@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'sendings', 'companies'));
@@ -48,6 +52,8 @@ $langs->loadLangs(array('interventions', 'sendings', 'companies'));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+
+$url_page_current = DOL_URL_ROOT.'/fichinter/contact.php';
 
 // Security check
 if ($user->socid) {
@@ -76,18 +82,29 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0) {
+	if ($result > 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+			if (isset($contactid)) {
+				$contactstatic = new Contact($db);
+				$fetchresult = $contactstatic->fetch((int) $contactid);
+				if ($fetchresult) {
+					$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+				} else {
+					$userstatic = new User($db);
+					$userstatic->fetch((int) $contactid);
+					$objname = $userstatic->firstname.' '.$userstatic->lastname;
+				}
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-
-		setEventMessages($mesg, null, 'errors');
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('ficheinter', 'creer')) {
 	// Toggle the status of a contact
@@ -102,6 +119,35 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'addmember' && $user->hasRight('ficheinter', 'write')) {
+	$result = $object->fetch($id);
+
+	if ($result > 0 && $id > 0 ) {
+		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+
+		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+		$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+	}
+
+	if ($result > 0) {
+		header("Location: ".$url_page_current."?id=".$object->id);
+		exit;
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			$langs->load("errors");
+			$memberstatic = new Adherent($db);
+			if (isset($newmember)) {
+				$memberstatic->fetch((int) $newmember);
+				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 
@@ -112,6 +158,7 @@ if ($action == 'addcontact' && $user->hasRight('ficheinter', 'creer')) {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 $formproject = new FormProjets($db);
 
@@ -140,7 +187,9 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	if (isset($object->thirdparty)) {
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");

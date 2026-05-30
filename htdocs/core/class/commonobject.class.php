@@ -22,7 +22,8 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
-*
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -1395,6 +1396,7 @@ abstract class CommonObject
 			foreach ($TListeContacts as $array_contact) {
 				if ($array_contact['status'] == 4 && $array_contact['id'] == $fk_socpeople && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added = true;
+					$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
 					break;
 				}
 			}
@@ -1416,6 +1418,147 @@ abstract class CommonObject
 				if (!$notrigger) {
 					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
 					$result = $this->call_trigger($triggerPrefix.'_ADD_CONTACT', $user);
+					if ($result < 0) {
+						$this->db->rollback();
+						return -5;
+					}
+				}
+
+				$this->db->commit();
+				return 1;
+			} else {
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$this->error = $this->db->errno();
+					$this->db->rollback();
+					return -6;
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -7;
+				}
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Add a link between element $this->element and a contact
+	 *
+	 *  @param	int			$memberid       		Id of member
+	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
+	 *  @param  string		$source             'member' is currently the only supported
+	 *  @param  int			$notrigger			Disable all triggers
+	 *  @return int         	        		Return integer <0 if KO, 0 if already added or code not valid, >0 if OK
+	 */
+	public function add_member_as_contact($memberid, $type_contact, $source, $notrigger = 0)
+	{
+		// phpcs:enable
+		global $user, $langs;
+
+		if (!$user->hasRight('adherent', 'creer')) {
+			dol_syslog(get_class($this)."::not hasRight adherent creer", LOG_ERR);
+			$langs->load("errors");
+			$this->error = $langs->trans("AddPermissions");
+			return -1;
+		}
+
+		dol_syslog(get_class($this)."::add_member_as_contact $memberid, $type_contact, $source, $notrigger", LOG_DEBUG);
+		if ($source != 'member') {
+			dol_syslog(get_class($this)."::wrong source, it (currently) has to be 'member'", LOG_ERR);
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", "3");
+			return -1;
+		}
+
+		// Check parameters
+		if ($memberid <= 0) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", "1");
+			dol_syslog(get_class($this)."::add_member_as_contact::memberid <=0 ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		// Check that the member actually exists
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$ismember = new Adherent($this->db);
+		$sql_check = "SELECT rowid FROM ".$this->db->prefix().$ismember->table_element." WHERE rowid = ".((int) $memberid);
+		$resql_check = $this->db->query($sql_check);
+		if ($resql_check) {
+			if (!$this->db->num_rows($resql_check)) {
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
+				dol_syslog(get_class($this)."::add_member_as_contact memberid ".$memberid." does not exist", LOG_ERR);
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if (!$type_contact) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
+			dol_syslog(get_class($this)."::add_member_as_contact::not type_contact ".$this->error, LOG_ERR);
+			return -2;
+		}
+
+		$id_type_contact = 0;
+		if (is_numeric($type_contact)) {
+			$id_type_contact = $type_contact;
+		} else {
+			// We look for id type_contact
+			$sql = "SELECT tc.rowid";
+			$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
+			$sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
+			$sql .= " AND tc.source='".$this->db->escape($source)."'";
+			$sql .= " AND tc.code='".$this->db->escape($type_contact)."' AND tc.active=1";
+			//print $sql;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$id_type_contact = $obj->rowid;
+				}
+			}
+		}
+		if ($id_type_contact == 0) {
+			dol_syslog(get_class($this)."::add_member_as_contact::CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
+			return 0;
+		}
+
+		$datecreate = dol_now();
+
+		// Socpeople must have already been added by some trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
+		$TListeContacts = $this->liste_member_as_contact(-1, $source);
+		$already_added = false;
+		if (is_array($TListeContacts) && !empty($TListeContacts)) {
+			foreach ($TListeContacts as $array_contact) {
+				if ($array_contact['status'] == 4 && $array_contact['memberid'] == $memberid && $array_contact['fk_c_type_contact'] == $id_type_contact) {
+					$already_added = true;
+					$this->error = 'DB_ERROR_RECORD_ALREADY_EXISTS';
+					break;
+				}
+			}
+		}
+
+		if (!$already_added) {
+			$this->db->begin();
+
+			// Insert into database
+			$sql = "INSERT INTO ".$this->db->prefix()."element_contact";
+			$sql .= " (element_id, fk_socpeople, fk_member, datecreate, statut, fk_c_type_contact) ";
+			$sql .= " VALUES (".$this->id.", 0, ".((int) $memberid)." , ";
+			$sql .= "'".$this->db->idate($datecreate)."'";
+			$sql .= ", 4, ".((int) $id_type_contact);
+			$sql .= ")";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if (!$notrigger) {
+					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
+					$result = $this->call_trigger($triggerPrefix.'_ADD_MEMBER_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
 						return -5;
@@ -1604,7 +1747,7 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_member as memid, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user or
 		if ($source == 'internal') {
 			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender, t.fk_country as country_id";
 		}
@@ -1627,6 +1770,10 @@ abstract class CommonObject
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_pays";
+		}
+		if ($source == 'member') {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."adherent as t on ec.fk_member = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.country";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		if (empty($arrayoftcids)) {
@@ -1651,6 +1798,7 @@ abstract class CommonObject
 		if ($statusoflink >= 0) {
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
+		$sql .= " AND ec.fk_socpeople > 0";
 		$sql .= " ORDER BY t.lastname ASC";
 
 		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
@@ -1704,6 +1852,123 @@ abstract class CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Get array of all contacts for an object
+	 *
+	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
+	 *    @param	'member'	$source			Source of contact: 'member' is currently the only one supported
+	 *    @param	int<0,1>	$list       	0:Returned array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *    @param	int			$status			Status of user or company
+	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
+	 *    @return array<int,array{parentId:int,source:string,memberid:int,id:int,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statusmember:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of members to be contacts, -1 if error
+	 */
+	public function liste_member_as_contact($statusoflink = -1, $source = 'member', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
+	{
+		dol_syslog(get_class($this)."::liste_member_as_contact::", LOG_DEBUG);
+		// phpcs:enable
+		global $langs, $user;
+
+		if (!$user->hasRight('adherent', 'read')) {
+			dol_syslog(get_class($this)."::not hasRight adherent read", LOG_ERR);
+			$langs->load("errors");
+			$this->error = $langs->trans("AddPermissions");
+			return -1;
+		}
+		if ($source != 'member') {
+			dol_syslog(get_class($this)."::wrong source, it (currently) has to be 'member'", LOG_ERR);
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorWrongValueForParameterX", "3");
+			return -1;
+		}
+
+		$tab = array();
+
+		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_member as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+		$sql .= ", a.rowid as memberid, a.statut as statusmember, a.country as country_id";
+		$sql .= ", a.civility as civility, a.lastname as lastname, a.firstname, a.email, a.address, a.zip, a.town";
+		if (empty($arrayoftcids)) {
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label, co.label as country";
+		}
+		$sql .= " FROM";
+		if (empty($arrayoftcids)) {
+			$sql .= " ".$this->db->prefix()."c_type_contact as tc,";
+		}
+		$sql .= " ".$this->db->prefix()."element_contact as ec";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."adherent as a on ec.fk_member = a.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = a.country";
+		$sql .= " WHERE ec.element_id = ".((int) $this->id);
+		if (empty($arrayoftcids)) {
+			$sql .= " AND ec.fk_c_type_contact = tc.rowid";
+			$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+			if ($code) {
+				$sql .= " AND tc.code = '".$this->db->escape($code)."'";
+			}
+			$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+			$sql .= " AND tc.active = 1";
+		} else {
+			$sql .= " AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', $arrayoftcids)).")";
+		}
+		if ($status >= 0) {
+			$sql .= " AND a.statut = ".((int) $status);
+		}
+		if ($statusoflink >= 0) {
+			$sql .= " AND ec.statut = ".((int) $statusoflink);
+		}
+		$sql .= " AND ec.fk_member > 0";
+		// there is that global variable that decides firstname or lastname order
+		$sql .= " ORDER BY a.lastname ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				if (!$list) {
+					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_label);
+					$tab[$i] = array(
+						'parentId' => $this->id,
+						'source' => $obj->source,
+						'memberid' => $obj->memberid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email' => $obj->email,
+						'address' => $obj->address,
+						'zip' => $obj->zip,
+						'town' => $obj->town,
+						'country_id' => $obj->country_id,
+						'country' => $obj->country,
+						'login' => (empty($obj->login) ? '' : $obj->login),
+						'photo' => (empty($obj->photo) ? '' : $obj->photo),
+						'gender' => (empty($obj->gender) ? '' : $obj->gender),
+						'statusmember' => $obj->statusmember,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'libelle' => $libelle_type,
+						'status' => (int) $obj->statuslink,
+						'fk_c_type_contact' => $obj->fk_c_type_contact
+					);
+				} else {
+					$tab[$i] = $obj->id;
+				}
+
+				$i++;
+			}
+
+			return $tab;
+		} else {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
 
 	/**
 	 * 		Update status of a contact linked to object
@@ -4542,6 +4807,7 @@ abstract class CommonObject
 	 */
 	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
 	{
+		dol_syslog(get_class($this)."::fetchObjectLinked", LOG_DEBUG);
 		global $hookmanager, $action;
 
 		// Important for pdf generation time reduction

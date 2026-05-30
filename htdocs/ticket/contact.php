@@ -4,6 +4,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,9 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+}
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
 /**
@@ -106,6 +110,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// thirdparty contacts
 if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);
 
@@ -138,13 +143,61 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 		}
 	}
 
-	if ($result >= 0) {
+	if ($result > 0) {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			$langs->load("errors");
+			if (isset($contactid)) {
+				$contactstatic = new Contact($db);
+				$fetchresult = $contactstatic->fetch((int) $contactid);
+				if ($fetchresult) {
+					$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+				} else {
+					$userstatic = new User($db);
+					$userstatic->fetch((int) $contactid);
+					$objname = $userstatic->firstname.' '.$userstatic->lastname;
+				}
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+}
+
+// members as contacts
+if ($action == 'addmember' && $user->hasRight('ticket', 'write')) {
+	$result = $object->fetch($id, '', $track_id);
+
+	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
+		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		if (empty($newmember)) {
+			$newmember = $object->fk_member;
+		}
+
+		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+		$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+	}
+
+	if ($result > 0) {
 		header("Location: ".$url_page_current."?id=".$object->id);
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			$memberstatic = new Adherent($db);
+			if (isset($newmember)) {
+				$memberstatic->fetch((int) $newmember);
+				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -203,6 +256,7 @@ llxHeader('', $langs->trans("TicketContacts"), $help_url, '', 0, 0, '', '', '', 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 
 if ($id > 0 || !empty($track_id) || !empty($ref)) {

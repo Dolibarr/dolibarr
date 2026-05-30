@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -530,6 +531,16 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Set parent member
+	if ($action == 'set_member' && $permissiontoadd) {
+		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+			$result = $object->setMember(GETPOSTINT('editmember'));
+			$url = $_SERVER["PHP_SELF"] . '?id=' . GETPOST('id', 'alpha');
+			header("Location: " . $url);
+			exit();
+		}
+	}
+
 	// Set progress status
 	if ($action == 'set_progression' && $permissiontoadd) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
@@ -964,7 +975,7 @@ if ($action == 'create' || $action == 'presend') {
 		$morehtmlref = '<div class="refidno">';
 
 		if ($permissiontoadd && !$user->socid) {
-			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
 			$morehtmlref .= '<span class="smallonsmartphone">'.dolPrintLabel($object->subject).'</span>';
@@ -1062,6 +1073,28 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= $object->project->getNomUrl(1);
 					if ($object->project->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($object->project->title).'</span>';
+					}
+				}
+			}
+		}
+
+		// Member
+		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
+			$langs->load("members");
+			$morehtmlref .= '<br>';
+			if ($permissiontoedit) {
+				$memberobj = new Adherent($db);
+				$memberresult = $memberobj->fetch($object->fk_member);
+				if ($memberresult) {
+					$morehtmlref .= img_picto($langs->trans("Member"), $memberobj->picto, 'class="pictofixedwidth"');
+					if ($action != 'editmember') {
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'editmember', 'id' => $object->id, 'fk_member' => $object->fk_member], true).'">'.img_edit($langs->transnoentitiesnoconv('SelectMember')).'</a> ';
+					}
+					$morehtmlref .= $form->form_member($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_member, $action == 'editmember' ? 'editmember' : 'none', '', 1, 0, 0, array(), 1);
+				} else {
+					$morehtmlref .= $memberobj->getNomUrl(1);
+					if ($memberobj->fullname) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($memberobj->fullname).'</span>';
 					}
 				}
 			}

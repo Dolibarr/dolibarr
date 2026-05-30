@@ -42,10 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
@@ -64,10 +66,12 @@ $mode = GETPOST('mode', 'alpha');
 
 $id = GETPOSTINT('id');
 $socid      = GETPOSTINT('socid');
+$memberid    = GETPOSTINT('memberid');
 $contractid  = GETPOSTINT('contractid');
 $projectid  = GETPOSTINT('projectid');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
+$search_member = GETPOST('search_member', 'alpha');
 $search_fk_project = GETPOSTINT('search_fk_project') ? GETPOSTINT('search_fk_project') : GETPOSTINT('projectid');
 $search_fk_contract = GETPOSTINT('search_fk_contract') ? GETPOSTINT('search_fk_contract') : GETPOSTINT('contractid');
 
@@ -96,7 +100,9 @@ $pagenext = $page + 1;
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
-if ($socid > 0) {
+if ($memberid > 0) {
+	$hookmanager->initHooks(array('memberticket', 'globalcard'));
+} elseif ($socid > 0) {
 	$hookmanager->initHooks(array('thirdpartyticket', 'globalcard'));
 } elseif ($projectid > 0) {
 	$hookmanager->initHooks(array('projectticket', 'globalcard'));
@@ -211,6 +217,9 @@ $parameters = array('arrayfields' => &$arrayfields);
 if ($socid > 0) {
 	$parameters['socid'] = $socid;
 }
+if ($memberid > 0) {
+	$parameters['memberid'] = $memberid;
+}
 if ($projectid > 0) {
 	$parameters['projectid'] = $projectid;
 }
@@ -286,6 +295,7 @@ if (empty($reshook)) {
 		//var_dump($listofobjectthirdparties);exit;
 	}
 
+	'@phan-var-force int $error';
 	// Reopen records
 	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
 		$objecttmp = new Ticket($db);
@@ -342,6 +352,7 @@ $now = dol_now();
 
 $user_temp = new User($db);
 $socstatic = new Societe($db);
+$memberstatic = new Adherent($db);
 
 $help_url = '';
 
@@ -351,6 +362,13 @@ if ($socid > 0) {
 	$moretitle = $langs->trans("ThirdParty") . ' - ';
 	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
 		$moretitle = $socstatic->name . ' - ';
+	}
+}
+if ($memberid > 0) {
+	$memberstatic->fetch($memberid);
+	$moretitle = $langs->trans("Member") . ' - ';
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/membernameonly/', $conf->global->MAIN_HTML_TITLE) && $memberstatic->fullname) {
+		$moretitle = $memberstatic->fullname . ' - ';
 	}
 }
 
@@ -386,9 +404,13 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a ON (t.fk_member = a.rowid)";
 $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 if ($socid > 0) {
 	$sql .= " AND t.fk_soc = ".((int) $socid);
+}
+if ($memberid > 0) {
+	$sql .= " AND t.fk_member = ".((int) $memberid);
 }
 
 foreach ($search as $key => $val) {
@@ -443,6 +465,9 @@ if ($search_all) {
 }
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_member) {
+	$sql .= natural_search('a.firstname', $search_member) . natural_search('a.lastname', $search_member);
 }
 if ($search_fk_project > 0) {
 	$sql .= natural_search('t.fk_project', (string) $search_fk_project, 2);
@@ -657,6 +682,30 @@ if ($projectid > 0 || $project_ref) {
 	}
 }
 
+if ($memberid && !$socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
+	$memberstat = new Adherent($db);
+	$res = $memberstat->fetch($memberid);
+	if ($res > 0) {
+		$tmpobject = $object;
+		$object = $memberstat; // $object must be of type Societe when calling societe_prepare_head
+		$head = member_prepare_head($memberstat);
+		$object = $tmpobject;
+
+		print dol_get_fiche_head($head, 'ticket', $langs->trans("Member"), -1, 'company');
+
+		dol_banner_tab($memberstat, 'memberid', '', $memberid, 'rowid', 'fullname');
+
+		print '<div class="fichecenter">';
+
+		print '<div class="underbanner clearboth"></div>';
+		// making a nice thick black line in the bottom to visually distinguish the member info and the tickets
+		print '</div>';
+		print dol_get_fiche_end();
+
+		print '<br>';
+	}
+}
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
@@ -696,8 +745,14 @@ $param .= $hookmanager->resPrint;
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
 }
+if ($memberid > 0) {
+	$param .= '&memberid='.urlencode((string) ($memberid));
+}
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
+}
+if ($search_member) {
+	$param .= '&search_societe='.urlencode($search_member);
 }
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode((string) ($projectid));
@@ -774,11 +829,15 @@ print '<input type="hidden" name="mode" value="'.$mode.'" >';
 if ($socid) {
 	print '<input type="hidden" name="socid" value="'.$socid.'" >';
 }
+if ($memberid) {
+	print '<input type="hidden" name="memberid" value="'.$memberid.'" >';
+}
 if ($projectid) {
 	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '').($memberid ? '&memberid='.$memberid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+// do we really need the if with the socid below if we have it just above? will it get there twice?
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
@@ -923,6 +982,8 @@ foreach ($object->fields as $key => $val) {
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'search_status width150 onrightofpage', 1, 0, '', '', '');
 			print '</td>';
 		} elseif ($key == "fk_soc") {
+			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+		} elseif ($key == "fk_member") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 		} elseif ($key == "datec" || $key == 'date_read' || $key == 'date_close') {
 			print '<td class="liste_titre center">';

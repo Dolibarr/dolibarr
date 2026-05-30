@@ -94,7 +94,7 @@ function ticket_prepare_head($object)
 	$h++;
 
 	if (!getDolGlobalInt('MAIN_DISABLE_CONTACTS_TAB') && empty($user->socid) && isModEnabled("societe")) {
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external')) + count($object->liste_member_as_contact(-1, 'member'));
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/ticket/contact.php', ['track_id' => $object->track_id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {

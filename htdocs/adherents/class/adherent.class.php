@@ -16,6 +16,7 @@
  * Copyright (C) 2021		Waël Almoman            	<info@almoman.com>
  * Copyright (C) 2021		Philippe Grand          	<philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1816,6 +1817,67 @@ class Adherent extends CommonObject
 		return 1;
 	}
 
+	/**
+	 *     Search and fetch members by email
+	 *
+	 *     @param  string 		$email   	Email
+	 *     @param  int<0,3>		$type    	Type of member (0=any, 1=individual, 2=legal entity)
+	 *     @param  array<string,mixed>	$filters 	Array of couple field name/value to filter the members with the same name
+	 *     @param  string 		$clause  	Clause for filters
+	 *     @return Adherent[]|int<-1,-1>		Array of Adherent object(s)
+	 */
+	public function searchMemberidByEmail($email, $type = 0, $filters = array(), $clause = 'AND')
+	{
+		dol_syslog(get_class($this)."::searchMemberidByEmail", LOG_DEBUG);
+		$members = array();
+		$exact = 0;
+
+		// Generation requete recherche
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+		$sql .= " WHERE entity IN (".getEntity('adherent', 1).")";
+		if (!empty($type)) {
+			$sql .= " AND fk_adherent_type = ".((int) $type);
+		}
+		if (!empty($email)) {
+			if (empty($exact)) {
+				$regs = array();
+				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
+					$email = str_replace('*', '%', $email);
+				} else {
+					$email = '%'.$email.'%';
+				}
+			}
+			$sql .= " AND ";
+			if (is_array($filters) && !empty($filters)) {
+				$sql .= "(";
+			}
+
+			$sql .= "email LIKE '".$this->db->escape($email)."'";
+		}
+		if (is_array($filters) && !empty($filters)) {
+			foreach ($filters as $field => $value) {
+				$sql .= " ".$clause." ".$this->db->sanitize($field)." LIKE '".$this->db->escape($value)."'";
+			}
+			if (!empty($email)) {
+				$sql .= ")";
+			}
+		}
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			while ($rec = $this->db->fetch_array($res)) {
+				$mem = new Adherent($this->db);
+				$mem->fetch($rec['rowid']);
+				$members[] = $mem;
+			}
+
+			return $members;
+		} else {
+			$this->error = $this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::searchMemberidByEmail ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 *	Insert subscription into database and eventually add links to banks, mailman, etc...

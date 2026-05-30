@@ -328,9 +328,8 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 		}
 	}
 
-	// Notifications
+	// Tickets
 	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
-		dol_syslog('Company::societe_prepare_head::isModEnabled::ticket', LOG_DEBUG);
 		//$langs->load('ticket');
 		$nbTicket = 0;
 		// Enable caching of thirdparty count notifications

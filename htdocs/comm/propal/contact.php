@@ -6,6 +6,7 @@
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -51,6 +55,9 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
+
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/comm/propal/contact.php';
 
 $object = new Propal($db);
 $error = 0;
@@ -105,13 +112,26 @@ if (empty($reshook)) {
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
 
-		if ($result >= 0) {
+		if ($result > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+				if (isset($contactid)) {
+					$contactstatic = new Contact($db);
+					$fetchresult = $contactstatic->fetch((int) $contactid);
+					if ($fetchresult) {
+						$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+					} else {
+						$userstatic = new User($db);
+						$userstatic->fetch((int) $contactid);
+						$objname = $userstatic->firstname.' '.$userstatic->lastname;
+					}
+				} else {
+					$objname = '';
+				}
+				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -130,6 +150,38 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			dol_print_error($db);
+		}
+	} elseif ($action == 'addmember' && $user->hasRight('propal', 'write')) {
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0) {
+			$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+			$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			if (!empty($newmember)) {
+				$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+				$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+			} else {
+				setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
+			}
+		}
+
+		if ($result > 0) {
+			header("Location: ".$url_page_current."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				$memberstatic = new Adherent($db);
+				if (isset($newmember)) {
+					$memberstatic->fetch((int) $newmember);
+					$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
+				} else {
+					$objname = '';
+				}
+				setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	}
 }
@@ -161,7 +213,9 @@ if ($object->id > 0) {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	if (isset($object->thirdparty)) {
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");

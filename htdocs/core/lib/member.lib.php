@@ -65,6 +65,70 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
+	// Tickets
+	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
+		//$langs->load('ticket');
+		$nbTicket = 0;
+		// Enable caching of member ticket count notifications
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_ticket_member_' . $object->id;
+		$nbticketretreived = dol_getcache($cachekey);
+		if (!is_null($nbticketretreived)) {
+			$nbTicket = $nbticketretreived;
+		} else {
+			// List of notifications enabled for contacts of the third party
+			$sql = "SELECT COUNT(t.rowid) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " WHERE t.fk_member = " . ((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbTicket = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/ticket/list.php', ['memberid' => $object->id]);
+		$head[$h][1] = $langs->trans("Tickets");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbTicket . '</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
+	// Related Items
+	$nbAsContact = 0;
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+	$cachekey = 'count_consumption_member_' . $object->id;
+	$nbAsContactretreived = dol_getcache($cachekey);
+	if (!is_null($nbAsContactretreived)) {
+		$nbAsContact = $nbAsContactretreived;
+	} else {
+		$sql = "SELECT COUNT(ec.rowid) as nb";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "element_contact as ec";
+		$sql .= " WHERE ec.fk_member = " . ((int) $object->id);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$nbAsContact = $obj->nb;
+		} else {
+			dol_print_error($db);
+		}
+		dol_setcache($cachekey, $nbAsContact, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+	}
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/related.php', ['id' => $object->id]);
+	$head[$h][1] = $langs->trans("RelatedObjects");
+	if ($nbAsContact > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbAsContact . '</span>';
+	}
+	$head[$h][2] = 'consumption';
+	$h++;
+
+
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if ($user->hasRight('partnership', 'read')) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;

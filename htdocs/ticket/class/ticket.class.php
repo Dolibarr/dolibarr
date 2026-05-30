@@ -81,6 +81,11 @@ class Ticket extends CommonObject
 	public $socid;
 
 	/**
+	 * @var int Member ID
+	 */
+	public $fk_member;
+
+	/**
 	 * @var int Contract ID
 	 */
 	public $fk_contract;
@@ -301,6 +306,7 @@ class Ticket extends CommonObject
 		'category_code' => array('type' => 'varchar(32)', 'label' => 'TicketCategory', 'visible' => -1, 'enabled' => 1, 'position' => 21, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax200'),
 		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax100'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'visible' => 1, 'enabled' => 'isModEnabled("societe")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'css' => 'tdoverflowmax150 maxwidth150onsmartphone'),
+		'fk_member' => array('type' => 'integer:Adherent:adherents/class/adherent.class.php', 'label' => 'Member', 'visible' => 1, 'enabled' => 'isModEnabled("adherent")', 'position' => 50, 'notnull' => -1, 'index' => 1, 'searchall' => 1, 'help' => "LinkedToDolibarrMember", 'css' => 'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type' => 'integer', 'label' => 'NotifyThirdparty', 'visible' => -1, 'enabled' => 0, 'position' => 51, 'notnull' => 1, 'index' => 1),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php', 'label' => 'Project', 'visible' => -1, 'enabled' => 'isModEnabled("project")', 'position' => 52, 'notnull' => -1, 'index' => 1, 'help' => "LinkToProject"),
 		'fk_contract' => array('type' => 'integer:Contrat:contrat/class/contrat.class.php', 'label' => 'Contract', 'visible' => -1, 'enabled' => 'isModEnabled("contract")', 'position' => 53, 'notnull' => -1, 'index' => 1, 'help' => "LinkToContract"),
@@ -672,6 +678,7 @@ class Ticket extends CommonObject
 		$sql .= " t.ref,";
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
+		$sql .= " t.fk_member,";
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
@@ -731,6 +738,7 @@ class Ticket extends CommonObject
 				$this->track_id = $obj->track_id;
 				$this->fk_soc = $obj->fk_soc;
 				$this->socid = $obj->fk_soc; // for fetch_thirdparty() method
+				$this->fk_member = $obj->fk_member;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_contract = $obj->fk_contract;
 				$this->origin_email = $obj->origin_email;
@@ -814,6 +822,7 @@ class Ticket extends CommonObject
 		$sql .= " t.ref,";
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
+		$sql .= " t.fk_member,";
 		$sql .= " t.fk_project,";
 		$sql .= " t.fk_contract,";
 		$sql .= " t.origin_email,";
@@ -935,6 +944,7 @@ class Ticket extends CommonObject
 					$line->ref = $obj->ref;
 					$line->track_id = $obj->track_id;
 					$line->fk_soc = $obj->fk_soc;
+					$line->fk_member = $obj->fk_member;
 					$line->fk_project = $obj->fk_project;
 					$line->fk_contract = $obj->fk_contract;
 					$line->origin_email = $obj->origin_email;
@@ -1022,6 +1032,10 @@ class Ticket extends CommonObject
 			$this->fk_soc = (int) $this->fk_soc;
 		}
 
+		if (isset($this->fk_member)) {
+			$this->fk_member = (int) $this->fk_member;
+		}
+
 		if (isset($this->fk_project)) {
 			$this->fk_project = (int) $this->fk_project;
 		}
@@ -1092,6 +1106,7 @@ class Ticket extends CommonObject
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "").",";
 		$sql .= " track_id=".(isset($this->track_id) ? "'".$this->db->escape($this->track_id)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->fk_soc) ? (int) $this->fk_soc : "null").",";
+		$sql .= " fk_member=".(isset($this->fk_member) ? (int) $this->fk_member : "null").",";
 		$sql .= " fk_project=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
 		$sql .= " fk_contract=".(isset($this->fk_contract) ? (int) $this->fk_contract : "null").",";
 		$sql .= " origin_email=".(isset($this->origin_email) ? "'".$this->db->escape($this->origin_email)."'" : "null").",";
@@ -1926,6 +1941,7 @@ class Ticket extends CommonObject
 			$actioncomm->email_from = $_SESSION['email_customer'];
 		}
 		$actioncomm->socid = $this->socid;
+		// actioncomm does not support members
 		$actioncomm->label = $this->subject;
 		if ($summary) {
 			$actioncomm->label = preg_replace('/(\[[^\]]*\]).*$/', '\1', $actioncomm->label);
@@ -2159,7 +2175,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *     Search and fetch thirparties by email
+	 *     Search and fetch thirdparties by email
 	 *
 	 *     @param  string 		$email   	Email
 	 *     @param  int<0,3>		$type    	Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
@@ -2280,6 +2296,29 @@ class Ticket extends CommonObject
 			$sql .= " SET fk_soc = ".($id > 0 ? (int) $id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this).'::setCustomer sql='.$sql);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				return 1;
+			} else {
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
+
+	/**
+	 *    Define parent member of current ticket
+	 *
+	 *    @param  int $id		Id of member to set or '' to remove
+	 *    @return int           Return integer <0 if KO, >0 if OK
+	 */
+	public function setMember($id)
+	{
+		if ($this->id) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
+			$sql .= " SET fk_member = ".($id > 0 ? (int) $id : "null");
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				return 1;
@@ -2510,6 +2549,7 @@ class Ticket extends CommonObject
 			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
 
+		$sql .= " AND ec.fk_socpeople > 0";
 		$sql .= " ORDER BY t.lastname ASC";
 
 		$resql = $this->db->query($sql);

@@ -27,6 +27,7 @@
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1887,6 +1888,283 @@ class Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Output html form to select a third party.
+	 *  Note: you must use the select_member() to get the component to select a member. This function must only be called by select_member.
+	 *
+	 * @param string 			$selected 		Preselected type
+	 * @param string 			$htmlname 		Name of field in form
+	 * @param string 			$filter 		Optional filter criteria. WARNING: Must be a USF syntax.
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text to use on empty line like 'SelectMember')
+	 * @param int<0,1>			$showtype 		Show third party nature in combolist (customer, prospect or supplier)
+	 * @param int 				$forcecombo 	Force to use standard HTML select component without beautification
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param string 			$filterkey 		Filter on key value
+	 * @param int<0,1>			$outputmode 	0=HTML select string, 1=Array
+	 * @param int 				$limit 			Limit number of answers
+	 * @param string 			$morecss 		Add more css styles to the SELECT component
+	 * @param string 			$moreparam 		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
+	 * @param string[] 			$excludeids 	Exclude IDs from the select combo
+	 * @param int<0,1>			$showcode 		Show code in list
+	 * @return array<int,array{key:int,value:string,label:string,labelhtml:string}>|string            	HTML string with
+	 * @see select_member()
+	 * @phpstan-return ($outputmode is 1 ? array<int,array{key:int,value:string,label:string,labelhtml:string}> : string)
+	 */
+	public function select_member_list($selected = '', $htmlname = 'memberid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
+	{
+		// phpcs:enable
+		global $user, $langs;
+		global $hookmanager;
+
+		$langs->loadLangs(array("companies", "suppliers"));
+
+		$out = '';
+		$num = 0;
+		$outarray = array();
+
+		if ($selected === '') {
+			$selected = array();
+		} elseif (!is_array($selected)) {
+			$selected = array($selected);
+		}
+
+		// Clean $filter that may contains sql conditions so sql code
+		if (function_exists('testSqlAndScriptInject')) {
+			if (testSqlAndScriptInject($filter, 3) > 0) {
+				$filter = '';
+				return 'SQLInjectionTryDetected';
+			}
+		}
+
+		if ($filter != '') {	// If a filter was provided
+			$errormsg = '';
+			$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 1);
+
+			// Redo clean $filter that may contains sql conditions so sql code
+			if (function_exists('testSqlAndScriptInject')) {
+				if (testSqlAndScriptInject($filter, 3) > 0) {
+					$filter = '';
+					return 'SQLInjectionTryDetected';
+				}
+			}
+		}
+
+		// We search companies
+		$sql = "SELECT a.rowid, a.firstname as firstname, a.lastname as lastname, a.civility, a.gender, a.societe, a.fk_soc";
+		if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+			$sql .= ", a.address, a.zip, a.town";
+			$sql .= ", dictp.code as country_code";
+		}
+		$sql .= " FROM " . $this->db->prefix() . "adherent as a";
+		if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_country as dictp ON dictp.rowid = a.country";
+		}
+		$sql .= " WHERE a.entity IN (" . getEntity('member') . ")";
+		if ($filter) {
+			// $filter is safe because, it has been tested by testSqlAndScriptInject() and sanitized by forgeSQLFromUniversalSearchCriteria()
+			$sqlwhere = $filter;
+			$sql .= " AND (" . $sqlwhere . ")";
+		}
+		if (getDolGlobalString('MEMBER_HIDE_INACTIVE_IN_COMBOBOX')) {
+			$sql .= " AND a.statut <> 0";
+		}
+		if (!empty($excludeids)) {
+			$sql .= " AND a.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
+		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectMemberListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		// Add criteria
+		if ($filterkey && $filterkey != '') {
+			$sql .= " AND (";
+			$prefix = !getDolGlobalString('MEMBER_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if MEMBER_DONOTSEARCH_ANYWHERE is on
+			// For natural search
+			$search_crit = explode(' ', $filterkey);
+			$i = 0;
+			if (count($search_crit) > 1) {
+				$sql .= "(";
+			}
+			foreach ($search_crit as $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
+				$i++;
+			}
+			if (count($search_crit) > 1) {
+				$sql .= ")";
+			}
+			$sql .= ")";
+		}
+		$sql .= $this->db->order("firstname", "ASC");
+		$sql .= $this->db->plimit($limit, 0);
+
+		// Build output string
+		dol_syslog(get_class($this)."::select_member_list", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Construct $out and $outarray
+			$out .= '<select id="' . $htmlname . '" class="flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($moreparam ? ' ' . $moreparam : '') . ' name="' . $htmlname . ($multiple ? '[]' : '') . '"' . ($multiple ? ' multiple' : '') . '>' . "\n";
+
+			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
+			if (getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT')) {
+				// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+				//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+				if ($showempty && !is_numeric($showempty)) {
+					$textifempty = $langs->trans($showempty);
+				} else {
+					$textifempty .= $langs->trans("All");
+				}
+			}
+			if ($showempty) {
+				$out .= '<option value="-1" data-html="' . dol_escape_htmltag('<span class="opacitymedium">' . ($textifempty ? $textifempty : '&nbsp;') . '</span>') . '">' . $textifempty . '</option>' . "\n";
+			}
+
+			$membertemp = new Adherent($this->db);
+
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$label = $obj->firstname.' '.$obj->lastname;
+					$labelhtml = $label;
+
+					if ($showtype) {
+						$membertemp->id = $obj->rowid;
+						$membertemp->morphy = $obj->morphy;
+						$label .= ' (';
+						if ($obj->morphy == 'mor') {
+							$label .= $langs->trans("Moral");
+						}
+						if ($obj->morphy == 'phy') {
+							$label .= $langs->trans("Physical");
+						}
+						$label .= ')';
+					}
+
+					if (getDolGlobalString('MEMBER_SHOW_ADDRESS_SELECTLIST')) {
+						$s = ($obj->address ? ' - ' . $obj->address : '') . ($obj->zip ? ' - ' . $obj->zip : '') . ($obj->town ? ' ' . $obj->town : '');
+						$label .= $s;
+						$labelhtml .= $s;
+					}
+
+					if (empty($outputmode)) {
+						if (in_array($obj->rowid, $selected)) {
+							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
+						} else {
+							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
+						}
+					} else {
+						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label, 'labelhtml' => $labelhtml));
+					}
+
+					$i++;
+					if (($i % 10) == 0) {
+						$out .= "\n";
+					}
+				}
+			}
+			$out .= '</select>' . "\n";
+			if (!$forcecombo) {
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("MEMBER_USE_SEARCH_TO_SELECT"));
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		$this->result = array('nbofthirdparties' => $num);
+
+		if ($outputmode) {
+			return $outarray;
+		}
+		return $out;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Output html form to select a member
+	 *  This call select_member_list() or ajax depending on setup. This component is not able to support multiple select.
+	 *
+	 * @param int|string 	$selected 				Preselected ID
+	 * @param string 		$htmlname 				Name of field in form
+	 * @param string 		$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here. Example: ((s.client:IN:1,3) AND (s.status:=:1)). Do not use a filter coming from input of users.
+	 * @param string|int<1,1> 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectMember')
+	 * @param int<0,1>		$showtype 				Show third party type in combolist (customer, prospect or supplier)
+	 * @param int<0,1>		$forcecombo 			Force to load all values and output a standard combobox (with no beautification)
+	 * @param array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param int 			$limit 					Maximum number of elements
+	 * @param string 		$morecss 				Add more css styles to the SELECT component
+	 * @param string 		$moreparam 				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param string 		$selected_input_value 	Value of preselected input text (for use with ajax)
+	 * @param int<0,3>		$hidelabel 				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder 'Search', 3 search icon after)
+	 * @param array<string,string|string[]>	$ajaxoptions 		Options for ajax_autocompleter
+	 * @param bool 			$multiple 				add [] in the name of element and add 'multiple' attribute (not working with ajax_autocompleter)
+	 * @param string[] 		$excludeids 			Exclude IDs from the select combo
+	 * @param int<0,1>		$showcode 				Show code
+	 * @return string  		 	            		HTML string with select box for member.
+	 */
+	public function select_member($selected = '', $htmlname = 'memberid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
+	{
+		dol_syslog("select_member::BEGIN", LOG_DEBUG);
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MEMBER_USE_SEARCH_TO_SELECT') && !$forcecombo) {
+			if (is_null($ajaxoptions)) {
+				$ajaxoptions = array();
+			}
+
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+
+			// No immediate load of all database
+			$placeholder = '';
+			if ($selected && empty($selected_input_value)) {
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$membertmp = new Adherent($this->db);
+				$membertmp->fetch($selected);
+				$selected_input_value = $membertmp->fullname;
+				unset($membertmp);
+			}
+
+			// mode 1
+			$urloption = 'htmlname=' . urlencode((string) (str_replace('.', '_', $htmlname))) . '&outjson=1&filter=' . urlencode((string) ($filter)) . (empty($excludeids) ? '' : '&excludeids=' . implode(',', $excludeids)) . ($showtype ? '&showtype=' . urlencode((string) ($showtype)) : '') . ($showcode ? '&showcode=' . urlencode((string) ($showcode)) : '') . ($limit ? '&limit='.$limit : '');
+
+			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
+			if (empty($hidelabel)) {
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel == 1 && !is_numeric($showempty)) {
+				$placeholder = $langs->trans($showempty);
+			} elseif ($hidelabel > 1) {
+				$placeholder = $langs->trans("RefOrLabel");
+				if ($hidelabel == 2) {
+					$out .= img_picto($langs->trans("Search"), 'search');
+				}
+			}
+			$out .= '<input type="text" class="' . $morecss . '" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' ' . (getDolGlobalString('MEMBER_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			if ($hidelabel == 3) {
+				$out .= img_picto($langs->trans("Search"), 'search');
+			}
+
+			$out .= ajax_event($htmlname, $events);
+
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/adherents/ajax/member.php', $urloption, getDolGlobalInt('MEMBER_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+		} else {
+			// Immediate load of all database
+			$out .= $this->select_member_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
+		}
+
+		dol_syslog("select_member::END", LOG_DEBUG);
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
@@ -7647,7 +7925,7 @@ class Form
 	 * @param int<0,1>	$forcecombo 			Force to use combo box
 	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 * @param int<0,1>	$nooutput 				No print output. Return it only.
-	 * @param int[] 	$excludeids 			Exclude IDs from the select combo
+	 * @param string[] 	$excludeids 			Exclude IDs from the select combo.
 	 * @param string 	$textifnothirdparty 	Text to show if no thirdparty
 	 * @return    string                        HTML output or ''
 	 */
@@ -7674,6 +7952,60 @@ class Form
 				$out .= $soc->getNomUrl(0, '');
 			} else {
 				$out .= '<span class="opacitymedium">' . $textifnothirdparty . '</span>';
+			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
+
+		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *  Output html select to select member
+	 *
+	 * @param string 	$page 					Page
+	 * @param string 	$selected 				Id preselected
+	 * @param string 	$htmlname 				Name of HTML select
+	 * @param string	$filter 				Optional filter criteria. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
+	 * @param string|int<0,1> 	$showempty 		Add an empty field (Can be '1' or text key to use on empty line like 'SelectMember')
+	 * @param int<0,1>	$showtype 				Show member type in combolist
+	 * @param int<0,1>	$forcecombo 			Force to use combo box
+	 * @param 	array<array{method:string,url:string,htmlname:string,params:array<string,string>}> 	$events 	Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param int<0,1>	$nooutput 				No print output. Return it only.
+	 * @param string[] 	$excludeids 			Exclude IDs from the select combo
+	 * @param string 	$textifnomember 		Text to show if no member
+	 * @return    string                        HTML output or ''
+	 */
+	public function form_member($page, $selected = '', $htmlname = 'memberid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnomember = '')
+	{
+		dol_syslog("form_member::", LOG_DEBUG);
+		// phpcs:enable
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			$limit = getDolGlobalInt('MEMBER_LIMIT_SIZE');
+
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set_member">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out .= $this->select_member($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, $limit, 'minwidth100', '', '', 1, array(), false, $excludeids);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="' . $langs->trans("Modify") . '">';
+			$out .= '</form>';
+		} else {
+			if ($selected) {
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$member = new Adherent($this->db);
+				$member->fetch((int) $selected);
+				$out .= $member->getNomUrl(0, 0, 'card', '');
+			} else {
+				$out .= '<span class="opacitymedium">' . $textifnomember . '</span>';
 			}
 		}
 
@@ -9298,79 +9630,6 @@ class Form
 		$optJson = array('key' => $outkey, 'value' => $outref, 'type' => $outtype);
 	}
 
-
-	/**
-	 *  Return list of members in Ajax if Ajax activated or go to selectTicketsList
-	 *
-	 * @param string $selected Preselected tickets
-	 * @param string $htmlname Name of HTML select field (must be unique in page).
-	 * @param string $filtertype To add a filter
-	 * @param int $limit Limit on number of returned lines
-	 * @param int $status Ticket status
-	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
-	 * @param int<0,3> $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
-	 * @param array<string,string|string[]> $ajaxoptions Options for ajax_autocompleter
-	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
-	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
-	 * @param int $forcecombo Force to use combo box
-	 * @param string $morecss Add more css on select
-	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
-	 * @param int<0,1>	$nooutput No print, return the output into a string
-	 * @param string[] 	$excludeids Exclude IDs from the select combo
-	 * @return        string
-	 */
-	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0, $excludeids = array())
-	{
-		global $langs, $conf;
-
-		$out = '';
-
-		// check parameters
-		if (is_null($ajaxoptions)) {
-			$ajaxoptions = array();
-		}
-
-		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
-			$placeholder = '';
-
-			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
-				$adherenttmpselect = new Adherent($this->db);
-				$adherenttmpselect->fetch((int) $selected);
-				$selected_input_value = $adherenttmpselect->ref;
-				unset($adherenttmpselect);
-			}
-
-			$urloption = '';
-
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
-
-			if (empty($hidelabel)) {
-				$out .= $langs->trans("RefOrLabel") . ' : ';
-			} elseif ($hidelabel > 1) {
-				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
-				if ($hidelabel == 2) {
-					$out .= img_picto($langs->trans("Search"), 'search');
-				}
-			}
-			$out .= '<input type="text" class="minwidth100" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' ' . (getDolGlobalString('PRODUCT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
-			if ($hidelabel == 3) {
-				$out .= img_picto($langs->trans("Search"), 'search');
-			}
-		} else {
-			$filterkey = '';
-
-			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss, $excludeids);
-		}
-
-		if (empty($nooutput)) {
-			print $out;
-		} else {
-			return $out;
-		}
-		return '';
-	}
-
 	/**
 	 *    Return list of adherents.
 	 *  Called by selectMembers.
@@ -9499,6 +9758,78 @@ class Form
 		}
 
 		return array();
+	}
+
+	/**
+	 *  Return list of members in Ajax if Ajax activated or go to selectTicketsList
+	 *
+	 * @param string $selected Preselected tickets
+	 * @param string $htmlname Name of HTML select field (must be unique in page).
+	 * @param string $filtertype To add a filter
+	 * @param int $limit Limit on number of returned lines
+	 * @param int $status Ticket status
+	 * @param string $selected_input_value Value of preselected input text (for use with ajax)
+	 * @param int<0,3> $hidelabel Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
+	 * @param array<string,string|string[]> $ajaxoptions Options for ajax_autocompleter
+	 * @param int $socid Thirdparty Id (to get also price dedicated to this customer)
+	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
+	 * @param int $forcecombo Force to use combo box
+	 * @param string $morecss Add more css on select
+	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
+	 * @param int<0,1>	$nooutput No print, return the output into a string
+	 * @param string[] 	$excludeids Exclude IDs from the select combo
+	 * @return        string
+	 */
+	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0, $excludeids = array())
+	{
+		global $langs, $conf;
+
+		$out = '';
+
+		// check parameters
+		if (is_null($ajaxoptions)) {
+			$ajaxoptions = array();
+		}
+
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('TICKET_USE_SEARCH_TO_SELECT')) {
+			$placeholder = '';
+
+			if ($selected && empty($selected_input_value)) {
+				require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+				$adherenttmpselect = new Adherent($this->db);
+				$adherenttmpselect->fetch((int) $selected);
+				$selected_input_value = $adherenttmpselect->ref;
+				unset($adherenttmpselect);
+			}
+
+			$urloption = '';
+
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+
+			if (empty($hidelabel)) {
+				$out .= $langs->trans("RefOrLabel") . ' : ';
+			} elseif ($hidelabel > 1) {
+				$placeholder = ' placeholder="' . $langs->trans("RefOrLabel") . '"';
+				if ($hidelabel == 2) {
+					$out .= img_picto($langs->trans("Search"), 'search');
+				}
+			}
+			$out .= '<input type="text" class="minwidth100" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . $placeholder . ' ' . (getDolGlobalString('PRODUCT_SEARCH_AUTOFOCUS') ? 'autofocus' : '') . ' />';
+			if ($hidelabel == 3) {
+				$out .= img_picto($langs->trans("Search"), 'search');
+			}
+		} else {
+			$filterkey = '';
+
+			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss, $excludeids);
+		}
+
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+		return '';
 	}
 
 	/**
@@ -10826,6 +11157,7 @@ class Form
 	 */
 	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = array(), $title = 'RelatedObjects')
 	{
+		dol_syslog(get_class($this)."::showLinkedObjectBlock", LOG_DEBUG);
 		global $conf, $langs, $hookmanager;
 		global $action;
 		global $db, $user;	// Will be used into tpl
@@ -11003,6 +11335,7 @@ class Form
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array(), $nooutput = 0)
 	{
+		dol_syslog(get_class($this)."::showLinkToObjectBlock::object->element=".$object->element, LOG_DEBUG);
 		global $conf, $langs, $hookmanager, $form;
 		global $action;
 
@@ -11212,7 +11545,6 @@ class Form
 				}
 
 				$sql = $possiblelink['sql'];
-
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);

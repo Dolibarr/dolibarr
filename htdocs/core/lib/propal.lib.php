@@ -64,7 +64,7 @@ function propal_prepare_head($object)
 	}
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external')) + count($object->liste_member_as_contact(-1, 'member'));
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {

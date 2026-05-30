@@ -774,6 +774,7 @@ class FormTicket
 			print '</tr>';
 		}
 
+		print '<!-- pre project -->';
 		if ($subelement != 'project') {
 			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
@@ -782,6 +783,7 @@ class FormTicket
 				print '</td></tr>';
 			}
 		}
+		print '<!-- post project -->';
 
 		if ($subelement != 'contract' && $subelement != 'contrat') {
 			if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
@@ -1484,7 +1486,7 @@ class FormTicket
 	 * Show the form to add message on ticket
 	 *
 	 * @param  	string  $width      			Width of form
-	 * @param	int		$fromPublicInterface	Set to 1 if call is done for the public interface
+	 * @param	int	$fromPublicInterface	Set to 1 if call is done for the public interface
 	 * @return 	void
 	 */
 	public function showMessageForm($width = '40%', $fromPublicInterface = 0)

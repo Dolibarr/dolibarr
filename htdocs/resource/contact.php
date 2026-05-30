@@ -4,6 +4,7 @@
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  */
 
@@ -34,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
+if (isModEnabled('member')) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,6 +52,8 @@ $langs->loadLangs(array('companies', 'resource', 'sendings'));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+
+$url_page_current = DOL_URL_ROOT.'/resource/contact.php';
 
 $object = new Dolresource($db);
 
@@ -80,18 +85,29 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0) {
+	if ($result > 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+			if (isset($contactid)) {
+				$contactstatic = new Contact($db);
+				$fetchresult = $contactstatic->fetch((int) $contactid);
+				if ($fetchresult) {
+					$objname = $contactstatic->firstname.' '.$contactstatic->lastname;
+				} else {
+					$userstatic = new User($db);
+					$userstatic->fetch((int) $contactid);
+					$objname = $userstatic->firstname.' '.$userstatic->lastname;
+				}
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-
-		setEventMessages($mesg, null, 'errors');
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('resource', 'write')) {
 	// Toggle the status of a contact
@@ -106,6 +122,38 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 	} else {
 		dol_print_error($db);
 	}
+} elseif ($action == 'addmember' && $user->hasRight('resource', 'write')) {
+	$result = $object->fetch($id);
+
+	if ($result > 0 && $id > 0 ) {
+		$newmember = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('newmember'));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		if (!empty($newmember)) {
+			$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+			$result = $object->add_member_as_contact($newmember, $typeid, GETPOST("source", 'aZ09'));
+		} else {
+			setEventMessages('ErrorWrongParameters', $object->errors, 'errors');
+		}
+	}
+
+	if ($result > 0) {
+		header("Location: ".$url_page_current."?id=".$object->id);
+		exit;
+	} else {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			$langs->load("errors");
+			$memberstatic = new Adherent($db);
+			if (isset($newmember)) {
+				$memberstatic->fetch((int) $newmember);
+				$objname = $memberstatic->firstname.' '.$memberstatic->lastname;
+			} else {
+				$objname = '';
+			}
+			setEventMessages($langs->trans("ErrorThisContactXIsAlreadyDefinedAsThisType", $objname), null, 'warnings');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 
@@ -116,6 +164,7 @@ if ($action == 'addcontact' && $user->hasRight('resource', 'write')) {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
+$memberstatic = new Adherent($db);
 $userstatic = new User($db);
 
 $help_url = '';
