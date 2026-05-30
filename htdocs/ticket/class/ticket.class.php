@@ -421,7 +421,8 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::create error -1 message too long', LOG_ERR);
 				$result = -1;
 			}
@@ -1043,7 +1044,8 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::update error -1 message too long', LOG_ERR);
 				return -1;
 			}
