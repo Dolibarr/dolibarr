@@ -4723,9 +4723,12 @@ class Facture extends CommonInvoice
 			$moduleSourceName = 'Invoice';
 			$addonConstName = 'FACTURE_ADDON';
 
-			// Clean parameters (if not defined or using deprecated value)
+			// Clean parameters (if not defined or using deprecated value).
+			// Default to Mercure on fresh installs: mod_facture_terre is flagged
+			// dolibarr_deprecated by the admin page filter (since the deprecation
+			// commit 7b759f439ef) and is no longer the recommended numbering module.
 			if (!getDolGlobalString('FACTURE_ADDON')) {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
+				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
 			} elseif (getDolGlobalString('FACTURE_ADDON') == 'mercure') {
