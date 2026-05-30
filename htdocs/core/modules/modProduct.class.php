@@ -517,7 +517,7 @@ class modProduct extends DolibarrModules
 			'p.price_min' => "MinPrice",
 			'p.price_ttc' => "SellingPriceTTC", //with tax
 			'p.price_min_ttc' => "SellingMinPriceTTC",
-			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
+			'p.price_base_type' => "PriceBaseType*", //price base: with-tax (TTC) or without (HT) tax. Required so that an empty cell does not produce a NULL row.
 			'p.tva_tx' => 'VATRate',
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice"
