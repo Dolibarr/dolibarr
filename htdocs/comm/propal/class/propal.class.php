@@ -2689,10 +2689,16 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->status;
-				$this->status = $this->oldcopy->status;
-				$this->date_signature = $this->oldcopy->date_signature;
-				$this->note_private = $this->oldcopy->note_private;
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				if (!empty($this->oldcopy)) {
+					$this->statut = $this->oldcopy->status;
+					$this->status = $this->oldcopy->status;
+					$this->date_signature = $this->oldcopy->date_signature;
+					$this->note_private = $this->oldcopy->note_private;
+				}
 
 				$this->db->rollback();
 				return -1;
