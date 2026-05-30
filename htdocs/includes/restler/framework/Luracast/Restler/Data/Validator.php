@@ -273,7 +273,8 @@ class Validator implements iValidate
     public static function date($input, ValidationInfo $info = null)
     {
         if (
-            preg_match(
+            is_string($input)
+            && preg_match(
                 '#^(?P<year>\d{2}|\d{4})-(?P<month>\d{1,2})-(?P<day>\d{1,2})$#',
                 $input,
                 $date
@@ -302,7 +303,8 @@ class Validator implements iValidate
     public static function datetime($input, ValidationInfo $info = null)
     {
         if (
-            preg_match('/^(?P<year>19\d\d|20\d\d)\-(?P<month>0[1-9]|1[0-2])\-' .
+            is_string($input)
+            && preg_match('/^(?P<year>19\d\d|20\d\d)\-(?P<month>0[1-9]|1[0-2])\-' .
                 '(?P<day>0\d|[1-2]\d|3[0-1]) (?P<h>0\d|1\d|2[0-3]' .
                 ')\:(?P<i>[0-5][0-9])\:(?P<s>[0-5][0-9])$/',
                 $input, $date)
@@ -345,7 +347,7 @@ class Validator implements iValidate
      */
     public static function time($input, ValidationInfo $info = null)
     {
-        if (preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/', $input)) {
+        if (is_string($input) && preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/', $input)) {
             return $input;
         }
         throw new Invalid(
@@ -367,7 +369,7 @@ class Validator implements iValidate
      */
     public static function time12($input, ValidationInfo $info = null)
     {
-        if (preg_match(
+        if (is_string($input) && preg_match(
             '/^([1-9]|1[0-2]|0[1-9]){1}(:[0-5][0-9])?\s?([aApP][mM]{1})?$/',
             $input)
         ) {
