@@ -170,6 +170,9 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // The blank option of sellist and select fields is posted as "0"
+		}
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
 
@@ -331,6 +334,9 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
+		}
+		if ((preg_match('/^sellist/i', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'select') && $value === '0') {
+			$value = ''; // The blank option of sellist and select fields is posted as "0"
 		}
 
 		$object->$key = $value;
