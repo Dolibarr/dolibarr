@@ -116,7 +116,7 @@ function dolGetRandomBytes($length)
  * 	Returns a specific ldap hash of a password.
  *
  * 	@param 		string		$password	Password to hash
- * 	@param		string		$type		Type of hash
+ * 	@param		'md5'|'md5frommd5'|'smd5'|'sha'|'ssha'|'sha256'|'ssha256'|'sha384'|'ssha384'|'sha512'|'ssha512'|'crypt'|'clear'		$type		Type of hash
  * 	@return		string					Hash of password
  */
 function dolGetLdapPasswordHash($password, $type = 'md5')
