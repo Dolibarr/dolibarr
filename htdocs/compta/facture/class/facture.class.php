@@ -5876,9 +5876,14 @@ class Facture extends CommonInvoice
 					// Select email template according to language of recipient
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
+						// The template is missing in the recipient's language (or under
+						// the chosen code). Log the issue and skip this invoice, instead
+						// of aborting the whole cron run so a single broken thirdparty
+						// does not silently stop the reminders for everyone else
+						// (see issue #34656).
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL
