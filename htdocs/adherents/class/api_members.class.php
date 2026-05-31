@@ -543,6 +543,16 @@ class Members extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		// Add POST-friendly aliases so the output of GET /members/{id}/subscriptions
+		// can be fed back into POST /members/{id}/subscriptions without renaming
+		// fields client-side (see issue #38279). The original dateh / datef fields
+		// are kept for backward compatibility with existing consumers.
+		if ($object instanceof Subscription) {
+			$object->start_date = $object->dateh;
+			$object->end_date = $object->datef;
+			$object->label = $object->note_public;
+		}
+
 		// Remove the subscriptions because they are handled as a subresource.
 		if ($object instanceof Adherent) {
 			unset($object->subscriptions);
