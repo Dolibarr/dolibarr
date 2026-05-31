@@ -3912,7 +3912,7 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
-	$object = unserialize(file_get_contents($cachefile));
+	$object = unserialize(file_get_contents($cachefile), ['allowed_classes' => false]);
 	return $object;
 }
 
