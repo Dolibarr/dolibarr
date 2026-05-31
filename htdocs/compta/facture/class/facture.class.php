@@ -5063,9 +5063,9 @@ class Facture extends CommonInvoice
 
 			// Clean parameters (if not defined or using deprecated value)
 			if (!getDolGlobalString('FACTURE_ADDON')) {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
-			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
+			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {	// terre is deprecated
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
 			} elseif (getDolGlobalString('FACTURE_ADDON') == 'mercure') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			}
