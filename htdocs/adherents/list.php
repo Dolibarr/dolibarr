@@ -363,11 +363,22 @@ if (empty($reshook)) {
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
+		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
+		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
+		// single subscription form (adherents/subscription.php), otherwise
+		// the mass action falls back to a one-year duration in
+		// Adherent::subscription() and ignores the global setting.
+		$datesubend = 0;
+		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
+			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"), (int) dol_print_date($now, "%m"));
+		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
+			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"));
+		}
 		$db->begin();
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				$result = $tmpmember->subscription($now, $amount);
+				$result = $tmpmember->subscription($now, $amount, 0, '', '', '', '', '', $datesubend);
 				if ($result < 0) {
 					$error++;
 				} else {
