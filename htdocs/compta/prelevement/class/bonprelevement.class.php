@@ -2187,8 +2187,11 @@ class BonPrelevement extends CommonObject
 
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
-		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		// 3 char + '-' + 10 (yymmddHHMM) + '-' + id + '-' + code, kept under the SEPA 35 char limit for MndtId.
+		// The original truncation to 13 chars was too aggressive: any customer code longer than ~10 char
+		// got truncated mid-string and the resulting UMR did not match the customer code on later lookups
+		// (see issue #29799). Bump to 20 so a typical "CU2509-00012" style code plus a small drum id fits.
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 20, 'right', 'UTF-8', 1);
 	}
 
 
