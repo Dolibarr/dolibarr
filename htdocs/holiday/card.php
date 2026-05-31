@@ -520,12 +520,18 @@ if (empty($reshook)) {
 					}
 				}
 
-				// option to notify the validator if the balance is less than the request
+				// option to notify the validator if the balance is less than the request.
+				// Skip the warning when the leave type has affect=0 in c_holiday_types,
+				// i.e. the type is configured not to deduct days from the balance, so a
+				// shortage is irrelevant (see issue #38212).
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE')) {
-					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+					$typeaffectsbalance = (int) getDictionaryValue('c_holiday_types', 'affect', $object->fk_type, true);
+					if ($typeaffectsbalance) {
+						$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
-					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
-						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
+							$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
+						}
 					}
 				}
 
