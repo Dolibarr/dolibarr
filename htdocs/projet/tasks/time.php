@@ -942,7 +942,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$projectstatic->fetch_thirdparty();
 		}
 		$res = $projectstatic->fetch_optionals();
-	} elseif ($object->fetch($id, $ref) >= 0) {
+	} elseif ($object->fetch($id, $ref) > 0) {
+		// Use > 0 (not >= 0): when the outer block is entered only because
+		// $allprojectforuser is set (id=0, ref=''), fetch returns 0 and Task::fetch
+		// leaves prior properties (set earlier by the updateline handler at
+		// line 302) untouched, so $object->fk_project would carry the task of
+		// the edited line. $projectstatic would then load that project and the
+		// per-row massaction checkboxes render on the all-projects list (see #38563).
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 			$object->fetchComments();
 		}
