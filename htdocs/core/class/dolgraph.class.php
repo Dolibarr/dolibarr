@@ -1645,6 +1645,9 @@ class DolGraph
 
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $series[$i] . ',' . $series[$i] . ']' : $series[$i];
 				$this->stringtoshow .= ']';
+
+				//$this->stringtoshow .= ', barThickness: 15';
+
 				$this->stringtoshow .= '}' . "\n";
 
 				$i++;
