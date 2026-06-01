@@ -20,7 +20,7 @@ ALTER TABLE llx_blockedlog ADD INDEX idx_entity_action_certified (entity,action)
 ALTER TABLE llx_blockedlog ADD INDEX idx_ref_object (ref_object);
 -- VMYSQL4.3 ALTER TABLE llx_blockedlog ADD INDEX idx_linktoref (linktoref(255));
 ALTER TABLE llx_blockedlog ADD INDEX signature (signature);
-ALTER TABLE llx_blockedlog ADD INDEX signature_reverse (signature_reverse);
+ALTER TABLE llx_blockedlog ADD INDEX signature_backward (signature_backward);
 
 -- For debug fields
 ALTER TABLE llx_blockedlog ADD INDEX fk_object_element (fk_object,element);
