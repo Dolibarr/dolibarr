@@ -4185,7 +4185,7 @@ class Societe extends CommonObject
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE parent = ".((int) $company_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				while ($resql && $obj = $this->db->fetch_object($resql)) {
+				while ($obj = $this->db->fetch_object($resql)) {
 					$child = $obj->rowid;
 					if ($child > 0 && !in_array($child, $children)) {
 						$children[] = $child;
