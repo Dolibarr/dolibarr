@@ -10177,7 +10177,7 @@ abstract class CommonObject
 	 */
 	private function isFieldEnabled($field)
 	{
-		return !isset($this->fields[$field]['enabled']) || $this->fields[$field]['enabled'];
+		return !isset($this->fields[$field]['enabled']) || (int) dol_eval((string) $this->fields[$field]['enabled']);
 	}
 
 	/**
