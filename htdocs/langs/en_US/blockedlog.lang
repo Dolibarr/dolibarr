@@ -124,6 +124,10 @@ RegistrationDone=Registration done
 NoRegistrationFound=No record related to the registration of this instance was found
 LastRegistrationUpdate=Last registration update
 BlockedLogInstance=Instance
+IncludesAll=Includes all
+IncludesAllHelp=Includes all record, even the one recorded with an old version before the v24. On version older than v24, the amount excluding tax for fast calculation of cumulative total was not recorded in the unalterable Log, so it won't be reported.
+OnlyFromV2=Only record from v24
+OnlyFromV2Help=After the v24 version, the amount excluding tax for fast calculation of cumulative total was recorded in the unalterable Log, so it is reported, but date range may be lower than the one of the "Includes all" option.
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
@@ -162,6 +166,6 @@ DebugTools=Debug tools
 URLToForceRegistration=URL to force the registration
 URLToForcePushOfBlockedLogCounter=URL to force the push of the last immutable record counter
 UseThisFormToUpdate=Use this form to update your registration information
-ControlFile=Control the file
-ControlSignals=Control signals
-OtherControl=Other controls
+ControlFile=Checking the file
+ControlSignals=Checking signals
+OtherControl=Other checks
