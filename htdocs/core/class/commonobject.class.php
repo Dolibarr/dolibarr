@@ -2366,7 +2366,7 @@ abstract class CommonObject
 		// Set new value
 		$this->$fieldKey = $value;
 
-		if (!empty($this->fields[$fieldKey]['legacyProperties'])) {
+		if (isset($this->fields[$fieldKey]['legacyProperties']) && !empty($this->fields[$fieldKey]['legacyProperties']) && is_array($this->fields[$fieldKey]['legacyProperties'])) {
 			foreach ($this->fields[$fieldKey]['legacyProperties'] as $legacyProperty) {
 				// Copy/propagate old data
 				if (property_exists($this->oldcopy, $legacyProperty) && property_exists($this->oldcopy, $fieldKey)) {
