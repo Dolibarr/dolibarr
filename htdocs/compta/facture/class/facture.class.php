@@ -1785,6 +1785,10 @@ class Facture extends CommonInvoice
 		$amountdeposit = array();
 		$descriptions = array();
 
+		// Bucket lines by tva_tx + vat_src_code so addline below receives the rate in
+		// the "tva (CODE)" format that Facture::addline knows how to parse. Bucketing
+		// on tva_tx alone wipes out the dictionary Code on the generated deposit line
+		// and on every downstream document derived from it (see issue #38035).
 		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
 
@@ -1793,7 +1797,7 @@ class Facture extends CommonInvoice
 				if (!empty($line->special_code)) {
 					continue;
 				}
-				$key = $line->tva_tx;
+				$key = $line->tva_tx . ($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 				if (!array_key_exists($key, $TTotalByTva)) {
 					$TTotalByTva[$key] = 0;
 					$descriptions[$key] = '';
@@ -1806,10 +1810,11 @@ class Facture extends CommonInvoice
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
+				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
 				$coef = $total / $origin->total_ttc; // Calc coef
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
-				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
 		} else {
 			$totalamount = 0;
@@ -1824,19 +1829,23 @@ class Facture extends CommonInvoice
 				}
 
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
-				$tva_tx = $lines[$i]->tva_tx;
-				$amountdeposit[$tva_tx] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
-				$descriptions[$tva_tx] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
-				$descriptions[$tva_tx] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
-				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
-				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
+				$tva_key = $lines[$i]->tva_tx . ($lines[$i]->vat_src_code ? ' ('.$lines[$i]->vat_src_code.')' : '');
+				if (!isset($amountdeposit[$tva_key])) {
+					$amountdeposit[$tva_key] = 0;
+					$descriptions[$tva_key] = '';
+				}
+				$amountdeposit[$tva_key] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
+				$descriptions[$tva_key] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
+				$descriptions[$tva_key] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_key] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
+				$descriptions[$tva_key] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
 
 			if ($totalamount == 0) {
 				$amountdeposit[0] = 0;
 			}
 
-			$amount_ttc_diff = $amountdeposit[0];
+			$amount_ttc_diff = $amountdeposit[0] ?? 0;
 		}
 
 		foreach ($amountdeposit as $tva => $amount) {
@@ -1892,6 +1901,9 @@ class Facture extends CommonInvoice
 			$deposit->fetch_lines();
 			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
 
+			// Pass tva_tx in the "rate (CODE)" form so updateline preserves the vat_src_code
+			// it received from addline; passing the bare rate would wipe the code.
+			$tva_tx_with_code = $deposit->lines[0]->tva_tx . ($deposit->lines[0]->vat_src_code ? ' ('.$deposit->lines[0]->vat_src_code.')' : '');
 			$updatelineResult = $deposit->updateline(
 				$deposit->lines[0]->id,
 				$deposit->lines[0]->desc,
@@ -1900,7 +1912,7 @@ class Facture extends CommonInvoice
 				$deposit->lines[0]->remise_percent,
 				$deposit->lines[0]->date_start,
 				$deposit->lines[0]->date_end,
-				$deposit->lines[0]->tva_tx,
+				$tva_tx_with_code,
 				0,
 				0,
 				'HT',
