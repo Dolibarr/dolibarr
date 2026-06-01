@@ -1278,6 +1278,13 @@ class Ticket extends CommonObject
 		$object->ref = $object->getDefaultRef();
 		$object->track_id = generate_random_id(16);
 		$object->progress = 0;
+		// Reset lifecycle timestamps so the clone starts fresh: datec is filled by
+		// create() with dol_now() when empty, date_read and date_close stay null
+		// because the new ticket has not been read or closed yet (see issue #38559).
+		$object->datec = null;
+		$object->date_read = null;
+		$object->date_close = null;
+		$object->resolution = null;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
