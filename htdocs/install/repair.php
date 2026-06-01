@@ -301,8 +301,8 @@ foreach ($sections as $section => $options) {
 		$tooltip = empty($opt['tooltip']) ? '' : $opt['tooltip'];
 		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
 		// Generate links with the right option and value
-		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
-		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
+		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test#pleasebepatient';
+		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed#pleasebepatient';
 		print '<tr>';
 		print '<td>' . $option . '</td>';
 		print '<td>';
@@ -312,8 +312,8 @@ foreach ($sections as $section => $options) {
 			print $info;
 		}
 		print '</td>';
-		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
-		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
 		print '</tr>';
 	}
 }
@@ -342,6 +342,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha')) || GETPOST('repair_mailing_path', 'alpha');
 
 if ($ok && $oneoptionset) {
+	print '<div id="pleasebepatient"></div>';
 	// Show wait message
 	print $langs->trans("PleaseBePatient").'<br><br>';
 

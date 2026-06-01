@@ -1103,6 +1103,9 @@ textarea.centpercent {
 .small, small {
 	font-size: 85%;
 }
+.smallimp {
+	font-size: 85% !important;
+}
 .select2-results__option .smallincombo {
 	font-size: 95%;
 	font-weight: bold;
@@ -3625,7 +3628,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	/* border: none; */
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
 	padding-left: 12px;
 	margin-left: 5px;
@@ -3794,8 +3797,8 @@ div.login_block_other {
 div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '51'; ?>px;
-	height: <?php echo $disableimages ? '25' : '51'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
 }
 
 .login_block_elem {
@@ -3862,6 +3865,7 @@ img.login, img.printer, img.entity {
 	background-size: contain;
 	border: 1px solid;
 	border-color: rgba(255, 255, 255, 0.2);
+	box-sizing: border-box; /* border is inside */
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
@@ -3869,6 +3873,9 @@ img.userphoto {			/* size for user photo in lists */
 	height: 1.4em;
 	background-size: contain;
 	vertical-align: middle;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 .userimg.atoplogin span.userphoto, .userimgatoplogin span.userphoto {
 	vertical-align: middle;
@@ -3895,6 +3902,9 @@ img.userphotosmall {			/* size for user photo in lists */
 	background-size: contain;
 	vertical-align: middle;
 	background-color: #FFF;
+	border: 1px solid;
+	border-color: #ddd;
+	box-sizing: border-box; /* border is inside */
 }
 img.userphotopublicvcard {
 	width: 60px;
@@ -5394,10 +5404,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 3px;
 	width: 118px;
 }
-
+<?php if (getDolGlobalString('MAIN_CSS_USE_SHADOWS') && getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+.boxtable, .firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
+}
+<?php } ?>
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
 	border-radius: 6px;
+
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5762,7 +5777,9 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
+	<?php if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
 	box-shadow: 1px 1px 6px #d4d4d4;
+	<?php } ?>
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -6194,7 +6211,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 /* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
-table.valid {
+table.valid, div.valid {
 	/* border-top: solid 1px #E6E6E6; */
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 	/* border-<?php print $right; ?>: solid 1px #444444;

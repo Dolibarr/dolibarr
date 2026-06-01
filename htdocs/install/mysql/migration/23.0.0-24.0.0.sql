@@ -546,6 +546,9 @@ ALTER TABLE llx_payment_various_extrafields ADD UNIQUE INDEX uk_payment_various_
 ALTER TABLE llx_actioncomm ADD COLUMN max_participants integer DEFAULT NULL AFTER status;
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_participants);
 
+ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
+
+
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';

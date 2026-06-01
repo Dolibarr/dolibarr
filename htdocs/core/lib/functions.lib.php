@@ -3551,6 +3551,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	}
 
+	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
+		$morehtmlref .= '<div style="clear: both;"></div>';
+		$morehtmlref .= '<div class="smallimp refidno opacitymedium banner-object-technical-id">';
+		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
+		$morehtmlref .= '</div>';
+	}
+
+
 	// Show barcode
 	if ($showbarcode) {
 		$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $form->showbarcode($object, 100, 'photoref valignmiddle') . '</div>';
@@ -3667,12 +3675,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= $moreaddress;
 			$morehtmlref .= '</div>';
 		}
-	}
-	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
-		$morehtmlref .= '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno opacitymedium banner-object-technical-id">';
-		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
-		$morehtmlref .= '</div>';
 	}
 
 	$parameters = array('morehtmlref' => &$morehtmlref, 'moreparam' => &$moreparam, 'morehtmlleft' => &$morehtmlleft, 'morehtmlstatus' => &$morehtmlstatus, 'morehtmlright' => &$morehtmlright);
@@ -7494,6 +7496,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
+		// Show the combolist to select number of record per page and the navigation arrows.
 		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $selectlimitsuffix, $morehtmlrightbeforearrow, $hidenavigation); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
@@ -7560,7 +7563,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<datalist id="limitlist">';
 			} else {
 				print '<li class="paginationcombolimit valignmiddle">';
-				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="limit" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
+				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="'.(is_numeric($selectlimitsuffix) ? 'limit' : $selectlimitsuffix).'" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
 			}
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit . ':' . $limit;
@@ -16087,7 +16090,7 @@ function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
  * Function to forge a SQL criteria from a Dolibarr filter syntax string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  string[]	$matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+ * @param  string[]	$matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.nature:is:NULL"
  * @return string                  Forged criteria. Example: "" or "()"
  */
 function dolForgeDummyCriteriaCallback($matches)
@@ -16109,7 +16112,7 @@ function dolForgeDummyCriteriaCallback($matches)
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
  * @param  string[]	$matches       	Array of found string by regex search.
- * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  * @see forgeSQLFromUniversalSearchCriteria()
  */
@@ -16563,8 +16566,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
-	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
 	$num = 0;
+	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
 
 	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
 		if (!empty($sql) && !empty($sql2)) {
@@ -17328,4 +17331,23 @@ function getObjectSocId($obj)
 		return (int) $obj->societe_id;
 	}
 	return null;
+}
+
+/**
+ * Get the limit of list to show according to the screen height
+ *
+ * @return int The limit of list to show
+ */
+function getListLimitFromScreenHeight()
+{
+	$default = 10;
+	if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+		$default = 8;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 950) {
+		$default = 10;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+		$default = 15;
+	}
+
+	return $default;
 }

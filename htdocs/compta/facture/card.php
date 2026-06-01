@@ -887,30 +887,32 @@ if (empty($reshook)) {
 			// We check if no payment has been made
 			if ($ventilExportCompta == 0) {
 				if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == $object->total_ttc && empty($object->paye))) {
+					// Set invoice to draft status
 					$result = $object->setDraft($user, $idwarehouse);
+
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
-					}
+					} else {
+						// Define output language
+						if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+							$outputlangs = $langs;
+							$newlang = '';
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
+							}
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+								$newlang = $object->thirdparty->default_lang;
+							}
+							if (!empty($newlang)) {
+								$outputlangs = new Translate("", $conf);
+								$outputlangs->setDefaultLang($newlang);
+								$outputlangs->load('products');
+							}
+							$model = $object->model_pdf;
+							$ret = $object->fetch($id); // Reload to get new records
 
-					// Define output language
-					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-							$newlang = GETPOST('lang_id', 'aZ09');
+							$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						}
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
-						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
-
-						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				}
 			}
@@ -1249,6 +1251,7 @@ if (empty($reshook)) {
 
 		$originentity = GETPOSTINT('originentity');
 		$object->demand_reason_id = $inputReasonId;
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -5070,7 +5073,7 @@ if ($action == 'create') {
 	// Confirm back to draft status (action = 'modif')
 	if ($action == 'modif') {
 		$oktomodif = 1;		// Assume we can modify by default
-
+		/*
 		$testvalue = $object->isEditable();
 		if ($testvalue < 0) {
 			switch ($testvalue) {
@@ -5110,7 +5113,7 @@ if ($action == 'create') {
 			$oktomodif = 0;
 			$action = '';
 		}
-
+		*/
 		if ($oktomodif) {
 			$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
 			$formquestion = array();

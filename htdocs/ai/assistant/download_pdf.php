@@ -144,9 +144,15 @@ try {
 			} else {
 				// Table Builder for List
 				$keys = array_keys($rows[0]);
-				$keys = array_filter($keys, function (string $k) {
-					return $k !== 'url' && $k !== 'rowid';
-				});
+				$keys = array_filter(
+					$keys,
+					/**
+					 * @return bool Select only fields other than url and rowid
+					 */
+					static function (string $k) {
+						return $k !== 'url' && $k !== 'rowid';
+					}
+				);
 
 				$html .= '<table cellpadding="4"><thead><tr>';
 				foreach ($keys as $k) {
@@ -175,9 +181,15 @@ try {
 	} elseif (isset($data[0]) && is_array($data[0])) {
 		// Simple list (e.g. search invoices)
 		$keys = array_keys($data[0]);
-		$keys = array_filter($keys, function (string $k) {
-			return $k !== 'url' && $k !== 'rowid';
-		});
+		$keys = array_filter(
+			$keys,
+			/**
+			 * @return bool Select only fields other than url and rowid
+			 */
+			static function (string $k) {
+				return $k !== 'url' && $k !== 'rowid';
+			}
+		);
 
 		$html .= '<table cellpadding="4"><thead><tr nobr="true">';
 		foreach ($keys as $key) {

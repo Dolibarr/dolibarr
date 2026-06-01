@@ -4,7 +4,6 @@ NewIntervention=Nova Intervenção
 AddIntervention=Criar Intervenção
 ChangeIntoRepeatableIntervention=Mudança para intervenção repetível
 ActionsOnFicheInter=Açoes na intervençao
-InterventionContact=Contato Intervenção
 ValidateIntervention=Confirmar Intervenção
 ModifyIntervention=Modificar intervençao
 ConfirmDeleteIntervention=Você tem certeza que deseja excluir esta intervenção?

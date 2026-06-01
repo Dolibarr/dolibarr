@@ -1293,6 +1293,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 if ($contextpage == 'lead') {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 }
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
@@ -2117,8 +2118,10 @@ while ($i < $imaxinloop) {
 		}
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall small">';
 			print dolPrintHTML($obj->title);
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
