@@ -90,9 +90,6 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
-$listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'alpha') > 0 ? GETPOST('listlimit', 'alpha') : 1000;
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -100,7 +97,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTI
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $listlimit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -698,7 +695,6 @@ if ($sortfield == 'country') {
 	$sortfield = 'country_code';
 }
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($listlimit + 1, $offset);
 //print $sql;
 
 // Output page
@@ -750,10 +746,72 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 
+$param = '';
+if ($search_label) {
+	$param .= '&search_label='.urlencode($search_label);
+}
+if (!empty($search_lang) && $search_lang != '-1') {
+	$param .= '&search_lang='.urlencode($search_lang);
+}
+if ($search_type_template != '-1') {
+	$param .= '&search_type_template='.urlencode($search_type_template);
+}
+if ($search_fk_user > 0) {
+	$param .= '&search_fk_user='.urlencode($search_fk_user);
+}
+if ($search_module) {
+	$param .= '&search_module='.urlencode($search_module);
+}
+if ($search_topic) {
+	$param .= '&search_topic='.urlencode($search_topic);
+}
+
+$paramwithsearch = $param;
+if ($sortorder) {
+	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
+}
+if ($sortfield) {
+	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
+}
+if (GETPOST('from', 'alpha')) {
+	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+}
+
+$massactionbutton = '';
+
+
+// List of available record in database
+dol_syslog("htdocs/admin/mails_templates.php", LOG_DEBUG);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$nbtotalofrecords = $db->num_rows($resql);
+
+$sql .= $db->plimit($limit + 1, $offset);
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+if ($action != 'create') {
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+}
+
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print load_fiche_titre($title, '', $titlepicto);
 } else {
-	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+	//print load_fiche_titre($title, $newcardbutton, $titlepicto);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $limit, 'limit', 0, 1);
 }
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
@@ -955,63 +1013,20 @@ if ($action == 'create') {
 	print '<br><br><br>';
 }
 
-// List of available record in database
-dol_syslog("htdocs/admin/dict", LOG_DEBUG);
-$resql = $db->query($sql);
-if (!$resql) {
-	dol_print_error($db);
-	exit;
-}
-
-$num = $db->num_rows($resql);
-
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" id="list_of_c_email_templates">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="table_list_of_c_email_templates">';
 
 $i = 0;
 
-$param = '';
-if ($search_label) {
-	$param .= '&search_label='.urlencode($search_label);
-}
-if (!empty($search_lang) && $search_lang != '-1') {
-	$param .= '&search_lang='.urlencode($search_lang);
-}
-if ($search_type_template != '-1') {
-	$param .= '&search_type_template='.urlencode($search_type_template);
-}
-if ($search_fk_user > 0) {
-	$param .= '&search_fk_user='.urlencode($search_fk_user);
-}
-if ($search_module) {
-	$param .= '&search_module='.urlencode($search_module);
-}
-if ($search_topic) {
-	$param .= '&search_topic='.urlencode($search_topic);
-}
-
-$paramwithsearch = $param;
-if ($sortorder) {
-	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
-}
-if ($sortfield) {
-	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
-}
-if (GETPOST('from', 'alpha')) {
-	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
-}
-
 // There is several pages
-if ($num > $listlimit) {
+/*
+if ($num > $limit) {
 	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $limit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 	print '</td></tr>';
 }
-
+*/
 
 // Title line with search boxes
 print '<tr class="liste_titre" id="Title line with search boxes">';
@@ -1478,8 +1493,9 @@ if ($nbqualified == 0) {
 print '</table>';
 print '</div>';
 
-print '</form>';
-
+if ($action != 'create') {
+	print '</form>';
+}
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print dol_get_fiche_end();

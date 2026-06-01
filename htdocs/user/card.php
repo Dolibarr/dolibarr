@@ -41,6 +41,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -55,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -101,7 +101,6 @@ $dateofbirth = dol_mktime(0, 0, 0, GETPOSTINT('dateofbirthmonth'), GETPOSTINT('d
 $childids = $user->getAllChildIds(1);	// For test on hrm fields (like salary visibility)
 
 $object = new User($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -933,7 +932,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
 if ($action == 'create' || $action == 'adduserldap') {
 	print load_fiche_titre($title, '', 'user');
 
-	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc", $langs->trans("CreateExternalUser"))."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc", $langs->transnoentities("CreateExternalUser"))."</span><br>\n";
 	print "<br>";
 
 

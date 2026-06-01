@@ -1174,14 +1174,7 @@ if (!defined('NOLOGIN')) {
 	}
 	if ((int) $conf->liste_limit <= 0) {
 		// Mode automatic. Similar code than into conf.class.php
-		$conf->liste_limit = 15;
-		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-			$conf->liste_limit = 8;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-			$conf->liste_limit = 10;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-			$conf->liste_limit = 20;
-		}
+		$conf->liste_limit = getListLimitFromScreenHeight();
 	}
 	// Overwrite main_checkbox_left_column from user setup
 	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
@@ -1313,7 +1306,7 @@ if (!defined('NOREQUIRETRAN')) {
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
 
 	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	$conf->browser->stringforfirstkey = $langs->transnoentities("KeyboardShortcut");
 	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
@@ -1738,7 +1731,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// Mobile appli like icon
-		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
+		$manifest = DOL_URL_ROOT.'/theme/manifest.json.php';
 		$parameters = array('manifest' => $manifest);
 		$resHook = $hookmanager->executeHooks('hookSetManifest', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($resHook > 0) {
@@ -2730,11 +2723,34 @@ function top_menu_ai()
 
 	$html = '';
 
-	if (isModEnabled('ai')) {
-		$html .= '<!-- div for quick ai link -->
-	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">
-	        <a accesskey="a" class="nofocusvisible" href="'.DOL_URL_ROOT.'/ai/assistant/index.php" title="'.$langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-magic"></i></a>
-	    </div>';
+	if (isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+		// Open the AI Assistant in a popup overlay rather than navigating away,
+		// so the user keeps their current page context while interacting with
+		// the assistant. Uses the standard Dolibarr helper which builds an
+		// iframe-in-jQuery-UI-dialog (modal, 80% width, height-150) and auto-
+		// appends dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=NAME
+		// so the embedded page renders without the surrounding chrome.
+		// JS-disabled fallback: the helper degrades to target="_blank".
+		// $label is used by dolButtonToOpenUrlInDialogPopup() both for the
+		// title="" tooltip on the <a> AND for the jQuery UI dialog title.
+		// Include the keyboard-shortcut hint (matching the convention used
+		// e.g. by the PublicVirtualCardUrl call earlier in this file and by
+		// bookmark/quickadd/search) so the icon tooltip on hover reads e.g.
+		// "AI Assistant (Ctrl Alt a)" -- the dialog title shows the same.
+		$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+		$aibtn = dolButtonToOpenUrlInDialogPopup(
+			'aiassistant',
+			$ailabel,
+			'<i class="fa fa-magic"></i>',
+			'/ai/assistant/index.php',
+			'',
+			'nofocusvisible',
+			'',
+			'',
+			'a'
+		);
+		$html .= '<!-- div for quick ai link (opens AI Assistant in popup) -->
+	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">'.$aibtn.'</div>';
 	}
 
 	return $html;

@@ -375,6 +375,7 @@ class ToolReports extends McpTool
 
 		$socid = $this->resolveThirdparty($args);
 		if (!$socid) {
+			$langs->load("errors");
 			return [[$langs->transnoentitiesnoconv("Error") => $langs->transnoentitiesnoconv("ErrorThirdPartyNotFound")]];
 		}
 

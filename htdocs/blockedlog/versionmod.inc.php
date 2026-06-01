@@ -33,3 +33,15 @@ define('DOLCERT_VERSION', '2.0.0');
 if (!defined('CERTIF_LNE')) {
 	define('CERTIF_LNE', '2');
 }
+
+
+// Array of dir/files to include in the signature of unalterable files
+// This array will be used by the generate_filelist_xml.php script to generate the filelist.xml file
+$arrayofunalterablefiles = array(
+	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
+);

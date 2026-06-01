@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  * \file    htdocs/ai/server/mcp_server.php
  * \ingroup ai
- * \brief   File of class to manage MCP Server
+ * \brief   File of the MCP Server service
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -52,7 +53,7 @@ while (ob_get_level()) {
 	ob_end_clean();
 }
 
-// Security check
+// Security check (a test on api_key is also done later)
 if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 	http_response_code(503);
 	echo json_encode([
@@ -120,6 +121,7 @@ if (!$valid) {
 	exit;
 }
 
+
 // Load service user
 $userId = getDolGlobalInt('AI_MCP_USER_ID');
 $serviceUser = new User($db);
@@ -157,11 +159,11 @@ require_once DOL_DOCUMENT_ROOT . '/ai/lib/ai.lib.php';
  * Only tools/call is logged -- lifecycle methods (initialize, ping,
  * notifications/initialized, tools/list, ...) are skipped to avoid noise.
  *
- * @param array<string,mixed> $req         The JSON-RPC request
- * @param mixed               $resp        The JSON-RPC response (null for notifications)
- * @param float               $tStart      microtime(true) captured before processing
- * @param string              $rawInput    Raw request body
- * @return void
+ * @param array<string,mixed>	$req		The JSON-RPC request
+ * @param ?mixed				$resp		The JSON-RPC response (null for notifications)
+ * @param float					$tStart		microtime(true) captured before processing
+ * @param string				$rawInput	Raw request body
+ * @return void								No return value, only logs the request
  */
 function mcp_log_request(array $req, $resp, float $tStart, string $rawInput): void
 {
@@ -242,6 +244,7 @@ try {
 
 		$responses = [];
 
+		// Answer to all MCP requests following the MCP protocol
 		foreach ($request as $req) {
 			if (!is_array($req)) {
 				continue;

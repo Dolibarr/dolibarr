@@ -523,10 +523,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status != $parent->oldcopy->status)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 

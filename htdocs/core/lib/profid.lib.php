@@ -246,3 +246,54 @@ function isValidTinForES($str)
 	//Can not be verified
 	return -4;
 }
+
+
+/**
+ *  Check the validity of a professional identifier according to the properties (country) of the company (siren, siret, ...)
+ *
+ *  @param	int			$idprof         1,2,3,4 (Example: 1=siren, 2=siret, 3=naf, 4=rcs/rm)
+ *  @param  Societe		$thirdparty     Object societe
+ *  @return int             			Return integer <=0 if KO, >0 if OK
+ */
+function isValidProfIds($idprof, $thirdparty)
+{
+	$ok = 1;
+
+	if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
+		return 1;
+	}
+
+	// Check SIREN
+	if ($thirdparty->country_code == 'FR') {
+		if ($idprof == 1 && !isValidSiren($thirdparty->idprof1)) {
+			return -1;
+		}
+
+		// Check SIRET
+		if ($idprof == 2 && !isValidSiret($thirdparty->idprof2)) {
+			return -2;
+		}
+	}
+
+	// Verify CIF/NIF/NIE if pays ES
+	if ($idprof == 1 && $thirdparty->country_code == 'ES') {
+		return isValidTinForES($thirdparty->idprof1);
+	}
+
+	// Verify NIF if country is PT
+	if ($idprof == 1 && $thirdparty->country_code == 'PT' && !isValidTinForPT($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	// Verify NIF if country is DZ
+	if ($idprof == 1 && $thirdparty->country_code == 'DZ' && !isValidTinForDZ($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	// Verify ID Prof 1 if country is BE
+	if ($idprof == 1 && $thirdparty->country_code == 'BE' && !isValidTinForBE($thirdparty->idprof1)) {
+		return -1;
+	}
+
+	return $ok;
+}
