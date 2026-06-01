@@ -191,8 +191,7 @@ abstract class CommonObject
 	 * searchmulti?: int<0, 1>,
 	 * picto?: string,
 	 * required?: int<0, 1>,
-	 * placeholder?: string,
-	 * legacyProperties?: array<int|string, string>
+	 * placeholder?: string
 	 * }>
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -205,7 +204,7 @@ abstract class CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 * 'length' the length of field. Example: 255, '24,8'
 	 * 'label' the translation key.
 	 * 'langfile' the key of the language file for translation.
@@ -232,7 +231,6 @@ abstract class CommonObject
 	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
 	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
-	 * 'legacyProperties' array of deprecated legacy attributes to populate @see $this->setFieldValue()
 	 *
 	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -2366,16 +2364,17 @@ abstract class CommonObject
 		// Set new value
 		$this->$fieldKey = $value;
 
-		if (isset($this->fields[$fieldKey]['legacyProperties']) && !empty($this->fields[$fieldKey]['legacyProperties']) && is_array($this->fields[$fieldKey]['legacyProperties'])) {
-			foreach ($this->fields[$fieldKey]['legacyProperties'] as $legacyProperty) {
+		$deprecatedProperties = $this->deprecatedProperties();
+		if (isset($deprecatedProperties) && !empty($deprecatedProperties) && is_array($deprecatedProperties)) {
+			foreach ($deprecatedProperties as $deprecatedProperty) {
 				// Copy/propagate old data
-				if (property_exists($this->oldcopy, $legacyProperty) && property_exists($this->oldcopy, $fieldKey)) {
-					$this->oldcopy->$legacyProperty = $this->oldcopy->$fieldKey ;
+				if (property_exists($this->oldcopy, $deprecatedProperty) && property_exists($this->oldcopy, $fieldKey)) {
+					$this->oldcopy->$deprecatedProperty = $this->oldcopy->$fieldKey ;
 				}
 
 				// set and propagate new data
-				if (property_exists($this, $legacyProperty)) {
-					$this->$legacyProperty = $this->$fieldKey;
+				if (property_exists($this, $deprecatedProperty)) {
+					$this->$deprecatedProperty = $this->$fieldKey;
 				}
 			}
 		}
