@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'cashdesk', 'compta', 'other'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -652,7 +652,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -672,7 +672,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -766,7 +766,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		if (GETPOST('inputregistrationnumber')) {
 			$inputregistrationnumber = GETPOST('inputregistrationnumber');
-			print 'We will use this value as full registration number ';
+			print $langs->trans("WeWillUseThisValueAsNumber");
 			print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
 
 			$secretkey = $inputregistrationnumber;	// We will use the entered value to check authenticity
