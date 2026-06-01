@@ -10177,8 +10177,7 @@ abstract class CommonObject
 	 */
 	private function isFieldEnabled($field)
 	{
-		return !isset($this->fields[$field]['enabled'])
-			|| (int) $this->fields[$field]['enabled'] === 1;
+		return !isset($this->fields[$field]['enabled']) || $this->fields[$field]['enabled'];
 	}
 
 	/**
