@@ -6806,8 +6806,7 @@ class Form
 				$formconfirm .= '</div>';
 			}
 			if (!empty($question)) {
-				// margin-top: auto pushes this element to the bottom of the flex container
-				$formconfirm .= '<div class="confirmmessage" style="margin-top: auto; padding-top: 15px;">';
+				$formconfirm .= '<div class="confirmmessage" style="padding-top: 15px;">';
 				$formconfirm .= img_help(0, '') . ' ' . $question;
 				$formconfirm .= '</div>';
 			}
@@ -6937,46 +6936,44 @@ class Form
 			$formconfirm .= '<input type="hidden" name="action" value="' . $action . '">' . "\n";
 			$formconfirm .= '<input type="hidden" name="token" value="' . newToken() . '">' . "\n";
 
-			$formconfirm .= '<table class="valid centpercent">' . "\n";
+			$formconfirm .= '<div class="valid">' . "\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
+			$formconfirm .= '<div class="validtitre">';
 			$formconfirm .= img_picto('', 'pictoconfirm') . ' ' . $title;
-			$formconfirm .= '</td></tr>' . "\n";
+			$formconfirm .= '</div>' . "\n";
 
 			// Line text
 			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">' . $formquestion['text'] . '</td></tr>' . "\n";
+				$formconfirm .= '<div class="valid">' . $formquestion['text'] . '</div>' . "\n";
 			}
 
 			// Line form fields
 			if ($more) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">' . "\n";
+				$formconfirm .= '<div>' . "\n";
 				$formconfirm .= $more;
-				$formconfirm .= '</td></tr>' . "\n";
+				$formconfirm .= '</div>' . "\n";
 			}
 
 			// NEW: Help block row (between form fields and question)
 			if (!empty($helpContent)) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2" style="padding-top:8px; border-top:1px solid #eee;">';
+				$formconfirm .= '<div style="padding-top:8px; border-top:1px solid #888;">';
 				$formconfirm .= $this->getHelpBlock($helpContent);
-				$formconfirm .= '</td></tr>' . "\n";
+				$formconfirm .= '</div>' . "\n";
 			}
 
 			// Let's add a row that acts as a spacer.
-			$formconfirm .= '<tr class="valid"><td class="valid" colspan="2" style="border-top: 2px solid #e0e0e0; padding-top: 30px;"></td></tr>' . "\n";
+			$formconfirm .= '<div style="padding-top: 20px;"></div>' . "\n";
 
 			// Question row
-			$formconfirm .= '<tr class="valid">';
-			$formconfirm .= '<td class="valid">' . $question . '</td>';
-			$formconfirm .= '<td class="valid center">';
+			$formconfirm .= '<div class="inline-block">' . $question . '</div>';
 
+			$formconfirm .= '<div class="inline-block">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
-			$formconfirm .= '</td>';
-			$formconfirm .= '</tr>' . "\n";
+			$formconfirm .= '</div>';
 
-			$formconfirm .= '</table>' . "\n";
+			$formconfirm .= '</div>';
 
 			if (empty($disableformtag)) {
 				$formconfirm .= "</form>\n";
@@ -9903,7 +9900,7 @@ class Form
 				$sql .= natural_search($splittedfieldstoshow, $searchkey);
 			}
 
-			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 				$errormessage = '';
 				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 				if ($errormessage) {
@@ -12620,7 +12617,7 @@ class Form
 
 		$ret .= '</div>';
 
-		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:>:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
 		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderall search_component_input" value="">';
 
 		$ret .= '</div>';

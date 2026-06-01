@@ -11,6 +11,7 @@
  * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026 Joris Le Blansch <ping@apio.systems>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1454,7 +1455,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Date next run
-		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
+		print "<tr><td>".$form->textwithpicto($langs->trans('NextDateToExecution'), $langs->trans("NextDateToExecutionHelp"))."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
@@ -1968,9 +1969,9 @@ if ($action == 'create') {
 			// Date when (next invoice generation)
 			print '<tr><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
-				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
+				print $form->editfieldkey($form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp")), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
 			} else {
-				print $langs->trans("NextDateToExecution");
+				print $form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp"));
 			}
 			print '</td><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {

@@ -422,6 +422,7 @@ FrequencyPer_y=Every %s years
 FrequencyUnit=Frequency unit
 toolTipFrequency=Examples:<br><b>Set 7, Day</b>: give a new invoice every 7 days<br><b>Set 3, Month</b>: give a new invoice every 3 month
 NextDateToExecution=Date for next invoice generation
+NextDateToExecutionHelp=If you set a day >= 28, the invoice will be generated on the last day of each month (end-of-month mode). For example, setting the 31st will generate invoices on Jan 31, Feb 28/29, Mar 31, Apr 30, etc.
 NextDateToExecutionShort=Date next gen.
 DateLastGeneration=Date of latest generation
 DateLastGenerationShort=Date latest gen.

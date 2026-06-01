@@ -14,7 +14,7 @@
  * Copyright (C) 2019-2026  Frédéric France         	<frederic.france@free.fr>
  * Copyright (C) 2020-2026  Open-Dsi                	<support@open-dsi.fr>
  * Copyright (C) 2024-2025  Charlene Benke      	    <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -598,6 +598,13 @@ $tabcond[DICT_ASSET_DISPOSAL_TYPE] = isModEnabled('asset');
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
 
+
+$tooltipvatex = $langs->trans("VATExemptionCodeDesc").'<br>'.$langs->trans("VATExemptionCodeDesc2").'<br>'.$langs->trans("VATExemptionCodeDesc3");
+if (($mysoc->country_code == 'FR')) {
+	$tooltipvatex .= '<br><br>'.$langs->trans("Example").':<br>';
+	$tooltipvatex .= 'VATEX-FR-FRANCHISE, VATEX-FR-CGI261-4, VATEX-FR-J, VATEX-FR-I, VATEX-FR-D, ...';
+}
+
 // Table to store complete information (will replace all other tables). Key is table name.
 $tabcomplete = array(
 	'c_forme_juridique' => array(
@@ -618,7 +625,7 @@ $tabcomplete = array(
 	'c_chargesociales' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
 	'c_typent' => array('picto' => 'company', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_currencies' => array('picto' => 'multicurrency', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'unicode' => $langs->trans("UnicodeCurrency"))),
-	'c_tva' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'taux' => $langs->trans("SellTaxRate"), 'recuperableonly' => $langs->trans("RecuperableOnly"), 'localtax1_type' => $langs->trans("LocalTaxDesc"), 'localtax2_type' => $langs->trans("LocalTaxDesc"), 'einvoice_vatex' => $langs->trans("VATExemptionCodeDesc").' '.$langs->trans("VATExemptionCodeDesc2").' '.$langs->trans("VATExemptionCodeDesc3"),)),
+	'c_tva' => array('picto' => 'bill', 'css' => array('einvoice_vatex' => 'tdoverflowmax100'), 'help' => array('code' => $langs->trans("EnterAnyCode"), 'taux' => $langs->trans("SellTaxRate"), 'recuperableonly' => $langs->trans("RecuperableOnly"), 'localtax1_type' => $langs->trans("LocalTaxDesc"), 'localtax2_type' => $langs->trans("LocalTaxDesc"), 'einvoice_vatex' => $tooltipvatex)),
 	'c_type_contact' => array('picto' => 'contact', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'position' => $langs->trans("PositionIntoComboList"))),
 	'c_payment_term' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"), 'type_cdr' => $langs->trans("TypeCdr", $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset"), $langs->transnoentitiesnoconv("NbOfDays"), $langs->transnoentitiesnoconv("Offset")))),
 	'c_paiement' => array('picto' => 'bill', 'help' => array('code' => $langs->trans("EnterAnyCode"))),
@@ -2428,8 +2435,7 @@ if ($id > 0) {
 						$TDurationTypes = $form->getDurationTypes($langs);
 
 						foreach ($fieldlist as $field => $value) {
-							//var_dump($fieldlist);
-							$class = '';
+							$class = (isset($tabcomplete[$tabname[$id]]['css'][$value]) ? $tabcomplete[$tabname[$id]]['css'][$value] : '');
 							$showfield = 1;
 							$valuetoshow = (isset($obj->$value) && $obj->$value !== null && $obj->$value !== '') ? $obj->$value : '';
 							$titletoshow = '';
@@ -2471,7 +2477,7 @@ if ($id > 0) {
 								$valuetoshow = price($valuetoshow);
 							}
 							if (in_array($value, array('private', 'joinfile', 'use_default'))) {
-								if (!empty($valuetoshow) && (string) $valuetoshow != '0') {
+								if (!empty($valuetoshow)) {
 									$valuetoshow = img_picto('', 'tick');
 								} else {
 									$valuetoshow = '';
@@ -2638,7 +2644,7 @@ if ($id > 0) {
 							if ($value == 'note' && $id == DICT_TVA) {
 								$class .= ' tdoverflowmax200';
 							}
-							if ($value == 'tracking') {
+							if (in_array($value, array($value == 'tracking'))) {
 								$class .= ' tdoverflowauto';
 							}
 							if (in_array($value, array('nbjour', 'decalage', 'pos', 'position', 'deposit_percent'))) {
@@ -2653,6 +2659,12 @@ if ($id > 0) {
 							if (in_array($value, array('localtax1_type', 'localtax2_type', 'note', 'note_public', 'note_private'))) {
 								$class .= ' small';
 							}
+
+							// Add val as tooltip if there is a tdoverflow on the cell
+							if (empty($titletoshow) && preg_match('/tdoverflow/', $class)) {
+								$titletoshow = $valuetoshow;
+							}
+
 							// Show value for field
 							if ($showfield) {
 								print '<!-- field value '. $value .' --><td class="'.$class.'"'.($titletoshow ? ' title="'.dolPrintHTMLForAttribute($titletoshow).'"' : '').'>'.$valuetoshow.'</td>';

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ interface NamingContractValidator
 	 *
 	 * @param string $className Class name to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if className matches object naming
 	 */
 	public function validateClassName(string $className, NamingContract $nc): bool;
 
@@ -53,7 +54,7 @@ interface NamingContractValidator
 	 *
 	 * @param string $filename Trigger filename to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if filename matches pattern
 	 */
 	public function validateTriggerFilename(string $filename, NamingContract $nc): bool;
 
@@ -62,7 +63,7 @@ interface NamingContractValidator
 	 *
 	 * @param string $url URL path to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if url path is cleaned from myobject and has objectNameLower
 	 */
 	public function validateUrl(string $url, NamingContract $nc): bool;
 
@@ -71,7 +72,7 @@ interface NamingContractValidator
 	 *
 	 * @param string $rightsKey Rights key to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if the rightsKey matches expected format
 	 */
 	public function validateRightsKey(string $rightsKey, NamingContract $nc): bool;
 }
@@ -123,7 +124,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 
 	/**
 	 * @param string $line Line content to check
-	 * @return bool
+	 * @return bool True if there is a NON_RENAMABLE_MARKER in the line
 	 */
 	private function lineContainsNonRenamableMarker(string $line): bool
 	{
@@ -138,7 +139,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	/**
 	 * @param string $className Class name to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if class name is valid
 	 */
 	public function validateClassName(string $className, NamingContract $nc): bool
 	{
@@ -148,7 +149,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	/**
 	 * @param string $filename Trigger filename to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if filename for Trigger is valid
 	 */
 	public function validateTriggerFilename(string $filename, NamingContract $nc): bool
 	{
@@ -163,7 +164,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	/**
 	 * @param string $url URL path to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if urlpath for module item is valid
 	 */
 	public function validateUrl(string $url, NamingContract $nc): bool
 	{
@@ -175,7 +176,7 @@ final class StrictNamingContractValidator implements NamingContractValidator
 	/**
 	 * @param string $rightsKey Rights key to validate
 	 * @param NamingContract $nc Naming contract to compare against
-	 * @return bool
+	 * @return bool True if $rightskey is valid for this module
 	 */
 	public function validateRightsKey(string $rightsKey, NamingContract $nc): bool
 	{
