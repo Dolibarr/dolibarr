@@ -140,9 +140,18 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // empty and silently skips both its standalone and its origin branches, so updates to
 // quantity, comment, batch and extrafields on an existing line are not persisted
 // (see issue #38386, regression from PR #36134).
-if ($object->id > 0 && empty($origin) && !empty($object->origin)) {
-	$origin = $object->origin;
-	if (empty($origin_id) && !empty($object->origin_id)) {
+// The restore is gated on $object->origin_id > 0 so standalone receptions, which have
+// no upstream origin, are not affected: $origin stays empty and the standalone branch
+// of the updateline handler is still selected.
+if (isset($object->origin_id) && $object->origin_id > 0) {
+	if (empty($origin)) {
+		if (!empty($object->origin_type)) {
+			$origin = $object->origin_type;
+		} elseif (is_string($object->origin) && $object->origin !== '') {
+			$origin = $object->origin;
+		}
+	}
+	if (empty($origin_id)) {
 		$origin_id = $object->origin_id;
 	}
 }
@@ -917,6 +926,12 @@ if (empty($reshook)) {
 					$ret = $object->fetch($object->id); // Reload to get new records
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
+
+				// Redirect after the successful save so the page leaves edit mode and the
+				// updated values are read back from DB, matching the cancel path below
+				// and the header-data save handlers (see issue #38386).
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit();
 			} else {
 				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To reshow the record we edit
 				exit();
