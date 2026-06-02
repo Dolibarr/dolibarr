@@ -8615,6 +8615,7 @@ abstract class CommonObject
 	 */
 	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $conf, $langs, $form;
 
 		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
