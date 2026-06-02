@@ -1800,7 +1800,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				]
 			);
 
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
+			if (basename($phpfileval['fullname']) === 'mod'.$module.'.class.php') {
+				// Module descriptor: substitute content but keep the persistent MODULEBUILDER markers intact
+				$result = dolReplaceInFilePreservingModuleBuilderMarkers($phpfileval['fullname'], $arrayreplacement);
+			} else {
+				$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
+			}
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');

@@ -1504,3 +1504,50 @@ function filterEnabledTabs($requested, $map)
 	}
 	return $valid;
 }
+
+/**
+ * Apply substitutions to a module descriptor file while preserving the MODULEBUILDER comment markers.
+ * Markers such as "BEGIN MODULEBUILDER LEFTMENU MYOBJECT" must keep their MYOBJECT/MYMODULE placeholder
+ * so that generating subsequent objects can still locate them (see checkExistComment()). A blanket
+ * substitution would rewrite them to the first object name and break the generation of further objects.
+ *
+ * @param	string					$file				Path to the module descriptor file
+ * @param	array<string,string>	$arrayreplacement	Substitution map (search => replace), applied as literal strings
+ * @return	int											1 on success, -1 on read/write error
+ */
+function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($content === false) {
+		return -1;
+	}
+
+	// Hide every "/* BEGIN|END MODULEBUILDER ... */" marker behind a sentinel before substituting
+	$sentinels = array();
+	$counter = 0;
+	$content = preg_replace_callback(
+		'/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//',
+		function ($matches) use (&$sentinels, &$counter) {
+			$key = "\0MODULEBUILDERMARKER".$counter."\0";
+			$sentinels[$key] = $matches[0];
+			$counter++;
+			return $key;
+		},
+		$content
+	);
+
+	$content = str_replace(array_keys($arrayreplacement), array_values($arrayreplacement), $content);
+
+	// Restore the protected markers untouched
+	if (!empty($sentinels)) {
+		$content = strtr($content, $sentinels);
+	}
+
+	if (file_put_contents($file, $content) === false) {
+		return -1;
+	}
+	return 1;
+}
