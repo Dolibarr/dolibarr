@@ -167,7 +167,7 @@ if ($tmpver[0] == 'auto') {
 			break;
 		}
 	}
-	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
+	if (!empty($tmpver[1])) {
 		$checklock .= '-'.$tmpver[1];
 	}
 }
