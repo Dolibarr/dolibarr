@@ -1465,3 +1465,42 @@ function countItemsInDirectory($path, $type = 1)
 	}
 	return $count;
 }
+
+/**
+ * Return the map of optional tabs that can be generated for a ModuleBuilder object.
+ * The CARD tab is always generated and is therefore not listed here.
+ * HISTORY is an alias of AGENDA (object event history is the agenda tab in Dolibarr).
+ *
+ * @return	array<string,array{file:string,var:string,marker:string,label:string}>	Map: tab key => metadata
+ */
+function getModuleBuilderObjectTabs()
+{
+	return array(
+		'contact'  => array('file' => 'myobject_contact.php',  'var' => 'showtabofpagecontact',  'marker' => 'CONTACT',  'label' => 'Contacts'),
+		'note'     => array('file' => 'myobject_note.php',      'var' => 'showtabofpagenote',     'marker' => 'NOTE',     'label' => 'Notes'),
+		'document' => array('file' => 'myobject_document.php',  'var' => 'showtabofpagedocument', 'marker' => 'DOCUMENT', 'label' => 'Documents'),
+		'agenda'   => array('file' => 'myobject_agenda.php',    'var' => 'showtabofpageagenda',   'marker' => 'AGENDA',   'label' => 'Events'),
+	);
+}
+
+/**
+ * Filter a list of requested tab keys against the known optional tabs map.
+ * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ *
+ * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
+ * @return	string[]	Sanitized list of valid tab keys, in map order
+ */
+function filterEnabledTabs($requested, $map)
+{
+	$valid = array();
+	if (!is_array($requested) || empty($requested)) {
+		return $valid;
+	}
+	foreach (array_keys($map) as $tabkey) {
+		if (in_array($tabkey, $requested, true)) {
+			$valid[] = $tabkey;
+		}
+	}
+	return $valid;
+}
