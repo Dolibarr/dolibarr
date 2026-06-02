@@ -150,7 +150,7 @@ $savrelease = $release;
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
-	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
+	if (!empty($tmpver[1])) {
 		$release .= '-'.$tmpver[1];
 	}
 }
