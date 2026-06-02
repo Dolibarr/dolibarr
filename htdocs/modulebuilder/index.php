@@ -1755,16 +1755,25 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				$arrayreplacement = array(
 					'/\$'.$tabinfo['var'].' = getDolGlobalInt\([^;]*\);/' => '$'.$tabinfo['var'].' = 1;'
 				);
-				dolReplaceInFile($libdestfile, $arrayreplacement, '', '0', 0, 1);
+				if (dolReplaceInFile($libdestfile, $arrayreplacement, '', '0', 0, 1) < 0) {
+					$error++;
+					dol_syslog("modulebuilder: failed to activate tab flag '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
 			} else {
-				removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$marker.'.*?\/\/ END MODULEBUILDER TABFLAG '.$marker.'\s*/s');
-				removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s');
+				if (!removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$marker.'.*?\/\/ END MODULEBUILDER TABFLAG '.$marker.'\s*/s')
+					|| !removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s')) {
+					$error++;
+					dol_syslog("modulebuilder: failed to purge tab '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
 			}
 		}
 		// Agenda has an extra event widget on the card page: purge it too to avoid a dead link when the agenda tab is excluded
-		if (!in_array('agenda', $enabledtabs, true)) {
+		if (!$error && !in_array('agenda', $enabledtabs, true)) {
 			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
-			removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s');
+			if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s')) {
+				$error++;
+				dol_syslog("modulebuilder: failed to purge agenda widget in ".$carddestfile, LOG_ERR);
+			}
 		}
 		if ($objectalreadyexists) {
 			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
