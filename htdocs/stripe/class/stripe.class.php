@@ -486,28 +486,28 @@ class Stripe extends CommonObject
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
-			    $paymentmethodtypes[] = "sepa_debit";
+				$paymentmethodtypes[] = "sepa_debit";
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
-			    $paymentmethodtypes[] = "klarna";
+				$paymentmethodtypes[] = "klarna";
 			}
 			if (getDolGlobalInt('STRIPE_BANCONTACT')) {
-			    $paymentmethodtypes[] = "bancontact";
+				$paymentmethodtypes[] = "bancontact";
 			}
 			if (getDolGlobalInt('STRIPE_IDEAL')) {
-			    $paymentmethodtypes[] = "ideal";
+				$paymentmethodtypes[] = "ideal";
 			}
 			if (getDolGlobalInt('STRIPE_GIROPAY')) {
-			    $paymentmethodtypes[] = "giropay";
+				$paymentmethodtypes[] = "giropay";
 			}
 			if (getDolGlobalInt('STRIPE_SOFORT')) {
-			    $paymentmethodtypes[] = "sofort";
+				$paymentmethodtypes[] = "sofort";
 			}
 			if ($mode == 'terminal') {
-			    if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
-			        $paymentmethodtypes = array("card_present");
-			    }
-			    $stripemode = 'manual';
+				if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+					$paymentmethodtypes = array("card_present");
+				}
+				$stripemode = 'manual';
 			}
 			global $dolibarr_main_url_root;
 			$descriptioninpaymentintent = $description;
