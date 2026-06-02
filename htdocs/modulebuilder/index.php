@@ -1826,8 +1826,15 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			]
 		);
 		$allModulePhpFiles = dol_dir_list($destdir, 'files', 1, '\.php$');
+		// The module descriptor must NOT go through the blanket substitution: it keeps persistent
+		// MYOBJECT/MYMODULE markers (TOPMENU/LEFTMENU) reused when generating subsequent objects, and its
+		// own placeholders are already resolved by initmodule and the dedicated menu/permission blocks.
+		$moduledescriptorbasename = 'mod'.$module.'.class.php';
 		if (is_array($allModulePhpFiles) && !empty($allModulePhpFiles)) {
 			foreach ($allModulePhpFiles as $phpFileval) {
+				if (basename($phpFileval['fullname']) === $moduledescriptorbasename) {
+					continue;
+				}
 				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
 				if ($result < 0) {
 					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
