@@ -199,6 +199,7 @@ The following changes may create regressions for some external modules, but were
 * The substitution variable __MYCOUNTRY_ID__ has been removed (duplicate of standard __MYCOMPANY_COUNTRY_ID__).
 * Renamed hook "info_admin" into "messageOfTheDay".
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
+* Module Paybox has been removed.
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
