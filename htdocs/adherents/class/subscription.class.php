@@ -78,6 +78,31 @@ class Subscription extends CommonObject
 	public $datef;
 
 	/**
+	 * Alias of $dateh exposed by the REST API GET response so the same payload
+	 * can be sent back to POST /members/{id}/subscriptions without renaming
+	 * (see issue #38279). Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $start_date;
+
+	/**
+	 * Alias of $datef exposed by the REST API GET response (see issue #38279).
+	 * Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $end_date;
+
+	/**
+	 * Alias of $note_public exposed by the REST API GET response (see
+	 * issue #38279). Not persisted.
+	 *
+	 * @var string
+	 */
+	public $label;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_type;
