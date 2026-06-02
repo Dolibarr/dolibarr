@@ -484,52 +484,57 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
+			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
-				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			    $paymentmethodtypes[] = "sepa_debit";
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
-				$paymentmethodtypes[] = "klarna";
+			    $paymentmethodtypes[] = "klarna";
 			}
 			if (getDolGlobalInt('STRIPE_BANCONTACT')) {
-				$paymentmethodtypes[] = "bancontact";
+			    $paymentmethodtypes[] = "bancontact";
 			}
 			if (getDolGlobalInt('STRIPE_IDEAL')) {
-				$paymentmethodtypes[] = "ideal";
+			    $paymentmethodtypes[] = "ideal";
 			}
 			if (getDolGlobalInt('STRIPE_GIROPAY')) {
-				$paymentmethodtypes[] = "giropay";
+			    $paymentmethodtypes[] = "giropay";
 			}
 			if (getDolGlobalInt('STRIPE_SOFORT')) {
-				$paymentmethodtypes[] = "sofort";
+			    $paymentmethodtypes[] = "sofort";
 			}
 			if ($mode == 'terminal') {
-				if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
-					$paymentmethodtypes = array("card_present");
-				}
-				$stripemode = 'manual';
+			    if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+			        $paymentmethodtypes = array("card_present");
+			    }
+			    $stripemode = 'manual';
 			}
-
 			global $dolibarr_main_url_root;
-
 			$descriptioninpaymentintent = $description;
-
-			$dataforintent = array(
-				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
-				"confirmation_method" => $stripemode,
-				"amount" => $stripeamount,
-				"currency" => $currency_code,
-				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
-				/*
-				'return_url' => $dolibarr_main_url_root.'/public/payment/paymentok.php',
-				'automatic_payment_methods' => array(
-					'enabled' => true,
-					'allow_redirects' => 'never',
-				),
-				*/
-				"description" => $descriptioninpaymentintent,
-				//"save_payment_method" => true,
-				"setup_future_usage" => "on_session",
-				"metadata" => $metadata
+			
+			// When STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2, use automatic_payment_methods
+			// so Stripe Dashboard controls active methods (Klarna, Bancontact, Link, etc.)
+			// and return_url redirect flow works correctly.
+			// In terminal mode, automatic methods are not supported — fallback to manual list.
+			$useautomaticmethods = (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 && $mode != 'terminal');
+			
+			$dataforintent = array_merge(
+			    array(
+			        "confirm"     => $confirmnow,
+			        "amount"      => $stripeamount,
+			        "currency"    => $currency_code,
+			        "description" => $descriptioninpaymentintent,
+			        "metadata"    => $metadata,
+			    ),
+			    $useautomaticmethods ? array(
+			        'automatic_payment_methods' => array(
+			            'enabled' => true,
+			        ),
+			    ) : array(
+			        'confirmation_method'  => $stripemode,
+			        'payment_method_types' => $paymentmethodtypes,
+			        'setup_future_usage'   => 'on_session',
+			    )
 			);
 			if ($tag) {
 				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
