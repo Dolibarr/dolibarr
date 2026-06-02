@@ -348,9 +348,6 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 		exit;
 	}
 }
-//if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-// No specific test for the moment
-//}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 	/**
@@ -1026,9 +1023,6 @@ print '<!-- creditor = '.dol_escape_htmltag((string) $creditor).' -->'."\n";
 if (isModEnabled('paypal')) {
 	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
-}
-if (isModEnabled('paybox')) {
-	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
 if (isModEnabled('stripe')) {
 	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
@@ -2411,25 +2405,6 @@ if ($action != 'dopayment') {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif ($reshook >= 0) {
 				print $hookmanager->resPrint;
-			}
-
-			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-				print '<br>';
-				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_paybox").click(function(){
-								$("#dopayment_paybox").click();
-							});
-							$("#dopayment_paybox").click(function(e){
-								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
-								e.stopPropagation();
-							});
-						});
-					  </script>
-				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
