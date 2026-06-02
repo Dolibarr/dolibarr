@@ -1526,18 +1526,14 @@ function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement
 	}
 
 	// Hide every "/* BEGIN|END MODULEBUILDER ... */" marker behind a sentinel before substituting
+	$foundmarkers = array();
+	preg_match_all('/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//', $content, $foundmarkers);
 	$sentinels = array();
-	$counter = 0;
-	$content = preg_replace_callback(
-		'/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//',
-		function (array $matches) use (&$sentinels, &$counter) {
-			$key = "\0MODULEBUILDERMARKER".$counter."\0";
-			$sentinels[$key] = $matches[0];
-			$counter++;
-			return $key;
-		},
-		$content
-	);
+	foreach (array_values(array_unique($foundmarkers[0])) as $index => $marker) {
+		$key = "\0MODULEBUILDERMARKER".$index."\0";
+		$sentinels[$key] = $marker;
+		$content = str_replace($marker, $key, $content);
+	}
 
 	$content = str_replace(array_keys($arrayreplacement), array_values($arrayreplacement), $content);
 
