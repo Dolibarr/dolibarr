@@ -485,13 +485,13 @@ if ($release) {
 		print DOLCERT_VERSION;
 		print ": ".$hashunalterable_files."\n";
 	} else {
-		if ($buildzip == '1' || $buildzip == 'zip') {
+		if ($buildzip == '1' || $buildzip === 'zip') {
 			$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
 			if ($result > 0) {
 				dol_delete_file($outputfile);
 				print "File ".$outputfile.".zip generated.\n";
 			}
-		} elseif ($buildzip == '2' || $buildzip == 'gz') {
+		} elseif ($buildzip == '2' || $buildzip === 'gz') {
 			$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
 			if ($result > 0) {
 				dol_delete_file($outputfile);
