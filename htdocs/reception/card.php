@@ -143,7 +143,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // The restore is gated on $object->origin_id > 0 so standalone receptions, which have
 // no upstream origin, are not affected: $origin stays empty and the standalone branch
 // of the updateline handler is still selected.
-if (isset($object->origin_id) && $object->origin_id > 0) {
+if ($object->origin_id > 0) {
 	if (empty($origin)) {
 		if (!empty($object->origin_type)) {
 			$origin = $object->origin_type;
