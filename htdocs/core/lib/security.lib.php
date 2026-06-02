@@ -172,8 +172,8 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *												This is used to check permission $user->rights->features->feature2...
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
- *  @param	int					$isdraft		1=The object with id=$objectid is a draft
- *  @param	int					$mode			Mode (0=default, 1=return without dying)
+ *  @param	int<0,1>			$isdraft		1=The object with id=$objectid is a draft
+ *  @param	int<0,1>			$mode			Mode (0=default, 1=return without dying)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
