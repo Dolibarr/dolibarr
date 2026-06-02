@@ -73,6 +73,7 @@ $checksource = '';
 $outputdir = '';
 $outputfile = '';
 $hashhtdocsdir = '';
+$hashscriptsdir = '';
 
 print '***** '.$script_file.' *****'."\n";
 
