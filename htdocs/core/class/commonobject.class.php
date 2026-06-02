@@ -9406,6 +9406,7 @@ abstract class CommonObject
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = '', $display_type = 'card')
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 
 		if (!is_object($form)) {
@@ -9708,7 +9709,6 @@ abstract class CommonObject
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
-								//$out .= '<!-- type = '.$extrafields->attributes[$this->table_element]['type'][$key].' -->';
 								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this, $this->table_element);
 								break;
 							case "edit":
