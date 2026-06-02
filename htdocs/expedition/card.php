@@ -254,10 +254,10 @@ if (empty($reshook)) {
 		// Weight and box dimensions are physical measurements that frequently use
 		// decimals (1.6 kg, 0.25 m, ...), so they must be read as floats and not
 		// truncated to int (see issue #34069 for the shipping module).
-		$object->weight = GETPOST('weight', 'alpha') == '' ? "NULL" : (float) price2num(GETPOST('weight', 'alpha'));
-		$object->sizeH = GETPOST('sizeH', 'alpha') == '' ? "NULL" : (float) price2num(GETPOST('sizeH', 'alpha'));
-		$object->sizeW = GETPOST('sizeW', 'alpha') == '' ? "NULL" : (float) price2num(GETPOST('sizeW', 'alpha'));
-		$object->sizeS = GETPOST('sizeS', 'alpha') == '' ? "NULL" : (float) price2num(GETPOST('sizeS', 'alpha'));
+		$object->weight = GETPOST('weight', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('weight');
+		$object->sizeH = GETPOST('sizeH', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeH');
+		$object->sizeW = GETPOST('sizeW', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeW');
+		$object->sizeS = GETPOST('sizeS', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeS');
 		$object->size_units = GETPOSTINT('size_units');
 		$object->weight_units = GETPOSTINT('weight_units');
 
@@ -582,18 +582,18 @@ if (empty($reshook)) {
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
 		if ($action == 'settrueWeight') {
-			$object->trueWeight = (float) price2num(GETPOST('trueWeight', 'alpha'));
+			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {
-			$object->trueWidth = (float) price2num(GETPOST('trueWidth', 'alpha'));
+			$object->trueWidth = GETPOSTFLOAT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {
-			$object->trueHeight = (float) price2num(GETPOST('trueHeight', 'alpha'));
+			$object->trueHeight = GETPOSTFLOAT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {
-			$object->trueDepth = (float) price2num(GETPOST('trueDepth', 'alpha'));
+			$object->trueDepth = GETPOSTFLOAT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
@@ -1361,7 +1361,7 @@ if ($action == 'create') {
 							print '<td class="center">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
 								if (GETPOSTISSET('qtyl'.$indiceAsked) && GETPOST('qtyl'.$indiceAsked) !== '') {
-									$deliverableQty = (float) price2num(GETPOST('qtyl'.$indiceAsked, 'alpha'), 'MS');
+									$deliverableQty = GETPOSTFLOAT('qtyl'.$indiceAsked, 'MS');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl right" type="text" size="4" value="'.$deliverableQty.'">';
