@@ -510,14 +510,13 @@ class Stripe extends CommonObject
 				$stripemode = 'manual';
 			}
 			global $dolibarr_main_url_root;
-			$descriptioninpaymentintent = $description;
+			$descriptioninpaymentintent = $description;	
 			
 			// When STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2, use automatic_payment_methods
 			// so Stripe Dashboard controls active methods (Klarna, Bancontact, Link, etc.)
 			// and return_url redirect flow works correctly.
 			// In terminal mode, automatic methods are not supported — fallback to manual list.
 			$useautomaticmethods = (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 && $mode != 'terminal');
-			
 			$dataforintent = array_merge(
 				array(
 					"confirm"     => $confirmnow,
