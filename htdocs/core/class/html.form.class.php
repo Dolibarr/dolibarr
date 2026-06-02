@@ -6604,9 +6604,12 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 250;
-			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 10;
+			$height = 180;
+			if (is_array($formquestion)) {
+				$height += (count($formquestion) * 40);
+			}
+			if ($question) {
+				$height += dol_nboflines_bis($question, 80) * 40;
 			}
 		}
 
