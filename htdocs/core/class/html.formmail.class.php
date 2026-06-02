@@ -2218,9 +2218,6 @@ class FormMail extends Form
 			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (isModEnabled('paybox')) {
-				$onlinepaymentenabled++;
-			}
 			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}

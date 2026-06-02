@@ -28,11 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 $langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
 
@@ -81,7 +80,7 @@ $now = dol_now();
 // Security check
 $object = new Societe($db);
 
-$permissiontoadd = $user->hasRight('societe', 'lire');
+$permissiontoadd = $user->hasRight('societe', 'write');
 
 
 /*
@@ -231,15 +230,14 @@ if ($result > 0) {
 	print "\n";
 
 	// Help
-	print '<div class="opacitymedium hideonsmartphone">';
+	print '<div class="info hideonsmartphone">';
 	print $langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser");
 	print '<br>'.$langs->trans("NotificationsDescContact").' - '.$langs->trans("YouAreHere");
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
-	print '<br>';
 	print '</div>';
 
-	print '<br><br>'."\n";
+	print '<br>'."\n";
 
 
 	// Add notification form
@@ -271,10 +269,19 @@ if ($result > 0) {
 		dol_print_error($db);
 	}
 
-	$param = "&socid=".$socid;
+	$param = "&socid=".((int) $socid);
+
+	$listofemails = $object->thirdparty_and_contact_email_array();
+
+	$helptext = '';
+	$buttonstatus = $permissiontoadd ? 1 : 0;
+	if (empty($listofemails)) {
+		$buttonstatus = 2;
+		$helptext = $langs->trans("YouMustCreateContactFirst");
+	}
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight("societe", "creer"));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), $helptext, 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $buttonstatus);
 
 	$titlelist = $form->textwithpicto($langs->trans("ListOfActiveNotifications"), $langs->trans("ListOfActiveNotificationsHelp", $langs->transnoentitiesnoconv("Target"), $langs->transnoentitiesnoconv("Event")));
 
@@ -297,7 +304,6 @@ if ($result > 0) {
 
 	// Line to add a new subscription
 	if ($action == 'create') {
-		$listofemails = $object->thirdparty_and_contact_email_array();
 		if (count($listofemails) > 0) {
 			$actions = array();
 
