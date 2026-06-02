@@ -506,42 +506,6 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 		}
 	}
 
-	if ($paymentmethod == 'paybox') {
-		$PRICE = price2num(GETPOST("newamount"), 'MT');
-		$email = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
-		$thirdparty_id = GETPOSTINT('thirdparty_id');
-
-		$origfulltag = GETPOST("fulltag", 'alpha');
-
-		// Securekey into back url useless for back url and we need an url lower than 150.
-		$urlok = preg_replace('/securekey=[^&]+&?/', '', $urlok);
-		$urlko = preg_replace('/securekey=[^&]+&?/', '', $urlko);
-
-		if (empty($PRICE) || !is_numeric($PRICE)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
-		} elseif (empty($email)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ONLINE_PAYMENT_SENDEMAIL"));
-		} elseif (!isValidEmail($email)) {
-			$mesg = $langs->trans("ErrorBadEMail", $email);
-		} elseif (!$origfulltag) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
-		} elseif (dol_strlen($urlok) > 150) {
-			$mesg = 'Error urlok too long '.$urlok.' (Paybox requires 150, found '.strlen($urlok).')';
-		} elseif (dol_strlen($urlko) > 150) {
-			$mesg = 'Error urlko too long '.$urlko.' (Paybox requires 150, found '.strlen($urlok).')';
-		}
-
-		if (empty($mesg)) {
-			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG, 0, '_payment');
-
-			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
-			print_paybox_redirect((float) $PRICE, getDolCurrency(), $email, $urlok, $urlko, $FULLTAG);
-
-			session_destroy();
-			exit;
-		}
-	}
-
 	if ($paymentmethod == 'stripe') {
 		if (GETPOST('newamount', 'alpha')) {
 			$amount = price2num(GETPOST('newamount', 'alpha'), 'MT');

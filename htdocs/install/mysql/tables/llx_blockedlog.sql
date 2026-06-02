@@ -35,6 +35,7 @@ CREATE TABLE llx_blockedlog
 	object_data	mediumtext,						-- field included into line signature
 	-- the signature of line
 	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
+	signature_backward varchar(100) DEFAULT '', 	-- the hash of the key for reverse signature with following hash after
 	-- fields used for debug only
 	element varchar(50),
 	fk_user	integer,
