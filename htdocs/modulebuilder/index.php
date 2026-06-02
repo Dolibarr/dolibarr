@@ -1738,7 +1738,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			// Pattern to remove everything between the tags
 			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
 			foreach ($TFilePaths as $filePath) {
-				if (! removePatternFromFile($filePath, $pattern)) {
+				// Skip files that were not generated (e.g. the API class when API generation is disabled);
+				// a missing optional file must not abort the whole object generation.
+				if (file_exists($filePath) && !removePatternFromFile($filePath, $pattern)) {
 					$error++;
 				}
 			}
