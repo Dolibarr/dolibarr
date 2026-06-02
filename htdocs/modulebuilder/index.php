@@ -1761,6 +1761,11 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s');
 			}
 		}
+		// Agenda has an extra event widget on the card page: purge it too to avoid a dead link when the agenda tab is excluded
+		if (!in_array('agenda', $enabledtabs, true)) {
+			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
+			removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s');
+		}
 		if ($objectalreadyexists) {
 			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
 		}
