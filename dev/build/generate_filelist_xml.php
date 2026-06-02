@@ -69,6 +69,10 @@ $includeconstants = array();
 $buildzip = 0;
 $release = '';
 $checklock = '';
+$checksource = '';
+$outputdir = '';
+$outputfile = '';
+$hashhtdocsdir = '';
 
 print '***** '.$script_file.' *****'."\n";
 
@@ -266,20 +270,20 @@ if ($release) {
 	}
 	$gitcommit = trim($fileforgitcontent);
 
-	fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-	fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" algo="'.$algo.'" gitcommit="'.$gitcommit.'">'."\n");
+	fwrite($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
+	fwrite($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" algo="'.$algo.'" gitcommit="'.$gitcommit.'">'."\n");
 
 	foreach ($includeconstants as $countrycode => $tmp) {
-		fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
+		fwrite($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
 		foreach ($tmp as $constname => $constvalue) {
 			$valueforchecksum = (empty($constvalue) ? '0' : $constvalue);
 			$checksumconcat[] = $valueforchecksum;
-			fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
+			fwrite($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
 		}
-		fputs($fp, '</dolibarr_constants>'."\n\n");
+		fwrite($fp, '</dolibarr_constants>'."\n\n");
 	}
 
-	fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
+	fwrite($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
 
 	// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|yaml|toml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest|py)$';
@@ -294,38 +298,38 @@ if ($release) {
 		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 		if ($newdir != $dir) {
 			if ($needtoclose) {
-				fputs($fp, '  </dir>'."\n");
+				fwrite($fp, '  </dir>'."\n");
 				$needtoclose = 0;
 			}
-			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			fwrite($fp, '  <dir name="'.$newdir.'">'."\n");
 			$dir = $newdir;
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
 			$hashoffile = hash_file($algo, $file);
 			$checksumconcat[] = $hashoffile;
-			fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
+			fwrite($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 		}
 	}
 	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
+		fwrite($fp, '  </dir>'."\n");
 		$needtoclose = 0;
 	}
-	fputs($fp, '</dolibarr_htdocs_dir>'."\n");
+	fwrite($fp, '</dolibarr_htdocs_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
 	$hashhtdocsdir = hash($algo, join(',', $checksumconcat));
 
-	fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
-	fputs($fp, $hashhtdocsdir."\n");
-	fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
+	fwrite($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
+	fwrite($fp, $hashhtdocsdir."\n");
+	fwrite($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
 
 
 	// Add the checksum for the part in scripts
 
 	$checksumconcat = array();
 
-	fputs($fp, '<dolibarr_scripts_dir version="'.$release.'">'."\n");
+	fwrite($fp, '<dolibarr_scripts_dir version="'.$release.'">'."\n");
 
 	$regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
 	$regextoexclude = '(custom|documents|conf|install)$';  // Exclude dirs
@@ -337,31 +341,31 @@ if ($release) {
 		$newdir = str_replace(dirname(__FILE__).'/../../scripts', '', dirname($file));
 		if ($newdir != $dir) {
 			if ($needtoclose) {
-				fputs($fp, '  </dir>'."\n");
+				fwrite($fp, '  </dir>'."\n");
 				$needtoclose = 0;
 			}
-			fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			fwrite($fp, '  <dir name="'.$newdir.'">'."\n");
 			$dir = $newdir;
 			$needtoclose = 1;
 		}
 		if (filetype($file) == "file") {
 			$hashoffile = hash_file($algo, $file);
 			$checksumconcat[] = $hashoffile;
-			fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
+			fwrite($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 		}
 	}
 	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
+		fwrite($fp, '  </dir>'."\n");
 		$needtoclose = 0;
 	}
-	fputs($fp, '</dolibarr_scripts_dir>'."\n");
+	fwrite($fp, '</dolibarr_scripts_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
 	$hashscriptsdir = hash($algo, join(',', $checksumconcat));
 
-	fputs($fp, '<dolibarr_scripts_dir_checksum>'."\n");
-	fputs($fp, $hashscriptsdir."\n");
-	fputs($fp, '</dolibarr_scripts_dir_checksum>'."\n\n");
+	fwrite($fp, '<dolibarr_scripts_dir_checksum>'."\n");
+	fwrite($fp, $hashscriptsdir."\n");
+	fwrite($fp, '</dolibarr_scripts_dir_checksum>'."\n\n");
 }
 
 
@@ -370,8 +374,8 @@ if ($release) {
 
 $checksumconcat = array();
 
-if ($release && $releaseblockedlog) {
-	fputs($fp, '<dolibarr_unalterable_files version="'.$releaseblockedlog.'">'."\n");
+if ($release && $releaseblockedlog && isset($fp)) {
+	fwrite($fp, '<dolibarr_unalterable_files version="'.$releaseblockedlog.'">'."\n");
 }
 
 // Array of dir/files to include in the section
@@ -387,13 +391,13 @@ foreach ($arrayofunalterablefiles as $entry) {
 			$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
 			if ($newdir != $dir) {
 				if ($needtoclose) {
-					if ($release) {
-						fputs($fp, '  </dir>'."\n");
+					if ($release && isset($fp)) {
+						fwrite($fp, '  </dir>'."\n");
 					}
 					$needtoclose = 0;
 				}
-				if ($release) {
-					fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+				if ($release && isset($fp)) {
+					fwrite($fp, '  <dir name="'.$newdir.'">'."\n");
 				}
 				$dir = $newdir;
 				$needtoclose = 1;
@@ -401,14 +405,14 @@ foreach ($arrayofunalterablefiles as $entry) {
 			if (filetype($file) == "file") {
 				$hashoffile = hash_file($algo, $file);
 				$checksumconcat[] = $hashoffile;
-				if ($release) {
-					fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
+				if ($release && isset($fp)) {
+					fwrite($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 				}
 			}
 		}
 		if ($needtoclose) {
-			if ($release) {
-				fputs($fp, '  </dir>'."\n");
+			if ($release && isset($fp)) {
+				fwrite($fp, '  </dir>'."\n");
 			}
 			$needtoclose = 0;
 		}
@@ -423,13 +427,13 @@ foreach ($arrayofunalterablefiles as $entry) {
 		}
 		if ($newdir != $dir) {
 			if ($needtoclose) {
-				if ($release) {
-					fputs($fp, '  </dir>'."\n");
+				if ($release && isset($fp)) {
+					fwrite($fp, '  </dir>'."\n");
 				}
 				$needtoclose = 0;
 			}
-			if ($release) {
-				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+			if ($release && isset($fp)) {
+				fwrite($fp, '  <dir name="'.$newdir.'">'."\n");
 			}
 			$dir = $newdir;
 			$needtoclose = 1;
@@ -437,13 +441,13 @@ foreach ($arrayofunalterablefiles as $entry) {
 		if (filetype($file) == "file") {
 			$hashoffile = hash_file($algo, $file);
 			$checksumconcat[] = $hashoffile;
-			if ($release) {
-				fputs($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
+			if ($release && isset($fp)) {
+				fwrite($fp, '    <'.$algo.'file name="'.basename($file).'" size="'.filesize($file).'">'.$hashoffile.'</'.$algo.'file>'."\n");
 			}
 		}
 		if ($needtoclose) {
-			if ($release) {
-				fputs($fp, '  </dir>'."\n");
+			if ($release && isset($fp)) {
+				fwrite($fp, '  </dir>'."\n");
 			}
 			$needtoclose = 0;
 		}
@@ -454,16 +458,16 @@ asort($checksumconcat); // Sort list of checksum
 
 $hashunalterable_files = hash($algo, join(',', $checksumconcat));
 
-if ($release) {
-	fputs($fp, '</dolibarr_unalterable_files>'."\n");
+if ($release && isset($fp)) {
+	fwrite($fp, '</dolibarr_unalterable_files>'."\n");
 
-	fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
-	fputs($fp, $hashunalterable_files."\n");
-	fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
+	fwrite($fp, '<dolibarr_unalterable_files_checksum>'."\n");
+	fwrite($fp, $hashunalterable_files."\n");
+	fwrite($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
 
 	// End of file
 
-	fputs($fp, '</checksum_list>'."\n");
+	fwrite($fp, '</checksum_list>'."\n");
 	fclose($fp);
 }
 
