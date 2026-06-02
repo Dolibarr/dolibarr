@@ -319,7 +319,7 @@ if ($release) {
 	fwrite($fp, '</dolibarr_htdocs_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
-	$hashhtdocsdir = hash($algo, join(',', $checksumconcat));
+	$hashhtdocsdir = hash($algo, implode(',', $checksumconcat));
 
 	fwrite($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
 	fwrite($fp, $hashhtdocsdir."\n");
@@ -362,7 +362,7 @@ if ($release) {
 	fwrite($fp, '</dolibarr_scripts_dir>'."\n");
 
 	asort($checksumconcat); // Sort list of checksum
-	$hashscriptsdir = hash($algo, join(',', $checksumconcat));
+	$hashscriptsdir = hash($algo, implode(',', $checksumconcat));
 
 	fwrite($fp, '<dolibarr_scripts_dir_checksum>'."\n");
 	fwrite($fp, $hashscriptsdir."\n");
@@ -457,7 +457,7 @@ foreach ($arrayofunalterablefiles as $entry) {
 
 asort($checksumconcat); // Sort list of checksum
 
-$hashunalterable_files = hash($algo, join(',', $checksumconcat));
+$hashunalterable_files = hash($algo, implode(',', $checksumconcat));
 
 if ($release && isset($fp)) {
 	fwrite($fp, '</dolibarr_unalterable_files>'."\n");
