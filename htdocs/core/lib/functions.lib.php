@@ -1292,7 +1292,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		$tmpcheck = 'alphanohtml';
-		if (empty($out)) {
+		if ($out === null || $out === '') {
 			$out = array();
 		} elseif (!is_array($out)) {
 			$out = explode(',', $out);
