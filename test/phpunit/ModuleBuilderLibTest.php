@@ -33,6 +33,10 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanTypeMismatchArgumentProbablyReal
  */
 class ModuleBuilderLibTest extends CommonClassTest
 {

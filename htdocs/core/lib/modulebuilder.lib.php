@@ -1530,7 +1530,7 @@ function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement
 	$counter = 0;
 	$content = preg_replace_callback(
 		'/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//',
-		function ($matches) use (&$sentinels, &$counter) {
+		function (array $matches) use (&$sentinels, &$counter) {
 			$key = "\0MODULEBUILDERMARKER".$counter."\0";
 			$sentinels[$key] = $matches[0];
 			$counter++;
