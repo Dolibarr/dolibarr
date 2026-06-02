@@ -519,22 +519,22 @@ class Stripe extends CommonObject
 			$useautomaticmethods = (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 && $mode != 'terminal');
 			
 			$dataforintent = array_merge(
-			    array(
-			        "confirm"     => $confirmnow,
-			        "amount"      => $stripeamount,
-			        "currency"    => $currency_code,
-			        "description" => $descriptioninpaymentintent,
-			        "metadata"    => $metadata,
-			    ),
-			    $useautomaticmethods ? array(
-			        'automatic_payment_methods' => array(
-			            'enabled' => true,
-			        ),
-			    ) : array(
-			        'confirmation_method'  => $stripemode,
-			        'payment_method_types' => $paymentmethodtypes,
-			        'setup_future_usage'   => 'on_session',
-			    )
+				array(
+					"confirm"     => $confirmnow,
+					"amount"      => $stripeamount,
+					"currency"    => $currency_code,
+					"description" => $descriptioninpaymentintent,
+					"metadata"    => $metadata,
+				),
+				$useautomaticmethods ? array(
+					'automatic_payment_methods' => array(
+						'enabled' => true,
+					),
+				) : array(
+					'confirmation_method'  => $stripemode,
+					'payment_method_types' => $paymentmethodtypes,
+					'setup_future_usage'   => 'on_session',
+				)
 			);
 			if ($tag) {
 				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
