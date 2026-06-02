@@ -104,6 +104,9 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
+		// Check that the file conf.php can't be read by any user.
+		// TODO
+
 
 		if ($action === 'BILL_UNVALIDATE') {
 			/** @var Facture $object */
@@ -161,6 +164,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		// Protect against modification of data that should be immutable on a validated invoice (memory test only, no database access)
 		if ($action === 'BILL_MODIFY' && !empty($object->oldcopy) && in_array($object->element, array('invoice', 'facture')) && $object->status != 0) {
+			/** @var Facture $object */
+			'@phan-var-force Facture $object';
 			if ($object->oldcopy->ref != $object->ref) {
 				$this->errors[] = 'Modifying the property Ref of a non draft invoice is not allowed';
 				return -2;

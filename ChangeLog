@@ -182,6 +182,7 @@ NEW: Add delivery date in supplier order linked object block (#38351)
 NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)
 NEW: A lot of look and feel enhancement in the immutable log pages.
 NEW: Enhance the tools to check file integrity.
+NEW: The OAuth login with Google stay on the requested page after the redirect instead of reaching the home page.
 
 For developers:
 ---------------
@@ -198,6 +199,7 @@ The following changes may create regressions for some external modules, but were
 * The substitution variable __MYCOUNTRY_ID__ has been removed (duplicate of standard __MYCOMPANY_COUNTRY_ID__).
 * Renamed hook "info_admin" into "messageOfTheDay".
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
+* Module Paybox has been removed.
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
