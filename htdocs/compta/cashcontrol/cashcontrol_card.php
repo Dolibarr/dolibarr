@@ -350,7 +350,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-		$sql .= " AND ".$possource." = '".$db->escape($terminalid)."'";
+		$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
