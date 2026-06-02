@@ -375,7 +375,7 @@ if ($release) {
 
 $checksumconcat = array();
 
-if ($release && $releaseblockedlog && isset($fp)) {
+if ($release && $releaseblockedlog && isset($fp)) { // @phpstan-ignore-line
 	fwrite($fp, '<dolibarr_unalterable_files version="'.$releaseblockedlog.'">'."\n");
 }
 
