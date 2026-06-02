@@ -1151,6 +1151,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
 
+	// Optional tabs selected by user, and detection of an already generated object (for idempotence warning)
+	$enabledtabs = filterEnabledTabs(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	$objectalreadyexists = dol_is_file($destdir.'/class/'.strtolower($objectname).'.class.php');
+
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
 	dol_mkdir($destdir.'/img');
@@ -1469,6 +1473,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 		}
 
+		// Exclude tab page files for tabs not selected by user
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			if (!in_array($tabkey, $enabledtabs, true)) {
+				unset($filetogenerate[$tabinfo['file']]);
+			}
+		}
+
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 
@@ -1731,6 +1742,27 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 					$error++;
 				}
 			}
+		}
+	}
+
+	// Apply object tab selection on the generated lib file:
+	// selected tabs -> hardcode the show flag to 1 (visible without extra config) ; unselected -> remove flag declaration and tab block
+	if (!$error) {
+		$libdestfile = $destdir.'/'.$ncObj->applyToFilename('lib/mymodule_myobject.lib.php');
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			$marker = $tabinfo['marker'];
+			if (in_array($tabkey, $enabledtabs, true)) {
+				$arrayreplacement = array(
+					'/\$'.$tabinfo['var'].' = getDolGlobalInt\([^;]*\);/' => '$'.$tabinfo['var'].' = 1;'
+				);
+				dolReplaceInFile($libdestfile, $arrayreplacement, '', '0', 0, 1);
+			} else {
+				removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$marker.'.*?\/\/ END MODULEBUILDER TABFLAG '.$marker.'\s*/s');
+				removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s');
+			}
+		}
+		if ($objectalreadyexists) {
+			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
 		}
 	}
 
