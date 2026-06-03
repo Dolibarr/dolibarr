@@ -241,7 +241,7 @@ $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs
 
 $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'<br>'.$langs->trans("UnalterableLogTool2FR", $langs->transnoentitiesnoconv("Bank"), $langs->transnoentitiesnoconv("CashControl")).'</span><br>';
 }
 
 print info_admin($htmltext, 0, 0, 'warning');

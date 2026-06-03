@@ -627,6 +627,15 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 if ($action == "create" || $action == "start") {
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
+	$htmltext = '';
+	// @phpstan-ignore-next-line  Country code is already FR because of in_array('FR') test above
+	if ($mysoc->country_code === 'FR') {
+		$htmltext .= $langs->trans("UnalterableLogTool2FR", $langs->transnoentitiesnoconv("Bank"), $langs->transnoentitiesnoconv("CashControl")).'<br>';
+	}
+
+	print info_admin($htmltext, 0, 0, 'warning');
+
+
 	if ($action == 'start') {
 		if (empty(GETPOSTINT('closeday'))) {
 			$endperiod = dol_get_last_day(GETPOSTINT('closeyear'), GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 'gmt');
