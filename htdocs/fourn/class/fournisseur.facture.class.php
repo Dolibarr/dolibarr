@@ -3211,6 +3211,7 @@ class FactureFournisseur extends CommonInvoice
 	public function createFromClone(User $user, $fromid, $invertdetail = 0)
 	{
 		global $conf, $langs, $hookmanager;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
@@ -3262,6 +3263,15 @@ class FactureFournisseur extends CommonInvoice
 			$this->error = $object->error;
 			$this->errors = $object->errors;
 			$error++;
+		}
+
+		if (!$error && $result > 0) {
+			$object->origin_type = $objFrom->element;
+			$object->origin_id = $objFrom->id;
+			$res_link = $object->add_object_linked($objFrom->element, $objFrom->id, $user, 0, 'clone');
+			if ($res_link <= 0) {
+				dol_syslog("Warning: Could not create clone link: " . $object->error, LOG_WARNING);
+			}
 		}
 
 		if (!$error) {
