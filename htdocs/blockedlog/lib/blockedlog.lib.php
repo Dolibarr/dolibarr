@@ -559,6 +559,24 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 }
 
 /**
+ * Show information about cash control
+ *
+ * @return string
+ */
+function showInformationAboutCashControl()
+{
+	global $mysoc, $langs;
+
+	$htmltext = '';
+	// @phpstan-ignore-next-line  Country code is already FR because of in_array('FR') test above
+	if ($mysoc->country_code === 'FR') {
+		$htmltext .= $langs->trans("UnalterableLogTool2FR", $langs->transnoentitiesnoconv("Bank"), $langs->transnoentitiesnoconv("CashControl")).'<br>';
+	}
+
+	return info_admin($htmltext, 0, 0, 'warning');
+}
+
+/**
  * Check if country change is allowed
  *
  * @param string	$oldcountrycode		Old country code of the company
