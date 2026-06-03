@@ -1278,6 +1278,7 @@ class Facture extends CommonInvoice
 	public function createFromClone(User $user, $fromid = 0)
 	{
 		global $hookmanager;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
@@ -1376,6 +1377,13 @@ class Facture extends CommonInvoice
 			$error++;
 			$this->setErrorsFromObject($object);
 		} else {
+			$object->origin_type = $objFrom->element;
+			$object->origin_id = $objFrom->id;
+			$res_link = $object->add_object_linked($objFrom->element, $objFrom->id, $user, 0, 'clone');
+			if ($res_link <= 0) {
+				dol_syslog("Warning: Could not create clone link: " . $object->error, LOG_WARNING);
+			}
+
 			// copy internal contacts
 			if ($object->copy_linked_contact($objFrom, 'internal') < 0) {
 				$error++;
