@@ -1461,6 +1461,7 @@ class Propal extends CommonObject
 	 */
 	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		global $conf, $hookmanager, $mysoc;
 
 		dol_include_once('/projet/class/project.class.php');
@@ -1601,6 +1602,15 @@ class Propal extends CommonObject
 		if ($result < 0) {
 			$this->setErrorsFromObject($object);
 			$error++;
+		}
+
+		if (!$error && $result > 0) {
+			$object->origin_type = $this->element;
+			$object->origin_id = $this->id;
+			$res_link = $object->add_object_linked($this->element, $this->id, $user, 0, 'clone');
+			if ($res_link <= 0) {
+				dol_syslog("Warning: Could not create clone link: " . $object->error, LOG_WARNING);
+			}
 		}
 
 		if (!$error && !getDolGlobalInt('MAIN_IGNORE_CONTACTS_ON_CLONING')) {
