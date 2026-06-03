@@ -1294,6 +1294,7 @@ class Commande extends CommonOrder
 	public function createFromClone(User $user, $socid = 0)
 	{
 		global $user, $hookmanager;
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
 
@@ -1351,6 +1352,15 @@ class Commande extends CommonOrder
 		$result = $this->create($user);
 		if ($result < 0) {
 			$error++;
+		}
+
+		if (!$error && $result > 0) {
+			$this->origin_type = $this->element;
+			$this->origin_id = $objFrom->id;
+			$res_link = $this->add_object_linked($this->element, $objFrom->id, $user, 0, 'clone');
+			if ($res_link <= 0) {
+				dol_syslog("Warning: Could not create clone link: " . $this->error, LOG_WARNING);
+			}
 		}
 
 		if (!$error) {
