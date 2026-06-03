@@ -458,9 +458,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_soc";
 			$sql .= ", client_nom";
 			$sql .= ", amount";
-			//$sql .= ", bic";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", iban";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", rum";		// no more required, we have fk_prelevement_demande
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
@@ -468,9 +465,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
-			//$sql .= ", '" . $this->db->escape($bic) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape(dolEncrypt($iban)) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape($rum) . "'";		// no more required, we have fk_prelevement_demande
 			$sql .= ", " . ((int) $id_prelevement_demande);
 			$sql .= (($sourcetype == 'salary') ? ", " . ((int) $client_id) : '');
 			$sql .= ")";
