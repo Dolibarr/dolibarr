@@ -4750,10 +4750,11 @@ abstract class CommonObject
 	 *	@param  string	$targettype		Object target type
 	 * 	@param	User	$f_user			User that create
 	 * 	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param	string	$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null (do not update).
 	 *	@return							int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), fetObjectLinked(), deleteObjectLinked()
 	 */
-	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $f_user = null, $notrigger = 0)
+	public function updateObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		global $user;
 		$updatesource = false;
@@ -4774,11 +4775,17 @@ abstract class CommonObject
 		if ($updatesource) {
 			$sql .= "fk_source = " . ((int) $sourceid);
 			$sql .= ", sourcetype = '" . $this->db->escape($sourcetype) . "'";
+			if (!empty($relationtype)) {
+				$sql .= ", relationtype = '" . $this->db->escape($relationtype) . "'";
+			}
 			$sql .= " WHERE fk_target = " . ((int) $this->id);
 			$sql .= " AND targettype = '" . $this->db->escape($this->element) . "'";
 		} elseif ($updatetarget) {
 			$sql .= "fk_target = " . ((int) $targetid);
 			$sql .= ", targettype = '" . $this->db->escape($targettype) . "'";
+			if (!empty($relationtype)) {
+				$sql .= ", relationtype = '" . $this->db->escape($relationtype) . "'";
+			}
 			$sql .= " WHERE fk_source = " . ((int) $this->id);
 			$sql .= " AND sourcetype = '" . $this->db->escape($this->element) . "'";
 		}
@@ -4791,6 +4798,9 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
+				if (!empty($relationtype)) {
+					$this->context['link_relationtype'] = $relationtype;
+				}
 
 				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
