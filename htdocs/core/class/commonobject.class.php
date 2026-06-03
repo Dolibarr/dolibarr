@@ -4832,10 +4832,11 @@ abstract class CommonObject
 	 *  @param	int		$rowid			Row id of line to delete. If defined, other parameters are not used.
 	 * 	@param	?User	$f_user			User that create
 	 * 	@param	int<0,1>	$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return     					int	>0 if OK, <0 if KO
+	 *	@param	string		$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null (delete all matching).
+	 *	@return     						int	>0 if OK, <0 if KO
 	 *	@see	add_object_linked(), updateObjectLinked(), fetchObjectLinked()
 	 */
-	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0)
+	public function deleteObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $rowid = 0, $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		global $user;
 		$deletesource = false;
@@ -4863,6 +4864,9 @@ abstract class CommonObject
 			$this->context['link_source_type'] = $sourcetype;
 			$this->context['link_target_id'] = $targetid;
 			$this->context['link_target_type'] = $targettype;
+			if (!empty($relationtype)) {
+				$this->context['link_relationtype'] = $relationtype;
+			}
 
 			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);	// Note: We should have used here a hook. Not a business event
 			if ($result < 0) {
@@ -4888,6 +4892,9 @@ abstract class CommonObject
 					$sql .= " OR";
 					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "')";
 				}
+			}
+			if (!empty($relationtype)) {
+				$sql .= " AND relationtype = '" . $this->db->escape($relationtype) . "'";
 			}
 
 			dol_syslog(get_class($this) . "::deleteObjectLinked", LOG_DEBUG);
