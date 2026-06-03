@@ -106,7 +106,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 		$h++;
 	}
 
-	if ($withtabsetup && !userIsTaxAuditor()) {
+	if ($withtabsetup && !userIsTaxAuditor() && (!defined('CERTIF_LNE') || constant('CERTIF_LNE') != 1)) {
 		$head[$h][0] = DOL_URL_ROOT."/blockedlog/admin/blockedlog.php".$param;
 		$head[$h][1] = $langs->trans("TechnicalInformation");
 		$head[$h][2] = 'technicalinfo';
@@ -556,4 +556,31 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 			$posy += 3;
 		}
 	}
+}
+
+/**
+ * Check if country change is allowed
+ *
+ * @param string	$oldcountrycode		Old country code of the company
+ * @param string	$newcountrycode		New country code of the company
+ * @return string						Error message
+ */
+function checkIfCountryChangeIsAllowed($oldcountrycode, $newcountrycode)
+{
+	global $langs;
+
+	$errmsg = '';
+
+	$listOfCountriesToDisallowBlockedLogDisabling = array('FR');
+
+	if ($newcountrycode != $oldcountrycode) {
+		if (in_array($oldcountrycode, $listOfCountriesToDisallowBlockedLogDisabling)) {
+			if (isALNERunningVersion() && defined('CERTIF_LNE') && constant('CERTIF_LNE') == 1) {
+				$langs->load("blockedlog");
+				$errmsg = $langs->trans("CountryChangeNotAllowedWhenBlockedLogIsRunning", $oldcountrycode, $langs->transnoentitiesnoconv("BlockedLog"));
+			}
+		}
+	}
+
+	return $errmsg;
 }

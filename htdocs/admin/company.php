@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
@@ -89,6 +90,16 @@ if ($reshook < 0) {
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
 	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
+
+	// Test if we are allowed to change company properties
+	$errmsg = checkIfCountryChangeIsAllowed($mysoc->country_code, $tmparray['code']);
+	if ($errmsg) {
+		$error++;
+		setEventMessages($errmsg, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
+		exit;
+	}
+
 	if (!empty($tmparray['id'])) {
 		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
 			// For FR, default value of option to show profid SIREN is on by default

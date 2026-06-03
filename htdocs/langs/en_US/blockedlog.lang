@@ -95,7 +95,7 @@ MAIN_INFO_ITPROVIDER_ZIP=IT supplier zip
 MAIN_INFO_ITPROVIDER_TOWN=IT supplier town
 RegistrationDoneAndModuleEnabled=The new registration information have been saved and registered. The module %s is enabled.
 UserRegistration=User registration
-RegistrationRequired=Registration expected
+RegistrationRequired=Registration required
 FileHasBeenEncodedWithASecretKeyStartingWith=The archive file content says it has been signed with a secret key starting with
 FileIntegrity=File integrity
 FileAuthenticity=File authenticity
@@ -129,6 +129,7 @@ IncludesAll=Includes all
 IncludesAllHelp=Includes all record, even the one recorded with an old version before the v24. On version older than v24, the amount excluding tax for fast calculation of cumulative total was not recorded in the unalterable Log, so it won't be reported.
 OnlyFromV2=Only record from v24
 OnlyFromV2Help=After the v24 version, the amount excluding tax for fast calculation of cumulative total was recorded in the unalterable Log, so it is reported, but date range may be lower than the one of the "Includes all" option.
+CountryChangeNotAllowedWhenBlockedLogIsRunning=Country change is not allowed when your country is %s once the module %s has been used.
 
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted

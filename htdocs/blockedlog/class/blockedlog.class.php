@@ -1850,14 +1850,12 @@ class BlockedLog
 	 */
 	public function canBeEnabled()
 	{
-		global $dolibarr_main_force_https;
-
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 
-		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && empty($dolibarr_main_force_https)) {
-			return 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
+		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && !isHTTPS()) {
+			return 'Error: The HTTPS must be enabled to allow the use of this module.';
 		}
 
 		return '';
