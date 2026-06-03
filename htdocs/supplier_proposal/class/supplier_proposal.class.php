@@ -1244,6 +1244,15 @@ class SupplierProposal extends CommonObject
 			$error++;
 		}
 
+		if (!$error && $result > 0) {
+			$this->origin_type = $this->element;
+			$this->origin_id = $objFrom->id;
+			$res_link = $this->add_object_linked($objFrom->element, $objFrom->id, $user, 0, 'clone');
+			if ($res_link <= 0) {
+				dol_syslog("Warning: Could not create clone link: " . $this->error, LOG_WARNING);
+			}
+		}
+
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
