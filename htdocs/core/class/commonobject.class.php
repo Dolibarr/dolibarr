@@ -4360,14 +4360,15 @@ abstract class CommonObject
 	/**
 	 *	Add an object link into llx_element_element.
 	 *
-	 *	@param		string	$origin		Linked element type
-	 *	@param		int		$origin_id	Linked element id
-	 * 	@param		User	$f_user		User that create
-	 * 	@param		int		$notrigger	1=Does not execute triggers, 0=execute triggers
-	 *	@return		int					Return integer <=0 if KO, >0 if OK
+	 *	@param	string		$origin			Linked element type
+	 *	@param	int			$origin_id		Linked element id
+	 * 	@param	User		$f_user			User that create
+	 * 	@param	int			$notrigger		1=Does not execute triggers, 0=execute triggers
+	 *  @param	string|null	$relationtype	Type of relation (e.g., 'clone', 'parent'). Default null.
+	 *	@return	int			Return integer <=0 if KO, >0 if OK
 	 *	@see		fetchObjectLinked(), updateObjectLinked(), deleteObjectLinked()
 	 */
-	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0)
+	public function add_object_linked($origin = null, $origin_id = null, $f_user = null, $notrigger = 0, $relationtype = null)
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
@@ -4414,11 +4415,17 @@ abstract class CommonObject
 		$sql .= ", sourcetype";
 		$sql .= ", fk_target";
 		$sql .= ", targettype";
+		if (!empty($relationtype)) {
+			$sql .= ", relationtype";
+		}
 		$sql .= ") VALUES (";
 		$sql .= ((int) $origin_id);
 		$sql .= ", '" . $this->db->escape($origin) . "'";
 		$sql .= ", " . ((int) $this->id);
 		$sql .= ", '" . $this->db->escape($targettype) . "'";
+		if (!empty($relationtype)) {
+			$sql .= ", '".$this->db->escape($relationtype)."'";
+		}
 		$sql .= ")";
 
 		dol_syslog(get_class($this) . "::add_object_linked", LOG_DEBUG);
