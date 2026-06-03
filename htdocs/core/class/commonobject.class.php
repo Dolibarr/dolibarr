@@ -269,6 +269,11 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
+	 * @var array<int, string>  Maps element_element rowid (int) to relationtype string (e.g., 'clone', 'parent').
+	 */
+	public $linkedObjectsRelationtype = array();
+
+	/**
 	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by OBJECT->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
@@ -4544,10 +4549,11 @@ abstract class CommonObject
 	 *  @param  int<0,1>	$alsosametype		0=Return only links to object that differs from source type. 1=Include also link to objects of same type.
 	 *  @param  string		$orderby			SQL 'ORDER BY' clause
 	 *  @param	int<0,1>|string	$loadalsoobjects	Load also the array $this->linkedObjects. Use 0 to not load (increase performances), Use 1 to load all, Use value of type ('facture', 'facturerec', ...) to load only a type of object.
-	 *	@return int<-1,1>						Return integer <0 if KO, >0 if OK
+	 *  @param	string			$relationtype		Filter by relation type (e.g., 'clone', 'parent'). Default null (no filter).
+	 *	@return int<-1,1>							Return integer <0 if KO, >0 if OK
 	 *  @see	add_object_linked(), updateObjectLinked(), deleteObjectLinked()
 	 */
-	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1)
+	public function fetchObjectLinked($sourceid = null, $sourcetype = '', $targetid = null, $targettype = '', $clause = 'OR', $alsosametype = 1, $orderby = 'sourcetype', $loadalsoobjects = 1, $relationtype = null)
 	{
 		global $hookmanager, $action;
 
@@ -4560,6 +4566,7 @@ abstract class CommonObject
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
+		$this->linkedObjectsRelationtype = array();
 
 		// Hook for allowing modules to completely alter the behavior of the method
 		$parameters = array(
@@ -4627,7 +4634,7 @@ abstract class CommonObject
 		 }*/
 
 		// Links between objects are stored in table element_element
-		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype";
+		$sql = "SELECT rowid, fk_source, sourcetype, fk_target, targettype, relationtype";
 		$sql .= " FROM ".$this->db->prefix()."element_element";
 		$sql .= " WHERE ";
 		if ($justsource || $justtarget) {
@@ -4648,6 +4655,9 @@ abstract class CommonObject
 			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
+		}
+		if (!empty($relationtype)) {
+			$sql .= " AND relationtype = '".$this->db->escape($relationtype)."'";
 		}
 		$sql .= $this->db->order($orderby);
 
@@ -4672,6 +4682,9 @@ abstract class CommonObject
 					if ($obj->fk_target == $targetid && $obj->targettype == $targettype) {
 						$this->linkedObjectsIds[$obj->sourcetype][$obj->rowid] = $obj->fk_source;
 					}
+				}
+				if (!empty($obj->relationtype)) {
+					$this->linkedObjectsRelationtype[$obj->rowid] = $obj->relationtype;
 				}
 				$i++;
 			}
