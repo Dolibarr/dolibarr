@@ -19,7 +19,7 @@ jobs:
 
     # Referent Qualite/ Conformite (will be autoassigned as reviewer)
     env:
-      REVIEWERS: "eldy"
+      REVIEWER: "eldy"
 
 
     # Do not run schedule on forks
