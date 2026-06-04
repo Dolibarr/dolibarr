@@ -24,6 +24,7 @@ class QuickMemo {
 			elementType: '',
 			context: '',
 			token: '',
+			shareBtnStatus: 0,
 			colors: ['#fff8a6', '#ffd6d6', '#d6ffd9', '#d6e6ff', '#f3d6ff', '#ffffff', '#f5f5f5'],
 			publicFontAIcon: 'far fa-eye',
 			privateFontAIcon: 'far fa-eye-slash',
@@ -522,7 +523,9 @@ class QuickMemo {
 		// Append buttons based on permissions
 		if (this.param.userWriteRight) {
 			actions.appendChild(btnPrivate);
-			actions.appendChild(btnShare);
+			if(this.param.shareBtnStatus > 0) {
+				actions.appendChild(btnShare);
+			}
 			actions.appendChild(colorInput);
 			actions.appendChild(btnCreateModel);
 		}

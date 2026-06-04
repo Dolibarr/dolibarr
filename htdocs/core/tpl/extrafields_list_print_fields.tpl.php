@@ -26,11 +26,13 @@
  * @var string $extrafieldsobjectkey
  * @var string $extrafieldsobjectprefix
  * @var int $i
+ * @var array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
  */
 '
 @phan-var-force CommonObject $object
 @phan-var-force stdClass $obj
 @phan-var-force int $i
+@phan-var-force array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
 ';
 
 // Protection to avoid direct call of template
@@ -42,8 +44,6 @@ if (empty($conf) || !is_object($conf)) {
 if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }
-
-$totalarray = array();
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...

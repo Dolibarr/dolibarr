@@ -238,9 +238,6 @@ function testAIConnection(string $service, string $key, string $url): array
 		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL_TEXT');
 	}
 
-	$data = [];
-	$headers = ["Content-Type: application/json"];
-
 	// GOOGLE
 	if ($service == 'google' || strpos($url, 'googleapis') !== false) {
 		if (strpos($url, ':generateContent') === false) {
@@ -424,6 +421,13 @@ function aiAdminPrepareHead()
 	$head[$h][1] = $langs->trans("CustomPrompt");
 	$head[$h][2] = 'custom';
 	$h++;
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
+		$head[$h][1] = $langs->trans("Assistant");
+		$head[$h][2] = 'assistant';
+		$h++;
+	}
 
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);

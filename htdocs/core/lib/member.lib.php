@@ -284,16 +284,10 @@ function member_admin_prepare_head()
  */
 function member_stats_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $conf, $langs;
 
 	$h = 0;
 	$head = array();
-
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/index.php');
-	$head[$h][1] = $langs->trans("Subscriptions");
-	$head[$h][2] = 'statssubscription';
-	$h++;
-
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['mode' => 'memberbycountry']);
 	$head[$h][1] = $langs->trans("Country");
 	$head[$h][2] = 'statscountry';
@@ -319,6 +313,7 @@ function member_stats_prepare_head($object)
 	$head[$h][2] = 'statsbyproperties';
 	$h++;
 
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -329,6 +324,37 @@ function member_stats_prepare_head($object)
 
 	return $head;
 }
+
+
+/**
+ *  Return array head with list of tabs to view object stats information
+ *
+ *  @param	Adherent	$object         Member or null
+ *  @return array<int,array<int,string>>	head links
+ */
+function membership_stats_prepare_head($object)
+{
+	global $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/index.php');
+	$head[$h][1] = $langs->trans("Subscriptions");
+	$head[$h][2] = 'statssubscription';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'membership_stats');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'memberships_stats', 'remove');
+
+	return $head;
+}
+
 
 /**
  *  Return array head with list of tabs to view object information

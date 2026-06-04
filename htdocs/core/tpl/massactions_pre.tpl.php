@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var FormCompany $formcompany
  * @var HookManager $hookmanager
@@ -205,11 +206,11 @@ if ($massaction == 'preaffectuser') {
 	$valuefieldtasksrole .= '</div>';
 
 	$formquestion[] = array(
-				'type' => 'other',
-				'name' => 'usertoaffect',
-				'label' => $langs->trans("User"),
-				'value' => $valuefielduser
-			);
+		'type' => 'other',
+		'name' => 'usertoaffect',
+		'label' => $langs->trans("User"),
+		'value' => $valuefielduser
+	);
 	$formquestion[] = array(
 		'type' => 'other',
 		'name' => 'projectrole',
@@ -378,7 +379,6 @@ if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = $objecttmp->element;
 	/** @var CommonObject $objecttmp */
-	$extrafields = new ExtraFields($db);
 	$keysuffix = '';
 	$extrafields->fetch_name_optionals_label($elementtype);
 	$extrafields_list = $extrafields->attributes[$elementtype]['label'];

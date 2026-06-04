@@ -47,8 +47,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
           coverage: none # disable xdebug, pcov
+          extensions: ast
           tools: cs2pr:1.8.6,phan:5.5.2
 
 

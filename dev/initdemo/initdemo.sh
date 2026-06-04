@@ -12,8 +12,8 @@
 # Regis Houssin       - regis.houssin@inodbox.com
 # Laurent Destailleur - eldy@users.sourceforge.net
 #------------------------------------------------------
-# Usage: initdemo.sh confirm|confirmresetblockedlog
-# usage: initdemo.sh confirm|confirmresetblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
+# Usage: initdemo.sh confirm|confirmcleanblockedlog
+# usage: initdemo.sh confirm|confirmcleanblockedlog mysqldump_dolibarr_x.x.x.sql database port login pass
 #------------------------------------------------------
 
 
@@ -44,12 +44,16 @@ admin=$5
 passwd=$6
 
 # ----------------------------- check params
-if [ "$confirm" != "confirm" ] && [ "$confirm" != "confirmresetblockedlog" ]
+if [ "$confirm" != "confirm" ] && [ "$confirm" != "confirmcleanblockedlog" ]
 then
 	echo "----- $0 -----"
-	echo "Usage: initdemo.sh confirm|confirmresetblockedlog "
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog"
 	echo " or"
-	echo "Usage: initdemo.sh confirm|confirmresetblockedlog [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo "Usage: initdemo.sh confirm|confirmcleanblockedlog [mysqldump_dolibarr_x.x.x.sql database port login pass]"
+	echo
+	echo "confirm:                To reload database"
+	echo "confirmcleanblockedlog: To reload database and reset blocked log"
+	echo
 	exit
 fi
 
@@ -205,10 +209,10 @@ export res=$?
 
 
 # ---------------------------- Run update of demo data
-if [ "$confirm" == "confirmresetblockedlog" ]; then
+if [ "$confirm" == "confirmcleanblockedlog" ]; then
 	echo
-	echo Run script updatedemo.php confirmresetblockedlog
-	"$mydir/updatedemo.php" confirmresetblockedlog
+	echo Run script updatedemo.php confirmcleanblockedlog
+	"$mydir/updatedemo.php" confirmcleanblockedlog
 	export res=$?
 fi
 

@@ -2845,7 +2845,6 @@ class Setup extends DolibarrApi
 	 */
 	public function getConfs()
 	{
-		global $conf;
 		$list = array();
 
 		if (!DolibarrApiAccess::$user->admin

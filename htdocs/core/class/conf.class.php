@@ -49,7 +49,7 @@ class Conf extends stdClass
 	public $global;
 
 	/**
-	 * @var stdClass 	To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass 	To store browser info (->name, ->os, ->version, ->ua, ->layout, ...). Set with the result of a call of getBrowserInfo()
 	 */
 	public $browser;
 
@@ -1021,6 +1021,11 @@ class Conf extends stdClass
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
 			}
 
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
+			}
+
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
@@ -1035,14 +1040,7 @@ class Conf extends stdClass
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
 				// Mode automatic. Similar code than into main.inc.php
-				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-					$this->liste_limit = 8;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-					$this->liste_limit = 10;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-					$this->liste_limit = 20;
-				}
+				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
@@ -1358,7 +1356,7 @@ class Conf extends stdClass
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 3;
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = (defined('MAIN_SECURITY_CSRF_WITH_TOKEN') ? constant('MAIN_SECURITY_CSRF_WITH_TOKEN') : 3);
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 

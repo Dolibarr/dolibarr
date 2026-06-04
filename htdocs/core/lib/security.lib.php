@@ -254,15 +254,15 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'	$type		Type of hash:
- *                                                                                                                          'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
- *                                                                                                                          'sha1' or '1': sha1
- *                                                                                                                          'sha1md5' or '2': sha1md5
- *                                                                                                                          'md5' or '3': md5
- *                                                                                                                          'openldapxxx' or '4': for OpenLdap
- *                                                                                                                          'sha256' or '5': sha256
- *                                                                                                                          'password_hash' or '6': password_hash
- *                                                                                                                          Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'|'hash'	$type		Type of hash:
+ *                                                                                                                  		        'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                                                                                                          		'sha1' or '1': sha1
+ *  		                                                                                                                        'sha1md5' or '2': sha1md5
+ *      		                                                                                                                    'md5' or '3': md5
+ *              		                                                                                                            'openldapxxx' or '4': for OpenLdap
+ *                      		                                                                                                    'sha256' or '5': sha256
+ *                              		                                                                                            'password_hash' or '6': password_hash
+ *                                      		                                                                                    Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
  *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
  * 	@return		string|array{pass_encrypted:string,pass_encoding:string}	Hash of string or array with pass_encrypted and pass_encoding
@@ -272,8 +272,8 @@ function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
 {
 	// No need to add salt for password_hash
 	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+		// if string contains a null character that can't be encoded. Return an error instead of fatal error.
 		if (strpos($chain, "\0") !== false) {
-			// String contains a null character that can't be encoded. Return an error instead of fatal error.
 			if ($mode == 1) {
 				return array('pass_encrypted' => 'Invalid string to encrypt. Contains a null character', 'pass_encoding' => '');
 			} else {
@@ -281,6 +281,7 @@ function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
 			}
 		}
 
+		// Build a password hash with default algorithm
 		if ($mode == 1) {
 			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
 		} else {
@@ -359,7 +360,7 @@ function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
  *
  * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, 'hash'). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
  *  @see dol_hash()
  */
@@ -546,13 +547,20 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = 'evaluation';
 	}
 
-	// @todo check : project_task
-	// @todo possible ?
-	// elseif (substr($features, -3, 3) == 'det') {
-	// 	$features = substr($features, 0, -3);
-	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
-	// 	$features = substr($features, 0, -4);
-	// }
+	// When the object is a task (element='project_task') and $feature2 is empty,
+	// $checkUserAccessToObject() falls into the $checkproject path and uses the task ID
+	// as project ID, which always fails. Setting $feature2='project_task' triggers the
+	// normalization at line 974 that redirects to the $checktask path, which correctly
+	// resolves $task->fk_project before calling getProjectsAuthorizedForUser().
+	if (is_object($object) && in_array($object->element, array('project_task', 'task'))
+		&& (empty($features) || in_array($features, array('projet', 'project')))
+		&& empty($feature2)) {
+		$features = 'projet';
+		$feature2 = 'project_task';
+		if (empty($tableandshare)) {
+			$tableandshare = 'projet_task';
+		}
+	}
 
 	// print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -1409,6 +1417,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		llxFooter();
 	}
 
+	// End PHP
 	exit(0);
 }
 

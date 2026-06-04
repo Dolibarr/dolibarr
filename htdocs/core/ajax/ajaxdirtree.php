@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2026  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -46,6 +46,8 @@ if (!defined('NOREQUIREAJAX')) {
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $action
  * @var int $section
  * @var string $module
  * @var ?string $mode

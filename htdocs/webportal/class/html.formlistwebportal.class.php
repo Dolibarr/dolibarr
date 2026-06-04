@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Charlene Benke          <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -580,16 +580,22 @@ class FormListWebPortal
 		if (!empty($field_spec['arrayofkeyval']) && is_array($field_spec['arrayofkeyval'])) {
 			$out = $this->form->selectarray('search_' . $field_key, $field_spec['arrayofkeyval'], (isset($this->search[$field_key]) ? $this->search[$field_key] : ''), $field_spec['notnull'], 0, 0, '', 1, 0, 0, '', '');
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $field_spec['type'])) {
-			$postDateStart = dol_mktime(0, 0, 0,
-					(int) isset($this->search[$field_key . '_dtstartmonth']) ? $this->search[$field_key . '_dtstartmonth'] : 0,
-					(int) isset($this->search[$field_key . '_dtstartday']) ? $this->search[$field_key . '_dtstartday'] : 0,
-					(int) isset($this->search[$field_key . '_dtstartyear']) ? $this->search[$field_key . '_dtstartyear'] : 0
-				);
-			$postDateEnd = dol_mktime(0, 0, 0,
-					(int) isset($this->search[$field_key . '_dtendmonth']) ? $this->search[$field_key . '_dtendmonth'] : 0,
-					(int) isset($this->search[$field_key . '_dtendday']) ? $this->search[$field_key . '_dtendday'] : 0,
-					(int) isset($this->search[$field_key . '_dtendyear']) ? $this->search[$field_key . '_dtendyear'] : 0
-				);
+			$postDateStart = dol_mktime(
+				0,
+				0,
+				0,
+				(int) isset($this->search[$field_key . '_dtstartmonth']) ? $this->search[$field_key . '_dtstartmonth'] : 0,
+				(int) isset($this->search[$field_key . '_dtstartday']) ? $this->search[$field_key . '_dtstartday'] : 0,
+				(int) isset($this->search[$field_key . '_dtstartyear']) ? $this->search[$field_key . '_dtstartyear'] : 0
+			);
+			$postDateEnd = dol_mktime(
+				0,
+				0,
+				0,
+				(int) isset($this->search[$field_key . '_dtendmonth']) ? $this->search[$field_key . '_dtendmonth'] : 0,
+				(int) isset($this->search[$field_key . '_dtendday']) ? $this->search[$field_key . '_dtendday'] : 0,
+				(int) isset($this->search[$field_key . '_dtendyear']) ? $this->search[$field_key . '_dtendyear'] : 0
+			);
 
 			$out = '<div class="grid width150">';
 			$out .= $this->form->inputDate('search_' . $field_key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
@@ -617,10 +623,13 @@ class FormListWebPortal
 
 			// specific to get invoice status (depends on payment)
 			if ($this->element == 'invoice') {
+				$invoice = $this->object;  // Copy to help static analysis
+				/** @var Facture $invoice */
+				'@phan-var-force Facture $invoice';
 				$discount = new DiscountAbsolute($this->db);
 
 				// Store company
-				$idCompany = (int) $this->object->socid;
+				$idCompany = (int) $invoice->socid;
 				if (!isset($this->companyStaticList[$idCompany])) {
 					$companyStatic = new Societe($this->db);
 					$companyStatic->fetch($idCompany);
@@ -629,19 +638,18 @@ class FormListWebPortal
 				$companyStatic = $this->companyStaticList[$idCompany];
 
 				// paid sum
-				$payment = $this->object->getSommePaiement();
-				$totalcreditnotes = $this->object->getSumCreditNotesUsed();
-				$totaldeposits = $this->object->getSumDepositsUsed();
+				$payment = $invoice->getSommePaiement();
+				$totalcreditnotes = $invoice->getSumCreditNotesUsed();
+				$totaldeposits = $invoice->getSumDepositsUsed();
 
 				// remain to pay
 				$totalpay = $payment + $totalcreditnotes + $totaldeposits;
-				$remaintopay = price2num($this->object->total_ttc - $totalpay);
-				if ($this->object->status == Facture::STATUS_CLOSED && $this->object->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
+				$remaintopay = price2num($invoice->total_ttc - $totalpay);
+				if ($invoice->status == Facture::STATUS_CLOSED && $invoice->close_code == 'discount_vat') {        // If invoice closed with discount for anticipated payment
 					$remaintopay = 0;
 				}
-				if ($this->object->type == Facture::TYPE_CREDIT_NOTE && $this->object->paye == 1) {
-					// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal
-					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, '', 'rc.fk_facture_source=' . $this->object->id);
+				if ($invoice->type == Facture::TYPE_CREDIT_NOTE && $invoice->paye == 1) {
+					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, null, 'rc.fk_facture_source=' . $invoice->id);
 					$remaintopay = -$remaincreditnote;
 				}
 
@@ -688,8 +696,11 @@ class FormListWebPortal
 					$filedir = $conf->{$element}->multidir_output[$this->object->entity] . '/' . dol_sanitizeFileName($this->object->ref);
 					$out = $this->form->getDocumentsLink($element, $filename, $filedir);
 				} elseif ($field_key == 'signature_link') {
-					if ($this->object->fk_statut == Propal::STATUS_VALIDATED) {
-						$out = $this->form->getSignatureLink('proposal', $this->object);
+					$webobject = $this->object;	// Intermediate var to help with typing.
+					/** @var WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject */
+					'@phan-var-force WebPortalPropal|WebPortalOrder|WebPortalInvoice $webobject';
+					if ($webobject->fk_statut == Propal::STATUS_VALIDATED) {
+						$out = $this->form->getSignatureLink('proposal', $webobject);
 					}
 				} else {
 					$out = $this->form->showOutputFieldForObject($this->object, $field_spec, $field_key, $this->object->$field_key, '');

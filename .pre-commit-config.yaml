@@ -41,6 +41,9 @@ repos:
         exclude_types: [markdown]
       # Fix the end of file
       - id: end-of-file-fixer
+        exclude: |
+          (?x)^(htdocs/public/includes/tinymce/.*
+               )$
       # Check that there are no completely merged file conflicts
       - id: check-merge-conflict
         stages: [pre-rebase, pre-commit, pre-merge-commit]
@@ -49,7 +52,7 @@ repos:
       # Check that shell files are executables
       - id: check-shebang-scripts-are-executable
         exclude:
-          (?x)^( dev/tools/dolibarr-postgres2mysql.php |test/other/test_serialize.php
+          (?x)^( dev/tools/dolibarr-postgres2mysql.php
           |test/phpunit/textutf8.txt |test/phpunit/textiso.txt |htdocs/includes/.*
           |htdocs/modulebuilder/template/.* |dev/build/debian/dolibarr.postrm |dev/build/debian/dolibarr.postinst
           |dev/build/debian/dolibarr.config )$
@@ -66,7 +69,7 @@ repos:
 
   # Check github actions
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.11
+    rev: v1.7.12
     hooks:
       - id: actionlint
         stages: [manual]  # To run: pre-commit run -a --hook-stage=manual actionlint
@@ -218,7 +221,7 @@ repos:
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         # Due to a current limitation of configuration files,
@@ -269,7 +272,7 @@ repos:
 
   # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 4.0.4
+    rev: 4.2.0
     hooks:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci
@@ -277,16 +280,11 @@ repos:
           (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql
           |htdocs/includes/.*
-          |htdocs/install/doctemplates/websites/.*_template
-          |htdocs/install/doctemplates/websites/website_template.*\.sql
+          |htdocs/install/doctemplates/websites/.*
           |htdocs/install/mysql/data/llx_20_c_departements\.sql
-          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
           |htdocs/install/mysql/migration/3\..*\.sql
           |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
-          |htdocs/install/mysql/migration/repair\.sql
-          |htdocs/install/mysql/tables/llx_bookcal_availabilities-bookcal\.sql
           |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
-          |htdocs/install/mysql/tables/llx_rights_def\.key\.sql
           |htdocs/install/pgsql/functions/functions.*\.sql
           |htdocs/modulebuilder/template/sql/.*\.sql
           )$

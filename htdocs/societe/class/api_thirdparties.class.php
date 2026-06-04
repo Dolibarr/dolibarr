@@ -331,8 +331,10 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->company->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -393,7 +395,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -1650,7 +1652,7 @@ class Thirdparties extends DolibarrApi
 		$notification->socid = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1727,7 +1729,7 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1824,7 +1826,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {

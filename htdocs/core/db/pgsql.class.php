@@ -62,7 +62,9 @@ class DoliDBPgsql extends DoliDB
 	public $standard_conforming_strings = false;
 
 
-	/** @var resource|boolean Resultset of last query */
+	/**
+	 * @var false|resource|PgSql\Result Resultset of last query
+	 */
 	private $_results;
 
 
@@ -624,7 +626,8 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return datas as an array
 	 *
-	 *	@param	resource	$resultset  Resultset of request
+	 *	@param	bool|resource	$resultset  Resultset of request
+	 *	@phpstan-param	bool|resource|PgSql\Result	$resultset
 	 *	@return	array<int,mixed>|null|int<0,0>	Array or null if KO or end of cursor or 0 if resultset is bool
 	 */
 	public function fetch_row($resultset)
@@ -633,6 +636,9 @@ class DoliDBPgsql extends DoliDB
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
+		}
+		if (is_bool($resultset)) {
+			return 0;
 		}
 		return pg_fetch_row($resultset);  // @phan-suppress-current-line PhanTypeMismatchArgumentProbablyReal
 	}
@@ -682,10 +688,10 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Libere le dernier resultset utilise sur cette connection
+	 *	Free the last pointer resultset used by this connection
 	 *
-	 * @param	resource	$resultset  Result set of request
-	 * @return	void
+	 * 	@param	resource|null	$resultset  	Result set of request
+	 * 	@return	void
 	 */
 	public function free($resultset = null)
 	{

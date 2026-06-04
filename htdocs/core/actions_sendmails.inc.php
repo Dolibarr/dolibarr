@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
@@ -155,11 +155,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'member' || $object->element == 'user') {
+			'@phan-var-force Adherent|User $object';
 			$thirdparty = $object;
 			if ($object->socid > 0) {
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'expensereport') {
+			'@phan-var-force ExpenseReport $object';
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
@@ -167,11 +169,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'societe') {
+			'@phan-var-force Societe $object';
 			$thirdparty = $object;
 			if (is_object($thirdparty) && $thirdparty->id > 0) {
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'contact') {
+			'@phan-var-force Contact $object';
 			$contact = $object;
 			if ($contact->id > 0) {
 				$contact->fetch_thirdparty();

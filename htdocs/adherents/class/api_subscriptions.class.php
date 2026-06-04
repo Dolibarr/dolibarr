@@ -244,7 +244,7 @@ class Subscriptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$subscription->array_options[$index] = $this->_checkValForAPI($field, $val, $subscription);
+					$subscription->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $subscription);
 				}
 				continue;
 			}

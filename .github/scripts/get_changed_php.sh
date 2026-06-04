@@ -1,4 +1,4 @@
-b!/bin/bash
+#!/bin/bash
 # Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
 
 set -euo pipefail
