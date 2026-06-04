@@ -142,9 +142,10 @@ function isRegistrationDataSaved()
 	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
 	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
 	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$companyidprof2 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
-	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
 		return false;
 	}
 
