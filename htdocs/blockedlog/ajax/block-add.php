@@ -90,5 +90,10 @@ if ($element === 'facture') {	// Test on permission done in top of page
 		$facture->call_trigger($action, $user);
 	}
 
-	print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
+	if ($facture->errors) {
+		http_response_code(500);
+		print implode("\n", $facture->errors);
+	} else {
+		print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is now ".$facture->pos_print_counter;
+	}
 }

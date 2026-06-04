@@ -130,7 +130,10 @@ if (!GETPOST('specimen') && empty($nojs)) {
 					lang: '".dol_escape_js($langs->defaultlang)."',
 					token: '".currentToken()."'
 			}
-		);
+		).fail(function(jqXHR, textStatus, errorThrown) {
+		    console.error('Error AJAX :', textStatus, errorThrown);
+		    console.error('Answer server :', jqXHR.responseText);
+		});
 	</script>";
 }
 
