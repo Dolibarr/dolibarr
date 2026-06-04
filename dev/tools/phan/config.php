@@ -487,6 +487,7 @@ return [
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
+		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)

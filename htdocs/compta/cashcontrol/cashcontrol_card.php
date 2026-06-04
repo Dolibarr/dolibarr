@@ -318,12 +318,14 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$datefilter = 'p.datep';
 	$modulesourcefilter = 'f.module_source';
 	$amountfield = 'pf.amount';
+	$possource = 'f.pos_source';
 	$fieldentity = 'p.entity';
 	$joinleft = 'LEFT ';
 	if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 		$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
 		$modulesourcefilter = 'bl.module_source';
 		$amountfield = 'bl.amounts';
+		$possource = 'bl.pos_source';
 		$fieldentity = 'bl.entity';
 		$joinleft = '';
 	}
@@ -336,21 +338,19 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	foreach ($arrayofpaymentmode as $key => $val) {
 		// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
-		/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
+		/*$sql = "SELECT p.rowid, p.ref as pref, p.datep as datep, cp.code,";
 		$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 		$sql .= " b.fk_account as bankid,";
 		$sql .= " bl.signature"; */
 		$sql = "SELECT SUM(".$db->sanitize($amountfield).") as total, COUNT(*) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f,";
 		$sql .= " ".MAIN_DB_PREFIX."paiement as p";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.ref_object = p.ref AND bl.entity = ".((int) $conf->entity).",";
 		$sql .= " ".$db->sanitize($joinleft)." JOIN ".MAIN_DB_PREFIX."blockedlog as bl ON bl.action = 'PAYMENT_CUSTOMER_CREATE'";
 		$sql .= " AND bl.element = 'payment' AND bl.fk_object = p.rowid AND bl.entity = ".((int) $conf->entity).",";
-		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid,";
 		$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-		$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
+		$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
@@ -580,6 +580,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		foreach ($arrayofpaymentmode as $key => $val) {
 			// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
+			// TODO
 			/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
 			$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 			$sql .= " b.fk_account as bankid,";
@@ -612,6 +613,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
+					// $theoricalamountforterminal and $theoricalnbofinvoiceforterminal will be used to get the amount for period (cash_calculated, cheque_calculated and card_calculated)
 					$theoricalamountforterminal[$terminalid][$key] = $obj->total;
 					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
@@ -1114,7 +1116,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 				print '</td>';
 
-				// Amount calculated per payment type
+				// Amount calculated per payment type (field cash_calculated, cheque_calculated, card_calculated)
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td class="smallheight center'.($i == 0 ? ' hide0' : '').'">';
