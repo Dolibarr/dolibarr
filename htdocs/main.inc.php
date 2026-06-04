@@ -367,7 +367,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	if ((GETPOSTISSET('massaction') || $tmpaction) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
 		// We exclude some action that are not sensitive so legitimate
-		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'testsetup', 'undeployconfirmed', 'validatenewpassword', 'view')))) {
+		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('check', 'create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editfile', 'editvalidator', 'file_manager', 'history', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'testsetup', 'undeployconfirmed', 'validatenewpassword', 'view')))) {
+			// Note: 'create' is for form to ask creattion, realcreation is action 'add'
+			// Note: 'check' if for the feature to control an archive.
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -3960,6 +3962,7 @@ if (!function_exists("llxFooter")) {
 							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
 							'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
+							'company_idprof2' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2),
 							'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
 							'company_state' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE', $mysoc->state),
 							'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),

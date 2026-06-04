@@ -311,6 +311,18 @@ $dolibarr_main_force_https='0';
 //
 $dolibarr_main_prod='1';
 
+// dolibarr_login_badcharunauthorized
+// ==================================
+// List of characters forbidden in Dolibarr user logins.
+// This is a security-sensitive setting. Prefer LDAP/SSO mapping to the email field when possible.
+// If this parameter is not defined, the secure default value is used: ,@<>"'
+// Set it to an empty string only if you explicitly want to allow all characters.
+// Set it to 'MAIN_LOGIN_BADCHARUNAUTHORIZED' only if you explicitly trust the Dolibarr hidden setup value.
+// Examples:
+// $dolibarr_login_badcharunauthorized=',@<>"\'';
+// $dolibarr_login_badcharunauthorized='';
+// $dolibarr_login_badcharunauthorized='MAIN_LOGIN_BADCHARUNAUTHORIZED';
+
 // dolibarr_main_restrict_os_commands
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.

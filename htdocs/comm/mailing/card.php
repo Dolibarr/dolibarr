@@ -304,9 +304,6 @@ if (empty($reshook)) {
 						if (isModEnabled('paypal')) {
 							$onlinepaymentenabled++;
 						}
-						if (isModEnabled('paybox')) {
-							$onlinepaymentenabled++;
-						}
 						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
