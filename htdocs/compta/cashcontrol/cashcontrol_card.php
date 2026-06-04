@@ -350,7 +350,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 		$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
-		$sql .= " AND ".$possource." = '".$db->escape($terminalid)."'";
+		$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
 		if ($key == 'cash') {
@@ -580,6 +580,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		foreach ($arrayofpaymentmode as $key => $val) {
 			// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
+			// TODO
 			/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
 			$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 			$sql .= " b.fk_account as bankid,";
@@ -612,6 +613,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
+					// $theoricalamountforterminal and $theoricalnbofinvoiceforterminal will be used to get the amount for period (cash_calculated, cheque_calculated and card_calculated)
 					$theoricalamountforterminal[$terminalid][$key] = $obj->total;
 					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
@@ -1114,7 +1116,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 				print '</td>';
 
-				// Amount calculated per payment type
+				// Amount calculated per payment type (field cash_calculated, cheque_calculated, card_calculated)
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td class="smallheight center'.($i == 0 ? ' hide0' : '').'">';

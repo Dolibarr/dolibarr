@@ -369,12 +369,6 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
-// For Paybox
-if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
-	// TODO Add a check to validate that payment is ok.
-	$ispaymentok = true; // We will do the rest of code
-}
-
 // For Stripe
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
