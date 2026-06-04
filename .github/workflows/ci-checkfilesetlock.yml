@@ -2,7 +2,7 @@
 # This is a basic workflow to check the lock on major version (to lock some files on certified versions)
 name: Check fileset lock
 
-on: [push, pull_request]
+on: [push, pull_request_target]
 
 concurrency:
   group: check-${{ github.workflow }}-${{ github.ref }}
@@ -12,18 +12,61 @@ jobs:
   checkmajorversion:
     name: Check lock on fileset unalterable_files with generate_filelist_xml.php
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    # Referent Qualite/ Conformite (will be autoassigned as reviewer)
+    env:
+      REVIEWERS: "eldy"
+
+
     # Do not run schedule on forks
     if: |
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
       - uses: actions/checkout@v6
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
+
       - name: Run generate_filelist_xml.php
+        id: checklock
+        continue-on-error: true
         run: |
           # shellcheck disable=2086
           dev/build/generate_filelist_xml.php checklock=auto unalterable_files
+
+
+      # Assign reviewers one-by-one with fine-grained error handling
+      #    - try each reviewer, track successes and failures
+      #    - fail the step only if none could be added
+      #    - succeed if at least one was added (but log failures)
+      - name: Assign reviewers when check fails
+        if: ${{ github.event_name == 'pull_request_target' && steps.checklock.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          REVIEWER: ${{ env.REVIEWER }}
+        run: |
+          echo "Lock check failed, assigning reviewer ${REVIEWER}"
+
+          curl -s \
+            -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/requested_reviewers" \
+            -d "{\"reviewers\":[\"${REVIEWER}\"]}"
+
+      - name: Fail workflow if lock check failed
+        if: steps.checklock.outcome == 'failure'
+        run: |
+          echo "The list of unalterable files has been modified."
+          echo "Review from the compliance maintainer is required."
+          exit 1
