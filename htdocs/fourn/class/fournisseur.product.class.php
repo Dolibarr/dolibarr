@@ -1025,8 +1025,8 @@ class ProductFournisseur extends Product
 		/* Issue #38456 To avoid sql errors like "Error in query (1062): Duplicate entry '610185-2551-1-1' for key 'uk_product_fournisseur_price_ref'" when calling CommonObject::commonReplaceThirdparty(..
 		we delete origin product prices existing in destination before update */
 		$sql = ' DELETE p_old FROM '.$dbs->prefix().'product_fournisseur_price p_old ';
-		$sql .= '	 WHERE p_old.fk_soc = '.$origin_id.' AND ';
-		$sql .= '		 EXISTS (SELECT 1 FROM '.$dbs->prefix().'product_fournisseur_price p_new	WHERE p_new.fk_product = p_old.fk_product AND p_new.fk_soc = '.$dest_id.')';
+		$sql .= '	 WHERE p_old.fk_soc = '.(int) $origin_id.' AND ';
+		$sql .= '		 EXISTS (SELECT 1 FROM '.$dbs->prefix().'product_fournisseur_price p_new WHERE p_new.fk_product = p_old.fk_product AND p_new.fk_soc = '.(int) $dest_id.')';
 
 		if (!$dbs->query($sql)) {
 			return false;
