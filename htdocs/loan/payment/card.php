@@ -60,6 +60,10 @@ if ($id > 0) {
 	}
 }
 
+if (!$user->hasRight('loan', 'read')) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -99,6 +103,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan pag
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = (string) $h;

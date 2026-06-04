@@ -1953,17 +1953,57 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 	string		$host		Add ssl:// for SSL/TLS.
-	 * @param 	int			$port		Example: 25, 465
-	 * @return	int						Socket id if ok, 0 if KO
+	 * @param 	string							$host		Add ssl:// for SSL/TLS.
+	 * @param 	int								$port		Example: 25, 465
+	 * @return	int|array<string,int|string>				Socket id if OK, = 0 if KO
 	 */
 	public function check_server_port($host, $port)
 	{
-		// phpcs:enable
-		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		// phpcs:enable
 		$_retVal = 0;
 		$timeout = 5; // Timeout in seconds
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($host);
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		// Deny some reserved host names
+		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+			$info = array();
+			$info['http_code'] = 400;
+			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
+			return $info;
+		}
+
+		// Clean host name $hosttocheck to convert it into an IP $iptocheck
+		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+			$iptocheck = '127.0.0.1';
+		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
+			$iptocheck = '::1';
+		} else {
+			// Resolve $hosttocheck to get the IP $iptocheck
+			$iptocheck = resolveDns($hosttocheck);
+		}
+
+		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
+			$iptocheck = '0'; // will disabled check on IP
+		}
+
+		if ($iptocheck && !in_array($iptocheck, array('127.0.0.1', '::1'))) {
+			$localurl = 0;
+			$tmpresult = isIPAllowed($iptocheck, $localurl);
+
+			if ($tmpresult) {
+				$info = array();
+				$info['http_code'] = 400;
+				$info['content'] = $tmpresult;
+				return $info;
+			}
+		}
 
 		if (function_exists('fsockopen')) {
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
@@ -2027,6 +2067,8 @@ class CMailFile
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
+
+		sleep(1);
 
 		return $_retVal;
 	}

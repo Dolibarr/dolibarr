@@ -1021,6 +1021,11 @@ class Conf extends stdClass
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
 			}
 
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
+			}
+
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
