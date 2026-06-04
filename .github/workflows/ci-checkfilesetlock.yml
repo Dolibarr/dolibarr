@@ -27,7 +27,26 @@ jobs:
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
-      - uses: actions/checkout@v6
+      # 1) Generate a GitHub App token (via actions/create-github-app-token)
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.PR18_APP_ID }}
+          private-key: ${{ secrets.PR18_SECRET_KEY }}
+
+
+      # 2) Checkout repository (useful if repo content is needed later)
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Debug information (useful for diagnostics)
+      - name: Debug info
+        run: |
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Ref: $GITHUB_REF"
+          echo "Run id: $GITHUB_RUN_ID"
+          echo "Reviewer configured: $REVIEWER"
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -47,7 +66,7 @@ jobs:
       #    - try each reviewer, track successes and failures
       #    - fail the step only if none could be added
       #    - succeed if at least one was added (but log failures)
-      - name: Assign reviewers when check fails
+      - name: Assign reviewers on PR (per-reviewer, tolerant errors)
         if: ${{ github.event_name == 'pull_request_target' && steps.checklock.outcome == 'failure' }}
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
@@ -62,7 +81,7 @@ jobs:
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${REPO}/pulls/${PR_NUMBER}/requested_reviewers" \
-            -d "{\"reviewers\":[\"${REVIEWER}\"]}"
+            -d "{\"reviewers\": [\"${REVIEWER}\"]}"
 
       - name: Fail workflow if lock check failed
         if: steps.checklock.outcome == 'failure'
