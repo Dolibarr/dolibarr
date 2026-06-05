@@ -1024,7 +1024,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$actiontypecode = 'AC_OTH_AUTO';
+	$actiontypecode = 'AC_EMAIL';
 	$triggersendname = 'PROPAL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROPOSAL_TO';
 	$trackid = 'pro' . $object->id;
