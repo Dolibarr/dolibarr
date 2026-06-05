@@ -7,11 +7,11 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -128,7 +129,6 @@ if (!$sortfield) {
 $cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
@@ -564,7 +564,8 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd);
 		print '</td><td>';
-		$limit_field_type = (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) ? 'numeric' : 'amount';
+		//$limit_field_type = (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE')) ? 'numeric' : 'amount'; // TODO deprecated ?
+		$limit_field_type = 'amount';
 		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
@@ -833,10 +834,10 @@ if ($object->id > 0) {
 
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
-			$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
-			$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
-			$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
-			$boxstattmp .= '</div>';
+		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
+		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
+		$boxstattmp .= '</div>';
 		if ($link) {
 			$boxstat .= dolButtonToOpenUrlInDialogPopup('popupoutstanding', $text, $boxstattmp, '/compta/recap-compta.php?socid='.$object->id, '', '');
 		} else {
@@ -1001,7 +1002,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $propal_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
@@ -1123,7 +1124,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $commande_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
@@ -1229,7 +1230,7 @@ if ($object->id > 0) {
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 
-					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list[0], $sendingstatic->element, $relativepath, 0, $param);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
@@ -1343,7 +1344,7 @@ if ($object->id > 0) {
 							}
 						}
 						$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
+						print $formfile->showPreview($file_list[0], $contrat->element, $relativepath, 0, 'entity=' . $objp->entity);
 					}
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
@@ -1444,7 +1445,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $fichinter_static->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
@@ -1675,7 +1676,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
+					print $formfile->showPreview($file_list[0], $facturestatic->element, $relativepath, 0, 'entity=' . $objp->entity);
 				}
 				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {

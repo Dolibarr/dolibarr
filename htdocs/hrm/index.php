@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -53,20 +60,10 @@ if (isModEnabled('holiday')) {
 }
 
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager = new HookManager($db);
-
 $hookmanager->initHooks(array('hrmindex'));
 
 // Get Parameters

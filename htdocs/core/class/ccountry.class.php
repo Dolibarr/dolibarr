@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					    <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke	        <charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jon Bendtsen          		<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/cstate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 
 /**
  * 	Class to manage dictionary Countries (used by imports)
@@ -62,9 +64,19 @@ class Ccountry extends CommonDict
 	 */
 	public $numeric_code;
 
+	/**
+	 * @var string
+	 */
+	public $phone_code;
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>
+	 * @var string
+	 */
+	public $trunk_prefix;
+
+
+	/**
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>
 	 */
 	public $fields = array(
 		'label' => array('type' => 'varchar(250)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 15, 'notnull' => -1, 'showoncombobox' => 1)
@@ -173,7 +185,9 @@ class Ccountry extends CommonDict
 		$sql .= " t.eec,";
 		$sql .= " t.active,";
 		$sql .= " t.favorite,";
-		$sql .= " t.numeric_code";
+		$sql .= " t.numeric_code,";
+		$sql .= " t.phone_code,";
+		$sql .= " t.trunk_prefix";
 		$sql .= " FROM ".$this->db->prefix()."c_country as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
@@ -199,6 +213,8 @@ class Ccountry extends CommonDict
 					$this->active = (int) $obj->active;
 					$this->favorite = $obj->favorite;
 					$this->numeric_code = $obj->numeric_code;
+					$this->phone_code = $obj->phone_code;
+					$this->trunk_prefix = $obj->trunk_prefix;
 				}
 
 				$this->db->free($resql);
@@ -325,5 +341,31 @@ class Ccountry extends CommonDict
 	{
 		global $langs;
 		return $langs->trans($this->label);
+	}
+}
+
+/**
+ * 	Class to manage dictionary Countries (used by imports)
+ */
+class CcountryExtended extends Ccountry
+{
+	/**
+	 * @var Cstate[]
+	 */
+	public $states;
+
+	/**
+	 * @var Cregion[]
+	 */
+	public $regions;
+
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
 	}
 }

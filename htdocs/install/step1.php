@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -252,6 +252,7 @@ if (!empty($db_prefix) && !preg_match('/^[a-z0-9]+_$/i', $db_prefix)) {
 	$error++;
 }
 
+$db = null;
 $main_dir = dol_sanitizePathName($main_dir);
 $main_data_dir = dol_sanitizePathName($main_data_dir);
 
@@ -365,18 +366,9 @@ if (!$error) {
 		//print '</a>';
 		$error++;
 	}
-} else {
-	if (isset($db)) {
-		print $db->lasterror();
-	}
-	if (isset($db) && !$db->connected) {
-		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-	}
-	print $langs->trans("ErrorGoBackAndCorrectParameters");
-	$error++;
 }
 
-if (!$error && $db->connected) {
+if (!$error && $db !== null && $db->connected) {
 	if (!empty($db_create_database)) {
 		$result = $db->select_db($db_name);
 		if ($result) {
@@ -389,7 +381,7 @@ if (!$error && $db->connected) {
 }
 
 // Define $defaultCharacterSet and $defaultDBSortingCollation
-if (!$error && $db->connected) {
+if (!$error && $db !== null && $db->connected) {
 	if (!empty($db_create_database)) {    // If we create database, we force default value
 		// Default values come from the database handler
 
@@ -421,7 +413,7 @@ if (!$error && $db->connected) {
 
 
 // Create config file
-if (!$error && $db->connected && $action == "set") {	// Test on permission not required here
+if (!$error && $db !== null && $db->connected && $action == "set") {	// Test on permission not required here
 	umask(0);
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $value) {

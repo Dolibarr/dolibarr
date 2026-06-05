@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Christophe Battarel 	<christophe@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke		<charlene@patas-monkey.com>
  *
@@ -29,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/doleditor.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/doleditor.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('main', 'admin', 'subtotals', 'errors'));

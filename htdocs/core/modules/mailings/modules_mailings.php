@@ -120,7 +120,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 *	Return number of records for email selector
 	 *
-	 *  @return     integer      Example
+	 *  @return     int      Example
 	 */
 	public function getNbOfRecords()
 	{
@@ -130,8 +130,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 * Return the number of recipients
 	 *
-	 * @param      string		$sql        Sql request to count
-	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 * @param      string		$sql    Sql request to count
+	 * @return     int<-1,max> 			Nb of recipients, or <0 if error
 	 */
 	public function getNbOfRecipients($sql)
 	{
@@ -139,7 +139,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		if ($result) {
 			$total = 0;
 			while ($obj = $this->db->fetch_object($result)) {
-				$total += $obj->nb;
+				$total += (int) $obj->nb;
 			}
 			return $total;
 		} else {

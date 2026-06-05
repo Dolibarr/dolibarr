@@ -533,7 +533,7 @@ if ($ext == 'csv') {
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -556,7 +556,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -572,7 +572,7 @@ if ($ext == 'csv') {
 	// Lines of title
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	print_liste_field_titre('ProductRef', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
@@ -602,7 +602,7 @@ if ($ext == 'csv') {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 
@@ -712,7 +712,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="left"></td>';
 			}
 
@@ -811,7 +811,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print $hookmanager->resPrint;
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right"></td>';
 			}
 

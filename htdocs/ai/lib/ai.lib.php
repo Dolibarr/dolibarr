@@ -43,6 +43,7 @@ function getListOfAIFeatures()
 
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
+		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
 		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
@@ -193,7 +194,7 @@ function getListOfAIServices()
 }
 
 /**
- * Tests the connection to an AI service using its API key and URL.
+ * Tests the connection to an AI service using its API key and URL by sending message "Hello"
  *
  * This function supports multiple AI providers (Google Gemini, Anthropic Claude, and OpenAI-compatible APIs like
  * Mistral, Groq, and DeepSeek). It constructs a minimal, provider-specific request payload and sends it
@@ -234,11 +235,8 @@ function testAIConnection(string $service, string $key, string $url): array
 
 	$model = '';
 	if (empty($model)) {
-		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL');
+		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL_TEXT');
 	}
-
-	$data = [];
-	$headers = ["Content-Type: application/json"];
 
 	// GOOGLE
 	if ($service == 'google' || strpos($url, 'googleapis') !== false) {
@@ -315,14 +313,14 @@ function testAIConnection(string $service, string $key, string $url): array
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
- * @return  void
+ * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = ''): void
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
 {
 	global $conf;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
-		return;
+		return 0;
 	}
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
@@ -355,10 +353,11 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= ")";
 
 	$resql = $db->query($sql);
-
 	if (!$resql) {
 		dol_print_error($db);
 	}
+
+	return 0;
 }
 
 /**
@@ -391,8 +390,9 @@ function getListForAISummarize()
 function getListForAIRephraseStyle()
 {
 	$arrayforaierephrasestyle = array(
+		'spellchecker' => 'RephraseSpellChecker',
 		'professional' => 'RephraseStyleProfessional',
-		'humouristic' => 'RephraseStyleHumouristic'
+		'humouristic' => 'RephraseStyleHumouristic',
 	);
 
 	return $arrayforaierephrasestyle;
@@ -421,6 +421,13 @@ function aiAdminPrepareHead()
 	$head[$h][1] = $langs->trans("CustomPrompt");
 	$head[$h][2] = 'custom';
 	$h++;
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
+		$head[$h][1] = $langs->trans("Assistant");
+		$head[$h][2] = 'assistant';
+		$h++;
+	}
 
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);

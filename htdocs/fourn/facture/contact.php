@@ -6,6 +6,7 @@
  * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023       Christian Foellmann  <christian@foellmann.de>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Serhii Bondarenko    <serhiilabs@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -45,6 +38,15 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
@@ -272,8 +274,14 @@ if ($id > 0 || !empty($ref)) {
 		//print '<div class="clearboth"></div>';
 		//print '<br>';
 
-		// Contacts lines
-		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir) {
+			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
+			if ($res) {
+				break;
+			}
+		}
 	} else {
 		recordNotFound('', 0);
 	}

@@ -51,7 +51,7 @@ button.dropdown-item.global-search-item {
 	display: block;
 }
 
-
+#topmenu-tool a,
 #topmenu-global-search-dropdown a.login-dropdown-a,
 #topmenu-quickadd-dropdown a.login-dropdown-a,
 #topmenu-bookmark-dropdown a.login-dropdown-a,
@@ -157,6 +157,10 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 /* CSS to hide the arrow to show open/close */
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
@@ -343,7 +347,7 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-login-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
@@ -471,7 +475,6 @@ li.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
-	background: var(--colorbackbody);
 	z-index: 1;
 }
 

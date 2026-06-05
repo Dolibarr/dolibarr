@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,23 +130,23 @@ class printing_printgcp extends PrintingDriver
 			$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
 			'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 
-			$token_ok = true;
+			$token = null;
 			try {
 				// Do a select into oauth_token to get existing token
 				$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
-				$token_ok = false;
+				$token = null;
 			}
 
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds
-			if ($token_ok) {
+			if ($token !== null) {
 				$expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
 			}
 
 			// Token expired so we refresh it
-			if ($token_ok && $expire) {
+			if (($token !== null) && $expire) {
 				try {
 					// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
 					$refreshtoken = $token->getRefreshToken();
@@ -170,7 +170,7 @@ class printing_printgcp extends PrintingDriver
 					'renew' => $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
 					'delete' => ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
 				);
-				if ($token_ok) {
+				if ($token !== null) {
 					$expiredat = '';
 
 					$refreshtoken = $token->getRefreshToken();
@@ -291,21 +291,21 @@ class printing_printgcp extends PrintingDriver
 		$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
 		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 		// Check if we have auth token
-		$token_ok = true;
+		$token = null;
 		try {
 			$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			$token_ok = false;
+			$token = null;
 		}
 		$expire = false;
 		// Is token expired or will token expire in the next 30 seconds
-		if ($token_ok) {
+		if ($token !== null) {
 			$expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
 		}
 
 		// Token expired so we refresh it
-		if ($token_ok && $expire) {
+		if (($token !== null) && $expire) {
 			try {
 				// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
 				$refreshtoken = $token->getRefreshToken();
@@ -317,6 +317,7 @@ class printing_printgcp extends PrintingDriver
 			}
 		}
 		// Send a request with api
+		$response = '';
 		try {
 			$response = $apiService->request(self::PRINTERS_SEARCH_URL);
 		} catch (Exception $e) {
@@ -435,14 +436,14 @@ class printing_printgcp extends PrintingDriver
 		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 
 		// Check if we have auth token and refresh it
-		$token_ok = true;
+		$token = null;
 		try {
 			$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			$token_ok = false;
+			$token = null;
 		}
-		if ($token_ok) {
+		if ($token !== null) {
 			try {
 				// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
 				$refreshtoken = $token->getRefreshToken();
@@ -489,22 +490,22 @@ class printing_printgcp extends PrintingDriver
 		$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
 		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 		// Check if we have auth token
-		$token_ok = true;
+		$token = null;
 		try {
 			$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			$token_ok = false;
+			$token = null;
 			$error++;
 		}
 		$expire = false;
 		// Is token expired or will token expire in the next 30 seconds
-		if ($token_ok) {
+		if ($token !== null) {
 			$expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
 		}
 
 		// Token expired so we refresh it
-		if ($token_ok && $expire) {
+		if (($token !== null) && $expire) {
 			try {
 				// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
 				$refreshtoken = $token->getRefreshToken();
@@ -518,6 +519,7 @@ class printing_printgcp extends PrintingDriver
 		}
 		// Getting Jobs
 		// Send a request with api
+		$response = '';
 		try {
 			$response = $apiService->request(self::PRINTERS_GET_JOBS);
 		} catch (Exception $e) {

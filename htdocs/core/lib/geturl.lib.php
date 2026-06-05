@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
  * Enhancement of CURL to add an anti SSRF protection:
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
+ *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
  *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
@@ -205,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -244,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -264,17 +267,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '::1';
 		} else {
 			// Resolve $hosttocheck to get the IP $iptocheck
-			if (function_exists('gethostbyname')) {
-				$iptocheck = gethostbyname($hosttocheck);
-			} else {
-				$iptocheck = $hosttocheck;
-			}
-			// TODO Resolve ip v6
+			$iptocheck = resolveDns($hosttocheck);
 		}
 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
-			$iptocheck = '0'; //
+			$iptocheck = '0'; // will disabled check on IP
 		}
 
 		if ($iptocheck) {
@@ -376,7 +374,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}
@@ -395,6 +393,43 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// @phpstan-ignore-next-line
 	return $rep;
 }
+
+
+/**
+ * Resolve a hostname into its IP
+ *
+ * @param	string	$hosttocheck		Hostname to check
+ * @return	string						First ip found (IP v4 or IP v6). If resolution fails, the $hosttocheck is returned.
+ */
+function resolveDns($hosttocheck)
+{
+	$iptocheck = null;
+
+	// Resolve $hosttocheck to get the IP $iptocheck
+	if (function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION')) {
+		try {
+			$records = dns_get_record($hosttocheck, DNS_A + DNS_AAAA);
+
+			if (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ip'])) {			// We take the first one
+				$iptocheck = $records[0]['ip'];
+			} elseif (!empty($records[0]) && is_array($records[0]) && !empty($records[0]['ipv6'])) {	// We take the first one
+				$iptocheck = $records[0]['ipv6'];
+			}
+		} catch (Exception $e) {
+			// Nothing done
+		}
+	} elseif (function_exists('gethostbyname')) {	// resolve only ipv4
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	if ($iptocheck === null) {
+		$iptocheck = $hosttocheck;
+	}
+	return $iptocheck;
+}
+
 
 /**
  * Is IP allowed
@@ -459,6 +494,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -514,6 +550,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

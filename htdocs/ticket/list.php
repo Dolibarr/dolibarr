@@ -251,11 +251,10 @@ if (empty($reshook)) {
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
 
-	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {	// @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php
 		$objecttmp = new Ticket($db);
 		$db->begin();
 
@@ -670,6 +669,9 @@ if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $co
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -685,14 +687,11 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -769,6 +768,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'" >';
 
 if ($socid) {
@@ -778,13 +778,14 @@ if ($projectid) {
 	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-$url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/ticket/stats/index.php?mode=statistics&objecttype=ticket@ticket'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
@@ -846,7 +847,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -858,7 +859,7 @@ print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? 
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -903,7 +904,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayofstatus['openall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('OpenAll').'</b>', 'label' => '-- '.$langs->trans('OpenAll'));
 			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
-					$arrayofstatus['closeall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
+					$arrayofstatus['closeall'] = array('id' => 'closeall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
 				}
 				$arrayofstatus[$key2] = array('id' => $key2, 'labelhtml' => $val2, 'label' => $val2);
 			}
@@ -971,7 +972,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -985,7 +986,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1012,7 +1013,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1076,7 +1077,7 @@ while ($i < $imaxinloop) {
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1103,6 +1104,9 @@ while ($i < $imaxinloop) {
 			if (in_array($key, array('ref', 'fk_project'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
+			if (in_array($key, array('subject'))) {
+				$cssforfield = 'minwidth200 tdoverflowbydiv';
+			}
 
 			if ($key == 'fk_statut' || $key == 'severity_code') {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -1110,29 +1114,28 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
+					print ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'fk_statut') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'subject') {
-					$s = $obj->subject;
-					print '<span title="'.dol_escape_htmltag($s).'">';
-					print dol_escape_htmltag($s);
-					print '</span>';
+					print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip">';
+					print dolPrintHTML($obj->subject);
+					print '</div>';
 				} elseif ($key == 'type_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'category_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'severity_code') {
 					$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
-					print '<span title="'.dol_escape_htmltag($s).'">';
+					print '<span title="'.dolPrintHTMLForAttribute($s).'">';
 					print $s;
 					print '</span>';
 				} elseif ($key == 'tms') {
@@ -1224,7 +1227,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

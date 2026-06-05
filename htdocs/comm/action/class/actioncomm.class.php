@@ -1550,10 +1550,8 @@ class ActionComm extends CommonObject
 					$response->url .= '&filtert=-1';
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
-			}
-			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($load_state_board)) {
+
+				while ($obj = $this->db->fetch_object($resql)) {
 					'@phan-var-force WorkboardResponse $response
 					 @phan-var-force ActionComm $agenda_static';
 					$response->nbtodo++;
@@ -1561,7 +1559,10 @@ class ActionComm extends CommonObject
 					if ($agenda_static->hasDelay()) {
 						$response->nbtodolate++;
 					}
-				} else {
+				}
+			} else {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
 					$this->nb["actionscomm"] = $obj->nb;
 				}
 			}
@@ -2298,31 +2299,31 @@ class ActionComm extends CommonObject
 					}
 					if ($key == 'logina') {
 						$logina = $value;
-						$condition = '=';
+						$sanitizedcondition = '=';
 						if (preg_match('/^!/', $logina)) {
 							$logina = preg_replace('/^!/', '', $logina);
-							$condition = '<>';
+							$sanitizedcondition = '<>';
 						}
 						$userforfilter = new User($this->db);
 						$result = $userforfilter->fetch(0, $logina);
 						if ($result > 0) {
-							$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
-						} elseif ($result < 0 || $condition == '=') {
+							$sql .= " AND a.fk_user_author ".$sanitizedcondition." ".((int) $userforfilter->id);
+						} elseif ($result < 0 || $sanitizedcondition == '=') {
 							$sql .= " AND a.fk_user_author = 0";
 						}
 					}
 					if ($key == 'logint') {
 						$logint = $value;
-						$condition = '=';
+						$sanitizedcondition = '=';
 						if (preg_match('/^!/', $logint)) {
 							$logint = preg_replace('/^!/', '', $logint);
-							$condition = '<>';
+							$sanitizedcondition = '<>';
 						}
 						$userforfilter = new User($this->db);
 						$result = $userforfilter->fetch(0, $logint);
 						if ($result > 0) {
 							$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
-						} elseif ($result < 0 || $condition == '=') {
+						} elseif ($result < 0 || $sanitizedcondition == '=') {
 							$sql .= " AND ar.fk_element = 0";
 						}
 					}
@@ -2362,7 +2363,7 @@ class ActionComm extends CommonObject
 
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event = array();
-					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
+					$event['uid'] = 'dolibarragenda-'.$obj->id."@".dol_getprefix('email');
 					$event['type'] = $type;
 
 					$datestart = (int) $this->db->jdate($obj->datep) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2401,6 +2402,8 @@ class ActionComm extends CommonObject
 						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 						$event['url'] = $link_subscription;
+					} else {
+						$event['url'] = $dolibarr_main_url_root.'/comm/action/card.php?id='.$obj->id;
 					}
 
 					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
@@ -2479,15 +2482,15 @@ class ActionComm extends CommonObject
 						}
 
 						if (getDolGlobalString('AGENDA_EXPORT_FIX_TZ')) {
-							$timestampStart -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-							$timestampEnd   -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampStart -= (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
+							$timestampEnd   -= (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 						}
 
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						$urlwithroot       = $urlwithouturlroot.DOL_URL_ROOT;
 						$url               = $urlwithroot.'/holiday/card.php?id='.$obj->rowid;
 
-						$event['uid']          = 'dolibarrholiday-'.$this->db->database_name.'-'.$obj->rowid."@".$_SERVER["SERVER_NAME"];
+						$event['uid']          = 'dolibarrholiday-'.$obj->rowid."@".dol_getprefix('email');
 						$event['author']       = dolGetFirstLastname($obj->firstname, $obj->lastname);
 						$event['type']         = 'event';
 						$event['category']     = "Holiday";

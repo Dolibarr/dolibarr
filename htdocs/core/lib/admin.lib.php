@@ -4,8 +4,9 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,19 +220,14 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					if (!empty($reg[2])) {
 						if (is_numeric($reg[2])) {	// This is a version
 							$versionrequest = explode('.', $reg[2]);
-							//var_dump($versionrequest);
-							//var_dump($versionarray);
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}
 						} else { // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
 							$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
-							//var_dump($reg[2]);
-							//var_dump($dbcollation);
 							if (empty($conf->db->dolibarr_main_db_collation) || ($reg[2] != $dbcollation)) {
 								$qualified = 0;
 							}
-							//var_dump($qualified);
 						}
 					}
 				}
@@ -239,7 +235,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 				if ($qualified) {
 					// Version qualified, delete SQL comments
 					$buf = preg_replace('/^--\sV(MYSQL|PGSQL)([^\s]*)/i', '', $buf);
-					//print "Ligne $i qualifi?e par version: ".$buf.'<br>';
+					//print "Line $i qualified by version: ".$buf.'<br>';
 				}
 			}
 
@@ -1280,6 +1276,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 					foreach ($modulestringorarray as $modulestring) {
 						$activate = false;
 						$activateerr = '';
+						$resarray = array();
 						foreach ($modulesdir as $dir) {
 							if (file_exists($dir.$modulestring.".class.php")) {
 								$resarray = activateModule($modulestring, 1, 0, $options);
@@ -1443,6 +1440,15 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 					$modName = substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
+						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module modFournisseur skipped because MAIN_USE_NEW_SUPPLIERMOD is enabled", LOG_DEBUG);
+							continue;
+						}
+						if (in_array($modName, ['modSupplierInvoice', 'modSupplierOrder']) && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module ".$modName." skipped because MAIN_USE_NEW_SUPPLIERMOD is disabled", LOG_DEBUG);
+							continue;
+						}
+
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
@@ -1611,6 +1617,15 @@ function activateModulesRequiredByCountry($country_code)
 					$modName = substr($file, 0, dol_strlen($file) - 10);
 
 					if ($modName) {
+						if ($modName === 'modFournisseur' && getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module modFournisseur skipped because MAIN_USE_NEW_SUPPLIERMOD is enabled", LOG_DEBUG);
+							continue;
+						}
+						if (in_array($modName, ['modSupplierInvoice', 'modSupplierOrder']) && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+							dol_syslog("Module ".$modName." skipped because MAIN_USE_NEW_SUPPLIERMOD is disabled", LOG_DEBUG);
+							continue;
+						}
+
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 						'@phan-var-force DolibarrModules $objMod';
@@ -2231,6 +2246,7 @@ function GetContentPolicySources()
 		// Fetch directives
 		"fetch" => array(
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
+			"blob" => array("label" => "blob:", "data-sourcetype" => "blob"),
 			"data" => array("label" => "data:", "data-sourcetype" => "data"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),

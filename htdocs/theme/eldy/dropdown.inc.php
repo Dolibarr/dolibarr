@@ -143,6 +143,10 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 .dropdown-toggle{
 	text-decoration: none !important;
@@ -326,7 +330,7 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,

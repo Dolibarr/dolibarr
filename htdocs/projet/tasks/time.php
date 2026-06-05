@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
@@ -504,6 +504,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);    // $value is ID of 1 line in timespent table
+					if (!array_key_exists($object->timespent_fk_user, $arrayoftasks)) {
+						$arrayoftasks[$object->timespent_fk_user] = [
+						 (int) $object->timespent_fk_product => ['timespent' => 0, 'totalvaluetodivideby3600' => 0]
+						];
+					}
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
@@ -1595,7 +1600,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$tasks = array();
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 		// If project has usage "Bill time", we force visibility of field "billed"
 		if ($projectstatic->usage_bill_time) {
@@ -1933,7 +1938,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 		$selectedfields .= (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 		// If project has usage "Bill time", we force visibility of field "billed"
@@ -1949,7 +1954,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// --------------------------------------------------------------------
 		print '<tr class="liste_titre_filter">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
@@ -1987,7 +1992,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 			}
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
@@ -2050,7 +2055,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="liste_titre center">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -2065,7 +2070,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Fields title label
 		// --------------------------------------------------------------------
 		print '<tr class="liste_titre">';
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 			$totalarray['nbfield']++;
 		}
@@ -2139,7 +2144,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 			$totalarray['nbfield']++;
 		}
@@ -2175,7 +2180,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<tr data-rowid="'.$task_time->rowid.'" class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="' . GETPOSTINT('lineid') . '">';
@@ -2463,7 +2468,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500',  ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);
@@ -2566,7 +2571,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print $hookmanager->resPrint;
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOSTINT('lineid').'">';
@@ -2626,7 +2631,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -2783,7 +2788,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $hookmanager->resPrint;
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '</td>';
 				}
@@ -2796,7 +2801,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<!-- second line --><tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '</td>';
 				}
@@ -2958,7 +2963,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $hookmanager->resPrint;
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '</td>';
 				}

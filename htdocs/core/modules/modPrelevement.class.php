@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,16 +74,15 @@ class modPrelevement extends DolibarrModules
 		$this->config_page_url = array("prelevement.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "BANK_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sepamandate";
-		$this->const[$r][3] = 'Name of manager to generate SEPA mandate';
-		$this->const[$r][4] = 0;
-		$r++;
-
+		$this->const = [
+			[
+				"BANK_ADDON_PDF",
+				"chaine",
+				"sepamandate",
+				'Name of manager to generate SEPA mandate',
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();

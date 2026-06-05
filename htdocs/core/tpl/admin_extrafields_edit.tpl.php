@@ -54,6 +54,7 @@ if (empty($conf) || !is_object($conf)) {
 
 
 $langs->load("modulebuilder");
+$langs->load("admin");
 
 $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:contact/class/contact.class.php<br>Product:product/class/product.class.php<br>Project:projet/class/project.class.php<br>...';
 
@@ -203,6 +204,7 @@ $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 $css = $extrafields->attributes[$elementtype]['css'][$attrname];
 $cssview = $extrafields->attributes[$elementtype]['cssview'][$attrname];
 $csslist = $extrafields->attributes[$elementtype]['csslist'][$attrname];
+$personal_data = $extrafields->attributes[$elementtype]['personal_data'][$attrname];
 
 $param_chain = '';
 if (is_array($param)) {
@@ -294,10 +296,19 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Computed value -->
 <tr class="extra_computed_value">
-<?php if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
-<?php } else { ?>
-	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$db, $langs, $mysoc, $user, $objectoffield').'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
+<?php
+global $dolibarr_main_restrict_eval_methods;
+if (!isset($dolibarr_main_restrict_eval_methods)) {
+	$showfunctions = 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isExternalUser, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match';
+} else {
+	$showfunctions = $dolibarr_main_restrict_eval_methods ? $dolibarr_main_restrict_eval_methods : $langs->transnoentitiesnoconv("None");
+}
+if (!getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
+<?php } else {
+	?>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc", '$objectoffield', $showfunctions).'<br>'.$langs->trans("ComputedFormulaDesc2").'<br><br>'.$langs->trans("ComputedFormulaDesc3")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($computed); ?></textarea></td>
 </tr>
@@ -345,6 +356,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
+<!-- Personal Data (RGPD/nLPD/LGPD) -->
+<tr class="extra_personal_data"><td><?php echo $form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")); ?></td><td class="valeur"><input id="personal_data" type="checkbox" name="personal_data" value="1"<?php echo($personal_data ? ' checked' : ''); ?>></td></tr>
+
 <!-- Empty on clone -->
 <tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo($emptyonclone ? ' checked' : ''); ?>></td></tr>
 
@@ -358,7 +372,6 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
 </td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag((string) $printable); ?>"></td></tr>
-
 
 <!-- Visibility for getNomUrl -->
 <tr><td class="extra_showintooltip"><?php echo $form->textwithpicto($langs->trans("DisplayExtraOnTooltip"), $langs->trans("DisplayExtraOnTooltipDesc")); ?>

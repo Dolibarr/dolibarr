@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,18 +57,18 @@ $search_type = GETPOST("search_type", 'int');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'intracommreportlist';
-if ((string) $type == '1') {
-	$contextpage = 'DESlist';
-	if ($search_type == '') {
-		$search_type = '1';
-	}
-}
-if ((string) $type == '0') {
-	$contextpage = 'DEBlist';
-	if ($search_type == '') {
-		$search_type = '0';
-	}
-}
+// if ((string) $type == '1') {
+// 	$contextpage = 'DESlist';
+// 	if ($search_type == '') {
+// 		$search_type = '1';
+// 	}
+// }
+// if ((string) $type == '0') {
+// 	$contextpage = 'DEBlist';
+// 	if ($search_type == '') {
+// 		$search_type = '0';
+// 	}
+// }
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -390,21 +390,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

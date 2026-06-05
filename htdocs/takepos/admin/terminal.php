@@ -223,7 +223,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "(courant:=:2)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse)) {
 		$atleastonefound++;
@@ -232,7 +232,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse)) {
 		$atleastonefound++;
@@ -241,7 +241,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse)) {
 		$atleastonefound++;
@@ -289,7 +289,7 @@ if (isModEnabled("bank")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse)) {
 			$atleastonefound++;
@@ -313,7 +313,7 @@ if (isModEnabled("bank")) {
 			print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
 		} else {
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-			print $form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+			print $form->select_comptes(getDolGlobalInt($name), $name, 0, "(courant:=:".((int) $cour).")", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		}
 		print '</td></tr>';

@@ -236,7 +236,7 @@ abstract class CommonClassTest extends TestCase
 					echo $line . "\n";
 				}
 			} else {
-				echo "Error: File $logFile does not exist or is not readable.\n";
+				echo "File $logFile does not exist or is not readable.\n";
 			}
 		}
 
@@ -474,7 +474,6 @@ abstract class CommonClassTest extends TestCase
 		'opensurvey' => 'OpenSurvey',
 		'order' => 'Commande',
 		'partnership' => 'Partnership',
-		'paybox' => 'Paybox',
 		'paymentbybanktransfer' => 'PaymentByBankTransfer',
 		'paypal' => 'Paypal',
 		'paypalplus' => null,
@@ -486,6 +485,7 @@ abstract class CommonClassTest extends TestCase
 		'productsupplierprice' => null,
 		'project' => 'Projet',
 		'propal' => 'Propale',
+		'quickmemo' => 'QuickMemo',
 		'receiptprinter' => 'ReceiptPrinter',
 		'reception' => 'Reception',
 		'recruitment' => 'Recruitment',

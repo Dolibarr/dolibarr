@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'cashdesk', 'other'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
@@ -80,6 +80,7 @@ $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
 	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
@@ -88,6 +89,8 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 	$search_startmonth = $tmparray['mon'];
 	$search_startyear = $tmparray['year'];
 }
+
+$includebeforev2 = GETPOSTINT('includebeforev2');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -170,7 +173,7 @@ if (userIsTaxAuditor()) {
 
 $form = new Form($db);
 
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -192,7 +195,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if (GETPOST('withtab', 'alpha')) {
+if ($withtab) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -200,7 +203,7 @@ $morehtmlcenter = '';
 $texttop = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
-if (!userIsTaxAuditor()) {
+if (!userIsTaxAuditor()) { // @phpstan-ignore-line as it is already checked before
 	$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
 	if (!isRegistrationDataSavedAndPushed()) {
 		$texttop = '';
@@ -209,7 +212,7 @@ if (!userIsTaxAuditor()) {
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
-$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+$head = blockedlogadmin_prepare_head($withtab);
 
 print dol_get_fiche_head($head, 'fingerprints', '', -1);
 
@@ -225,11 +228,20 @@ print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('',
 print '<br>';
 print "</div>\n";
 
+$nbrecorddone = $block_static->countRecord();
+$mindisksize = 50;	// Gb
+$maxtranspermonth = 10000;
+$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
-$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
+
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
 }
 
 print info_admin($htmltext, 0, 0, 'warning');
@@ -289,8 +301,8 @@ if ($search_signature) {
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
 }
-if (GETPOST('withtab', 'alpha')) {
-	$param .= '&withtab='.urlencode(GETPOST('withtab', 'alpha'));
+if ($withtab) {
+	$param .= '&withtab='.((int) $withtab);
 }
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
@@ -305,7 +317,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
+print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent liste">';
@@ -314,7 +326,7 @@ print '<table class="noborder centpercent liste">';
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -375,7 +387,7 @@ if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop m
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -387,7 +399,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
 }
 print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
@@ -405,7 +417,7 @@ if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop m
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
 }
 print '</tr>';
@@ -472,7 +484,7 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>';
 				print '</td>';
 			}
@@ -527,7 +539,7 @@ if (is_array($blocks)) {
 			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
 
 			// Amount
-			print '<td class="right nowraponall">';
+			print '<td class="right nowraponall"><span class="amount">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
 				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
 				if ($ingrey) {
@@ -538,7 +550,7 @@ if (is_array($blocks)) {
 					print '</span>';
 				}
 			}
-			print '</td>';
+			print '</span></td>';
 
 			// Details link
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';
@@ -591,7 +603,7 @@ if (is_array($blocks)) {
 			}
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="liste_titre">';
 				print '</td>';
 			}
@@ -615,7 +627,7 @@ if (is_array($blocks)) {
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td>';
 					print '</td>';
 				}
@@ -684,7 +696,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre">';
 					print '</td>';
 				}
@@ -708,14 +720,15 @@ if (is_array($blocks)) {
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
-			include_once DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			global $foundoldformat, $firstrecorddate;
+			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -729,7 +742,20 @@ if (is_array($blocks)) {
 				} else {
 					print ' - '.$langs->trans("Now");
 				}
-				print '</span>';
+				print '</span> &nbsp; ';
+
+				// If there is at least one record with old format
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog WHERE object_format < 'V2' and action = 'BILL_VALIDATE' LIMIT 1";
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$foundav1 = 1;
+					if ($includebeforev2) {
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=0&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("OnlyFromV2"), $langs->trans("OnlyFromV2Help")).'</a></span>';
+					} else {
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludesAll"), $langs->trans("IncludesAllHelp")).'</a></span>';
+					}
+				}
 				print '</td>';
 
 				// Action
@@ -737,7 +763,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("TTC");
+				print ($foundoldformat ? '' : price($totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->trans("HT")).($foundoldformat ? '' : " - ".price($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").price($totalamountlifetime['BILL_VALIDATE']).' '.$langs->trans("TTC");
 				print '</td>';
 
 				// Details link
@@ -756,7 +782,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre"></td>';
 				}
 
@@ -767,7 +793,7 @@ if (is_array($blocks)) {
 				print '<tr class="liste_total totalblockedlog">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td></td>';
 				}
 
@@ -789,7 +815,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
+				print price($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
 				print '</td>';
 
 				// Details link
@@ -808,7 +834,7 @@ if (is_array($blocks)) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre"></td>';
 				}
 

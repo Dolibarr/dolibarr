@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -541,6 +541,7 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+			$marginInfo = null;
 
 			// Add Margin
 			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
@@ -577,7 +578,7 @@ if ($resql) {
 			}
 
 			// Add margin
-			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT') && $marginInfo !== null) {
 				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
 			}
 
