@@ -944,8 +944,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleConfirmation(action, details, originalIntent) {
-        pendingIntent = originalIntent.arguments.original_intent || originalIntent;
-        const toolName = pendingIntent.tool || 'unknown tool';
+		// original_intent must be provided by parse_intent.php.
+		// If missing, treat as a malformed confirmation and abort.
+		if (!originalIntent.arguments || !originalIntent.arguments.original_intent) {
+			appendMsg('error', t('AIError') + ': malformed confirmation response (missing original_intent). Please try again.');
+			input.disabled = false;
+			input.focus();
+			return;
+		}
+		pendingIntent = originalIntent.arguments.original_intent;
+		const toolName = pendingIntent.tool || 'unknown tool';
         let template = t('ConfirmAiAction');
         let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
@@ -1022,6 +1030,17 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${pendingIntent.tool || ''}...`);
         const loadingMsg = chat.lastElementChild;
         input.disabled = true;
+		// PendingIntent must be a real action tool, never a system tool.
+		// This catches the edge case where handleConfirmation stored the wrong intent.
+		const systemTools = ['ask_for_confirmation', 'ask_for_clarification', 'respond_to_user', 'reject_general_question'];
+		if (!pendingIntent || !pendingIntent.tool || systemTools.includes(pendingIntent.tool)) {
+			loadingMsg.remove();
+			appendMsg('error', t('AIError') + ': cannot execute system tool "' + (pendingIntent && pendingIntent.tool || 'unknown') + '" as an action. Please try again.');
+			pendingIntent = null;
+			input.disabled = false;
+			input.focus();
+			return;
+		}
         try {
             const toolRes = await fetch('execute_tool.php', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
