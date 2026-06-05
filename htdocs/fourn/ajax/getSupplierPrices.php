@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       /htdocs/fourn/ajax/getSupplierPrices.php
+ *	\file       htdocs/fourn/ajax/getSupplierPrices.php
  *	\brief      File to return an Ajax response to get list of possible prices for margin calculation
  */
 
@@ -57,6 +57,29 @@ $prices = array();
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "margins", "products"));
 
+if (!isModEnabled('product') && !isModEnabled('service')) {
+	accessforbidden("Not allowed");
+}
+if (!$user->hasRight('fournisseur', 'lire')) {
+	accessforbidden("Not allowed");
+}
+
+$object = new ProductFournisseur($db);
+
+if ($idprod > 0) {
+	$object->fetch($idprod);
+
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', 'rowid');
+}
+
+
 
 /*
  * View
@@ -67,15 +90,12 @@ top_httphead('application/json');
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if ($idprod > 0) {
-	$producttmp = new ProductFournisseur($db);
-	$producttmp->fetch($idprod);
-
 	$sorttouse = 's.nom, pfp.quantity, pfp.price';
 	if (GETPOST('bestpricefirst')) {
 		$sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
 	}
 
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
+	$productSupplierArray = $object->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if (is_array($productSupplierArray)) {
 		foreach ($productSupplierArray as $productSupplier) {
 			if (getDolGlobalInt("DISABLE_BAD_REPUTATION_PRODUCT_PRICE") && $productSupplier->supplier_reputation == "DONOTORDER") {
@@ -130,11 +150,11 @@ if ($idprod > 0) {
 	// After best supplier prices and before costprice
 	if (isModEnabled('stock')) {
 		// Add price for pmp
-		$price = $producttmp->pmp;
+		$price = $object->pmp;
 		if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 			// get pmp for subproducts if any
-			$producttmp->get_sousproduits_arbo();
-			$prods_arbo=$producttmp->get_arbo_each_prod();
+			$object->get_sousproduits_arbo();
+			$prods_arbo = $object->get_arbo_each_prod();
 			if (!empty($prods_arbo)) {
 				$price = 0;
 				foreach ($prods_arbo as $child) {
@@ -149,11 +169,11 @@ if ($idprod > 0) {
 	}
 
 	// Add price for costprice (at end)
-	$price = $producttmp->cost_price;
+	$price = $object->cost_price;
 	if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 		// get costprice for subproducts if any
-		$producttmp->get_sousproduits_arbo();
-		$prods_arbo=$producttmp->get_arbo_each_prod();
+		$object->get_sousproduits_arbo();
+		$prods_arbo = $object->get_arbo_each_prod();
 		if (!empty($prods_arbo)) {
 			$price = 0;
 			foreach ($prods_arbo as $child) {

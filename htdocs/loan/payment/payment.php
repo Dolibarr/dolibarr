@@ -324,7 +324,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opened bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, '(courant:=:'.Account::TYPE_CURRENT.')', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

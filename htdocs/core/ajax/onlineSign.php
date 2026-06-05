@@ -76,16 +76,19 @@ $response = "";
 
 $type = $mode;
 
+global $dolibarr_main_instance_unique_id;
+$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+
 // Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
@@ -339,7 +342,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contract->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contract->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -780,7 +783,7 @@ if ($action == "importSignature") {
 
 				$online_sign_ip = getUserRemoteIP();
 
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $object->table_element;
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $db->sanitize($object->table_element);
 				$sql .= " SET ";
 				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";

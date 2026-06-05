@@ -6,7 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@
  * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-ancestors 'self'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -74,17 +74,8 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOIPCHECK")) {
 		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 	}
-} elseif (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'ticket' && strpos($_SERVER['HTTP_REFERER'], 'public/ticket') !== false) {
-	if (!defined("NOLOGIN")) {
-		define("NOLOGIN", 1);
-	}
-	if (!defined("NOCSRFCHECK")) {
-		define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-	}
-	if (!defined("NOIPCHECK")) {
-		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-	}
 }
+
 
 /**
  * Header empty
@@ -186,13 +177,15 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
 if (!empty($hashp)) {
-	if (GETPOST('type', 'alpha')=='link') {
+	if (GETPOST('type', 'alpha') == 'link') {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$result = $link->fetch(0, $hashp);
 		if ($result > 0 && !empty($link->url)) {
-			header('Location: '.$link->url);
-			exit;
+			if (preg_match('/^(http|dav)/', $link->url)) {
+				header('Location: '.$link->url);
+				exit;
+			}
 		} else {
 			$langs->load("errors");
 			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
@@ -416,7 +409,6 @@ if ($modulepart == 'facture') {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
 			$sql .= " WHERE rowid = ".((int) $invoice->id);
 			$db->query($sql);
-			//var_dump($invoice);exit;
 
 			$invoice->pos_print_counter += 1;
 			//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
@@ -431,10 +423,10 @@ if ($modulepart == 'facture') {
 				$hidedesc = 0;
 				$hideref = 0;
 				$moreparams = '';
-				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-				$moreparams = isset($moreparams) ? $moreparams : null;
+				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
+				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
+				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
+				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
 
 				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 				if ($result < 0) {

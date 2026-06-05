@@ -119,7 +119,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -284,10 +285,9 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
-								//$conf->global->API_DISABLE_LOGIN_API = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
-									continue;
-								}
+								//if ($file_searched == 'api_login.class.php' && !getDolGlobalString('API_ENABLE_LOGIN_API')) {
+								//	continue;
+								//}
 
 								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
 

@@ -470,3 +470,4 @@ WarningEvaluationEmptyValidate=Impossible d'évaluer les niveaux de compétences
 ErrorBadParametersForDirectDebitFileCreate=Impossible de créer un virement bancaire fichier : le paramètre de format attendu n'est pas fourni.
 ErrorBadParametersForDirectDebitFileCreateDids=Impossible de créer un virement bancaire fichier : les identifiants des demandes de paiement existantes ne sont pas fournis.
 UserDoesNotHaveRightsToChangeHisPassword=Ce utilisateur n'a pas le droit de modifier son propre mot de passe
+ErrorExpeditionQtyTooHigh=La quantité à expédier (%s) dépasse la quantité restante à livrer (%s).

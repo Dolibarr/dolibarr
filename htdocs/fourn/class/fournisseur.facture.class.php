@@ -15,7 +15,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1330,15 +1330,13 @@ class FactureFournisseur extends CommonInvoice
 			}
 		}
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('BILL_SUPPLIER_MODIFY', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BILL_SUPPLIER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -2245,7 +2243,7 @@ class FactureFournisseur extends CommonInvoice
 			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
 			// and this is done at the line level, which has its own VAT rate
 
-			$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
+			$tabprice = calcul_price_total((float) $qty, $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2777,7 +2775,7 @@ class FactureFournisseur extends CommonInvoice
 				$facturestatic->status = $obj->status;
 
 				$response->nbtodo++;
-				$response->total += $obj->total_ht;
+				$response->total += (float) $obj->total_ht;
 
 				if ($facturestatic->hasDelay()) {
 					$response->nbtodolate++;
@@ -3212,7 +3210,7 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function createFromClone(User $user, $fromid, $invertdetail = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$error = 0;
 
@@ -3222,6 +3220,8 @@ class FactureFournisseur extends CommonInvoice
 
 		// Load source object
 		$object->fetch($fromid);
+		$objFrom = clone $object;
+
 		$object->id = 0;
 		$object->statut = self::STATUS_DRAFT;	// For backward compatibility
 		$object->status = self::STATUS_DRAFT;
@@ -3265,6 +3265,16 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		if (!$error) {
+			// Hook of thirdparty module
+			if (is_object($hookmanager)) {
+				$parameters = array('objFrom' => $objFrom);
+				$action = '';
+				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+				if ($reshook < 0) {
+					$this->setErrorsFromObject($hookmanager);
+					$error++;
+				}
+			}
 		}
 
 		unset($object->context['createfromclone']);

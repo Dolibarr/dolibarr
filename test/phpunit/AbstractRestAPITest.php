@@ -101,7 +101,7 @@ abstract class AbstractRestAPITest extends CommonClassTest
 		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), "$test Error".(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
 		$this->assertEquals('200', $object['success']['code']);
 
-		$this->api_key = $object['success']['token'];
+		$this->api_key = isset($object['success']['token']) ? $object['success']['token'] : null;
 
 		print "$method api_key: $this->api_key \n";
 	}

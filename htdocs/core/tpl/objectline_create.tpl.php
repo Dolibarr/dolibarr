@@ -12,7 +12,7 @@
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@
  * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
- * @var ExtraFields $extrafields
+ * @var ?ExtraFields $extrafields
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -60,7 +60,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
 @phan-var-force CommonObjectLine $line
-@phan-var-force ExtraFields $extrafields
+@phan-var-force ?ExtraFields $extrafields
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
 @phan-var-force int<0,1> $usehm
@@ -469,7 +469,7 @@ if ($nolinesbefore) {
 			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 			echo '</div>';
 		}
-		if (is_object($objectline)) {
+		if (is_object($objectline) && $extrafields instanceof ExtraFields) {
 			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 			if (!empty($temps)) {
@@ -708,8 +708,8 @@ $jsConf = [
 		'getSupplierPrices' => DOL_URL_ROOT . '/fourn/ajax/getSupplierPrices.php?bestpricefirst=1'
 	],
 	'mySoc' => [
-		'country_code' =>$mysoc->country_code,
-		'state_code' =>$mysoc->state_code,
+		'country_code' => $mysoc->country_code,
+		'state_code' => $mysoc->state_code,
 	],
 	'docObject' => [
 		'table_element_line' => $this->table_element_line,
@@ -732,7 +732,7 @@ $jsConf = [
 	]
 ];
 
-if ( !empty($object->thirdparty) ) {
+if (!empty($object->thirdparty)) {
 	$jsConf['docObject']['thirdparty'] = [
 		'state_code' => $object->thirdparty->state_code,
 		'country_code' => $object->thirdparty->country_code,
@@ -1019,6 +1019,7 @@ if ( !empty($object->thirdparty) ) {
 						if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
 					}
 
+					let idProdFournPrice = $(this).val();
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
@@ -1102,13 +1103,20 @@ if ( !empty($object->thirdparty) ) {
 									}
 								}
 							}
-							// Set vat rate if field is an input box
-							$('#tva_tx').val(tva_tx);
-							// Set vat rate by selecting the combo
-							//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-							$('#tva_tx option').removeAttr('selected');
-							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+							// Set vat rate: handle both input box and combo cases
+							if ($('#tva_tx option').length) {
+								// It is a combo: try exact match first (rate + code), fallback to numeric match
+								if ($('#tva_tx option[value="' + stringforvatrateselection + '"]').length) {
+									$('#tva_tx').val(stringforvatrateselection);
+								} else {
+									$('#tva_tx option').filter(function () {
+										return parseFloat($(this).val()) === parseFloat(tva_tx);
+									}).first().prop('selected', true);
+								}
+							} else {
+								// It is an input box
+								$('#tva_tx').val(tva_tx);
+							}
 
 							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
 								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
@@ -1138,6 +1146,11 @@ if ( !empty($object->thirdparty) ) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
 							}
+
+							// Execute js context Dolibarr Hooks
+							if (typeof Dolibarr != 'undefined') {
+								Dolibarr.executeHook('objectLineCreate:LoadUnitPrice', {idProdFournPrice, 'socid': jsConf.docObject.socid,ajaxResultData : data, jsConf});
+							}
 						},
 						'json'
 					);
@@ -1150,10 +1163,11 @@ if ( !empty($object->thirdparty) ) {
 				$("#fournprice_predef").find("option").remove();
 				$("#fournprice_predef").hide();
 				$("#buying_price").val("").show();
+				let idProd = $(this).val();
 
 				/* Call post to load content of combo list fournprice_predef */
 				var token = jsConf.conf.token;		// For AJAX Call we use old 'token' and not 'newtoken'
-				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': token }, function(data) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': idProd, 'token': token }, function(data) {
 					if (data && data.length > 0)
 					{
 						var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
@@ -1241,6 +1255,12 @@ if ( !empty($object->thirdparty) ) {
 								$('#buying_price').hide();
 							}
 						});
+
+
+						// Execute js context Dolibarr Hooks
+						if (typeof Dolibarr != 'undefined') {
+							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
+						}
 					}
 				},
 				'json');
@@ -1276,10 +1296,16 @@ if ( !empty($object->thirdparty) ) {
 						jQuery("#remise_percent").val(pbqpercent);
 					}
 				} else { jQuery("#pbq").val(''); }
+
+				// Execute js context Dolibarr Hooks
+				if (typeof Dolibarr != 'undefined') {
+					Dolibarr.executeHook('objectLineCreate:CustomerPriceByQty', { pbq, pbqup, pbqbase, pbqqty, pbqpercent });
+				}
 			}
 
 			// Deal with supplier ref price (idprodfournprice = int)
-			if (jQuery('#idprodfournprice').val() > 0)
+			var supplierVal = jQuery('#idprodfournprice').val();
+			if (supplierVal && supplierVal !== '-1' && (supplierVal > 0 || supplierVal.indexOf('idprod_') === 0))
 			{
 				console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
 
@@ -1390,7 +1416,6 @@ if ( !empty($object->thirdparty) ) {
 						jQuery('#dp_desc').text(description);
 					}
 				}
-
 			} else if (jQuery('#idprodfournprice').length > 0) {
 				console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
 
@@ -1458,6 +1483,10 @@ if ( !empty($object->thirdparty) ) {
 			setforpredef();
 		}
 
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('objectLineCreate:ProductSelectionChange');
+		}
 	});
 
 	/* Function to set fields visibility after selecting a free product */

@@ -133,7 +133,7 @@ function dolSessionWrite($sess_id, $val)
 		if (empty($sessionidfound)) {
 			if ((int) ini_get('session.gc_probability') == 0) {
 				// dolSessionGC will be never called
-				$max_lifetime = max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime'));
+				$max_lifetime = min(3600 * 24, max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime')));
 				$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
 				$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
 				$dbsession->query($delete_query);

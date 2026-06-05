@@ -457,7 +457,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	font-size: 0.88em;
 }
 .info-box-desc {
-	font-size: 0.92em;
+	font-size: 0.91em;
 }
 /* Force values for small screen 480 */
 /*

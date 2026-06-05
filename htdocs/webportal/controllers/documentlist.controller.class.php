@@ -3,6 +3,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
+ * Copyright (C) 2026		Ferran Marcet				<fmarcet@2byte.es>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -19,6 +20,7 @@
 
 
 require_once __DIR__ . '/abstractdocument.controller.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 /**
  * \file        htdocs/webportal/controllers/documentlist.controller.class.php
@@ -91,9 +93,9 @@ class DocumentListController extends AbstractDocumentController
 		if (!empty($thirdparty) && $thirdparty->id) {
 			// 1. Prepare data
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-			$client_dir_name = dol_sanitizeFileName($thirdparty->ref);
-			$dir_ged_tiers = $conf->societe->dir_output . '/' . $client_dir_name;
-			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
+			$client_dir_name = $thirdparty->id;
+			$dir_ged_tiers = $conf->societe->multidir_output[$thirdparty->entity ?? $conf->entity]."/".$client_dir_name;
+			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC, 1);
 
 			// 2. Define the link builder function
 			/**

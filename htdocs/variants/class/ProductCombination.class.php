@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
@@ -74,7 +74,7 @@ class ProductCombination
 	/**
 	 * Is the price variation a relative variation?
 	 * Can be an array if multiprice feature per level is enabled.
-	 * @var bool|array
+	 * @var bool
 	 */
 	public $variation_price_percentage = false;
 
@@ -523,10 +523,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status != $parent->oldcopy->status)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 

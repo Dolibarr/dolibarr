@@ -58,8 +58,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./.github/scripts/get_changed_php.sh
 
-      #- name: Print changed files
-      #  run: echo "Changed files are ${{ steps.changed-files.outputs.all_changed_files }}"
+      - name: Print changed files
+        run: echo "Changed files are ${{ steps.changed-php.outputs.all_changed_files }}"
 
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.

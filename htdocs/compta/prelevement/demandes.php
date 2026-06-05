@@ -279,7 +279,7 @@ print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -290,7 +290,7 @@ print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name=
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -299,14 +299,14 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print '</tr>';
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print_liste_field_titre(($sourcetype ? "RefSalary" : "Bill"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre(($sourcetype ? "Employee" : "Company"), $_SERVER["PHP_SELF"]);
 print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
 }
 print '</tr>';
@@ -329,7 +329,7 @@ while ($i < min($num, $limit) && $resql !== null) {
 	print '<tr class="oddeven">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="right"></td>';
 	}
 
@@ -365,7 +365,7 @@ while ($i < min($num, $limit) && $resql !== null) {
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="right"></td>';
 	}
 

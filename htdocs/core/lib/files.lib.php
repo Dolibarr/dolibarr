@@ -6,7 +6,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -764,7 +764,7 @@ function dol_fileperm($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string						$srcfile			       Source file (can't be a directory)
- * @param	array<string,string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	array<string,null|string|int> 	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string						$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	string						$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int							$indexdatabase		       1=index new file into database.
@@ -823,7 +823,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		$content = make_substitutions($content, $arrayreplacement, null);
 	} else {
 		foreach ($arrayreplacement as $key => $value) {
-			$content = preg_replace($key, $value, $content);
+			$content = preg_replace($key, (string) $value, $content);
 		}
 	}
 
@@ -849,6 +849,52 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 
 	return 1;
 }
+
+/**
+ * Removes content from a file that matches a given pattern.
+ *
+ * @param string $filePath Path to the file to be processed.
+ * @param string $pattern Regular expression pattern to identify the content to remove.
+ * @return bool Returns true if the operation was successful, false otherwise.
+ */
+function removePatternFromFile(string $filePath, string $pattern): bool
+{
+	// Check if the file exists
+	if (! file_exists($filePath)) {
+		dol_syslog("files.lib.php::removePatternFromFile: File $filePath does not exist", LOG_WARNING);
+
+		return false;
+	}
+
+	// Read the file content
+	$content = file_get_contents($filePath);
+	if ($content === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Unable to read the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Remove content matching the pattern
+	$updatedContent = preg_replace($pattern, '', $content);
+	if ($updatedContent === null) {
+		dol_syslog("files.lib.php::removePatternFromFile: Error while processing the file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	// Write the updated content back to the file
+	$result = file_put_contents($filePath, $updatedContent);
+	if ($result === false) {
+		dol_syslog("files.lib.php::removePatternFromFile: Permission denied to overwrite the target file $filePath", LOG_WARNING);
+
+		return false;
+	}
+
+	dol_syslog("files.lib.php::removePatternFromFile: Content successfully removed in the file $filePath", LOG_INFO);
+
+	return true;
+}
+
 
 
 /**
@@ -985,9 +1031,9 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	string					$destfile				Destination file (a directory)
  * @param	string					$newmask				Mask for new file ('0' by default means getDolGlobalString('MAIN_UMASK')). Example: '0666'
  * @param 	int						$overwriteifexists		Overwrite file if exists (1 by default)
- * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	?array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
- * @param	string[]				$excludefileext			Exclude some file extensions
+ * @param	?string[]				$excludefileext			Exclude some file extensions
  * @param	int						$excludearchivefiles	Exclude archive files that start with v+timestamp or d+timestamp (0 by default)
  * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
@@ -1448,7 +1494,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
- *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
+ *  @param	int		$mode				0=Default mode use to move a file from the default system upload dir (/tmp/...) into $upload_dir. 1=Mode to move an uploaded file with a simple rename (when uploaded dir is in same filesystem than $upload_dir).
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
@@ -1768,6 +1814,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
+						chmod(dol_osencode("$dir/$item"), 0755);
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -2223,7 +2270,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
  */
 function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
-	global $db, $user, $conf, $langs, $_FILES;
+	global $db, $langs;
 
 	$keytodelete = $filenb;
 	$keytodelete--;
@@ -2412,7 +2459,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $dir);
 
 	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir)) {     // If not a temporary directory. TODO Does this test work ?
-		$filename = basename($file);
+		//$filename = basename($file);
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
@@ -2449,12 +2496,49 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 	}
 }
 
+/**
+ * Check if a file is a real PDF file by checking its signature and its MIME type.
+ * Testing first char may be enough. No need to use the finfo_file().
+ *
+ * @param 	string 	$filePath	File path to check
+ * @return 	bool				True if the file is a real PDF, false otherwise.
+ */
+function isRealPdf(string $filePath)
+{
+	if (!is_file($filePath) || !is_readable($filePath)) {
+		return false;
+	}
+
+	// Open file
+	$handle = fopen($filePath, 'rb');
+	if (!$handle) {
+		return false;
+	}
+	$header = fread($handle, 5);
+	fclose($handle);
+
+	if ($header !== '%PDF-') {
+		return false;
+	}
+
+	// Check using finfo_file
+	/*
+	$finfo = finfo_open(FILEINFO_MIME_TYPE);
+	$mime = finfo_file($finfo, $filePath);
+	finfo_close($finfo);
+	if ($mime !== 'application/pdf') {
+		return false;
+	}
+	*/
+
+	return true;
+}
 
 /**
- * 	Convert an image file or a PDF into another image format.
+ * 	Convert a PDF file into another image format.
  *  This need Imagick php extension. You can use dol_imageResizeOrCrop() for a function that need GD.
  *
- *  @param	string	$fileinput  Input file name
+ *  @param	string	$fileinput  Input full path name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
  *  @param  string  $page       Page number if we convert a PDF into png
@@ -2466,6 +2550,14 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
+			// Imagick may have a support for Magick Scripting Language (MSL) that allows to run execution code with some files like SVG. So we need to check
+			// that file is really a PDF file.
+			// Note: The Imagick policy options can be disabled into /etc/ImageMagick*/policy.xml.
+			if (!isRealPdf($fileinput)) {
+				dol_syslog("We try to convert a PDF file with name ".$fileinput." but it is not a real PDF file (hack attempt ?).", LOG_WARNING);
+				return -4;
+			}
+
 			$filetoconvert = $fileinput.(($page != '') ? '['.$page.']' : '');
 			//var_dump($filetoconvert);
 			$ret = $image->readImage($filetoconvert);
@@ -2474,6 +2566,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." conversion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			return 0;
 		}
+
 		if ($ret) {
 			$ret = $image->setImageFormat($ext);
 			if ($ret) {
@@ -2990,23 +3083,33 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = 1;
 		$original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/'.$original_file;
 	} elseif ($modulepart == 'medias' && !empty($dolibarr_main_data_root)) {
-		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity has no sense
-		if (isModEnabled('multicompany') && (empty($entity) || empty($conf->medias->multidir_output[$entity]))) {
-			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
-		} */
+		/* the medias directory is by default a public directory accessible online for everybody, so test on permission per entity is not done, it has no sense */
 		if (empty($entity)) {
 			$entity = 1;
 		}
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if ($mode == 'write') {
+			if ($fuser->hasRight('website', 'write')) {
+				$accessallowed = 1;
+			}
+		} else {
+			$accessallowed = 1;		// As dir is public, we allow read access to all files in medias directory
+		}
 		$original_file = (empty($conf->medias->multidir_output[$entity]) ? (empty($conf->medias->dir_output) ? DOL_DATA_ROOT.'/medias' : $conf->medias->dir_output) : $conf->medias->multidir_output[$entity]).'/'.$original_file;
 	} elseif ($modulepart == 'logs' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.(log|json)$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for doctemplates
 		$accessallowed = $user->admin;
-		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
+		$relative_file = $original_file;
+		$ent = ($entity > 0 ? $entity : $conf->entity);
+		$path_with_entity = $dolibarr_main_data_root . '/' . $ent . '/doctemplates/' . $relative_file;
+		if ($ent > 1 && file_exists(dol_osencode($path_with_entity))) {
+			$original_file = $path_with_entity;
+		} else {
+			$original_file = $dolibarr_main_data_root . '/doctemplates/' . $relative_file;
+		}
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
 		// Wrapping for doctemplates of websites
 		$accessallowed = ($fuser->hasRight('website', 'write') && preg_match('/\.jpg$/i', basename($original_file)));
@@ -3619,17 +3722,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$email_split = explode('@', $_SESSION['email_customer']);
 
 			$sqlprotectagainstexternals = 'SELECT t.rowid, t.fk_soc FROM '.MAIN_DB_PREFIX.'ticket t';
-			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
-			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
-			$sqlprotectagainstexternals.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
-			$sqlprotectagainstexternals.= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
-			$sqlprotectagainstexternals.= ' AND (';
-			$sqlprotectagainstexternals.= '   (';
-			$sqlprotectagainstexternals.= '     tc.rowid IS NOT NULL';
-			$sqlprotectagainstexternals.= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
-			$sqlprotectagainstexternals.= '   )';
-			$sqlprotectagainstexternals.= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
-			$sqlprotectagainstexternals.= ' )';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id = t.rowid';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople c ON c.rowid = ec.fk_socpeople';
+			$sqlprotectagainstexternals .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_contact tc ON tc.element = "ticket" AND tc.rowid = ec.fk_c_type_contact';
+			$sqlprotectagainstexternals .= ' WHERE t.ref LIKE "'.$db->sanitize($refname).'"';
+			$sqlprotectagainstexternals .= ' AND (';
+			$sqlprotectagainstexternals .= '   (';
+			$sqlprotectagainstexternals .= '     tc.rowid IS NOT NULL';
+			$sqlprotectagainstexternals .= '     AND c.email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= '   )';
+			$sqlprotectagainstexternals .= '   OR t.origin_email = "'.$db->sanitize($email_split[0]).'@'.$db->sanitize($email_split[1]).'"';
+			$sqlprotectagainstexternals .= ' )';
 		}
 		$original_file = $conf->ticket->multidir_output[$entity].'/'.$original_file;
 		// If modulepart=module_user_temp	Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp/iduser
@@ -3764,9 +3867,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 /**
  * Store object in file.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @param mixed $object Object to store in cachefile
+ * @param string 	$directory 	Directory of cache
+ * @param string 	$filename 	Name of filecache
+ * @param string 	$object 	String to store in cachefile
  * @return void
  */
 function dol_filecache($directory, $filename, $object)
@@ -3779,7 +3882,7 @@ function dol_filecache($directory, $filename, $object)
 	}
 	$cachefile = $directory.$filename;
 
-	file_put_contents($cachefile, serialize($object), LOCK_EX);
+	file_put_contents($cachefile, json_encode($object), LOCK_EX);
 	dolChmod($cachefile);
 }
 
@@ -3802,14 +3905,14 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string 	$directory 		Directory of cache
- * @param string 	$filename 		Name of filecache
- * @return mixed 					Unserialise from file
+ * @param 	string 	$directory 		Directory of cache
+ * @param 	string 	$filename 		Name of filecache
+ * @return 	string 					Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
-	$object = unserialize(file_get_contents($cachefile));
+	$object = json_decode(file_get_contents($cachefile));
 	return $object;
 }
 

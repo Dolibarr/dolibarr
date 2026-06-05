@@ -146,6 +146,8 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 
+$db = null;
+
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
 	print '<span class="inline-block valignmiddle">'.$langs->trans('DataMigration').'</span></h3>';
@@ -671,6 +673,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 				migrate_blockedlog_add_hmac_key();
 			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '23.0.9');
+			$beforeversionarray = explode('.', '24.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
+				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+			}
 		}
 
 		// Code executed only if migration is LAST ONE. Must always be done.
@@ -897,7 +908,7 @@ dolibarr_install_syslog("Exit ".$ret);
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error ? 2 : 0, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 
@@ -2672,11 +2683,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 1");
 	$resql = $db->query($sql);
@@ -2732,11 +2743,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 	$db->begin();
 
-	$sql = "SELECT t1.rowid, t1.".$field1." as field";
-	$sql .= " FROM ".MAIN_DB_PREFIX.$table1." as t1";
-	$sql .= " WHERE t1.".$field1." IS NOT NULL AND t1.".$field1." NOT IN";
-	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
-	$sql .= " WHERE t1.rowid = t2.".$field2.")";
+	$sql = "SELECT t1.rowid, t1.".$db->sanitize($field1)." as field";
+	$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table1)." as t1";
+	$sql .= " WHERE t1.".$db->sanitize($field1)." IS NOT NULL AND t1.".$db->sanitize($field1)." NOT IN";
+	$sql .= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$db->sanitize($table2)." as t2";
+	$sql .= " WHERE t1.rowid = t2.".$db->sanitize($field2).")";
 
 	dolibarr_install_syslog("upgrade2::migrate_restore_missing_links DIRECTION 2");
 	$resql = $db->query($sql);
@@ -2966,7 +2977,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 
 		$db->begin();
 
-		$sqlSelect = "SELECT ".$fk_source.", ".$fk_target;
+		$sqlSelect = "SELECT ".$db->sanitize($fk_source).", ".$db->sanitize($fk_target);
 		$sqlSelect .= " FROM ".MAIN_DB_PREFIX.$table;
 
 		$resql = $db->query($sqlSelect);
@@ -2984,9 +2995,9 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->$fk_source;
+					$sqlInsert .= ((int) $obj->$fk_source);
 					$sqlInsert .= ", '".$db->escape($sourcetype)."'";
-					$sqlInsert .= ", ".$obj->$fk_target;
+					$sqlInsert .= ", ".((int) $obj->$fk_target);
 					$sqlInsert .= ", '".$db->escape($targettype)."'";
 					$sqlInsert .= ")";
 
@@ -3003,7 +3014,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 			}
 
 			if ($error == 0) {
-				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$table;
+				$sqlDrop = "DROP TABLE ".MAIN_DB_PREFIX.$db->sanitize($table);
 				if ($db->query($sqlDrop)) {
 					$db->commit();
 				} else {
@@ -3494,7 +3505,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
-						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+						$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($table)." SET ";
 						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
 						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 
@@ -4207,6 +4218,9 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
 	if (is_dir(DOL_DATA_ROOT.$oldname) && !file_exists(DOL_DATA_ROOT.$newname)) {
 		dolibarr_install_syslog("upgrade2::migrate_rename_directories move ".DOL_DATA_ROOT.$oldname.' into '.DOL_DATA_ROOT.$newname);
 		@rename(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname);
+	} else {
+		// If new directory already exists, we copy content of old one intotnew one
+		dolCopyDir(DOL_DATA_ROOT.$oldname, DOL_DATA_ROOT.$newname, '0', 1);
 	}
 }
 
@@ -4369,7 +4383,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array<string,'noboxes'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
+ * @param	array<string,'noboxes'|'menuonly'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
  * @param   int<0,1>	$force          1=Reload module even if not already loaded
  * @return	int							Return integer <0 if KO, >0 if OK
  */
@@ -4409,7 +4423,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
@@ -4567,7 +4580,7 @@ function migrate_productlot_path()
 	$resql = $db->query($sql);
 
 	if ($resql) {
-		$modulepart="product_batch";
+		$modulepart = "product_batch";
 
 		$lot = new Productlot($db);
 
@@ -5573,7 +5586,8 @@ function migrate_apiresttokens()
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
-					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					unset($tmpuser->conf);
+					$tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";

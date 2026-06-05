@@ -31,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
  * @var Translate $langs
  * @var User $user
  */
+// Libraries
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
@@ -107,7 +105,8 @@ $item->fieldAttr = array(
 	'type' => 'number',
 	'step' => '0.01',
 	'min' => 0,
-	'max' => 100
+	'max' => 100,
+	'class' => 'width75 right',
 );
 
 
@@ -133,6 +132,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
+$action = 'edit';
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $help_url = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura';
@@ -150,27 +151,7 @@ print dol_get_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), 
 
 print '<span class="opacitymedium">'.$langs->trans("InvoiceFirstSituationDesc").'</span><br><br>';
 
-
-/*
- *  Numbering module
- */
-
-if ($action == 'edit') {
-	print $formSetup->generateOutput(true);
-} else {
-	print $formSetup->generateOutput();
-}
-
-if (count($formSetup->items) > 0) {
-	if ($action != 'edit') {
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	}
-} else {
-	print '<br>'.$langs->trans("NothingToSetup");
-}
-
+print $formSetup->generateOutput(true);
 
 print dol_get_fiche_end();
 

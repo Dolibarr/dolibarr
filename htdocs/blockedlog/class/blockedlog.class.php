@@ -884,7 +884,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
-				$terminalofpayment = '';
+				$terminalofpayment = null;
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -926,19 +926,19 @@ class BlockedLog
 					// Set the ->module_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
-							$originofpayment = $tmpobject->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						} elseif ($originofpayment != $tmpobject->module_source) {
-							$originofpayment = 'mix';	// the payment is on several invoices with different origins
+							$originofpayment = 'mix';	// the payment is on several invoices with different origins of module
 						} else {
 							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 					// Set the ->pos_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'pos_source')) {
-						if (is_null($originofpayment)) {
-							$terminalofpayment = $tmpobject->pos_source;
-						} elseif ($originofpayment != $tmpobject->pos_source) {
-							$terminalofpayment = 'mix';	// the payment is on several invoices with different origins
+						if (is_null($terminalofpayment)) {
+							$terminalofpayment = (string) $tmpobject->pos_source;
+						} elseif ($terminalofpayment != $tmpobject->pos_source) {
+							$terminalofpayment = 'mix';	// the payment is on several invoices with same origin of module but different terminals
 						} else {
 							$terminalofpayment = (string) $tmpobject->pos_source;
 						}
@@ -1200,16 +1200,11 @@ class BlockedLog
 	 *
 	 * @param	?stdClass	$data	Data to serialize
 	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
-	 * @return 	string				Value serialized, an object (stdClass)
+	 * @return 	string				Value serialized, an object (stdClass).
 	 */
-	public function dolEncodeBlockedData($data, $mode = 0)
+	public function dolEncodeBlockedData($data, $mode = 1)
 	{
-		$aaa = '';
-		try {
-			$aaa = json_encode($data);
-		} catch (Exception $e) {
-			// print $e->getErrs);
-		}
+		$aaa = json_encode($data);
 
 		return $aaa;
 	}
@@ -1309,7 +1304,7 @@ class BlockedLog
 		$this->object_version = DOL_VERSION;
 
 		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
-		$this->object_format = 'V1';	// TODO Switch to V2 for every version
+		$this->object_format = 'V2';	// TODO Switch to V2 for every version
 		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
 			$this->object_format = 'V2';
 		}
@@ -1393,9 +1388,9 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "'".$this->db->escape($this->object_format)."',";
 		$sql .= "0,";
-		$sql .= $this->fk_user.",";
+		$sql .= ((int) $this->fk_user).",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
-		$sql .= ($this->entity ? $this->entity : $conf->entity).",";
+		$sql .= ((int) ($this->entity ? $this->entity : $conf->entity)).",";
 		$sql .= "'".$this->db->escape($this->debuginfo)."'";
 		$sql .= ")";
 
@@ -1524,7 +1519,8 @@ class BlockedLog
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($format == 'V2') {
 			$s = $this->entity;
-			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl;
+			$s .= '|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1582,7 +1578,7 @@ class BlockedLog
 			}
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
 			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
-				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.');
+				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
 			}
 			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
 		} else {
@@ -1656,7 +1652,8 @@ class BlockedLog
 					$previousdatecreation = $this->db->jdate($obj->date_creation, $tz);
 				}
 			} else {
-				dol_print_error($this->db);
+				dol_print_error($this->db);		// can happen after a deadlock when too many requests do create into blocked log happen at the same time.
+				http_response_code(503);
 				exit;
 			}
 		}
@@ -1825,9 +1822,9 @@ class BlockedLog
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
 
-		if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
+		/*if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
 			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
-		}
+		}*/
 
 		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}
@@ -1887,5 +1884,28 @@ class BlockedLog
 		}
 
 		return $canbedisabled;
+	}
+
+
+	/**
+	 * Return current number of records.
+	 *
+	 * @return  int		Number of recor for all instances
+	 */
+	public function countRecord()
+	{
+		$nb = 0;
+
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		} else {
+			dol_print_error($this->db);
+		}
+		$this->db->free($resql);
+
+		return $nb;
 	}
 }

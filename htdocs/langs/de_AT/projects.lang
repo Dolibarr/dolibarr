@@ -6,7 +6,6 @@ TasksPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
 TasksDesc=Diese Ansicht zeigt alle Aufgaben (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Aufgaben).
 NoProject=Kein Projekt definiert
 MyActivities=Meine Tätigkeiten
-ListVariousPaymentsAssociatedProject=List of manual journal entries related to the project
 CloseAProject=Schließe Projekt
 ReOpenAProject=Öffne Projekt
 ProjectContact=Projektansprechpartner

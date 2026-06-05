@@ -12,12 +12,20 @@ Security report are valid only on any current stable version for the last 5 majo
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected.
+- Send your report as an issue on https://github.com/Dolibarr/dolibarr/issues or on GitHub Vulnerability Disclosure Program tool (VDP): https://github.com/Dolibarr/dolibarr/security/advisories (recommended). Do 1 report only per vulnerability. Reports combining several vulnerabilities, as well as reports generated using IA will be rejected. 
+
+NOTE: This is a private vulnerability report process: Advisories are sent to users by our internal channel (RSS at https://cti.dolibarr.org/index-security.rss), we do not publish CVE reports.
+
 <!--
 - Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
+
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary (in such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager).
+
+NOTE: This is a private vulnerability report process: Advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourself (we have no CNA number), but you are free to do it yourself.
+
+Also, note that we are a project developed by volunteers and have no found for bounties.
 
 
 ## Hunting vulnerabilities on Dolibarr
@@ -57,10 +65,16 @@ Reports are processed around once a month.
 
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
-* The version to analyze must be the last version available in the "develop" branch. Reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.   
-* $dolibarr_main_prod must be set to 1 in conf.php
-* $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
-* $dolibarr_main_force_https must be set to something else than 0.
+* The version to analyze must be the last version available in the "develop" branch. Also, reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.
+* Installation must be done properly for a production usage. This includes:
+** creation of the install.lock in the last step of installation process.
+** $dolibarr_main_prod must be set to 1 in conf.php
+** $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
+** $dolibarr_main_force_https must be set to something else than 0.
+** The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
+** The web server setup must be done so that only the documents directory is in write mode and directory listing is not allowed. The directory path htdocs/ must be read-only.
+** The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
+** Fail2ban rules for rate limit on the login page, forgotten password page, API calls and all public pages (/public/*) must be installed as recommended in the section "About - Admin tools - Section Access limits and mitigation".
 * Some constant must be set in the backoffice menu Home - Setup - Other
   - MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 3 
   - MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1
@@ -69,10 +83,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
   - MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (only relative links are allowed in descriptions/notes), or 2 (no links are allowed in descriptions/notes)
   CSRF attacks and HTML injections are accepted but double check this setup that is experimental setup that already fix a lot of case and soon enabled by default.
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles in "experimental", "development" or external modules are not valid vulnerabilities).
-* The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
-* The web server setup must be done so that only the documents directory is in write mode and directory listing is not allowed. The directory path htdocs/ must be read-only.
-* The modules DebugBar and ModuleBuilder must NOT be enabled. (by default, these modules are not enabled. They are developer tools)
-* Fail2ban rules for rate limit on the login page, forgotten password page, API calls and all public pages (/public/*) must be installed as recommended in the section "About - Admin tools - Section Access limits and mitigation".
+
 
 Scope is the web application (backoffice) and the APIs.
 

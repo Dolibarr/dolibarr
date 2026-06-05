@@ -1582,15 +1582,18 @@ abstract class CommonDocGenerator
 
 		$parameters = array(
 			'curY' => &$curY,
-			'columnText' => $columnText,
+			'columnText' => &$columnText,
 			'colKey' => $colKey,
 			'pdf' => &$pdf,
 		);
 		$reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0 && isset($hookmanager->resArray['columnText'])) {
+			$columnText = $hookmanager->resArray['columnText'];
+		}
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
-		if (!$reshook) {
+		if (!$reshook || $reshook > 0) {
 			if (empty($columnText)) {
 				return 0;
 			}
@@ -1809,9 +1812,16 @@ abstract class CommonDocGenerator
 					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '2');
 				}
 
+				if (!$enabled) {
+					continue;
+				}
+
+				// Reset enabled: only printable attribute determines PDF visibility
+				$enabled = 0;
 				$disableOnEmpty = 0;
-				if ($enabled && !empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
-					$printable = intval($extrafields->attributes[$object->table_element]['printable'][$key]);
+				$printable = 0;
+				if (!empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
+					$printable = (int) $extrafields->attributes[$object->table_element]['printable'][$key];
 					if (in_array($printable, $params['printableEnable']) || in_array($printable, $params['printableEnableNotEmpty'])) {
 						$enabled = 1;
 					}
@@ -1821,11 +1831,7 @@ abstract class CommonDocGenerator
 					}
 				}
 
-				if (empty($extrafields->attributes[$object->table_element]['printable'][$key])) {
-					continue;
-				}
-
-				if (empty($enabled)) {
+				if (empty($enabled) || empty($printable)) {
 					continue;
 				}
 
@@ -1966,7 +1972,7 @@ abstract class CommonDocGenerator
 	 * @param float			$tab_top        Tab top position
 	 * @param float			$tab_height     Default tab height
 	 * @param Translate		$outputlangs    Output language
-	 * @param int			$hidetop        Hide top
+	 * @param int<0,1>		$hidetop        Hide top
 	 * @return float						Height of col tab titles
 	 */
 	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)

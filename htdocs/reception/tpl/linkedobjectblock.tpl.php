@@ -60,6 +60,13 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refSupplierWithThirdparty = $objectlink->ref_supplier ? dolPrintHTML($objectlink->ref_supplier).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refSupplierWithThirdparty = '<span class="small">'.$refSupplierWithThirdparty;
+	$refSupplierWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refSupplierWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -72,8 +79,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref tdoverflowmax150" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
-		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+		<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty; ?></td>
+		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->hasRight('reception', 'lire')) {
 			$total += $objectlink->total_ht;

@@ -245,9 +245,9 @@ class FactureLigne extends CommonInvoiceLine
 
 				if ($type !== 'separate') {
 					if (in_array($type, array('point','multipts','linestrg','polygon'))) {
-						$sql .= ", ST_AsWKT(ef.".$key.") as ".$key;
+						$sql .= ", ST_AsWKT(ef.".$this->db->sanitize($key).") as ".$this->db->sanitize($key);
 					} else {
-						$sql .= ", ef.".$key;
+						$sql .= ", ef.".$this->db->sanitize($key);
 					}
 				}
 			}

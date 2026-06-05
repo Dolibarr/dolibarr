@@ -211,8 +211,10 @@ if (empty($reshook)) {
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	//BEGIN MODULEBUILDER LINES
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+	//END MODULEBUILDER LINES
 
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -266,51 +268,6 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-card')
 // 	});
 // });
 // </script>';
-
-if ($object->id > 0 && (empty($action) || ($action != 'create'))) {
-	$head = myobjectPrepareHead($object);
-
-	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
-
-	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-
-	$morehtmlref = '<div class="refidno">';
-	/*
-		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(getDolGlobalInt('THIRDPARTY_REF_INPUT_SIZE') ? ':'.getDolGlobalInt('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
-		// Thirdparty
-		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-		if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
-		}
-		// Project
-		if (isModEnabled('project')) {
-			$langs->load("projects");
-			$morehtmlref .= '<br>';
-			if ($permissiontoadd) {
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
-				if (!empty($object->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
-				}
-			}
-		}
-	*/
-	$morehtmlref .= '</div>';
-
-
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-}
 
 // Part to create
 if ($action == 'create') {
@@ -397,10 +354,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 'action-delete');
 	}
+	//BEGIN MODULEBUILDER LINES
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	//END MODULEBUILDER LINES
 
 	// Clone confirmation
 	if ($action == 'clone') {
@@ -443,6 +402,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Print form confirm
 	print $formconfirm;
+
+
+
+	$head = myobjectPrepareHead($object);
+
+	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Object card
@@ -509,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-
+	//BEGIN MODULEBUILDER LINES
 	/*
 	 * Lines
 	 */
@@ -539,6 +504,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
 		}
 
+		//BEGIN MODULEBUILDER LINES
 		// Form to add new line
 		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 			if ($action != 'editline') {
@@ -554,6 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		}
+		//END MODULEBUILDER LINES
 
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';
@@ -562,8 +529,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print "</form>\n";
 	}
-
-
+	//END MODULEBUILDER LINES
 	// Buttons for actions
 
 	if ($action != 'presend' && $action != 'editline') {
@@ -600,7 +566,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			/*

@@ -30,14 +30,11 @@
 */
 function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {
-	global $conf, $db;
-
-
 	if (defined('SUBTOTALS_SPECIAL_CODE')) {
-		$substitutionarray['is_subtotals_line'] = ($line->special_code == SUBTOTALS_SPECIAL_CODE);
+		$substitutionarray['is_subtotals_line'] = ($line->special_code == constant('SUBTOTALS_SPECIAL_CODE'));
 		$substitutionarray['is_not_subtotals_line'] = !$substitutionarray['is_subtotals_line'];
-		$substitutionarray['is_subtotals_title'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty > 0);
-		$substitutionarray['is_subtotals_subtotal'] = (($line->special_code == SUBTOTALS_SPECIAL_CODE) && $line->qty < 0);
+		$substitutionarray['is_subtotals_title'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty > 0);
+		$substitutionarray['is_subtotals_subtotal'] = (($line->special_code == constant('SUBTOTALS_SPECIAL_CODE')) && $line->qty < 0);
 		$subtotal_total = 0;
 		if (isModEnabled('multicurrency') && $object->multicurrency_code != getDolCurrency()) {
 			$subtotal_total = $object->getSubtotalLineMulticurrencyAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall

@@ -44,8 +44,20 @@ define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 $algo = 'sha256';
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT."/blockedlog/versionmod.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/blockedlog/versionmod.inc.php";
+
+// Array of dir/files to include in the signature of unalterable files
+// This array will be used by the generate_filelist_xml.php script to generate the filelist.xml file
+$arrayofunalterablefiles = array(
+	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
+);
+
 
 
 /*
@@ -62,22 +74,29 @@ print '***** '.$script_file.' *****'."\n";
 
 if (empty($argv[1])) {
 	print "Usage:   ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value] [buildzip=1]\n";
-	print "Usage:   ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] unalterable_files\n";
+	print "Usage:   ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] name_of_locked_scope\n";
 	print "\n";
 	print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=ES:CONST_XX_IS_ON includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
+	print "Example: ".$script_file." checklock=auto unalterable_files\n";
 	print "\n";
-	print "Generate the file filelist-x.y.z[-mybuild].xml with signature of files. ";
-	print "The file always includes the 3 sections:\n";
+	print "Generate the XML filelist-x.y.z[-mybuild].xml with the signature of files. ";
+	print "The XML always includes the 3 sections:\n";
 	print "- dolibarr_htdocs_dir\n";
 	print "- dolibarr_scripts_dir\n";
 	print "- dolibarr_unalterable_files (only files inside the scope of the unalterable module)\n";
-	print "and if a specific setup/parameter need to be included into the signature for check:\n";
+	print "and if a specific setup/parameter need to be included into the signature:\n";
 	print "- dolibarr_constants\n";
 	print "\n";
-	print "If used with parameter 'check_unalterable_files', it will validate that the signature generated is the samethan the one found into lockedfiles.txt";
+	print "If used with the parameter 'checklock' 'unalterable_files', it will validate that the signature generated is the same than the one for scope 'unalterable_files' found into dev/lockedfiles.txt\n";
 	print "\n";
 	exit(1);
 }
+
+
+// We can defined here a list of scopes that need a dedicated signature
+$arrayoflockedscopes = array(
+	'unalterable_files' => DOLCERT_VERSION				// The scope for the French Loi Finance and certification
+);
 
 
 $i = 0;
@@ -116,12 +135,13 @@ if (empty($release) && empty($checklock)) {
 	print "Error: Missing release or checklock parameter\n";
 	print "Usage: ".$script_file." release=auto[-mybuild]|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
 	print "Usage: ".$script_file." checklock=auto[-mybuild]|x.y.z[-mybuild] unalterable_files\n";
+	print "\n";
 	exit(2);
 }
 
 $savrelease = $release;
 
-// If release is auto, we take current version
+// If $release is auto, we take current version
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
@@ -129,13 +149,19 @@ if ($tmpver[0] == 'auto') {
 		$release .= '-'.$tmpver[1];
 	}
 }
-
 $releaseblockedlog = DOLCERT_VERSION;
 
-// If release is auto, we take current version to read checklock file
+
+// If $checklock is auto, we take current version to read checklock file
 $tmpver = explode('-', $checklock, 2);
 if ($tmpver[0] == 'auto') {
 	$checklock = DOL_VERSION;
+	foreach ($arrayoflockedscopes as $lockedscope => $versionlocked) {
+		if ($checksource == $lockedscope) {
+			$checklock = $versionlocked;
+			break;
+		}
+	}
 	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
 		$checklock .= '-'.$tmpver[1];
 	}
@@ -201,8 +227,8 @@ if ($release) {
 }
 if ($checklock) {
 	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
-	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";
-	print "Check source                        : ".$checksource."\n";
+	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";		// For example 2.0.0
+	print "Scope name to check                 : ".$checksource."\n";				// For example unalterable_files
 }
 
 if ($release) {
@@ -236,7 +262,7 @@ if ($release) {
 		$fileforgitcontent = file_get_contents($fileforgit);
 	}
 	if (empty($fileforgitcontent)) {
-		print "Failed to get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
+		print "Can't get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
 	}
 	$gitcommit = trim($fileforgitcontent);
 
@@ -257,7 +283,8 @@ if ($release) {
 
 	// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install\/doctemplates|install\/mysql\/migration|install\/filelist.*|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+
 	$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 
 	$dir = '';
@@ -348,15 +375,6 @@ if ($release && $releaseblockedlog) {
 }
 
 // Array of dir/files to include in the section
-$arrayofunalterablefiles = array(
-	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
-);
-
 foreach ($arrayofunalterablefiles as $entry) {
 	if ($entry['file'] == 'all') {
 		$regextoinclude = $entry['regextoinclude'];
@@ -456,7 +474,11 @@ if ($release) {
 		print "File ".$outputfile." generated.\n";
 		print "Signature for htdocs files: ".$hashhtdocsdir."\n";
 		print "Signature for scripts files: ".$hashscriptsdir."\n";
-		print "Signature for the ".count($checksumconcat)." unalterable files: ".$hashunalterable_files."\n";
+
+		// For the scope unalterable_files:
+		print "Signature for the ".count($checksumconcat)." files in scope unalterable_files ";
+		print DOLCERT_VERSION;
+		print ": ".$hashunalterable_files."\n";
 	} else {
 		if ($buildzip == '1' || $buildzip == 'zip') {
 			$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
@@ -475,7 +497,7 @@ if ($release) {
 }
 
 if ($checklock) {
-	print "Signature for unalterable files: ".$algo." ".$hashunalterable_files."\n";
+	print "Signature of locked files for the scope '".$checksource."' : ".$algo." ".$hashunalterable_files."\n";
 
 	$lockedfile = DOL_DOCUMENT_ROOT.'/../dev/lockedfiles.txt';
 	$checksuminlockedfile = '';
@@ -488,15 +510,18 @@ if ($checklock) {
 		foreach ($arraylocked as $line) {
 			$tmparray = preg_split("/\s+/", $line, 4);
 			if ($tmparray[0] == $checklockmajorversion && $tmparray[2] == $algo) {
-				$checksuminlockedfile = $tmparray[3];
+				$checksuminlockedfile = trim($tmparray[3]);
 			}
 		}
 		if (empty($checksuminlockedfile)) {
-			print "The major version ".$checklockmajorversion." is not locked on the scope '".$checksource."' (file found but no matching entry found into dev/lockedfiles.txt).\n";
-		} elseif ($checksuminlockedfile != $hashunalterable_files) {
-			print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' to checksum ".$algo." ".$checksuminlockedfile."\n";
-			if ($checklockmajorversion != $checksource) {
-				print "The checksum now differs from the locked one, so we return an error.\n";
+			print "The major version ".$checklockmajorversion." is not locked on the scope '".$checksource."' (file found but no lock entry found into dev/lockedfiles.txt).\n";
+		} else {
+			print "The major version ".$checklockmajorversion." is locked on scope '".$checksource."' with the checksum : ".$algo." ".$checksuminlockedfile."\n";
+			print "\n";
+			if (hash_equals($checksuminlockedfile, $hashunalterable_files)) {
+				print "OK - The checksum of current files is the same than the locked one.\n";
+			} else {
+				print "ERROR - The checksum of current files differs from the locked one, so we return an error.\n";
 				print "\n";
 				exit(10);
 			}

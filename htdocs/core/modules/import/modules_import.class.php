@@ -1351,7 +1351,7 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+										$computedFieldPos = isset($arrayfield[$val]) ? ((int) $arrayfield[$val]) : 0;
 										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$newval = $res; 	// We get new value computed.
@@ -1393,9 +1393,9 @@ class ModeleImports
 
 									// Load content of field@table into cache array
 									if (!is_array($this->cachefieldtable[$cachekey])) { // If content of field@table not already loaded into cache
-										$sql = "SELECT ".$field." as aliasfield FROM ".$table;
+										$sql = "SELECT ".$this->db->sanitize($field)." as aliasfield FROM ".$this->db->sanitize($table);
 										if (!empty($filter)) {
-											$sql .= ' WHERE '.$filter;
+											$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 										}
 
 										$resql = $this->db->query($sql);

@@ -1331,7 +1331,6 @@ MailToSendInvoice=Facturas de clientes
 MailToSendSupplierRequestForQuotation=Solicitud de presupuesto
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas de proveedores
-MailToExpenseReport=Reporte de gastos
 MailToTicket=Entradas
 ByDefaultInList=Mostrar por defecto en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable

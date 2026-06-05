@@ -1403,7 +1403,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1541,12 +1541,12 @@ class FormFile
 					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
 						print 'target="_blank" ';
 					}
-					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 					if ($forcedownload) {
 						print '&attachment=1';
 					}
 					if (!empty($object->entity)) {
-						print '&entity='.$object->entity;
+						print '&entity='.((int) $object->entity);
 					}
 					print '&file='.urlencode($filepath);
 					print '">';
@@ -1566,7 +1566,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'" spellcheck="false">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1638,7 +1638,7 @@ class FormFile
 
 					// Shared or not - Hash of file
 					if (empty($moreoptions['hideshared'])) {
-						print '<td class="center minwidth100 nowraponsmartphone">';
+						print '<td class="center nowraponsmartphone">';
 						if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 							if ($editline) {
 								print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
@@ -1678,7 +1678,7 @@ class FormFile
 					// Custom actions buttons
 					if (!empty($moreoptions['buttons'])) {
 						print '<td>';
-						foreach ($moreoptions['buttons'] as $moreoptkey => $moreoptval) {
+						foreach ($moreoptions['buttons'] as $moreoptval) {
 							print '<a href="'.$moreoptval['url'].'&urlfile='.urlencode($file['name']).'">';
 							print $moreoptval['picto'];
 							print '</a>';

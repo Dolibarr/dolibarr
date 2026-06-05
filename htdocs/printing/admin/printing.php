@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,11 +152,16 @@ if ($mode == 'setup' && $user->admin) {
 			$dirmodels = array('/core/modules/printing/');
 		}
 
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
@@ -296,11 +301,16 @@ if ($mode == 'config' && $user->admin) {
 	}
 
 	foreach ($result as $tmpdriver) {
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$tmpdriver;
@@ -343,11 +353,16 @@ if ($mode == 'test' && $user->admin) {
 			$dirmodels = array('/core/modules/printing/');
 		}
 
+		$classfile = null;
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
 				break;
 			}
+		}
+		if ($classfile === null) {
+			dol_syslog("Could not load printing module".$driver, LOG_ERR);
+			exit(1);
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;

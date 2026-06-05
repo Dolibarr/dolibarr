@@ -13,7 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020-2024  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2023       Joachim Küter      		<git-jk@bloxera.com>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
@@ -74,10 +74,17 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
 /**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
  * @var ?string $php_session_save_handler
  * @var ?string $dolibarr_main_force_https
  * @var ?string $dolibarr_main_restrict_ip
  * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -113,7 +120,7 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
-	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
+	ini_set('session.gc_maxlifetime', max(120, min(3600 * 24, (int) $_COOKIE[$sessiontimeout])));	// Between 120 and 86400
 }
 
 // This create lock, released by session_write_close() or end of page.
@@ -139,12 +146,13 @@ if (!defined('NOSESSION')) {
 }
 
 
-// Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
+// Init the 7 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager, $extrafields
 require_once 'master.inc.php';
 /**
  * The master.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var ?DoliDB $db                 May be null if NOREQUIREDB is defined
+ * @var ?ExtraFields $extrafields   May be null if NOREQUIREDB is defined
  * @var ?HookManager $hookmanager   May be null if NOHOOKMANAGER is defined
  * @var ?Translate $langs           May be null if NOREQUIRETRAN is defined
  * @var ?User $user                 May be null if NOREQUIREUSER is defined
@@ -309,7 +317,7 @@ if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') && getDolGlobalString('MAIN_VERSION_LAST_INSTALL') != DOL_VERSION) {
 	$checkifupgraderequired = true;
 }
-if ($checkifupgraderequired) {
+if ($checkifupgraderequired && !defined('MAIN_VERSION_DISABLE_DB_CHECK')) {
 	$versiontocompare = getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL'));
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
@@ -359,7 +367,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	if ((GETPOSTISSET('massaction') || $tmpaction) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
 		// We exclude some action that are not sensitive so legitimate
-		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'validatenewpassword')))) {
+		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('check', 'create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editfile', 'editvalidator', 'file_manager', 'history', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'testsetup', 'undeployconfirmed', 'validatenewpassword', 'view')))) {
+			// Note: 'create' is for form to ask creattion, realcreation is action 'add'
+			// Note: 'check' if for the feature to control an archive.
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -444,31 +454,33 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-// Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOSTISSET('disablemodules')) {
-	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
-}
-if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
+if (!empty($dolibarr_main_demo)) {
+	// Disable modules (this must be after session_start and after conf has been loaded)
+	if (GETPOSTISSET('disablemodules')) {
+		$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
+	}
+	if (!empty($_SESSION["disablemodules"])) {
+		$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
-	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
-	foreach ($disabled_modules as $module) {
-		if ($module) {
-			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); 	// To avoid warnings
-			}
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+		foreach ($disabled_modules as $module) {
+			if ($module) {
+				if (empty($conf->$module)) {
+					$conf->$module = new stdClass(); 	// To avoid warnings
+				}
 
-			$conf->$module->enabled = false;		// Old usage
-			unset($conf->modules[$module]);
+				$conf->$module->enabled = false;		// Old usage
+				unset($conf->modules[$module]);
 
-			foreach ($modulepartkeys as $modulepartkey) {
-				unset($conf->modules_parts[$modulepartkey][$module]);
-			}
-			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;		// Old usage
-				$conf->supplier_invoice->enabled = 0;	// Old usage
-				unset($conf->modules['supplier_order']);
-				unset($conf->modules['supplier_invoice']);
+				foreach ($modulepartkeys as $modulepartkey) {
+					unset($conf->modules_parts[$modulepartkey][$module]);
+				}
+				if ($module == 'fournisseur') {		// Special case
+					$conf->supplier_order->enabled = 0;		// Old usage
+					$conf->supplier_invoice->enabled = 0;	// Old usage
+					unset($conf->modules['supplier_order']);
+					unset($conf->modules['supplier_invoice']);
+				}
 			}
 		}
 	}
@@ -1164,14 +1176,7 @@ if (!defined('NOLOGIN')) {
 	}
 	if ((int) $conf->liste_limit <= 0) {
 		// Mode automatic. Similar code than into conf.class.php
-		$conf->liste_limit = 15;
-		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-			$conf->liste_limit = 8;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-			$conf->liste_limit = 10;
-		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-			$conf->liste_limit = 20;
-		}
+		$conf->liste_limit = getListLimitFromScreenHeight();
 	}
 	// Overwrite main_checkbox_left_column from user setup
 	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
@@ -1303,7 +1308,7 @@ if (!defined('NOREQUIRETRAN')) {
 	// accesskey is for Mac:               CTRL + Option + key for all browsers
 
 	// Note: $con->browser->os and $conf->browser->name may not be defined if we are in CLI mode.
-	$conf->browser->stringforfirstkey = $langs->trans("KeyboardShortcut");
+	$conf->browser->stringforfirstkey = $langs->transnoentities("KeyboardShortcut");
 	if (!empty($conf->browser->os) && $conf->browser->os == 'macintosh') {
 		$conf->browser->stringforfirstkey .= ' CTRL + Option +';
 	} else {
@@ -1506,10 +1511,12 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 {
 	global $db, $conf, $hookmanager;
 
-	if ($contenttype == 'text/html') {
-		header("Content-Type: text/html; charset=".$conf->file->character_set_client);
-	} else {
-		header("Content-Type: ".$contenttype);
+	if ($contenttype != 'none') {
+		if ($contenttype == 'text/html') {
+			header("Content-Type: text/html; charset=".$conf->file->character_set_client);
+		} else {
+			header("Content-Type: ".$contenttype);
+		}
 	}
 
 	// Security options
@@ -1726,7 +1733,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		// Mobile appli like icon
-		$manifest = DOL_URL_ROOT.'/theme/'.$conf->theme.'/manifest.json.php';
+		$manifest = DOL_URL_ROOT.'/theme/manifest.json.php';
 		$parameters = array('manifest' => $manifest);
 		$resHook = $hookmanager->executeHooks('hookSetManifest', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($resHook > 0) {
@@ -1993,7 +2000,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 
 			// jQuery jeditable for Edit In Place features
-			if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !defined('DISABLE_JQUERY_JEDITABLE')) {
+			/*if (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE') && !defined('DISABLE_JQUERY_JEDITABLE')) {
 				print '<!-- JS to manage editInPlace feature -->'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.js?' . $ext . '"></script>'."\n";
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js?' . $ext . '"></script>'."\n";
@@ -2008,9 +2015,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
 				print 'var withInPlace = 300;'; // width in pixel for default string edit
 				print '</script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js?' . $ext . '"></script>'."\n";
-				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js?' . $ext . '"></script>'."\n";
-			}
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/public/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}*/
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 				// jQuery plugin "mutiselect", "multiple-select", "select2", ...
 				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
@@ -2046,6 +2053,25 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					print 'CKEDITOR.disableAutoInline = true;'."\n";
 				}
 				print '</script>'."\n";
+			}
+
+			// TinyMCE (alternative WYSIWYG backend, selected by FCKEDITOR_EDITORNAME='tinymce')
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_EDITORNAME') == 'tinymce' && !defined('DISABLE_TINYMCE')) || defined('FORCE_TINYMCE')) {
+				print '<!-- Includes JS for TinyMCE -->'."\n";
+				$pathtinymce = DOL_URL_ROOT.'/public/includes/tinymce/tinymce/';
+				$jstinymce = 'tinymce.min.js';
+				if (defined('JS_TINYMCE') && constant('JS_TINYMCE')) {
+					$pathtinymce = constant('JS_TINYMCE');
+				}
+				print '<script src="'.$pathtinymce.$jstinymce.'?'.$ext.'"></script>'."\n";
+				print '<script nonce="'.getNonce().'">';
+				print '/* enable tinymce by main.inc.php */';
+				print 'var tinymceBasePath = \''.dol_escape_js($pathtinymce).'\';'."\n";
+				print 'var tinymceFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print 'var tinymceFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+				print '</script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/tinymce/config.js?'.$ext, 1).'"></script>'."\n";
+				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/tinymce-ckeditor-compat.js?'.$ext.'"></script>'."\n";
 			}
 
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
@@ -2230,13 +2256,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_search();
 		}
 
+		// Add AI picto
+		$toprightmenu .= top_menu_ai();
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 			// Add the quick add object dropdown
 			$toprightmenu .= top_menu_quickadd();
 		}
-
-		// Add bookmark dropdown
-		$toprightmenu .= top_menu_bookmark();
 
 		if (getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE')) {
 			// Add the import file link
@@ -2685,6 +2714,56 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  *
  * @return  string                  HTML content
  */
+function top_menu_ai()
+{
+	global $conf, $langs;
+
+	// Button disabled on text browser
+	/*if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		return '';
+	}*/
+
+	$html = '';
+
+	if (isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+		// Open the AI Assistant in a popup overlay rather than navigating away,
+		// so the user keeps their current page context while interacting with
+		// the assistant. Uses the standard Dolibarr helper which builds an
+		// iframe-in-jQuery-UI-dialog (modal, 80% width, height-150) and auto-
+		// appends dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=NAME
+		// so the embedded page renders without the surrounding chrome.
+		// JS-disabled fallback: the helper degrades to target="_blank".
+		// $label is used by dolButtonToOpenUrlInDialogPopup() both for the
+		// title="" tooltip on the <a> AND for the jQuery UI dialog title.
+		// Include the keyboard-shortcut hint (matching the convention used
+		// e.g. by the PublicVirtualCardUrl call earlier in this file and by
+		// bookmark/quickadd/search) so the icon tooltip on hover reads e.g.
+		// "AI Assistant (Ctrl Alt a)" -- the dialog title shows the same.
+		$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+		$aibtn = dolButtonToOpenUrlInDialogPopup(
+			'aiassistant',
+			$ailabel,
+			'<i class="fa fa-magic"></i>',
+			'/ai/assistant/index.php',
+			'',
+			'nofocusvisible',
+			'',
+			'',
+			'a'
+		);
+		$html .= '<!-- div for quick ai link (opens AI Assistant in popup) -->
+	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">'.$aibtn.'</div>';
+	}
+
+	return $html;
+}
+
+/**
+ * Build the tooltip on top menu quick add.
+ * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
+ *
+ * @return  string                  HTML content
+ */
 function top_menu_quickadd()
 {
 	global $conf, $langs;
@@ -2699,7 +2778,7 @@ function top_menu_quickadd()
 	if (!empty($conf->use_javascript_ajax)) {
 		$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="a" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' a)"><i class="fa fa-plus-circle"></i></a>
+        <a accesskey="c" class="dropdown-toggle login-dropdown-a nofocusvisible" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$conf->browser->stringforfirstkey.' c)"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
@@ -2906,6 +2985,14 @@ function printDropdownQuickadd($mode = 0)
 				"picto" => "object_service",
 				"activation" => isModEnabled("service") && $user->hasRight("service", "write"), // vs hooking
 				"position" => 410,
+			),
+			array(
+				"url" => "/product/stock/stocktransfer/stocktransfer_card.php?action=create&amp;mainmenu=products",
+				"title" => "StockTransferNew@stocks",
+				"name" => "StockTransfer@stocks",
+				"picto" => "stock",
+				"activation" => isModEnabled("stocktransfer") && $user->hasRight("stocktransfer", "stocktransfer", "write"), // vs hooking
+				"position" => 415,
 			),
 			array(
 				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
@@ -3875,6 +3962,7 @@ if (!function_exists("llxFooter")) {
 							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
 							'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
+							'company_idprof2' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2),
 							'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
 							'company_state' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE', $mysoc->state),
 							'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),

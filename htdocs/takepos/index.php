@@ -721,6 +721,16 @@ function New() {
 
 	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
 
+	if (invoiceid == '') {
+		$("#poslines").load("invoice.php?action=delete&token=<?php echo newToken(); ?>&place=" + place, function () {
+			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
+		});
+
+		ClearSearch(false);
+		$("#idcustomer").val("");
+		return;
+	}
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&token=<?php echo newToken();?>&id='+invoiceid, function(data) {
 		var r;
 
@@ -741,7 +751,6 @@ function New() {
 		}
 	});
 }
-
 /**
  * Search products
  *

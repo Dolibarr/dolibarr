@@ -40,7 +40,7 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-$group = 'ExperimentalUx';
+$group = 'UxDolibarrContext';
 $experimentName = 'UxDolibarrContextLangsTool';
 
 $experimentAssetsPath = dolBuildUrl('/public/includes/dolibarr-js-context');
