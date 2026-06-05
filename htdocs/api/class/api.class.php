@@ -119,9 +119,6 @@ class DolibarrApi
 			))) {
 				throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
 			}
-			if (in_array($field, array('specimen'))) {
-				// Allowed but not used
-			}
 
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
