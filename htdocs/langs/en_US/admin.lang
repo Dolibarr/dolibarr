@@ -1656,6 +1656,7 @@ LDAPServerPort=Server port
 LDAPServerPortExample=Standard or StartTLS: 389, LDAPs: 636
 LDAPServerProtocolVersion=Protocol version
 LDAPServerUseTLS=Use TLS
+LDAPServerTLSIgnoreCert=Ignore server TLS certificate
 LDAPServerUseTLSExample=Your LDAP server use StartTLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
