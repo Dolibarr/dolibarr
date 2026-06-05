@@ -687,6 +687,9 @@ if ($search_fk_user != '' && $search_fk_user != '-1') {
 if ($search_module) {
 	$sql .= natural_search('module', $search_module);
 }
+// Exclude disabled modules
+$listofmodules = implode(",", array_keys($conf->modules));
+$sql .= "AND (".natural_search('module', $listofmodules, 3, 1)." OR module IS NULL)";
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
 }

@@ -10828,7 +10828,7 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
-		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of deprecated update by database
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of the deprecated update by database
 			$fieldvalues['tms'] = $this->db->idate($now);
 		}
 

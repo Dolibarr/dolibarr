@@ -369,12 +369,6 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
-// For Paybox
-if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
-	// TODO Add a check to validate that payment is ok.
-	$ispaymentok = true; // We will do the rest of code
-}
-
 // For Stripe
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
@@ -396,7 +390,9 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	}
 
 	// Check we are coming from the newpaymentpage
-	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
+	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
+	if (empty(GETPOST('payment_intent', 'alphanohtml')) && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
