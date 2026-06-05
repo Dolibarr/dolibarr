@@ -91,4 +91,8 @@ phpstan_custom.neon
 
 # ignore .htaccess files
 .htaccess
+<<<<<<< develop
+.ddev
+=======
 /.run-phpstan
+>>>>>>> develop
