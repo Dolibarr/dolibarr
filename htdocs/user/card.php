@@ -558,6 +558,9 @@ if (empty($reshook)) {
 					$isimage = image_format_supported($_FILES['photo']['name']);
 					if ($isimage > 0) {
 						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+						if ($object->id == $user->id) {
+							$user->photo = $object->photo;
+						}
 					} else {
 						$error++;
 						$langs->load("errors");
