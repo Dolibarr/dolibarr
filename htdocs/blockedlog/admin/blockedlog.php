@@ -3,7 +3,7 @@
  * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
