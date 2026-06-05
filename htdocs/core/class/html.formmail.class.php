@@ -1856,6 +1856,8 @@ class FormMail extends Form
 				$ret->content_lines = (string) $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
 				$ret->email_from = (string) $obj->email_from;
+				$ret->email_tocc = (string) $obj->email_tocc;
+				$ret->email_tobcc = (string) $obj->email_tobcc;
 
 				break;
 			} else {
