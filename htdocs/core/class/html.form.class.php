@@ -1123,7 +1123,7 @@ class Form
 	/**
 	 *  Return a select list of country phone calling codes
 	 *
-	 *  @param	string		$selected			Pre-selected phone code value (e.g. "+33")
+	 *  @param	string		$selected			Preselected phone code value (e.g. "+33")
 	 *  @param	string		$htmlname			Name of HTML select element
 	 *  @param	string		$morecss			More CSS classes
 	 *  @param	int			$showempty			Show empty option (1) or not (0)
@@ -1397,6 +1397,157 @@ class Form
 		$out .= '</script>'."\n";
 
 		return $out;
+	}
+
+	/**
+	 *  Generate HTML table rows for standard object linking (invoices, orders, proposals, etc.).
+	 *
+	 *  This method creates the table body rows with checkboxes for selecting objects to link.
+	 *  It displays Ref, RefCustomer, AmountHTShort, and Company columns.
+	 *
+	 * @param 	CommonObject 	$object 			The source object we are linking from
+	 * @param 	string 			$key 				The element type key (e.g., 'invoice', 'order', 'propal')
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
+	 * @param 	int 			$num 				Number of records returned from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
+	 * @return  string 							HTML table rows for the link selection table
+	 */
+	private function makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("RefCustomer") . '</td>';
+		$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
+			$htmltoenteralink .= '<td class="right">';
+			if ($possiblelink['label'] == 'LinkToContract') {
+				$htmltoenteralink .= $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
+			}
+			$htmltoenteralink .= '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
+			$htmltoenteralink .= '</td>';
+			$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
+	}
+
+	/**
+	 *  Generate HTML table rows for conference/booth attendee linking.
+	 *
+	 *  This method creates custom table body rows specifically for ConferenceOrBoothAttendee objects.
+	 *  It displays Ref, Name, Email, Company, DateOfRegistration, and Project columns.
+	 *  Uses getNomUrl() for clickable links to attendee, company, and project records.
+	 *
+	 * @param 	CommonObject 			$object 			The source object we are linking from (e.g., propal, order)
+	 * @param 	string 					$key 				The element type key ('conferenceorboothattendee')
+	 * @param 	array{enabled:bool,perms:int,label:string,sql:string,linkname?:string} $possiblelink Array containing link configuration
+	 * @param 	int 					$num 				Number of records returned from the SQL query
+	 * @param 	mysqli_result|resource|true	$resqllist		Database result resource from the SQL query
+	 * @return  string 									HTML table rows for the attendee link selection table
+	 */
+	private function makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		global $langs, $form;
+		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		$attendeestatic = new ConferenceOrBoothAttendee($this->db);
+		$companystatic = new Societe($this->db);
+		$projectstatic = new Project($this->db);
+		if (empty($form)) {
+			$form = new Form($this->db);
+		}
+		$htmltoenteralink = '';
+		$i = 0;
+
+		// headers
+		$htmltoenteralink .= '<tr class="liste_titre">';
+		$htmltoenteralink .= '<td class="nowrap"></td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Name") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Email") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("Project") . '</td>';
+		$htmltoenteralink .= '<td>' . $langs->trans("DateOfRegistration") . '</td>';
+		$htmltoenteralink .= '</tr>';
+
+		// rows with data
+		while ($i < $num) {
+			$objp = $this->db->fetch_object($resqllist);
+			$alreadylinked = false;
+			if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
+				if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
+					$alreadylinked = true;
+				}
+			}
+			$htmltoenteralink .= '<tr class="oddeven">';
+			$htmltoenteralink .= '<td>';
+			if ($alreadylinked) {
+				$htmltoenteralink .= img_picto('', 'link');
+			} else {
+				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= '</td>';
+			$fetchattendee = $attendeestatic->fetch($objp->rowid);
+			if ($fetchattendee) {
+				$htmltoenteralink .= '<td>' . $attendeestatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			$htmltoenteralink .= '<td>' . $objp->email . '</td>';
+			$fetchcompany = $companystatic->fetch($objp->socid);
+			if ($fetchcompany) {
+				$htmltoenteralink .= '<td>' . $companystatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->name . '</td>';
+			}
+			$fetchcproject = $projectstatic->fetch($objp->fk_project);
+			if ($fetchcproject) {
+				$htmltoenteralink .= '<td>' . $projectstatic->getNomUrl(0). '</td>';
+			} else {
+				$htmltoenteralink .= '<td>' . $objp->fk_project . '</td>';
+			}
+			$htmltoenteralink .= '<td>' . $objp->date_subscription . '</td>';
+			$htmltoenteralink .= '</tr>';
+			$i++;
+		}
+
+		return $htmltoenteralink;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5970,7 +6121,7 @@ class Form
 		$langs->loadLangs(array("admin", "banks"));
 		$num = 0;
 
-		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic";
+		$sql = "SELECT rowid, label, bank, status, iban_prefix, bic, default_rib";
 		$sql .= " FROM " . $this->db->prefix() . "societe_rib";
 		$sql .=  " WHERE type = 'ban'";
 		if ($filtre) {
@@ -6005,7 +6156,7 @@ class Form
 				}
 				$out .= trim($obj->label);
 				if ($showibanbic) {
-					$out .= ' (' . $iban . '/' .$obj->bic. ')';
+					$out .= ' (' . $iban . '/' .$obj->bic. ')' . ($obj->default_rib ? ' ['.$langs->trans("ByDefault").']' : '');
 				}
 				$out .= '</option>';
 				$i++;
@@ -6351,6 +6502,34 @@ class Form
 		return $output;
 	}
 
+	/**
+	 *  Generate a collapsible help block with a standard '?' icon.
+	 *  Designed for use in formconfirm() to provide context without clutter.
+	 *
+	 *  @param  string  $content        The detailed explanation text (HTML allowed)
+	 *  @param  string  $icon           FontAwesome icon class (default: 'fa-question-circle')
+	 *  @return string                  The HTML string for the help block
+	 */
+	public function getHelpBlock($content, $icon = 'fa-question-circle')
+	{
+		global $langs;
+
+		// Sanitize content (assuming it might contain HTML, but escaping text nodes if needed)
+		// We trust the caller to pass safe HTML or translated strings.
+
+		$html = '<details class="dolibarr-help-block" style="margin-top:8px;">';
+		$html .= '<summary style="cursor:pointer; color:#0056b3; font-weight:normal; list-style:none; font-size:0.9em; display:flex; align-items:center;">';
+		$html .= '<span class="fa ' . $icon . '" style="margin-right:6px;"></span>';
+		$html .= $langs->trans("Help"); // Standardized title
+		$html .= '</summary>';
+		$html .= '<div style="margin-top:6px; padding:10px; background:#f8f9fa; border:1px solid #dee2e6; border-radius:4px; font-size:0.9em; color:#555; line-height:1.5;">';
+		$html .= $content;
+		$html .= '</div>';
+		$html .= '</details>';
+
+		return $html;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
@@ -6402,9 +6581,12 @@ class Form
 	 * @param int 			$disableformtag 	1=Disable form tag. Can be used if we are already inside a <form> section.
 	 * @param string 		$labelbuttonyes 	Label for Yes
 	 * @param string 		$labelbuttonno 		Label for No
+	 * @param string 		$helpContent 		Optional help text to display in a collapsible block at the bottom left of the dialog.
+	 * 											If set, a standard '?' icon with the label "Help" will appear.
+	 * 											Clicking it expands the content provided here. Supports HTML.
 	 * @return string                        	HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 600, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No', $helpContent = '')
 	{
 		global $langs, $conf;
 
@@ -6422,9 +6604,12 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 250;
-			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 10;
+			$height = 185;
+			if (is_array($formquestion)) {
+				$height += (count($formquestion) * 40);
+			}
+			if ($question) {
+				$height += dol_nboflines_bis($question, 80) * 40;
 			}
 		}
 
@@ -6446,7 +6631,7 @@ class Form
 			$more .= '<div class="tagtable paddingtopbottomonly centpercent noborderspacing">' . "\n";
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
-					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');    // deprecated. Use morecss instead.
+					$size = (!empty($input['size']) ? ' size="' . $input['size'] . '"' : '');	// deprecated. Use morecss instead.
 					$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
@@ -6608,27 +6793,40 @@ class Form
 			}
 
 			// Show JQuery confirm box.
+			// Add 'flex-direction: column' and 'justify-content: space-between' to push content to top and buttons to bottom
 			$formconfirm .= '<div id="' . $dialogconfirm . '" title="' . dol_escape_htmltag($title) . '" style="display: none;">';
+			$formconfirm .= '<div style="display: flex; flex-direction: column; height: 100%;">';
 			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">' . $formquestion['text'] . '</div>' . "\n";
 			}
 			if (!empty($more)) {
 				$formconfirm .= '<div class="confirmquestions">' . $more . '</div>' . "\n";
 			}
-			$formconfirm .= ($question ? '<div class="confirmmessage">' . img_help(0, '') . ' ' . $question . '</div>' : '');
+			// NEW: Add help block if content provided
+			if (!empty($helpContent)) {
+				$formconfirm .= '<div style="text-align:left; margin-top:12px; padding-top:8px; border-top:1px solid #eee; clear:both;">';
+				$formconfirm .= $this->getHelpBlock($helpContent);
+				$formconfirm .= '</div>';
+			}
+			if (!empty($question)) {
+				$formconfirm .= '<div class="confirmmessage" style="padding-top: 15px;">';
+				$formconfirm .= img_help(0, '') . ' ' . $question;
+				$formconfirm .= '</div>';
+			}
+			$formconfirm .= '</div>';
 			$formconfirm .= '</div>' . "\n";
 
 			$formconfirm .= "\n<!-- begin code of popup for formconfirm page=" . $page . " -->\n";
 			$formconfirm .= '<script nonce="' . getNonce() . '" type="text/javascript">' . "\n";
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
-            $(function() {
-            	$( "#' . $dialogconfirm . '" ).dialog({
-                    autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
+			$(function() {
+				$( "#' . $dialogconfirm . '" ).dialog({
+					autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
 			if ($newselectedchoice == 'no') {
 				$formconfirm .= '
 						open: function() {
-            				$(this).parent().find("button.ui-button:eq(2)").focus();
+							$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
 
@@ -6641,35 +6839,35 @@ class Form
 			$postconfirmas = 'GET';
 
 			$formconfirm .= '
-                    resizable: false,
+					resizable: false,
 					height: \'' . dol_escape_js($height) . '\',
-                    width: \'' . dol_escape_js($width) . '\',
-                    modal: true,
-                    closeOnEscape: false,
-                    buttons: {
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
+					width: \'' . dol_escape_js($width) . '\',
+					modal: true,
+					closeOnEscape: false,
+					buttons: {
+						"' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
 							var options = "token=' . urlencode(newToken()) . '";
-                        	var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
+							var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
 							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
-                         	var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
+							var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
 
-                         	if (inputok.length > 0) {
-                         		$.each(inputok, function(i, inputname) {
-                         			var more = "";
+							if (inputok.length > 0) {
+								$.each(inputok, function(i, inputname) {
+									var more = "";
 									var inputvalue;
-                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
+									if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
 										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
-                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         				inputvalue = $("#" + inputname + more).val();
+										if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+										inputvalue = $("#" + inputname + more).val();
 									}
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
 									console.log("formconfirm check inputname="+inputname+" inputvalue="+inputvalue);
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
-            				if (pageyes.length > 0) {';
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
+							if (pageyes.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6683,25 +6881,25 @@ class Form
 			$formconfirm .= '
 								console.log("after post ok");
 							}
-	                        $(this).dialog("close");
-                        },
-                        "' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
-                        	var options = "token=' . urlencode(newToken()) . '";
-                         	var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
+							$(this).dialog("close");
+						},
+						"' . dol_escape_js($langs->transnoentities($labelbuttonno)) . '": function() {
+							var options = "token=' . urlencode(newToken()) . '";
+							var inputko = ' . json_encode($inputko) . ';	/* List of fields into form */
 							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-                         	var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
-                         	if (inputko.length > 0) {
-                         		$.each(inputko, function(i, inputname) {
-                         			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
-                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
-                         		});
-                         	}
-                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
-                         	//alert(urljump);
-            				if (pageno.length > 0) {';
+							var pageno="' . dol_escape_js(!empty($pageno) ? $pageno : '') . '";
+							if (inputko.length > 0) {
+								$.each(inputko, function(i, inputname) {
+									var more = "";
+									if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+									var inputvalue = $("#" + inputname + more).val();
+									if (typeof inputvalue == "undefined") { inputvalue=""; }
+									options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
+								});
+							}
+							var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
+							//alert(urljump);
+							if (pageno.length > 0) {';
 			if ($postconfirmas == 'GET') {
 				$formconfirm .= 'location.href = urljump;';
 			} else {
@@ -6715,21 +6913,21 @@ class Form
 			$formconfirm .= '
 								console.log("after post ko");
 							}
-                            $(this).dialog("close");
-                        }
-                    }
-                }
-                );
+							$(this).dialog("close");
+						}
+					}
+				}
+				);
 
-            	var button = "' . $button . '";
-            	if (button.length > 0) {
-                	$( "#" + button ).click(function() {
-                		$("#' . $dialogconfirm . '").dialog("open");
-        			});
-                }
-            });
-            });
-            </script>';
+				var button = "' . $button . '";
+				if (button.length > 0) {
+					$( "#" + button ).click(function() {
+						$("#' . $dialogconfirm . '").dialog("open");
+					});
+				}
+			});
+			});
+			</script>';
 			$formconfirm .= "<!-- end ajax formconfirm -->\n";
 		} else {
 			$formconfirm .= "\n<!-- begin formconfirm page=" . dol_escape_htmltag($page) . " -->\n";
@@ -6741,35 +6939,44 @@ class Form
 			$formconfirm .= '<input type="hidden" name="action" value="' . $action . '">' . "\n";
 			$formconfirm .= '<input type="hidden" name="token" value="' . newToken() . '">' . "\n";
 
-			$formconfirm .= '<table class="valid centpercent">' . "\n";
+			$formconfirm .= '<div class="valid">' . "\n";
 
 			// Line title
-			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="2">';
+			$formconfirm .= '<div class="validtitre">';
 			$formconfirm .= img_picto('', 'pictoconfirm') . ' ' . $title;
-			$formconfirm .= '</td></tr>' . "\n";
+			$formconfirm .= '</div>' . "\n";
 
 			// Line text
 			if (is_array($formquestion) && array_key_exists('text', $formquestion) && !empty($formquestion['text'])) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">' . $formquestion['text'] . '</td></tr>' . "\n";
+				$formconfirm .= '<div class="valid">' . $formquestion['text'] . '</div>' . "\n";
 			}
 
 			// Line form fields
 			if ($more) {
-				$formconfirm .= '<tr class="valid"><td class="valid" colspan="2">' . "\n";
+				$formconfirm .= '<div>' . "\n";
 				$formconfirm .= $more;
-				$formconfirm .= '</td></tr>' . "\n";
+				$formconfirm .= '</div>' . "\n";
 			}
 
-			// Line with question
-			$formconfirm .= '<tr class="valid">';
-			$formconfirm .= '<td class="valid">' . $question . '</td>';
-			$formconfirm .= '<td class="valid center">';
+			// NEW: Help block row (between form fields and question)
+			if (!empty($helpContent)) {
+				$formconfirm .= '<div style="padding-top:8px; border-top:1px solid #888;">';
+				$formconfirm .= $this->getHelpBlock($helpContent);
+				$formconfirm .= '</div>' . "\n";
+			}
+
+			// Let's add a row that acts as a spacer.
+			$formconfirm .= '<div style="padding-top: 20px;"></div>' . "\n";
+
+			// Question row
+			$formconfirm .= '<div class="inline-block">' . $question . '</div>';
+
+			$formconfirm .= '<div class="inline-block">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="' . $langs->trans("Validate") . '">';
-			$formconfirm .= '</td>';
-			$formconfirm .= '</tr>' . "\n";
+			$formconfirm .= '</div>';
 
-			$formconfirm .= '</table>' . "\n";
+			$formconfirm .= '</div>';
 
 			if (empty($disableformtag)) {
 				$formconfirm .= "</form>\n";
@@ -6798,7 +7005,6 @@ class Form
 
 		return $formconfirm;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
@@ -6982,6 +7188,7 @@ class Form
 	 */
 	public function form_availability($page, $selected = '', $htmlname = 'availability', $addempty = 0)
 	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		// phpcs:enable
 		global $langs;
 		if ($htmlname != "none") {
@@ -7639,7 +7846,7 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
+		$sql = "SELECT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly, t.einvoice_vatex";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
@@ -7664,6 +7871,8 @@ class Form
 					$tmparray['localtax1_type']	= $obj->localtax1_type;
 					$tmparray['localtax2']	    = $obj->localtax2;
 					$tmparray['localtax2_type']	= $obj->localtax1_type;
+					$tmparray['einvoice_vatex']	= $obj->einvoice_vatex;
+
 					$tmparray['label']			= $obj->taux . '%' . ($obj->code ? ' (' . $obj->code . ')' : ''); // Label must contains only 0-9 , . % or *
 					$tmparray['labelallrates']	= $obj->taux . '/' . ($obj->localtax1 ? $obj->localtax1 : '0') . '/' . ($obj->localtax2 ? $obj->localtax2 : '0') . ($obj->code ? ' (' . $obj->code . ')' : ''); // Must never be used as key, only label
 					$positiverates = '';
@@ -9694,7 +9903,7 @@ class Form
 				$sql .= natural_search($splittedfieldstoshow, $searchkey);
 			}
 
-			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 				$errormessage = '';
 				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
 				if ($errormessage) {
@@ -10863,12 +11072,20 @@ class Form
 					'label' => 'LinkToOrder',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : ''),
 					'linkname' => 'commande',
+				),
 				'subscription' => array(
 					'enabled' => isModEnabled('member'),
 					'perms' => 1,
 					'label' => 'LinkToMemberSubscription',
 					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
-					'linkname' => 'subscription'),
+					'linkname' => 'subscription',
+				),
+				'conferenceorboothattendee' => array(
+					'enabled' => isModEnabled('eventorganization'),
+					'perms' => 1,
+					'label' => 'LinkToConferenceOrBoothAttendee',
+					'sql' => "SELECT s.rowid as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.rowid as rowid, a.fk_project as fk_project, a.ref as ref, a.email as email, a.date_subscription as date_subscription FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "eventorganization_conferenceorboothattendee as a WHERE a.fk_soc = s.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND s.entity IN (' . getEntity('conferenceorboothattendee') . ')' . (empty($object->fk_project) ? '' : ' AND a.fk_project = ' . (int) $object->fk_project),
+					'linkname' => 'attendee'
 				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),
@@ -11002,7 +11219,6 @@ class Form
 				$resqllist = $this->db->query($sql);
 				if ($resqllist) {
 					$num = $this->db->num_rows($resqllist);
-					$i = 0;
 
 					if ($num > 0) {
 						// Section for free predefined list
@@ -11016,41 +11232,19 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
 						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module) ? '@'.$module : ''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
-						$htmltoenteralink .= '<tr class="liste_titre">';
-						$htmltoenteralink .= '<td class="nowrap"></td>';
-						$htmltoenteralink .= '<td>' . $langs->trans("Ref") . '</td>';
-						$htmltoenteralink .= '<td>' . $langs->trans("RefCustomer") . '</td>';
-						$htmltoenteralink .= '<td class="right">' . $langs->trans("AmountHTShort") . '</td>';
-						$htmltoenteralink .= '<td>' . $langs->trans("Company") . '</td>';
-						$htmltoenteralink .= '</tr>';
-						while ($i < $num) {
-							$objp = $this->db->fetch_object($resqllist);
-							$alreadylinked = false;
-							if (!empty($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key])) {
-								if (in_array($objp->rowid, array_values($object->linkedObjectsIds[$possiblelink['linkname'] ?? $key]))) {
-									$alreadylinked = true;
-								}
-							}
-							$htmltoenteralink .= '<tr class="oddeven">';
-							$htmltoenteralink .= '<td>';
-							if ($alreadylinked) {
-								$htmltoenteralink .= img_picto('', 'link');
-							} else {
-								$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
-							}
-							$htmltoenteralink .= '</td>';
-							$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
-							$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
-							$htmltoenteralink .= '<td class="right">';
-							if ($possiblelink['label'] == 'LinkToContract') {
-								$htmltoenteralink .= $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")) . ' ';
-							}
-							$htmltoenteralink .= '<span class="amount">' . (isset($objp->total_ht) ? price($objp->total_ht) : '') . '</span>';
-							$htmltoenteralink .= '</td>';
-							$htmltoenteralink .= '<td>' . $objp->name . '</td>';
-							$htmltoenteralink .= '</tr>';
-							$i++;
+
+						switch ($key) {
+							case 'conferenceorboothattendee':
+								// Custom logic for linking to attendees
+								$htmltoenteralink .= $this->makeAddLinkToAttendee($object, $key, $possiblelink, $num, $resqllist);
+								break;
+
+							default:
+								// Standard logic for all other object types
+								$htmltoenteralink .= $this->makeAddLinkToObject($object, $key, $possiblelink, $num, $resqllist);
+								break;
 						}
+
 						$htmltoenteralink .= '</table>';
 						$htmltoenteralink .= '<div class="center">';
 						if ($num) {
@@ -11554,7 +11748,7 @@ class Form
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'memberphoto') {
-			$dir = $conf->adherent->dir_output;
+			$dir = $conf->member->dir_output;
 			$photo = $object->photo;  // Copy to help static analysis
 			if (!empty($photo)) {
 				if (dolIsAllowedForPreview($photo)) {
@@ -11661,7 +11855,7 @@ class Form
 					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
-						$ret .= '<div class="divforspanimg valignmiddle center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
+						$ret .= '<div class="divforspanimg valignmiddle inline-block center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
 						//$ret .= '<div class="difforspanimgright"></div>';
 					} else {
 						$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '">';
@@ -12426,7 +12620,7 @@ class Form
 
 		$ret .= '</div>';
 
-		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:<:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
+		$ret .= "<!-- Field to enter a generic filter string: t.ref:like:'SO-%', t.date_creation:>:'20160101', t.date_creation:<:'2016-01-01 12:30:00', t.nature:is:NULL, t.field2:isnot:NULL -->\n";
 		$ret .= '<input type="text" placeholder="' . $langs->trans("Filters") . '" id="search_component_params_input" name="search_component_params_input" class="noborderall search_component_input" value="">';
 
 		$ret .= '</div>';

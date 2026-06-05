@@ -871,6 +871,7 @@ print '<input type="submit" class="button small reposition" name="PROJECT_TIMESH
 print '</td>';
 print '</tr>';
 
+/* Generates a lot of confusion for users. Not visible by default.
 print '<tr class="oddeven">';
 print '<td class="left">';
 print $form->textwithpicto($langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT'), $langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT_help'));
@@ -879,6 +880,7 @@ print '<td class="right">';
 print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
 print '</td>';
 print '</tr>';
+*/
 
 print '</table>';
 print '</div>';

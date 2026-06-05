@@ -435,6 +435,20 @@ if ($action == 'setenabletabonthirdparty') {
 	}
 }
 
+if ($action == 'setenabledissociatecashsales') {
+	$setenabledissociatecashsales = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISSOCIATE_CASH_SALES", $setenabledissociatecashsales, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 if ($action == 'setexportenablelettering') {
 	$setexportenablelettering = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING", $setexportenablelettering, 'yesno', 0, '', $conf->entity);
@@ -924,6 +938,20 @@ if (getDolGlobalString('ACCOUNTING_ENABLE_TABONTHIRDPARTY')) {
 	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabletabonthirdparty&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDissociateCashSales"), $langs->trans("AccountingDissociateCashSalesDesc")).'</td>';
+if (getDolGlobalString('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabledissociatecashsales&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabledissociatecashsales&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }

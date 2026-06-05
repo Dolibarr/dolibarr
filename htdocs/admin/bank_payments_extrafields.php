@@ -29,7 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,7 +37,6 @@ require '../main.inc.php';
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 // Load translation files required by the page

@@ -207,15 +207,44 @@ if (GETPOST('buttonreset', 'alpha')) {
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
+
+	$isExternalDownload = 0;
+	$producttoinstall = GETPOST('producttoinstall', 'array');
+
 	// $original_file should match format module_modulename-x.y[.z].zip
-	$tmpfile = $_FILES['fileinstall']['tmp_name'];
+	if ($producttoinstall) {
+		$isExternalDownload = 1;
+		$tmpExternalModuleZipFile = $remotestore->getModuleZIP($producttoinstall); // Return the zip file path.
+		if ($tmpExternalModuleZipFile) {
+			// We fill $_FILES with the zip file we just created to reuse the same code as if file was uploaded by user
+			$_FILES['fileinstall'] = array(
+				'name' => basename($tmpExternalModuleZipFile),
+				'type' => 'application/zip',
+				'tmp_name' => $tmpExternalModuleZipFile,
+				'error' => 0,
+				'size' => filesize($tmpExternalModuleZipFile)
+			);
+		}
+	}
+
+	$tmpfile = (string) $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
+	if (empty($tmpfile)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+		$error++;
+	}
+
 	if (!$original_file) {
 		$langs->load("Error");
-		setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		if ($isExternalDownload) {
+			setEventMessages($langs->trans("ErrorFailToDownloadModuleFromSource", $producttoinstall['name']), null, 'warnings');
+		} else {
+			setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		}
 		$error++;
 	} else {
 		if (!$error && !preg_match('/\.zip$/i', $original_file)) {
@@ -226,11 +255,6 @@ if ($action == 'install' && $allowonlineinstall) {
 		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*_|theme_|).*\-([0-9][0-9\.]*)(\s\(\d+\)\s)?\.zip$/i', $original_file)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
-			$error++;
-		}
-		if (empty($tmpfile)) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
 		}
 	}
@@ -247,7 +271,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error'], 0, 'addedfile', '', $isExternalDownload ? 1 : 0);
 		if ((int) $result > 0) {
 			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
@@ -1349,9 +1373,33 @@ if ($mode == 'marketplace') {
 	print '<td></td>';
 	print '</tr>';
 
-	$url = 'https://www.dolistore.com';
+
+	// Source Community github
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
+	print '<tr class="oddeven nohover" height="100">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
+
 
 	// Source Marketplace DoliStore
+	$url = 'https://www.dolistore.com';
+
 	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
@@ -1378,28 +1426,6 @@ if ($mode == 'marketplace') {
 		$messagetoadd .= '</span>';
 
 		print $remotestore->libStatus($remotestore->dolistoreApiStatus, 2, $messagetoadd);
-	}
-	print '</td>';
-	print '</tr>';
-
-	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-
-	// Source Community github
-	print '<tr class="oddeven nohover" height="100">'."\n";
-	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
-	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
-	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>';
-	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
-	print '</td>';
-	print '<td class="center">';
-	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
-		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
-		if ($remotestore->githubFileError) {
-			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
-		}
-		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';
 	print '</tr>';
@@ -1442,10 +1468,10 @@ if ($mode == 'marketplace') {
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
 		<?php
-		print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
-
 		if ($search_keyword !== '') {
 			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
+		} else {
+			print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
 		}
 		?>
 						&nbsp;

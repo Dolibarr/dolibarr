@@ -9,11 +9,11 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2026	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ require "../main.inc.php";
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -63,7 +64,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
@@ -103,7 +103,7 @@ if ($user->socid) {
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
-$extrafields = new ExtraFields($db);
+
 $ret = 0;
 $pu_ht = null;  // Init for static analysis
 $pu_ttc = null;  // Init for static analysis
@@ -1138,6 +1138,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$staticcontractline = new ContratLigne($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
@@ -1525,10 +1526,10 @@ if ($action == 'create') {
 
 
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
@@ -1560,6 +1561,86 @@ if ($action == 'create') {
 		print "</table>";
 
 		print '</div>';
+		print '<div class="fichehalfright">';
+
+		print '<!-- amounts -->'."\n";
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Qty by service status
+		print '<tr><td class="titlefield">'."".'</td>';
+		print '<td class=right>'.$langs->trans('Total').'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(0, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 0).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(4, 5, 1).'</td>';
+		print '<td class=right>'.$staticcontractline->LibStatut(5, 5, 0).'</td>';
+		print '</tr>';
+
+		$all= $object->getTotalizedLines(-1, 0);
+		$draft= $object->getTotalizedLines(0, 0);
+		$enabled= $object->getTotalizedLines(4, 0);
+		$expired= $object->getTotalizedLines(4, 1);
+		$close= $object->getTotalizedLines(5, 0);
+
+		print '<tr><td class="titlefield">'.$langs->trans("Lines").'</td>';
+		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
+		print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_ht'] ? price($enabled['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_ht'] ? price($expired['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_ht'] ? price($close['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.($all['total_tva'] ? price($all['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_tva'] ? price($draft['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_tva'] ? price($enabled['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_tva'] ? price($expired['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_tva'] ? price($close['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '</tr>';
+
+		if ($mysoc->localtax1_assuj == "1" || $all['total_localtax1'] != 0) {
+			print '<tr><td class="titlefield">' . $langs->trans("TotalLT1") . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax1'] ? price($all['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax1'] ? price($draft['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax1'] ? price($enabled['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax1'] ? price($expired['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($close['total_localtax1'] ? price($close['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '</tr>';
+		}
+
+		if ($mysoc->localtax2_assuj == "1" || $all['total_localtax2'] != 0) {
+			print '<tr><td class="titlefield">' . $langs->trans("TotalLT2") . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax2'] ? price($all['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax2'] ? price($draft['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax2'] ? price($enabled['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax2'] ? price($expired['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($close['total_localtax2'] ? price($close['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '</tr>';
+		}
+
+		print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.($all['total_ttc'] ? price($all['total_ttc']): '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_ttc'] ? price($draft['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_ttc'] ? price($enabled['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_ttc'] ? price($expired['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_ttc'] ? price($close['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '</tr>';
+
+		print "</table>";
+
+		print '</div>';
+		print '</div>';
+
+		print '<div class="clearboth"></div><br>';
 
 		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
 			print '</form>';
@@ -1658,12 +1739,12 @@ if ($action == 'create') {
 					if ($nbofservices > 1 && $conf->browser->layout != 'phone' && $user->hasRight('contrat', 'creer')) {
 						print '<td width="30" class="linecolmove tdlineupdown center">';
 						if ($cursorline > 1) {
-							print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
+							print '<a class="lineupdown reposition paddingrightonly paddingleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
 							echo img_up('default', 0, 'imgupforline');
 							print '</a>';
 						}
 						if ($cursorline < $nbofservices) {
-							print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
+							print '<a class="lineupdown reposition paddingrightonly paddingleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
 							echo img_down('default', 0, 'imgdownforline');
 							print '</a>';
 						}
