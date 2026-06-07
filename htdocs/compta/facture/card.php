@@ -1264,7 +1264,7 @@ if (empty($reshook)) {
 		$classname = null;
 
 
-		// Replacement invoice
+		// Add a Replacement invoice
 		if (GETPOST('type') == Facture::TYPE_REPLACEMENT) {
 			if (empty($dateinvoice)) {
 				$error++;
@@ -1314,7 +1314,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Credit note invoice
+		// Add a Credit note invoice
 		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
 			$sourceinvoice = GETPOSTINT('fac_avoir');
 			if (!($sourceinvoice > 0) && !getDolGlobalString('INVOICE_CREDIT_NOTE_STANDALONE')) {
@@ -1367,14 +1367,16 @@ if (empty($reshook)) {
 				$object->type = Facture::TYPE_CREDIT_NOTE;
 
 				$facture_source = new Facture($db); // fetch origin object
-				if ($facture_source->fetch($object->fk_facture_source) > 0) {
+				if ($object->fk_facture_source > 0 && $facture_source->fetch($object->fk_facture_source) > 0) {
 					if ($facture_source->isSituationInvoice()) {
 						$object->situation_counter = $facture_source->situation_counter;
 						$object->situation_cycle_ref = $facture_source->situation_cycle_ref;
 						$facture_source->fetchPreviousNextSituationInvoice();
 					}
-				}
 
+					$object->pos_source = $facture_source->pos_source;			// We must reuse the same than original values so correction will appear in same terminal same original invoice for conformity
+					$object->module_source = $facture_source->module_source;		// We must reuse the same than original values so correction will appear in same terminal same original invoice for conformity
+				}
 
 				$id = $object->create($user);
 				if ($id < 0) {
@@ -3737,7 +3739,7 @@ if ($action == 'create') {
 	}
 
 	// Load objectsrc
-	$objectsrc = null;  // Initialise
+	$objectsrc = null;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -6861,7 +6863,12 @@ if ($action == 'create') {
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || ($object->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) || $object->type == Facture::TYPE_PROFORMA) && $object->status > 0 && $usercancreate) {
 				if (!$objectidnext) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&fac_avoir='.$object->id.'&action=create&type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').($object->entity > 0 ? '&originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+					print '<!-- button create credit note -->';
+					if ($object->module_source == 'takepos') {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseInvoiceGeneratedBy", $langs->transnoentitiesnoconv('TakePOS')).'">'.$langs->trans("CreateCreditNote").'</a>';
+					} else {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&fac_avoir='.$object->id.'&action=create&type=2'.($object->fk_project > 0 ? '&projectid='.$object->fk_project : '').($object->entity > 0 ? '&originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+					}
 				}
 			}
 

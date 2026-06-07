@@ -201,7 +201,9 @@ class modBlockedLog extends DolibarrModules
 		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 		if (empty($hmac_encoded_secret_key)) {
 			// Add key
-			$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+			$randomsecret = bin2hex(random_bytes(32)); // 64 char hex - 256 bits
+
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;
 
 			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
 
@@ -276,7 +278,7 @@ class modBlockedLog extends DolibarrModules
 	 * Data directories are not deleted
 	 *
 	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
-	 * @return     int             		1 if OK, 0 if KO
+	 * @return     int             		1 if OK, 0 if KO to cancel all actions
 	 */
 	public function remove($options = '')
 	{
