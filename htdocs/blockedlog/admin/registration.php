@@ -333,7 +333,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		$htmltext = '';
 		// @phpstan-ignore-next-line  Country code is already FR because of in_array('FR') test above
 		if ($mysoc->country_code === 'FR') {
-			$htmltext .= $langs->trans("UnalterableLogTool1FR").'<br>';
+			$htmltext .= $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		}
 
 		print info_admin($htmltext, 0, 0, 'warning');
@@ -353,7 +353,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		print info_admin($htmltext, 0, 0, 'info');
 
 		// Show remind on good practices related to archives
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }

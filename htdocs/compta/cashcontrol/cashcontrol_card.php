@@ -118,7 +118,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	// For action 'update_extras', is there a specific permission set for the attribute to update
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
-$permissiontoreopen = $user->hasRight("takepos", "reopencashclosing");
+$permissiontoreopen = $user->hasRight("takepos", "run");
 
 
 $sqlfilteronopdate = '';

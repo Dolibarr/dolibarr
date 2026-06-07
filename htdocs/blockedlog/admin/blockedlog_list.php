@@ -147,6 +147,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_module_source = '';
 	$search_pos_source = '';
 	$search_ref = '';
+	$search_type_code = '';			// Type of payment
 	$search_amount = '';
 	$search_signature = '';
 	$search_showonlyerrors = 0;
@@ -185,6 +186,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedl
 // Get list of blocked logs.
 // Warning: This make a fetch on each line.
 $blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source, $search_pos_source);
+
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -237,11 +239,12 @@ $nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
-$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 
 $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'</span><br>';
+} else {
+	$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 }
 
 print info_admin($htmltext, 0, 0, 'warning');
@@ -273,6 +276,9 @@ if ($search_amount) {
 }
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
+}
+if ($search_type_code) {
+	$param .= '&search_type_code='.urlencode($search_type_code);
 }
 if ($search_startyear > 0) {
 	$param .= '&search_startyear='.((int) $search_startyear);
@@ -366,6 +372,9 @@ print '</td>';
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 
+// Payment mode
+//print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_type_code" value="'.dol_escape_htmltag($search_type_code).'"></td>';
+
 // Amount
 print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 
@@ -409,6 +418,7 @@ print getTitleFieldOfList($langs->trans('POS'), 0, $_SERVER["PHP_SELF"], '', '',
 print getTitleFieldOfList($langs->trans('Terminal'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
+//print getTitleFieldOfList($langs->trans('PaymentMode'), 0, $_SERVER["PHP_SELF"], 'type_code', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail").'<br>'.$langs->trans("AmountInCurrency", getDolCurrency()))."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
@@ -501,11 +511,11 @@ if (is_array($blocks)) {
 			print dolPrintHTML($block->user_fullname);
 			print '</td>';
 
-			// Module
+			// Module Source
 			$labelofmodulesource = $block->module_source;
 			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofmodulesource).'">'.dolPrintHTML($labelofmodulesource).'</td>';
 
-			// Terminal
+			// Terminal POS
 			print '<td>'.dolPrintHTML($block->pos_source).'</td>';
 
 			// Action
@@ -531,6 +541,9 @@ if (is_array($blocks)) {
 				// Ref not stored
 			}
 			print '</div></td>';
+
+			// Payment mode
+			//print '<td>'.dolPrintHTML($block->type_code).'</td>';
 
 			//$tmpobj = json_decode($block->object_data);
 

@@ -405,15 +405,19 @@ if ($modulepart == 'facture') {
 
 			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
 
-			// Increase counter by 1
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-			$sql .= " WHERE rowid = ".((int) $invoice->id);
-			$db->query($sql);
+			// $object->pos_print_counter is current value. We increase it here.
+			if ($object->status == $object::STATUS_CLOSED) {
+				// Increase counter by 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+				$sql .= " WHERE rowid = ".((int) $invoice->id);
+				$db->query($sql);
 
-			$invoice->pos_print_counter += 1;
-			//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
+				$invoice->pos_print_counter += 1;
+				//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
+			}
 
-			// When we reach the second print, we must regenerate the document to have the mention duplicate on PDF
+			// When we reach the second print, we must regenerate the document to have the mention duplicata on PDF)
+			// No need if we are at print 3, 4 or more. The PDF was regenerated when counter was 2,
 			if ($invoice->pos_print_counter == 2) {
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(GETPOST('lang'));

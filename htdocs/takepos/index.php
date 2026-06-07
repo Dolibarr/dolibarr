@@ -1079,7 +1079,10 @@ function CashReport(rowid)
 	$.colorbox({href:"../compta/cashcontrol/report.php?id="+rowid+"&contextpage=takepos", width:"60%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("CashReport"); ?>"});
 }
 
-// TakePOS Popup
+/*
+ * TakePOS Popup
+ * Open the <div id='ModalID'>in a popup. Example with ModalID='ModalCreditNote'
+ */
 function ModalBox(ModalID)
 {
 	var modal = document.getElementById(ModalID);
@@ -1349,7 +1352,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				while ($obj = $db->fetch_object($resql)) {
-					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.$obj->code.'\'">'.$obj->code.'</button>';
+					print '<button type="button" class="block" onclick="location.href=\'index.php?setcurrency='.urlencode($obj->code).'\'">'.$obj->code.'</button>';
 				}
 			}
 			?>
@@ -1358,7 +1361,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 </div>
 <?php } ?>
 
-<!-- Modal terminal Credit Note -->
+<!-- Modal popup to create a Credit Note -->
 <div id="ModalCreditNote" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">

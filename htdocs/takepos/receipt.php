@@ -289,13 +289,14 @@ if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 }
 
 // $object->pos_print_counter is current value. We increase it here.
+if ($object->status == $object::STATUS_CLOSED) {
+	// If no more a temporary receipt, we increase counter by 1
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+	$sql .= " WHERE rowid = ".((int) $object->id);
+	$db->query($sql);
 
-// Increase counter by 1
-$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-$sql .= " WHERE rowid = ".((int) $object->id);
-$db->query($sql);
-
-$object->pos_print_counter += 1;
+	$object->pos_print_counter += 1;
+}
 
 // Show if it is a duplicata
 $isADuplicata = ($object->pos_print_counter >= 2);
@@ -590,6 +591,7 @@ if (!GETPOST('forcenoautoopen') && !GETPOST('specimen') && empty($nojs)) {
 	<script type="text/javascript">
 	<?php
 	if ($facid) {
+		print 'console.log("ref = '.$object->ref.' - pos_print_counter = '.$object->pos_print_counter.'");';
 		print 'window.print();';
 	} //Avoid print when is specimen
 	?>
