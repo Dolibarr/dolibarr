@@ -111,6 +111,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		if ($mysoc->country_code == 'FR' && $isqualified && !isRegistrationDataSavedAndPushed()) {
 			$errmsg = 'Error: You are using Dolibarr with the module "Blocked Log" to be compliant with the French Law Finance certification, but the registration step was not done or is not complete. Try to reenable the module %s.';
 			dol_syslog($errmsg, LOG_ERR);
+			dol_syslog("MAIN_FIRST_REGISTRATION_OK_DATE=".getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'));
+			dol_syslog("BLOCKEDLOG_REGISTRATION_NAME=".getDolGlobalString("BLOCKEDLOG_REGISTRATION_NAME"));
 			$this->errors[] = $errmsg;
 			return -1;
 		}

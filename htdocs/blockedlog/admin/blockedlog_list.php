@@ -78,6 +78,7 @@ $search_code = GETPOST('search_code', 'array:alpha');
 $search_module_source = GETPOST('search_module_source', 'array:alpha');
 $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_type_code = GETPOST('search_type_code', 'aZ09');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
 $withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
