@@ -41,6 +41,11 @@ class Entrepot extends CommonObject
 	public $element = 'stock';
 
 	/**
+	 * @var string Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_stock';
+	
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'entrepot';
