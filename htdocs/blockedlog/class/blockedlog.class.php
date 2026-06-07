@@ -149,6 +149,11 @@ class BlockedLog
 	public $ref_object = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code = '';
+
+	/**
 	 * @var ?stdClass
 	 */
 	public $object_data = null;
@@ -865,6 +870,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
+			$this->type_code = $this->object_data->type_code;
 			$this->linktype = $this->element;
 			$this->linktoref = '';
 
@@ -1130,7 +1136,7 @@ class BlockedLog
 		}
 
 		$sql = "SELECT b.rowid, b.date_creation, b.action, b.module_source, b.pos_source, b.amounts_taxexcl, b.amounts, b.element, b.fk_object, b.entity,";
-		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
+		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.type_code, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
 			$sql .= " WHERE b.rowid = ".((int) $id);
@@ -1167,6 +1173,7 @@ class BlockedLog
 				//exit;
 
 				$this->ref_object = $obj->ref_object;
+				$this->type_code = $obj->type_code;
 				$this->linktoref = $obj->linktoref;
 				$this->linktype = $obj->linktype;
 
@@ -1360,6 +1367,7 @@ class BlockedLog
 		$sql .= " fk_object,";
 		$sql .= " date_object,";
 		$sql .= " ref_object,";
+		$sql .= " type_code,";
 		$sql .= " linktoref,";
 		$sql .= " linktype,";
 		$sql .= " object_data,";
@@ -1382,8 +1390,9 @@ class BlockedLog
 		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object, $tz)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
+		$sql .= "'".$this->db->escape($this->type_code)."',";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktoref)."'" : "null").",";
-		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktype)."'" : "null").",";
+		$sql .= ($this->linktype ? "'".$this->db->escape($this->linktype)."'" : "null").",";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "'".$this->db->escape($this->object_format)."',";
@@ -1521,6 +1530,9 @@ class BlockedLog
 			$s = $this->entity;
 			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl;
 			$s .= '|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			if ($this->type_code) {
+				$s .= '|'.(string) $this->type_code;
+			}
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1684,9 +1696,10 @@ class BlockedLog
 	 *  @param	string			        $search_signature		Search signature
 	 *  @param	string			        $search_module_source	Search on module source
 	 *  @param	string			        $search_pos_source		Search on terminal
+	 *  @param	string					$search_type_code		Search on type code
 	 *	@return	BlockedLog[]|int<-2,-1>							Array of object log or <0 if error
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '', $search_type_code = '')
 	{
 		global $conf;
 		//global $cachedlogs;
@@ -1719,6 +1732,9 @@ class BlockedLog
 		}
 		if ($search_end > 0) {
 			$sql .= " AND date_creation <= '".$this->db->idate($search_end, 'gmt')."'";
+		}
+		if ($search_type_code) {
+			$sql .= natural_search("type_code", (string) $search_type_code);
 		}
 		if ($search_ref != '') {
 			$sql .= " AND (".natural_search("ref_object", $search_ref, 0, 1);
@@ -1785,12 +1801,18 @@ class BlockedLog
 				//if (!isset($cachedlogs[$obj->rowid]))
 				//{
 				$b = new BlockedLog($this->db);
-				$b->fetch($obj->rowid);
+				$result = $b->fetch($obj->rowid);
 				//$b->loadTrackedEvents();
 				//$cachedlogs[$obj->rowid] = $b;
 				//}
 
 				//$results[] = $cachedlogs[$obj->rowid];
+				if ($result < 0) {
+					$this->error = $b->error;
+					$this->errors = $b->errors;
+					return -1;
+				}
+
 				$results[] = $b;
 			}
 
@@ -1817,7 +1839,7 @@ class BlockedLog
 			//$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 			$fingerprint = bin2hex(random_bytes(32)); // 64 char hex
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Initial signature fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}

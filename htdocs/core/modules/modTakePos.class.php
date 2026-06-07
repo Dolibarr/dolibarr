@@ -205,13 +205,6 @@ class modTakePos extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'editorderedlines';
 
-		$r++;
-		$this->rights[$r][0] = 50154;
-		$this->rights[$r][1] = 'Can reopen a cash closing. Must be reserved to admin support staff only.';
-		$this->rights[$r][2] = 'a';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'reopencashclosing';
-
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
