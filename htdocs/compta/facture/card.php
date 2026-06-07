@@ -5075,7 +5075,7 @@ if ($action == 'create') {
 	// Confirm back to draft status (action = 'modif')
 	if ($action == 'modif') {
 		$oktomodif = 1;		// Assume we can modify by default
-		/*
+
 		$testvalue = $object->isEditable();
 		if ($testvalue < 0) {
 			switch ($testvalue) {
@@ -5115,7 +5115,7 @@ if ($action == 'create') {
 			$oktomodif = 0;
 			$action = '';
 		}
-		*/
+
 		if ($oktomodif) {
 			$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
 			$formquestion = array();
