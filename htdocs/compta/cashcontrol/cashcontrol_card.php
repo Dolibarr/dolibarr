@@ -111,13 +111,15 @@ if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
-$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
-$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = $user->hasRight("takepos", "run");
+$permissiontodelete = $user->hasRight("takepos", "run") || ($permissiontoadd && $object->status == 0);
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
+$permissiontoreopen = $user->hasRight("takepos", "run");
+
 
 $sqlfilteronopdate = '';
 
@@ -216,7 +218,7 @@ if (GETPOST('cancel', 'alpha')) {
 	}
 }
 
-if ($action == "reopen" && $permissiontoadd) {
+if ($action == "reopen" && $permissiontoreopen) {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_MODIFY');
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -580,6 +582,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		foreach ($arrayofpaymentmode as $key => $val) {
 			// NOTE: Must be same request than into report.php, except it does an aggregate and do the request 3 times, once per payment type.
 
+			// TODO
 			/*$sql = "SELECT p.rowid, p.datep as datep, cp.code,";
 			$sql .= " f.rowid as facid, f.ref, f.datef as datef, pf.amount as amount,";
 			$sql .= " b.fk_account as bankid,";
@@ -612,6 +615,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
+					// $theoricalamountforterminal and $theoricalnbofinvoiceforterminal will be used to get the amount for period (cash_calculated, cheque_calculated and card_calculated)
 					$theoricalamountforterminal[$terminalid][$key] = $obj->total;
 					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
@@ -1025,7 +1029,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+				if ($permissiontoreopen) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReOpen').'</a></div>';
+				}
 			}
 
 			print '</div>';
@@ -1114,7 +1122,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
 				print '</td>';
 
-				// Amount calculated per payment type
+				// Amount calculated per payment type (field cash_calculated, cheque_calculated, card_calculated)
 				$i = 0;
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td class="smallheight center'.($i == 0 ? ' hide0' : '').'">';

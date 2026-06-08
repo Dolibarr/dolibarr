@@ -40,18 +40,17 @@ NEW: use select label for extrafield substitution in emails (#37005)
 NEW: A page can force its value for MAIN_SECURITY_CSRF_WITH_TOKEN
 NEW: API endpoint for getting product price logs (#38420)
 NEW: API get country: load region and load states now an option (#37715)
-NEW: Accountancy - Add comparative balance with closure snapshot support (#37382)
+NEW: Accountancy - Add comparative balance with closure snapshot support - SQL part (#37382)
 NEW: Accountancy - Add confirmation message with link after transaction validation (#37383)
 NEW: Accountancy - Add default options for export (#37938)
 NEW: Accountancy - Add hook in Label for accounting operation (#37838)
 NEW: Accountancy - Add matching on general account (#38040)
 NEW: Accountancy - Add option to dissociate cash sales (#38160)
-NEW: Accountancy - Add transaction model (SQL Part) (#36807)
 NEW: Accountancy - Auxiliary account - Propose an ajax search on list (#37570)
 NEW: Accountancy - Export Quadra - Add option to export thirdparty account only if not existing (#38208)
 NEW: Accountancy - Multi reports system (#37248)
 NEW: Accountancy - Select between accrual accounting and cash accounting (#37050)
-NEW: Accountancy - Transaction template system (#37286)
+NEW: Accountancy - Transaction template system (#36807 | #37286)
 NEW: Accounting codes of a product can be collapsed
 NEW: Add Batch and function to send HR information (#37542)
 NEW: Add CSV/XLSX import mode to disable triggers execution (refactoring of import, while preserving legacy SQL compatibility) (#37367)
@@ -133,7 +132,7 @@ NEW: Switch MAIN_SECURITY_CSRF_WITH_TOKEN from 2 to 3.
 NEW: Switch default value of nature of a thirdparty. Individual if no data to guess instead of company by default.
 NEW: UIUX Category - Add category type in create form (#38206)
 NEW: UIUX Intervention - Merge two-step creation form into a single unified form (#38284)
-NEW: UXUI add helptext to function formconfirm (#38435)
+NEW: UIUX add helptext to function formconfirm (#38435)
 NEW: Update holiday class to handle date_create field (#36918)
 NEW: Use the initAsSpecimen to generate the test invoice.
 NEW: Use the js lib into htdocs/public/includes instead of htdocs/includes
