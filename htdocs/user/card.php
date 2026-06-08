@@ -473,7 +473,7 @@ if (empty($reshook)) {
 					$object->pass = GETPOST("password", 'password');
 				}
 				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
-					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+					$object->api_key = (GETPOSTISSET("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
 				}
 				if (!empty($user->admin) && $user->id != $id) {
 					// admin flag can only be set/unset by an admin user and not four ourself
@@ -563,6 +563,9 @@ if (empty($reshook)) {
 					$isimage = image_format_supported($_FILES['photo']['name']);
 					if ($isimage > 0) {
 						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+						if ($object->id == $user->id) {
+							$user->photo = $object->photo;
+						}
 					} else {
 						$error++;
 						$langs->load("errors");

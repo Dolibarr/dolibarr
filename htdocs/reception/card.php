@@ -134,6 +134,28 @@ $extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
+// Restore $origin and $origin_id from the loaded object when the request only carried the
+// reception id (e.g. the line edit form on an existing reception posts action=updateline
+// and id=N but no origin field). Without this, the action handler below sees $origin
+// empty and silently skips both its standalone and its origin branches, so updates to
+// quantity, comment, batch and extrafields on an existing line are not persisted
+// (see issue #38386, regression from PR #36134).
+// The restore is gated on $object->origin_id > 0 so standalone receptions, which have
+// no upstream origin, are not affected: $origin stays empty and the standalone branch
+// of the updateline handler is still selected.
+if ($object->origin_id > 0) {
+	if (empty($origin)) {
+		if (!empty($object->origin_type)) {
+			$origin = $object->origin_type;
+		} elseif (is_string($object->origin) && $object->origin !== '') {
+			$origin = $object->origin;
+		}
+	}
+	if (empty($origin_id)) {
+		$origin_id = $object->origin_id;
+	}
+}
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptioncard', 'globalcard'));
 
@@ -903,6 +925,12 @@ if (empty($reshook)) {
 					$ret = $object->fetch($object->id); // Reload to get new records
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
+
+				// Redirect after the successful save so the page leaves edit mode and the
+				// updated values are read back from DB, matching the cancel path below
+				// and the header-data save handlers (see issue #38386).
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit();
 			} else {
 				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To reshow the record we edit
 				exit();
@@ -2612,11 +2640,11 @@ if ($action == 'create' && $permissiontoadd) {
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					$text = $lines[$i]->product->getNomUrl(1);
 					$text .= ' - '.$label;
-					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
+					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->description));
 					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
+						print (!empty($lines[$i]->description) && $lines[$i]->description != $label) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
 				}
 				print "</td>\n";
