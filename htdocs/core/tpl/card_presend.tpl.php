@@ -5,6 +5,7 @@
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -436,6 +437,30 @@ if ($action == 'presend') {
 	}
 
 	$formmail->withto = $liste;
+	// Pre-select the recipient by contact role when the document has one assigned in the matching role.
+	// Skips silently when the user already chose a recipient, the element type isn't in the role map,
+	// no contact in that role is assigned, or the assigned contact isn't in $liste (e.g. no email).
+	if (!GETPOSTISSET('receiver') && getDolGlobalInt('MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE')) {
+		$roleByElement = array(
+			'facture'          => 'BILLING',
+			'invoice_supplier' => 'BILLING',
+			'propal'           => 'CUSTOMER',
+			'commande'         => 'CUSTOMER',
+			'order_supplier'   => 'BILLING',
+			'shipping'         => 'SHIPPING',
+			'reception'        => 'SHIPPING',
+			'contrat'          => 'BILLING',
+		);
+		if (isset($roleByElement[$object->element])) {
+			$cids = $object->getIdContact('external', $roleByElement[$object->element]);
+			foreach ((array) $cids as $cid) {
+				if (isset($liste[$cid])) {
+					$_POST['receiver'] = array((string) $cid);
+					break;
+				}
+			}
+		}
+	}
 	$formmail->withtofree = (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1');
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');

@@ -317,6 +317,7 @@ MAIN_DISABLE_ALL_MAILS=Alle E-Mail-Funktionen deaktivieren (für Test- oder Demo
 MAIN_MAIL_FORCE_SENDTO=Sende alle E-Mails an den folgenden anstatt an die tatsächlichen Empfänger (für Testzwecke)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=E-Mail-Adressen von Mitarbeitern (falls definiert) beim Schreiben einer neuen E-Mail in der Liste vordefinierten Empfänger vorschlagen
 MAIN_MAIL_NO_WITH_TO_SELECTED=Empfängeradresse beim Schreiben einer E-Mail nicht vorausfüllen, auch wenn nur eine Adresse als Auswahlmöglichkeit besteht
+MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE=Empfänger anhand der dem Beleg zugeordneten Kontaktrolle vorauswählen (z. B. Rechnungen verwenden den BILLING-Kontakt, Lieferscheine den SHIPPING-Kontakt). Wirkt nicht, wenn bereits ein Empfänger gewählt wurde.
 MAIN_MAIL_SENDMODE=Versandmethode
 MAIN_MAIL_SMTPS_ID=SMTP-Benutzername oder ID (wenn zum Senden vom Server eine Authentifizierung gefordert wird)
 MAIN_MAIL_SMTPS_PW=SMTP-Passwort oder Token (wenn zum Senden vom Server eine Authentifizierung gefordert wird)

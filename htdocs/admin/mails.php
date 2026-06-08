@@ -102,6 +102,7 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO", GETPOST("MAIN_MAIL_FORCE_SENDTO", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT", GETPOSTINT("MAIN_MAIL_ENABLED_USER_DEST_SELECT"), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MAIN_MAIL_NO_WITH_TO_SELECTED', GETPOSTINT('MAIN_MAIL_NO_WITH_TO_SELECTED'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE', GETPOSTINT('MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE'), 'chaine', 0, '', $conf->entity);
 		// Send mode parameters
 		dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", GETPOST("MAIN_MAIL_SENDMODE", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT", GETPOSTINT("MAIN_MAIL_SMTP_PORT"), 'chaine', 0, '', $conf->entity);
@@ -670,6 +671,10 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>';
 	print $form->selectyesno('MAIN_MAIL_NO_WITH_TO_SELECTED', getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED'), 1);
 	print '</td></tr>';
+	// Preselect recipient by contact role
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE").'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE', getDolGlobalString('MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE'), 1);
+	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -999,6 +1004,8 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_ENABLED_USER_DEST_SELECT')).'</td></tr>';
 	//Disable autoselect to
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
+	//Preselect recipient by contact role
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_PRESELECT_BY_CONTACT_ROLE')).'</td></tr>';
 
 	print '</table>';
 	print '</div>';
