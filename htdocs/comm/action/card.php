@@ -7,9 +7,9 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,11 +36,11 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -131,7 +131,6 @@ $donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession')
 $object = new ActionComm($db);
 $cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 $form = new Form($db);
@@ -332,7 +331,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes' && $userc
 			//$object->fetch($id);
 			if (!empty($object->socpeopleassigned)) {
 				reset($object->socpeopleassigned);
-				$object->contact_id = key($object->socpeopleassigned);
+				$object->contact_id = (int) key($object->socpeopleassigned);
 			}
 			$result = $object->createFromClone($user, GETPOSTINT('socid'));
 			if ($result > 0) {
@@ -420,10 +419,21 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
-			}
 			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
+			}
 
 			$hasPermissionOnLinkedObject = 0;
 			if ($user->hasRight($modulecodetouseforpermissioncheck, 'read')) {
@@ -980,7 +990,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 		$object->contact_id = GETPOSTINT("contactid");
 		if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
 			reset($object->socpeopleassigned);
-			$object->contact_id = key($object->socpeopleassigned);
+			$object->contact_id = (int) key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
 		$taskid = GETPOSTINT('taskid');
@@ -1001,8 +1011,20 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$elProp = getElementProperties(GETPOST("elementtype", 'alpha'));
 			$modulecodetouseforpermissioncheck = $elProp['module'];
 			// Keep permission check aligned with rights class aliases (see restrictedArea()).
-			if ($modulecodetouseforpermissioncheck == 'productbatch') {
-				$modulecodetouseforpermissioncheck = 'produit';
+			$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+			switch ($modulecodetouseforpermissioncheck) {
+				case 'productbatch':
+					$modulecodetouseforpermissioncheck = 'produit';
+					break;
+				case 'eventorganization':
+					// Event organization relies on Project permissions
+					$modulecodetouseforpermissioncheck = 'projet';
+					$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+					break;
+				default:
+					// No mapping needed, keep original values
+					break;
 			}
 
 			$hasPermissionOnLinkedObject = 0;
@@ -1255,7 +1277,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 	if ($datep != $object->datep) {
 		if (!empty($object->datef)) {
-			$object->datef += $datep - $object->datep;
+			$object->datef += (int) $datep - $object->datep;
 		}
 		$object->datep = $datep;
 
@@ -1485,7 +1507,10 @@ if ($action == 'create') {
 	// Type of event
 	if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_RDV');
+		$default = getDolGlobalString('AGENDA_USE_EVENT_TYPE_DEFAULT', 'AC_OTH');
+		if (empty($default)) {
+			$default = 'AC_OTH';
+		}
 		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 		$selectedvalue = GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default);
 		print $formactions->select_type_actions($selectedvalue, "actioncode", "systemauto", 0, -1, 0, 1);	// TODO Replace 0 with -2 in onlyautoornot
@@ -1583,7 +1608,7 @@ if ($action == 'create') {
 		*/
 
 		// limit date
-		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+		$repeateventlimitdate = empty($repeateventlimitdate) ? (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
 
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
@@ -1651,7 +1676,9 @@ if ($action == 'create') {
 	print '<table class="border centpercent nobottom">';
 
 	// Assigned to user
-	print '<tr><td class="nowrap titlefieldcreate"><span>'.$langs->trans("ActionAffectedTo").'</span></td><td>';
+	print '<tr><td class="nowrap titlefieldcreate"><span>';
+	print $langs->trans("AssignedTo");
+	print '</span></td><td>';
 	$listofuserid = [];
 	$listofcontactid = [];
 	$listofotherid = [];
@@ -1850,7 +1877,7 @@ if ($action == 'create') {
 			print '</select>';
 			print ajax_combobox('taskid');
 		} else {
-			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 32, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 		}
 		print '</td></tr>';
 	}
@@ -1864,9 +1891,22 @@ if ($action == 'create') {
 		$elProp = getElementProperties($origin);
 		$modulecodetouseforpermissioncheck = $elProp['module'];
 		// Keep permission check aligned with rights class aliases (see restrictedArea()).
-		if ($modulecodetouseforpermissioncheck == 'productbatch') {
-			$modulecodetouseforpermissioncheck = 'produit';
+		$submodulecodetouseforpermissioncheck = $elProp['subelement'];
+
+		switch ($modulecodetouseforpermissioncheck) {
+			case 'productbatch':
+				$modulecodetouseforpermissioncheck = 'produit';
+				break;
+			case 'eventorganization':
+				// Event organization relies on Project permissions
+				$modulecodetouseforpermissioncheck = 'projet';
+				$submodulecodetouseforpermissioncheck = ''; // Project doesn't use submodules for read
+				break;
+			default:
+				// No mapping needed, keep original values
+				break;
 		}
+
 		if ($user->hasRight($modulecodetouseforpermissioncheck, 'read') || $user->hasRight($modulecodetouseforpermissioncheck, $elProp['element'], 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
@@ -1899,7 +1939,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 100, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -2021,7 +2061,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Add");
+	print $form->buttonsSaveCancel("Create");
 
 	print "</form>";
 }
@@ -2080,7 +2120,7 @@ if ($id > 0 && $action != 'create') {
 	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
-	// Confirmation suppression action
+	// Deletion confirmation action
 	if ($action == 'delete') {
 		print $form->formconfirm("card.php?id=".urlencode((string) ($id)), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
@@ -2418,7 +2458,7 @@ if ($id > 0 && $action != 'create') {
 				</script>
 				<?php
 
-				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 64, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
@@ -2451,7 +2491,7 @@ if ($id > 0 && $action != 'create') {
 						$tid = GETPOSTINT("taskid");
 					}
 
-					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 64, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
 
 					print '</td>';
 				} else {
@@ -2470,7 +2510,7 @@ if ($id > 0 && $action != 'create') {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		// Wysiwyg editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
+		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -2994,7 +3034,7 @@ if ($id > 0 && $action != 'create') {
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}

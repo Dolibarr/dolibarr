@@ -166,8 +166,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 			$sourcetype = $sourcesarray[$directivetype][$sourcecsp]["data-sourcetype"];
 		}
 		$securitycspstring = "";
-		if (isset($sourcetype) && $sourcetype == "data") {
+		if ($sourcetype == "data") {
 			$forceCSPArr[$directivecsp][] = "data:".$sourcedatacsp;
+		} elseif (isset($sourcetype) && $sourcetype == "blob") {
+			$forceCSPArr[$directivecsp][] = "blob:".$sourcedatacsp;
 		} elseif (isset($sourcetype) && $sourcetype == "input") {
 			if (empty($forceCSPArr[$directivecsp])) {
 				$forceCSPArr[$directivecsp] = array();

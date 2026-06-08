@@ -506,35 +506,7 @@ class FormFile
 			$param .= ($param ? '&' : '').'entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		}
 
-		$printer = 0;
-		$supportedmoduleparts = [
-			'company',
-			'member',
-			'product',
-			'stock',
-			'ficheinter',
-			'user',
-			'project',
-			'contract',
-			'facture',
-			'supplier_proposal',
-			'propal',
-			'proposal',
-			'order',
-			'commande',
-			'expedition',
-			'commande_fournisseur',
-			'facture_fournisseur',
-			'expensereport',
-			'delivery',
-			'ticket',
-			'bom',
-			'mrp:mo',
-		];
-		// The direct print feature is implemented only for such elements
-		if (in_array($modulepart, $supportedmoduleparts)) {
-			$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
-		}
+		$printer = ($user->hasRight('printing', 'read') && isModEnabled('printing'));
 
 		$hookmanager->initHooks(array('formfile'));
 
@@ -1431,7 +1403,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1495,7 +1467,14 @@ class FormFile
 				print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center '); // Preview
 			}
 			// Shared or not - Hash of file
-			print_liste_field_titre('Shared');
+			if (empty($moreoptions['hideshared'])) {
+				//print_liste_field_titre('Shared');
+				print_liste_field_titre('');
+			}
+			// Custom action buttons
+			if (!empty($moreoptions['buttons'])) {
+				print_liste_field_titre('');
+			}
 			// Action button
 			print_liste_field_titre('');
 			if (empty($disablemove) && count($filearray) > 1) {
@@ -1562,12 +1541,12 @@ class FormFile
 					if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
 						print 'target="_blank" ';
 					}
-					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					print 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
 					if ($forcedownload) {
 						print '&attachment=1';
 					}
 					if (!empty($object->entity)) {
-						print '&entity='.$object->entity;
+						print '&entity='.((int) $object->entity);
 					}
 					print '&file='.urlencode($filepath);
 					print '">';
@@ -1587,7 +1566,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'" spellcheck="false">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1658,41 +1637,56 @@ class FormFile
 					}
 
 					// Shared or not - Hash of file
-					print '<td class="center minwidth100 nowraponsmartphone">';
-					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
-						if ($editline) {
-							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
-							print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
-						} else {
-							if ($file['share']) {
-								// Define $urlwithroot
-								$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-								$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-								//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-								//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-								$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
-								$paramlink = '';
-								if (!empty($file['share'])) {
-									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
-								}
-								if ($forcedownload) {
-									$paramlink .= ($paramlink ? '&' : '').'attachment=1';
-								}
-
-								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
-
-								print '<!-- shared link -->';
-								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+					if (empty($moreoptions['hideshared'])) {
+						print '<td class="center nowraponsmartphone">';
+						if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
+							if ($editline) {
+								print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
+								print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
 							} else {
-								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
+								if ($file['share']) {
+									// Define $urlwithroot
+									$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+									$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+									//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+									//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
+									$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
+									$paramlink = '';
+									if (!empty($file['share'])) {
+										$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
+									}
+									if ($forcedownload) {
+										$paramlink .= ($paramlink ? '&' : '').'attachment=1';
+									}
+
+									$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+
+									print '<!-- shared link -->';
+									print '<a href="'.$fulllink.'" target="_blank" rel="noopener" data-showidonhover="downloadlink'.$filearray[$key]['rowid'].'">';
+									print img_picto($langs->trans("FileSharedViaALink"), 'collab');
+									print '</a> ';
+									print '<input type="text" class="centpercentminusx minwidth50imp nopadding small downloadexternallink showonhover" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
+								} else {
+									//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
+								}
 							}
 						}
+						print '</td>';
 					}
-					print '</td>';
 
-					// Actions buttons (1 column or 2 if !disablemove)
+					// Custom actions buttons
+					if (!empty($moreoptions['buttons'])) {
+						print '<td>';
+						foreach ($moreoptions['buttons'] as $moreoptval) {
+							print '<a href="'.$moreoptval['url'].'&urlfile='.urlencode($file['name']).'">';
+							print $moreoptval['picto'];
+							print '</a>';
+						}
+						print '</td>';
+					}
+
+					// Hard coded common actions buttons (1 column or 2 if !disablemove)
 					if (!$editline) {
 						// Delete or view link
 						// ($param must start with &)
@@ -1751,7 +1745,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition editfilelink paddingright marginleftonly" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink paddingright marginleftonly" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						// Output link to delete file
@@ -1803,6 +1797,12 @@ class FormFile
 			}
 			if ($nboffiles == 0) {
 				$colspan = '6';
+				if (!empty($moreoptions['buttons'])) {
+					$colspan++;
+				}
+				if (!empty($moreoptions['hideshared'])) {
+					$colspan++;
+				}
 				if (empty($disablemove) && count($filearray) > 1) {
 					$colspan++; // 6 columns or 7
 				}

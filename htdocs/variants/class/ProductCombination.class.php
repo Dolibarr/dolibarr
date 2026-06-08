@@ -2,7 +2,7 @@
 /* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
@@ -74,7 +74,7 @@ class ProductCombination
 	/**
 	 * Is the price variation a relative variation?
 	 * Can be an array if multiprice feature per level is enabled.
-	 * @var bool|array
+	 * @var bool
 	 */
 	public $variation_price_percentage = false;
 
@@ -523,10 +523,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status != $parent->oldcopy->status)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 
@@ -551,22 +551,22 @@ class ProductCombination
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
-					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
+					if ((isset($parent->multiprices[$i]) && $parent->multiprices[$i] != '') || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
-						$new_min_price = $parent->multiprices_min[$i];
+						$new_min_price = isset($parent->multiprices_min[$i]) ? $parent->multiprices_min[$i] : 0;
 						$variation_price = (float) (!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
 						$variation_price_percentage = (bool) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
-						if ($parent->prices_by_qty_list[$i]) {
+						if (!empty($parent->prices_by_qty_list[$i])) {
 							$new_psq = 1;
 						} else {
 							$new_psq = 0;
 						}
 
 						if ($new_type == 'TTC') {
-							$new_price = $parent->multiprices_ttc[$i];
+							$new_price = isset($parent->multiprices_ttc[$i]) ? $parent->multiprices_ttc[$i] : 0;
 						} else {
-							$new_price = $parent->multiprices[$i];
+							$new_price = isset($parent->multiprices[$i]) ? $parent->multiprices[$i] : 0;
 						}
 
 						if ($variation_price_percentage) {

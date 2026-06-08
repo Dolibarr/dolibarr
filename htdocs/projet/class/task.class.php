@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022-2025  Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
@@ -1015,7 +1015,7 @@ class Task extends CommonObjectLine
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'task', $addlabel = 0, $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
 	{
@@ -1266,6 +1266,7 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		$search_options_pattern = 'search_task_options_'; // Aligned with perweek.php/perday.php that build $search_array_options with this prefix (via extrafields->getOptionalsFromPost('projet_task', '', 'search_task_')). Without it, the SQL template falls back to 'search_options_' and the preg_replace fails to strip the actual prefix, generating phantom column names like efpt.search_task_options_<field>.
 		global $db, $conf; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -1683,6 +1684,16 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret <= 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+		}
+
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
@@ -1696,10 +1707,10 @@ class Task extends CommonObjectLine
 				} else {
 					$this->status = Task::STATUS_VALIDATED;
 				}
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			} else {
 				$this->status = Task::STATUS_ONGOING;
-				$sql .= ", fk_statut = ".$this->status;
+				$sql .= ", fk_statut = ".((int) $this->status);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2084,7 +2095,7 @@ class Task extends CommonObjectLine
 		}
 
 		// Clean parameters
-		if (empty($this->timespent_datehour)) {
+		if (empty($this->timespent_datehour) || ($this->timespent_date != $this->timespent_datehour)) {
 			$this->timespent_datehour = $this->timespent_date;
 		}
 		if (isset($this->timespent_note)) {
@@ -2143,6 +2154,16 @@ class Task extends CommonObjectLine
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			$ret = -1;
+		}
+
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret < 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
 		}
 
 		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {

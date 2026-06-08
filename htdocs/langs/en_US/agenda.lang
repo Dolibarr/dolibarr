@@ -29,6 +29,7 @@ ViewWeek=Week view
 ViewPerUser=Per user view
 ViewPerType=Per type view
 AutoActions= Automatic filling
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
 AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
 BookCalSystem=Online booking
 BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
 PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

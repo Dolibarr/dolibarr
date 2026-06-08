@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
- * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,7 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
-// Defini si peux lire/modifier utilisateurs et permissions
+// Define if user can modify other users and permissions
 $caneditperms = (isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? false : (!empty($user->admin) || $user->hasRight("user", "user", "write")));
 $permissiontodelete = $caneditperms;
 // Advanced permissions

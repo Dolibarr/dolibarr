@@ -5,9 +5,9 @@
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'accountancy', 'salaries'));
@@ -156,13 +155,14 @@ $name = '';
 $period = '';
 $periodlink = '';
 $exportlink = '';
+$description = '';
 
 $encaiss = array();
 $encaiss_ttc = array();
 $decaiss = array();
 $decaiss_ttc = array();
 
-// Affiche en-tete du rapport
+// Display report header
 if ($modecompta == 'CREANCES-DETTES') {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -223,7 +223,7 @@ if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 
 
 /*
- * Factures clients
+ * Customers invoices
  */
 
 $subtotal_ht = 0;
@@ -286,7 +286,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 //}
 
 if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
-	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
+	// Adding legacy client payments not linked via 'paiement_facture'.
 	if ($modecompta != 'CREANCES-DETTES') {
 		$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -335,7 +335,7 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 
 
 /*
- * Frais, factures fournisseurs.
+ * Expenses, supplier invoices.
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -634,23 +634,23 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
 	if ($modecompta == 'CREANCES-DETTES') {
 		$column = 's.dateep';		// we use the date of end of period of salary
 
-		$sql = "SELECT s.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(s.amount) as amount";
+		$sql = "SELECT s.label as nom, date_format(".$db->sanitize($column).",'%Y-%m') as dm, sum(s.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " WHERE s.entity IN (".getEntity('salary').")";
 		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " GROUP BY s.label, dm";
 	}
 	if ($modecompta == "RECETTES-DEPENSES") {
 		$column = 'p.datep';
 
-		$sql = "SELECT p.label as nom, date_format(".$column.",'%Y-%m') as dm, sum(p.amount) as amount";
+		$sql = "SELECT p.label as nom, date_format(".$db->sanitize($column).",'%Y-%m') as dm, sum(p.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON p.fk_salary = s.rowid";
 		$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
 		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 		}
 		$sql .= " GROUP BY p.label, dm";
 	}
@@ -704,7 +704,7 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 
 		$column = 'p.date_valid';
 		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
@@ -713,11 +713,11 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql .= " WHERE p.entity IN (".getEntity('expensereport').")";
-		$sql .= " AND p.fk_statut>=5";
+		$sql .= " AND p.fk_statut >= 5";
 
 		$column = 'pe.datep';
 		if (!empty($date_start) && !empty($date_end)) {
-			$sql .= " AND ".$column." >= '".$db->idate($date_start)."' AND ".$column." <= '".$db->idate($date_end)."'";
+			$sql .= " AND ".$db->sanitize($column)." >= '".$db->idate($date_start)."' AND ".$db->sanitize($column)." <= '".$db->idate($date_end)."'";
 		}
 	}
 
@@ -925,11 +925,11 @@ if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('loan'
  */
 
 if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
-	$predefinedgroupwhere = "(";
-	$predefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
-	$predefinedgroupwhere .= " OR ";
-	$predefinedgroupwhere .= " (aa.pcg_type = 'INCOME')";
-	$predefinedgroupwhere .= ")";
+	$sanitizedpredefinedgroupwhere = "(";
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " OR ";
+	$sanitizedpredefinedgroupwhere .= " (aa.pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
 	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
@@ -939,7 +939,7 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 	$sql .= " WHERE b.entity = ".$conf->entity;
 	$sql .= " AND aa.entity = ".$conf->entity;
 	$sql .= " AND b.numero_compte = aa.account_number";
-	$sql .= " AND ".$predefinedgroupwhere;
+	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
@@ -996,6 +996,7 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 
 $action = "balance";
 $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 // Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));

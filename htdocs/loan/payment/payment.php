@@ -303,7 +303,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	if (empty($datepaid)) {
 		if (empty($ts_temppaid)) {
-			$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : dol_now();
+			$datepayment = (getDolGlobalString('MAIN_AUTOFILL_DATE') ? dol_now() : -1);
 		} else {
 			$datepayment = $ts_temppaid;
 		}
@@ -324,7 +324,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opened bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, '(courant:=:'.Account::TYPE_CURRENT.')', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

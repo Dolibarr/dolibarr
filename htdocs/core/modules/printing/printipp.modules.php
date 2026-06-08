@@ -163,11 +163,7 @@ class printing_printipp extends PrintingDriver
 			dol_print_error($this->db);
 		}
 
-		$fileprint = $conf->{$module}->dir_output;
-		if ($subdir != '') {
-			$fileprint .= '/'.$subdir;
-		}
-		$fileprint .= '/'.$file;
+		$fileprint = getMultidirOutput(null, $module) . '/' . $file;
 		$ipp->setData($fileprint);
 		try {
 			$ipp->printJob();
@@ -218,17 +214,17 @@ class printing_printipp extends PrintingDriver
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state->_value0).'</td>';
 			$html .= '<td>'.$langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value0).'</td>';
 			$html .= '<td>'.(!empty($printer_det->printer_state_reasons->_value1) ? $langs->trans('STATE_IPP_'.$printer_det->printer_state_reasons->_value1) : '').'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2).'</td>';
-			$html .= '<td>'.$langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3).'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value2) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value2) : '').'</td>';
+			$html .= '<td>'.(!empty($printer_det->printer_type->_value3) ? $langs->trans('IPP_COLOR_'.$printer_det->printer_type->_value3) : '').'</td>';
 			//$html.= '<td>'.$printer_det->device_uri->_value0.'</td>';
 			$html .= '<td>'.$printer_det->media_default->_value0.'</td>';
-			$html .= '<td>'.$langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1).'</td>';
+			$html .= '<td>'.(!empty($printer_det->media_type_supported->_value1) ? $langs->trans('MEDIA_IPP_'.$printer_det->media_type_supported->_value1) : '').'</td>';
 			// Default
 			$html .= '<td class="center">';
 			if (getDolGlobalString('PRINTIPP_URI_DEFAULT') == $value) {
 				$html .= img_picto($langs->trans("Default"), 'on');
 			} else {
-				$html .= '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'&mode=test&varname=PRINTIPP_URI_DEFAULT&driver=printipp&value='.urlencode($value).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+				$html .= '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'setvalue', 'mode' => 'test', 'varname' => 'PRINTIPP_URI_DEFAULT', 'driver' => 'printipp', 'value' => $value], true).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 			}
 			$html .= '</td>';
 			$html .= '</tr>'."\n";

@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -245,7 +245,7 @@ if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectl
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (empty($disableremove)) {
-		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+		// Deletion is authorised only when there is no line in a previous situation
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';

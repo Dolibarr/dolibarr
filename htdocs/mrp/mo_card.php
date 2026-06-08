@@ -31,6 +31,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
@@ -206,6 +207,11 @@ if (empty($reshook)) {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'settags' && isModEnabled('category') && $permissiontoadd) {
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
@@ -267,6 +273,46 @@ if (empty($reshook)) {
 		}
 	}
 
+
+	// Allow editing qty while MO is still in draft status.
+	// IMPORTANT: this handler MUST run BEFORE actions_addupdatedelete.inc.php,
+	// which has a generic 'set<key>' matcher that would intercept 'setqty' and
+	// call $object->fetch() + update() without setting $object->oldQty, so
+	// Mo::updateProduction() would skip the line scaling (its condition is
+	// !empty($this->oldQty)).
+	if ($action == 'setqty' && $permissiontoadd && $object->status == Mo::STATUS_DRAFT) {
+		$newqty = GETPOSTFLOAT('qty');
+		if ($newqty > 0) {
+			$object->oldQty = (float) $object->qty;
+			$object->qty = $newqty;
+			$res = $object->update($user);
+			if ($res > 0) {
+				// Enforce invariant: the 'toproduce' line for the MO's main product
+				// must equal the MO qty. Mo::updateProduction() scales by ratio
+				// (newQty/oldQty) which can drift if the line state was already
+				// inconsistent (e.g. legacy data from before this patch). Realign
+				// the main product line, leaving sub-products and frozen lines
+				// untouched.
+				$object->fetchLines();
+				foreach ($object->lines as $line) {
+					if ($line->role === 'toproduce'
+						&& (int) $line->fk_product === (int) $object->fk_product
+						&& empty($line->qty_frozen)
+						&& (float) $line->qty != (float) $object->qty) {
+						$line->qty = (float) $object->qty;
+						$line->update($user);
+					}
+				}
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Qty")), null, 'errors');
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+		exit;
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -373,6 +419,13 @@ if ($action == 'create') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>'."\n";
 
@@ -498,6 +551,13 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+	if (isModEnabled('category')) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
+		print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 
@@ -684,7 +744,46 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'fk_warehouse';
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
+	// Allow inline edit of qty while MO is in draft status.
+	// Note: editfieldval() does not handle type 'real' (no <input> rendered, only
+	// Save/Cancel buttons appear). So we override the type to 'numeric' only when
+	// the user has actually clicked the edit pencil (action=editqty). This keeps
+	// the read-mode rendering (price() format) untouched.
+	if ($object->status == Mo::STATUS_DRAFT && $permissiontoadd && isset($object->fields['qty'])) {
+		$object->fields['qty']['alwayseditable'] = 1;
+		if ($action == 'editqty') {
+			$object->fields['qty']['type'] = 'numeric';
+		}
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// Tags-Categories
+	if (isModEnabled('category')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($permissiontoadd) {
+			print '<a class="editfielda" href="' . DOL_URL_ROOT . '/mrp/mo_card.php?id=' . $object->id . '&action=edittags&token=' . newToken() . '">' . img_edit() . '</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		if ($action == 'edittags') {
+			print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="' . newToken() . '">';
+			print $form->selectCategories(Categorie::TYPE_MO, 'categories', $object);
+			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="' . $langs->trans("Modify") . '">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_MO, 1);
+		}
+		print "</td></tr>";
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -805,16 +904,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($permissiontoadd) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 				}
 			}
 
 			// Reload BOM
 			if ($object->status == $object::STATUS_DRAFT && $object->fk_bom > 0) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reload&token='.newToken().'">'.$langs->trans("Reload").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reload&token='.newToken().'" title="'.dolPrintHTMLForAttribute($langs->trans("ReInitializeHelp")).'">'.$langs->trans("ReInitialize").'</a>';
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Reload').'</a>'."\n";
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dolPrintHTMLForAttribute($langs->trans("ReInitializeHelp").'<br>'.$langs->trans("NotEnoughPermissions")).'">'.$langs->trans('ReInitialize').'</a>'."\n";
 				}
 			}
 
@@ -832,7 +931,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=mo', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&token='.newToken().'&object=mo', 'clone', $permissiontoadd);
 			}
 
 			// Cancel - Reopen

@@ -39,6 +39,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -208,6 +209,7 @@ class Reception extends CommonObject
 	 */
 	public $detail_batch;
 
+	const STATUS_CANCELED = -1;
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
@@ -1501,7 +1503,7 @@ class Reception extends CommonObject
 								$origin_object->loadReceptions();
 								//var_dump($this->$origin->receptions);exit;
 								if (count($origin_object->receptions) <= 0) {
-									$origin_object->setStatut(3); // ordered
+									$origin_object->setStatut(3); // CommandeFournisseur ordered
 								}
 							}
 						}
@@ -1850,7 +1852,7 @@ class Reception extends CommonObject
 	/**
 	 *	Set the planned delivery date
 	 *
-	 *	@param      User			$user        		Object utilisateur qui modifie
+	 *	@param      User			$user        		Object User who makes the update
 	 *	@param      integer 		$delivery_date     Delivery date
 	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
@@ -2438,7 +2440,7 @@ class Reception extends CommonObject
 							}
 							//var_dump($this->$origin->receptions);exit;
 							if ($setStatut) {
-								$this->origin_object->setStatut(3); // ordered
+								$this->origin_object->setStatut(3); // CommandeFournisseur ordered
 							}
 						}
 					}

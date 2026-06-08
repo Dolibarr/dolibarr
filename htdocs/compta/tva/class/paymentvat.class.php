@@ -236,7 +236,7 @@ class PaymentVAT extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_vat (fk_tva, datec, datep, amount,";
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".((float) $totalamount).",";
 			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
@@ -749,7 +749,7 @@ class PaymentVAT extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{

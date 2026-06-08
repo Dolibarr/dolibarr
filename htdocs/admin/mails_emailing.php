@@ -343,7 +343,7 @@ if ($action == 'edit') {
 		print '</script>'."\n";
 	}
 
-	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -570,7 +570,21 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_emailing', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br><br>\n";
+	print "<br>\n";
+
+	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
+	} else {
+		print yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			print img_warning($langs->trans("Disabled"));
+		}
+	}
+
+	print "<br>\n";
+	print "<br>\n";
+	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
@@ -719,16 +733,16 @@ if ($action == 'edit') {
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testconnect">' . $langs->trans("DoTestServerAvailability") . '</a>';
+				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testconnect&token='.newToken().'">' . $langs->trans("DoTestServerAvailability") . '</a>';
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("FeatureNotAvailableOnLinux") . '">' . $langs->trans("DoTestServerAvailability") . '</a>';
 		}
 
-		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&amp;mode=init">' . $langs->trans("DoTestSend") . '</a>';
+		print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=test&mode=init">' . $langs->trans("DoTestSend") . '</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&amp;mode=init">' . $langs->trans("DoTestSendHTML") . '</a>';
+			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=testhtml&mode=init">' . $langs->trans("DoTestSendHTML") . '</a>';
 		}
 	}
 
@@ -746,20 +760,35 @@ if ($action == 'edit') {
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$result = $mail->check_server_port((string) $server, (int) $port);
-		if ($result) {
-			print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
-		} else {
-			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+		$errormsg = '';
 
+		$listOfAllowedPorts = array('25', '465', '587', '2525');
+		if (!in_array($port, $listOfAllowedPorts)) {
+			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
+		}
+
+		if (empty($errormsg)) {
+			$result = $mail->check_server_port((string) $server, (int) $port);
+			if ($result && !is_array($result)) {
+				print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
+			} else {
+				$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+				if (is_array($result)) {
+					$errormsg .= '<br>'.$result['content'];
+				}
+			}
+		}
+
+		if ($errormsg) {
 			if ($mail->error) {
 				$errormsg .= ' - '.$mail->error;
 			}
 
 			setEventMessages($errormsg, null, 'errors');
 		}
+
 		print '<br>';
 	}
 

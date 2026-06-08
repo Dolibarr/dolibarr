@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/version.inc.php
  * 	\ingroup	core
- *  \brief      File that include the conf.php file and commons lib like functions.lib.php
+ *  \brief      File with the public/commercial version of Dolibarr.
  */
 
 if (!defined('DOL_APPLICATION_TITLE')) {
@@ -37,13 +37,9 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 }
 
 // The major version of Dolibarr
-define('DOL_MAJOR_VERSION', '23');
-define('DOL_MINOR_VERSION', '0.0');
+define('DOL_MAJOR_VERSION', '24');
+define('DOL_MINOR_VERSION', '0.0-beta');
 
 
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));
 // DOL_VERSION is now a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
-
-// Set to 1 if the beta version is a just a candidate for certification or if the stable version has been certified.
-// Use 2 to force LNE features for debug purposes
-define('CERTIF_LNE', '0');

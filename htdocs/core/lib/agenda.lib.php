@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@
  * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
+ * @param	string			$search_import_key	Import IDfilter
  * @return	void
  */
 function print_actions_filter(
@@ -69,7 +70,8 @@ function print_actions_filter(
 	$usergroupid = 0,
 	$excludetype = '',
 	$resourceid = 0,
-	$search_categ_cus = 0
+	$search_categ_cus = 0,
+	$search_import_key = ''
 ) {
 	global $user, $langs, $db, $hookmanager;
 	global $massaction;
@@ -80,7 +82,6 @@ function print_actions_filter(
 	$formactions = new FormActions($db);
 
 	// Filters
-	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="year" value="'.((int) $year).'">';
 	print '<input type="hidden" name="month" value="'.((int) $month).'">';
@@ -379,8 +380,8 @@ function show_array_last_actions_done($max = 5)
 			print "</tr>\n";
 			$i++;
 		}
-		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
+		// TODO Add a reminder for "contracts need to be put in service."
+		// TODO Add reminder for "contracts expiring soon."
 		print "</table></div><br>";
 
 		$db->free($resql);

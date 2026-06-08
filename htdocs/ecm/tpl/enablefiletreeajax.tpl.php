@@ -2,6 +2,7 @@
 /* Copyright (C) 2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,11 @@
 /**
  * @var ?Conf $conf
  * @var Translate $langs
+ * @var string $param
  */
+'
+@phan-var-force string $param
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";

@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 /**
  * API class for orders
  *
+ * @since	4.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
@@ -59,6 +61,7 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with order information
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param       int         $id            ID of order
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
@@ -75,6 +78,7 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with order information
 	 *
+	 * @since	10.0.0	Initial implementation
 	 * @param       string		$ref			Ref of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
@@ -93,6 +97,7 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with order information
 	 *
+	 * @since	10.0.0	Initial implementation
 	 * @param       string		$ref_ext			External reference of object
 	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
@@ -124,8 +129,8 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
 		}
-		if ($id == 0) {
-			throw new RestException(400, 'No order with id=0 can exist');
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			throw new RestException(400, 'No ID or Ref provided');
 		}
 		$result = $this->commande->fetch($id, $ref, $ref_ext);
 		if (!$result) {
@@ -152,7 +157,7 @@ class Orders extends DolibarrApi
 
 		// Add online_payment_url, cf #20477
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', (string) $this->commande->ref);
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
@@ -162,12 +167,14 @@ class Orders extends DolibarrApi
 	 *
 	 * Get a list of orders
 	 *
+	 * @since	4.0.0	Initial implementation
+	 * @since	20.0.0	Return pagination data
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -273,7 +280,7 @@ class Orders extends DolibarrApi
 
 					// Add online_payment_url, cf #20477
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
+					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', (string) $commande_static->ref);
 
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($commande_static), $properties);
 				}
@@ -308,10 +315,14 @@ class Orders extends DolibarrApi
 	 *
 	 * Example: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of order
+	 * @throws RestException 403 Insufficiant rights
+	 * @throws RestException 404 Third party not found
+	 * @throws RestException 500 Error when creating order
 	 */
 	public function post($request_data = null)
 	{
@@ -319,8 +330,20 @@ class Orders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
+
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch($socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Third party with id='.$socid.' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(404, 'Third party with id='.$thirdpartytmp->id.' not found or not allowed');
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -355,6 +378,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get lines of an order
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param int   $id             Id of order
 	 *
 	 * @url	GET {id}/lines
@@ -388,6 +412,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get properties of a line of an order object by id
 	 *
+	 * @since	19.0.0	Initial implementation
 	 * @param int   $id             Id of order
 	 * @param int   $lineid         Id of line
 	 * @param string                $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -423,6 +448,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Add a line to given order
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param int   $id             Id of order to update
 	 * @param array $request_data   OrderLine data
 	 * @phan-param ?array<string,string> $request_data
@@ -492,6 +518,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Update a line to given order
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param	int   $id             Id of order to update
 	 * @param	int   $lineid         Id of line to update
 	 * @param	array $request_data   OrderLine data
@@ -560,6 +587,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Delete a line of a given order
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param	int		$id             Id of order to update
 	 * @param	int		$lineid         Id of line to delete
 	 * @return	Object					Object with cleaned properties
@@ -597,6 +625,7 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
+	 * @since	12.0.0	Initial implementation
 	 * @param	int					$id			ID of order
 	 * @param	string				$type		Type of the contact ('BILLING', 'SHIPPING', 'CUSTOMER', ...)
 	 * @return	array<int,mixed>				Array of contacts
@@ -631,6 +660,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Add a contact type of given order
 	 *
+	 * @since	10.0.0	Initial implementation
 	 * @param int    $id            Id of order to update
 	 * @param int    $contactid     Id of contact to add
 	 * @param string $type          Type (code in dictionary) of the contact (BILLING, SHIPPING, CUSTOMER + possibly your own)
@@ -754,6 +784,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Unlink a contact type of given order
 	 *
+	 * @since	12.0.0	Initial implementation
 	 * @param int    $id             Id of order to update
 	 * @param int    $contactid      Id of contact
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -807,6 +838,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Update order general fields (won't touch lines of order)
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param	int		$id             Id of order to update
 	 * @param	array	$request_data   Data
 	 * @phan-param ?array<string,string> $request_data
@@ -840,7 +872,7 @@ class Orders extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->commande->array_options[$index] = $this->_checkValForAPI($field, $val, $this->commande);
+					$this->commande->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->commande);
 				}
 				continue;
 			}
@@ -865,6 +897,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Delete order
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param   int     $id         Order ID
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -887,7 +920,7 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->commande->delete(DolibarrApiAccess::$user)) {
+		if ($this->commande->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when deleting order : '.$this->commande->error);
 		}
 
@@ -908,6 +941,7 @@ class Orders extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param   int $id             Order ID
 	 * @param   int $idwarehouse    Warehouse ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -949,7 +983,7 @@ class Orders extends DolibarrApi
 
 		//fix #20477 : add online_payment_url
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', (string) $this->commande->ref);
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
@@ -959,6 +993,7 @@ class Orders extends DolibarrApi
 	 *
 	 *  Function used when order is reopend after being closed.
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param int   $id       Id of the order
 	 *
 	 * @url     POST {id}/reopen
@@ -997,6 +1032,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Classify the order as invoiced. Could be also called setbilled
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param	int   $id           Id of the order
 	 * @return	Object					Object with cleaned properties
 	 *
@@ -1042,6 +1078,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Close an order (Classify it as "Delivered")
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param   int     $id             Order ID
 	 * @param   int     $notrigger      Disabled triggers
 	 * @return	Object					Object with cleaned properties
@@ -1088,6 +1125,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Set an order to draft
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param   int     $id             Order ID
 	 * @param   int		$idwarehouse    Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 * @return	Object					Object with cleaned properties
@@ -1135,6 +1173,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Create an order using an existing proposal.
 	 *
+	 * @since	4.0.0	Initial implementation
 	 * @param int   $proposalid       Id of the proposal
 	 * @return	Object					Object with cleaned properties
 	 *
@@ -1177,6 +1216,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Get the shipments of an order
 	 *
+	 * @since	14.0.0	Initial implementation
 	 * @param int   $id       Id of the order
 	 *
 	 * @url     GET {id}/shipment
@@ -1236,6 +1276,7 @@ class Orders extends DolibarrApi
 	/**
 	 * Create the shipment of an order
 	 *
+	 * @since	14.0.0	Initial implementation
 	 * @param int   $id       Id of the order
 	 * @param int	$warehouse_id Id of a warehouse
 	 *

@@ -552,10 +552,12 @@ if ($resql) {
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
-		$formquestion[] = array('type' => 'other',
+		$formquestion[] = array(
+			'type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
-			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone')
+		);
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", $nbselected), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
 	}
 
@@ -593,7 +595,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="center liste_titre">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -621,7 +623,7 @@ if ($resql) {
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="center liste_titre">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -631,7 +633,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	}
@@ -650,7 +652,7 @@ if ($resql) {
 	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	}
@@ -662,7 +664,7 @@ if ($resql) {
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
-		// Ref produit as link
+		// Product ref as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->product_type;
@@ -742,7 +744,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
 			print '</td>';
@@ -896,7 +898,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
 			print '</td>';
@@ -907,49 +909,48 @@ if ($resql) {
 	}
 	print '</table>';
 	print '</div>';
+	?>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function init_savebutton() {
+				console.log("We check if at least one line is checked")
 
-	print '<script type="text/javascript">
-        jQuery(document).ready(function() {
-        	function init_savebutton()
-        	{
-	            console.log("We check if at least one line is checked")
+				atleastoneselected = 0;
+				jQuery(".checkforselect").each(function(index) {
+					/* console.log( index + ": " + $( this ).text() ); */
+					if ($(this).is(':checked')) atleastoneselected++;
+				});
 
-    			atleastoneselected=0;
-	    		jQuery(".checkforselect").each(function( index ) {
-	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
-	  			});
+				if (atleastoneselected) jQuery("#changeaccount").removeAttr('disabled');
+				else jQuery("#changeaccount").attr('disabled', 'disabled');
+				if (atleastoneselected) jQuery("#changeaccount").attr('class', 'button');
+				else jQuery("#changeaccount").attr('class', 'button');
+			}
 
-	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
-	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
-	            else jQuery("#changeaccount").attr(\'class\',\'button\');
-        	}
-
-        	jQuery(".checkforselect").change(function() {
-        		init_savebutton();
-        	});
-        	jQuery(".productforselect").change(function() {
-				console.log($(this).attr("id")+" "+$(this).val());
+			jQuery(".checkforselect").change(function() {
+				init_savebutton();
+			});
+			jQuery(".productforselect").change(function() {
+				console.log($(this).attr("id") + " " + $(this).val());
 				if ($(this).val() && $(this).val() != -1) {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', true);
+					$(".productforselect"+$(this).attr("id")).prop('checked', true);
 				} else {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', false);
+					$(".productforselect"+$(this).attr("id")).prop('checked', false);
 				}
-        		init_savebutton();
-        	});
+				init_savebutton();
+			});
 
-        	init_savebutton();
+			init_savebutton();
 
-            jQuery("#search_current_account").keyup(function() {
-        		if (jQuery("#search_current_account").val() != \'\')
-                {
-                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
-                    jQuery("#search_current_account_valid").val(-1);
-                }
-        	});
-        });
-        </script>';
+			jQuery("#search_current_account").keyup(function() {
+				if (jQuery("#search_current_account").val() != '') {
+					console.log("We set a value of account to search " + jQuery("#search_current_account").val() + ", so we disable the other search criteria on account");
+					jQuery("#search_current_account_valid").val(-1);
+				}
+			});
+		});
+	</script>
+	<?php
 
 	print '</form>';
 

@@ -300,7 +300,7 @@ if ($action == 'update') {
 		$dirforimage = $conf->mycompany->dir_output . '/logos/';
 		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+			if (preg_match('/([^\\/:]+)$/i', (string) $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);
@@ -691,14 +691,6 @@ if ($mode == 'login') {
 	print $langs->trans("Parameter");
 	print '</td><td>';
 	print '</td></tr>';
-
-	// Hide helpcenter link on login page
-	/*
-	print '<tr class="oddeven"><td>' . $langs->trans("DisableLinkToHelpCenter") . '</td><td>';
-	print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '', 'login');
-	print '</td>';
-	print '</tr>';
-	*/
 
 	// Message on login page
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount', 'user'));

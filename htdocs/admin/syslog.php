@@ -261,7 +261,7 @@ foreach ($syslogModules as $moduleName) {
 				$value = (isset($option['default']) ? $option['default'] : '');
 			}
 
-			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" placeholder="'.$option['default'].'" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) {
 				print '<br>'.$langs->trans("Example").': '.dol_escape_htmltag($option['example']);
 			}

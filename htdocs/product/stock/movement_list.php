@@ -165,6 +165,17 @@ if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	unset($arrayfields['pl.eatby']);
 }
 
+if (!getDolGlobalString('STOCK_SUPPORT_SERVICES')) {
+	$usercanreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+} elseif (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$usercanreadsupplierprice = $user->hasRight('product', 'product_advance', 'read_supplier_prices') || $user->hasRight('product', 'service_advance', 'read_supplier_prices');
+} else {
+	$usercanreadsupplierprice = $user->hasRight('product', 'lire') || $user->hasRight('service', 'lire');
+}
+
+if (!$usercanreadsupplierprice) {
+	unset($arrayfields['m.price']);
+}
 
 $tmpwarehouse = new Entrepot($db);
 if ($id > 0 || !empty($ref)) {
@@ -172,6 +183,10 @@ if ($id > 0 || !empty($ref)) {
 	$id = $tmpwarehouse->id;
 }
 
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 // Security check
 //$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
@@ -944,9 +959,11 @@ if ($warehouse->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Value
-	print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-	print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-	print "</td></tr>";
+	if ($usercanreadsupplierprice) {
+		print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+		print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+		print "</td></tr>";
+	}
 
 	// Last movement
 	$sql = "SELECT MAX(m.datem) as datem";
@@ -1182,7 +1199,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1193,7 +1210,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1324,7 +1341,7 @@ if (!empty($arrayfields['m.tms']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1339,7 +1356,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1407,7 +1424,7 @@ if (!empty($arrayfields['m.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['m.tms']['label'], $_SERVER["PHP_SELF"], "m.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1514,7 +1531,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$warehouse->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1540,8 +1557,9 @@ while ($i < $imaxinloop) {
 		}
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall tdoverflowmax150 cell2linesheight">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
+			print '<br><span class="opacitymedium">'.$productstatic->label.'</span>';
 			print "</td>\n";
 		}
 		// Product label
@@ -1628,12 +1646,13 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
-			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			// Product and service differentiation, if we have permissions for only one of them
+			$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 			if ($productstatic->isService()) {
-				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+				$displayprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 			}
 			print '<td class="right">';
-			if ($obj->price != 0 && $usercancreadsupplierprice) {
+			if ($obj->price != 0 && $displayprice) {
 				print price($obj->price);
 			}
 			print '</td>';
@@ -1647,7 +1666,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1691,7 +1710,7 @@ print '</div>'."\n";
 print '</form>'."\n";
 
 // Add number of product when there is a filter on period
-if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
+if (count($arrayofuniqueproduct) == 1 && !empty($search_date_startyear) && is_numeric($search_date_startyear)) {
 	print "<br>";
 
 	$productidselected = 0;
@@ -1699,8 +1718,8 @@ if (count($arrayofuniqueproduct) == 1 && !empty($year) && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : (int) dol_print_date(time(), "%Y"), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($search_date_startyear ? $search_date_startyear : dol_print_date(time(), "%Y"), $search_date_startmonth ? $search_date_startmonth : 1, true);
+	$dateafter = dol_get_last_day($search_date_endyear ? $search_date_endyear : dol_print_date(time(), "%Y"), $search_date_endmonth ? $search_date_endmonth : 12, true);
 	$balancebefore = $object->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $object->calculateBalanceForProductBefore($productidselected, $dateafter);
 

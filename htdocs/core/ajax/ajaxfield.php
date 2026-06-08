@@ -19,7 +19,8 @@
 /**
  *      \file       htdocs/core/ajax/ajaxfield.php
  *      \ingroup    core
- *      \brief      This script returns content of extrafield. See extrafield to update value.
+ *      \brief      This script returns content of fields or extrafields (using new class/fields/*.class.php files).
+ *      			TODO This may depreciate htdoc/core/ajax/ajaxextrafields.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -40,15 +41,14 @@ if (!defined('NOHEADERNOFOOTER')) {
 }
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/fieldsmanager.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/fieldsmanager.class.php';
 
 // object id
 $objectid = GETPOST('objectid', 'aZ09');
@@ -77,14 +77,13 @@ if (empty($object->element)) {
 $module = $object->module;
 $element = $object->element;
 
+// Security check
 $usesublevelpermission = ($module != $element ? $element : '');
 if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
-
 // print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
-// Security check
 restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 
 

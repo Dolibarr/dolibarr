@@ -501,7 +501,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Object utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object User which updates the donation
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */
@@ -950,7 +950,7 @@ class Don extends CommonObject
 	 *	@param	int  	$notooltip					1=Disable tooltip
 	 *	@param	string	$moretitle					Add more text to title tooltip
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{

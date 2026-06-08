@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011       Regis Houssin     	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW				    <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,12 @@ function categories_prepare_head(Categorie $object, $type)
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $extrafields, $db;
 
-	$extrafields = new ExtraFields($db);
+	if (!is_object($extrafields)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($db);
+	}
 	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");
@@ -109,6 +112,18 @@ function categoriesadmin_prepare_head()
 	}
 	$head[$h][2] = 'attributes_categories';
 	$h++;
+
+	// Multilangs Extrafields
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/categories/admin/categorie_lang_extrafields.php');
+		$head[$h][1] = $langs->trans("CategoriesTranslationsExtrafields");
+		$nbExtrafields = isset($extrafields->attributes['categorie_lang']['count']) ? $extrafields->attributes['categorie_lang']['count'] : 0;
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'translationAttributes';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

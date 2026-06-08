@@ -46,7 +46,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

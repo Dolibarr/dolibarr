@@ -133,7 +133,7 @@ class Recruitments extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
@@ -248,7 +248,7 @@ class Recruitments extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
@@ -375,7 +375,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$result = $this->_validate($request_data, $this->jobposition);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -414,17 +414,19 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields. Validate against the candidature model so the API
+		// rejects with the actual missing candidature fields (e.g. email) instead of
+		// the unrelated job position fields (see issue #38429).
+		$result = $this->_validate($request_data, $this->candidature);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				$this->candidature->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+			$this->candidature->$field = $this->_checkValForAPI($field, $value, $this->candidature);
 		}
 
 		// Clean data
@@ -686,25 +688,26 @@ class Recruitments extends DolibarrApi
 	 * Validate fields before create or update object
 	 *
 	 * @param	?array<string,mixed>		$data   Array of data to validate
+	 * @param	CommonObject				$object Object to validate against
 	 * @return	array<string,mixed>
 	 *
 	 * @throws	RestException
 	 */
-	private function _validate($data)
+	private function _validate($data, $object)
 	{
 		if ($data === null) {
 			$data = array();
 		}
-		$jobposition = array();
-		foreach ($this->jobposition->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
+		$result = array();
+		foreach ($object->fields as $field => $propfield) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'ref')) || empty($propfield['notnull']) || $propfield['notnull'] != 1 || !empty($propfield['noteditable']) || isset($propfield['default'])) {
+				continue; // Not a mandatory field or auto-generated field or has default value
 			}
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$jobposition[$field] = $data[$field];
+			$result[$field] = $data[$field];
 		}
-		return $jobposition;
+		return $result;
 	}
 }

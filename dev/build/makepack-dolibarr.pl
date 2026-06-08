@@ -87,7 +87,7 @@ $DIR ||= '.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE = "$DIR/../..";
-$DESTI  = "$SOURCE/build";
+$DESTI  = "$SOURCE/dev/build";
 if ( $SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i ) {
 	print
 	  "Error: Launch the script $PROG.$Extension with its full path from /.\n";
@@ -202,29 +202,46 @@ if ( !$TEMP || !-d $TEMP ) {
 $BUILDROOT = "$TEMP/buildroot";
 
 # Get version $MAJOR, $MINOR and $BUILD
-open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN>) {
-	if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MAJORVERSION = $1;
-		last;
+if (! -e $SOURCE . "/htdocs/version.inc.php") {
+	open(my $IN, "<", "$SOURCE/htdocs/filefunc.inc.php")
+		or die "Error: Can't open file $SOURCE/htdocs/filefunc.inc.php\n";
+
+	while (<$IN>) {
+		if (/define\s*\(\s*['"]DOL_VERSION['"]\s*,\s*['"]([^'"]+)['"]\s*\)/) {
+			$VERSION = $1;
+			last;
+		}
 	}
-}
-close $IN;
-open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
-  or die "Error: Can't open version file "
-  . $SOURCE
-  . "/htdocs/version.inc.php\n";
-while (<$IN2>) {
-	if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
-		$MINORVERSION = $1;
-		last;
+
+	close($IN);
+
+	$PROJVERSION = $VERSION;
+} else {
+	open( my $IN, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN>) {
+		if ( $_ =~ /define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MAJORVERSION = $1;
+			last;
+		}
 	}
+	close $IN;
+	open( my $IN2, "<", $SOURCE . "/htdocs/version.inc.php" )
+	  or die "Error: Can't open version file "
+	  . $SOURCE
+	  . "/htdocs/version.inc.php\n";
+	while (<$IN2>) {
+		if ( $_ =~ /define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/ ) {
+			$MINORVERSION = $1;
+			last;
+		}
+	}
+	close $IN2;
+
+	$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 }
-close $IN2;
-$PROJVERSION = $MAJORVERSION . "." . $MINORVERSION;
 
 ( $MAJOR, $MINOR, $BUILD ) = split( /\./, $PROJVERSION, 3 );
 if ( $MINOR eq '' ) { die "Error can't detect version"; }
@@ -399,7 +416,7 @@ else {
 $atleastonerpm = 0;
 foreach my $target ( sort keys %CHOOSEDTARGET ) {
 	if ( $target =~ /RPM/i ) {
-		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/build" ) ) {
+		if ( $atleastonerpm && ( $DESTI eq "$SOURCE/dev/build" ) ) {
 			print
 "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
@@ -572,7 +589,7 @@ if ($nboftargetok) {
 			exit;
 		}
 
-		print 'Create xml check file with md5 checksum with command php '
+		print 'Create xml check file with hash checksum with command php '
 		  . $SOURCE
 		  . '/dev/build/generate_filelist_xml.php release='
 		  . $MAJOR . '.'
@@ -635,10 +652,8 @@ if ($nboftargetok) {
 				  . $BUILD . '"' . "\n";
 				$ret =
 `git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push '
-				  . $GITREMOTENAME
-				  . ' -f "$MAJOR.$MINOR.$BUILD"' . "\n";
-				$ret = `git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
+				print "Run git push $GITREMOTENAME -f '$MAJOR.$MINOR.$BUILD'\n";
+				$ret = `git push $GITREMOTENAME -f "$MAJOR.$MINOR.$BUILD"`;
 
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
@@ -679,6 +694,7 @@ if ($nboftargetok) {
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
+		$ret = `rm -f  $BUILDROOT/$PROJECT/.pyproject.toml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.settings`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/.stickler.yml`;
@@ -723,6 +739,8 @@ if ($nboftargetok) {
 
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql`;
 		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3`;
+
+		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php`;
 
 		$ret = `rm -fr $BUILDROOT/$PROJECT/node_modules`;
 
@@ -826,19 +844,19 @@ if ($nboftargetok) {
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/bin`;
 		$ret =
-`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`
+`rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/ckeditor/adapters`
 		  ;    # Keep this removal in case we embed libraries
 		$ret =
-		  `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`
+		  `rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/ckeditor/samples`
 		  ;    # Keep this removal in case we embed libraries
-		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`
+		$ret = `rm -fr $BUILDROOT/$PROJECT/htdocs/public/includes/ckeditor/_source`
 		  ; # _source must be kept into tarball for official debian, not for the rest
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/composer`;
 		$ret = `rm -f  $BUILDROOT/$PROJECT/htdocs/includes/doctrine`;
 		$ret =
-`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
+`rm -f  $BUILDROOT/$PROJECT/htdocs/public/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
 		$ret =
-`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
+`rm -f  $BUILDROOT/$PROJECT/htdocs/public/includes/jquery/plugins/select2/release.sh`;
 		$ret =
 		  `rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/doc`;
 		$ret =
@@ -944,7 +962,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMETGZ/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
@@ -981,7 +999,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMEXZ/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMEXZ into $FILENAMEXZ.xz...\n";
@@ -1020,7 +1038,7 @@ if ($nboftargetok) {
 
 			$ret = `rm -fr $BUILDROOT/$FILENAMEZIP/dev/build/exe`;
 			$ret =
-			  `rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/includes/ckeditor/_source`
+			  `rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/public/includes/ckeditor/_source`
 			  ; # We can't remove it with exclude file, we need it for some tarball packages
 
 			print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
@@ -1058,6 +1076,7 @@ if ($nboftargetok) {
 			if ( $RPMDIR eq "" ) { $RPMDIR = $ENV{'HOME'} . "/rpmbuild"; }
 
 			print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+			print "RPMDIR = $RPMDIR\n";
 
 			print "Remove target " . $FILENAMERPM . "...\n";
 			unlink( "$NEWDESTI/" . $FILENAMERPM );
@@ -1072,7 +1091,7 @@ if ($nboftargetok) {
 			$ret = `$cmd`;
 
        # Removed files we don't need (already removed before)
-       #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/includes/ckeditor/_source`;
+       #$ret=`rm -fr $BUILDROOT/$FILENAMETGZ2/htdocs/public/includes/ckeditor/_source`;
 
 			print "Set permissions on files/dir\n";
 			$ret = `chmod -R 755 $BUILDROOT/$FILENAMETGZ2`;
@@ -1271,17 +1290,17 @@ if ($nboftargetok) {
 
 			# Removed duplicate license files
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/plugins/scayt/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/plugins/scayt/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/plugins/wsc/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source/plugins/wsc/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/plugins/scayt/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/plugins/scayt/LICENSE.md`;
 			$ret =
-`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/plugins/wsc/LICENSE.md`;
+`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/plugins/wsc/LICENSE.md`;
 			$ret =
 			  `rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/php-iban/LICENSE`;
 			$ret =
@@ -1304,7 +1323,7 @@ if ($nboftargetok) {
 `rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 
 # Removed files we don't need (already removed)
-#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/public/includes/ckeditor/ckeditor/_source`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
 			$ret = `rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;
@@ -1388,61 +1407,41 @@ if ($nboftargetok) {
 
 			print "Set permissions on files/dir\n";
 			$ret = `chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
-			$cmd =
-			  "find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
 			$ret = `chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
-			$ret =
-`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
-			$ret =
-`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_mymodule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
+			$ret = `chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
+			$ret = `chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/mymodule.php`;
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
-			$cmd =
-"find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
+			$cmd = "find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";
 			$ret = `$cmd`;
 
-			print
-"Rename directory $BUILDROOT/$PROJECT.tmp into $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
-			$cmd =
-"mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
+			print "Rename directory $BUILDROOT/$PROJECT.tmp into $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build\n";
+			$cmd = "mv $BUILDROOT/$PROJECT.tmp $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build";
 			$ret = `$cmd`;
 
 			print "Go into directory $BUILDROOT\n";
 			chdir("$BUILDROOT");
 
-# We need a tarball to be able to build "quilt" debian package (not required for native but we need patch so it is not a native)
-			print
-"Compress $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build into $BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz...\n";
-			$cmd =
-"tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
+			# We need a tarball to be able to build "quilt" debian package (not required for native but we need patch so it is not a native)
+			print "Compress $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build into $BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz...\n";
+			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
 			print $cmd. "\n";
 			$ret = `$cmd`;
 
@@ -1455,24 +1454,26 @@ if ($nboftargetok) {
 			$cmd = "dpkg-buildpackage -us -uc --compression=gzip";
 			print "Launch DEB build ($cmd)\n";
 			$ret = `$cmd 2>&1 3>&1`;
+			$ret2 = $?;
 			print $ret. "\n";
+			print "Result = $ret2". "\n";
 
 			chdir("$olddir");
 
-			print
-"You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
-			print
-"You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
+			if ($ret2 eq 0) {
+				print "You can check bin package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}_all.deb\"\n";
+				print "You can check src package with lintian --pedantic -E -I \"$NEWDESTI/${FILENAMEDEB}.dsc\"\n";
 
-			# Move to final dir
-			print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
-			$ret = `mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
+				# Move to final dir
+				print "Move *_all.deb *.dsc *.orig.tar.gz *.changes to $NEWDESTI\n";
+				$ret = `mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
 
-#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
-			$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
-			$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
+				#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option
+				$ret = `mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
+				$ret = `mv $BUILDROOT/*.changes "$NEWDESTI/"`;
+			}
 			next;
 		}
 
@@ -1492,17 +1493,15 @@ if ($nboftargetok) {
 				print "Check that ISCC.exe is in your PATH.\n";
 			}
 			else {
-				print
-"Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
+				print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
 			}
 
 			$SOURCEBACK = $SOURCE;
 			$SOURCEBACK =~ s/\//\\/g;
 
-			print
-"Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+			print "Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
 
-#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+			#$ret=`cat "$SOURCE/dev/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
 			open( my $IN3, '<',
 				$SOURCE . "/dev/build/exe/doliwamp/doliwamp.iss" )
 			  or die $!;
@@ -1516,40 +1515,35 @@ if ($nboftargetok) {
 			close($IN3);
 			close($OUT);
 
-			print
-"Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
+			print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
 
 			if ( $OS eq 'windows' ) {
-				$cmd =
-"ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+				$cmd = "ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			else {
-#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+				#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			print "$cmd\n";
 			$ret = `$cmd`;
 			print "ret=$ret\n";
 
 			# Move to final dir
-			print
-"Move \"$SOURCE\\dev\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+			print "Move \"$SOURCE\\dev\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
 			rename(
 				"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe",
 				"$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"
 			);
-			print
-"Move $SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+			print "Move $SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
 
 			use File::Copy;
 
-#$ret=`mv "$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+			#$ret=`mv "$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
 			$ret = move(
 				"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe",
 				"$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"
 			);
 
-			print
-"Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
+			print "Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
 
 			#$ret=`rm "$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss"`;
 			$ret = unlink("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss");
@@ -1568,7 +1562,7 @@ if ($nboftargetok) {
 			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml" =>
 			  'none',    # none means it won't be published on SF
 			"$DESTI/package_rpm_generic/$FILENAMERPM" =>
-'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+				'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_rpm_generic/$FILENAMERPMSRC" =>
 			  'none',    # none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb" =>
@@ -1599,8 +1593,7 @@ if ($nboftargetok) {
 			  'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc" =>
 			  'package_debian-ubuntu',
-
-#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz" =>
 			  'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz" =>
@@ -1662,8 +1655,7 @@ if ($nboftargetok) {
 			$NUM_SCRIPT = <STDIN>;
 			chomp($NUM_SCRIPT);
 
-			print
-"Create empty dir /tmp/emptydir. We need it to create target dir using rsync.\n";
+			print "Create empty dir /tmp/emptydir. We need it to create target dir using rsync.\n";
 			$ret = `mkdir -p "/tmp/emptydir/"`;
 
 			%filestoscan = %filestoscansf;
@@ -1707,13 +1699,13 @@ if ($nboftargetok) {
 				#use String::ShellQuote qw( shell_quote );
 				#$ssh->cmd('mkdir '.shell_quote($destFolder).' && exit');
 
-#use Net::SFTP::Foreign;
-#my $sftp = Net::SFTP::Foreign->new($ip, user => $user, password => $pass, autodie => 1);
-#$sftp->mkdir($destFolder)
+				#use Net::SFTP::Foreign;
+				#my $sftp = Net::SFTP::Foreign->new($ip, user => $user, password => $pass, autodie => 1);
+				#$sftp->mkdir($destFolder)
 
-    #$command="ssh eldy,dolibarr\@frs.sourceforge.net mkdir -p \"$destFolder\"";
-    #print "$command\n";
-    #my $ret=`$command 2>&1`;
+			    #$command="ssh eldy,dolibarr\@frs.sourceforge.net mkdir -p \"$destFolder\"";
+			    #print "$command\n";
+			    #my $ret=`$command 2>&1`;
 
 				$command = "rsync -s -e 'ssh' --recursive /tmp/emptydir/ \""
 				  . $destFolder . "\"";

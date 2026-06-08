@@ -3,8 +3,8 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2045,13 +2045,13 @@ class Website extends CommonObject
 				}
 				if ($lineContent1 !== $lineContent2) {
 					if (isset($lines1[$lineNum]) && !isset($lines2[$lineNum])) {
-						// Ligne deleted de la source
+						// Line deleted from the source
 						$diff["Supprimée à la ligne " . ($lineNum + 1)] = $lineContent1;
 					} elseif (!isset($lines1[$lineNum]) && isset($lines2[$lineNum])) {
-						// Nouvelle ligne added dans la destination
+						// New line added to the target
 						$diff["Ajoutée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					} else {
-						// Différence found it
+						// Found a difference
 						$diff["Modifiée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					}
 				}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2017-2018  Laurent Destailleur	    <eldy@users.sourceforge.net>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,19 +64,68 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		// Protect against modification of data that should be immutable on a validated invoice (memory test only, no database access)
+		// Not required, invoice is already protected by the status Validated
+		/*
+		if ($action === 'LINEBILL_INSERT' && in_array($object->element, array('invoiceline', 'facturedet'))) {
+			$invoice = new Facture($this->db);
+			$invoice->fetch($object->fk_facture);
+
+			var_dump($invoice->status, $invoice->posmodule);exit;
+			$this->errors[] = 'Modifying the lines of invoice is not allowed';
+			return -2;
+		}
+		var_dump($object->element);exit;
+		*/
+
+
 		// List of mandatory logged actions
-		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
+		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'cashcontrol');
 
 		// Add custom actions to log
 		if (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')) {
 			$listofqualifiedelement = array_merge($listofqualifiedelement, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')));
 		}
 
-		// Test if event/record is qualified
+		// Test if event/record is qualified for immutable logging
 		// If custom actions are not set or if action not into custom actions, we can exclude action if object->element is not valid
 		if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 			return 1;
 		}
+
+
+		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
+		$isqualified = isALNERunningVersion(1);
+		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS()) {
+			$errmsg = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS is mandatory to be allowed to record any event (Your hosting does not match the install requirements).';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->errors[] = $errmsg;
+			return -1;
+		}
+
+		// Detect if a certified version was installed on an old version. So we can force the user to redo the configuration stepwith new requirements.
+		if ($mysoc->country_code == 'FR' && $isqualified && !isRegistrationDataSavedAndPushed()) {
+			$errmsg = 'Error: You are using Dolibarr with the module "Blocked Log" to be compliant with the French Law Finance certification, but the registration step was not done or is not complete. Try to reenable the module %s.';
+			dol_syslog($errmsg, LOG_ERR);
+			dol_syslog("MAIN_FIRST_REGISTRATION_OK_DATE=".getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'));
+			dol_syslog("BLOCKEDLOG_REGISTRATION_NAME=".getDolGlobalString("BLOCKEDLOG_REGISTRATION_NAME"));
+			$this->errors[] = $errmsg;
+			return -1;
+		}
+
+		if ($action === 'BILL_UNVALIDATE') {
+			/** @var Facture $object */
+			'@phan-var-force Facture $object';
+			if ($object->isEditable() <= 0) {
+				$this->errors[] = 'Modifying this invoice is not allowed';
+				return -2;
+			}
+		}
+
 		/** @var Facture|Don|Paiement|PaymentDonation|Subscription|PaymentVarious|CashControl $object */
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
@@ -84,12 +133,16 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$b = new BlockedLog($this->db);
 		$b->loadTrackedEvents();			// Get the list of tracked events into $b->trackedevents
 
-		// Tracked events
-		if (!in_array($action, array_keys($b->trackedevents))) {
+		// Tracked or controlled events
+		if (!in_array($action, array_keys($b->trackedevents)) && !in_array($action, array_keys($b->controlledevents))) {
 			return 0;
 		}
 
+		// If we are here, we are on an action code that will have a control or will generate a record in blockedlog database.
+
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' && $object->element == 'payment') {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 				if (empty($object->paiementcode) && !empty($object->paiementid)) {
@@ -98,17 +151,46 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 				if (!in_array($object->paiementcode, array('LIQ', 'CB', 'CHQ'))) {
 					// Check that invoice of payment is not from a POS module. Refuse if yes
+					$invoiceids = array();
 					if (is_array($object->amounts)) {
-						$invoiceids = array();
 						foreach ($object->amounts as $objid => $amount) {
 							$invoiceids[] = $objid;
 						}
 					}
 					// Test there is not invoices with id in $invoiceids and with a module_source that is not empty
-
-					//$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version.';
-					//return -1;
+					$tmpinvoice = new Facture($this->db);
+					foreach ($invoiceids as $invoiceid) {
+						$tmpinvoice->id = 0;
+						$tmpinvoice->fetch($invoiceid);
+						if ($tmpinvoice->id > 0 && $tmpinvoice->module_source == 'takepos') {		// @phpstan-ignore-line PHP think tmpinvoice->id is always 0
+							$this->errors[] = 'The payment mode '.$object->paiementcode.' is not available in this version for payment of invoices generated from '.$tmpinvoice->module_source;
+							return -1;
+						}
+					}
 				}
+			}
+		}
+
+		// Protect against modification of data that should be immutable on a validated invoice (memory test only, no database access)
+		if ($action === 'BILL_MODIFY' && !empty($object->oldcopy) && in_array($object->element, array('invoice', 'facture')) && $object->status != 0) {
+			/** @var Facture $object */
+			'@phan-var-force Facture $object';
+			if ($object->oldcopy->ref != $object->ref) {
+				$this->errors[] = 'Modifying the property Ref of a non draft invoice is not allowed';
+				return -2;
+			}
+			if (($object->oldcopy->total_ht != $object->total_ht) || ($object->oldcopy->total_tva != $object->total_tva) || ($object->oldcopy->total_ttc != $object->total_ttc)
+				|| ($object->oldcopy->date != $object->date) || ($object->oldcopy->revenuestamp != $object->revenuestamp)
+				|| ($object->oldcopy->thirdparty->idprof1 != $object->thirdparty->idprof1)	// Siren
+				|| ($object->oldcopy->thirdparty->idprof2 != $object->thirdparty->idprof2)	// Siret
+				|| ($object->oldcopy->thirdparty->tva_intra != $object->thirdparty->tva_intra)
+				) {
+				$this->errors[] = 'You try to modify a property that is locked once the invoice has been validated (total, revenu stamp, professional id).';
+				return -2;
+			}
+			if ($object->oldcopy->lines != $object->lines) {
+				$this->errors[] = 'Modifying the lines of invoice is not allowed';
+				return -2;
 			}
 		}
 
@@ -121,8 +203,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'MEMBER_SUBSCRIPTION_CREATE' || $action === 'MEMBER_SUBSCRIPTION_MODIFY' || $action === 'MEMBER_SUBSCRIPTION_DELETE'
 			|| $action === 'DON_VALIDATE' || (($action === 'DON_MODIFY' || $action === 'DON_DELETE') && ($object->statut != 0 || $object->status != 0))
 			|| $action === 'CASHCONTROL_CLOSE'
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0))
-			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
+			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && ($object->statut != 0 || $object->status != 0 || $object->module_source != ''))
 			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
 		) {
 			$qualified++;
@@ -131,9 +213,11 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
 				/** @var Don|Subscription $object */
+				'@phan-var-force Don|Subscription $object';
 				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_CLOSE') {
 				/** @var CashControl $object */
+				'@phan-var-force CashControl $object';
 				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} else {
 				if (property_exists($object, 'total_ht')) {
@@ -144,14 +228,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
-		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
-		{
-			$qualified++;
-			$amounts=  (double) $object->total_ttc;
-		}*/
 		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
 			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE') {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			$qualified++;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
@@ -161,6 +241,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				$amounts = $object->amount;
 			}
 		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
+			/** @var Paiement $object */
+			'@phan-var-force Paiement $object';
 			$qualified++;
 			$amounts = (float) $object->amount;
 		}
@@ -179,7 +261,8 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
-		$res = $b->create($user);		// Insert event in unalterable log. We are in a trigger so inside a global db transaction.
+		// Insert event in unalterable log. We are in a trigger so inside a global db transaction.
+		$res = $b->create($user);
 
 		if ($res < 0) {
 			$this->setErrorsFromObject($b);

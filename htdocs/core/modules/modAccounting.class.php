@@ -5,6 +5,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2016-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2021	Open-DSI				<support@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,10 +156,10 @@ class modAccounting extends DolibarrModules
 		$this->module_parts = array();
 
 		// Boxes
-		$this->boxes = array(
-			0=>array('file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'),
-			1=>array('file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex')
-		);
+		$this->boxes = [
+			['file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'],
+			['file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex'],
+		];
 
 		// Permissions
 		$this->rights_class = 'accounting';

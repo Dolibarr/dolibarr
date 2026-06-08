@@ -1218,7 +1218,6 @@ MailToSendShipment=Envios
 MailToSendSupplierRequestForQuotation=Solicitud de presupuesto / cotización
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas del vendedor / proveedor
-MailToExpenseReport=Reporte de gastos
 MailToThirdparty=Clientes / Proveedores
 ByDefaultInList=Mostrar de forma predeterminada en la vista de lista
 YouUseLastStableVersion=Utiliza la última versión estable

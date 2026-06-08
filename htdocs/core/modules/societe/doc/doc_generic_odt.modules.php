@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
  * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,6 +319,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				$result = $this->db->query($sql);
 				$num = $this->db->num_rows($result);
+				$contactstatic = null;
 
 				if ($num) {
 					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -334,15 +335,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
-					$foundtagforlines = 1;
+					$listlines = null;
 					try {
 						$listlines = $odfHandler->setSegment('companycontacts');
 					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
+						$listlines = null;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && $contactstatic !== null) {
+					if ($listlines !== null && $contactstatic !== null) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {

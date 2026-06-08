@@ -27,6 +27,14 @@
  */
 
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -36,15 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "compta", "accountancy", "productbatch", "products"));
@@ -441,11 +440,12 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilDoneCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacityhigh small">'.$langs->trans("DescVentilDoneCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
-	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom marginbottomonly">';
+	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom paddingtop">';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<br><br>';
 
 	$moreforfilter = '';
 
@@ -700,7 +700,7 @@ if ($result) {
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100 cell2linesheight">';
 			if ($productstatic->id > 0) {
 				print $productstatic->getNomUrl(1);
 			} else {
@@ -766,9 +766,10 @@ if ($result) {
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dolPrintHTML($langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')').'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')').'">';
 			if ($objp->country_code) {
-				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
+				print $langs->trans("Country".$objp->country_code);
+				//print ' ('.$objp->country_code.')';
 			}
 			print '</td>';
 			$totalarray['nbfield']++;

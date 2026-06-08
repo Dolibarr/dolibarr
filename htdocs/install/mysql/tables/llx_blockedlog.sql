@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2007-2025 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2026 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ CREATE TABLE llx_blockedlog
 	rowid integer AUTO_INCREMENT PRIMARY KEY,	-- Automatic sequence ID
 	-- fields included into signature
 	module_source varchar(32) DEFAULT '',		-- field included into line signature. If the event was recorded from a POS module or another module.
+	pos_source varchar(32) DEFAULT '',			-- field included into line signature. The number of the terminal.
 	action varchar(50),							-- field included into line signature. The type of event.
 	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature. For future usage of multi-entity.
 	date_creation	datetime,					-- field included into line signature. Date and time of event.
@@ -28,12 +29,14 @@ CREATE TABLE llx_blockedlog
 	amounts_taxexcl double(24,8) NULL,			-- field included into line signature (denormalized data from object_data)
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)
 	date_object	datetime,						-- field included into line signature (denormalized data from object_data)
+	type_code varchar(8) DEFAULT '',			-- field included into line signature (denormalized data from object_data = payment mode code)
 	user_fullname varchar(255),					-- field included into line signature. User recording the event.
 	linktoref text,								-- field included into line signature. Link to another ref_object.
 	linktype varchar(16),						-- field included into line signature. Link type.
 	object_data	mediumtext,						-- field included into line signature
 	-- the signature of line
 	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
+	signature_backward varchar(100) DEFAULT '', -- the hash of the key for reverse signature with following hash after (not used)
 	-- fields used for debug only
 	element varchar(50),
 	fk_user	integer,

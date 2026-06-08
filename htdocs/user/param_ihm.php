@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ if ($user->id != $id && !$canreaduser) {
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
 
-// Charge utilisateur edite
+// Load editing user
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
@@ -637,7 +637,8 @@ if ($action == 'edit') {
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
 		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
 	} else {
-		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
+		if ($caneditfield || !empty($user->admin)) {
+			// If the user editing is the current user (no special permissions required as this is an output modification page and not a data modification page), or if they are an admin.
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';

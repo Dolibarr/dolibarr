@@ -33,6 +33,7 @@
 // Include the main.inc.php (note: when file is included into send.php, $action is already set and main.inc.php was already loaded)
 /**
  * @var string $action
+ * @var string $nojs
  */
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
@@ -92,7 +93,7 @@ if (!$user->hasRight('takepos', 'run')) {
 
 top_htmlhead('', '', 2);
 
-if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
+if (!$facid && (string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$sql .= " AND entity IN (".getEntity('invoice').")";
@@ -109,38 +110,41 @@ if ($facid > 0 && !GETPOST('specimen')) {
 } else {
 	$object->initAsSpecimen('takepos');
 }
-print '<body>';
 
+print '<body>';
 
 // Record entry in blocked logs each time we print a receipt
 //
 // This will also increase the counter of printings of the receipt
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
 
-print "
-<script>
-
-	console.log('Call /blockedlog/ajax/block-add on output of receipt.php.');
-	$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php'
-			, {
-				id: ".((int) $object->id)."
-									, element: '".dol_escape_js($object->element)."'
-									, action: 'DOC_PREVIEW'
-									, token: '".currentToken()."'
-			   }
-	);
-</script>";
-
-/*
- * jQuery(document).ready(function () {
-});
- */
+if (!GETPOST('specimen') && empty($nojs)) {
+	print "
+	<script>
+		console.log('Call /blockedlog/ajax/block-add from Ajax call on receipt.php.');
+		$.post('".DOL_URL_ROOT."/blockedlog/ajax/block-add.php',
+			{
+					id: ".((int) $object->id).",
+					element: '".dol_escape_js($object->element)."',
+					action: 'DOC_PREVIEW',
+					lang: '".dol_escape_js($langs->defaultlang)."',
+					token: '".currentToken()."'
+			}
+		).fail(function(jqXHR, textStatus, errorThrown) {
+		    console.error('Error AJAX :', textStatus, errorThrown);
+		    console.error('Answer server :', jqXHR.responseText);
+		});
+	</script>";
+}
 
 // Call to external receipt modules factory if it exists and if we can (not allowed in some cases)
 if (isALNERunningVersion()) {
-	// If LNE version, we force format. Custom templates is not allowed
+	// If LNE version, we force parameters.
 	$conf->global->TAKEPOS_SHOW_HT_RECEIPT = 1;
 	$conf->global->TAKEPOS_TICKET_VAT_GROUPPED = 1;
+	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	$conf->global->TAKEPOS_GIFT_RECEIPT = 0;
+	$conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS = 0;
 } else {
 	$parameters = array();
 	$hookmanager->initHooks(array('takeposfrontend'));
@@ -175,20 +179,21 @@ if (isALNERunningVersion()) {
 	}
 }
 </style>
+
 <center>
-<div style="font-size: 1.5em">
+<div style="font-size: 1.3em">
+<br><!-- Need a margin to avoid that the print of the ticket is cut by the browser -->
 <?php
-echo '<b>'.$mysoc->name.'</b>';
+echo '<b>'.dolPrintHTML($mysoc->name).'</b>';
 
 if (GETPOST('specimen')) {
 	print '<br>';
-	print '!!!!! SPECIMEN !!!!!';
+	print '!!! SPECIMEN !!!';
 }
 ?>
 </div>
 </center>
 <br>
-<p class="left">
 <?php
 $constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $_SESSION['takeposterminal']);
 if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
@@ -201,12 +206,11 @@ if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) 
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
+	print '<p class="left">';
 	print nl2br($newfreetext);
+	print '<p>';
 }
-?>
-</p>
 
-<?php
 if ($object->status == Facture::STATUS_DRAFT) {
 	$canprintifnotvalidate = true;
 	if (isALNERunningVersion()) {
@@ -235,13 +239,14 @@ if ($object->status == Facture::STATUS_DRAFT || empty($facid) || GETPOST('specim
 	if (empty($facid) || GETPOST('specimen')) {
 		print '99999';
 	} else {
-		print $object->ref;
+		print dolPrintHTML($object->ref);
 	}
 } else {
-	print $object->ref;
+	print dolPrintHTML($object->ref);
 }
 // POS terminal
-print '<br>'.$langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
+print "<br>\n";
+print $langs->trans("Terminal").' '.(GETPOST('specimen') ? '99' : ($object->pos_source ? $object->pos_source : 'Backoffice'));
 if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	if ($object->socid != getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"])) {
 		$soc = new Societe($db);
@@ -254,10 +259,12 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	}
 }
 // Date
-print "<br>".$langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
+print "<br>\n";
+print $langs->trans('Date').": ".dol_print_date($object->date ? $object->date : dol_now(), 'day');
 // Date of printing
 if (isALNERunningVersion() || !getDolGlobalString('TAKEPOS_HIDE_DATE_OF_PRINTING')) {
-	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
+	print "<br>\n";
+	print $langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel');
 }
 // Transaction ID
 if (isALNERunningVersion() && isModEnabled('blockedlog')) {
@@ -276,25 +283,35 @@ if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 			}
 		}
 
-		print "<br>".$langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
+		print "<br>\n";
+		print $langs->trans("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
 	}
 }
 
-// $object->pos_print_counter is current value. It is increased by a parallel process when calling ajax block-add.php that
-// may have finished before or after this page start, so $object->pos_print_counter may be already up to date, but we use the value at begin
-// of this page start and we increase 1 to have correct value we want to show.
-$object->pos_print_counter += 1;
+// $object->pos_print_counter is current value. We increase it here.
+if ($object->status == $object::STATUS_CLOSED) {
+	// If no more a temporary receipt, we increase counter by 1
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+	$sql .= " WHERE rowid = ".((int) $object->id);
+	$db->query($sql);
+
+	$object->pos_print_counter += 1;
+}
 
 // Show if it is a duplicata
 $isADuplicata = ($object->pos_print_counter >= 2);
 
-if ($object->status == $object::STATUS_CLOSED) {
-	if ($isADuplicata) {
-		print '<br><b>*** DUPLICATA (no '.($object->pos_print_counter - 1).') ***</b>';	// Hard coded string
-	}
-} else {
+if ($object->status != $object::STATUS_CLOSED) {
 	// Not yet paid completely
-	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';	// Hard coded string
+	print '<br><b>*** '.strtoupper($langs->trans("TemporaryReceipt")).' ***</b>';
+} else {
+	if ($isADuplicata) {
+		print '<br><b>*** '.$langs->transnoentities("DUPLICATA");
+		if (getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT')) {
+			print ' (no '.($object->pos_print_counter - 1).')';
+		}
+		print ' ***</b>';
+	}
 }
 ?>
 </p>
@@ -303,12 +320,12 @@ if ($object->status == $object::STATUS_CLOSED) {
 <table class="centpercent" style="border-top-style: double;">
 	<thead>
 	<tr>
-		<th class="left"><?php print $langs->trans("Label"); ?></th>
+		<th class="left"><?php print $langs->trans("Ref").'/'.$langs->trans("Label"); ?></th>
 		<th class="right"><?php print $langs->trans("Qty"); ?></th>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("Price");
 						  } ?></th>
-		<?php  if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
+		<?php if (getDolGlobalString('TAKEPOS_SHOW_HT_RECEIPT')) { ?>
 		<th class="right"><?php if ($gift != 1) {
 			print $langs->trans("TotalHT");
 						  } ?></th>
@@ -337,6 +354,7 @@ if ($object->status == $object::STATUS_CLOSED) {
 		<tr>
 			<td>
 			<?php if (!empty($line->product_label)) {
+				echo $line->product_ref." - ";
 				echo $line->product_label;
 			} else {
 				echo $line->desc;
@@ -406,14 +424,19 @@ if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 
 // Now show local taxes if company uses them
 
-if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
+// $mysoc->useLocalTax(N) is a country-wide flag (true as soon as the country has a
+// matching c_tva row with a localtaxN_type), so on its own it always prints the line
+// for Spanish companies even when the company is "No sujeto a RE / IRPF". Mirror the
+// pattern used by compta/facture/card.php, card-rec.php and prelevement.php and gate
+// the country check on $mysoc->localtaxN_assuj == "1".
+if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || price2num($object->total_localtax1, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></th>
 </tr>
 <?php } ?>
-<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
+<?php if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || price2num($object->total_localtax2, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";
@@ -435,12 +458,17 @@ if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]
 	if ($gift != 1) {
 		echo ''.$langs->trans("TotalTTC").' '.$_SESSION["takeposcustomercurrency"].'</th><td class="right">'.price($object->total_ttc * $multicurrency->rate->rate, 1, '', 1, - 1, - 1, $_SESSION["takeposcustomercurrency"])."\n";
 	}
-	echo '</td></tr>';
+	echo '</th></tr>';
 }
 
 // We force the feature when LNE is on, whatever is setup. When a payment is done, we always want to see it on receipt.
 if (isALNERunningVersion()) {
 	$conf->global->TAKEPOS_PRINT_PAYMENT_METHOD = 1;
+	if ($object->status == $object::STATUS_CLOSED) {
+		print '<tr><th class="right"></th><td>';
+		print '--- '.$langs->trans("Paid").' ---';
+		print '</td></tr>';
+	}
 }
 
 if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
@@ -529,7 +557,22 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 	$langs->load("blockedlog");
 	print '<center class="small"><i>';
-	print $langs->trans("LNECertifiedPOSSystem")."<br>";
+
+	// Special additional message for FR only
+	$infotoshow = '';
+	if ($mysoc->country_code == 'FR') {
+		$islne = isALNEQualifiedVersion(1, 1);
+		if ($islne) {
+			if (preg_match('/\-/', DOL_VERSION)) {
+				// This is an alpha or beta version
+				$infotoshow = $langs->trans("LNECandidatePOSSystem");
+			} else {
+				$infotoshow = $langs->trans("LNECertifiedPOSSystem");
+			}
+		}
+	}
+	print $infotoshow."<br>";
+
 	if ($mysoc->idprof2) {
 		$labelidprof = $langs->transcountry("ProfId2Short", $mysoc->country_code);
 		print $labelidprof.': '.$mysoc->idprof2;
@@ -543,15 +586,17 @@ if (isALNEQualifiedVersion() || isALNERunningVersion()) {
 		$labelidprof = $langs->trans("VATIntra");
 		print ' - '.$labelidprof.': '.$mysoc->tva_intra;
 	}
-	print "</i></center><br>\n";
+	print "</i></center>\n";
 }
 
+print "<br>\n<!-- Need a margin to avoid that the print of the ticket is cut by the browser -->";
 
-if (!GETPOST('forcenoautoopen')) {
+if (!GETPOST('forcenoautoopen') && !GETPOST('specimen') && empty($nojs)) {
 	?>
 	<script type="text/javascript">
 	<?php
 	if ($facid) {
+		print 'console.log("ref = '.$object->ref.' - pos_print_counter = '.$object->pos_print_counter.'");';
 		print 'window.print();';
 	} //Avoid print when is specimen
 	?>

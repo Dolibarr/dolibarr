@@ -143,6 +143,10 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 .dropdown-toggle{
 	text-decoration: none !important;
@@ -272,7 +276,7 @@ a.top-menu-dropdown-link {
 .dropdown-menu > .user-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
@@ -290,7 +294,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .user-body, .dropdown-body {
-	padding: 15px;
+	padding: 20px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;
@@ -326,7 +330,7 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,

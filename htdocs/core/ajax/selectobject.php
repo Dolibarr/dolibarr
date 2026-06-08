@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +94,7 @@ if (!empty($objectfield)) {
 }
 
 $objecttmp = null;
+$filter = '';
 if ($objectdesc) {
 	// Example of value for $objectdesc:
 	// Bom:bom/class/bom.class.php:0:t.status=1
@@ -108,7 +109,10 @@ if ($objectdesc) {
 	$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
 
 	$classname = $InfoFieldList[0];
-	$classpath = dol_sanitizePathName($InfoFieldList[1]);
+	$classpath = '';
+	if (!empty($InfoFieldList[1])) {
+		$classpath = dol_sanitizePathName($InfoFieldList[1]);
+	}
 
 	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
@@ -118,7 +122,7 @@ if ($objectdesc) {
 	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
 
 	// Fallback to another solution to get $objecttmp
-	if (empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
+	if (getDolGlobalString("MAIN_ALLOW_UNSECURED_FALLBACK_FOR_SELECTOBJECT") && empty($objecttmp) && !empty($classpath) && preg_match('/\.class\.php$/', $classpath)) {
 		dol_include_once($classpath);
 
 		if ($classname && class_exists($classname)) {
@@ -132,7 +136,7 @@ $sharedentities = getEntity(strtolower($objecttmp->element));
 
 $filter = str_replace(
 	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
-	array($conf->entity, $sharedentities, $user->id, $id),
+	array((string) $conf->entity, $sharedentities, (string) $user->id, (string) $id),
 	$filter
 );
 
@@ -167,7 +171,7 @@ top_httphead($outjson ? 'application/json' : 'text/html');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-$arrayresult = $form->selectForFormsList($objecttmp, (string) $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
+$arrayresult = ($objecttmp === null) ? [] : $form->selectForFormsList($objecttmp, (string) $htmlname, 0, 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

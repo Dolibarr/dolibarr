@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2021  John BOTELLA    <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +84,7 @@ class FormSetup
 
 	/**
 	 * an list of hidden inputs used only in edit mode
-	 * @var array<string,string>  Currently array{token:string,action:string}
+	 * @var array<string,int|string>  	Currently array{token:string,action:string}
 	 */
 	public $formHiddenInputs = array();
 
@@ -144,11 +146,11 @@ class FormSetup
 	/**
 	 * Generate the form (in read or edit mode depending on $editMode)
 	 *
-	 * @param 	bool 	$editMode 		True will display output on edit mod
-	 * @param	bool	$hideTitle		True to hide the first title line
-	 * @param	string	$title			Title of first line
-	 * @param	string	$cssfirstcolumn	CSS first column
-	 * @return 	string					Html output
+	 * @param 	int|bool 	$editMode 		True will display output on edit mod
+	 * @param	bool		$hideTitle		True to hide the first title line
+	 * @param	string		$title			Title of first line
+	 * @param	string		$cssfirstcolumn	CSS first column
+	 * @return 	string						Html output
 	 */
 	public function generateOutput($editMode = false, $hideTitle = false, $title = '', $cssfirstcolumn = '')
 	{
@@ -183,7 +185,7 @@ class FormSetup
 			}
 
 			// generate output table
-			$out .= $this->generateTableOutput($editMode, $hideTitle, $title, $cssfirstcolumn);
+			$out .= $this->generateTableOutput((bool) $editMode, $hideTitle, $title, $cssfirstcolumn);
 
 
 			$reshook = $hookmanager->executeHooks('formSetupBeforeGenerateOutputButton', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -242,7 +244,8 @@ class FormSetup
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		} else {
-			$out = '<table class="noborder centpercent">';
+			$out = '<div class="div-table-responsive-no-min">';
+			$out .= '<table class="noborder centpercent">';
 			if (empty($hideTitle)) {
 				if (empty($title)) {
 					$title = $this->langs->transnoentitiesnoconv("Parameter");
@@ -265,6 +268,7 @@ class FormSetup
 			$out .= '</tbody>';
 
 			$out .= '</table>';
+			$out .= '</div>';
 			return $out;
 		}
 	}
@@ -336,11 +340,15 @@ class FormSetup
 		$out = '';
 		if ($item->enabled == 1) {
 			$trClass = 'oddeven';
+			$tdOutputFieldClass = '';
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
 			if (!empty($item->fieldParams['trClass'])) {
 				$trClass .= ' '.$item->fieldParams['trClass'];
+			}
+			if (!empty($item->fieldParams['tdOutputFieldClass'])) {
+				$tdOutputFieldClass .= ' class="'.$item->fieldParams['tdOutputFieldClass'].'"';
 			}
 
 			$this->setupNotEmpty++;
@@ -352,7 +360,7 @@ class FormSetup
 			$out .= '</span>';
 			$out .= '</td>';
 
-			$out .= '<td>';
+			$out .= '<td'.$tdOutputFieldClass.'>';
 
 			if ($editMode) {
 				$out .= $item->generateInputField();
@@ -361,7 +369,7 @@ class FormSetup
 			}
 
 			if (!empty($item->errors)) {
-				// TODO : move set event message in a methode to be called by cards not by this class
+				// TODO : move set event message in a method to be called by cards not by this class
 				setEventMessages(null, $item->errors, 'errors');
 			}
 
@@ -626,7 +634,7 @@ class FormSetupItem
 	/** @var string the conf key used in database */
 	public $confKey;
 
-	/** @var string|false */
+	/** @var string|false 	The label of field */
 	public $nameText = false;
 
 	/** @var string */
@@ -644,7 +652,7 @@ class FormSetupItem
 	/** @var array{name?:string,id?:string,value?:mixed,class?:string,disabled?:?int<0,1>,type?:string,size?:int,placeholder?:string,step?:float|string,min?:int,max?:int}  fields attribute only for compatible fields like input text */
 	public $fieldAttr = array();
 
-	/** @var bool|string set this var to override field output will override and too */
+	/** @var bool|string set this var to override field value on both input and output */
 	public $fieldOverride = false;
 
 	/** @var bool|string set this var to override field input */
@@ -656,10 +664,10 @@ class FormSetupItem
 	/** @var int  */
 	public $rank = 0;
 
-	/** @var array<string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
+	/** @var array<int|string,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var for options on select and multiselect items   */
 	public $fieldOptions = array();
 
-	/** @var array<string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
+	/** @var array<int|string,string|int|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}> set this var to add more parameters */
 	public $fieldParams = array();
 
 	/** @var callable  */
@@ -931,7 +939,20 @@ class FormSetupItem
 				$input = $this->fieldParams['input'] ?? array();
 				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
 				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
-				$suffixarray = array('ifoff' => empty($this->fieldParams['alertifoff']) ? '' : '_red', 'ifon' => empty($this->fieldParams['alertifon']) ? '' : '_red');
+				$suffixarray = array(
+					'ifoff' => '',
+					'ifon' => '',
+				);
+				if (!empty($this->fieldParams['alertifoff'])) {
+					$suffixarray['ifoff'] = '_red';
+				} elseif (!empty($this->fieldParams['warningifoff'])) {
+					$suffixarray['ifoff'] = '_warning';
+				}
+				if (!empty($this->fieldParams['alertifon'])) {
+					$suffixarray['ifon'] = '_red';
+				} elseif (!empty($this->fieldParams['warningifon'])) {
+					$suffixarray['ifon'] = '_warning';
+				}
 
 				$out .= ajax_constantonoff($this->confKey, $input, $this->entity, $revertonoff, 0, $forcereload, 2, 0, 0, $suffixarray, '', $this->cssClass);
 			} else {
@@ -985,7 +1006,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
-		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1001,7 +1022,7 @@ class FormSetupItem
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth40 maxwidth75' : $this->cssClass);
 		}
 		//return img_picto('', 'currency', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
-		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' /> '.$langs->getCurrencySymbol($mysoc->currency_code);
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false"> '.$langs->getCurrencySymbol($mysoc->currency_code);
 	}
 
 	/**
@@ -1014,7 +1035,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
 		}
-		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return img_picto('', 'email', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1027,7 +1048,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth100 maxwidth500' : $this->cssClass);
 		}
-		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return img_picto('', 'url', 'class="pictofixedwidth"').'<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' spellcheck="false">';
 	}
 
 	/**
@@ -1037,7 +1058,7 @@ class FormSetupItem
 	 */
 	public function generateInputFieldTextarea()
 	{
-		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft">' . "\n";
+		$out = '<textarea class="flat" name="'.$this->confKey.'" id="'.$this->confKey.'" cols="50" rows="5" wrap="soft" spellcheck="false">' . "\n";
 		$out .= dol_htmlentities($this->fieldValue);
 		$out .= "</textarea>\n";
 		return $out;
@@ -1159,7 +1180,7 @@ class FormSetupItem
 			$min = $genhandler->length;
 			$max = $genhandler->length2;
 		}
-		$out = '<input required="required" type="password" class="flat" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
+		$out = '<input required="required" type="password" class="flat minwidth150'.($this->cssClass ? ' '.$this->cssClass : '').'" id="'.$this->confKey.'" name="'.$this->confKey.'" value="'.(GETPOST($this->confKey, 'alpha') ? GETPOST($this->confKey, 'alpha') : $this->fieldValue).'"';
 		if ($min) {
 			$out .= ' minlength="' . $min . '"';
 		}
@@ -1676,7 +1697,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a multiselect list.
 	 *
-	 * @param array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
+	 * @param array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}> $fieldOptions A table of field options
 	 * @return self
 	 */
 	public function setAsMultiSelect($fieldOptions)
@@ -1692,7 +1713,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)
@@ -1709,7 +1730,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a radio button.
 	 *
-	 * @param  ?array<string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
+	 * @param  ?array<int|string,string|array{id:string,label:string,picto?:string,labelIsHtml?:bool}> $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsRadio($fieldOptions)

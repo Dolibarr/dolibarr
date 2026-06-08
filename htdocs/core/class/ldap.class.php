@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@
  *  Note:
  *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
  *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
- *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource)
+ *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource')
  */
 
 /**
@@ -242,7 +242,8 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource The internal LDAP connection handle
+	 * @var false|resource	The internal LDAP connection handle. Was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @phpstan-var LDAP\Connection
 	 */
 	public $connection;
 
@@ -312,7 +313,6 @@ class Ldap
 	 * Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * After return, this->connection and $this->bind are defined
 	 *
-	 * @see connect_bind renamed
 	 * @return		int		if KO: <0 || if bind anonymous: 1 || if bind auth: 2
 	 */
 	public function connectBind()
@@ -347,7 +347,7 @@ class Ldap
 		if (empty($this->error)) {
 			// Loop on each ldap server
 			foreach ($this->server as $host) {
-				if ($connected) {
+				if ($connected) {  // @phpstan-ignore if.alwaysFalse
 					break;
 				}
 				if (empty($host)) {
@@ -385,7 +385,7 @@ class Ldap
 					}
 				}
 
-				if (is_resource($this->connection) || is_object($this->connection)) {
+				if ($this->connection !== false) {
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connectBind this->connection is ok", LOG_DEBUG);
 					}
@@ -437,7 +437,7 @@ class Ldap
 							}
 						}
 						// Try in anonymous
-						if (!$this->bind) {
+						if (!$this->bind) {  // @phpstan-ignore booleanNot.alwaysTrue
 							dol_syslog(get_class($this)."::connectBind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
@@ -452,7 +452,7 @@ class Ldap
 					}
 				}
 
-				if (!$connected) {
+				if (!$connected) {  // @phpstan-ignore booleanNot.alwaysTrue
 					$this->unbind();
 				}
 			}	// End loop on each server
@@ -541,8 +541,8 @@ class Ldap
 				}
 			}
 		} else {
-			if (is_resource($this->connection)) {
-				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal
+			if ($this->connection !== false) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal PhanTypeSuspiciousIndirectVariable
 				$this->result = @ldap_unbind($this->connection);
 			}
 		}
@@ -1142,7 +1142,7 @@ class Ldap
 		// We need to search for this user in order to get their entry.
 		$this->result = @ldap_search($this->connection, $this->people, $filterrecord, $attributes);
 
-		// Pourquoi cette ligne ?
+		// What is this line for ?
 		//$info = ldap_get_entries($this->connection, $this->result);
 
 		// Only one entry should ever be returned (no user will have the same uid)
@@ -1239,7 +1239,7 @@ class Ldap
 					$keyattributelower = strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
 
-					//permet de recuperer le SID avec Active Directory
+					// Enables getting the SID using Active Directory
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid") {
 						$objectsid = $this->getObjectSid($recordid);
 						$fulllist[$recordid][$attributeArray[$j]] = $objectsid;
@@ -1577,15 +1577,15 @@ class Ldap
 	 */
 	public function convertTime($value)
 	{
-		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
+		$dateLargeInt = $value; // nano secondes since the year 1601 !!!!
 		if (PHP_INT_SIZE < 8) {
 			// 32 bit platform
-			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // seconds since 1 jan 1601
 		} else {
 			// At least 64 bit platform
-			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // seconds since 1 jan 1601
 		}
-		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
+		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * days * seconds
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;
 	}
@@ -1649,7 +1649,7 @@ class Ldap
 			$c = $result['count'];
 			$gids = array();
 			for ($i = 0; $i < $c; $i++) {
-				$gids[] = $result[$i]['gidnumber'][0];
+				$gids[] = (int) $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
 
