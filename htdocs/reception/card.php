@@ -148,7 +148,7 @@ if ($object->origin_id > 0) {
 		if (!empty($object->origin_type)) {
 			$origin = $object->origin_type;
 		} elseif (is_string($object->origin) && $object->origin !== '') {
-			$origin = $object->origin;
+			$origin = (string) $object->origin;
 		}
 	}
 	if (empty($origin_id)) {
