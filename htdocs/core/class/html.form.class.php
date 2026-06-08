@@ -10763,6 +10763,8 @@ class Form
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
+		global $conf;
+
 		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		$cat = new Categorie($this->db);
@@ -10788,7 +10790,12 @@ class Form
 					$sfortag .= '>';
 					if ($rendermode == 1) {
 						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'">';
-						$sfortag .= img_picto('', 'category', 'class="paddingright"').$c->label;
+						$sfortag .= img_picto('', 'category', 'class="paddingright"');
+						if ($conf->dol_optimize_smallscreen) {
+							$sfortag .= dolPrintHTML(dol_trunc($c->label, 8));
+						} else {
+							$sfortag .= dolPrintHTML($c->label);
+						}
 						$sfortag .= '</a>';
 					} else {
 						$sfortag .= $way;

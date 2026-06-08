@@ -172,7 +172,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 
 		// Show remind on good practices related to archives
 		/*
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 		*/
 	}
@@ -188,9 +188,11 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td></td>';
 print "</tr>\n";
 
+// Initial signature
+// Generated randomly when doing the first insert by blockedlog.class.php, and saved into BLOCKEDLOG_ENTITY_FINGERPRINT
 print '<tr class="oddeven">';
-print '<td class="titlefieldmiddle">';
-print $langs->trans("CompanyInitialKey").'</td><td>';
+print '<td class="titlefieldmiddle" title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
+print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
