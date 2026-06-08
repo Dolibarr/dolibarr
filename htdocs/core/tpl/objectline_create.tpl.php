@@ -1061,18 +1061,16 @@ if (!empty($object->thirdparty)) {
 
 							// usefull to retrieve percent from customer specific price
 							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
-							    var remisePercentInput = jQuery('#remise_percent');
-							
-							    if (remisePercentInput.length > 0) {
-							        console.log("Remise spécifique client trouvée : " + data.discount + "%");
-							
-							        remisePercentInput
-							            .val(data.discount)
-							            .trigger('input')
-							            .trigger('change');
-							    } else {
-							        console.warn("Champ #remise_percent introuvable, remise non appliquée");
-							    }
+								var remisePercentInput = jQuery('#remise_percent');
+								if (remisePercentInput.length > 0) {
+									console.log("Remise spécifique client trouvée : " + data.discount + "%");
+									remisePercentInput
+									.val(data.discount)
+									.trigger('input')
+									.trigger('change');
+								} else {
+									console.warn("Champ #remise_percent introuvable, remise non appliquée");
+								}
 							}
 
 							// Set values for any fields in the form options_SOMETHING
