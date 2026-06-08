@@ -16,8 +16,8 @@
  * Copyright (C) 2020		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Lenin Rivas					<lenin.rivas777@gmail.com>
- * Copyright (C) 2023		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026	William Mead				<william@m34d.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2025		Anthony Berton				<anthony.berton@bb2a.fr>
@@ -1329,7 +1329,7 @@ if (empty($reshook)) {
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
+				} elseif (!getDolGlobalInt('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}

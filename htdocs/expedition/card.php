@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1238,7 +1239,7 @@ if (empty($reshook)) {
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 					$fk_product = $idprod; // Update $fk_product with the fetched child product
-				} else {
+				} elseif (!getDolGlobalInt('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}

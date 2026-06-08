@@ -644,7 +644,7 @@ if (empty($reshook)) {
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
+				} elseif (!getDolGlobalInt('PRODUCT_ALLOW_VARIANT_PARENT_LINE')) {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
@@ -1601,11 +1601,8 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
-							if (empty($object->delivery_date)) {
-								$tmpdate = $srcobject->delivery_date;
-								$object->setDeliveryDate($user, $tmpdate);
-							}
-
+							$tmpdate = $srcobject->delivery_date;
+							$object->setDeliveryDate($user, $tmpdate);
 							$object->set_id_projet($user, $srcobject->fk_project);
 
 							$lines = $srcobject->lines;
@@ -1896,6 +1893,7 @@ if ($action == 'create') {
 			$cond_reglement_id = 0;
 			$deposit_percent = 0;
 			$mode_reglement_id = 0;
+			$datelivraison = '';
 			$objectsrc->note_private = '';
 			$objectsrc->note_public = '';
 			if ($societe = $object->thirdparty) {
