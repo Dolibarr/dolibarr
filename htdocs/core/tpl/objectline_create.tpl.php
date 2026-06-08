@@ -1059,7 +1059,7 @@ if (!empty($object->thirdparty)) {
 								jQuery("#price_ht").val(data.price_ht);
 							}
 
-							// usefull to retrieve percent from customer specific price
+							// useful to retrieve percent from customer specific price
 							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
 								var remisePercentInput = jQuery('#remise_percent');
 								if (remisePercentInput.length > 0) {
