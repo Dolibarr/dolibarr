@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	// return DOL_VERSION;
 	return constant('DOLCERT_VERSION');
 }
 
@@ -130,7 +129,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
- * Must be the samefields than the one defined as mandatory into the registration form.
+ * Must be the same fields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
