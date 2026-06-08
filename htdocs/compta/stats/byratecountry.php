@@ -318,14 +318,32 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("TotalHT").'</b></td></tr>';
 
+	// Situation invoice compensation field (equivalent to get_prev_progress() used in lines.php)
+	$total_ht_situation_field = $db->ifsql(
+		"f.situation_cycle_ref IS NOT NULL AND f.situation_cycle_ref > 0 AND fd.situation_percent > 0",
+		"fd.total_ht * (fd.situation_percent - COALESCE((
+			SELECT fdprev.situation_percent
+			FROM ".MAIN_DB_PREFIX."facturedet as fdprev
+			WHERE fdprev.rowid = fd.fk_prev_id
+		), 0) - COALESCE((
+			SELECT SUM(fdcn.situation_percent)
+			FROM ".MAIN_DB_PREFIX."facturedet as fdcn
+			INNER JOIN ".MAIN_DB_PREFIX."facture as fcn ON fcn.rowid = fdcn.fk_facture
+			WHERE fdcn.fk_prev_id = fd.fk_prev_id
+			AND fcn.situation_cycle_ref = f.situation_cycle_ref
+			AND fcn.type = ".Facture::TYPE_CREDIT_NOTE."
+		), 0)) / fd.situation_percent",
+		"fd.total_ht"
+	);
+
 	// Sales invoices
 	$sql = "SELECT fd.tva_tx AS vatrate,";
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, $total_ht_situation_field, "0").") AS month".str_pad((string) $i, 2, "0", STR_PAD_LEFT).",";
 	}
-	$sql .= "  SUM(fd.total_ht) as total";
+	$sql .= "  SUM(".$total_ht_situation_field.") as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 	$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe as soc ON soc.rowid = f.fk_soc";
@@ -419,11 +437,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= "  LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = soc.fk_pays";
 	$sql2 .= " WHERE ff.datef >= '".$db->idate($date_start)."'";
 	$sql2 .= "  AND ff.datef <= '".$db->idate($date_end)."'";
-	$sql .= " AND ff.fk_statut in (1,2)";
+	$sql2 .= " AND ff.fk_statut in (1,2)";
 	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-		$sql .= " AND ff.type IN (0,1,2,5)";
+		$sql2 .= " AND ff.type IN (0,1,2,5)";
 	} else {
-		$sql .= " AND ff.type IN (0,1,2,3,5)";
+		$sql2 .= " AND ff.type IN (0,1,2,3,5)";
 	}
 	$sql2 .= " AND ff.entity IN (".getEntity("facture_fourn", 0).")";
 	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label, cc.code ";
