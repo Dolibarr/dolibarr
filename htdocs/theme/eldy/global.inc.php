@@ -694,7 +694,6 @@ tr.tdsmallheight, tr.tdsmallheight td {
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
-	border-bottom: solid 1px rgba(0,0,0,0.4);
 	margin-right: 1px !important;
 }
 td.onholidaymorning, td.onholidayafternoon {
@@ -3628,7 +3627,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	/* border: none; */
-	border-bottom: solid 1px rgba(180,180,180,.4);
+	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
 	padding-left: 12px;
 	margin-left: 5px;
@@ -5404,10 +5403,15 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 3px;
 	width: 118px;
 }
-
+<?php if (getDolGlobalString('MAIN_CSS_USE_SHADOWS') && getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+.boxtable, .firstcolumn table.noborder, .secondcolumn table.noborder {
+	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
+}
+<?php } ?>
 .boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
 	border-radius: 6px;
+
 }
 
 .tabBar .fichehalfright .boxstats {
@@ -5772,7 +5776,9 @@ div.info, div.warning, div.error, div.green, div.neutral, section.neutral {
 }
 
 div.fiche div.info, div.fiche div.warning, div.fiche div.neutral, div.fiche div.green {
+	<?php if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
 	box-shadow: 1px 1px 6px #d4d4d4;
+	<?php } ?>
 	margin: 1em 0em 1.2em 0em;
 }
 
@@ -6637,7 +6643,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;

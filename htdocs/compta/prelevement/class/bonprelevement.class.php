@@ -178,7 +178,7 @@ class BonPrelevement extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -458,9 +458,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_soc";
 			$sql .= ", client_nom";
 			$sql .= ", amount";
-			//$sql .= ", bic";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", iban";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", rum";		// no more required, we have fk_prelevement_demande
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
@@ -468,9 +465,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
-			//$sql .= ", '" . $this->db->escape($bic) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape(dolEncrypt($iban)) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape($rum) . "'";		// no more required, we have fk_prelevement_demande
 			$sql .= ", " . ((int) $id_prelevement_demande);
 			$sql .= (($sourcetype == 'salary') ? ", " . ((int) $client_id) : '');
 			$sql .= ")";
