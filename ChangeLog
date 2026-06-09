@@ -8,7 +8,6 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)
@@ -20,7 +19,6 @@ NEW: #36638 Feature: Add PDF document generation to Salaries module (#36785)
 NEW: #37645 Salaries - Add shortcut buttons on date (Previous month / current month / next month) (#37704)
 NEW: #37727 phone input with country code (#37728)
 NEW: Add substitutions for deposit (#37546)
-NEW: Improve API compatibility for users, tasks and ticket attachments (#37644)
 NEW: Intervention - Add tag/category on this object (#38158)
 NEW: VAT Report - Add button to collapse / expand all rates (#36946)
 NEW: Various payments - Add extrafield (#38260)
@@ -29,7 +27,6 @@ NEW: Add “Bank Account” column in invoicing views (customer & supplier invoi
 NEW: Extrafield option for tooltip  in getNomUrl (#37431)
 NEW: Fichinter model on stable version (#36873)
 NEW: Manage discount for all lines for supplier elements. (#36954)
-NEW: Replace MyObject MyModule occurrences (#38370)
 NEW: add support for label field in addline method In supplier order (#36544)
 NEW: adds visual indicators on the Sales Order card (commande/card.php)  (#37460)
 NEW: allow to save stocks as 0 on a stock movement. (#36812)
@@ -38,8 +35,6 @@ NEW: enable supplier external download links and expose substitution variables f
 NEW: hide remise_except unit price on invoice lines (#37066)
 NEW: use select label for extrafield substitution in emails (#37005)
 NEW: A page can force its value for MAIN_SECURITY_CSRF_WITH_TOKEN
-NEW: API endpoint for getting product price logs (#38420)
-NEW: API get country: load region and load states now an option (#37715)
 NEW: Accountancy - Add comparative balance with closure snapshot support - SQL part (#37382)
 NEW: Accountancy - Add confirmation message with link after transaction validation (#37383)
 NEW: Accountancy - Add default options for export (#37938)
@@ -56,7 +51,6 @@ NEW: Add Batch and function to send HR information (#37542)
 NEW: Add CSV/XLSX import mode to disable triggers execution (refactoring of import, while preserving legacy SQL compatibility) (#37367)
 NEW: Add EUID number (#37222)
 NEW: Add Hook for adapting virtual stock in replenish screen (#37290)
-NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
 NEW: Add a protection against total change on a validated invoice.
 NEW: Add a separator between won/lost and other opportunity status in list
 NEW: Add button more on membership stat page
@@ -93,7 +87,6 @@ NEW: Can enable/disable external calendar per calendar.
 NEW: Can request and force user to change its password (#37196)
 NEW: Can set position of search object in combo search
 NEW: Can use colored switch in setup factory
-NEW: Category - API - Add type list (#38207)
 NEW: Contact - List - Add column State & Region (#37553)
 NEW: Contract - Add consolidated total (#38249)
 NEW: Contract - Add statistics (#38136)
@@ -114,7 +107,6 @@ NEW: MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is on by default
 NEW: Member subscription tooltip includes label (#38291)
 NEW: Move deprecated option MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER into conf.php file.
 NEW: Printing the initial message from ticket creation just like any new message in tickets Events/Agenda view (#37713)
-NEW: Refactoring how the counter of print is done. Now done synchronously in documents.php or receipt.php
 NEW: Remove legacy crabe template of invoice
 NEW: Show example of ai models in setup
 NEW: Show short label of categories by default, long is in hover.
@@ -163,7 +155,6 @@ NEW: show last 10 events on conference attendee card (#38170)
 NEW: use of rich editor is off by default on public page - #GHSA-5jmx-352f-p5g3
 NEW: webportal hooks on form list (#36844)
 NEW: New hidden option STOCK_EXPEDITION_NO_MORE_THAN_ORDER to prevent shipping more than ordered quantity (#37604)
-NEW: API create fixed amount discount (#37091)
 NEW: Add OIDC user auto-creation and fix login bugs (#37314)
 NEW: Add default_rib field to SQL query and output (#38355)
 NEW: Add mass action to cancel invoices using credit notes (#37852)
@@ -174,17 +165,26 @@ NEW: Show bom net needs treeview by line position. (#37459)
 NEW: Show name_alias in parentheses in thirdparty dropdown lists (#37997)
 NEW: Thirdparty card +tab with events where thirdparty is attendee/booth (#37743)
 NEW: Update ticket read date when status changes (#37470)
-NEW: add hooks in reception card (#37214)
-NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
 NEW: add drag-and-drop functionality for managing draft expedition lines (#36311)
 NEW: Add delivery date in supplier order linked object block (#38351)
-NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)
 NEW: A lot of look and feel enhancement in the immutable log pages.
 NEW: Enhance the tools to check file integrity.
 NEW: The OAuth login with Google stay on the requested page after the redirect instead of reaching the home page.
 
 For developers:
 ---------------
+NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
+NEW: Replace MyObject MyModule occurrences (#38370)
+NEW: add hooks in reception card (#37214)
+NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
+NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)
+NEW: Refactoring how the counter of print is done. Now done synchronously in documents.php or receipt.php
+NEW: API create fixed amount discount (#37091)
+NEW: Improve API compatibility for users, tasks and ticket attachments (#37644)
+NEW: API endpoint for getting product price logs (#38420)
+NEW: API get country: load region and load states now an option (#37715)
+NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
+NEW: Category - API - Add type list (#38207)
 
 
 WARNING:
