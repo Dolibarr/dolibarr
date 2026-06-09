@@ -3222,7 +3222,7 @@ class Ticket extends CommonObject
 	 */
 	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '', $replyto = '')
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
@@ -3253,6 +3253,14 @@ class Ticket extends CommonObject
 
 		if (empty($from)) {
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		}
+
+		$hookmanager->initHooks(array('ticketsendticketmessage'));
+		$parameters = array('from' => $from);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('getTicketMessageEmailFrom', $parameters, $this, $action);
+		if ($reshook && !empty($hookmanager->resArray['from'])) {
+			$from = $hookmanager->resArray['from'];
 		}
 
 		$is_sent = false;
