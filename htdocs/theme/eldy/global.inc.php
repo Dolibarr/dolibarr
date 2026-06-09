@@ -6643,7 +6643,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;

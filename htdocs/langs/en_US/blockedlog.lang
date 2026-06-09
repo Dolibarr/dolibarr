@@ -6,7 +6,7 @@ ArchivesDesc=You can use this tool to export immutable logs into archive files. 
 ArchivesAuditorDesc=You can use this tool to load and control immutable logs from archive files.
 ControlDesc=You can use this page to know if some backup restoration were done in the past (or if the last line of the immutable log was deleted) on a given instance
 UnalterableLogTool1=The law of some countries (like in France when doing B2C), ask that you do it on a regular basis.
-UnalterableLogTool1FR=Remind: In France, you MUST generate archives of the immutable logs, at least, once every year. We recommand to do it once per month. Also, you MUST keep these archives for at least 7 years. According to the law, It is the user's responsibility to store their archives on media that guarantee their preservation, including in the event of hardware failure, so we recommand to store them on at least 2 different physical supports.
+UnalterableLogTool1FR=Remind: In France, if you use the Point Of Sale feature, you MUST generate archives of the immutable logs, at least, once every year (Recommended once per month, via tab %s). Also, you MUST keep these archives for 7 years. According to the law, It is the user's responsibility to store their archives on media that guarantee their preservation, including in the event of hardware failure, so we recommand to store them on at least 2 different physical supports.
 UnalterableLogTool2=The journal of Immutable Logs contains the history of data that need immutable recording.
 UnalterableLogTool2MaxUsage=You have currently %s unalterable transactions. If you have a disk space of %s Gb, you can still record %s transactions (invoice/payment creation/modification) before you need to increase your disk size.
 UnalterableLogTool2b=It is the responsibility of the user of the application to ensure backups in order to comply with legal obligations. When securing your immutable logs by exporting and storing archives files (from tab <b>%s</b>), it is recommended to store the exported archive files in at least 2 different places (Secured cloud, External USB drive, ...).
@@ -61,7 +61,7 @@ LNECertifiedPOSSystem=LNE Certified POS system
 LNECandidatePOSSystem=POS system candidate for the LNE certification
 LNECertifiedVersionFR=The version %s of module Immutable Logs is a certified version. More information on https://www.dolibarr.org/certifications.php
 LNECandidateVersionForCertificationFR=The version %s of module Immutable Logs is a candidate version to become a LNE certified version. Not yet certified.
-NotCertifiedVersionFR=This version %s of application is technically compliant with the french VAT anti-fraud law (check any update of the law of your country), but you MUST get the compliant statement from an IT company to be allowed to use this software to collect payments from private individuals (ask your reseller or integrator to get this statement of compliance).
+NotCertifiedVersionFR=This version %s of application is technically ready to be compliant with the french VAT anti-fraud law (check any update of the law of your country), but is NOT the certified version, so you MUST get the compliant statement from an IT company to be allowed to use this software to collect payments from private individuals (ask your reseller or integrator to obtain this statement of compliance).
 InvoiceGeneratedWithLNECertifiedPOSSystem=Invoice generated with a LNE certified POS system
 InvoiceGeneratedWithLNECandidatePOSSystem=Invoice generated with a candidate for the LNE certified POS system
 TotalTTCIfInvoiceSeeCompleteDataForDetail=Event amount. Total including tax if invoice. See the column "complete data" for details.
@@ -129,7 +129,7 @@ IncludesAll=Includes all
 IncludesAllHelp=Includes all record, even the one recorded with an old version before the v24. On version older than v24, the amount excluding tax for fast calculation of cumulative total was not recorded in the unalterable Log, so it won't be reported.
 OnlyFromV2=Only record from v24
 OnlyFromV2Help=After the v24 version, the amount excluding tax for fast calculation of cumulative total was recorded in the unalterable Log, so it is reported, but date range may be lower than the one of the "Includes all" option.
-
+NeedAThirdPartyStatement=You need a third-party statement to be compliant with law
 ## logTypes
 logBILL_DELETE=Customer invoice logically deleted
 logBILL_PAYED=Customer invoice paid

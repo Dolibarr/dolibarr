@@ -414,7 +414,9 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		// Check mandatory fields
+		// Check mandatory fields. Validate against the candidature model so the API
+		// rejects with the actual missing candidature fields (e.g. email) instead of
+		// the unrelated job position fields (see issue #38429).
 		$result = $this->_validate($request_data, $this->candidature);
 
 		foreach ($request_data as $field => $value) {
