@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  *
