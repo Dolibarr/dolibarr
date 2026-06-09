@@ -170,6 +170,7 @@ NEW: Add delivery date in supplier order linked object block (#38351)
 NEW: A lot of look and feel enhancement in the immutable log pages.
 NEW: Enhance the tools to check file integrity.
 NEW: The OAuth login with Google stay on the requested page after the redirect instead of reaching the home page.
+NEW: Add shipment online url to substitution array
 
 For developers:
 ---------------
