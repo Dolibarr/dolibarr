@@ -309,7 +309,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	$firstname = GETPOST("firstname", 'alphanohtml');
 	$societe = GETPOST("societe", 'alphanohtml');
 	$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
-	$country_id = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
+	$forcecountry = getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE');
+	$country_id = $forcecountry ? (int) getCountry($forcecountry, '3', $db, $langs) : GETPOSTINT('country_id');
 
 	if (!in_array($morphy, array('mor', 'phy'))) {
 		$error++;
@@ -426,7 +427,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$adh->pass = GETPOST('pass1', 'password');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
+		$adh->country_id  = $country_id;
 		$adh->state_id    = GETPOSTINT('state_id');
 		$adh->typeid      = getDolGlobalInt("MEMBER_NEWFORM_FORCETYPE", GETPOSTINT('typeid'));
 		$adh->note_private = GETPOST('note_private');
@@ -911,7 +912,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	print '<tr><td class="fieldrequired">'.$langs->trans('Country').'</td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth paddingright"');
 	if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-		$country_id = getCountry(getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE'), '2', $db, $langs);
+		$country_id = (int) getCountry(getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE'), '3', $db, $langs);
 	}
 	if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 		$country_code = dol_user_country();
