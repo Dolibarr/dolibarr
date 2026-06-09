@@ -3255,7 +3255,6 @@ class Ticket extends CommonObject
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 		}
 
-		$hookmanager->initHooks(array('ticketsendticketmessage'));
 		$parameters = array('from' => $from);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('getTicketMessageEmailFrom', $parameters, $this, $action);
