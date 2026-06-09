@@ -666,7 +666,8 @@ class Context
 			}
 
 			// Save what will be next token. Into forms, we will add param $context->newToken();
-			$token = dol_hash(uniqid((string) mt_rand(), true)); // Generate
+
+			$token = bin2hex(random_bytes(32));
 			$_SESSION['newtoken'] = $token;
 
 			return $token;
