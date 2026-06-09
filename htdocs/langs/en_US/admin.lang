@@ -1987,7 +1987,6 @@ ClickToDialDesc=This module change phone numbers, when using a desktop computer,
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface, installed on the same computer as the browser, and called when you click on a link starting with "tel:" in your browser. If you need a link that start with "sip:" or a full server solution (no need of local software installation), you must set this to "No" and fill the next field.
 ##### Point Of Sale (CashDesk) #####
-CashDesk=Point of Sale
 CashDeskSetup=Point of Sales module setup
 CashDeskThirdPartyForSell=Default generic third party to use for sales
 ForbidSalesToTheDefaultCustomer=Do not allow to record sales on a generic third party (must use a different third party for each sale)

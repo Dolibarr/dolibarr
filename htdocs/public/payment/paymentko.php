@@ -94,12 +94,6 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-/*
-if (isModEnabled('paybox')) {
-}
-if (isModEnabled('stripe')) {
-}
-*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
