@@ -968,6 +968,10 @@ function showWebsiteTemplates(Website $website, int $refresh)
  * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
+ * This does not check for evil callable function (like dol_eval_standard could do), because php concat should be allowed so obfuscation is always possible so
+ * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
+ * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
+ * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
@@ -987,10 +991,24 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
 		global $dolibarr_website_allow_custom_php;
-		if (empty($dolibarr_website_allow_custom_php)) {
+		if (empty($dolibarr_website_allow_custom_php)) {		// Case of $dolibarr_website_allow_custom_php = 0
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		} elseif ($dolibarr_website_allow_custom_php == 1) {	// Case of $dolibarr_website_allow_custom_php = 1
+			$notdisabledsystemfunction = '';
+			$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+			foreach ($systemfunctions as $systemfunction) {
+				// @phpstan-ignore-next-line
+				if (function_exists($systemfunction)) {
+					$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+				}
+			}
+			if ($notdisabledsystemfunction) {
+				$error++;
+				setEventMessages($langs->trans("Error: dolibarr_website_allow_custom_php=1 so dynamic PHP content is allowed only if RCE PHP functions are all disabled.", 'dolibarr_website_allow_custom_php'), null, 'errors');
+			}
 		}
+
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

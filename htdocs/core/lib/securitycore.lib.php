@@ -161,7 +161,7 @@ function dolDecrypt($chain, $key = '')
 				return $chain;
 			}
 			$tmpexplode = explode(':', $reg[2]);
-			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
+			if (!empty($tmpexplode[1])) {
 				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
 				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');

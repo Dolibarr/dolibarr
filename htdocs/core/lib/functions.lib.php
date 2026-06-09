@@ -10159,6 +10159,27 @@ function dol_concat($text1, $text2)
 }
 
 /**
+ * Add a function to replace array_map with allowed callback
+ *
+ * @param	callable			$callback	Function
+ * @param	array<mixed,mixed>	$array		Array
+ * @return	array<mixed,mixed>				The array after the array_map
+ */
+function safeArrayMap(callable $callback, array $array)
+{
+	if (!is_callable($callback)) {
+		throw new InvalidArgumentException("Les callbacks sont désactivés.");
+	}
+	// Vérifie que $callback est une fonction "sûre" (ex: dans une liste blanche)
+	$allowed_callbacks = ['strtolower', 'strtoupper', 'intval'];
+	if (is_string($callback) && !in_array($callback, $allowed_callbacks, true)) {
+		throw new InvalidArgumentException("Callback non autorisé.");
+	}
+	return array_map($callback, $array);
+}
+
+
+/**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
@@ -10797,6 +10818,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
+					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
+						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+					}
 				}
 			}
 
@@ -11597,6 +11622,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 /**
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
+ *  In dynamic code, this function is allowed when usort is not because it allows callable parameters.
  *
  *  @phpstan-template T of array<string|int,mixed>
  *  @phan-template T of array<string|int,mixed>
@@ -12213,7 +12239,7 @@ function dol_eval_new($s)
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
- * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+ * 											If we return a string on error, it must start with 'Bad call of'... or 'Bad string syntax'... or 'Exception'... !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12229,7 +12255,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 	global $object;
 
-	// Old variables (deprecated)
+	// Old variables (deprecated since v23)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
@@ -12513,7 +12539,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		ob_start(); // An evaluation has no reason to output data
 		$isObBufferActive = true;
 		$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
-		$tmpo = ob_get_clean();
+		$tmpo = ob_get_clean();			// This close the buffer
 		$isObBufferActive = false;
 		if ($tmpo) {
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
@@ -12522,7 +12548,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
-			$tmpo = ob_get_clean();
+			$tmpo = ob_get_clean();		// This close the buffer
 			$isObBufferActive = false;
 		}
 		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';

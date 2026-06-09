@@ -425,8 +425,8 @@ $dolibarr_cron_allow_cli='0';
 // By default for security purpose, it is not possible to add or edit PHP dynamic content into a website (even if user has permission for this). To be able
 // to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
 // 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
-// 1 will allow custom PHP inside website features, but only if dangerous PHP system functions are disabled (using the PHP disable_functions parameter)
-// 2 will allow custom PHP inside website features even if PHP remote execution features like "exec" are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
+// 1 will allow custom PHP inside website features, but only if all RCE PHP functions in the "exec" family are disabled (using the PHP disable_functions parameter)
+// 2 will allow custom PHP inside website features, even if RCE PHP functions in the "exec" family are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
 // Default value: '0'
 // Examples: '0', '1' or '2'
 //
