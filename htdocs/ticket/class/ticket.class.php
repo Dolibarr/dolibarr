@@ -1513,6 +1513,7 @@ class Ticket extends CommonObject
 
 		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
 		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status])) ? $this->labelStatusShort[$status] : '';
+		$statusType = '';
 
 		$isUnknown = false;
 		switch ($status) {
