@@ -1005,7 +1005,8 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			}
 			if ($notdisabledsystemfunction) {
 				$error++;
-				setEventMessages($langs->trans("Error: dolibarr_website_allow_custom_php=1 so dynamic PHP content is allowed only if RCE PHP functions are all disabled.", 'dolibarr_website_allow_custom_php'), null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorDynamicPHPContentNotAllowed", 'dolibarr_website_allow_custom_php'), null, 'errors');
 			}
 		}
 
