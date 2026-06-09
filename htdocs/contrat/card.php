@@ -1387,7 +1387,7 @@ if ($action == 'create') {
 		$hselected = '0';
 		$formconfirm = '';
 
-		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract', 0, '', '', 0, '', 1);
 
 
 		if ($action == 'delete') {
@@ -1566,6 +1566,7 @@ if ($action == 'create') {
 		print '<!-- amounts -->'."\n";
 		print '<div class="underbanner clearboth"></div>';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border tableforfield centpercent">';
 
 		// Qty by service status
@@ -1637,6 +1638,7 @@ if ($action == 'create') {
 
 		print "</table>";
 
+		print '</div>';
 		print '</div>';
 		print '</div>';
 

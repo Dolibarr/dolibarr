@@ -160,6 +160,7 @@ ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
 ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
 
 ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
 ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;

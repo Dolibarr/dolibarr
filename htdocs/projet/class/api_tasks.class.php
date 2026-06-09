@@ -652,11 +652,12 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int         	$id                 Task ID
 	 * @param   datetime|string	$date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @phan-param string $date
 	 * @param   int         	$duration           Duration in seconds (3600 = 1h)
 	 * @param   int         	$product_id         The product id that is used, default is null
 	 * @param   int         	$user_id            User (Use 0 for connected user)
 	 * @param   string      	$note               Note
-	 * @param   int|null    	$progress           Progress percentage (0-100). If null, progress is not updated
+	 * @param   int         	$progress           Progress percentage (0-100). Use -1 to leave progress unchanged
 	 *
 	 * @url POST    {id}/addtimespent
 	 *      NOTE: Should be "POST {id}/timespent", since POST already implies "add"

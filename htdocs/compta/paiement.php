@@ -690,11 +690,11 @@ if ($result >= 0) {
 			if (isModEnabled("multicurrency")) {
 				$langs->load("multicurrency");
 				$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
-				print '<th>'.$langs->trans('Currency').'</th>';
-				print '<th class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
-				print '<th class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></th>';
+				print '<td>'.$langs->trans('Currency').'</th>';
+				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td class="right">'.$alreadypayedlabel.'</td>';

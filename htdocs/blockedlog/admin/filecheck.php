@@ -52,7 +52,12 @@ if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
 $error = 0;
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
+	// Can add an edditional mention
+	$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -101,7 +106,15 @@ if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 
+$showblockedlogversion = 0;
+if ($mysoc->country_code == 'FR') {
+	$showblockedlogversion = 1;
+}
 if (isALNERunningVersion()) {
+	$showblockedlogversion = 1;
+}
+
+if ($showblockedlogversion) {
 	print '<tr class="oddeven nohover">';
 	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
 	print $versionbadge;
