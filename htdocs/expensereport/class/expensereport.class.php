@@ -2652,11 +2652,12 @@ class ExpenseReport extends CommonObject
 		}
 
 		$now = dol_now();
-		if ($option == 'toapprove') {
-			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
-		} else {
-			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+		$warning_delay = (int) ($option == 'toapprove' ? $conf->expensereport->approve->warning_delay : $conf->expensereport->payment->warning_delay);
+		if ($warning_delay <= 0) {
+			// No delay configured (MAIN_DELAY_EXPENSEREPORTS / MIN_DELAY_EXPENSEREPORTS_TO_PAY not set), so nothing is late.
+			return false;
 		}
+		return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $warning_delay);
 	}
 
 	/**
