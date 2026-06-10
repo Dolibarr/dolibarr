@@ -53,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'bills', 'orders', 'companies');
@@ -580,8 +581,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 							$idprodline = $fk_product;
 						}
 
-						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+						// Add lines. Pass type=1 (service) explicitly so the invoice line is tagged
+						// as a service even when no product is bound to the time entry. Otherwise
+						// the default $type=0 leaks through and the PDF labels the operation as
+						// "Delivery of goods" instead of "Provision of services" (issue #34571).
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject, '', '', 0, 0, '', 'HT', 0, Product::TYPE_SERVICE);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -680,7 +684,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						}
 						$idprodline = $value['fk_product'];
 					}
-					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+					// Pass type=1 (service) explicitly so the invoice line is tagged as a service
+					// even when no product is bound to the time entry. Otherwise the default
+					// $type=0 leaks through and the PDF labels the operation as
+					// "Delivery of goods" instead of "Provision of services" (issue #34571).
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject, '', '', 0, 0, '', 'HT', 0, Product::TYPE_SERVICE);
 					if ($lineid < 0) {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');

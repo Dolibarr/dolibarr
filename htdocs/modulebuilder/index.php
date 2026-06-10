@@ -1151,6 +1151,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
 
+	// Optional tabs selected by user, and detection of an already generated object (for idempotence warning)
+	$enabledtabs = filterEnabledTabs(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	$objectalreadyexists = dol_is_file($destdir.'/class/'.strtolower($objectname).'.class.php');
+
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
 	dol_mkdir($destdir.'/img');
@@ -1469,6 +1473,13 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 		}
 
+		// Exclude tab page files for tabs not selected by user
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			if (!in_array($tabkey, $enabledtabs, true)) {
+				unset($filetogenerate[$tabinfo['file']]);
+			}
+		}
+
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 
@@ -1727,10 +1738,47 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			// Pattern to remove everything between the tags
 			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
 			foreach ($TFilePaths as $filePath) {
-				if (! removePatternFromFile($filePath, $pattern)) {
+				// Skip files that were not generated (e.g. the API class when API generation is disabled);
+				// a missing optional file must not abort the whole object generation.
+				if (file_exists($filePath) && !removePatternFromFile($filePath, $pattern)) {
 					$error++;
 				}
 			}
+		}
+	}
+
+	// Apply object tab selection on the generated lib file:
+	// selected tabs -> hardcode the show flag to 1 (visible without extra config) ; unselected -> remove flag declaration and tab block
+	if (!$error) {
+		$libdestfile = $destdir.'/'.$ncObj->applyToFilename('lib/mymodule_myobject.lib.php');
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			$marker = $tabinfo['marker'];
+			if (in_array($tabkey, $enabledtabs, true)) {
+				$arrayreplacement = array(
+					'/\$'.$tabinfo['var'].' = getDolGlobalInt\([^;]*\);/' => '$'.$tabinfo['var'].' = 1;'
+				);
+				if (dolReplaceInFile($libdestfile, $arrayreplacement, '', '0', 0, 1) < 0) {
+					$error++;
+					dol_syslog("modulebuilder: failed to activate tab flag '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
+			} else {
+				if (!removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$marker.'.*?\/\/ END MODULEBUILDER TABFLAG '.$marker.'\s*/s')
+					|| !removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s')) {
+					$error++;
+					dol_syslog("modulebuilder: failed to purge tab '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
+			}
+		}
+		// Agenda has an extra event widget on the card page: purge it too to avoid a dead link when the agenda tab is excluded
+		if (!$error && !in_array('agenda', $enabledtabs, true)) {
+			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
+			if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s')) {
+				$error++;
+				dol_syslog("modulebuilder: failed to purge agenda widget in ".$carddestfile, LOG_ERR);
+			}
+		}
+		if ($objectalreadyexists) {
+			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
 		}
 	}
 
@@ -1752,7 +1800,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 				]
 			);
 
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
+			if (basename($phpfileval['fullname']) === 'mod'.$module.'.class.php') {
+				// Module descriptor: substitute content but keep the persistent MODULEBUILDER markers intact
+				$result = dolReplaceInFilePreservingModuleBuilderMarkers($phpfileval['fullname'], $arrayreplacement);
+			} else {
+				$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
+			}
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -1778,8 +1831,15 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			]
 		);
 		$allModulePhpFiles = dol_dir_list($destdir, 'files', 1, '\.php$');
+		// The module descriptor must NOT go through the blanket substitution: it keeps persistent
+		// MYOBJECT/MYMODULE markers (TOPMENU/LEFTMENU) reused when generating subsequent objects, and its
+		// own placeholders are already resolved by initmodule and the dedicated menu/permission blocks.
+		$moduledescriptorbasename = 'mod'.$module.'.class.php';
 		if (is_array($allModulePhpFiles) && !empty($allModulePhpFiles)) {
 			foreach ($allModulePhpFiles as $phpFileval) {
+				if (basename($phpFileval['fullname']) === $moduledescriptorbasename) {
+					continue;
+				}
 				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
 				if ($result < 0) {
 					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
@@ -4234,6 +4294,9 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
+				// Tabs selected by default = all optional tabs; reflect posted state on redisplay
+				$enabledtabsdefault = GETPOSTISSET('enabledtab') ? GETPOST('enabledtab', 'array') : array_keys(getModuleBuilderObjectTabs());
+
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
 				print '<div class="tagtable">';
@@ -4273,6 +4336,13 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
+				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
+					print '<input type="checkbox" name="enabledtab[]" id="enabledtab_'.$tabkey.'" value="'.dol_escape_htmltag($tabkey).'"'.$checked.'> ';
+					print '<label for="enabledtab_'.$tabkey.'">'.dol_escape_htmltag($langs->trans($tabinfo['label'])).'</label> &nbsp; ';
+				}
+				print '<br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';

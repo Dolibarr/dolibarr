@@ -6483,7 +6483,12 @@ class Form
 					$output .= '<option ' . $add . 'value="' . $cate_arbo[$key]['id'] . '"';
 					$output .= ' data-html="' . dol_escape_htmltag($labeltoshow) . '"';
 					$output .= '>';
-					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+					// The visible (truncated) label is rendered via data-html in
+					// templateResult of the select2 combobox; the bare option text
+					// must keep the full label so that the select2 search matcher
+					// (ajax_combobox in core/lib/ajax.lib.php) can find a hit on
+					// characters that lie outside the truncated portion.
+					$output .= dol_escape_htmltag($cate_arbo[$key]['fulllabel']);
 					$output .= '</option>';
 
 					$cate_arbo[$key]['data-html'] = $labeltoshow;
