@@ -2349,8 +2349,13 @@ class Expedition extends CommonObject
 		global $mysoc;
 
 		$this->lines = array();
+		$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_product, ed.fk_unit, ed.description, ed.fk_elementdet, ed.fk_element, ed.element_type, ed.qty, ed.rang, ed.extraparams';
+		$sql .= ', p.ref as product_ref, p.label as product_label, p.description as product_desc, p.fk_product_type, p.barcode as product_barcode';
+		$sql .= ', p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units';
+		$sql .= ', p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy';
+		$sql .= ', p.tobatch as product_tobatch, p.stockable_product';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as ed';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = ed.fk_product)';
 		$sql .= ' WHERE ed.fk_expedition = '.((int) $this->id);
@@ -2370,15 +2375,65 @@ class Expedition extends CommonObject
 				$line->rowid            = $objp->rowid;
 				$line->id				= $objp->rowid;
 				$line->fk_expedition	= $this->id;
+				$line->qty_shipped      = $objp->qty;
+				$line->qty_asked        = $objp->qty;
 				$line->description      = $objp->description;
 				$line->qty              = $objp->qty;
 				$line->fk_entrepot      = $objp->fk_entrepot;
+				$line->entrepot_id      = $objp->fk_entrepot;
 				$line->fk_product       = $objp->fk_product;
+				$line->product_type     = $objp->fk_product_type;
+				$line->fk_product_type  = $objp->fk_product_type;
+				$line->ref              = $objp->product_ref;
+				$line->product_ref      = $objp->product_ref;
+				$line->product_label    = $objp->product_label;
+				$line->libelle          = $objp->product_label;
+				$line->label            = $objp->product_label;
+				$line->product_desc     = $objp->product_desc;
+				$line->desc             = $objp->description;
+				$line->product_barcode  = $objp->product_barcode;
+				$line->product_tosell   = $objp->product_tosell;
+				$line->product_tobuy    = $objp->product_tobuy;
+				$line->product_tobatch  = $objp->product_tobatch;
+				$line->stockable_product = $objp->stockable_product;
+				$line->weight           = $objp->weight;
+				$line->weight_units     = $objp->weight_units;
+				$line->length           = $objp->length;
+				$line->length_units     = $objp->length_units;
+				$line->width            = $objp->width;
+				$line->width_units      = $objp->width_units;
+				$line->height           = $objp->height;
+				$line->height_units     = $objp->height_units;
+				$line->surface          = $objp->surface;
+				$line->surface_units    = $objp->surface_units;
+				$line->volume           = $objp->volume;
+				$line->volume_units     = $objp->volume_units;
 				$line->rang             = $objp->rang;
 				$line->fk_element 		= $objp->fk_element;
+				$line->origin_id        = $objp->fk_element;
 				$line->fk_unit          = $objp->fk_unit;
 				$line->fk_elementdet 	= $objp->fk_elementdet;
-				$line->fk_element_type 	= $objp->element_type;
+				$line->origin_line_id   = $objp->fk_elementdet;
+				$line->element_type 	= $objp->element_type;
+				$line->fk_origin        = $objp->element_type;
+				$line->extraparams      = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
+
+				$detail_entrepot = new stdClass();
+				$detail_entrepot->entrepot_id = $objp->fk_entrepot;
+				$detail_entrepot->qty_shipped = $objp->qty;
+				$detail_entrepot->line_id = $objp->rowid;
+				$line->details_entrepot = array($detail_entrepot);
+
+				$line->detail_batch = array();
+				if (isModEnabled('productbatch') && $objp->rowid > 0 && $objp->product_tobatch > 0) {
+					$newdetailbatch = $shipmentlinebatch->fetchAll($objp->rowid, $objp->fk_product);
+					if (is_array($newdetailbatch)) {
+						foreach ($newdetailbatch as $detailbatch) {
+							$detailbatch->entrepot_id = $detailbatch->fk_warehouse;
+						}
+						$line->detail_batch = $newdetailbatch;
+					}
+				}
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
