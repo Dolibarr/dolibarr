@@ -1416,6 +1416,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
+print '<thead>';
 print '<tr class="liste_titre_filter">';
 // Action column left
 if ($conf->main_checkbox_left_column) {
@@ -1822,7 +1823,7 @@ if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print '</tr>'."\n";
+print '</tr></thead>'."\n";
 
 
 $i = 0;

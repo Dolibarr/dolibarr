@@ -247,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names

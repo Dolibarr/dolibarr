@@ -698,6 +698,7 @@ while ($i < $imaxinloop) {
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;
+	$adherent->company = $obj->societe;
 	$adherent->ref = $obj->rowid;
 	$adherent->id = $obj->rowid;
 	$adherent->statut = $obj->status;

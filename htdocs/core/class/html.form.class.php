@@ -495,7 +495,10 @@ class Form
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
 
-			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+			// ExtraLanguages::fetch_name_extralanguages() leaves $this->attributes empty
+			// when MAIN_USE_ALTERNATE_TRANSLATION_FOR is not configured, so PHP 8 raises
+			// 'Undefined array key' on the read below if we do not guard it (issue #34596).
+			if (empty($extralanguages->attributes[$object->element]) || !is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
 				return ''; // No extralang field to show
 			}
 
@@ -6452,6 +6455,7 @@ class Form
 
 
 		$output = '<select class="flat minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
+		$num = 0;
 		if (is_array($cate_arbo)) {
 			$num = count($cate_arbo);
 
@@ -6479,7 +6483,12 @@ class Form
 					$output .= '<option ' . $add . 'value="' . $cate_arbo[$key]['id'] . '"';
 					$output .= ' data-html="' . dol_escape_htmltag($labeltoshow) . '"';
 					$output .= '>';
-					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+					// The visible (truncated) label is rendered via data-html in
+					// templateResult of the select2 combobox; the bare option text
+					// must keep the full label so that the select2 search matcher
+					// (ajax_combobox in core/lib/ajax.lib.php) can find a hit on
+					// characters that lie outside the truncated portion.
+					$output .= dol_escape_htmltag($cate_arbo[$key]['fulllabel']);
 					$output .= '</option>';
 
 					$cate_arbo[$key]['data-html'] = $labeltoshow;
@@ -6489,7 +6498,7 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
-		$this->num = count($cate_arbo);
+		$this->num = $num;
 
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array
@@ -6604,9 +6613,12 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 250;
-			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24) + 10;
+			$height = 185;
+			if (is_array($formquestion)) {
+				$height += (count($formquestion) * 40);
+			}
+			if ($question) {
+				$height += dol_nboflines_bis($question, 80) * 40;
 			}
 		}
 
@@ -10760,6 +10772,8 @@ class Form
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
+		global $conf;
+
 		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		$cat = new Categorie($this->db);
@@ -10785,7 +10799,12 @@ class Form
 					$sfortag .= '>';
 					if ($rendermode == 1) {
 						$sfortag .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $c->id).'&type='.urlencode($c->type).'" class="'.$forced_color.'">';
-						$sfortag .= img_picto('', 'category', 'class="paddingright"').$c->label;
+						$sfortag .= img_picto('', 'category', 'class="paddingright"');
+						if ($conf->dol_optimize_smallscreen) {
+							$sfortag .= dolPrintHTML(dol_trunc($c->label, 8));
+						} else {
+							$sfortag .= dolPrintHTML($c->label);
+						}
 						$sfortag .= '</a>';
 					} else {
 						$sfortag .= $way;
@@ -11564,7 +11583,9 @@ class Form
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (!empty($extralanguages->attributes['societe']['name'])) {
+				// Guard against PHP 8 'Undefined array key' when MAIN_USE_ALTERNATE_TRANSLATION_FOR
+				// is not configured and fetch_name_extralanguages() leaves attributes empty (issue #34596).
+				if (!empty($extralanguages->attributes['societe']) && !empty($extralanguages->attributes['societe']['name'])) {
 					$object->fetchValuesForExtraLanguages();
 
 					$htmltext = '';
@@ -11745,7 +11766,7 @@ class Form
 			$email = $object->email;
 			$capture = 'user';
 		} elseif ($modulepart == 'memberphoto') {
-			$dir = $conf->adherent->dir_output;
+			$dir = $conf->member->dir_output;
 			$photo = $object->photo;  // Copy to help static analysis
 			if (!empty($photo)) {
 				if (dolIsAllowedForPreview($photo)) {
@@ -11852,7 +11873,7 @@ class Form
 					$ret .= '<img class="gravatar photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" title="'.dolPrintHTMLForAttribute('Gravatar avatar - '.$email).'" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="https://www.gravatar.com/avatar/' . dol_hash(strtolower(trim($email)), 'sha256', 1) . '?s=' . $width . '&d=' . $defaultimg . '">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
-						$ret .= '<div class="divforspanimg valignmiddle center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
+						$ret .= '<div class="divforspanimg valignmiddle inline-block center photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . '>' . img_picto('', 'company') . '</div>';
 						//$ret .= '<div class="difforspanimgright"></div>';
 					} else {
 						$ret .= '<img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" alt="" ' . ($width ? ' width="' . $width . '"' : '') . ($height ? ' height="' . $height . '"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '">';

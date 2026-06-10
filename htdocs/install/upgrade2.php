@@ -3887,7 +3887,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					} else {
-						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+						print ' - '.$langs->trans('AlreadyDone').'<br>';
 					}
 				} else {
 					dol_print_error($db);
@@ -4423,7 +4423,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
