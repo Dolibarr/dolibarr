@@ -7671,7 +7671,7 @@ abstract class CommonObject
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = null";
 				} elseif (!empty($geoDataType['ST_Function'])) {
-					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = ".$geoDataType['ST_Function']."('".$this->db->escape($this->array_options["options_".$key])."')";
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = ".$this->db->sanitize($geoDataType['ST_Function'])."('".$this->db->escape($this->array_options["options_".$key])."')";
 				} else {
 					// TODO What about if field is type int or float ($attributeType = price, int, ...) ?
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = '".$this->db->escape($new_array_options["options_".$key])."'";
