@@ -701,7 +701,7 @@ if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<div class="tabsAction">';
 
 		if ($object->status > 0) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=createsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $rowid, 'action' => 'createsubscription'], true).'">'.$langs->trans("AddSubscription")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 		}
@@ -744,7 +744,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 		print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'clabel', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre('Note', $_SERVER["PHP_SELF"], 'clabel', '', $param, '', $sortfield, $sortorder);
 		if (isModEnabled('bank')) {
 			print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 		}
@@ -810,7 +810,7 @@ if ($action != 'createsubscription' && $action != 'create_thirdparty') {
 		}
 
 		if (empty($num)) {
-			$colspan = 6;
+			$colspan = 7;
 			if (isModEnabled('bank')) {
 				$colspan++;
 			}
@@ -1028,7 +1028,7 @@ if (($action == 'createsubscription' || $action == 'create_thirdparty') && $user
 		print '<td><input autofocus class="width50" type="text" name="subscription" value="'.(GETPOSTISSET('subscription') ? GETPOST('subscription') : (is_null($adht->amount) ? '' : price($adht->amount, 0, '', 0))).'"> '.$langs->trans("Currency".getDolCurrency()) .'</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td>';
+		print '<tr><td>'.$langs->trans("Note").'</td>';
 		print '<td><input name="label" type="text" size="32" value="';
 		if (!getDolGlobalString('MEMBER_NO_DEFAULT_LABEL')) {
 			print $langs->trans("Subscription").' '.dol_print_date(($datefrom ? $datefrom : time()), "%Y");

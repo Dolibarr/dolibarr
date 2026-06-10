@@ -44,8 +44,20 @@ define('DOL_DOCUMENT_ROOT', dirname(dirname($path)).'/htdocs');
 $algo = 'sha256';
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT."/blockedlog/versionmod.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/blockedlog/versionmod.inc.php";
+
+// Array of dir/files to include in the signature of unalterable files
+// This array will be used by the generate_filelist_xml.php script to generate the filelist.xml file
+$arrayofunalterablefiles = array(
+	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
+	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
+);
+
 
 
 /*
@@ -215,6 +227,7 @@ if ($release) {
 }
 if ($checklock) {
 	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
+	print "Version of running Dolibarr         : ".DOL_VERSION."\n";
 	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";		// For example 2.0.0
 	print "Scope name to check                 : ".$checksource."\n";				// For example unalterable_files
 }
@@ -250,7 +263,7 @@ if ($release) {
 		$fileforgitcontent = file_get_contents($fileforgit);
 	}
 	if (empty($fileforgitcontent)) {
-		print "Failed to get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
+		print "Can't get the last commit ID (are you on the branch for the release branch name ".$branchname." ?). We will use an empty value for gitcommit.\n";
 	}
 	$gitcommit = trim($fileforgitcontent);
 
@@ -271,7 +284,8 @@ if ($release) {
 
 	// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install\/doctemplates|install\/mysql\/migration|install\/filelist.*|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+
 	$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 
 	$dir = '';
@@ -362,15 +376,6 @@ if ($release && $releaseblockedlog) {
 }
 
 // Array of dir/files to include in the section
-$arrayofunalterablefiles = array(
-	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
-);
-
 foreach ($arrayofunalterablefiles as $entry) {
 	if ($entry['file'] == 'all') {
 		$regextoinclude = $entry['regextoinclude'];

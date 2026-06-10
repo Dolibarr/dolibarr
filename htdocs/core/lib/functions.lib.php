@@ -290,6 +290,26 @@ function getDolGlobalString($key, $default = '')
 }
 
 /**
+ * Return the list of unauthorized characters in user logins.
+ *
+ * @return string
+ */
+function getDolGlobalLoginBadCharUnauthorized()
+{
+	global $dolibarr_login_badcharunauthorized;
+
+	if (isset($dolibarr_login_badcharunauthorized)) {
+		if ($dolibarr_login_badcharunauthorized === 'MAIN_LOGIN_BADCHARUNAUTHORIZED') {
+			return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		}
+
+		return (string) $dolibarr_login_badcharunauthorized;
+	}
+
+	return ',@<>"\'';
+}
+
+/**
  * Return a Dolibarr global constant int value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -1272,7 +1292,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		$tmpcheck = 'alphanohtml';
-		if (empty($out)) {
+		if ($out === null || $out === '') {
 			$out = array();
 		} elseif (!is_array($out)) {
 			$out = explode(',', $out);
@@ -1488,6 +1508,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
 	global $dolibarr_main_force_https;
 
 	if ($expire == -1) {
@@ -2241,12 +2263,12 @@ function dolSlugify($stringtoslugify)
 }
 
 /**
- *  Returns text escaped for inclusion into javascript code
+ * Returns text escaped for inclusion into JavaScript code.
  *
- *  @param	int|string	$stringtoescape			String to escape
- *  @param	int<0,3>	$mode					0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \ .
- *  @param	int<0,1>	$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
- *  @return string								Escaped string. Both ' and " are escaped into ' if they are escaped.
+ * @param	int|string	$stringtoescape			String to escape
+ * @param	int			$mode					0=Escape also \' and \" into \', 1=Escape \' but not \" for usage into 'string', 2=Escape \" but not \' for usage into "string", 3=Escape \' and " with \\.
+ * @param	int			$noescapebackslashn		0=Escape also \n. 1=Do not escape \n.
+ * @return	string								Escaped string. Both \' and " are escaped into \' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 {
@@ -3551,6 +3573,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	}
 
+	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
+		$morehtmlref .= '<div style="clear: both;"></div>';
+		$morehtmlref .= '<div class="smallimp refidno opacitymedium banner-object-technical-id">';
+		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
+		$morehtmlref .= '</div>';
+	}
+
+
 	// Show barcode
 	if ($showbarcode) {
 		$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $form->showbarcode($object, 100, 'photoref valignmiddle') . '</div>';
@@ -3649,14 +3679,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($object->name_alias)) {
 		/** @var Societe $object */
 		'@phan-var-force Societe $object';
-		$morehtmlref .= '<div class="refidno opacitymedium">' . dol_escape_htmltag($object->name_alias) . '</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium banner-object-name-alias">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
 		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
-			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
+			$morehtmlref .= '<div class="refidno banner-object-label">' . $object->label . '</div>';
 		}
 	}
 	// Show address and email
@@ -3667,12 +3697,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlref .= $moreaddress;
 			$morehtmlref .= '</div>';
 		}
-	}
-	if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') == '1' || preg_match('/' . preg_quote($object->element, '/') . '/i', getDolGlobalString('MAIN_SHOW_TECHNICAL_ID'))) && !empty($object->id)) {
-		$morehtmlref .= '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno opacitymedium">';
-		$morehtmlref .= $langs->trans("TechnicalID") . ': ' . ((int) $object->id);
-		$morehtmlref .= '</div>';
 	}
 
 	$parameters = array('morehtmlref' => &$morehtmlref, 'moreparam' => &$moreparam, 'morehtmlleft' => &$morehtmlleft, 'morehtmlstatus' => &$morehtmlstatus, 'morehtmlright' => &$morehtmlright);
@@ -3691,7 +3715,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	// $morehtmlstatus is part under the status
 	// $morehtmlright is part of htmlright
 
-	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent">';
+	print '<div class="' . ($onlybanner ? 'arearefnobottom ' : 'arearef ') . 'heightref valignmiddle centpercent object-banner-tab-container" data-module-part="'.dolPrintHTMLForAttribute($modulepart).'">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
@@ -4240,7 +4264,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 			$default_timezone = @date_default_timezone_get();
 		}
 	} elseif (strrpos($gm, "tz,") !== false) {
-		$timezone = str_replace("tz,", "", $gm); // Example 'tz,Europe/Berlin'
+		$timezone = (string) str_replace("tz,", "", $gm); // Example 'tz,Europe/Berlin'
 		try {
 			$localtz = new DateTimeZone($timezone);
 		} catch (Exception $e) {
@@ -4482,6 +4506,9 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 	//$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 	//$rep .= '</div>';
 	$rep = $newemail;
+	if (getDolGlobalString('MAIN_MAIL_COPY_ON_CLICK')) {
+		$rep .= showValueWithClipboardCPButton($newemail, 0, 'none');
+	}
 
 	if ($hookmanager) {
 		$parameters = array('cid' => $contactid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
@@ -5202,25 +5229,6 @@ function getUserRemoteIP($trusted = 0)
 		$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_X_FORWARDED_FOR']); // value is clean here but may have been forged by proxy
 	}
 	return $ip;
-}
-
-/**
- * Return if we are using a HTTPS connection
- * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
- * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
- * Then HTTP_X_FORWARDED_SSL
- *
- * @return	boolean		True if user is using HTTPS
- */
-function isHTTPS()
-{
-	$isSecure = false;
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-		$isSecure = true;
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-		$isSecure = true;
-	}
-	return $isSecure;
 }
 
 /**
@@ -7324,7 +7332,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *	@param	?string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $morehtmlcenter     String in the middle ('' by default). We often find here string $massaction coming from $form->selectMassAction()
  *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown.
+ *	@param	int|string  $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value of number to not show number. Use '' if unknown. Use a string to show a string.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtmlright		More html to show (after arrows)
@@ -7491,6 +7499,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	}
 
 	if ($savlimit || $morehtmlright || $morehtmlrightbeforearrow) {
+		// Show the combolist to select number of record per page and the navigation arrows.
 		print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtmlright, $savlimit, $totalnboflines, $selectlimitsuffix, $morehtmlrightbeforearrow, $hidenavigation); // output the div and ul for previous/last completed with page numbers into $pagelist
 	}
 
@@ -7557,7 +7566,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<datalist id="limitlist">';
 			} else {
 				print '<li class="paginationcombolimit valignmiddle">';
-				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="limit" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
+				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="'.(is_numeric($selectlimitsuffix) ? 'limit' : $selectlimitsuffix).'" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
 			}
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit . ':' . $limit;
@@ -10150,6 +10159,27 @@ function dol_concat($text1, $text2)
 }
 
 /**
+ * Add a function to replace array_map with allowed callback
+ *
+ * @param	callable			$callback	Function
+ * @param	array<mixed,mixed>	$array		Array
+ * @return	array<mixed,mixed>				The array after the array_map
+ */
+function safeArrayMap(callable $callback, array $array)
+{
+	if (!is_callable($callback)) {
+		throw new InvalidArgumentException("Les callbacks sont désactivés.");
+	}
+	// Vérifie que $callback est une fonction "sûre" (ex: dans une liste blanche)
+	$allowed_callbacks = ['strtolower', 'strtoupper', 'intval'];
+	if (is_string($callback) && !in_array($callback, $allowed_callbacks, true)) {
+		throw new InvalidArgumentException("Callback non autorisé.");
+	}
+	return array_map($callback, $array);
+}
+
+
+/**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
@@ -10788,6 +10818,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
+					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
+						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+					}
 				}
 			}
 
@@ -11588,6 +11622,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 /**
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
+ *  In dynamic code, this function is allowed when usort is not because it allows callable parameters.
  *
  *  @phpstan-template T of array<string|int,mixed>
  *  @phan-template T of array<string|int,mixed>
@@ -12204,7 +12239,7 @@ function dol_eval_new($s)
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
- * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+ * 											If we return a string on error, it must start with 'Bad call of'... or 'Bad string syntax'... or 'Exception'... !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12220,7 +12255,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 	global $object;
 
-	// Old variables (deprecated)
+	// Old variables (deprecated since v23)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
@@ -12504,7 +12539,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		ob_start(); // An evaluation has no reason to output data
 		$isObBufferActive = true;
 		$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
-		$tmpo = ob_get_clean();
+		$tmpo = ob_get_clean();			// This close the buffer
 		$isObBufferActive = false;
 		if ($tmpo) {
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
@@ -12513,10 +12548,10 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
-			$tmpo = ob_get_clean();
+			$tmpo = ob_get_clean();		// This close the buffer
 			$isObBufferActive = false;
 		}
-		$error = 'dol_eval try/catch error : ';
+		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
 		$error .= $e->getMessage();
 		dol_syslog($error, LOG_WARNING);
 		return 'Exception during evaluation: ' . $s;
@@ -15880,7 +15915,7 @@ function jsonOrUnserialize($stringtodecode, $assoc = true)
 {
 	$result = json_decode($stringtodecode, $assoc);
 	if ($result === null) {
-		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
+		$result = unserialize($stringtodecode, ['allowed_classes' => false]);	// For backward compatibility. Is no more used in recent versions.
 	}
 
 	return $result;
@@ -16084,7 +16119,7 @@ function dolCheckFilters($sqlfilters, &$error = '', &$parenthesislevel = 0)
  * Function to forge a SQL criteria from a Dolibarr filter syntax string.
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
- * @param  string[]	$matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
+ * @param  string[]	$matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.nature:is:NULL"
  * @return string                  Forged criteria. Example: "" or "()"
  */
 function dolForgeDummyCriteriaCallback($matches)
@@ -16106,7 +16141,7 @@ function dolForgeDummyCriteriaCallback($matches)
  * This method is called by forgeSQLFromUniversalSearchCriteria()
  *
  * @param  string[]	$matches       	Array of found string by regex search.
- * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+ * 									Example: "t.ref:like:'SO-%'" or "t.date_creation:>:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
  * @return string                  	Forged criteria. Example: "t.field LIKE 'abc%'"
  * @see forgeSQLFromUniversalSearchCriteria()
  */
@@ -16560,8 +16595,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
 	}
 
-	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
 	$num = 0;
+	$MAXWITHOUTPAGINATION = getDolGlobalInt('AGENDA_MAX_EVENTS_ON_PAGE_WITHOUT_PAGINATION', 100);
 
 	if ($sql || $sql2) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
 		if (!empty($sql) && !empty($sql2)) {
@@ -17325,4 +17360,23 @@ function getObjectSocId($obj)
 		return (int) $obj->societe_id;
 	}
 	return null;
+}
+
+/**
+ * Get the limit of list to show according to the screen height
+ *
+ * @return int The limit of list to show
+ */
+function getListLimitFromScreenHeight()
+{
+	$default = 10;
+	if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
+		$default = 8;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 950) {
+		$default = 10;
+	} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+		$default = 15;
+	}
+
+	return $default;
 }

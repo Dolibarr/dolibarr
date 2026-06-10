@@ -197,3 +197,4 @@ CreditCardDeclared=Card declared
 CashLifetime=Cash lifetime
 ChequeLifetime=Cheque lifetime
 CardLifetime=Card lifetime
+DefaultCashPOSLabel=Cash account for POS

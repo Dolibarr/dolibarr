@@ -59,7 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (getDolGlobalString('THEME_DARKMODEENABLED')) {
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes

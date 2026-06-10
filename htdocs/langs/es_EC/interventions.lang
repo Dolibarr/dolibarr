@@ -6,7 +6,6 @@ ListOfInterventions=Lista de intervenciones
 ActionsOnFicheInter=Acciones de intervención
 LastInterventions=Últimas intervenciones%s
 CreateDraftIntervention=Crear proyecto
-InterventionContact=Contacto de intervención
 DeleteIntervention=Eliminar la intervención
 ValidateIntervention=Validar la intervención
 ModifyIntervention=Modificar la intervención

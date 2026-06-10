@@ -78,6 +78,33 @@ class Subscription extends CommonObject
 	public $datef;
 
 	/**
+	 * Alias of $dateh exposed by the REST API GET response so the same payload
+	 * can be sent back to POST /members/{id}/subscriptions without renaming
+	 * client-side. Matches the date_start / date_end naming convention used by
+	 * other Dolibarr objects. Not persisted (see issue #38279).
+	 *
+	 * @var integer
+	 */
+	public $date_start;
+
+	/**
+	 * Alias of $datef exposed by the REST API GET response (see issue #38279).
+	 * Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $date_end;
+
+	/**
+	 * Public note exposed under the documented field name. Already populated by
+	 * fetch() but not declared as a real property; declared here so phpstan and
+	 * phan stop flagging the API setter as touching a dynamic property.
+	 *
+	 * @var string
+	 */
+	public $note_public;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_type;
