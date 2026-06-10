@@ -1053,7 +1053,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</script>'."\n";
 		}
 
-		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
+		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data" spellcheck="false">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -1736,7 +1736,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value' => '');
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 250);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 0);
 		}
 
 		// Confirm resiliate

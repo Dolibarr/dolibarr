@@ -33,6 +33,7 @@
  * @var int $firstrecorddate
  * @var int $error
  * @var ?int $search_end
+ * @var int $includebeforev2
  */
 '@phan-var-force array<string,float> $totalamountlifetime';
 '@phan-var-force array<string,float> $totalhtamountlifetime';
@@ -59,7 +60,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 $sql .= " WHERE entity = ".((int) $conf->entity);
 //$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
 $sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
-$sql .= " AND date_creation < '".$db->idate($dateend)."'";
+if ($dateend > 0) {
+	$sql .= " AND date_creation < '".$db->idate($dateend)."'";
+}
+if (empty($includebeforev2)) {
+	$sql .= " AND object_format >= 'V2'";		// We take all record from the new format (V2)
+}
 $sql .= " GROUP BY action, module_source, object_format";
 
 $resql = $db->query($sql);
@@ -75,7 +81,7 @@ if ($resql) {
 		if (!empty($firstrecorddate)) {
 			$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin, 'gmt'));
 		} else {
-			$firstrecorddate = $obj->datemin;
+			$firstrecorddate = $db->jdate($obj->datemin, 'gmt');
 		}
 
 		if (!isset($totalamountlifetime[$obj->action])) {
