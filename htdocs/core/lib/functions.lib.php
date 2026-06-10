@@ -290,6 +290,26 @@ function getDolGlobalString($key, $default = '')
 }
 
 /**
+ * Return the list of unauthorized characters in user logins.
+ *
+ * @return string
+ */
+function getDolGlobalLoginBadCharUnauthorized()
+{
+	global $dolibarr_login_badcharunauthorized;
+
+	if (isset($dolibarr_login_badcharunauthorized)) {
+		if ($dolibarr_login_badcharunauthorized === 'MAIN_LOGIN_BADCHARUNAUTHORIZED') {
+			return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		}
+
+		return (string) $dolibarr_login_badcharunauthorized;
+	}
+
+	return ',@<>"\'';
+}
+
+/**
  * Return a Dolibarr global constant int value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -1272,7 +1292,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		$tmpcheck = 'alphanohtml';
-		if (empty($out)) {
+		if ($out === null || $out === '') {
 			$out = array();
 		} elseif (!is_array($out)) {
 			$out = explode(',', $out);
@@ -1488,6 +1508,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
 	global $dolibarr_main_force_https;
 
 	if ($expire == -1) {
@@ -5207,25 +5229,6 @@ function getUserRemoteIP($trusted = 0)
 		$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_X_FORWARDED_FOR']); // value is clean here but may have been forged by proxy
 	}
 	return $ip;
-}
-
-/**
- * Return if we are using a HTTPS connection
- * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
- * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
- * Then HTTP_X_FORWARDED_SSL
- *
- * @return	boolean		True if user is using HTTPS
- */
-function isHTTPS()
-{
-	$isSecure = false;
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-		$isSecure = true;
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-		$isSecure = true;
-	}
-	return $isSecure;
 }
 
 /**
@@ -10156,6 +10159,27 @@ function dol_concat($text1, $text2)
 }
 
 /**
+ * Add a function to replace array_map with allowed callback
+ *
+ * @param	callable			$callback	Function
+ * @param	array<mixed,mixed>	$array		Array
+ * @return	array<mixed,mixed>				The array after the array_map
+ */
+function safeArrayMap(callable $callback, array $array)
+{
+	if (!is_callable($callback)) {
+		throw new InvalidArgumentException("Les callbacks sont désactivés.");
+	}
+	// Vérifie que $callback est une fonction "sûre" (ex: dans une liste blanche)
+	$allowed_callbacks = ['strtolower', 'strtoupper', 'intval'];
+	if (is_string($callback) && !in_array($callback, $allowed_callbacks, true)) {
+		throw new InvalidArgumentException("Callback non autorisé.");
+	}
+	return array_map($callback, $array);
+}
+
+
+/**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
@@ -10794,6 +10818,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
+					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
+						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+					}
 				}
 			}
 
@@ -11594,6 +11622,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 /**
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
+ *  In dynamic code, this function is allowed when usort is not because it allows callable parameters.
  *
  *  @phpstan-template T of array<string|int,mixed>
  *  @phan-template T of array<string|int,mixed>
@@ -12210,7 +12239,7 @@ function dol_eval_new($s)
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
- * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+ * 											If we return a string on error, it must start with 'Bad call of'... or 'Bad string syntax'... or 'Exception'... !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12226,7 +12255,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 	global $object;
 
-	// Old variables (deprecated)
+	// Old variables (deprecated since v23)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
@@ -12510,7 +12539,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		ob_start(); // An evaluation has no reason to output data
 		$isObBufferActive = true;
 		$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
-		$tmpo = ob_get_clean();
+		$tmpo = ob_get_clean();			// This close the buffer
 		$isObBufferActive = false;
 		if ($tmpo) {
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
@@ -12519,7 +12548,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
-			$tmpo = ob_get_clean();
+			$tmpo = ob_get_clean();		// This close the buffer
 			$isObBufferActive = false;
 		}
 		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
@@ -15886,7 +15915,7 @@ function jsonOrUnserialize($stringtodecode, $assoc = true)
 {
 	$result = json_decode($stringtodecode, $assoc);
 	if ($result === null) {
-		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
+		$result = unserialize($stringtodecode, ['allowed_classes' => false]);	// For backward compatibility. Is no more used in recent versions.
 	}
 
 	return $result;

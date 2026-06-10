@@ -92,6 +92,18 @@ html,body {
 	max-height:calc(100vh-50px);
 }
 
+/* Fix dropdown user-header layout missing .side-nav-vert context under TakePOS */
+.bodytakepos #topmenu-login-dropdown .dropdown-menu {
+	line-height: 1.3em;
+}
+
+.bodytakepos #topmenu-login-dropdown .dropdown-menu > .user-header {
+	min-height: 100px;
+	padding: 10px;
+	text-align: center;
+	white-space: normal;
+}
+
 .center {
 	text-align: center;
 }

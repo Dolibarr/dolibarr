@@ -241,7 +241,7 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 print '<div class="tabBar">';
 print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth75 maxwidth150imp valignmiddle', true);
 print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
-print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
+print '<input type="submit" class="button smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->trans("Search")).'" />';
 print '</div>';
 print '<br>';
 
