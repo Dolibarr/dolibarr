@@ -3979,7 +3979,8 @@ if (!function_exists("llxFooter")) {
 							'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
 							'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
 							'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
-							'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+							'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1'),
+							'provider_idprof2' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2')
 						);
 						printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceregistration);
 					} else {

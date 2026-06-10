@@ -11745,15 +11745,15 @@ abstract class CommonObject
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
+		// containing() returns an integer < 0 on error (e.g. when the categorie_xxx table does not exist).
+		// Normalize to an empty array to avoid array_diff()/foreach() warnings below.
+		if (!is_array($existing)) {
+			$existing = array();
+		}
 		if ($remove_existing) {
 			// Diff
-			if (is_array($existing)) {
-				$to_del = array_diff($existing, $categories);
-				$to_add = array_diff($categories, $existing);
-			} else {
-				$to_del = array(); // Nothing to delete
-				$to_add = $categories;
-			}
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
 		} else {
 			$to_del = array(); // Nothing to delete
 			$to_add = array_diff($categories, $existing);

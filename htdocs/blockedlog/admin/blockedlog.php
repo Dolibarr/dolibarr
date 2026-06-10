@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +199,6 @@ print '</td></tr>';
 
 /*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td class="right" width="300">';

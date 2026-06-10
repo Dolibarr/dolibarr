@@ -107,7 +107,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
-		// Detect if a certified version was installed on an old version. So we can force the user to redo the configuration stepwith new requirements.
+		// Detect if a certified version was installed on an old version. So we can force the user to redo the configuration step with new requirements.
 		if ($mysoc->country_code == 'FR' && $isqualified && !isRegistrationDataSavedAndPushed()) {
 			$errmsg = 'Error: You are using Dolibarr with the module "Blocked Log" to be compliant with the French Law Finance certification, but the registration step was not done or is not complete. Try to reenable the module %s.';
 			dol_syslog($errmsg, LOG_ERR);

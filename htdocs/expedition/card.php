@@ -783,6 +783,7 @@ if (empty($reshook)) {
 		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
+
 		if ($action == 'settrueWeight') {		// Test on permission not required
 			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
@@ -1780,8 +1781,9 @@ if ($action == 'create' && $usercancreate) {
 			print $langs->trans("Weight");
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
+
+			print '<input name="weight" size="4" value="' . dol_escape_htmltag(GETPOST('weight')) . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOST('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -2116,8 +2118,8 @@ if ($action == 'create' && $usercancreate) {
 							// Quantity to send
 							print '<td class="center">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
-								if (GETPOSTINT('qtyl' . $indiceAsked)) {
-									$deliverableQty = GETPOSTINT('qtyl' . $indiceAsked);
+								if (GETPOSTISSET('qtyl'.$indiceAsked) && GETPOST('qtyl'.$indiceAsked) !== '') {
+									$deliverableQty = GETPOSTFLOAT('qtyl'.$indiceAsked, 'MS');
 								}
 								print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
 								$qtylValue = $deliverableQty;
