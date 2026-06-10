@@ -435,6 +435,7 @@ print '</tr>';
 
 $checkresult = array();
 $checkdetail = array();
+$checkerror = array();
 $loweridinerror = 0;
 
 if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
@@ -455,6 +456,9 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 
 			$checkresult[$block->id] = $checksignature; // false if error
 			$checkdetail[$block->id] = $tmpcheckresult;
+			if (!empty($tmpcheckresult['error'])) {
+				$checkerror[$block->id] = $tmpcheckresult['error'];
+			}
 
 			if (!$checksignature) {
 				if (empty($loweridinerror)) {
@@ -584,9 +588,16 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidityButChainIsKo').'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">OK</span>';
+				} elseif ($block->action == 'MODULE_RESET') {
+					// Old action code on old version.
+					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
 				} else {
-					print '<span class="badge badge-status8 badge-status" title="'.$langs->trans('KoCheckFingerprintValidity').'">KO</span>';
+					print '<span class="badge badge-status8 badge-status" title="';
+					if (!empty($checkerror[$block->id])) {
+						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
+					}
+					print dolPrintHTMLForAttribute($langs->trans('KoCheckFingerprintValidity')).'">KO</span>';
 				}
 			} else {
 				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
@@ -600,12 +611,6 @@ if (is_array($blocks)) {
 					}
 				}
 			}
-
-			/*
-			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
-				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
-			}
-			*/
 			print '</td>';
 
 			// Link to debug information object
