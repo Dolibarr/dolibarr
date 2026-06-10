@@ -414,7 +414,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::create error -1 message too long', LOG_ERR);
 				$result = -1;
 			}
@@ -1049,7 +1051,9 @@ class Ticket extends CommonObject
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
 			if (dol_strlen($this->message) > 65000) {
-				$this->errors[] = 'ErrorFieldTooLong';
+				global $langs;
+				$langs->loadLangs(array('errors', 'ticket'));
+				$this->errors[] = $langs->trans('ErrorFieldTooLong', $langs->transnoentitiesnoconv('InitialMessage'));
 				dol_syslog(get_class($this).'::update error -1 message too long', LOG_ERR);
 				return -1;
 			}
@@ -1279,6 +1283,19 @@ class Ticket extends CommonObject
 		$object->ref = $object->getDefaultRef();
 		$object->track_id = generate_random_id(16);
 		$object->progress = 0;
+		// Reset lifecycle timestamps so the clone starts fresh: datec is filled by
+		// create() with dol_now() when empty, date_read and date_close stay null
+		// because the new ticket has not been read or closed yet (see issue #38559).
+		// Reset lifecycle timestamps and resolution so the clone starts fresh.
+		// datec stays at 0 so Ticket::create()'s `if (empty($this->datec))` guard
+		// fills it with dol_now(). date_read / date_close / resolution are unset
+		// so the SQL writers' `!isset` checks emit NULL. We use these forms
+		// rather than `= null` so phpstan stays happy with the int-typed
+		// property declarations.
+		$object->datec = 0;
+		unset($object->date_read);
+		unset($object->date_close);
+		unset($object->resolution);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -1513,7 +1530,9 @@ class Ticket extends CommonObject
 
 		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
 		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status])) ? $this->labelStatusShort[$status] : '';
+		$statusType = '';
 
+		$isUnknown = false;
 		switch ($status) {
 			case self::STATUS_NOT_READ:						// Not read
 				$statusType = 'status0';
@@ -1540,10 +1559,8 @@ class Ticket extends CommonObject
 				$statusType = 'status6';
 				break;
 			default:
-				$labelStatus = 'Unknown';
-				$labelStatusShort = 'Unknown';
-				$statusType = 'status0';
-				$mode = 0;
+				$isUnknown = true;
+				break;
 		}
 
 		$parameters = array(
@@ -1556,6 +1573,13 @@ class Ticket extends CommonObject
 
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
+		}
+
+		if ($isUnknown) {
+			$labelStatus = 'Unknown';
+			$labelStatusShort = 'Unknown';
+			$statusType = 'status0';
+			$mode = 0;
 		}
 
 		$params = array();
@@ -3222,7 +3246,7 @@ class Ticket extends CommonObject
 	 */
 	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '', $replyto = '')
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 			dol_syslog(get_class($this).'::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
@@ -3253,6 +3277,13 @@ class Ticket extends CommonObject
 
 		if (empty($from)) {
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		}
+
+		$parameters = array('from' => $from);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('getTicketMessageEmailFrom', $parameters, $this, $action);
+		if ($reshook && !empty($hookmanager->resArray['from'])) {
+			$from = $hookmanager->resArray['from'];
 		}
 
 		$is_sent = false;
