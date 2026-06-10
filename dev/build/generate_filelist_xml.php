@@ -109,7 +109,7 @@ $result = array();
 while ($i < $argc) {
 	if (!empty($argv[$i])) {
 		parse_str($argv[$i], $result);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
-		/** @var array<int,array{release:?string,checklock:?string,includecustom:?string,buildzip:?string}> $result */
+		/** @var array<int,array{release:?string,checklock:?string,includecustom:?string,includeconstant:?string,buildzip:?string}> $result */
 	}
 	if (!empty($result["release"])) {
 		$release = $result["release"];
