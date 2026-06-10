@@ -78,7 +78,7 @@ if (!isModEnabled('opensurvey')) {
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
-$listofvoters = explode(',', $_SESSION["savevoter"]);
+$listofvoters = explode(',', $_SESSION["savevoter"] ?? '');
 
 $error = 0;
 

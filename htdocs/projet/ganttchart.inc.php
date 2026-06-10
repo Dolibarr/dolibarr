@@ -40,6 +40,7 @@
 ';
 ?>
 
+<!-- ganttchart.inc.php::begin -->
 <div id="principal_content" style="margin-left: 0;">
 	<div style="margin-left: 0; position: relative;" class="gantt" id="GanttChartDIV"></div>
 
@@ -173,6 +174,7 @@ else
 }
 </script>
 </div>
+<!-- ganttchart.inc.php::end -->
 
 
 
@@ -189,8 +191,11 @@ else
  */
 function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $project_id = null)
 {
-	global $langs;
+	global $langs, $db;
 	global $dateformatinput2;
+	$projectstatic = new Project($db);
+	$taskstatic = new Task($db);
+
 
 	$start_date = $task["task_start_date"];
 	$end_date = $task["task_end_date"];
@@ -222,21 +227,29 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	}
 	// Define percent
 	$percent = empty($task['task_percent_complete']) ? 0 : $task['task_percent_complete'];
-	// Link (more information)
+
+	// Link and name (more information)
 	if ($task["task_id"] < 0) {
-		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
-		$link = '';
+		$link=DOL_URL_ROOT.'/projet/card.php?id='.abs($task["task_id"]);
+		$fetchresult = $projectstatic->fetch(abs($task["task_id"]));
+		if ($fetchresult > 0) {
+			$tmpname = $projectstatic->getNomUrl(0, 'withproject', 1);
+			$name = '<span style="font-size: 1.2em; font-weight: bold;">' . $tmpname . '</span>';
+		} else {
+			$name = $task['task_name'];
+		}
+		//$name = $task['task_name'];
 	} else {
 		$link = DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
+		$fetchresult = $taskstatic->fetch($task["task_id"]);
+		if ($fetchresult > 0) {
+			$name = $taskstatic->getNomUrl(0, 'withproject', 'task', 1);
+		} else {
+			$name = $task['task_name'];
+		}
+		//$name = $task['task_name'];
 	}
 
-	// Name
-	//$name='<a href="'.DOL_URL_ROOT.'/projet/task/tasks.php?id='.$task['task_id'].'">'.$task['task_name'].'</a>';
-	$name = $task['task_name'];
-
-	/*for($i=0; $i < $level; $i++) {
-		$name=' - '.$name;
-	}*/
 	// Add line to gantt
 	/*
 	g.AddTaskItem(new JSGantt.TaskItem(1, 'Define Chart API','',          '',          'ggroupblack','', 0, 'Brian', 0,  1,0,1,'','','Some Notes text',g));

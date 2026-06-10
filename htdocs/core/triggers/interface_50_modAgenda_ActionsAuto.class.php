@@ -1621,7 +1621,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
-		$actioncomm->percentage  = -1; // Not applicable
+		$actioncomm->percentage  = ($actioncomm->type_code === 'AC_EMAIL') ? 100 : -1; // 100 = Done for sent emails, -1 = Not applicable otherwise
 		$actioncomm->socid       = $societeforactionid;
 		$actioncomm->contact_id  = $contactforactionid; // deprecated, now managed by setting $actioncomm->socpeopleassigned later
 		$actioncomm->authorid    = $user->id; // User saving action

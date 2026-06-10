@@ -990,6 +990,9 @@ input.pageplusone {
 .anchorundermenu {
 	scroll-margin-top: 80px;
 }
+.banner-object-label {
+	opacity: 0.8;
+}
 
 select:invalid, select.--error {
 	color: gray;
@@ -1238,6 +1241,9 @@ textarea.centpercent {
 }
 .small, small {
 	font-size: 85%;
+}
+.smallimp {
+	font-size: 85% !important;
 }
 .select2-results__option .smallincombo {
 	font-size: 95%;
@@ -6048,7 +6054,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 /* Formulaire confirmation (When HTML is used)                                    */
 /* ============================================================================== */
 
-table.valid {
+table.valid, div.valid {
 	/* border-top: solid 1px #E6E6E6; */
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 	/* border-<?php print $right; ?>: solid 1px #444444;
@@ -6462,7 +6468,7 @@ td.small.cal_event {
 }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;
@@ -6885,6 +6891,9 @@ div.cke_notifications_area .cke_notification_warning {
 /*  TinyMCE                                                                       */
 /* ============================================================================== */
 
+td.linecoldescription .tox.tox-tinymce {
+	margin-top: 8px;
+}
 .tox .tox-edit-area::before {
 	border: none !important;
 }

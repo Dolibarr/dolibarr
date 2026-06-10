@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019		Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOSTINT('id'); // For this page, id can also be 'all'
 $ref	= GETPOST('ref', 'alpha');
-$mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
+$mode = (GETPOST('mode', 'alpha') ? (string) GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOSTINT('search_year');
 $search_categ  = GETPOSTINT('search_categ');
 $notab = GETPOSTINT('notab');
@@ -275,8 +275,10 @@ if ($result || !($id > 0)) {
 	// Year
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
 	$arrayyears = array();
-	for ($year = $currentyear - 25; $year < $currentyear; $year++) {
+	$year = $currentyear - 25;
+	while ($year < $currentyear) {
 		$arrayyears[$year] = (string) $year;
+		$year++;
 	}
 	if (!in_array($year, $arrayyears)) {
 		$arrayyears[$year] = (string) $year;
@@ -289,7 +291,7 @@ if ($result || !($id > 0)) {
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
 
-	// Third party
+	// Thirdparty
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
@@ -452,7 +454,7 @@ if ($result || !($id > 0)) {
 		$mesg = $px->isGraphKo();
 		if (!$mesg) {
 			foreach ($graphfiles as $key => $val) {
-				if (!$val['file']) {
+				if (!$val['file']) {  // @phpstan-ignore-line booleanNot.alwaysFalse
 					continue;
 				}
 
@@ -530,26 +532,26 @@ if ($result || !($id > 0)) {
 	$i = 0;
 	if (count($graphfiles) > 0) {
 		foreach ($graphfiles as $key => $val) {
-			if (!$graphfiles[$key]['file']) {
+			if (!$graphfiles[$key]['file']) {  // @phpstan-ignore-line booleanNot.alwaysFalse
 				continue;
 			}
 
 			if ($key == 'propal' && !$user->hasRight('propal', 'lire')) {
 				continue;
 			}
-			if ($key == 'order' && !$user->hasRight('commande', 'lire')) {
+			if ($key == 'orders' && !$user->hasRight('commande', 'lire')) {
 				continue;
 			}
 			if ($key == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
-			if ($key == 'proposals_suppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
+			if ($key == 'proposalssuppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
 				continue;
 			}
-			if ($key == 'invoices_suppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
+			if ($key == 'invoicessuppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 				continue;
 			}
-			if ($key == 'orders_suppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
+			if ($key == 'orderssuppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
 				continue;
 			}
 			if ($key == 'mrp' && !$user->hasRight('mrp', 'read')) {

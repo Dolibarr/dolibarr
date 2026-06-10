@@ -87,4 +87,23 @@ abstract class McpTool
 	{
 		return ['global']; // Default
 	}
+
+	/**
+	 * Return true if this is a system/infrastructure tool that must always
+	 * remain visible and executable regardless of the admin allow-list.
+	 *
+	 * The default is false. Override and return true in any tool class that
+	 * provides core assistant communication functions (clarification,
+	 * confirmation, responses, etc.).
+	 *
+	 * McpHandler calls this method at runtime — no tool names are hardcoded
+	 * anywhere. Adding a new system tool class in the future requires only
+	 * overriding this method in that class; no changes to McpHandler are needed.
+	 *
+	 * @return bool
+	 */
+	public function isSystem()
+	{
+		return false;
+	}
 }

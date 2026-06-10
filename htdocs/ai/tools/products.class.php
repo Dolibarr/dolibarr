@@ -38,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  */
 class ToolProducts extends McpTool
 {
-
 	/**
 	 * 	Constructor
 	 *
@@ -378,6 +377,15 @@ class ToolProducts extends McpTool
 		// Clamp limit between 1 and 100, default 10
 		$limit = isset($args['limit']) ? max(1, min(100, (int) $args['limit'])) : 10;
 		$offset = isset($args['offset']) ? max(0, (int) $args['offset']) : 0;
+
+		// Safety fallback
+		if ($limit <= 0) {
+			$limit = 5;
+		}
+		if ($limit > 1000) {
+			dol_syslog("Search DB Error: Too many record requested", LOG_ERR);
+			return ["error" => "DB Error"];
+		}
 
 		// Build SQL
 		$sql = "SELECT p.rowid, p.ref, p.label, p.price, p.stock, p.seuil_stock_alerte, p.desiredstock, p.fk_product_type";
