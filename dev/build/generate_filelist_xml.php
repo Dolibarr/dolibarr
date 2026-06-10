@@ -227,6 +227,7 @@ if ($release) {
 }
 if ($checklock) {
 	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
+	print "Version of running Dolibarr         : ".DOL_VERSION."\n";
 	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";		// For example 2.0.0
 	print "Scope name to check                 : ".$checksource."\n";				// For example unalterable_files
 }

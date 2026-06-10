@@ -942,12 +942,19 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// We discard showing according to filters
 		if ($search_keyword) {
 			$qualified = 0;
-			if (preg_match('/'.preg_quote($search_keyword, '/').'/i', $modulename)
-				|| preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduletechnicalname)
-				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
-				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
-				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
-			) {
+			$search_keyword_array = explode(' ', $search_keyword);
+			$foundkeyword = 1;
+			foreach ($search_keyword_array as $word) {
+				if (!preg_match('/'.preg_quote($word, '/').'/i', $modulename)
+					&& !preg_match('/'.preg_quote($word, '/').'/i', $moduletechnicalname)
+					&& !($moduledesc && preg_match('/'.preg_quote($word, '/').'/i', $moduledesc))
+					&& !($moduledesclong && preg_match('/'.preg_quote($word, '/').'/i', $moduledesclong))
+					&& !($moduleauthor && preg_match('/'.preg_quote($word, '/').'/i', $moduleauthor))
+				) {
+					$foundkeyword = 0;
+				}
+			}
+			if ($foundkeyword) {
 				$qualified = 1;
 			}
 			if (!$qualified) {

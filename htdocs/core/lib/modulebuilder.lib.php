@@ -1465,3 +1465,85 @@ function countItemsInDirectory($path, $type = 1)
 	}
 	return $count;
 }
+
+/**
+ * Return the map of optional tabs that can be generated for a ModuleBuilder object.
+ * The CARD tab is always generated and is therefore not listed here.
+ * HISTORY is an alias of AGENDA (object event history is the agenda tab in Dolibarr).
+ *
+ * @return	array<string,array{file:string,var:string,marker:string,label:string}>	Map: tab key => metadata
+ */
+function getModuleBuilderObjectTabs()
+{
+	return array(
+		'contact'  => array('file' => 'myobject_contact.php',  'var' => 'showtabofpagecontact',  'marker' => 'CONTACT',  'label' => 'Contacts'),
+		'note'     => array('file' => 'myobject_note.php',      'var' => 'showtabofpagenote',     'marker' => 'NOTE',     'label' => 'Notes'),
+		'document' => array('file' => 'myobject_document.php',  'var' => 'showtabofpagedocument', 'marker' => 'DOCUMENT', 'label' => 'Documents'),
+		'agenda'   => array('file' => 'myobject_agenda.php',    'var' => 'showtabofpageagenda',   'marker' => 'AGENDA',   'label' => 'Events'),
+	);
+}
+
+/**
+ * Filter a list of requested tab keys against the known optional tabs map.
+ * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ *
+ * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
+ * @return	string[]	Sanitized list of valid tab keys, in map order
+ */
+function filterEnabledTabs($requested, $map)
+{
+	$valid = array();
+	if (!is_array($requested) || empty($requested)) {
+		return $valid;
+	}
+	foreach (array_keys($map) as $tabkey) {
+		if (in_array($tabkey, $requested, true)) {
+			$valid[] = $tabkey;
+		}
+	}
+	return $valid;
+}
+
+/**
+ * Apply substitutions to a module descriptor file while preserving the MODULEBUILDER comment markers.
+ * Markers such as "BEGIN MODULEBUILDER LEFTMENU MYOBJECT" must keep their MYOBJECT/MYMODULE placeholder
+ * so that generating subsequent objects can still locate them (see checkExistComment()). A blanket
+ * substitution would rewrite them to the first object name and break the generation of further objects.
+ *
+ * @param	string					$file				Path to the module descriptor file
+ * @param	array<string,string>	$arrayreplacement	Substitution map (search => replace), applied as literal strings
+ * @return	int											1 on success, -1 on read/write error
+ */
+function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($content === false) {
+		return -1;
+	}
+
+	// Hide every "/* BEGIN|END MODULEBUILDER ... */" marker behind a sentinel before substituting
+	$foundmarkers = array();
+	preg_match_all('/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//', $content, $foundmarkers);
+	$sentinels = array();
+	foreach (array_values(array_unique($foundmarkers[0])) as $index => $marker) {
+		$key = "\0MODULEBUILDERMARKER".$index."\0";
+		$sentinels[$key] = $marker;
+		$content = str_replace($marker, $key, $content);
+	}
+
+	$content = str_replace(array_keys($arrayreplacement), array_values($arrayreplacement), $content);
+
+	// Restore the protected markers untouched
+	if (!empty($sentinels)) {
+		$content = strtr($content, $sentinels);
+	}
+
+	if (file_put_contents($file, $content) === false) {
+		return -1;
+	}
+	return 1;
+}
