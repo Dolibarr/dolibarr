@@ -66,7 +66,7 @@ $arrayofunalterablefiles = array(
 
 $includecustom = 0;
 $includeconstants = array();
-$buildzip = 0;
+$buildzip = '0';
 $release = '';
 $checklock = '';
 $checksource = '';
@@ -131,7 +131,7 @@ while ($i < $argc) {
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
 	}
 	if (!empty($result["buildzip"])) {
-		$buildzip = 1;
+		$buildzip = '1';
 	}
 	$i++;
 }
