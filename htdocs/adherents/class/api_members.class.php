@@ -614,6 +614,17 @@ class Members extends DolibarrApi
 			unset($object->total_ttc);
 		}
 
+		// Expose POST-friendly aliases on the Subscription GET response so the
+		// payload returned by GET /members/{id}/subscriptions matches the field
+		// names POST /members/{id}/subscriptions expects (see issue #38279).
+		// $dateh / $datef stay in the response for backward compatibility with
+		// existing consumers; date_start / date_end are the documented names
+		// used by the rest of the codebase (e.g. tasks, expenses, holidays).
+		if ($object instanceof Subscription) {
+			$object->date_start = $object->dateh;
+			$object->date_end = $object->datef;
+		}
+
 		return $object;
 	}
 
