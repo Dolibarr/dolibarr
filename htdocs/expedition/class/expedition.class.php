@@ -2112,21 +2112,52 @@ class Expedition extends CommonObject
 		// NOTE: This fetch_lines is special because it groups all lines with the same origin_line_id into one line.
 		// TODO: See if we can restore a common fetch_lines (one line = one record)
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
-		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
-		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end, cd.special_code";
+		$sql = "SELECT COALESCE(cd.rowid, pd.rowid, ed.rowid) as rowid";
+		$sql .= ", COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) as fk_product";
+		$sql .= ", COALESCE(cd.label, pd.label, '') as custom_label";
+		$sql .= ", COALESCE(cd.description, pd.description, ed.description) as description";
+		$sql .= ", CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.qty ELSE COALESCE(cd.qty, pd.qty, ed.qty) END as qty_asked";
+		$sql .= ", COALESCE(cd.product_type, pd.product_type, p.fk_product_type, 0) as product_type";
+		$sql .= ", COALESCE(cd.fk_unit, pd.fk_unit, ed.fk_unit) as fk_unit";
+		$sql .= ", COALESCE(cd.total_ht, pd.total_ht, 0) as total_ht";
+		$sql .= ", COALESCE(cd.total_localtax1, pd.total_localtax1, 0) as total_localtax1";
+		$sql .= ", COALESCE(cd.total_localtax2, pd.total_localtax2, 0) as total_localtax2";
+		$sql .= ", COALESCE(cd.total_ttc, pd.total_ttc, 0) as total_ttc";
+		$sql .= ", COALESCE(cd.total_tva, pd.total_tva, 0) as total_tva";
+		$sql .= ", COALESCE(cd.fk_remise_except, pd.fk_remise_except, NULL) as fk_remise_except";
+		$sql .= ", COALESCE(cd.fk_product_fournisseur_price, pd.fk_product_fournisseur_price, NULL) as fk_fournprice";
+		$sql .= ", COALESCE(cd.vat_src_code, pd.vat_src_code, '') as vat_src_code";
+		$sql .= ", COALESCE(cd.tva_tx, pd.tva_tx, 0) as tva_tx";
+		$sql .= ", COALESCE(cd.localtax1_tx, pd.localtax1_tx, 0) as localtax1_tx";
+		$sql .= ", COALESCE(cd.localtax2_tx, pd.localtax2_tx, 0) as localtax2_tx";
+		$sql .= ", COALESCE(cd.localtax1_type, pd.localtax1_type, '') as localtax1_type";
+		$sql .= ", COALESCE(cd.localtax2_type, pd.localtax2_type, '') as localtax2_type";
+		$sql .= ", COALESCE(cd.info_bits, pd.info_bits, 0) as info_bits";
+		$sql .= ", COALESCE(cd.price, pd.price, 0) as price";
+		$sql .= ", COALESCE(cd.subprice, pd.subprice, 0) as subprice";
+		$sql .= ", COALESCE(cd.remise_percent, pd.remise_percent, 0) as remise_percent";
+		$sql .= ", COALESCE(cd.buy_price_ht, pd.buy_price_ht, 0) as pa_ht";
+		$sql .= ", COALESCE(cd.fk_multicurrency, pd.fk_multicurrency, 0) as fk_multicurrency";
+		$sql .= ", COALESCE(cd.multicurrency_code, pd.multicurrency_code, '') as multicurrency_code";
+		$sql .= ", COALESCE(cd.multicurrency_subprice, pd.multicurrency_subprice, 0) as multicurrency_subprice";
+		$sql .= ", COALESCE(cd.multicurrency_total_ht, pd.multicurrency_total_ht, 0) as multicurrency_total_ht";
+		$sql .= ", COALESCE(cd.multicurrency_total_tva, pd.multicurrency_total_tva, 0) as multicurrency_total_tva";
+		$sql .= ", COALESCE(cd.multicurrency_total_ttc, pd.multicurrency_total_ttc, 0) as multicurrency_total_ttc";
+		$sql .= ", COALESCE(cd.rang, pd.rang, ed.rang, ed.rowid) as rang";
+		$sql .= ", COALESCE(cd.date_start, pd.date_start) as date_start";
+		$sql .= ", COALESCE(cd.date_end, pd.date_end) as date_end";
+		$sql .= ", COALESCE(cd.special_code, pd.special_code, 0) as special_code";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot, ed.extraparams";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
 		$sql .= ", p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy";
 		$sql .= ", p.tobatch as product_tobatch, p.stockable_product";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON ed.fk_elementdet = cd.rowid AND ed.element_type IN ('commande', 'order')";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."propaldet as pd ON ed.fk_elementdet = pd.rowid AND ed.element_type = 'propal'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = COALESCE(cd.fk_product, pd.fk_product, ed.fk_product)";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-		$sql .= " AND ed.fk_elementdet = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
+		$sql .= " ORDER BY COALESCE(cd.rang, pd.rang, ed.rang, ed.rowid), CASE WHEN ed.fk_elementdet IS NULL OR ed.fk_elementdet = 0 THEN ed.rowid ELSE ed.fk_elementdet END, ed.rowid";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2137,7 +2168,7 @@ class Expedition extends CommonObject
 			$i = 0;
 			$line = new ExpeditionLigne($this->db);
 			$lineindex = 0;
-			$originline = 0;
+			$originline = '';
 
 			$this->total_ht = 0;
 			$this->total_tva = 0;
@@ -2155,7 +2186,8 @@ class Expedition extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				if ($originline > 0 && $originline == $obj->fk_elementdet) {
+				$currentlinekey = (!empty($obj->fk_elementdet) ? $obj->element_type.'#'.$obj->fk_elementdet : 'shipping#'.$obj->line_id);
+				if ($originline !== '' && $originline === $currentlinekey) {
 					// '@phan-var-force ExpeditionLigne $line'; // $line from previous loop
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
@@ -2268,7 +2300,7 @@ class Expedition extends CommonObject
 				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
-				if ($originline != $obj->fk_elementdet) {
+				if ($originline !== $currentlinekey) {
 					$line->detail_batch = array();
 				}
 
@@ -2277,7 +2309,7 @@ class Expedition extends CommonObject
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
-						if ($originline != $obj->fk_elementdet) {
+						if ($originline !== $currentlinekey) {
 							$line->detail_batch = $newdetailbatch;
 						} else {
 							$line->detail_batch = array_merge($line->detail_batch, $newdetailbatch);
@@ -2314,7 +2346,7 @@ class Expedition extends CommonObject
 
 				$line->fetch_optionals();
 
-				if ($originline != $obj->fk_elementdet) {
+				if ($originline !== $currentlinekey) {
 					$this->lines[$lineindex] = $line;
 					$lineindex++;
 				} else {
@@ -2326,7 +2358,7 @@ class Expedition extends CommonObject
 				}
 
 				$i++;
-				$originline = $obj->fk_elementdet;
+				$originline = $currentlinekey;
 			}
 			$this->db->free($resql);
 			return 1;

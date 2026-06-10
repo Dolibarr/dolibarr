@@ -3243,6 +3243,11 @@ if ($action == 'create' && $usercancreate) {
 			$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
 			$sql .= " AND obj.fk_" . $origin . " = " . ((int) $origin_id);
 			$sql .= " AND obj.rowid = ed.fk_elementdet";
+			if ($origin == 'commande') {
+				$sql .= " AND ed.element_type IN ('commande', 'order')";
+			} else {
+				$sql .= " AND ed.element_type = '" . $db->escape($origin) . "'";
+			}
 			$sql .= " AND ed.fk_expedition = e.rowid";
 			//if ($filter) $sql.= $filter;
 			$sql .= " ORDER BY obj.fk_product";
