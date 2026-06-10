@@ -75,7 +75,7 @@ class McpHandler
 	 * @param User      $user    User object
 	 * @param Conf|null $conf    Configuration object. Falls back to global $conf when null.
 	 * @param string    $toolcontext Pass McpHandler::CTX_ASSISTANT or McpHandler::CTX_MCP_SERVER.
-	 *                       Defaults to CTX_ASSISTANT when empty.
+	 *                               Defaults to CTX_ASSISTANT when empty.
 	 */
 	public function __construct($db, $user, $conf = null, $toolcontext = '')
 	{
