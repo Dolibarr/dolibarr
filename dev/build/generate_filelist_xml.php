@@ -496,7 +496,7 @@ if ($release) {
 			}
 		} elseif ($buildzip === '2' || $buildzip === 'gz') {
 			$outputfile = $inputfile.'.gz';
-			$result = dol_compress_file($outputfile, $outputfile, 'gz');
+			$result = dol_compress_file($inputfile, $outputfile, 'gz');
 			if ($result > 0) {
 				dol_delete_file($outputfile);
 				print "File ".$outputfile." generated.\n";
