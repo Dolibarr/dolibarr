@@ -3867,9 +3867,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 /**
  * Store object in file.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @param mixed $object Object to store in cachefile
+ * @param string 	$directory 	Directory of cache
+ * @param string 	$filename 	Name of filecache
+ * @param string 	$object 	String to store in cachefile
  * @return void
  */
 function dol_filecache($directory, $filename, $object)
@@ -3882,7 +3882,7 @@ function dol_filecache($directory, $filename, $object)
 	}
 	$cachefile = $directory.$filename;
 
-	file_put_contents($cachefile, serialize($object), LOCK_EX);
+	file_put_contents($cachefile, json_encode($object), LOCK_EX);
 	dolChmod($cachefile);
 }
 
@@ -3905,14 +3905,14 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string 	$directory 		Directory of cache
- * @param string 	$filename 		Name of filecache
- * @return mixed 					Unserialise from file
+ * @param 	string 	$directory 		Directory of cache
+ * @param 	string 	$filename 		Name of filecache
+ * @return 	string 					Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
-	$object = unserialize(file_get_contents($cachefile));
+	$object = json_decode(file_get_contents($cachefile));
 	return $object;
 }
 
