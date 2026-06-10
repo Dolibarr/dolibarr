@@ -41,14 +41,17 @@ jobs:
             const isProfane = profanityList.some(word => new RegExp(`\\b${word}\\b`, 'i').test(comment))
             const isOffTopic = offTopicKeywords.some(kw => comment.toLowerCase().includes(kw.toLowerCase()))
 
-            let isEnglish = true
-            try {
-              const franc = require('franc')
-              const lang = franc(comment)
-              isEnglish = lang && lang.startsWith('eng')
-            } catch (e) {
-              console.log('Language detection failed:', e)
+            async function isEnglishFunc(text) {
+              try {
+                const { franc } = await import('franc');
+                const lang = franc(text);
+                return lang.startsWith('eng') || lang.startsWith('sco');
+              } catch (e) {
+                console.log('Language detection failed:', e)
+                return true;
+              }
             }
+            let isEnglish = await isEnglishFunc(comment)
 
             if ((isForbidden || isProfane || isOffTopic || !isEnglish) && !isOwner) {
               try {
