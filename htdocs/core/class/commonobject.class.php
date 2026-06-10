@@ -7646,11 +7646,6 @@ abstract class CommonObject
 					break;
 			}
 
-			$geoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
-			if ($geoDataType) {
-				$new_array_options["options_".$key] = $geoDataType['ST_Function']."('".$this->db->escape($this->array_options["options_".$key])."')";
-			}
-
 			$this->db->begin();
 
 			$linealreadyfound = 0;
@@ -7672,14 +7667,14 @@ abstract class CommonObject
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
+				$geoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 				if ($this->array_options["options_".$key] === null) {
-					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
-				} elseif ($geoDataType) {
-					// No quote or escape, geo input value is already escaped and enclosed in a sql function
-					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = ".$new_array_options["options_".$key];
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = null";
+				} elseif (!empty($geoDataType['ST_Function'])) {
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = ".$geoDataType['ST_Function']."('".$this->db->escape($this->array_options["options_".$key])."')";
 				} else {
 					// TODO What about if field is type int or float ($attributeType = price, int, ...) ?
-					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields SET ".$this->db->sanitize($key)." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
 
