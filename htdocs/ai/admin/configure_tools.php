@@ -187,29 +187,32 @@ print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 print '<span class="opacitymedium">' . $langs->trans("ToolAccessControlHelp") . '</span><br><br>';
 
 print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px; border-top:1px solid #ddd;">';
+
+// Presets For Chat Assistant
 print '<div>';
 print '<strong>' . $langs->trans('PresetsForChatAssistant') . ':</strong><br>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=ast&mode=all&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=ast&mode=readonly&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('ReadOnly') . '</a>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=ast&mode=none&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'all'), 1) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'readonly'), 1) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'none'), 1) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
 print '</div>';
 
+// Presets For MCP Server
 print '<div>';
 print '<strong>' . $langs->trans('PresetsForMcpServer') . ':</strong><br>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=mcp&mode=all&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=mcp&mode=readonly&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('ReadOnly') . '</a>';
-print '<a class="button" href="' . $_SERVER['PHP_SELF'] . '?action=apply_preset&toolcontext=mcp&mode=none&token=' . newToken() . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'all'), 1) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'readonly'), 1) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'none'), 1) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
 print '</div>';
 
 print '</div>';
-print '</div>';
+
 
 // Tools table
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="toolsTable">';
 print '<tr class="liste_titre">';
 print '<td class="tdoverflowmax200" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
-print '<td class="center" style="min-width: 60px;">' . $langs->trans('Type') . '</td>';
+print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="hideonsmartphone">' . $langs->trans('ToolDescription') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('ChatAssistant') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('McpServer') . '</td>';
@@ -240,10 +243,10 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 
 			if (preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name)) {
 				$type      = 'write';
-				$typeBadge = '<span class="badge badge-status8" style="display: inline-block;">' . $langs->trans('Write') . '</span>';
+				$typeBadge = '<span class="badge badge-status8" style="display: inline-block;">' . $langs->trans('Modify') . '</span>';
 			} else {
 				$type      = 'read';
-				$typeBadge = '<span class="badge badge-status4" style="display: inline-block;">' . $langs->trans('Read') . '</span>';
+				$typeBadge = '<span class="badge badge-status4" style="display: inline-block;">' . $langs->trans('ViewOnly') . '</span>';
 			}
 
 			print '<tr class="oddeven group-' . $groupId . '" data-tool-name="' . dol_escape_htmltag($name) . '" data-tool-type="' . $type . '">';
