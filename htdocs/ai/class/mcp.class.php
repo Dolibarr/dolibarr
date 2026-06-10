@@ -75,7 +75,7 @@ class McpHandler
 	 * @param User      $user    User object
 	 * @param Conf|null $conf    Configuration object. Falls back to global $conf when null.
 	 * @param string    $toolcontext Pass McpHandler::CTX_ASSISTANT or McpHandler::CTX_MCP_SERVER.
-	 *                           Defaults to CTX_ASSISTANT when empty.
+	 *                       Defaults to CTX_ASSISTANT when empty.
 	 */
 	public function __construct($db, $user, $conf = null, $toolcontext = '')
 	{
@@ -99,7 +99,7 @@ class McpHandler
 	 * names are hardcoded here. Any tool class that overrides isSystem() returning
 	 * true is treated as a system tool automatically.
 	 *
-	 * @param McpTool $toolInstance
+	 * @param McpTool $toolInstance The tool instance to evaluate.
 	 * @return bool
 	 */
 	private function isSystemTool($toolInstance)
@@ -464,8 +464,7 @@ class McpHandler
 
 			if (!empty($allowed) && !in_array($toolName, $allowed, true)) {
 				dol_syslog(
-					"[McpHandler] Blocked execution of tool '" . $toolName . "'"
-					. " in tool context '" . $this->toolcontext . "' (not in allow-list).",
+					"[McpHandler] Blocked execution of tool '$toolName' in tool context '{$this->toolcontext}' (not in allow-list).",
 					LOG_WARNING
 				);
 				return array('error' => "Tool '" . $toolName . "' is not available in this tool context.");
