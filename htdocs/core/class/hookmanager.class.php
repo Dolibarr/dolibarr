@@ -361,7 +361,7 @@ class HookManager
 							}
 						}
 					} else {
-						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+						// Generic old hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 
 						// TODO. this test should be done in the hook method by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset,PhanUndeclaredProperty
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && (property_exists($actionclassinstance, 'module_number') && ($parameters['special_code'] != $actionclassinstance->module_number))) {

@@ -289,9 +289,8 @@ insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (2
 
 -- ROMANIA (id country=188)
 insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,   '0','0','VAT rate 0', 1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,   '9','0','VAT rate - reduced',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,  '19','0','VAT rate - standard',1,__ENTITY__);
-insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,   '5','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,  '11','0','VAT rate - reduced',1,__ENTITY__);
+insert into llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) values (188,  '21','0','VAT rate - standard',1,__ENTITY__);
 
 -- SAUDI ARABIA (id country=26)
 INSERT INTO llx_c_tva(fk_pays,taux,recuperableonly,note,active,entity) VALUES (26,   '0', '0', 'VAT rate 0', 1,__ENTITY__);

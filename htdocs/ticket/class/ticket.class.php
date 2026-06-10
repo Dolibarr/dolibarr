@@ -262,7 +262,7 @@ class Ticket extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString('MY_SETUP_PARAM'))
@@ -1513,7 +1513,9 @@ class Ticket extends CommonObject
 
 		$labelStatus = (isset($status) && !empty($this->labelStatus[$status])) ? $this->labelStatus[$status] : '';
 		$labelStatusShort = (isset($status) && !empty($this->labelStatusShort[$status])) ? $this->labelStatusShort[$status] : '';
+		$statusType = '';
 
+		$isUnknown = false;
 		switch ($status) {
 			case self::STATUS_NOT_READ:						// Not read
 				$statusType = 'status0';
@@ -1540,10 +1542,8 @@ class Ticket extends CommonObject
 				$statusType = 'status6';
 				break;
 			default:
-				$labelStatus = 'Unknown';
-				$labelStatusShort = 'Unknown';
-				$statusType = 'status0';
-				$mode = 0;
+				$isUnknown = true;
+				break;
 		}
 
 		$parameters = array(
@@ -1556,6 +1556,13 @@ class Ticket extends CommonObject
 
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
+		}
+
+		if ($isUnknown) {
+			$labelStatus = 'Unknown';
+			$labelStatusShort = 'Unknown';
+			$statusType = 'status0';
+			$mode = 0;
 		}
 
 		$params = array();

@@ -149,6 +149,11 @@ class BlockedLog
 	public $ref_object = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code = '';
+
+	/**
 	 * @var ?stdClass
 	 */
 	public $object_data = null;
@@ -865,6 +870,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
+			$this->type_code = $this->object_data->type_code;
 			$this->linktype = $this->element;
 			$this->linktoref = '';
 
@@ -884,7 +890,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
-				$terminalofpayment = '';
+				$terminalofpayment = null;
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -926,19 +932,19 @@ class BlockedLog
 					// Set the ->module_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
-							$originofpayment = $tmpobject->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						} elseif ($originofpayment != $tmpobject->module_source) {
-							$originofpayment = 'mix';	// the payment is on several invoices with different origins
+							$originofpayment = 'mix';	// the payment is on several invoices with different origins of module
 						} else {
 							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 					// Set the ->pos_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'pos_source')) {
-						if (is_null($originofpayment)) {
-							$terminalofpayment = $tmpobject->pos_source;
-						} elseif ($originofpayment != $tmpobject->pos_source) {
-							$terminalofpayment = 'mix';	// the payment is on several invoices with different origins
+						if (is_null($terminalofpayment)) {
+							$terminalofpayment = (string) $tmpobject->pos_source;
+						} elseif ($terminalofpayment != $tmpobject->pos_source) {
+							$terminalofpayment = 'mix';	// the payment is on several invoices with same origin of module but different terminals
 						} else {
 							$terminalofpayment = (string) $tmpobject->pos_source;
 						}
@@ -1130,7 +1136,7 @@ class BlockedLog
 		}
 
 		$sql = "SELECT b.rowid, b.date_creation, b.action, b.module_source, b.pos_source, b.amounts_taxexcl, b.amounts, b.element, b.fk_object, b.entity,";
-		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
+		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.type_code, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
 			$sql .= " WHERE b.rowid = ".((int) $id);
@@ -1167,6 +1173,7 @@ class BlockedLog
 				//exit;
 
 				$this->ref_object = $obj->ref_object;
+				$this->type_code = $obj->type_code;
 				$this->linktoref = $obj->linktoref;
 				$this->linktype = $obj->linktype;
 
@@ -1304,7 +1311,7 @@ class BlockedLog
 		$this->object_version = DOL_VERSION;
 
 		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
-		$this->object_format = 'V1';	// TODO Switch to V2 for every version
+		$this->object_format = 'V2';	// TODO Switch to V2 for every version
 		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
 			$this->object_format = 'V2';
 		}
@@ -1360,6 +1367,7 @@ class BlockedLog
 		$sql .= " fk_object,";
 		$sql .= " date_object,";
 		$sql .= " ref_object,";
+		$sql .= " type_code,";
 		$sql .= " linktoref,";
 		$sql .= " linktype,";
 		$sql .= " object_data,";
@@ -1382,8 +1390,9 @@ class BlockedLog
 		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object, $tz)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
+		$sql .= "'".$this->db->escape($this->type_code)."',";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktoref)."'" : "null").",";
-		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktype)."'" : "null").",";
+		$sql .= ($this->linktype ? "'".$this->db->escape($this->linktype)."'" : "null").",";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "'".$this->db->escape($this->object_format)."',";
@@ -1519,7 +1528,11 @@ class BlockedLog
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($format == 'V2') {
 			$s = $this->entity;
-			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl;
+			$s .= '|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			if ($this->type_code) {
+				$s .= '|'.(string) $this->type_code;
+			}
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1683,9 +1696,10 @@ class BlockedLog
 	 *  @param	string			        $search_signature		Search signature
 	 *  @param	string			        $search_module_source	Search on module source
 	 *  @param	string			        $search_pos_source		Search on terminal
+	 *  @param	string					$search_type_code		Search on type code
 	 *	@return	BlockedLog[]|int<-2,-1>							Array of object log or <0 if error
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '', $search_type_code = '')
 	{
 		global $conf;
 		//global $cachedlogs;
@@ -1718,6 +1732,9 @@ class BlockedLog
 		}
 		if ($search_end > 0) {
 			$sql .= " AND date_creation <= '".$this->db->idate($search_end, 'gmt')."'";
+		}
+		if ($search_type_code) {
+			$sql .= natural_search("type_code", (string) $search_type_code);
 		}
 		if ($search_ref != '') {
 			$sql .= " AND (".natural_search("ref_object", $search_ref, 0, 1);
@@ -1784,12 +1801,18 @@ class BlockedLog
 				//if (!isset($cachedlogs[$obj->rowid]))
 				//{
 				$b = new BlockedLog($this->db);
-				$b->fetch($obj->rowid);
+				$result = $b->fetch($obj->rowid);
 				//$b->loadTrackedEvents();
 				//$cachedlogs[$obj->rowid] = $b;
 				//}
 
 				//$results[] = $cachedlogs[$obj->rowid];
+				if ($result < 0) {
+					$this->error = $b->error;
+					$this->errors = $b->errors;
+					return -1;
+				}
+
 				$results[] = $b;
 			}
 
@@ -1813,17 +1836,12 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			//$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 			$fingerprint = bin2hex(random_bytes(32)); // 64 char hex
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Initial signature fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
-
-		/*if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
-			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
-		}*/
 
 		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}
@@ -1849,14 +1867,13 @@ class BlockedLog
 	 */
 	public function canBeEnabled()
 	{
-		global $dolibarr_main_force_https;
-
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 
-		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && empty($dolibarr_main_force_https)) {
-			return 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
+		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && !isHTTPS()) {
+			return 'Error: The HTTPS must be enabled to allow the use of this module in France.';
 		}
 
 		return '';
@@ -1883,5 +1900,28 @@ class BlockedLog
 		}
 
 		return $canbedisabled;
+	}
+
+
+	/**
+	 * Return current number of records.
+	 *
+	 * @return  int		Number of recor for all instances
+	 */
+	public function countRecord()
+	{
+		$nb = 0;
+
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		} else {
+			dol_print_error($this->db);
+		}
+		$this->db->free($resql);
+
+		return $nb;
 	}
 }

@@ -341,7 +341,7 @@ class Propal extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -2767,10 +2767,16 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->status;	// deprecated
-				$this->status = $this->oldcopy->status;
-				$this->date_signature = $this->oldcopy->date_signature;
-				$this->note_private = $this->oldcopy->note_private;
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				if (!empty($this->oldcopy)) {
+					$this->statut = $this->oldcopy->status;	// deprecated
+					$this->status = $this->oldcopy->status;
+					$this->date_signature = $this->oldcopy->date_signature;
+					$this->note_private = $this->oldcopy->note_private;
+				}
 
 				$this->db->rollback();
 				return -1;

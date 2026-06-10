@@ -41,6 +41,12 @@
 @phan-var-force int $num
 ';
 
+global $inputalsopricewithtax;
+
+if (empty($inputalsopricewithtax)) {
+	$inputalsopricewithtax = 0;
+}
+
 echo "<!-- BEGIN PHP TEMPLATE subtotal_view.tpl.php -->\n";
 
 $langs->load('subtotals');
@@ -103,8 +109,11 @@ if ($line->qty > 0) { ?>
 		print '<td class="linecoluht_currency"></td>';
 	}
 	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
-	if (!getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') && $object->element != 'facturerec') {
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		print '<td class="linecoluttc"></td>';
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		print '<td class="linecoluttc_currency"></td>';
 	}
 
 	print '<td class="linecolqty"></td>';
@@ -170,7 +179,18 @@ if ($line->qty > 0) { ?>
 	<?php } ?>
 <?php } elseif ($line->qty < 0) {
 	// Base colspan if there is no module activated to display line correctly
-	$colspan = 3;
+	$colspan = 3;  // linecoldescription, linecolvat, linecoluht
+
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+		$colspan++;
+	}
+	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
 
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$colspan += 2;
@@ -190,16 +210,6 @@ if ($line->qty > 0) { ?>
 		if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
 			$colspan += 1;
 		}
-	}
-
-	// Handling colspan if multicurrency module is enabled
-	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
-		$colspan += 1;
-	}
-
-	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
-	if (!getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX') && $object->element != 'facturerec') {
-		$colspan += 1;
 	}
 
 	// Handling colspan if PRODUCT_USE_UNITS conf is enabled

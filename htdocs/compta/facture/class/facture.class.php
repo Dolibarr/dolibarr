@@ -296,7 +296,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
 	 *  'enabled' is a condition when the field must be managed.
@@ -376,7 +376,7 @@ class Facture extends CommonInvoice
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 310),
 		'module_source' => array('type' => 'varchar(32)', 'label' => 'POSModule', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 315),
 		'pos_source' => array('type' => 'varchar(32)', 'label' => 'POSTerminal', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 320),
-		'pos_print_counter' => array('type' => 'varchar(32)', 'label' => 'PrintCount', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => 0, 'position' => 325),
+		'pos_print_counter' => array('type' => 'integer', 'label' => 'PrintCount', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => 0, 'position' => 325),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 506),
@@ -1273,9 +1273,10 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param      User	$user        	User that clone
 	 *  @param  	int 	$fromid         Id of object to clone
+	 *  @param		int		$forceentity	Entity id to force (used by multicompany to clone into another entity)
 	 * 	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $fromid = 0)
+	public function createFromClone(User $user, $fromid = 0, $forceentity = null)
 	{
 		global $hookmanager;
 
@@ -1304,6 +1305,8 @@ class Facture extends CommonInvoice
 
 			// TODO Change product price if multi-prices
 		}
+
+		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 
 		$object->id = 0;
 		$object->statut = self::STATUS_DRAFT;
@@ -1808,6 +1811,10 @@ class Facture extends CommonInvoice
 		$amountdeposit = array();
 		$descriptions = array();
 
+		// Bucket lines by tva_tx + vat_src_code so addline below receives the rate in
+		// the "tva (CODE)" format that Facture::addline knows how to parse. Bucketing
+		// on tva_tx alone wipes out the dictionary Code on the generated deposit line
+		// and on every downstream document derived from it (see issue #38035).
 		if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
 
@@ -1816,7 +1823,7 @@ class Facture extends CommonInvoice
 				if (!empty($line->special_code)) {
 					continue;
 				}
-				$key = $line->tva_tx;
+				$key = $line->tva_tx . ($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
 				if (!array_key_exists($key, $TTotalByTva)) {
 					$TTotalByTva[$key] = 0;
 					$descriptions[$key] = '';
@@ -1829,10 +1836,11 @@ class Facture extends CommonInvoice
 			}
 
 			foreach ($TTotalByTva as $tva => &$total) {
+				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
 				$coef = $total / $origin->total_ttc; // Calc coef
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
-				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
 		} else {
 			$totalamount = 0;
@@ -1847,19 +1855,23 @@ class Facture extends CommonInvoice
 				}
 
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
-				$tva_tx = $lines[$i]->tva_tx;
-				$amountdeposit[$tva_tx] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
-				$descriptions[$tva_tx] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
-				$descriptions[$tva_tx] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
-				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
-				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
+				$tva_key = $lines[$i]->tva_tx . ($lines[$i]->vat_src_code ? ' ('.$lines[$i]->vat_src_code.')' : '');
+				if (!isset($amountdeposit[$tva_key])) {
+					$amountdeposit[$tva_key] = 0;
+					$descriptions[$tva_key] = '';
+				}
+				$amountdeposit[$tva_key] += ((float) $lines[$i]->total_ht * (float) $origin->deposit_percent) / 100;
+				$descriptions[$tva_key] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' : '');
+				$descriptions[$tva_key] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_key] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
+				$descriptions[$tva_key] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
 
 			if ($totalamount == 0) {
 				$amountdeposit[0] = 0;
 			}
 
-			$amount_ttc_diff = $amountdeposit[0];
+			$amount_ttc_diff = $amountdeposit[0] ?? 0;
 		}
 
 		foreach ($amountdeposit as $tva => $amount) {
@@ -1915,6 +1927,9 @@ class Facture extends CommonInvoice
 			$deposit->fetch_lines();
 			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
 
+			// Pass tva_tx in the "rate (CODE)" form so updateline preserves the vat_src_code
+			// it received from addline; passing the bare rate would wipe the code.
+			$tva_tx_with_code = $deposit->lines[0]->tva_tx . ($deposit->lines[0]->vat_src_code ? ' ('.$deposit->lines[0]->vat_src_code.')' : '');
 			$updatelineResult = $deposit->updateline(
 				$deposit->lines[0]->id,
 				$deposit->lines[0]->desc,
@@ -1923,7 +1938,7 @@ class Facture extends CommonInvoice
 				$deposit->lines[0]->remise_percent,
 				$deposit->lines[0]->date_start,
 				$deposit->lines[0]->date_end,
-				$deposit->lines[0]->tva_tx,
+				$tva_tx_with_code,
 				0,
 				0,
 				'HT',
@@ -2374,7 +2389,7 @@ class Facture extends CommonInvoice
 
 				$this->module_source = $obj->module_source;
 				$this->pos_source = $obj->pos_source;
-				$this->pos_print_counter = $obj->pos_print_counter;
+				$this->pos_print_counter = (int) $obj->pos_print_counter;
 				$this->email_sent_counter = $obj->email_sent_counter;
 
 				// Multicurrency
@@ -5063,9 +5078,9 @@ class Facture extends CommonInvoice
 
 			// Clean parameters (if not defined or using deprecated value)
 			if (!getDolGlobalString('FACTURE_ADDON')) {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
-			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {
-				$conf->global->FACTURE_ADDON = 'mod_facture_terre';
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
+			} elseif (getDolGlobalString('FACTURE_ADDON') == 'terre') {	// terre is deprecated
+				$conf->global->FACTURE_ADDON = 'mod_facture_mars';
 			} elseif (getDolGlobalString('FACTURE_ADDON') == 'mercure') {
 				$conf->global->FACTURE_ADDON = 'mod_facture_mercure';
 			}
