@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=A opção do fluxo de trabalho módulo para d
 NoWarehouseInBase=Nenhum armazém na base
 ShipmentUpdated=Expedição atualizado com sucesso
 ShipmentIncrementStockOnDelete = Aumentar o estoque na exclusão
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Distribuição
+DeliveryRef=Ref. de entrega
+DeliveryCard=Recibo de entrega
+DeliveryOrder=Recibo de entrega
+DeliveryDate=Data da entrega
+CreateDeliveryOrder=Gerar recibo de entrega
+DeliveryStateSaved=Estado da entrega guardado
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Definir data de envio
+ValidateDeliveryReceipt=Validar recibo de entrega
+ValidateDeliveryReceiptConfirm=Tem certeza que deseja validar este recibo de entrega?
+DeleteDeliveryReceipt=Eliminar recibo de entrega
+DeleteDeliveryReceiptConfirm=Tem a certeza que pretende eliminar este recibo de entrega <b>%s</b>?
+DeliveryMethod=Método de envio
+TrackingNumber=Nº de tracking
+DeliveryNotValidated=Entrega não validada
+StatusDeliveryCanceled=Cancelada
+StatusDeliveryDraft=Minuta
+StatusDeliveryValidated=Recebido
+NameAndSignature=Nome e assinatura:
+ToAndDate=Em___________________________________ a ____/_____/__________
+GoodStatusDeclaration=Recebi a mercadoria em bom estado,
+Deliverer=Distribuidor:
+Sender=Remetente
+Recipient=Destinatario
+ErrorStockIsNotEnough=Não existe stock suficiente
+Shippable= Transportável
+NonShippable=Não Transportável
+ShowShippableStatus=Mostrar estado de envio
+ShowReceiving=Mostrar recibo da entrega
+NonExistentOrder=Ordem inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantidades de stock já alocadas em linhas anteriores
 
 # Sending methods
 # ModelDocument

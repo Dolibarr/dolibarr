@@ -224,7 +224,7 @@ function displayBox($selectedDate, $month, $year)
 	</tr>
 	<tr class="dpDayNames">
 	<?php
-	$startday = isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1;
+	$startday = getDolGlobalInt('MAIN_START_WEEK', 1);
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for ($i = 0; $i < 7; $i++) {
 		echo '<td width="', (int) (($i + 1) * 100 / 7) - (int) ($i * 100 / 7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";

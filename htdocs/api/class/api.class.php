@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	    William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@
 
 use Luracast\Restler\Restler;
 use Luracast\Restler\Defaults;
+use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
 
 /**
  * Class for API REST v1
@@ -58,7 +60,20 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
+
 		$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
+
+		if ($production_mode) {
+			// Create the directory Defaults::$cacheDirectory if it does not exist. If dir does not exist, using production_mode generates an error 500.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (!dol_is_dir(Defaults::$cacheDirectory)) {
+				dol_mkdir(Defaults::$cacheDirectory, DOL_DATA_ROOT);
+			}
+			if (getDolGlobalString('MAIN_API_DEBUG')) {
+				dol_syslog("Debug API construct::cacheDirectory=".Defaults::$cacheDirectory, LOG_DEBUG, 0, '_api');
+			}
+		}
+
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -81,11 +96,34 @@ class DolibarrApi
 	 * @param	string|string[]	$value		Value to check/clean
 	 * @param	Object			$object		Object
 	 * @return 	string|array<string,mixed>	Value cleaned
+	 * @throws	RestException 400 Bad parameters
 	 */
 	protected function _checkValForAPI($field, $value, $object)
 	{
 		// phpcs:enable
 		if (!is_array($value)) {
+			// Make protected values for forbidden properties
+			/* Disabled. A protection exists to check that ->entity is same than the HTTP header DOLAPIENTITY
+			if (in_array($field, array('entity'))) {
+				throw new RestException(400, 'Parameter '.$field.' is not allowed in request. To work on a different entity, you must set the entity into the HTTP header "DOLAPIENTITY: idOfEntity"');
+			}*/
+			if (in_array($field, array(
+				'db', 'table_element', 'table_rowid', 'table_ref_field', 'table_element_line', 'element', 'fk_element', 'element_for_permission', 'class_element_line',
+				'fields', 'TRIGGER_PREFIX', 'picto',
+				'restrictiononfksoc', 'ismultientitymanaged', 'isextrafieldmanaged',
+				'module', 'error', 'errorhidden', 'errors', 'warning', 'warnings', 'validateFieldsErrors',
+				'oldcopy', 'oldref', 'newref', 'context',
+				'actionmsg', 'actionmsg2', 'thirdparty', 'user',
+				'tpl', 'extraparams',
+				'childtables', 'childtablesoncascade'
+			))) {
+				throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+			}
+			if (in_array($field, array('specimen'))) {
+				// Allowed but not used
+				dol_syslog('Debug API _checkValForAPI, found use of field specimen', LOG_DEBUG, 0, '_api');
+			}
+
 			// Sanitize the value using its type declared into ->fields of $object
 			if (!empty($object->fields) && !empty($object->fields[$field]) && !empty($object->fields[$field]['type'])) {
 				if (strpos($object->fields[$field]['type'], 'int') || strpos($object->fields[$field]['type'], 'double') || in_array($object->fields[$field]['type'], array('real', 'price', 'stock'))) {
@@ -96,28 +134,35 @@ class DolibarrApi
 				}
 				if ($object->fields[$field]['type'] == 'select') {
 					// Check values are in the list of possible 'options'
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'sellist' || $object->fields[$field]['type'] == 'checkbox') {
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'boolean' || $object->fields[$field]['type'] == 'radio') {
-					// TODO
+					return sanitizeVal($value, 'alphanohtml');
 				}
 				if ($object->fields[$field]['type'] == 'email') {
 					return sanitizeVal($value, 'email');
 				}
 				if ($object->fields[$field]['type'] == 'password') {
-					return sanitizeVal($value, 'none');
+					return sanitizeVal($value, 'password');
 				}
 				// Others will use 'alphanohtml'
 			}
 
+			// In case of a field with unknown type (legacy code), we use other tricks to guess a more accurate type
+
+			// We try to use its name to have a chance to sanitize it
+			if (preg_match('/^fk_/i', $field)) {
+				// We accept only integer
+				return sanitizeVal($value, 'int');
+			}
 			if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 				return sanitizeVal($value, 'restricthtml');
-			} else {
-				return sanitizeVal($value, 'alphanohtml');
 			}
+
+			return sanitizeVal($value, 'alphanohtml');
 		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
 			$newarrayvalue = array();
 			foreach ($value as $tmpkey => $tmpvalue) {
@@ -130,9 +175,69 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
+	 * Check and convert a string depending on its type/name.
+	 *
+	 * @param	string			$field		Field name
+	 * @param	string|string[]	$value		Value to check/clean
+	 * @param	Object			$object		Object
+	 * @return 	string|array<string,mixed>	Value cleaned
+	 */
+	protected function _checkValExtrafieldsForAPI($field, $value, $object)
+	{
+		global $extrafields;
+
+		// phpcs:enable
+		if (!is_array($value)) {
+			// Sanitize the value using its type declared into ->fields of $object
+			$typeOfExtraField = '';
+			if (!empty($extrafields->attributes) && !empty($extrafields->attributes[$object->table_element])
+				&& !empty($extrafields->attributes[$object->table_element]['type'])
+				&& !empty($extrafields->attributes[$object->table_element]['type'][$field])) {
+				$typeOfExtraField = $extrafields->attributes[$object->table_element]['type'][$field];
+			}
+
+			if ($typeOfExtraField) {
+				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
+					return sanitizeVal($value, 'int');
+				}
+				if ($object->array_options[$field]['type'] == 'html') {
+					return sanitizeVal($value, 'restricthtml');
+				}
+				if ($object->array_options[$field]['type'] == 'select') {
+					// TODO Check values are in the list of possible 'options'
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'sellist' || $typeOfExtraField == 'checkbox') {
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'boolean' || $typeOfExtraField == 'radio') {
+					return sanitizeVal($value, 'alphanohtml');
+				}
+				if ($typeOfExtraField == 'email') {
+					return sanitizeVal($value, 'email');
+				}
+				if ($typeOfExtraField == 'password') {
+					return sanitizeVal($value, 'password');
+				}
+				// Others will use 'alphanohtml'
+			}
+
+			return sanitizeVal($value, 'alphanohtml');
+		} else {	// Example when $field = 'extrafields' and $value = content of $object->array_options
+			$newarrayvalue = array();
+			foreach ($value as $tmpkey => $tmpvalue) {
+				$newarrayvalue[$tmpkey] = $this->_checkValExtrafieldsForAPI($tmpkey, $tmpvalue, $object);
+			}
+
+			return $newarrayvalue;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 * Filter properties that will be returned on object
 	 *
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object			Object to clean
 	 * @param   string  $properties		Comma separated list of properties names
@@ -183,7 +288,7 @@ class DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensitive object data
-	 * @phpstan-template T of Object
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
@@ -213,6 +318,9 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->warning);
+		unset($object->warnings);
+		unset($object->TRIGGER_PREFIX);
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
@@ -227,7 +335,6 @@ class DolibarrApi
 		unset($object->contact);			// We use contact_id now
 		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
-		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
 		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
@@ -240,7 +347,8 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
-		unset($object->model_pdf);
+		unset($object->fk_multicurrency);
+		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
 		unset($object->newref);
@@ -293,6 +401,7 @@ class DolibarrApi
 			unset($object->comments);
 		}
 
+		unset($object->module);
 		unset($object->origin_object);
 		unset($object->origin);
 		unset($object->element);
@@ -326,17 +435,22 @@ class DolibarrApi
 				unset($object->lines[$i]->country);
 				unset($object->lines[$i]->country_id);
 				unset($object->lines[$i]->country_code);
+				unset($object->lines[$i]->deposit_percent);
 				unset($object->lines[$i]->mode_reglement_id);
 				unset($object->lines[$i]->mode_reglement_code);
 				unset($object->lines[$i]->mode_reglement);
 				unset($object->lines[$i]->cond_reglement_id);
+				unset($object->lines[$i]->cond_reglement_supplier_id);
 				unset($object->lines[$i]->cond_reglement_code);
 				unset($object->lines[$i]->cond_reglement);
 				unset($object->lines[$i]->fk_delivery_address);
 				unset($object->lines[$i]->fk_projet);
 				unset($object->lines[$i]->fk_project);
+
 				unset($object->lines[$i]->thirdparty);
 				unset($object->lines[$i]->user);
+				unset($object->lines[$i]->product);
+
 				unset($object->lines[$i]->model_pdf);
 				unset($object->lines[$i]->note_public);
 				unset($object->lines[$i]->note_private);
@@ -368,13 +482,13 @@ class DolibarrApi
 	/**
 	 * Check access by user to a given resource
 	 *
-	 * @param string	$resource		element to check
-	 * @param int		$resource_id	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
-	 * @param string	$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
-	 * @param string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
-	 * @param string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
-	 * @param string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
-	 * @return bool
+	 * @param 	string				$resource		element to check
+	 * @param 	int|string|Object	$resource_id	Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+	 * @param 	string				$dbtablename	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity. Not used if objectid is null (optional)
+	 * @param 	string				$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+	 * @param 	string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+	 * @param 	string				$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+	 * @return 	bool
 	 */
 	protected static function _checkAccessToResource($resource, $resource_id = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
 	{
@@ -419,7 +533,7 @@ class DolibarrApi
 	 *
 	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
-	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
+	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:>:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)

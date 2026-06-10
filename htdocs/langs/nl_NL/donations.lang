@@ -57,3 +57,7 @@ donAnonymous=Anonieme donatie
 AnonymousDonationTooltip=Vink dit vakje aan als u wilt dat uw donatie anoniem blijft. Er wordt dan niet om uw persoonlijke gegevens gevraagd.
 publicDonationFieldHelp=%s kan mijn donatie publiceren in het openbare register
 listOfPublicDonations=Lijst met publieke donaties
+donationErrorMessageContactEmail=Er is een fout opgetreden. Om uw donatie te voltooien, kunt u contact met ons opnemen via %s
+descDonationLineInInvoice=Donatie en bijdrage
+companyBusinessNumber=Bedrijfsregistratienummer
+companyTIN=belasting Identificatienummer

@@ -1,25 +1,5 @@
 <?php
-/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2012-2013  Christophe Battarel <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2022  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
- * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
- * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
- * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
+/* Copyright (C) 2006-2026  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +17,7 @@
 
 
 /**
- *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
+ * Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  *
  * @phan-forbid-undeclared-magic-properties
  */
@@ -76,9 +56,9 @@ trait CommonTrigger
 	 * NB:  Error from trigger are stacked in interface->errors
 	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
 	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
-	 * @return  int                       Result of run_triggers
+	 * @param   string    $triggerName  Trigger's name to execute
+	 * @param   ?User     $user         Object user
+	 * @return  int                     Result of run_triggers
 	 */
 	public function call_trigger($triggerName, $user)
 	{
@@ -86,15 +66,17 @@ trait CommonTrigger
 		global $langs, $conf;
 
 		if (!empty($this->TRIGGER_PREFIX) && strpos($triggerName, $this->TRIGGER_PREFIX . '_') !== 0) {
-			if (!preg_match('/^OBJECT_LINK/', $triggerName)) {	// We add this exception as we have some call_trigger with a triggeName that is not the business object (as in method inside the commonobjet.class.php to manage links)
-				dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . $this->TRIGGER_PREFIX . '_" as required.');
-				exit;
+			if (!preg_match('/^OBJECT_LINK/', $triggerName) && !preg_match('/^PAYMENTONLINE_/', $triggerName)) {	// We add this exception as we have some call_trigger with a triggeName that is not the business object (as in method inside the commonobjet.class.php to manage links)
+				dol_syslog('The trigger "' . $triggerName . '" does not start with "' . $this->TRIGGER_PREFIX . '_" as required.', LOG_ERR);
+				//dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . $this->TRIGGER_PREFIX . '_" as required.');
+				//exit;
 			}
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
-			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
+			dol_syslog("call_trigger was called with no langs variable defined so we init one. ".getCallerInfoString());
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('');
 			$langs->load("main");
 		}
 

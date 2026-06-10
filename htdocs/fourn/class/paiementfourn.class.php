@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
- * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
- * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2011  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2023       Joachim Kueter		    <git-jk@bloxera.com>
+ * Copyright (C) 2023       Sylvain Legrand		    <technique@infras.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class PaiementFourn extends Paiement
 	 */
 	public $statut;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
-	// fk_paiement dans llx_paiement_facture est le rowid du paiement
+	// fk_paiement dans llx_paiement_facture is rowid of payment
 
 	/**
 	 * Label of payment type
@@ -197,7 +197,7 @@ class PaiementFourn extends Paiement
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate((int) $key, $value ? $value : 0, $way, 'facture_fourn');
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
@@ -285,9 +285,9 @@ class PaiementFourn extends Paiement
 							if ($closepaidinvoices) {
 								$paiement = $invoice->getSommePaiement();
 								$creditnotes = $invoice->getSumCreditNotesUsed();
-								//$creditnotes = 0;
+								// $creditnotes = 0;
 								$deposits = $invoice->getSumDepositsUsed();
-								//$deposits = 0;
+								// $deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0) {
@@ -341,9 +341,15 @@ class PaiementFourn extends Paiement
 												$discount->amount_ht = abs($amount_ht[$tva_tx]);
 												$discount->amount_tva = abs($amount_tva[$tva_tx]);
 												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+												$discount->total_ht = abs($amount_ht[$tva_tx]);
+												$discount->total_tva = abs($amount_tva[$tva_tx]);
+												$discount->total_ttc = abs($amount_ttc[$tva_tx]);
 												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
+												$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
+												$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
 												$discount->tva_tx = abs((float) $tva_tx);
 
 												$result = $discount->create($user);
@@ -446,8 +452,8 @@ class PaiementFourn extends Paiement
 
 	/**
 	 *	Delete a payment and lines generated into accounts
-	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
-	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	If the payment relates to a reconciled account entry, we refuse
+	 *	If the payment concerns at least one 'to be paid' invoice, we refuse
 	 *	@TODO Add User $user as first param
 	 *  @param		User	$user			User making the deletion
 	 *	@param		int		$notrigger		No trigger
@@ -463,9 +469,9 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture a l'etat payee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('paye=1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('paye:=:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorCantDeletePaymentSharedWithPayedInvoice";
@@ -489,7 +495,7 @@ class PaiementFourn extends Paiement
 			}
 		}
 
-		// Efface la ligne de paiement (dans paiement_facture et paiement)
+		// Delete payment line (from llx_paiement_facture and llx_paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 		$sql .= ' WHERE fk_paiementfourn = '.((int) $this->id);
 		$resql = $this->db->query($sql);
@@ -503,7 +509,7 @@ class PaiementFourn extends Paiement
 				return -3;
 			}
 
-			// Supprimer l'ecriture bancaire si paiement lie a ecriture
+			// Delete the bank entry if a payment is linked to an entry
 			if ($bank_line_id) {
 				$accline = new AccountLine($this->db);
 				$result = $accline->fetch($bank_line_id);
@@ -539,7 +545,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Information on object
 	 *
-	 *	@param	int		$id      Id du paiement don't il faut afficher les infos
+	 *	@param	int		$id      ID of the payment whose information needs to be displayed
 	 *	@return	void
 	 */
 	public function info($id)
@@ -569,7 +575,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
+	 *	@param      string	$filter         SQL filter. Use USF syntax. Warning: This value must not come from a user input.
 	 *	@return     array<int,int>|int<-1,-1>	Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
@@ -578,7 +584,7 @@ class PaiementFourn extends Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= " AND ".$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
@@ -627,8 +633,7 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$langs->load('compta');
-		/*if ($mode == 0)
-		{
+		/*if ($mode == 0) {
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
 		}
@@ -674,7 +679,7 @@ class PaiementFourn extends Paiement
 	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param		int  	$notooltip		1=Disable tooltip
 	 *  @param		string	$morecss		Add more CSS
-	 *	@return		string					Chaine avec URL
+	 *	@return		string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{

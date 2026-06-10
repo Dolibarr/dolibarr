@@ -75,7 +75,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	$object->fetch($id);
 	if ($object->statut == Deplacement::STATUS_DRAFT) {
-		$result = $object->setStatut(1);
+		$result = $object->setStatut(Deplacement::STATUS_REFUNDED, null, '', 'DELIVERY_MODIFY');
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
@@ -86,7 +86,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 } elseif ($action == 'classifyrefunded' && $user->hasRight('deplacement', 'creer')) {
 	$object->fetch($id);
 	if ($object->statut == Deplacement::STATUS_VALIDATED) {
-		$result = $object->setStatut(Deplacement::STATUS_REFUNDED);
+		$result = $object->setStatut(Deplacement::STATUS_REFUNDED, null, '', 'DELIVERY_MODIFY');
 		if ($result > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;

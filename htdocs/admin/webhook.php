@@ -126,12 +126,6 @@ if ($action == 'updateMask') {
 			// We therefore requires a variable to have a coherent view
 			$conf->global->$constforval = $value;
 		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
 	}
 } elseif ($action == 'unsetdoc') {
 	$tmpobjectkey = GETPOST('object', 'aZ09');

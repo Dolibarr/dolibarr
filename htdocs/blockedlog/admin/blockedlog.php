@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,30 +27,33 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 
-// Access Control
-if (!$user->admin || empty($conf->blockedlog->enabled)) {
-	accessforbidden();
-}
-
 // Get Parameters
 $action     = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
 $withtab    = GETPOSTINT('withtab');
+$origin     = GETPOST('origin');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
+
+// Access Control
+if (!$user->admin || !isModEnabled('blockedlog')) {
+	accessforbidden();
+}
 
 
 /*
@@ -91,43 +95,110 @@ $form = new Form($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-$title = $langs->trans("BlockedLogSetup");
+$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
 $linkback = '';
 if ($withtab) {
-	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
-print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog'), $linkback);
+$morehtmlcenter = '';
+
+$registrationnumber = getHashUniqueIdOfRegistration();
+$texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+if (!isRegistrationDataSavedAndPushed()) {
+	$texttop = '';
+}
+
+print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head();
-	print dol_get_fiche_head($head, 'blockedlog', '', -1);
+	$head = blockedlogadmin_prepare_head($withtab);
+	print dol_get_fiche_head($head, 'technicalinfo', '', -1);
 }
 
-
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
+
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+
+
+// Special additional message for FR only
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
+		}
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
+	}
+
+	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+}
+
+// Show generic message (for countries that need registration) to explain we need registration to collect data and why
+if (in_array($mysoc->country_code, array('FR'))) {
+	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
+	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
+
+	if (!isRegistrationDataSavedAndPushed() || $origin == 'initmodule') {
+		if ($infotoshow) {
+			print info_admin($infotoshow, 0, 0, 'info');
+		}
+		/*
+		$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
+		$htmltext .= $langs->trans("InformationWillBePublishedTo");
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo2", $organization_for_ping, $dataprivacy_url);
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	} else {
+		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary" title="Flag stored into MAIN_FIRST_REGISTRATION_OK_DATE. Registered data saved into BLOCKEDLOG_REGISTRATION_...">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= '<br>';
+		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
+		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
+		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
+
+		print info_admin($htmltext, 0, 0, 'info');
+
+		// Show remind on good practices related to archives
+		/*
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	}
+}
+
 
 print '<br>';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Key").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
+// Initial signature
+// Generated randomly when doing the first insert by blockedlog.class.php, and saved into BLOCKEDLOG_ENTITY_FINGERPRINT
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
-print $langs->trans("CompanyInitialKey").'</td><td>';
-print $block_static->getSignature();
+print '<td class="titlefieldmiddle" title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
+print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
+print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
+/*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td class="right" width="300">';
@@ -142,9 +213,14 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
+*/
 
+
+// Show the input of countries not allowed for disabling
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("BlockedLogDisableNotAllowedForCountry").'</td>';
+print '<td>';
+print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+print '</td>';
 print '<td>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -166,18 +242,24 @@ if ($resql) {
 
 $selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected);
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+// Can module be disabled
+$canbedisabled = $block_static->canBeDisabled();
+
+print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
 print '</form>';
 
 print '</td>';
 
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td class="">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents = $block_static->trackedevents;
 foreach ($arrayoftrackedevents as $key => $val) {
+	if (preg_match('/^separator/i', $key)) {
+		continue;
+	}
 	print $key.' - ';
 	if (is_array($val)) {
 		print $langs->trans($val['labelhtml']).'<br>';
@@ -192,6 +274,28 @@ print '</tr>';
 
 print '</table>';
 print '</div>';
+
+
+print '<br><br>';
+
+
+print '<!-- Link to pay -->';
+print '<span class="fas fa-external-link-alt" style=""></span> <span class="opacitymedium">'.$langs->trans("DebugTools").'</span><br>';
+print '<br>';
+
+$urlforceregistration = DOL_MAIN_URL_ROOT.'/index.php?forceregistration=1';
+print $langs->trans("URLToForceRegistration").'<br>';
+print '<div class="urllink"><input type="text" id="forceregistration" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforceregistration.'"><a class="" href="'.$urlforceregistration.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forceregistration');
+
+print '<br>';
+
+$urlforcepushcounter = DOL_MAIN_URL_ROOT.'/index.php?forcepushcounter=1';
+print $langs->trans("URLToForcePushOfBlockedLogCounter").'<br>';
+print '<div class="urllink"><input type="text" id="forcepushcounter" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforcepushcounter.'"><a class="" href="'.$urlforcepushcounter.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcepushcounter');
+
+
 
 if ($withtab) {
 	print dol_get_fiche_end();

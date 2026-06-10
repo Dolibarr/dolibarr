@@ -46,6 +46,10 @@ IPP_Color=Renkli
 IPP_Device=Aygıt
 IPP_Media=Yazıcı ortamı
 IPP_Supported=Ortam türü
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Hiçbiri
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Renkli
 DirectPrintingJobsDesc=Bu sayfa geçerli yazıcılar için yazdırma işlerini listeler.
 GoogleAuthNotConfigured=Google OAuth kurulmadı. OAuth modülünü etkinleştirin ve bir Google Kimliği/Gizlisi ayarlayın.
 GoogleAuthConfigured=Google OAuth kimlik bilgileri OAuth modülünün kurulumunda bulundu.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Google Bulut Yazdırma yazıcı sürücüsü yapılan
 PrintingDriverDescprintipp=Yazdırma sürücüsü Cups'ları için yapılandırma değişkenleri
 PrintTestDescprintgcp=Google Bulut Yazdırma Yazıcı Listesi.
 PrintTestDescprintipp=Cups için Yazıcıların Listesi
-Testbbbb
+PrinterLocation=Printer location

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -20,16 +20,11 @@
  */
 
 /**
- *       \file       htdocs/core/search.php
- *       \brief      Wrapper that receive any search. Depending on input field, make a redirect to correct URL.
+ *       \file      htdocs/core/search.php
+ *       \brief     Wrapper that receive any search. Depending on input field, make a redirect to correct URL.
+ *       			This page is called by search forms when MAIN_SEARCH_FORM_ON_HOME_AREAS is set or from user area.
  */
 
-if (!defined('NOREQUIREUSER')) {
-	define('NOREQUIREUSER', '1');
-}
-if (!defined('NOREQUIREDB')) {
-	define('NOREQUIREDB', '1');
-}
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
@@ -41,9 +36,6 @@ if (!defined('NOCSRFCHECK')) {
 }
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
 }
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
@@ -100,7 +92,7 @@ if (GETPOST('search_donation') != '') {
 	exit;
 }
 if (GETPOST('search_product') != '') {
-	header("Location: ".DOL_URL_ROOT.'/product/list.php?sall='.urlencode(GETPOST('search_product')));
+	header("Location: ".DOL_URL_ROOT.'/product/list.php?search_all='.urlencode(GETPOST('search_product')));
 	exit;
 }
 if (GETPOST('search_thirdparty') != '') {
@@ -146,11 +138,5 @@ if (GETPOST('search_group') != '') {
 }
 
 
-
 // If we are here, search was called with no supported criteria
-if (!empty($_SERVER['HTTP_REFERER'])) {
-	header("Location: ".$_SERVER['HTTP_REFERER']);
-	exit;
-} else {
-	print 'The wrapper search.php was called without any search criteria';
-}
+print 'The wrapper search.php was called without any search criteria';

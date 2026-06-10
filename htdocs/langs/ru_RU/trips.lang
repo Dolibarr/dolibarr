@@ -121,7 +121,6 @@ ValideTrip=Одобрить отчёт о затратах
 ExpenseReportPayments=отчёт о затратах платежи
 TaxUndefinedForThisCategory = налог не определен для этого категория
 errorComputeTtcOnMileageExpense=Ошибка при расчете расходов на пробег
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Только элементы в Черновик статус могут быть удалены в массовом действии
 
 ## Dictionary
 EX_BRE=Завтрак
@@ -159,3 +158,4 @@ TF_TRAIN=Поезд
 TF_TRIP=Транспортировка
 FailedToSetPaid=Не удалось установить как Оплачен
 FailedToSetToCancel=Не удалось отменить
+NobodyHasPermissionToValidateExpenseReport=Никто не имеет разрешения на подтвердить отчет о расходах

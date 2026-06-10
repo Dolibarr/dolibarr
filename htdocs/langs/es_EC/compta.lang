@@ -106,7 +106,6 @@ ByUserAuthorOfInvoice=Por el autor de la factura
 CheckReceipt=Depósito
 CheckReceiptShort=Depósito
 NewCheckReceipt=Nuevo descuento
-NewCheckDepositOn=Crear recibo para depósito en cuenta:%s
 NoWaitingChecks=No hay cheques a la espera de depósito.
 NbOfCheques=No. de cheques
 PaySocialContribution=Pagar un impuesto social/fiscal

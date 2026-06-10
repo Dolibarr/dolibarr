@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2019		Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/doleditor.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/doleditor.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('main', 'admin', 'subtotals', 'errors'));
@@ -56,25 +57,49 @@ $formother = new FormOther($db);
 $default = 'ffffff';
 
 // Constant and translation of the module description
-$modules = array(
+$modules = [
 	'PROPAL' => array('lang' => 'propal', 'key' => 'Proposal', 'old_pdf' => '(azur model)'),
 	'COMMANDE' => array('lang' => 'orders', 'key' => 'CustomerOrder', 'old_pdf' => '(einstein model)'),
+	'FICHINTER' => array('lang' => 'interventions', 'key' => 'Intervention', 'old_pdf' => '(soleil model)'),
 	'FACTURE' => array('lang' => 'bills', 'key' => 'CustomerInvoice', 'old_pdf' => '(crabe model)'),
 	'FACTUREREC' => array('lang' => 'bills', 'key' => 'RecurringInvoiceTemplate'),
-);
+	'SUPPLIER_PROPOSAL' => [
+		'lang' => 'supplier_proposal',
+		'key' => 'SupplierProposal',
+		'old_pdf' => '(aurore model)',
+	],
+	'ORDER_SUPPLIER' => [
+		'lang' => 'orders',
+		'key' => 'SupplierOrder',
+		'old_pdf' => '(muscadet model)',
+	],
+	'INVOICE_SUPPLIER' => [
+		'lang' => 'bills',
+		'key' => 'SupplierInvoice',
+	],
+];
 // Conditions for the option to be offered
-$conditions = array(
-	'PROPAL' => (isModEnabled("propal")),
-	'COMMANDE' => (isModEnabled("order")),
-	'FACTURE' => (isModEnabled("invoice")),
-	'FACTUREREC' => (isModEnabled("invoice")),
-);
+$conditions = [
+	'PROPAL' => isModEnabled("propal"),
+	'COMMANDE' => isModEnabled("order"),
+	'FICHINTER' => (isModEnabled("intervention")),
+	'FACTURE' => isModEnabled("invoice"),
+	'FACTUREREC' => isModEnabled("invoice"),
+	'SUPPLIER_PROPOSAL' => isModEnabled("supplier_proposal"),
+	'ORDER_SUPPLIER' => isModEnabled("supplier_order"),
+	'INVOICE_SUPPLIER' => isModEnabled("supplier_invoice"),
+];
 
 $max_depth = 0;
 
 foreach ($modules as $const => $desc) {
-	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH');
-	$max_depth = max($const_depth, $max_depth);
+	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
+
+	$constante_title = 'SUBTOTAL_TITLE_' . $const;
+	$constante_subtotal = 'SUBTOTAL_' . $const;
+	if (getDolGlobalString($constante_title) || getDolGlobalString($constante_subtotal)) {
+		$max_depth = max($const_depth, $max_depth);
+	}
 }
 
 $colors = array();
@@ -122,7 +147,7 @@ if ($action == 'update_colors') {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-subtotals');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SubtotalSetup"), $linkback, 'title_setup');
 

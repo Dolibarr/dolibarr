@@ -148,4 +148,3 @@ For testing use `npm run test` with e2e tests.
 Or help us donating...
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S7B43P63C5QEN)
-

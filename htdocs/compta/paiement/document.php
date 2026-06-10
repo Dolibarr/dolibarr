@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,13 @@
  */
 
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -41,14 +48,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers', 'other'));
 
@@ -57,15 +56,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-if ($object !== null) {
-	$result = restrictedArea($user, $object->element, $object->id, 'payment', '');
-}
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
@@ -89,11 +81,18 @@ if ($object->fetch($id, $ref)) {
 	$ref = dol_sanitizeFileName($object->ref);
 	$upload_dir = $conf->compta->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 } else {
-	$upload_dir = '';
+	$upload_dir = null;
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+restrictedArea($user, $object->element, $object->id, 'payment', '');
 
 $permissiontoadd = ($user->hasRight('facture', 'creer')); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -106,55 +105,19 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$form = new Form($db);
-
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
-llxHeader('', $title);
+$help_url = '';
+llxHeader('', $title, $help_url);
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_prepare_head($object);
+
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Payment"), -1, 'payment');
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
-
-	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', 0, 3).': ';
-	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
-
-	// Payment mode
-	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
-	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
-	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
-
-	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-
-	// Amount
-	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
-
-	$allow_delete = 1;
-	// Bank account
-	if (isModEnabled('bank')) {
-		if ($object->fk_account) {
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->bank_line);
-			if ($bankline->rappro) {
-				$allow_delete = 0;
-				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-			}
-
-			$morehtmlref .= '<br>'.$langs->trans('BankAccount').' : ';
-			$accountstatic = new Account($db);
-			$accountstatic->fetch($bankline->fk_account);
-			$morehtmlref .= $accountstatic->getNomUrl(1);
-
-			$morehtmlref .= '<br>'.$langs->trans('BankTransactionLine').' : ';
-			$morehtmlref .= $bankline->getNomUrl(1, 0, 'showconciliated');
-		}
-	}
+	$morehtmlref = '';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -168,7 +131,8 @@ if ($object->id > 0) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">'."\n";
+
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 	print "</table>\n";

@@ -2,12 +2,13 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   	Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
- * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,21 +132,25 @@ class Thirdparties extends DolibarrApi
 	 * Get a list of third parties
 	 *
 	 * @since	3.8.0	Initial implementation
+	 * @since	21.0.0	Data pagination
 	 *
-	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer nor prospect, 4 for suppliers
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return	array						Array of thirdparty objects
+	 * @param	bool	$pagination_data	If this parameter is set to true, the response will include pagination data. The default value is false. Page starts from 0*
+	 * @return	array						Array of third party objects
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -175,9 +180,7 @@ class Thirdparties extends DolibarrApi
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
 			}
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
-		$sql .= " AND t.fk_stcomm = st.id";
 		if ($mode == 1) {
 			$sql .= " AND t.client IN (1, 3)";
 		} elseif ($mode == 2) {
@@ -187,7 +190,7 @@ class Thirdparties extends DolibarrApi
 		} elseif ($mode == 4) {
 			$sql .= " AND t.fournisseur IN (1)";
 		}
-		// Select thirdparties of given category
+		// Select third parties of a given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
 				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
@@ -247,7 +250,7 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve third parties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			$message = '';
@@ -270,7 +273,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, $message);
 		}
 
-		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		//if $pagination_data is true, the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
@@ -307,6 +310,17 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
 		}
+
+		// External api user does not know internal country ID
+		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+			}
+			$request_data['country_id'] = $id;
+		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
@@ -314,6 +328,14 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->company->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				$this->company->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
+				}
 				continue;
 			}
 
@@ -373,7 +395,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -520,7 +542,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(501, 'Multiprices features activation needed for this request');
 		}
 
@@ -1060,7 +1082,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!is_array($result)) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -1077,6 +1099,7 @@ class Thirdparties extends DolibarrApi
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of the third party
+	 * @param	string	$mode			'customer' or 'supplier'
 	 * @param	string	$filter			Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
 	 * @param	string	$sortfield		Sort field
 	 * @param	string	$sortorder		Sort order
@@ -1092,7 +1115,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 503
 	 */
-	public function getFixedAmountDiscounts($id, $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
+	public function getFixedAmountDiscounts($id, $mode = 'customer', $filter = "none", $sortfield = "f.type", $sortorder = 'ASC')
 	{
 		$obj_ret = array();
 
@@ -1113,15 +1136,29 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
-
-		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
-		if ($filter == "available") {
-			$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
-		}
-		if ($filter == "used") {
-			$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+		$sql = '';
+		if ($mode === 'customer') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = re.fk_facture_source";
+			$sql .= " WHERE re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_facture IS NOT NULL OR re.fk_facture_line IS NOT NULL)";
+			}
+		} elseif ($mode === 'supplier') {
+			$sql = "SELECT f.ref, f.type as factype, re.fk_invoice_supplier_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_invoice_supplier, re.fk_invoice_supplier_line";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = re.fk_invoice_supplier_source";
+			$sql .= " WHERE f.rowid = re.fk_invoice_supplier_source AND re.fk_soc = ".((int) $id);
+			if ($filter == "available") {
+				$sql .= " AND re.fk_invoice_supplier IS NULL AND re.fk_invoice_supplier_line IS NULL";
+			}
+			if ($filter == "used") {
+				$sql .= " AND (re.fk_invoice_supplier IS NOT NULL OR re.fk_invoice_supplier_line IS NOT NULL)";
+			}
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1130,13 +1167,121 @@ class Thirdparties extends DolibarrApi
 		if (!$result) {
 			throw new RestException(503, $this->db->lasterror());
 		} else {
-			$num = $this->db->num_rows($result);
+			//$num = $this->db->num_rows($result);
 			while ($obj = $this->db->fetch_object($result)) {
 				$obj_ret[] = $obj;
 			}
 		}
 
 		return $obj_ret;
+	}
+
+	/**
+	 * Create a fixed amount discount for a thirdparty
+	 *
+	 * @since 24.0.0	Initial implementation
+	 *
+	 * @param int       $id                 ID of thirdparty
+	 * @param array     $request_data       Request data
+	 *                                      - amount       		float    Amount including tax (required if price_base_type is TTC)
+	 *                                      - description      	string   Description of the discount (required)
+	 *                                      - tva_tx           	float    VAT rate in percentage
+	 *                                      - discount_type    	int      Type of discount: 0 = customer discount, 1 = supplier discount (default: 0)
+	 *                                      - price_base_type  	string   Price base type: 'HT' or 'TTC' (default: 'HT')
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url     POST {id}/fixedamountdiscounts
+	 *
+	 * @return  int  ID of the created discount
+	 *
+	 * @throws RestException 400 Bad request
+	 * @throws RestException 401 Access not allowed for login
+	 * @throws RestException 404 Thirdparty not found
+	 * @throws RestException 500 Error creating discount
+	 */
+	public function createFixedAmountDiscount($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403);
+		}
+
+		// Check mandatory fields
+		if (empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+		if (!isset($request_data['amount'])) {
+			throw new RestException(400, 'Missing required field: amount');
+		}
+		if (!isset($request_data['description'])) {
+			throw new RestException(400, 'Missing required field: description');
+		}
+
+		// Check access to resource
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login'.DolibarrApiAccess::$user->login);
+		}
+
+		// Fetch thirdparty to verify it exists
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating discount, thirdparty not found');
+		}
+
+
+		// Validate amount
+		if (!is_numeric($request_data['amount']) || $request_data['amount'] <= 0) {
+			throw new RestException(400, 'Invalid amount_ht: must be a positive number');
+		}
+		$amount = (float) $request_data['amount'];
+
+		// Validate VAT rate
+		if (isset($request_data['tva_tx']) && (!is_numeric($request_data['tva_tx']) || $request_data['tva_tx'] < 0)) {
+			throw new RestException(400, 'Invalid tva_tx: must be a positive number or zero');
+		}
+		$tva_tx = isset($request_data['tva_tx']) ? (float) $request_data['tva_tx'] : 0;
+
+		// Get price base type (HT or TTC) : HT as default
+		$price_base_type = 'HT';
+		if (isset($request_data['price_base_type'])) {
+			$price_base_type = strtoupper($request_data['price_base_type']);
+			if ($price_base_type !== 'HT' && $price_base_type !== 'TTC') {
+				throw new RestException(400, 'Invalid price_base_type: must be "HT" or "TTC"');
+			}
+		}
+
+		// Get discount type (0 = customer, 1 = supplier): 0 as default
+		$discount_type = 0;
+		if (isset($request_data['discount_type'])) {
+			$discount_type = (int) $request_data['discount_type'];
+			if ($discount_type !== 0 && $discount_type !== 1) {
+				throw new RestException(400, 'Invalid discount_type: must be 0 (customer) or 1 (supplier)');
+			}
+		}
+
+		// Get description
+		$description = $request_data['description'];
+		if (empty(trim($description))) {
+			throw new RestException(400, 'Description cannot be empty');
+		}
+
+		// Prepare VAT rate with code if provided
+		$vatrate = "";
+		if (isset($request_data['vat_src_code']) && !empty($request_data['vat_src_code'])) {
+			$vatrate = $tva_tx . ' (' . $request_data['vat_src_code'] . ')';
+		}
+
+		// Create the discount using Societe::set_remise_except()
+		$this->db->begin();
+
+		$result = $this->company->set_remise_except($amount, DolibarrApiAccess::$user, $description, $vatrate, $discount_type, $price_base_type);
+
+		if ($result > 0) {
+			$this->db->commit();
+			return $result;
+		} else {
+			$this->db->rollback();
+			throw new RestException(500, 'Error creating discount: '.$this->company->error, array_merge(array($this->company->error), $this->company->errors));
+		}
 	}
 
 	/**
@@ -1447,8 +1592,11 @@ class Thirdparties extends DolibarrApi
 		$notifications = array();
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$notifications[] = $obj;
 				$i++;
@@ -1504,7 +1652,7 @@ class Thirdparties extends DolibarrApi
 		$notification->socid = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1581,7 +1729,7 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1678,7 +1826,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {
@@ -1738,8 +1886,11 @@ class Thirdparties extends DolibarrApi
 		$accounts = array();
 
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 
 				$account = new CompanyBankAccount($this->db);
@@ -1819,7 +1970,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1878,7 +2029,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
+			$account->rum = $prelevement->buildRumNumber((string) $this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1994,7 +2145,9 @@ class Thirdparties extends DolibarrApi
 			}
 
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 
 				$account = new CompanyBankAccount($this->db);
@@ -2067,8 +2220,11 @@ class Thirdparties extends DolibarrApi
 
 		$accounts = array();
 
+		$i = 0;
 		$num = $this->db->num_rows($result);
-		while ($i < $num) {
+		//$min = min($num, ($limit <= 0 ? $num : $limit));
+		$min = $num;
+		while ($i < $min) {
 			$obj = $this->db->fetch_object($result);
 			$account = new SocieteAccount($this->db);
 
@@ -2227,7 +2383,7 @@ class Thirdparties extends DolibarrApi
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url		PUT		{id}/accounts/{site}
+	 * @url		POST		{id}/accounts/{site}
 	 */
 	public function postSocieteAccount($id, $site, $request_data = null)
 	{
@@ -2448,8 +2604,11 @@ class Thirdparties extends DolibarrApi
 		} else {
 			$i = 0;
 
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
+			$min = $num;
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$account = new SocieteAccount($this->db);
 				$account->fetch($obj->rowid);
@@ -2465,9 +2624,12 @@ class Thirdparties extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

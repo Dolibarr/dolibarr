@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=निम्नलिखित क्रिया�
 AccountancyAreaDescActionOnceBis=भविष्य में लेखांकन में डेटा स्थानांतरित करते समय आपको स्वचालित रूप से सही डिफ़ॉल्ट लेखांकन खाता सुझाकर आपका समय बचाने के लिए अगले चरण किए जाने चाहिए
 AccountancyAreaDescActionFreq=बहुत बड़ी कंपनियों के लिए निम्नलिखित कार्य आमतौर पर हर महीने, सप्ताह या प्रतिदिन निष्पादित किए जाते हैं...
 AccountancyAreaDescJournalSetup=चरण %s: मेनू %s से अपनी जर्नल सूची की सामग्री की जाँच करें
-AccountancyAreaDescChartModel=चरण %s: जाँच करें कि खाता चार्ट का मॉडल मौजूद है या नहीं या मेनू %s से एक मॉडल बनाएँ
+AccountancyAreaDescChartModel=चरण %s: जाँच करें कि आपके देश के लिए खाता चार्ट का मॉडल मौजूद है या मेनू %s से एक बनाएँ
 AccountancyAreaDescChart=चरण %s: मेनू %s से अपने खाते का चार्ट चुनें और पूरा करें
 AccountancyAreaDescFiscalPeriod=चरण %s: वित्तीय अवधि निर्धारित करें जो लेखांकन प्रविष्टियाँ बनाने के लिए स्वीकृत तिथियों की सीमा निर्धारित करती है। इसके लिए, मेनू प्रविष्टि %s का उपयोग करें।
 AccountancyAreaDescVat=चरण %s: प्रत्येक VAT दरों के लिए लेखांकन खाते परिभाषित करें। इसके लिए, मेनू प्रविष्टि %s का उपयोग करें।
@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=दान दर्ज करने के लिए 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=खाता (खाते के चार्ट से) सदस्यता पंजीकरण के लिए उपयोग किया जाएगा (सदस्यता मॉड्यूल - यदि सदस्यता चालान के बिना दर्ज की गई है)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=खाता (खाता चार्ट से) ग्राहक जमा को पंजीकृत करने के लिए डिफ़ॉल्ट खाते के रूप में उपयोग किया जाना चाहिए
 UseAuxiliaryAccountOnCustomerDeposit=ग्राहक खाते को डाउन पेमेंट की पंक्तियों के लिए सहायक खाता बही में व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो डाउन पेमेंट पंक्तियों के लिए व्यक्तिगत खाता खाली रहेगा)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=खाता (खाता चार्ट से) डिफ़ॉल्ट के रूप में उपयोग किया जाना है
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=अग्रिम भुगतान की पंक्तियों के लिए सहायक खाता बही में आपूर्तिकर्ता खाते को व्यक्तिगत खाते के रूप में संग्रहीत करें (यदि अक्षम किया गया है, तो अग्रिम भुगतान पंक्तियों के लिए व्यक्तिगत खाता रिक्त रहेगा)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=ग्राहक द्वारा रखी गई वारंटी को पंजीकृत करने के लिए डिफ़ॉल्ट रूप से लेखांकन खाता
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=खाता (खाता चार्ट से) उसी देश में खरीदे गए उत्पादों के लिए डिफ़ॉल्ट खाते के रूप में उपयोग किया जाएगा (उत्पाद पत्रक में परिभाषित न होने पर उपयोग किया जाएगा)
@@ -278,6 +278,7 @@ PcgtypeDesc=खातों के समूह का उपयोग कुछ
 AccountingCategoriesDesc=खातों के कस्टम समूह का उपयोग लेखांकन खातों को एक नाम में समूहित करने के लिए किया जा सकता है, जिससे फ़िल्टर का उपयोग या कस्टम रिपोर्ट का निर्माण आसान हो जाता है।
 Reconcilable=अविस्र्द्ध
 Centralized=केंद्रीकृत खाता
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=कर से पहले कुल कारोबार
 TotalMarge=कुल बिक्री मार्जिन
 DescVentilCustomer=यहां खाते के चार्ट से उत्पाद खाते से जुड़ी (या नहीं) ग्राहक चालान पंक्तियों की सूची देखें
@@ -319,7 +320,7 @@ NotReconciled=मेल-मिलाप नहीं हुआ
 WarningRecordWithoutSubledgerAreExcluded=चेतावनी, बिना सबलेजर खाते के परिभाषित सभी पंक्तियों को फ़िल्टर कर दिया गया है और इस दृश्य से बाहर रखा गया है
 AccountRemovedFromCurrentChartOfAccount=लेखांकन खाता जो खातों के वर्तमान चार्ट में मौजूद नहीं है
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=चेतावनी, इस पृष्ठ में केवल लेखांकन प्रणाली में स्थानांतरित प्रविष्टियाँ ही हैं।
-BookkeepingNumRefModelDesc = संदर्भ संख्या को yyyyjjnnnn प्रारूप में लौटाता है, जहां yyyy वर्ष है और jj जर्नल कोड है, nnnn वर्ष और जर्नल कोड के आधार पर एक क्रमिक स्वचालित वृद्धिशील संख्या है।
+BookkeepingNumRefModelDesc = संदर्भ संख्या को yymmjjnnnnn प्रारूप में लौटाता है, जहां yy वर्ष है, mm महीना है और jj जर्नल कोड है, nnnnn वर्ष, महीने और जर्नल कोड के आधार पर एक अनुक्रमिक स्वतः-वृद्धिशील संख्या है।
 BookkeepingNumberingModules = बहीखाता क्रमांकन मॉडल
 ## Admin
 BindingOptions=लेखाशास्त्र में स्थानांतरण के विकल्प
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=आपूर्तिकर्ता 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=जब यह विकल्प सक्षम होता है, तो आप यह निर्धारित कर सकते हैं कि आपूर्तिकर्ता या किसी विक्रेता के चालान को अलग तरीके से लेखांकन में स्थानांतरित किया जाना चाहिए: "%s" सेटअप पृष्ठ में निर्धारित खाता चार्ट से 2 दिए गए खातों पर लेखांकन में एक अतिरिक्त डेबिट और एक क्रेडिट लाइन उत्पन्न की जाएगी।
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=सहायक खाता बही देखने के लिए तृतीय-पक्ष कार्ड पर टैब सक्रिय करें
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=जब यह विकल्प सक्षम होता है, तो तृतीय-पक्ष कार्ड में एक नया टैब दिखाई देता है, जिससे तृतीय-पक्ष के लिए लेखांकन को देखा और प्रबंधित किया जा सकता है, जैसे मिलान, मुद्रण और बहुत कुछ
+
 ## Export
 NotExportLettering=फ़ाइल बनाते समय अक्षरों को निर्यात न करें
 NotifiedExportDate=अभी तक निर्यात न की गई पंक्तियों को निर्यातित के रूप में चिह्नित करें <span class="warning">(निर्यातित के रूप में चिह्नित पंक्ति को संशोधित करने के लिए, आपको संपूर्ण लेनदेन को हटाना होगा और उसे लेखांकन में पुनः स्थानांतरित करना होगा)</span>
@@ -389,6 +391,7 @@ Modelcsv_Gestinumv5=गेस्टिनम (v5) के लिए निर्�
 Modelcsv_charlemagne=अप्लिम शारलेमेन के लिए निर्यात
 ChartofaccountsId=खातों का चार्ट आईडी
 ExportToPdf = पीडीएफ में निर्यात करें
+ExportToCsv = Export to CSV
 PdfLedgerTitle = बही खाते
 PdfBalanceTitle = खाता संतुलन
 PdfBookkeepingTitle = बहीखाता
@@ -440,7 +443,7 @@ AccountRemovedFromGroup=खाता समूह से हटा दिया 
 SaleLocal=स्थानीय बिक्री
 SaleExport=निर्यात बिक्री
 SaleEEC=ईईसी में बिक्री
-SaleEECWithVAT=बिक्री ईईसी में है, जिसमें वैट शून्य नहीं है, इसलिए हम मानते हैं कि यह अंतर-सामुदायिक बिक्री नहीं है और सुझाया गया खाता मानक उत्पाद खाता है।
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=बिक्री EEC में है, जिसमें वैट नहीं है, लेकिन तीसरे पक्ष की वैट आईडी परिभाषित नहीं है। हम मानक बिक्री के लिए खाते पर वापस आते हैं। आप तीसरे पक्ष की वैट आईडी को ठीक कर सकते हैं, या यदि आवश्यक हो तो बाध्यकारी के लिए सुझाए गए उत्पाद खाते को बदल सकते हैं।
 AnySale=कोई भी बिक्री
 ForbiddenTransactionAlreadyExported=निषिद्ध: लेन-देन को मान्य और/या निर्यात किया जा चुका है।
@@ -485,7 +488,7 @@ AccountancyClosureConfirmClose=क्या आप वाकई वर्तम�
 AccountancyClosureConfirmAccountingReversal=क्या आप निश्चित हैं कि आप "प्रतिधारित आय" के लिए प्रविष्टियां रिकॉर्ड करना चाहते हैं?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=(doc_type=%s के लिए लेनदेन, doc_id=%s, doc_det=>%s) पहले ही रिकॉर्ड किए जा चुके थे
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=सेटअप के कुछ अनिवार्य चरण पूरे नहीं हुए, कृपया उन्हें पूरा करें
@@ -508,7 +511,7 @@ ErrorNoFiscalPeriodActiveFound=कोई सक्रिय वित्ती�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=बहीखाता दस्तावेज़ की तिथि सक्रिय वित्तीय अवधि के अंदर नहीं है
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=बहीखाता दस्तावेज़ की तारीख एक बंद वित्तीय अवधि के अंदर है
 Error_BOOKKEEPING_ADDON_NotDefined=त्रुटि, बहीखाता क्रमांकन संदर्भ के लिए नियम लेखा मॉड्यूल के सामान्य सेटअप में परिभाषित नहीं है
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=%s (भुगतान आईडी: %s) के लिए बुक में एक गैर संतुलित लेनदेन डालने का प्रयास करें। रद्द किया गया। निश्चित रूप से एक बग है।
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=उत्पाद या सेवा का उपयोग
 ## Import
 ImportAccountingEntries=लेखांकन प्रविष्टियाँ
@@ -537,15 +540,15 @@ ExpenseReportJournal=व्यय रिपोर्ट जर्नल
 DocsAlreadyExportedAreIncluded=पहले से निर्यात किए गए दस्तावेज़ शामिल हैं
 ClickToShowAlreadyExportedLines=पहले से निर्यातित पंक्तियाँ दिखाने के लिए क्लिक करें
 NAccounts=%s खाते
-ACCOUNTING_USE_TREASURY_Desc=यह ट्रेजरी अकाउंटेंसी का तरीका है। हम अकाउंटेंसी करने के लिए केवल भुगतान और उनकी तारीख का उपयोग कर रहे हैं।
-ACCOUNTING_USE_NON_TREASURY_Desc=यह वास्तविक लेखा-जोखा का तरीका है। हम लेखा-जोखा करने के लिए चालान और भुगतान दोनों का उपयोग कर रहे हैं।
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=इस बैंक लेनदेन को उत्पन्न करने वाले स्रोत दस्तावेज़ का संदर्भ (इनवॉइस संदर्भ, व्यय रिपोर्ट संदर्भ, ...)
 BankTransactionRef=बैंक लेनदेन के लिए संदर्भ (वैकल्पिक, एक स्वचालित आईडी पहले से ही उत्पन्न है)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=इससे बुककीपिंग प्रविष्टि क्लोन हो जाएगी (इस बुककीपिंग प्रविष्टि से जुड़ी सभी पंक्तियों को क्लोन किया जाएगा)। क्या आप वाकई चयनित %s रिकॉर्ड को क्लोन करना चाहते हैं?
 ConfirmMassCloneBookkeepingWriting=सामूहिक क्लोनिंग की पुष्टि करें
-ConfirmMassReturnAccountBookkeepingWriting=सामूहिक विलुप्ति की पुष्टि करें
-ConfirmMassReturnAccountBookkeepingWritingQuestion=इससे बुककीपिंग प्रविष्टि समाप्त हो जाएगी (इस बुककीपिंग प्रविष्टि से जुड़ी सभी पंक्तियाँ समाप्त हो जाएँगी)। क्या आप वाकई %s चयनित रिकॉर्ड्स को बायपास करना चाहते हैं?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=इससे सभी चयनित लाइनों का खाता बदल जाएगा।
 confirmMassAssignAccountBookkeepingWritingConfirm=सामूहिक खाता परिवर्तन की पुष्टि करें
 CloningSuccess=सफल लेनदेन क्लोनिंग : %s
@@ -560,6 +563,6 @@ NoAccountsChangedWithAccountNumber=खाता संख्या के सा
 HasAlreadyBeenReversed=पहले ही उलट दिया गया है
 ErrorWhileCreating=निर्माण के दौरान त्रुटि %s
 ReturnAccount=वापस करना
-Clone=क्लोनर
+Clone=Clone
 AlreadyReturnedAccount=प्रविष्टि n°%s को पहले ही उलट दिया गया है
 SuccessReturnedAccount=प्रविष्टि n°%s को उलट दिया गया है

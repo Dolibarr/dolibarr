@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +30,18 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -67,6 +68,14 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
 // Load variable for pagination
@@ -84,7 +93,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Don($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->don->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -126,6 +134,7 @@ $fieldstosearchall = array(
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = array();
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -177,6 +186,14 @@ if (empty($reshook)) {
 		$search_name = "";
 		$search_amount = "";
 		$search_status = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -208,6 +225,7 @@ $form = new Form($db);
 $now = dol_now();
 
 $donationstatic = new Don($db);
+$projectstatic = null;
 if (isModEnabled('project')) {
 	$projectstatic = new Project($db);
 }
@@ -219,9 +237,9 @@ $morecss = array();
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql .= " d.amount, d.fk_statut as status,";
-$sql .= " p.rowid as pid, p.ref, p.title, p.public";
+$sql = "SELECT d.rowid, d.ref, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
+$sql .= " d.amount, d.fk_statut as status, s.nom,";
+$sql .= " p.rowid as pid, p.ref as pref, p.title, p.public";
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -255,6 +273,12 @@ if (trim($search_name) != '') {
 }
 if ($search_amount) {
 	$sql .= natural_search('d.amount', $search_amount, 1);
+}
+if ($search_date_start) {
+	$sql .= " AND d.datedon >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND d.datedon <= '".$db->idate($search_date_end)."'";
 }
 
 // Count total nb of records
@@ -296,7 +320,7 @@ $num = $db->num_rows($resql);
 if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.((int) $id));
+	header("Location: ".dol_buildpath('/don/card.php', 1).'?id='.((int) $id));
 	exit;
 }
 
@@ -305,21 +329,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-donation page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
-
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -354,12 +363,32 @@ if ($search_name) {
 if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -472,8 +501,14 @@ if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 print '<td class="liste_titre">';
 print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
 print '</td>';
-print '<td class="liste_titre left">';
-print '&nbsp;';
+// Date invoice
+print '<td class="liste_titre center">';
+print '<div class="nowrapfordate">';
+print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '</div>';
+print '<div class="nowrapfordate">';
+print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '</div>';
 print '</td>';
 if (isModEnabled('project')) {
 	print '<td class="liste_titre right">';
@@ -514,7 +549,7 @@ if ($conf->main_checkbox_left_column) {
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 } else {
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
@@ -553,10 +588,10 @@ while ($i < $imaxinloop) {
 
 	$donationstatic->setVarsFromFetchObj($obj);
 
-	$donationstatic->id = $obj->rowid;
-	$donationstatic->ref = $obj->rowid;
+	$donationstatic->id = (int) $obj->rowid;
+	$donationstatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 	$donationstatic->date = $db->jdate($obj->datedon);
-	$donationstatic->status = $obj->status;
+	$donationstatic->status = (int) $obj->status;
 	$donationstatic->lastname = $obj->lastname;
 	$donationstatic->firstname = $obj->firstname;
 	$object = $donationstatic;
@@ -576,7 +611,7 @@ while ($i < $imaxinloop) {
 		if (!empty($obj->socid) && $company->id > 0) {
 			$donationstatic->societe = $company->getNomUrl(1);
 		} else {
-			$donationstatic->societe = $obj->societe;
+			$donationstatic->societe = (string) $obj->societe;  // Value from sql query
 		}
 
 		$object = $donationstatic;
@@ -596,7 +631,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {
@@ -638,8 +673,7 @@ while ($i < $imaxinloop) {
 			print "<td>";
 			if ($obj->pid) {
 				$projectstatic->id = $obj->pid;
-				$projectstatic->ref = $obj->ref;
-				$projectstatic->id = $obj->pid;
+				$projectstatic->ref = $obj->pref;
 				$projectstatic->public = $obj->public;
 				$projectstatic->title = $obj->title;
 				print $projectstatic->getNomUrl(1);
@@ -651,7 +685,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right"><span class="amount">'.price($obj->amount).'</span></td>';
 
 		// Status
-		print '<td class="center">'.$donationstatic->LibStatut($obj->status, 5).'</td>';
+		print '<td class="center">'.$donationstatic->LibStatut($donationstatic->status, 5).'</td>';
 
 		// Action column
 		if (empty($conf->main_checkbox_left_column)) {

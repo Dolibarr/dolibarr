@@ -35,7 +35,7 @@
 
   Version 2.8.3 :
     - Fix compatibility with PHP v7.1
-    
+
   Version 2.8.2 :
     - PCLZIP_CB_PRE_EXTRACT and PCLZIP_CB_POST_EXTRACT are now supported with
       extraction as a string (PCLZIP_OPT_EXTRACT_AS_STRING). The string

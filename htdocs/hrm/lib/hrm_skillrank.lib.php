@@ -128,7 +128,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	$ret .= '</span>';
 	if (is_array($Lines) && !empty($Lines)) {
 		foreach ($Lines as $line) {
-			$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : Skill::DEFAULT_MAX_RANK_PER_SKILL;
+			$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', Skill::DEFAULT_MAX_RANK_PER_SKILL);
 			if ($line->rankorder > $MaxNumberSkill) {
 				continue;
 			}

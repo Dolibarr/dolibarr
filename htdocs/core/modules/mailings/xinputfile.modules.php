@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,16 @@ class mailing_xinputfile extends MailingTargets
 {
 	public $name = 'EmailsFromFile'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc = 'EMails from a file'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $desc = 'EMails from a file'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array(); // Module mailing actif si modules require_module actifs
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
 	/**

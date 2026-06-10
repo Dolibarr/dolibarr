@@ -3,7 +3,6 @@
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,20 +41,22 @@ if (!defined('NOREQUIREHTML')) {
 
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
+
+$action = GETPOST('action', 'aZ09');
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
@@ -235,13 +236,18 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-			// Define list of possible payments
-			$arrayOfValidPaymentModes = array();
+// Define list of possible payments
+$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql .= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql .= " AND active = 1";
+if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+	// In certified version, we can use only 3 payments modes in POS because
+	// the cash control feature support only this 3 payment modes
+	$sql .= " AND code IN ('LIQ', 'CB', 'CHQ')";
+}
 $sql .= " ORDER BY libelle";
 $resql = $db->query($sql);
 
@@ -289,6 +295,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 ?>
 	var alreadypayed = <?php echo $alreadypayed ?>;
+	var invoicetype = <?php echo $invoice->type ?>;
 
 	function addreceived(price)
 	{
@@ -301,30 +308,37 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		?>
 		$('.change1').html(pricejs(parseFloat(received), 'MT'));
 		$('.change1').val(parseFloat(received));
-		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
-		//console.log("already+received = "+alreadypaydplusreceived);
+		console.log("invoicetype="+invoicetype);
+		console.log("alreadyreceived="+alreadypayed);
+		console.log("received="+received);
+		if (invoicetype == 2) {
+			alreadypaydplusreceived = price2numjs(alreadypayed - parseFloat(received));
+		} else {
+			alreadypaydplusreceived = price2numjs(alreadypayed + parseFloat(received));
+		}
+		console.log("already+received = "+alreadypaydplusreceived);
 		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
-		if (Math.abs(alreadypaydplusreceived) > <?php echo (float) abs($invoice->total_ttc); ?>)
-		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) ($invoice->type == Facture::TYPE_CREDIT_NOTE ? ($remaintopay * -1) : $remaintopay); ?>);
+		if (Math.abs(alreadypaydplusreceived) > Math.abs(<?php echo ((float) $invoice->total_ttc); ?>)) {
+			if (invoicetype == 2) {
+				var change = parseFloat(alreadypayed + parseFloat(received) + <?php echo (float) $invoice->total_ttc; ?>);
+			} else {
+				var change = parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+			}
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
 			$('.change1').addClass('colorgreen');
 			$('.change2').removeClass('colorwhite');
 			$('.change2').addClass('colorred');
-		} else
-		{
+		} else {
 			$('.change2').html(pricejs(0, 'MT'));
 			$('.change2').val(0);
-			if (alreadypaydplusreceived == <?php echo $invoice->total_ttc; ?>)
-			{
+			if (alreadypaydplusreceived == <?php echo (float) $invoice->total_ttc; ?>) {
 				$('.change1').removeClass('colorred');
 				$('.change1').addClass('colorgreen');
 				$('.change2').removeClass('colorred');
 				$('.change2').addClass('colorwhite');
-			}
-			else {
+			} else {
 				$('.change1').removeClass('colorgreen');
 				$('.change1').addClass('colorred');
 				$('.change2').removeClass('colorred');
@@ -356,27 +370,12 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
 		var excess = $("#change2").val();
-		var isCreditNote = <?php echo ($invoice->type == Facture::TYPE_CREDIT_NOTE ? 'true' : 'false'); ?>;
-		if(isCreditNote){
-			amountpayed = amountpayed * -1;
-			if (amountpayed < <?php echo $invoice->total_ttc; ?>) {
-				amountpayed = <?php echo $invoice->total_ttc; ?>;
-			}
-		} else if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
-			amountpayed = <?php echo $invoice->total_ttc; ?>;
+		if (amountpayed > <?php echo (float) $invoice->total_ttc; ?>) {
+			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
-			if(isCreditNote){
-				if (amountpayed < <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ){
-					console.log("Close popup");
-					parent.$('#invoiceid').val("");
-					parent.$.colorbox.close();
-				} else {
-					console.log("Amount is not complete, so we do NOT close popup and reload it.");
-					location.reload();
-				}
-			}else if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
+			if (amountpayed > <?php echo (float) $remaintopay; ?> || amountpayed == <?php echo (float) $remaintopay; ?> || amountpayed == 0 ) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
 				parent.$.colorbox.close();
@@ -443,11 +442,11 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
 		var excess = $("#change2").val();
-		if (amountpayed > <?php echo $invoice->getRemainToPay(); ?>) {
-			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+		if (amountpayed > <?php echo (float) $invoice->getRemainToPay(); ?>) {
+			amountpayed = <?php echo (float) $invoice->getRemainToPay(); ?>;
 		}
 		if (amountpayed == 0) {
-			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+			amountpayed = <?php echo (float) $invoice->getRemainToPay(); ?>;
 		}
 
 		console.log("Pay with terminal ", amountpayed);
@@ -480,10 +479,11 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
 				console.log("Capture paymentIntent successful "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
-			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
+			if (amountpayed > <?php echo (float) $remaintopay; ?> || amountpayed == <?php echo (float) $remaintopay; ?> || amountpayed == 0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
-			} else {
+			}
+			else {
 				console.log("Amount is not comple, so we do NOT close popup and reload it.");
 				location.reload();
 			}
@@ -501,13 +501,13 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 	function ValidateSumup() {
 		console.log("Launch ValidateSumup");
 		<?php $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
-		var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+		var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
 		var amountpayed = $("#change1").val();
-		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
-			amountpayed = <?php echo $invoice->total_ttc; ?>;
+		if (amountpayed > <?php echo (float) $invoice->total_ttc; ?>) {
+			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		if (amountpayed == 0) {
-			amountpayed = <?php echo $invoice->total_ttc; ?>;
+			amountpayed = <?php echo (float) $invoice->total_ttc; ?>;
 		}
 		var currencycode = "<?php echo $invoice->multicurrency_code; ?>";
 
@@ -541,34 +541,20 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	echo "line1=line1.padEnd(20);";
 	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
 	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
-		type: 'GET',
-		data: { text: line1+line2 },
-		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
-	});";
+	if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_CUSTOMER_DISPLAY')) {
+		echo 'webSocketCustomerDisplay.onOpen(function() {';
+		echo '	webSocketCustomerDisplay.send(line1);';
+		echo '	webSocketCustomerDisplay.send(line2);';
+		echo '});';
+	} else {
+		echo "$.ajax({
+			type: 'GET',
+			data: { text: line1+line2 },
+			url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+		});";
+	}
 }
 ?>
-</script>
-
-<script>
-var isCreditNote = <?php echo ($invoice->type == Facture::TYPE_CREDIT_NOTE ? 'true' : 'false'); ?>;
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-	if (isCreditNote) {
-		// Change the text of the label "Received" to "PaymentBack"
-		document.querySelectorAll('.takepospay').forEach(function(el) {
-			if (el.innerHTML.includes('<?php echo $langs->trans("Received"); ?>')) {
-				el.innerHTML = el.innerHTML.replace('<?php echo $langs->trans("Received"); ?>', '<?php echo $langs->trans("PaymentBack"); ?>');
-			}
-		});
-		var recibidoAmount = document.querySelector('.change1');
-		if (recibidoAmount) {
-			recibidoAmount.classList.remove('colorred');
-			recibidoAmount.classList.add('colorgreen');
-		}
-	}
-});
 </script>
 
 <?php
@@ -603,7 +589,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 		</div>
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
-		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
+		<span class="takepospay colorwhite"><?php echo $invoice->type == $invoice::TYPE_CREDIT_NOTE ? $langs->trans("Refunded") : $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
 		echo price(0, 1, '', 1, -1, -1, $conf->currency);
 		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
@@ -647,7 +633,7 @@ array(
 "class" => "poscolordelete"
 ),
 );
-$numpad = getDolGlobalString('TAKEPOS_NUMPAD');
+$numpad = getDolGlobalInt('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
@@ -780,10 +766,14 @@ if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
 	}
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+$parameters = array('action_buttons' => $action_buttons);
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $invoice may have been modified by hook
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook == 0) {
+	$action_buttons = array_merge($action_buttons, $hookmanager->resArray);
+} elseif ($reshook > 0) {
+	$action_buttons = $hookmanager->resArray;
 }
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";

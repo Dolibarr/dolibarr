@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 class BankAccounts extends DolibarrApi
 {
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields, checked when creating an object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -59,7 +59,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
-	 * @param  int		$category   Use this param to filter list by category
+	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
@@ -357,7 +357,7 @@ class BankAccounts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+					$account->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $account);
 				}
 				continue;
 			}
@@ -428,9 +428,12 @@ class BankAccounts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -487,6 +490,7 @@ class BankAccounts extends DolibarrApi
 
 		if ($result) {
 			$num = $this->db->num_rows($result);
+			//$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $num; $i++) {
 				$obj = $this->db->fetch_object($result);
 				$accountLine = new AccountLine($this->db);
@@ -591,6 +595,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		$url = sanitizeVal($url);
 		$label = sanitizeVal($label);
 		$type = sanitizeVal($type);
@@ -636,6 +644,30 @@ class BankAccounts extends DolibarrApi
 	}
 
 	/**
+	 * Get the detail of a given line of the bank account.
+	 *
+	 * @param 	int 			$line_id 	ID of the account line
+	 * @return	array|mixed					Data without useless information. Note: If we use here AccountLine as return type, we got error if xdebug is on, due to infinite loop parsing of doc by Restler, we can disable this we commenting line 228 to 323 in CommonObject)
+	 * @url GET /lines/{line_id}
+	 *
+	 * @throws RestException
+	 */
+	public function getDetailAccountLine($line_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($line_id);
+		if (!$result) {
+			throw new RestException(404, 'account Line not found');
+		}
+
+		return $this->_cleanObjectDatas($accountLine);
+	}
+
+	/**
 	 * Update an account line
 	 *
 	 * @param int    $id    		ID of account
@@ -647,7 +679,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function updateLine($id, $line_id, $label)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -661,6 +693,10 @@ class BankAccounts extends DolibarrApi
 		$result = $accountLine->fetch($line_id);
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
+		}
+
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
 		}
 
 		$accountLine->label = sanitizeVal($label);
@@ -685,7 +721,7 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function deleteLine($id, $line_id)
 	{
-		if (!DolibarrApiAccess::$user->rights->banque->modifier) {
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'modifier')) {
 			throw new RestException(403);
 		}
 
@@ -701,6 +737,10 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account line not found');
 		}
 
+		if ($accountLine->fk_account != $id) {
+			throw new RestException(400, 'Line does not belong to this account');
+		}
+
 		if ($accountLine->delete(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'error when deleting account line');
 		}
@@ -711,31 +751,6 @@ class BankAccounts extends DolibarrApi
 				'message' => "account line $line_id deleted"
 			)
 		);
-	}
-
-	/**
-	 * Get the detail of a given line of the bank account.
-	 *
-	 * @param 	int 			$line_id 	ID of the account line
-	 * @return  AccountLine					Object with cleaned properties
-	 *
-	 * @throws RestException
-	 *
-	 * @url GET /lines/{line_id}
-	 */
-	public function getDetailAccountLine($line_id)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
-			throw new RestException(403);
-		}
-
-		$accountLine = new AccountLine($this->db);
-		$result = $accountLine->fetch($line_id);
-		if (!$result) {
-			throw new RestException(404, 'account Line not found');
-		}
-
-		return $this->_cleanObjectDatas($accountLine);
 	}
 
 	/**

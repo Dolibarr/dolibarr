@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -95,6 +95,15 @@ if (isModEnabled('mrp') && $conf->use_javascript_ajax) {
 		$colorseries = array();
 		$vals = array();
 
+		/**
+		 * @var string $badgeStatus0
+		 * @var string $badgeStatus1
+		 * @var string $badgeStatus4
+		 * @var string $badgeStatus5
+		 * @var string $badgeStatus6
+		 * @var string $badgeStatus8
+		 * @var string $badgeStatus9
+		 */
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		while ($i < $num) {

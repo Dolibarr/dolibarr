@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Request payment with a Stripe Direct Debit for a customer invoice
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Make payment with a stripe sepa for a supplier invoice
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
@@ -386,7 +386,7 @@ if ($object->id > 0) {
 		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -722,7 +722,7 @@ if ($object->id > 0) {
 
 	// For which amount ?
 	// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
-	// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+	// The table prelevement and prelevement_lignes must be removed in future and merged into prelevement_demande
 	// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
 	// Step 2: Move field fk_... + status into prelevement_demande.
 	$pending = 0;
@@ -797,108 +797,116 @@ if ($object->id > 0) {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
 		$user_perms = $user->hasRight('paymentbybanktransfer', 'create');
 	}
-
+	// Calculate the remaining amount available for new transfer requests
+	// This takes into account pending requests (traite=0) and requests in non-credited transfer receipts
+	$remaintopaylesspendingdebit	= $resteapayer - $pending;
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
-		if ($resteapayer > 0) {
-			if ($user_perms) {
-				$remaintopaylesspendingdebit = $resteapayer - $pending;
-
-				$title = $langs->trans("NewStandingOrder");
-				if ($type == 'bank-transfer') {
-					$title = $langs->trans("NewPaymentByBankTransfer");
+	// If WITHDRAW_STRICT_CHECK_AMOUNT is enabled, allow multiple partial requests as long as the total requested amount doesn't exceed the invoice total
+	// Otherwise, use original behavior: block if any request is pending
+	if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+		// New behavior: check remaining amount
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $remaintopaylesspendingdebit > 0);
+	} else {
+		// Original behavior: check if no open requests
+		$canCreateRequest	= ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0 && $resteapayer > 0);
+	}
+	if ($canCreateRequest) {
+		if ($user_perms) {
+			$title = $langs->trans("NewStandingOrder");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("NewPaymentByBankTransfer");
+			}
+			print '<!-- form to select BAN -->';
+			print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			print '<input type="hidden" name="token" value="'.newToken().'" />';
+			print '<input type="hidden" name="id" value="'.$object->id.'" />';
+			print '<input type="hidden" name="type" value="'.$type.'" />';
+			print '<input type="hidden" name="action" value="new" />';
+			print '<div class="center formconsumeproduce">';
+			//print $langs->trans('CustomerIBAN').' ';
+			// if societe rib in model invoice, we preselect it
+			$selectedRib = '';
+			if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
+				$facturerec = new FactureRec($db);
+				$facturerec->fetch($object->fk_fac_rec_source);
+				if ($facturerec->fk_societe_rib) {
+					$companyBankAccount = new CompanyBankAccount($db);
+					$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
+					$selectedRib = $companyBankAccount->id;
 				}
-
-				print '<!-- form to select BAN -->';
-				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			}
+			$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', '(fk_soc:=:'.$object->socid.")", $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
+			$defaultRibId = $object->thirdparty->getDefaultRib();
+			if ($defaultRibId) {
+				$companyBankAccount = new CompanyBankAccount($db);
+				$res = $companyBankAccount->fetch($defaultRibId);
+				if ($res > 0 && !$companyBankAccount->verif()) {
+					print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
+				}
+			} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				print img_warning($langs->trans("NoDefaultIBANFound"));
+			}
+			// Bank Transfer Amount
+			if (getDolOptimizeSmallScreen()) {
+				print '<br>';
+			} else {
+				print ' &nbsp; &nbsp; ';
+			}
+			print '<label for="withdraw_request_amount">';
+			if ($type == 'bank-transfer') {
+				print $langs->trans('BankTransferAmount');
+			} else {
+				print $langs->trans("WithdrawRequestAmount");
+			}
+			print '</label> ';
+			print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
+			// Button
+			print '<br><br>';
+			print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
+			print '<br><br>';
+			print '</div>';
+			print '</form>';
+			if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+				// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
+				print "<br>";
+				// Add stripe sepa button
+				$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+				print '<form method="POST" action="">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
-
-				print '<div class="center formconsumeproduce">';
-
-				print $langs->trans('CustomerIBAN').' ';
-
-				// if societe rib in model invoice, we preselect it
-				$selectedRib = '';
-				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
-					$facturerec = new FactureRec($db);
-					$facturerec->fetch($object->fk_fac_rec_source);
-					if ($facturerec->fk_societe_rib) {
-						$companyBankAccount = new CompanyBankAccount($db);
-						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
-						$selectedRib = $companyBankAccount->id;
-					}
-				}
-
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
-
-				$defaultRibId = $object->thirdparty->getDefaultRib();
-				if ($defaultRibId) {
-					$companyBankAccount = new CompanyBankAccount($db);
-					$res = $companyBankAccount->fetch($defaultRibId);
-					if ($res > 0 && !$companyBankAccount->verif()) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
-					}
-				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-					print img_warning($langs->trans("NoDefaultIBANFound"));
-				}
-
-
-				// Bank Transfer Amount
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
-				if ($type == 'bank-transfer') {
-					print $langs->trans('BankTransferAmount');
-				} else {
-					print $langs->trans("WithdrawRequestAmount");
-				}
-				print '</label> ';
-				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
-
-				// Button
-				print '<br><br>';
+				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
-				print '<br><br>';
-
-				print '</div>';
-
 				print '</form>';
-
-				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
-					print "<br>";
-					// Add stripe sepa button
-					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
-					print '<form method="POST" action="">';
-					print '<input type="hidden" name="token" value="'.newToken().'" />';
-					print '<input type="hidden" name="id" value="'.$object->id.'" />';
-					print '<input type="hidden" name="type" value="'.$type.'" />';
-					print '<input type="hidden" name="action" value="new" />';
-					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
-					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-					print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
-					print '</form>';
-				}
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($numopen == 0) {
-			if ($object->status > $object::STATUS_DRAFT) {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
+		// Different error messages based on the mode
+		if ($object->status > $object::STATUS_DRAFT) {
+			if ($object->paid == 0) {
+				if (getDolGlobalString('WITHDRAW_STRICT_CHECK_AMOUNT')) {
+					// Total amount has already been requested (pending + in transfer receipts)
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountRequestedAlreadyReachesTotal")).'">'.$buttonlabel.'</a>';
+				} else {
+					// Original behavior: request already done or amount must be positive
+					if ($numopen > 0) {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
+					}
+				}
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$buttonlabel.'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
 		}
 	}
-
 	print "</div>\n";
 
 
@@ -927,9 +935,10 @@ if ($object->id > 0) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td>&nbsp;</td>';
 	}
+	print '<td class="left">'.$langs->trans("ID").'</td>';
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
@@ -942,7 +951,7 @@ if ($object->id > 0) {
 	}
 	print '<td>&nbsp;</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td>&nbsp;</td>';
 	}
 	print '</tr>';
@@ -989,13 +998,16 @@ if ($object->id > 0) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
 				print '</a>';
 				print '</td>';
 			}
+
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
@@ -1051,7 +1063,7 @@ if ($object->id > 0) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
@@ -1062,7 +1074,7 @@ if ($object->id > 0) {
 			print '</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="center">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -1123,9 +1135,12 @@ if ($object->id > 0) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
+
+			// ID
+			print '<td class="nowraponall">'.$obj->rowid."</td>\n";
 
 			// Date
 			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
@@ -1194,7 +1209,7 @@ if ($object->id > 0) {
 			print '<td>&nbsp;</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 
@@ -1203,7 +1218,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);

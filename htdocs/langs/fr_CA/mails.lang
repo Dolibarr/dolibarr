@@ -157,3 +157,4 @@ YouCanMakeSomeInstructionForEmail=Vous pouvez créer quelques instructions pour 
 ModelTemplate=Modèle de courrier électronique
 YouCanChooseAModelForYouMailContent=Vous pouvez choisir l'un des modèles ou en générer un avec l'IA
 MailingNumberOfEmailsPerBatchHelp=Définissez le nombre d'e-mails que vous souhaitez envoyer pour chaque action d'envoi manuel. Attention : un nombre important d'e-mails peut entraîner la mise sur liste noire de votre serveur.
+SelectOneArticleOrEnterYourOwnContent=Sélectionnez un produit ou un service, ou saisissez votre propre texte…

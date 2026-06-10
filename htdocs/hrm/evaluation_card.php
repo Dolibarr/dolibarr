@@ -4,8 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -41,15 +48,6 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skillrank.lib.php';
 
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
 
@@ -58,7 +56,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'evaluationcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -103,15 +101,14 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = ($object->status == Evaluation::STATUS_DRAFT) ? 1 : 0;
+restrictedArea($user, $object->element, $object, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 if (!isModEnabled("hrm")) {
 	accessforbidden();
 }
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
 }
-
 
 /*
  * Actions
@@ -130,11 +127,39 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {		// Test on permission not required
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 			}
+		}
+	}
+
+	if ($action == 'saveSkill' && $permissiontoadd) {
+		$TNote = GETPOST('TNote', 'array');
+		if (!empty($TNote)) {
+			foreach ($object->lines as $line) {
+				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
+				$line->update($user);
+			}
+			//setEventMessage($langs->trans("SaveLevelSkill"));
+		}
+
+		$action = 'validate';
+	}
+
+	if ($action == "validate" && $permissiontoadd) {
+		$TNote = GETPOST('TNote', 'array');
+		$emptyTNote = true;
+		foreach ($object->lines as $line) {
+			if (!in_array($TNote[$line->fk_skill], array("0", ""))) {
+				$emptyTNote = false;
+				break;
+			}
+		}
+		if ($emptyTNote) {
+			setEventMessage($langs->trans("WarningEvaluationEmptyValidate"), 'errors');
+			$action = '';
 		}
 	}
 
@@ -166,17 +191,6 @@ if (empty($reshook)) {
 	$trackid = 'evaluation'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if ($action == 'saveSkill') {
-		$TNote = GETPOST('TNote', 'array');
-		if (!empty($TNote)) {
-			foreach ($object->lines as $line) {
-				$line->rankorder = ($TNote[$line->fk_skill] == "NA" ? -1 : $TNote[$line->fk_skill]);
-				$line->update($user);
-			}
-			setEventMessage($langs->trans("SaveLevelSkill"));
-		}
-	}
-
 	if ($action == 'close' && $permissiontoadd) {
 		// save evaldet lines to user;
 		$sk = new SkillRank($db);
@@ -197,22 +211,20 @@ if (empty($reshook)) {
 				}
 			} else {
 				//check if the skill is present to use it
-				$find = false;
 				$keyFind = 0;
 				foreach ($SkillrecordsForActiveUser as $k => $sr) {
 					if ($sr->fk_skill == $line->fk_skill) {
 						$keyFind = $k;
-						$find = true;
 						break;
 					}
 				}
 				//we update the skill user
-				if ($find) {
-					$updSkill = $SkillrecordsForActiveUser[$k];
+				if ($keyFind) {
+					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
 					$updSkill->update($user);
-				} else { // sinon on ajoute la skill
+				} else { // else we create the skill
 					$newSkill = new SkillRank($db);
 					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 				}
@@ -249,49 +261,36 @@ if (empty($reshook)) {
 }
 
 
-
-
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("Evaluation");
 $help_url = '';
 $css = array();
 $css[] = '/hrm/css/style.css';
 llxHeader('', $title, $help_url, '', 0, 0, '', $css);
-
-print '<script type="text/javascript" language="javascript">
+?>
+<script>
 	$(document).ready(function() {
-	  $("#btn_valid").click(function(){
-		 var form = $("#form_save_rank");
-
-		 $.ajax({
-
-			 type: "POST",
-			 url: form.attr("action"),
-			 data: form.serialize(),
-			 dataType: "json"
-		 }).always(function() {
-             window.location.href = "'.dol_buildpath('/hrm/evaluation_card.php', 1).'?id='.$id.'&action=validate&token='.newToken().'";
-             return false;
-		 });
-
-	   });
+		$("#btn_valid").click(function() {
+			console.log("Click on btn_valid");
+			var form = $("#form_save_rank");
+			form.submit();
+			return true;
+		});
 	});
-</script>';
+</script>
+<?php
 
 // Part to create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEval"), '', 'object_' . $object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -324,7 +323,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Evaluation"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -376,7 +375,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateEvaluation', $numref);
@@ -655,7 +654,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}
 
 			// Back to draft

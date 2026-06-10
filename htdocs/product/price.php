@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
@@ -66,6 +66,7 @@ $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $error = 0;
 $errors = array();
+$rowid = 0;
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -110,6 +111,13 @@ if ($object->id > 0) {
 
 $maxpricesupplier = 0;
 
+if ($object->id > 0) {
+	$permissiontoadd = $object->getRights()->creer;
+} else {
+	$permissiontoadd = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
+}
+
+
 /*
  * Actions
  */
@@ -136,7 +144,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if (($action == 'update_vat') && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if (($action == 'update_vat') && !$cancel && $permissiontoadd) {
 		$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 		$price_label = GETPOST('price_label', 'alpha');
@@ -278,9 +286,10 @@ if (empty($reshook)) {
 
 	$maxpricesupplier = 0;
 
-	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $object->getRights()->creer) {
+	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $permissiontoadd) {
 		$error = 0;
 		$pricestoupdate = array();
+		$object->oldcopy = dol_clone($object, 1);	// when calling ->update later we need to call method on ->oldcopy so we clone using param 1
 
 		$psq = GETPOSTINT('psqflag');
 
@@ -305,7 +314,8 @@ if (empty($reshook)) {
 		}
 
 		// Multiprices
-		if (!$error && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || ($action == 'update_level_price' && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')))) {
+		if (!$error && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')
+			|| ($action == 'update_level_price' && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')))) {	// Test on permission already done
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
@@ -389,6 +399,7 @@ if (empty($reshook)) {
 				}
 
 				$pricestoupdate[$i] = array(
+					'price_label' => '', // no change so empty value
 					'price' => price2num($newprice[$i], '', 2),
 					'price_min' => price2num($newprice_min[$i], '', 2),
 					'price_base_type' => $newpricebase[$i],
@@ -511,52 +522,6 @@ if (empty($reshook)) {
 				// If price has changed, we update it
 				if (!array_key_exists($key, $object->multiprices) || $object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
 					$res = $object->updatePrice((float) $newprice, $val['price_base_type'], $user, (float) $val['vat_tx'], (float) $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code'], $val['price_label']);
-					if ($res > 0) {
-						$extralabels = $extrafields->fetch_name_optionals_label("product");
-						if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') && !empty($extralabels)) {
-							// Default price
-							$extrafield_values = $extrafields->getOptionalsFromPost("product");
-							foreach ($extrafield_values as $efkey => $value) {
-								$object->array_options[$efkey] = $value;
-							}
-							$result = $object->insertExtraFields();
-							if ($result < 0) {
-								$error++;
-							}
-						} elseif ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($extralabels)) {
-							$price_extralabels = $extrafields->fetch_name_optionals_label("product_price");
-							$sql = "SELECT rowid";
-							$sql .= " FROM ".$object->db->prefix()."product_price";
-							$sql .= " WHERE entity IN (".getEntity('productprice').")";
-							$sql .= " AND price_level=".((int) $key); // $i
-							$sql .= " AND fk_product = ".((int) $object->id);
-							$sql .= " ORDER BY date_price DESC, rowid DESC";
-							$sql .= " LIMIT 1";
-							$resql = $object->db->query($sql);
-							if ($resql) {
-								$lineid = $object->db->fetch_object($resql);
-								$db->free($resql);
-							}
-							if (!empty($lineid->rowid)) {
-								if (!empty($price_extralabels) && is_array($price_extralabels)) {
-									foreach ($price_extralabels as $code => $label) {
-										$code_array = GETPOST($code, 'array');
-										$object->array_options['options_'.$code] = $code_array[$key];
-									}
-									// We need to force table to update product_price and not product extrafields
-									$object->id = $lineid->rowid;
-									$object->table_element = 'product_price';
-									$result = $object->insertExtraFields();
-								}
-								// Back to product table
-								$object->id = $id;
-								$object->table_element = 'product';
-								if ($result < 0) {
-									$error++;
-								}
-							}
-						}
-					}
 				} else {
 					$res = 0;
 				}
@@ -583,18 +548,19 @@ if (empty($reshook)) {
 						$db->free($resql);
 					}
 					if (!empty($lineid->rowid)) {
+						require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+						$genericObject = new GenericObject($db);
+						// We need to force table to update product_price extrafields
+						$genericObject->id = $lineid->rowid;
+						$genericObject->table_element = 'product_price';
 						foreach ($price_extralabels as $code => $label) {
-							$code_array = GETPOST($code, 'array');
-							$object->array_options['options_'.$code] = $code_array[$key];
+							$extrafield_values = $extrafields->getOptionalsFromPost('product_price', (string) $key);
+							$genericObject->array_options['options_'.$code] = $extrafield_values['options_'.$code];
 						}
-						// We need to force table to update product_price and not product extrafields
-						$object->id = $lineid->rowid;
-						$object->table_element = 'product_price';
-						$result = $object->insertExtraFields();
-						// Back to product table
-						$object->id = $id;
-						$object->table_element = 'product';
+						$result = $genericObject->insertExtraFields();
+
 						if ($result < 0) {
+							setEventMessages($genericObject->error, $genericObject->errors, 'errors');
 							$error++;
 						}
 					}
@@ -626,7 +592,7 @@ if (empty($reshook)) {
 	}
 
 	// Set Price by quantity
-	if ($action == 'activate_price_by_qty') {
+	if ($action == 'activate_price_by_qty' && $permissiontoadd) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -638,7 +604,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Unset Price by quantity
-	if ($action == 'disable_price_by_qty') {
+	if ($action == 'disable_price_by_qty' && $permissiontoadd) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -650,12 +616,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	if ($action == 'edit_price_by_qty') { // Test on permission not required
 		$rowid = GETPOSTINT('rowid');
 	}
 
 	// Add or update price by quantity
-	if ($action == 'update_price_by_qty') {
+	if ($action == 'update_price_by_qty' && $permissiontoadd) {
 		// Récupération des variables
 		$rowid = GETPOSTINT('rowid');
 		$priceid = GETPOSTINT('priceid');
@@ -712,7 +678,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_price_by_qty') {
+	if ($action == 'delete_price_by_qty' && $permissiontoadd) {
 		$rowid = GETPOSTINT('rowid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -724,9 +690,9 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_all_price_by_qty') {
+	if ($action == 'delete_all_price_by_qty' && $permissiontoadd) {
 		$priceid = GETPOSTINT('priceid');
-		if (!empty($rowid)) {
+		if (!empty($priceid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE fk_product_price = ".((int) $priceid);
 
@@ -846,6 +812,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			// Insert price
 			$result = $prodcustprice->create($user, 0, $update_child_soc);
 			if ($result > 0) {
 				if (!empty($extrafield_values) && is_array($extrafield_values)) {
@@ -1136,7 +1103,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$positiverates = '0';
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
-			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+
 			print '</td></tr>';
 		} else {
 			// TVA
@@ -1156,12 +1123,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$positiverates = '0';
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
-			/*
-			if ($object->default_vat_code)
-			{
-				print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
-			}
-			else print vatrate($object->tva_tx . ($object->tva_npr ? '*' : ''), true);*/
+
 			print '</td></tr>';
 		}
 	} else {
@@ -1227,7 +1189,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("PriceLevel");
 		if ($user->admin) {
-			print ' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&token='.newToken().'&pricelevel='.$i.'&id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
+			print ' <a class="editfielda" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editlabelsellingprice', 'id' => $object->id], true).'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
 		}
 		print '</td>';
 		print '<td style="text-align: right">'.$langs->trans("SellingPrice").'</td>';
@@ -1304,6 +1266,10 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 			}
 			print '</td>';
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1312,35 +1278,16 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				$sql2  = "SELECT";
-				$sql2 .= " fk_object";
 				foreach ($extralabels as $key => $value) {
-					$sql2 .= ", ".$key;
-				}
-				$sql2 .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-				$sql2 .= " WHERE fk_object = ".((int) $lineid->rowid);
-				$resql2 = $db->query($sql2);
-				if ($resql2) {
-					if ($db->num_rows($resql2) != 1) {
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right"></td>';
-							}
-						}
-					} else {
-						$obj = $db->fetch_object($resql2);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
-								print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_price')."</td>";
-							}
-						}
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && $extrafields->attributes["product_price"]['list'][$key] != 3) {
+						print '<td align="right">'.$extrafields->showOutputField($key, $genericObject->array_options['options_' . $key], '', 'product_price')."</td>";
 					}
-					$db->free($resql1);
-					$db->free($resql2);
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 
@@ -1423,6 +1370,16 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		}
 	}
 } else {
+	// Type
+	if (isModEnabled("product") && isModEnabled("service")) {
+		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+		print '<tr><td class="">';
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+		print '</td><td>';
+		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+		print '</td></tr>';
+	}
+
 	// TVA
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
@@ -1475,7 +1432,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 
 	// Packaging
 	if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-		print '<tr class="field_price_label"><td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc")).'</td><td>';
+		print '<tr class="field_price_label"><td>'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td><td>';
 		print $object->packaging;
 		print '</td></tr>';
 	}
@@ -1587,23 +1544,19 @@ print dol_get_fiche_end();
 
 
 
-/*
- * Action bar
- */
-
+// Button for actions
 
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";
 
-
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	if (empty($reshook)) {
 		if ($object->isVariant()) {
-			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
-			}
+			//if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NoEditVariants")) . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+			//}
 		} else {
 			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
@@ -1760,9 +1713,9 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", getDolGlobalString('MAIN_MAX_DECIMALS_UNIT')), 1, 'help');
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
-			print '<input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
+			print '<input name="price_min" size="10" value="'.($object->price_min_ttc ? price($object->price_min_ttc) : '').'">';
 		} else {
-			print '<input name="price_min" size="10" value="'.price($object->price_min).'">';
+			print '<input name="price_min" size="10" value="'.($object->price_min ? price($object->price_min) : '').'">';
 		}
 		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE')) {
 			print ' &nbsp; '.$langs->trans("MinimumRecommendedPrice", price((float) $maxpricesupplier, 0, '', 1, -1, -1, 'auto')).' '.img_warning().'</td>';
@@ -1773,10 +1726,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		// Packaging
 		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 			print '<tr><td>';
-			print $form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductSellDesc"));
+			print $form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc"));
 			print '</td><td>';
 			$packaging = $object->packaging;
-			print '<input class="flat" name="packaging" size="5" value="' . price($packaging, 0, '', 1, -1, 2).'">';
+			print '<input class="flat" name="packaging" size="5" value="' . ($packaging ? price($packaging, 0, '', 1, -1, 2) : '').'">';
 			print '</td>';
 			print '</tr>';
 		}
@@ -1930,6 +1883,10 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 			print '</td>';
 
 			if (!empty($extralabels)) {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/genericobject.class.php';
+				$genericObject = new GenericObject($db);
+				// We need to force table to fetch optionals product_price extrafields
+				$genericObject->table_element = 'product_price';
 				$sql1 = "SELECT rowid";
 				$sql1 .= " FROM ".$object->db->prefix()."product_price";
 				$sql1 .= " WHERE entity IN (".getEntity('productprice').")";
@@ -1938,44 +1895,23 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 				$sql1 .= " ORDER BY date_price DESC, rowid DESC";
 				$sql1 .= " LIMIT 1";
 				$resql1 = $object->db->query($sql1);
-				if ($resql1) {
-					$lineid = $object->db->fetch_object($resql1);
+				if ($resql1 && $lineid = $object->db->fetch_object($resql1)) {
+					$genericObject->id = $lineid->rowid;
+					$genericObject->fetch_optionals();
 				}
-				if (empty($lineid->rowid)) {
-					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-							if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-								$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-							}
-
-							$extravalue = GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key};
-							print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
+				foreach ($extralabels as $key => $value) {
+					if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
+							$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
 						}
-					}
-				} else {
-					$sql  = "SELECT";
-					$sql .= " fk_object";
-					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$key;
-					}
-					$sql .= " FROM ".MAIN_DB_PREFIX."product_price_extrafields";
-					$sql .= " WHERE fk_object = ".((int) $lineid->rowid);
-					$resql = $db->query($sql);
-					if ($resql) {
-						$obj = $db->fetch_object($resql);
-						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_price"]['list'][$key]) && ($extrafields->attributes["product_price"]['list'][$key] == 1 || $extrafields->attributes["product_price"]['list'][$key] == 3 || ($action == "edit_level_price" && $extrafields->attributes["product_price"]['list'][$key] == 4))) {
-								if (!empty($extrafields->attributes["product_price"]['langfile'][$key])) {
-									$langs->load($extrafields->attributes["product_price"]['langfile'][$key]);
-								}
 
-								$extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key} ?? '');
-								print '<td align="center"><input name="'.$key.'['.$i.']" size="10" value="'.$extravalue.'"></td>';
-							}
-						}
-						$db->free($resql);
+						// $extravalue = (GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $genericObject->array_options['options_' . $key] ?? '');
+						print '<td align="center">';
+						print $extrafields->showInputField($key, $genericObject->array_options['options_' . $key], '', (string) $i, '', '', $genericObject, 'product_price');
+						print '</td>';
 					}
 				}
+				$db->free($resql1);
 			}
 			print '</tr>';
 		}
@@ -2273,7 +2209,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				$sql  = "SELECT";
 				$sql .= " fk_object";
 				foreach ($extralabels as $key => $value) {
-					$sql .= ", ".$key;
+					$sql .= ", ".$db->sanitize($key);
 				}
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
 				$sql .= " WHERE fk_object = ".((int) $prodcustprice->id);
@@ -2339,7 +2275,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		$title = $langs->trans('PriceByCustomerLog');
 		$title .= ' - '.$staticsoc->getNomUrl(1);
 
-		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+		$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $backbutton, count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
@@ -2404,7 +2340,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print "<td>".dol_print_date($line->date_begin, "day", 'tzuserrel')."</td>";
 				print "<td>".dol_print_date($line->date_end, "day", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 
 				$positiverates = '';
 				if (price2num($line->tva_tx)) {
@@ -2433,16 +2369,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
-				print '<td class="right">'.$line->price_label.'</td>';
+				print '<td class="right">'.dolPrintHTML($line->price_label).'</td>';
 				print '<td class="right">'.price($line->discount_percent).'</td>';
 
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
-				print '<td class="right">';
-				print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
-				//print $userstatic->getLoginUrl(1);
+				print '<td class="tdoverflowmax125">';
+				// @TODO Add a cache on $userstatic
+				if ($line->fk_user > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($line->fk_user);
+					print $userstatic->getNomUrl(1, '', 0, 0, 24, 0, 'login');
+				}
 				print '</td>';
+
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '</tr>';
 			}
@@ -2572,7 +2511,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 
 			// VAT Rate
-			print '<td class="right">';
+			print '<td class="right nowraponall">';
 
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
@@ -2589,8 +2528,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr);
 
-			//print vatrate($object->tva_tx, true, $object->tva_npr);
-			//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
 			print "</td>";
 
 			print '<td class="right"><span class="amount">'.price($object->price)."</span></td>";
@@ -2603,7 +2540,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 			print '<td class="right">'.price($object->price_min).'</td>';
 			print '<td class="right">'.price($object->price_min_ttc).'</td>';
-			print '<td class="right">'.$object->price_label.'</td>';
+			print '<td class="right">'.dolPrintHTML($object->price_label).'</td>';
 			print '<td class="right"></td>';
 			print '<td class="right"></td>';
 			if (!empty($extralabels)) {
@@ -2657,12 +2594,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '<tr class="oddeven">';
 
 				print '<td class="tdoverflowmax125">'.$staticsoc->getNomUrl(1)."</td>";
-				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
+				print '<td>'.dolPrintHTML($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->date_begin, "day", 'tzuserrel')."</td>";
 				print "<td>".dol_print_date($line->date_end, "day", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				// VAT Rate
-				print '<td class="right">';
+				print '<td class="right nowraponall">';
 
 				$positiverates = '';
 				if (price2num($line->tva_tx)) {
@@ -2692,7 +2629,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
-				print '<td class="right">'.$line->price_label.'</td>';
+				print '<td class="right">'.dolPrintHTMLForAttribute($line->price_label).'</td>';
 				print '<td class="right">'.price($line->discount_percent).'</td>';
 
 				// Extrafields
@@ -2702,7 +2639,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					$sql  = "SELECT";
 					$sql .= " fk_object";
 					foreach ($extralabels as $key => $value) {
-						$sql .= ", ".$key;
+						$sql .= ", ".$db->sanitize($key);
 					}
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_extrafields";
 					$sql .= " WHERE fk_object = ".((int) $line->id);
@@ -2727,17 +2664,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				}
 
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
-				// @TODO Add a cache on $users object
-				print '<td>';
-				print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+				print '<td class="tdoverflowmax125">';
+				if ($line->fk_user > 0) {
+					$userstatic = new User($db);
+					$userstatic->fetch($line->fk_user);
+					// @TODO Add a cache on $userstatic object
+					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
+				}
 				print '</td>';
 
 				// Todo Edit or delete button
 				// Action
-				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
-					print '<td class="right nowraponall">';
+				print '<td class="right nowraponall">';
+				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&id='.$object->id.'&socid='.$line->fk_soc.'">';
 					print img_info($langs->trans('PriceByCustomerLog'));
 					print '</a>';
@@ -2746,11 +2685,13 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
+				}
+				if ($user->hasRight('produit', 'supprimer') || $user->hasRight('service', 'supprimer')) {
 					print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&id='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
-					print '</td>';
 				}
+				print '</td>';
 
 				print "</tr>\n";
 			}
@@ -2791,13 +2732,13 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if (!$num) {
 			$db->free($result);
 
-			// Il doit au moins y avoir la ligne de prix initial.
-			// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
+			// We must have at least one initial line
+			// We add it to fix this if not (trouble with old versions)
 			// We emulate the change of the price from interface with the same value than the one into table llx_product
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
+				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1, 0, 0, 0, array(), $object->default_vat_code);
 			} else {
-				$ret = $object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
+				$ret = $object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min), 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
 			}
 
 			if ($ret < 0) {
@@ -2811,7 +2752,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 		if ($num > 0) {
 			// Default prices or
 			// Log of previous customer prices
-			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("Back").'</a>';
+			$backbutton = '<a class="justalink" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("GoBack").'</a>';
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
@@ -2980,19 +2921,19 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 				print '</td>';
 
 				// Price Label
-				print '<td class="right">';
-				print $objp->price_label;
+				print '<td>';
+				print dolPrintHTML($objp->price_label);
 				print '</td>';
 
 				// User
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($objp->user_id > 0) {
+					// @TODO Add a cache on $userstatic
 					$userstatic = new User($db);
 					$userstatic->fetch($objp->user_id);
 					print $userstatic->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 				}
 				print '</td>';
-
 
 				// Action
 				if ($user->hasRight('produit', 'supprimer')) {

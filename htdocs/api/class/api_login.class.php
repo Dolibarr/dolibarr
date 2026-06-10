@@ -41,9 +41,8 @@ class Login
 		global $db;
 		$this->db = $db;
 
-		//$conf->global->API_DISABLE_LOGIN_API = 1;
-		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
-			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
+		if (!getDolGlobalInt('API_ENABLE_LOGIN_API')) {
+			throw new RestException(403, "Error: The login APIs are disabled. It is recommended to call the APIs using the DOLAPIKEY token of an allowed user instead of the login/password. API key can be set from the user card. If you really need to get the API token from the login API, you can set the constant API_ENABLE_LOGIN_API.");
 		}
 	}
 
@@ -77,7 +76,7 @@ class Login
 	 * Login
 	 *
 	 * Request the API token for a couple username / password.
-	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the POST method. This will expose your password.
+	 * WARNING: You should NEVER use this API, like you should never use the similar API that uses the GET method. This will expose your password.
 	 * To use the APIs, you should instead set an API token to the user you want to allow to use API (This API token called DOLAPIKEY can be found/set on the user page) and use this token as credential for any API call.
 	 * From the API explorer, you can enter directly the "DOLAPIKEY" into the field at the top right of the page to get access to any allowed APIs.
 	 *
@@ -96,12 +95,12 @@ class Login
 	 */
 	public function index($login, $password, $entity = '', $reset = 0)
 	{
-		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
+		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		// Is the login API disabled ? The token must be generated from backoffice only.
-		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
-			dol_syslog("Warning: A try to use the login API has been done while the login API is disabled. You must generate or get the token from the backoffice.", LOG_WARNING);
-			throw new RestException(403, "Error, the login API has been disabled for security purpose. You must generate or get the token from the backoffice.");
+		if (!getDolGlobalString('API_ENABLE_LOGIN_API')) {
+			dol_syslog("Warning: A try to use the login API has been done while the login API is disabled (Option API_ENABLE_LOGIN_API is off). You must generate or get the DOLAPIKEY token from the backoffice instead of using the /login API.", LOG_WARNING);
+			throw new RestException(403, "Error, the login API has been disabled for security purpose (Option API_ENABLE_LOGIN_API is off). You must generate or get the DOLAPIKEY token from the backoffice instead of using the /login API.");
 		}
 
 		// Authentication mode
@@ -159,7 +158,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().getDolGlobalString('MAIN_API_KEY'), '1');
+			$token = dol_hash($login.bin2hex(random_bytes(32)).getDolGlobalString('MAIN_API_KEY'), 'hash');
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -187,7 +186,7 @@ class Login
 			'success' => array(
 				'code' => 200,
 				'token' => $token,
-				'entity' => $tmpuser->entity,
+				'entity' => $tmpuser->entity ?? 1,
 				'message' => 'Welcome '.$login.($reset ? ' - Token is new' : ' - This is your token (recorded for your user). You can use it to make any REST API call, or enter it into the DOLAPIKEY field to use the Dolibarr API explorer.')
 			)
 		);

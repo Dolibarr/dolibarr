@@ -28,8 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -184,7 +183,7 @@ llxHeader('', $langs->trans("SyslogSetup"), '', '', 0, 0, '', '', '', 'mod-admin
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("SyslogSetup"), $linkback, 'title_setup');
 print '<br>';
@@ -262,7 +261,7 @@ foreach ($syslogModules as $moduleName) {
 				$value = (isset($option['default']) ? $option['default'] : '');
 			}
 
-			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" placeholder="'.$option['default'].'" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) {
 				print '<br>'.$langs->trans("Example").': '.dol_escape_htmltag($option['example']);
 			}
@@ -316,14 +315,14 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat minwidth400" id="level" name="level" '.$optionmc.'>';
-print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL == LOG_EMERG ? 'SELECTED' : '').'>LOG_EMERG ('.LOG_EMERG.')</option>';
-print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL == LOG_ALERT ? 'SELECTED' : '').'>LOG_ALERT ('.LOG_ALERT.')</option>';
-print '<option value="'.LOG_CRIT.'" '.($conf->global->SYSLOG_LEVEL == LOG_CRIT ? 'SELECTED' : '').'>LOG_CRIT ('.LOG_CRIT.')</option>';
-print '<option value="'.LOG_ERR.'" '.($conf->global->SYSLOG_LEVEL == LOG_ERR ? 'SELECTED' : '').'>LOG_ERR ('.LOG_ERR.')</option>';
-print '<option value="'.LOG_WARNING.'" '.($conf->global->SYSLOG_LEVEL == LOG_WARNING ? 'SELECTED' : '').'">LOG_WARNING ('.LOG_WARNING.')</option>';
-print '<option value="'.LOG_NOTICE.'" '.($conf->global->SYSLOG_LEVEL == LOG_NOTICE ? 'SELECTED' : '').' data-html="'.dol_escape_htmltag('LOG_NOTICE ('.LOG_NOTICE.') - <span class="opacitymedium">'.$langs->trans("RecommendedForProduction").'</span>').'">LOG_NOTICE ('.LOG_NOTICE.')</option>';
-print '<option value="'.LOG_INFO.'" '.($conf->global->SYSLOG_LEVEL == LOG_INFO ? 'SELECTED' : '').'>LOG_INFO ('.LOG_INFO.')</option>';
-print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL >= LOG_DEBUG ? 'SELECTED' : '').' data-html="'.dol_escape_htmltag('LOG_DEBUG ('.LOG_DEBUG.') - <span class="opacitymedium">'.$langs->trans("RecommendedForDebug").'</span>').'">LOG_DEBUG ('.LOG_DEBUG.')</option>';
+print '<option value="'.LOG_EMERG.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_EMERG ? 'selected' : '').'>LOG_EMERG ('.LOG_EMERG.')</option>';
+print '<option value="'.LOG_ALERT.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_ALERT ? 'selected' : '').'>LOG_ALERT ('.LOG_ALERT.')</option>';
+print '<option value="'.LOG_CRIT.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_CRIT ? 'selected' : '').'>LOG_CRIT ('.LOG_CRIT.')</option>';
+print '<option value="'.LOG_ERR.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_ERR ? 'selected' : '').'>LOG_ERR ('.LOG_ERR.')</option>';
+print '<option value="'.LOG_WARNING.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_WARNING ? 'selected' : '').'>LOG_WARNING ('.LOG_WARNING.')</option>';
+print '<option value="'.LOG_NOTICE.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_NOTICE ? 'selected' : '').' data-html="'.dol_escape_htmltag('LOG_NOTICE ('.LOG_NOTICE.') - <span class="opacitymedium">'.$langs->trans("RecommendedForProduction").'</span>').'">LOG_NOTICE ('.LOG_NOTICE.')</option>';
+print '<option value="'.LOG_INFO.'" '.(getDolGlobalString('SYSLOG_LEVEL') == LOG_INFO ? 'selected' : '').'>LOG_INFO ('.LOG_INFO.')</option>';
+print '<option value="'.LOG_DEBUG.'" '.(getDolGlobalString('SYSLOG_LEVEL') >= LOG_DEBUG ? 'selected' : '').' data-html="'.dol_escape_htmltag('LOG_DEBUG ('.LOG_DEBUG.') - <span class="opacitymedium">'.$langs->trans("RecommendedForDebug").'</span>').'">LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select>';
 
 print ajax_combobox("level");
@@ -332,7 +331,7 @@ print '</td></tr>';
 if (!empty($conf->loghandlers['mod_syslog_file']) && isModEnabled('cron')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
 	print '<td colspan="2"><input class="width50" type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.getDolGlobalString('SYSLOG_FILE_SAVES').'" />';
-	print ' &nbsp; (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+	print ' &nbsp; <a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a></td></tr>';
 }
 
 print '</table>';

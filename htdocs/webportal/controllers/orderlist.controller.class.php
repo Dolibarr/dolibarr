@@ -24,18 +24,13 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formlistwebportal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/webportal/controllers/abstractlist.controller.class.php';
 
 /**
  * Class for OrderListController
  */
-class OrderListController extends Controller
+class OrderListController extends AbstractListController
 {
-	/**
-	 * @var FormListWebPortal Form for list
-	 */
-	public $formList;
-
-
 	/**
 	 * Check current access to controller
 	 *
@@ -64,23 +59,31 @@ class OrderListController extends Controller
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+		$langs->loadLangs(array('orders', 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 		$context->title = $langs->trans('WebPortalOrderListTitle');
 		$context->desc = $langs->trans('WebPortalOrderListDesc');
 		$context->menu_active[] = 'order_list';
 
 		// set form list
-		$formListWebPortal = new FormListWebPortal($this->db);
-		$formListWebPortal->init('order');
+		$this->formList = new FormListWebPortal($this->db);
+		$this->formList->init($this, 'order');
 
 		// hook for action
 		$hookRes = $this->hookDoAction();
 		if (empty($hookRes)) {
-			$formListWebPortal->doActions();
+			$this->formList->doActions();
 		}
 
-		$this->formList = $formListWebPortal;
+		// filter on logged third-party
+		$sqlBody = " AND t.fk_soc = ".((int) $context->logged_thirdparty->id);
+		// discard record with status draft
+		$sqlBody .= " AND t.fk_statut <> 0";
+		$this->formList->setSqlRequest('', $sqlBody);
+
+		$this->formList->loadRecords();
+		$this->formList->setParams();
+		$this->formList->setColumnsVisibility();
 
 		return 1;
 	}
@@ -106,7 +109,7 @@ class OrderListController extends Controller
 		if (empty($hookRes)) {
 			print '<main class="container">';
 			//print '<figure>';
-			print $this->formList->elementList($context);
+			$this->loadTemplate('list');
 			//print '</figure>';
 			print '</main>';
 		}

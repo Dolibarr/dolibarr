@@ -110,7 +110,6 @@ CheckReceiptShort=comprobante de depósito
 LastCheckReceiptShort=Últimos comprobantes de depósito %s
 LastPaymentForDepositShort=Últimas boletas de depósito %s %s
 NewCheckReceipt=Nuevo descuento
-NewCheckDepositOn=Crear recibo para depósito a cuenta: %s
 NoWaitingChecks=No hay cheques en espera de depósito.
 NoWaitingPaymentForDeposit=No %s pago pendiente de depósito.
 DateChequeReceived=Consultar fecha de recepción

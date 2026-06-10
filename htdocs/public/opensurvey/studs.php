@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,18 +39,17 @@ if (!defined('NOIPCHECK')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Societe $mysoc
  * @var Translate $langs
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -69,7 +68,7 @@ $canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_f
 
 // Security check
 if (!isModEnabled('opensurvey')) {
-	httponly_accessforbidden('Module Survey not enabled');
+	httponly_accessforbidden('Module Opensurvey not enabled');
 }
 
 
@@ -79,7 +78,7 @@ if (!isModEnabled('opensurvey')) {
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
-$listofvoters = explode(',', $_SESSION["savevoter"]);
+$listofvoters = explode(',', $_SESSION["savevoter"] ?? '');
 
 $error = 0;
 
@@ -341,12 +340,14 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<div class="survey_intro">';
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
+print '<div class="small">';
 print '<span class="opacitymedium">'.$langs->trans("OpenSurveyHowTo").'</span><br>';
 if (empty($object->allow_spy)) {
 	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
 } else {
 	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
 }
+print '</div>';
 print '</div>';
 print '<br>';
 
@@ -373,7 +374,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	print '<br><center><div class="quatrevingtpercent center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
+	print '<br><center><div class="center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
 	llxFooterSurvey();
 
 	$db->close();
@@ -500,7 +501,7 @@ while ($compteur < $num) {
 
 	$ensemblereponses = $obj->reponses;
 
-	// ligne d'un usager pré-authentifié
+	// Set if line of pre-authentified user
 	$mod_ok = (in_array($obj->name, $listofvoters));
 
 	if (!$mod_ok && !$object->allow_spy) {
@@ -513,7 +514,7 @@ while ($compteur < $num) {
 	// Name
 	print '<td class="nom">'.img_picto($obj->name, 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->name).'</td>'."\n";
 
-	// si la ligne n'est pas a changer, on affiche les données
+	// If the line does not need modification, show the data
 	if (!$testligneamodifier) {
 		for ($i = 0; $i < $nbcolonnes; $i++) {
 			$car = substr($ensemblereponses, $i, 1);
@@ -672,7 +673,7 @@ while ($compteur < $num) {
 		print '<td class="casevide"><input type="submit" class="button small" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
-	//demande de confirmation pour modification de ligne
+	// Ask for confirmation to modify the line
 	for ($i = 0; $i < $nblines; $i++) {
 		if (GETPOSTISSET("modifierligne".$i)) {
 			if ($compteur == $i) {
@@ -843,12 +844,12 @@ if ($comments) {
 	print '<br>'.img_picto('', 'note', 'class="pictofixedwidth"').'<span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span><br>'."\n";
 
 	foreach ($comments as $obj) {
-		// ligne d'un usager pré-authentifié
+		// Set if line of pre-authentified user
 		//$mod_ok = (in_array($obj->name, $listofvoters));
 
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', 0, 0, 0, '', 'nomarginleft').'</a> ';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete', '', 0, 0, 0, '', 'nomarginleft').'</a> ';
 		}
 		//else print img_picto('', 'ellipsis-h', '', 0, 0, 0, '', 'nomarginleft').' ';
 		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";

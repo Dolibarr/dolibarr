@@ -55,4 +55,3 @@ This the second major release of Arabeyes fonts, this release features:
   * We dropped ae_ prefix from all fonts, so please fix your configuration
     files.
   * Various other small fixes, see ChangeLog file for details.
-

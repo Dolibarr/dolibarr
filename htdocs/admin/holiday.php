@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,9 +35,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "errors", "holiday"));
+$langs->loadLangs(array("admin", "errors", "holiday", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -177,7 +176,7 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
@@ -199,7 +198,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
 clearstatcache();
 
@@ -228,7 +227,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -305,7 +304,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$sql = "SELECT nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
@@ -396,7 +395,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 									// Default
 									print '<td class="center">';
-									if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+									if (getDolGlobalString('HOLIDAY_ADDON_PDF') == $name) {
 										print img_picto($langs->trans("Default"), 'on');
 									} else {
 										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -446,6 +445,32 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '</div>';
 	print "<br>";
 }
+
+
+/*
+ * Type of leaves
+ */
+
+print load_fiche_titre($langs->trans("LeaveType"), '', '');
+
+print '<div class="urllink">';
+print img_picto('', 'url', 'class="pictofixedwidth"').' <a href="'.DOL_URL_ROOT.'/admin/dict.php?id=28&search_country_id='.($conf->entity).'">'.$langs->trans("ClickHereToGoToDictionary", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionary"), $langs->transnoentitiesnoconv("LeaveType")).'</a>';
+print '</div>';
+
+print '<br><br>';
+
+
+/*
+ * Type of leaves
+ */
+
+print load_fiche_titre($langs->trans("DictionaryPublicHolidays"), '', '');
+
+print '<div class="urllink">';
+print img_picto('', 'url', 'class="pictofixedwidth"').' <a href="'.DOL_URL_ROOT.'/admin/dict.php?id=32&search_country_id='.($conf->entity).'">'.$langs->trans("ClickHereToGoToDictionary", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionary"), $langs->transnoentitiesnoconv("DictionaryPublicHolidays")).'</a>';
+print '</div>';
+
+print '<br><br>';
 
 
 /*
@@ -531,7 +556,7 @@ print "</tr>";
 
 // Set holiday decrease at the end of month
 print '<tr class="oddeven">';
-print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt")."</td>";
+print "<td>".$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt").' <span class="opacitymedium">('.$langs->trans("ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAtBis").')</span></td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('HOLIDAY_DECREASE_AT_END_OF_MONTH', array(), null, 0, 0, 0, 2, 0, 1);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 
 /**
  * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur|Fichinter $object
+ * @var PropaleLigne|ContratLigne|OrderLine|FactureLigne|ExpeditionLigne|DeliveryLine|CommandeFournisseurLigne|SupplierInvoiceLine|SupplierProposalLine|FichinterLigne $line
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -33,7 +33,10 @@
  */
 
 '
-@phan-var-force CommonObject $this
+@phan-var-force Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this
+@phan-var-force ?array<int,string> $depth_array
+@phan-var-force ?array<string,string> $titles
+@phan-var-force string $type
 ';
 
 $depth_array = $depth_array ?? array();
@@ -50,14 +53,14 @@ if ($type == 'title') {
 	$formquestion = array(
 		array('type' => 'text', 'name' => 'subtotallinedesc', 'label' => $langs->trans("SubtotalLineDesc"), 'moreattr' => 'placeholder="' . $langs->trans("Description") . '"'),
 		array('type' => 'select', 'name' => 'subtotallinelevel', 'label' => $langs->trans("SubtotalLineLevel"), 'values' => $depth_array, 'default' => 1, 'select_show_empty' => 0),
-		array('type' => 'checkbox', 'value' => false, 'name' => 'titleshowuponpdf', 'label' => $langs->trans("ShowUPOnPDF")),
-		array('type' => 'checkbox', 'value' => false, 'name' => 'titleshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
+		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowuponpdf', 'label' => $langs->trans("ShowUPOnPDF")),
+		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 		array('type' => 'checkbox', 'value' => false, 'name' => 'titleforcepagebreak', 'label' => $langs->trans("ForcePageBreak")),
 	);
 } elseif ($type == 'subtotal') {
 	$formquestion = array(
 		array('type' => 'select', 'name' => 'subtotaltitleline', 'label' => $langs->trans("CorrespondingTitleLine"), 'values' => $titles, 'select_show_empty' => 0),
-		array('type' => 'checkbox', 'value' => false, 'name' => 'subtotalshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
+		array('type' => 'checkbox', 'value' => true, 'name' => 'subtotalshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 	);
 }
 
@@ -65,7 +68,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, array('propal', 'commande', 'facturerec', 'shipping'))) {
+} elseif (in_array($object->element, $object::$ALLOWED_TYPES)) {  // @phan-suppress-current-line PhanUndeclaredStaticProperty
 	$page .= '?id=' . $object->id;
 }
 

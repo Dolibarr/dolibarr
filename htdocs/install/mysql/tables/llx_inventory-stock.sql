@@ -17,23 +17,23 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_inventory 
-( 
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-  entity integer DEFAULT 0, 
+CREATE TABLE llx_inventory
+(
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity integer DEFAULT 0,
   ref varchar(48),							-- We will also use this code as inventory code
   date_creation datetime DEFAULT NULL,
-  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat	integer,					-- user making creation
   fk_user_modif integer,                    -- user making last change
   fk_user_valid integer,                    -- valideur de la fiche
-  fk_warehouse integer DEFAULT NULL, 
+  fk_warehouse integer DEFAULT NULL,
   fk_product integer DEFAULT NULL,
   categories_product varchar(255) DEFAULT NULL, -- product categories id separated by comma
   status integer DEFAULT 0,
-  title varchar(255) NOT NULL, 
+  title varchar(255) NOT NULL,
   date_inventory datetime DEFAULT NULL,
   date_validation datetime DEFAULT NULL,
   import_key               varchar(14)       	-- import key
-) 
+)
 ENGINE=innodb;

@@ -26,8 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
  *
  * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -81,7 +80,7 @@ $user->fetch_clicktodial();
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
 llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-clicktodial');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
 
@@ -152,7 +151,7 @@ print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
 print '<br>'.$url;
 print '<br>';
 print '<br>';
-print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP')).'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -175,7 +174,7 @@ if (getDolGlobalString('CLICKTODIAL_URL')) {
 		$phonefortest = GETPOST('phonefortest');
 	}
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
@@ -183,13 +182,13 @@ if (getDolGlobalString('CLICKTODIAL_URL')) {
 	print '</form>';
 
 	$setupcomplete = 1;
-	if (preg_match('/__LOGIN__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) {
+	if (preg_match('/__LOGIN__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_login)) {
 		$setupcomplete = 0;
 	}
-	if (preg_match('/__PASSWORD__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) {
+	if (preg_match('/__PASSWORD__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_password)) {
 		$setupcomplete = 0;
 	}
-	if (preg_match('/__PHONEFROM__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) {
+	if (preg_match('/__PHONEFROM__/', getDolGlobalString('CLICKTODIAL_URL')) && empty($user->clicktodial_poste)) {
 		$setupcomplete = 0;
 	}
 

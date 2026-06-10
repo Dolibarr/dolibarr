@@ -57,3 +57,7 @@ donAnonymous=Donació anònima
 AnonymousDonationTooltip=Marqueu aquesta casella si voleu que la vostra donació romangui anònima. No us demanaran la vostra informació personal.
 publicDonationFieldHelp=%s pot publicar la meva donació al registre públic
 listOfPublicDonations=Llista de donacions públiques
+donationErrorMessageContactEmail=S'ha produït un error. Per completar la vostra donació, poseu-vos en contacte amb nosaltres a %s
+descDonationLineInInvoice=Donació i contribució
+companyBusinessNumber=Número de registre mercantil
+companyTIN=Número d'identificació fiscal

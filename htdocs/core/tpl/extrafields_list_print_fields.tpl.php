@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +14,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var stdClass $obj
+ * @var DoliDB $db
  * @var ExtraFields $extrafields
  *
- * @var string	$extrafieldsobjectkey
+ * @var string $extrafieldsobjectkey
+ * @var string $extrafieldsobjectprefix
+ * @var int $i
+ * @var array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
  */
-
 '
 @phan-var-force CommonObject $object
+@phan-var-force stdClass $obj
+@phan-var-force int $i
+@phan-var-force array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
 ';
 
 // Protection to avoid direct call of template
@@ -79,12 +85,13 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null, 'list');
+
 				$title = dol_string_nohtmltag($valuetoshow);
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print ($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;

@@ -4,7 +4,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,12 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 $trackid = GETPOST('trackid');
 
@@ -68,12 +67,12 @@ $substitutionarrayfortest = array(
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	//'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("Recipient").')',
-	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("Recipient").')',
-	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("Recipient").')',
-	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
-	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
-	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
+	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("MailRecipient").')',
+	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("MailRecipient").')',
+	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("MailRecipient").')',
+	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("MailRecipient").')',
+	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("MailRecipient").')',
+	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("MailRecipient").')',
 	'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );
@@ -201,9 +200,7 @@ $head = email_admin_prepare_head();
 $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-if (version_compare(phpversion(), '7.0', '>=')) {
-	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
-}
+$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 // List of oauth services
 $oauthservices = array();
@@ -369,7 +366,7 @@ if ($action == 'edit') {
 		print '</script>'."\n";
 	}
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -1129,8 +1126,15 @@ if ($action == 'edit') {
 						if ($dnstype == 'DMARC') {
 							$domain = '_dmarc.'.$domain;
 						}
-						$dnsinfo = dns_get_record($domain, DNS_TXT);
+
+						$authns = (getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS') ? explode(',', getDolGlobalString('MAIN_MAIL_OVERRIDE_AUTHORITATIVE_DNS')) : null); // eg 8.8.8.8, x.x.x.x
+						$dnsinfo = @dns_get_record($domain, DNS_TXT, $authns);
+						if ($dnsinfo === false) {
+							$langs->load("errors");
+							$text .= ($text ? '<br>' : '').$langs->trans("WarningDNSServerNotAvailable");
+						}
 					}
+
 					if (!empty($dnsinfo) && is_array($dnsinfo)) {
 						foreach ($dnsinfo as $info) {
 							if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
@@ -1161,19 +1165,35 @@ if ($action == 'edit') {
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
-		$result = $mail->check_server_port($server, $port);
-		if ($result) {
-			print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", $server, $port).'</div>';
-		} else {
-			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", $server, $port);
+		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
+		$errormsg = '';
+
+		$listOfAllowedPorts = array('25', '465', '587', '2525');
+		if (!in_array($port, $listOfAllowedPorts)) {
+			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
+		}
+
+		if (empty($errormsg)) {
+			$result = $mail->check_server_port((string) $server, (int) $port);
+			if ($result && !is_array($result)) {
+				print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
+			} else {
+				$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+				if (is_array($result)) {
+					$errormsg .= '<br>'.$result['content'];
+				}
+			}
+		}
+
+		if ($errormsg) {
 			if ($mail->error) {
 				$errormsg .= ' - '.$mail->error;
 			}
 
 			setEventMessages($errormsg, null, 'errors');
 		}
+
 		print '<br>';
 	}
 

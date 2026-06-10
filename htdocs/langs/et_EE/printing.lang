@@ -46,6 +46,10 @@ IPP_Color=Värv
 IPP_Device=Seade
 IPP_Media=Printerikandjad
 IPP_Supported=Meedia tüüp
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Puudub
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Värv
 DirectPrintingJobsDesc=See leht loetleb saadaolevate printerite jaoks leitud printimistööd.
 GoogleAuthNotConfigured=Google OAuthi pole seadistatud. Luba moodul OAuth ja määra Google'i ID/salakood.
 GoogleAuthConfigured=Mooduli OAuth seadistamisel leiti Google OAuthi mandaat.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Google Cloud Printi printeridraiveri konfiguratsiooni
 PrintingDriverDescprintipp=Printimise draiveri Cupsi konfiguratsioonimuutujad.
 PrintTestDescprintgcp=Google Cloud Printi printerite loend.
 PrintTestDescprintipp=Tasside printerite loend.
-Testbbbb
+PrinterLocation=Printer location

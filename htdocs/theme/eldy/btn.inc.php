@@ -23,16 +23,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var User $user
  *
  * @var string $butactionbg
+ * @var string $colorbackhmenu1
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
- * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
  * @var int<0,max> $nbtopmenuentries
  * @var string $right
- * @var string $left
+ * @var string $textbutaction
  */
 
 '
 @phan-var-force string $butactionbg
+@phan-var-force string $colorbackhmenu1
 @phan-var-force string $colortextlink
 @phan-var-force int<0,1> $dol_optimize_smallscreen
 @phan-var-force string $fontlist
@@ -56,7 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (getDolGlobalString('THEME_DARKMODEENABLED')) {
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -84,9 +87,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
+
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -94,10 +95,13 @@ div.tabsAction > div.divButAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butActionRefused,
 div.tabsAction > div.divButAction > a.butAction,
 div.tabsAction > div.divButAction > a.butActionDelete,
-div.tabsAction > div.divButAction > a.butActionRefused {
+div.tabsAction > div.divButAction > a.butActionRefused,
+div.tabsAction > .dropdown > .dropdown-toggle {
 	margin-bottom: 1.4em !important;
 	margin-right: 0px !important;
+	/* box-shadow: 1px 1px 5px #d0d0d0; */
 }
+
 .divButAction {
 	padding: 0 !important;
 	margin: 0 !important;
@@ -181,7 +185,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	padding-<?php echo $left; ?>: 6px;
 	font-size: 1.5em;
 	border: none;
-	box-shadow: none; webkit-box-shadow: none;
+	box-shadow: none;
+	webkit-box-shadow: none;
 }
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
@@ -257,6 +262,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	background-color: transparent ! important;
 }
 
+.butActionLogin, .butActionLogin:link, .butActionLogin:visited, .butActionLogin:hover, .butActionLogin:active {
+	background-color: rgb(<?php echo $colorbackhmenu1; ?>);
+	padding: 1em 1em;
+}
+
 
 /*
 TITLE BUTTON
@@ -284,11 +294,10 @@ TITLE BUTTON
 	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: var(--btncolorbg); */
-	border: 1px solid var(--btncolorborder);
+	border: 1px solid transparent;
 }
 
 a.btnTitle.btnTitleSelected {
@@ -331,7 +340,7 @@ a.btnTitle.btnTitleSelected {
 }
 .btnTitle.reposition:not(.btnTitleSelected) {
 	background-color: unset;
-	border: unset;
+	border: 1px solid transparent;
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {

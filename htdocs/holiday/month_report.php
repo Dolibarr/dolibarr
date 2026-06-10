@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2011		François Legastelois		<flegastelois@teclib.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('holiday', 'hrm'));
@@ -168,7 +167,7 @@ $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql .= " WHERE cp.rowid > 0";
+$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
 $sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
 $sql .= " AND (";
 $sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
@@ -224,7 +223,7 @@ if (!empty($search_year)) {
 	$param .= '&search_year='.((int) $search_year);
 }
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -240,16 +239,16 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 // Selection filter
 print '<div class="tabBar">';
-print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth75 maxwidth150imp valignmiddle', true);
 print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
-print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
+print '<input type="submit" class="button smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->trans("Search")).'" />';
 print '</div>';
 print '<br>';
 
 //$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -258,7 +257,7 @@ print '<table class="tagtable nobottomiftotal liste">';
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<th class="wrapcolumntitle center maxwidthsearch liste_titre">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -273,9 +272,9 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 }
 
 // Filter: Type
+$arraytypeleaves = array();
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	$typeleaves = $holidaystatic->getTypes(1, -1);
-	$arraytypeleaves = array();
 	foreach ($typeleaves as $key => $val) {
 		$labeltoshow = ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']);
 		$arraytypeleaves[$val['rowid']] = $labeltoshow;
@@ -319,7 +318,7 @@ if (!empty($arrayfields['cp.description']['checked'])) {
 	print '</th>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<th class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -329,7 +328,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 if (!empty($arrayfields['cp.ref']['checked'])) {
@@ -366,7 +365,7 @@ if (!empty($arrayfields['cp.description']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', $param, '', $sortfield, $sortorder);
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 print '</tr>';
@@ -432,7 +431,7 @@ if ($num == 0) {
 
 		print '<tr class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 
@@ -459,7 +458,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday).'</td>';
+			print '<td class="right">'.num_open_day($date_start, $date_end, 0, 1, $obj->halfday, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 
 		if (!empty($arrayfields['date_start_month']['checked'])) {
@@ -475,7 +474,7 @@ if ($num == 0) {
 		}
 
 		if (!empty($arrayfields['used_days_month']['checked'])) {
-			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
+			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
 			print '<td class="maxwidth300 small">';
@@ -485,7 +484,7 @@ if ($num == 0) {
 			print '</td>';
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '</tr>';

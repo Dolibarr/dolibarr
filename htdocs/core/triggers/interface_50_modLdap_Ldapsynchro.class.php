@@ -2,7 +2,8 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * @param string		$action		Event action code
-	 * @param Adherent|User|UserGroup|Contact	$object     Object  (Note: AdherentType seems excluded)
+	 * @param CommonObject	$object     Object  (Note: AdherentType seems excluded)
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param Conf		    $conf       Object conf
@@ -81,6 +82,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 		// Users
 		if ($action == 'USER_CREATE') {
 			'@phan-var-force User $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -104,6 +106,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_MODIFY') {
 			'@phan-var-force User $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -184,6 +187,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_NEW_PASSWORD') {
 			'@phan-var-force User $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -218,6 +222,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_ENABLEDISABLE') {
 			'@phan-var-force User $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalInt("LDAP_SYNCHRO_ACTIVE") === Ldap::SYNCHRO_DOLIBARR_TO_LDAP && getDolGlobalString('LDAP_SERVER_TYPE') == "activedirectory") {
 				$ldap = new Ldap();
@@ -249,6 +254,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USER_DELETE') {
 			'@phan-var-force User $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -267,6 +273,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USERGROUP_CREATE') {
 			'@phan-var-force UserGroup $object'; // Seems to suppose this object kind
+			/** @var User $object */
 			// Groups
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
@@ -300,8 +307,13 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USERGROUP_MODIFY') {
 			'@phan-var-force UserGroup $object'; // Seems to suppose this object kind
+			/** @var UserGroup $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+				if ($object->members === null && getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
+					// LDAP requires that we always send members so we load them to avoid emptying group
+					$object->members = $object->listUsersForGroup('', 0);
+				}
 				$ldap = new Ldap();
 				$result = $ldap->connectBind();
 
@@ -323,6 +335,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 
 					$info = $object->_load_ldap_info();
+					if (isset($info['member']) && empty($info['member']) && !getDolGlobalString('LDAP_SEND_EMPTY_MEMBERS_TO_GROUP')) {
+						// Members were not explicitly loaded and LDAP allows us not to send members, so we do not send them
+						unset($info['member']);
+					}
 					$dn = $object->_load_ldap_dn($info);
 
 					$result = $ldap->update($dn, $info, $user, $olddn);
@@ -334,6 +350,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'USERGROUP_DELETE') {
 			'@phan-var-force UserGroup $object'; // Seems to suppose this object kind
+			/** @var UserGroup $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -352,6 +369,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'CONTACT_CREATE') {
 			'@phan-var-force Contact $object'; // Seems to suppose this object kind
+			/** @var Contact $object */
 			// Contacts
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
@@ -371,6 +389,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'CONTACT_MODIFY') {
 			'@phan-var-force Contact $object'; // Seems to suppose this object kind
+			/** @var Contact $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
 				$ldap = new Ldap();
@@ -405,6 +424,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'CONTACT_DELETE') {
 			'@phan-var-force Contact $object'; // Seems to suppose this object kind
+			/** @var Contact $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
 				$ldap = new Ldap();
@@ -423,6 +443,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_CREATE') {
 			'@phan-var-force Adherent $object'; // Seems to suppose this object kind
+			/** @var Adherent $object */
 			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
@@ -468,6 +489,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_VALIDATE') {
 			'@phan-var-force UserGroup $object'; // Seems to suppose this object kind
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If status field is setup to be synchronized
@@ -490,6 +512,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If subscriptions fields are setup to be synchronized
@@ -516,6 +539,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_MODIFY') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -527,79 +551,83 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
-					if (!method_exists($object->oldcopy, '_load_ldap_info')) {
-						dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
-						$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
-					}
+					$oldcopy = $object->oldcopy; // Copy for static analysis
 
-					$oldinfo = $object->oldcopy->_load_ldap_info();
-					$olddn = $object->oldcopy->_load_ldap_dn($oldinfo);
+					if (is_object($oldcopy)) {
+						if (!method_exists($oldcopy, '_load_ldap_info')) {
+							dol_syslog("Trigger ".$action." was called by a function that did not set previously the method ->_load_ldap_info onto object", LOG_WARNING);
+							$oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
+						}
 
-					// Verify if entry exist
-					$container = $object->oldcopy->_load_ldap_dn($oldinfo, 1);
-					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
-					$records = $ldap->search($container, $search);
-					if (count($records) && $records['count'] == 0) {
-						$olddn = '';
-					}
-
-					$info = $object->_load_ldap_info();
-					$dn = $object->_load_ldap_dn($info);
-					$newrdn = $object->_load_ldap_dn($info, 2);
-					$newparent = $object->_load_ldap_dn($info, 1);
-
-					$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
-
-					// For member type
-					if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-						require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
-
-						/*
-						 * Change member info
-						 */
-						$newmembertype = new AdherentType($this->db);
-						$newmembertype->fetch($object->typeid);
-						$newmembertype->listMembersForMemberType('', 1);
-
-						$oldinfo = $newmembertype->_load_ldap_info();
-						$olddn = $newmembertype->_load_ldap_dn($oldinfo);
+						$oldinfo = $oldcopy->_load_ldap_info();
+						$olddn = $oldcopy->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
-						$container = $newmembertype->_load_ldap_dn($oldinfo, 1);
-						$search = "(".$newmembertype->_load_ldap_dn($oldinfo, 2).")";
+						$container = $oldcopy->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$oldcopy->_load_ldap_dn($oldinfo, 2).")";
 						$records = $ldap->search($container, $search);
 						if (count($records) && $records['count'] == 0) {
 							$olddn = '';
 						}
 
-						$info = $newmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-						$dn = $newmembertype->_load_ldap_dn($info);
+						$info = $object->_load_ldap_info();
+						$dn = $object->_load_ldap_dn($info);
+						$newrdn = $object->_load_ldap_dn($info, 2);
+						$newparent = $object->_load_ldap_dn($info, 1);
 
-						$result = $ldap->update($dn, $info, $user, $olddn);
+						$result = $ldap->update($dn, $info, $user, $olddn, $newrdn, $newparent);
 
-						if ($object->oldcopy->typeid != $object->typeid) {
+						// For member type
+						if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
+							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
+
 							/*
-							 * Remove member in old member type
+							 * Change member info
 							 */
-							$oldmembertype = new AdherentType($this->db);
-							$oldmembertype->fetch($object->oldcopy->typeid);
-							$oldmembertype->listMembersForMemberType('', 1);
+							$newmembertype = new AdherentType($this->db);
+							$newmembertype->fetch($object->typeid);
+							$newmembertype->listMembersForMemberType('', 1);
 
-							$oldinfo = $oldmembertype->_load_ldap_info();
-							$olddn = $oldmembertype->_load_ldap_dn($oldinfo);
+							$oldinfo = $newmembertype->_load_ldap_info();
+							$olddn = $newmembertype->_load_ldap_dn($oldinfo);
 
 							// Verify if entry exist
-							$container = $oldmembertype->_load_ldap_dn($oldinfo, 1);
-							$search = "(".$oldmembertype->_load_ldap_dn($oldinfo, 2).")";
+							$container = $newmembertype->_load_ldap_dn($oldinfo, 1);
+							$search = "(".$newmembertype->_load_ldap_dn($oldinfo, 2).")";
 							$records = $ldap->search($container, $search);
 							if (count($records) && $records['count'] == 0) {
 								$olddn = '';
 							}
 
-							$info = $oldmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
-							$dn = $oldmembertype->_load_ldap_dn($info);
+							$info = $newmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+							$dn = $newmembertype->_load_ldap_dn($info);
 
 							$result = $ldap->update($dn, $info, $user, $olddn);
+
+							if ($oldcopy->typeid != $object->typeid) {
+								/*
+								 * Remove member in old member type
+								 */
+								$oldmembertype = new AdherentType($this->db);
+								$oldmembertype->fetch($oldcopy->typeid);
+								$oldmembertype->listMembersForMemberType('', 1);
+
+								$oldinfo = $oldmembertype->_load_ldap_info();
+								$olddn = $oldmembertype->_load_ldap_dn($oldinfo);
+
+								// Verify if entry exist
+								$container = $oldmembertype->_load_ldap_dn($oldinfo, 1);
+								$search = "(".$oldmembertype->_load_ldap_dn($oldinfo, 2).")";
+								$records = $ldap->search($container, $search);
+								if (count($records) && $records['count'] == 0) {
+									$olddn = '';
+								}
+
+								$info = $oldmembertype->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+								$dn = $oldmembertype->_load_ldap_dn($info);
+
+								$result = $ldap->update($dn, $info, $user, $olddn);
+							}
 						}
 					}
 				}
@@ -610,6 +638,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_NEW_PASSWORD') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If password field is setup to be synchronized
@@ -632,6 +661,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_RESILIATE') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				// If status field is setup to be synchronized
@@ -654,6 +684,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_DELETE') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var Adherent $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -702,6 +733,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_TYPE_CREATE') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var AdherentType $object */
 			// Member types
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
@@ -726,6 +758,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_TYPE_MODIFY') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var AdherentType $object */
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
@@ -737,25 +770,29 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 					}
 
-					$object->oldcopy->listMembersForMemberType('', 1);
+					$oldcopy = $object->oldcopy;  // Local copy to help static analysis.
 
-					$oldinfo = $object->oldcopy->_load_ldap_info();
-					$olddn = $object->oldcopy->_load_ldap_dn($oldinfo);
+					if (is_object($oldcopy)) {
+						$oldcopy->listMembersForMemberType('', 1);
 
-					// Verify if entry exist
-					$container = $object->oldcopy->_load_ldap_dn($oldinfo, 1);
-					$search = "(".$object->oldcopy->_load_ldap_dn($oldinfo, 2).")";
-					$records = $ldap->search($container, $search);
-					if (count($records) && $records['count'] == 0) {
-						$olddn = '';
+						$oldinfo = $oldcopy->_load_ldap_info();
+						$olddn = $oldcopy->_load_ldap_dn($oldinfo);
+
+						// Verify if entry exist
+						$container = $oldcopy->_load_ldap_dn($oldinfo, 1);
+						$search = "(".$oldcopy->_load_ldap_dn($oldinfo, 2).")";
+						$records = $ldap->search($container, $search);
+						if (count($records) && $records['count'] == 0) {
+							$olddn = '';
+						}
+
+						$object->listMembersForMemberType('', 1);
+
+						$info = $object->_load_ldap_info();
+						$dn = $object->_load_ldap_dn($info);
+
+						$result = $ldap->update($dn, $info, $user, $olddn);
 					}
-
-					$object->listMembersForMemberType('', 1);
-
-					$info = $object->_load_ldap_info();
-					$dn = $object->_load_ldap_dn($info);
-
-					$result = $ldap->update($dn, $info, $user, $olddn);
 				}
 
 				if ($result <= 0) {
@@ -764,6 +801,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			}
 		} elseif ($action == 'MEMBER_TYPE_DELETE') {
 			'@phan-var-force Adherent|User $object'; // Seems to suppose this object type
+			/** @var AdherentType $object */
 			if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 				$ldap = new Ldap();
 				$result = $ldap->connectBind();

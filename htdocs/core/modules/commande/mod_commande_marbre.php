@@ -48,6 +48,11 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	public $error = '';
 
 	/**
+	 * @var int		Position
+	 */
+	public $position = 10;
+
+	/**
 	 * @var string name
 	 */
 	public $name = 'Marbre';
@@ -58,7 +63,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	public function __construct()
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if ((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL') >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefix = 'SO'; // We use correct standard code "SO = Sale Order"

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -750,7 +750,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($max)) {
-					$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$max = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($max < $x[$i + 1]) {
 					$max = $x[$i + 1];
 				}
@@ -780,7 +782,9 @@ class DolGraph
 		foreach ($this->data as $x) {	// Loop on each x
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each series
 				if (is_null($min)) {
-					$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					if (isset($x[$i + 1])) {
+						$min = $x[$i + 1];		// $i+1 because the index 0 is the legend
+					}
 				} elseif ($min > $x[$i + 1]) {
 					$min = $x[$i + 1];
 				}
@@ -1331,8 +1335,8 @@ class DolGraph
 
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
-				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
-				$this->stringtoshow .= 'rotation: -Math.PI,' . "\n";
+				$this->stringtoshow .= 'circumference: 180,' . "\n";
+				$this->stringtoshow .= 'rotation: -90,' . "\n";
 			}
 			$this->stringtoshow .= 'elements: { arc: {' . "\n";
 			// Color of each arc
@@ -1488,7 +1492,7 @@ class DolGraph
 				if ($this->hideXValues) {
 					$this->stringtoshow .= 'x: { display: false }';
 				}
-				if ($this->hideYValues || $this->hideXValues) {
+				if ($this->hideYValues && $this->hideXValues) {
 					$this->stringtoshow .= ', ';
 				}
 				if ($this->hideYValues) {
@@ -1641,6 +1645,9 @@ class DolGraph
 
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $series[$i] . ',' . $series[$i] . ']' : $series[$i];
 				$this->stringtoshow .= ']';
+
+				//$this->stringtoshow .= ', barThickness: 15';
+
 				$this->stringtoshow .= '}' . "\n";
 
 				$i++;
@@ -1711,7 +1718,7 @@ class DolGraph
 			if (empty($conf->dol_optimize_smallscreen)) {
 				return ($defaultsize ? $defaultsize : 500);
 			} else {
-				return (empty($_SESSION['dol_screenwidth']) ? 280 : ($_SESSION['dol_screenwidth'] - 40));
+				return (empty($_SESSION['dol_screenwidth']) ? 280 : (int) ($_SESSION['dol_screenwidth'] - 40));
 			}
 		} elseif ($direction == 'height') {
 			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : 220) : 200);

@@ -7,10 +7,10 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ $id = (GETPOSTINT('fichinterid') ? GETPOSTINT('fichinterid') : GETPOSTINT('id'))
 $ref = GETPOST('ref', 'alpha');
 $date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
 if ($user->socid) {
@@ -221,7 +221,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$newinter->note_private = $object->note_private;
 	$newinter->note_public = $object->note_public;
 
-	// on créer un nouvelle intervention
+	// Create a new intervention
 	$extrafields->fetch_name_optionals_label($newinter->table_element);
 
 	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
@@ -232,12 +232,12 @@ if ($action == 'add' && $permissiontoadd) {
 	if ($newfichinterid > 0) {
 		// Now we add line of details
 		foreach ($object->lines as $line) {
-			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, array());
+			$newinter->addline($user, $newfichinterid, $line->desc, dol_now(), $line->duree, array());
 		}
 
-		// on update le nombre d'inter crée à partir du modèle
+		// Update the number of interventions created from the template (model)
 		$object->updateNbGenDone();
-		//on redirige vers la fiche d'intervention nouvellement crée
+		// Redirect to the newly created interventions report
 		header('Location: '.DOL_URL_ROOT.'/fichinter/card.php?id='.$newfichinterid);
 		exit;
 	} else {
@@ -370,11 +370,15 @@ if ($action == 'create') {
 
 		// Contrat
 		if (isModEnabled('contract')) {
-			$formcontract = new FormContract($db);
-			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
-			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
-			print "</td></tr>";
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$formcontract = new FormContract($db);
+				print "<tr><td>".$langs->trans("Contract")."</td><td>";
+				$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
+				$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
+				print "</td></tr>";
+			}
 		}
 		print "</table>";
 
@@ -453,7 +457,7 @@ if ($action == 'create') {
 				// Show product and description
 
 				print '<td>';
-				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+				print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 
 				$text = img_object($langs->trans('Service'), 'service');
 
@@ -510,7 +514,7 @@ if ($action == 'create') {
 			$object->fetch_thirdparty();
 
 			$author = new User($db);
-			$author->fetch((int) $object->user_author);
+			$author->fetch((int) $object->user_author_id);
 
 			$head = fichinter_rec_prepare_head($object);
 
@@ -530,7 +534,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->hasRight('ficheinter', 'creer')) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -580,34 +584,38 @@ if ($action == 'create') {
 
 			// Contract
 			if (isModEnabled('contract') && $contratstatic !== null) {
-				$langs->load('contracts');
-				print '<tr>';
-				print '<td>';
+				// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+				// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+				if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+					$langs->load('contracts');
+					print '<tr>';
+					print '<td>';
 
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Contract');
-				print '</td>';
-				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
-					print img_edit($langs->trans('SetContract'), 1);
-					print '</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td>';
-				if ($action == 'contrat') {
-					$formcontract = new FormContract($db);
-					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
-				} else {
-					if ($object->fk_contrat) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contrat);
-						print $contratstatic->getNomUrl(0, 0, 1);
-					} else {
-						print "&nbsp;";
+					print '<table class="nobordernopadding" width="100%"><tr><td>';
+					print $langs->trans('Contract');
+					print '</td>';
+					if ($action != 'contrat') {
+						print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
+						print img_edit($langs->trans('SetContract'), 1);
+						print '</a></td>';
 					}
+					print '</tr></table>';
+					print '</td><td>';
+					if ($action == 'contrat') {
+						$formcontract = new FormContract($db);
+						$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
+					} else {
+						if ($object->fk_contrat) {
+							$contratstatic = new Contrat($db);
+							$contratstatic->fetch($object->fk_contrat);
+							print $contratstatic->getNomUrl(0, 0, 1);
+						} else {
+							print "&nbsp;";
+						}
+					}
+					print '</td>';
+					print '</tr>';
 				}
-				print '</td>';
-				print '</tr>';
 			}
 			print "</table>";
 			print '</div>';
@@ -654,13 +662,13 @@ if ($action == 'create') {
 			// Date when
 			print '<tr><td>';
 			if ($user->hasRight('ficheinter', 'creer') && ($action == 'date_when' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
+				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('ficheinter', 'creer'), 'day');
 			} else {
 				print $langs->trans("NextDateToExecution");
 			}
 			print '</td><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day');
+				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('ficheinter', 'creer'), 'day');
 			}
 			print '</td>';
 			print '</tr>';
@@ -668,14 +676,14 @@ if ($action == 'create') {
 			// Max period / Rest period
 			print '<tr><td>';
 			if ($user->hasRight('ficheinter', 'creer') && ($action == 'nb_gen_max' || $object->frequency > 0)) {
-				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, $user->hasRight('facture', 'creer'));
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, $user->hasRight('ficheinter', 'creer'));
 			} else {
 				print $langs->trans("MaxPeriodNumber");
 			}
 
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('facture', 'creer'));
+				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->hasRight('ficheinter', 'creer'));
 			} else {
 				print '';
 			}
@@ -740,6 +748,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
+				$type =0;
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
@@ -747,8 +756,7 @@ if ($action == 'create') {
 
 				// TODO: $objp is not set here, so why test?
 				if (isset($objp) && is_object($objp)) {  // $objp always null @phpstan-ignore-line
-					// Try to enhance type detection using date_start and date_end for free lines when type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines when type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}

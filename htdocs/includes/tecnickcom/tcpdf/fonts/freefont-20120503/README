@@ -44,9 +44,9 @@ Design Issues
 Which font shapes should be made?  Historical style terms like Renaissance
 or Baroque letterforms cannot be applied beyond Latin/Cyrillic/Greek
 scripts to any greater extent than Kufi or Nashki can be applied beyond
-Arabic script; "italic" is strictly meaningful only for Latin letters, 
+Arabic script; "italic" is strictly meaningful only for Latin letters,
 although many scripts such as Cyrillic have a history with "cursive" and
-many others with "oblique" faces. 
+many others with "oblique" faces.
 
 However, most modern writing systems have typographic formulations for
 contrasting uniform and modulated character stroke widths, and since the
@@ -90,7 +90,7 @@ wish to do so, delete this exception statement from your version.
 Files and their suffixes
 ------------------------
 
-The files with .sfd (Spline Font Database) are in FontForge's native format. 
+The files with .sfd (Spline Font Database) are in FontForge's native format.
 They may be used to modify the fonts.
 
 TrueType fonts are the files with the .ttf (TrueType Font) suffix.  These
@@ -116,7 +116,7 @@ More information is at the main project page of Free UCS scalable fonts:
 To report problems with GNU FreeFont, it is best to obtain a Savannah
 account and post reports using that account on
 	https://savannah.gnu.org/bugs/
-	
+
 Public discussions about GNU FreeFont may be posted to the mailing list
 	freefont-bugs@gnu.org
 

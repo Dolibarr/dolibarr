@@ -27,6 +27,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
@@ -38,16 +45,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("deliveries", "other"));
+$langs->loadLangs(array("sendings", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -135,7 +134,7 @@ $help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expedici
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda');
 
 $head = shipping_prepare_head($object);
-print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
+print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipment"), -1, $object->picto);
 
 
 // Shipping card

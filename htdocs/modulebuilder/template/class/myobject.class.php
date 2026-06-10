@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,12 +44,18 @@ class MyObject extends CommonObject
 	public $element = 'myobject';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trgiger keys 'MYMODULE_MYOBJECT_MODIFY', ...
+
+	/**
 	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
 	 */
 	public $table_element = 'mymodule_myobject';
 
 	/**
-	 * @var string 		If permission must be checkec with hasRight('mymodule', 'read') and not hasright('mymodyle', 'myobject', 'read'), you can uncomment this line
+	 * @var string 		If permission must be checked with hasRight('mymodule', 'read') and not hasright('mymodule', 'myobject', 'read'), you can uncomment this line
 	 */
 	//public $element_for_permission = 'mymodule';
 
@@ -86,7 +92,7 @@ class MyObject extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -98,7 +104,7 @@ class MyObject extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -124,7 +130,8 @@ class MyObject extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id', 'lang' => 'mymodule@mymodule'),
-		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
@@ -154,11 +161,6 @@ class MyObject extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string label
 	 */
 	public $label;
@@ -178,7 +180,7 @@ class MyObject extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
-	 * @var int Status
+	 * @var ?int Status
 	 */
 	public $status;
 
@@ -188,7 +190,7 @@ class MyObject extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_modif;
 
@@ -203,43 +205,42 @@ class MyObject extends CommonObject
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
-
+	//BEGIN MODULEBUILDER LINES
 	// If this object has a subtable with lines
 
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'mymodule_myobjectline';
+	 /**
+	  * @var string    Name of subtable line
+	  */
+	 public $table_element_line = 'mymodule_myobjectline';
 
-	// /**
-	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
-	//  */
-	// public $fk_element = 'fk_myobject';
+	 /**
+	  * @var string    Field with ID of parent key if this object has a parent
+	  */
+	 public $fk_element = 'fk_myobject';
 
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'MyObjectline';
+	 /**
+	  * @var string    Name of subtable class that manage subtable lines
+	  */
+	 public $class_element_line = 'MyObjectline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
+	 /**
+	  * @var array<array<string>|string>		List of child tables. To test if we can delete object.
+	  */
+	 protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
-	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
-	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
-	//  */
-	// protected $childtablesoncascade = array('mymodule_myobjectdet');
+	 /**
+	  * @var string[]	List of child tables. To know object to delete on cascade.
+	  *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	  *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	  */
+	 protected $childtablesoncascade = array('mymodule_myobjectdet');
 
-	// /**
-	//  * @var MyObjectLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
+	 /**
+	  * @var MyObjectLine[]     Array of subtable lines
+	  */
+	 public $lines = array();
 
-
+	//END MODULEBUILDER LINES
 
 	/**
 	 * Constructor
@@ -325,14 +326,15 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
 
 		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
-
+		foreach ($this->lines as $line)
+			$line->fetch_optionals();
+		//END MODULEBUILDER LINES
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -416,9 +418,11 @@ class MyObject extends CommonObject
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
 		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
+		//END MODULEBUILDER LINES
 		return $result;
 	}
 
@@ -435,8 +439,7 @@ class MyObject extends CommonObject
 		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
-
-
+	//END MODULEBUILDER LINES
 	/**
 	 * Load list of objects in memory from the database.
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
@@ -543,6 +546,7 @@ class MyObject extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 *  Delete a line of object in database
 	 *
@@ -560,6 +564,7 @@ class MyObject extends CommonObject
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
+	//END MODULEBUILDER LINES
 
 
 	/**
@@ -596,10 +601,10 @@ class MyObject extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -794,7 +799,7 @@ class MyObject extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (property_exists($this, 'label')) {
-			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
 		return $datas;
@@ -834,18 +839,19 @@ class MyObject extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
-
+		$baseurl = dol_buildpath('/mymodule/myobject_card.php', 1);
+		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+			if ($add_save_lastsearch_values) {
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -859,13 +865,13 @@ class MyObject extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -1002,6 +1008,12 @@ class MyObject extends CommonObject
 			return '';
 		}
 
+		$paramsBadge = array('badgeParams' => array('attr' => array(
+			'data-status-element' => $this->element,
+			'data-status' => (int) $status
+		)));
+
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
@@ -1019,7 +1031,7 @@ class MyObject extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
 	}
 
 	/**
@@ -1030,21 +1042,28 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem";
+		$sql = "SELECT t.rowid, t.date_creation as datec";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+		} else {
+			$sql .= ", t.tms as datem";
+		}
 		if (!empty($this->fields['date_validation'])) {
-			$sql .= ", date_validation as datev";
+			$sql .= ", t.date_validation as datev";
 		}
 		if (!empty($this->fields['fk_user_creat'])) {
-			$sql .= ", fk_user_creat";
+			$sql .= ", t.fk_user_creat";
 		}
 		if (!empty($this->fields['fk_user_modif'])) {
-			$sql .= ", fk_user_modif";
+			$sql .= ", t.fk_user_modif";
 		}
 		if (!empty($this->fields['fk_user_valid'])) {
-			$sql .= ", fk_user_valid";
+			$sql .= ", t.fk_user_valid";
 		}
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -1063,10 +1082,10 @@ class MyObject extends CommonObject
 				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+					$this->date_validation = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 
@@ -1091,10 +1110,11 @@ class MyObject extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return	array<CommonObjectLine>|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1107,10 +1127,12 @@ class MyObject extends CommonObject
 			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
+			/** @phpstan-ignore-next-line */
 			$this->lines = $result;
 			return $this->lines;
 		}
 	}
+	//END MODULEBUILDER LINES
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1189,12 +1211,10 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_myobject';
-
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} else {
+				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 
@@ -1243,7 +1263,7 @@ class MyObject extends CommonObject
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
@@ -1259,7 +1279,7 @@ class MyObject extends CommonObject
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
+//BEGIN MODULEBUILDER LINES
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
@@ -1302,3 +1322,4 @@ class MyObjectLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
+//END MODULEBUILDER LINES

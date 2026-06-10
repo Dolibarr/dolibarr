@@ -71,12 +71,12 @@ if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) |
 	print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
 	print "Usage:  $script_file test myfilepath.csv 2 1002\n";
 	print "\n";
-	exit(-1);
+	exit(1);
 }
 if (! file_exists($filepath)) {
 	print "Error: File ".$filepath." not found.\n";
 	print "\n";
-	exit(-1);
+	exit(1);
 }
 
 $ret=$user->fetch('', 'admin');

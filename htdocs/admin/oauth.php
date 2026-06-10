@@ -86,7 +86,7 @@ if ($action == 'update') {
 			$constvalue = str_replace('_ID', '', $key);
 			$newconstvalue = $constvalue;
 			if (GETPOSTISSET($constvalue.'_NAME')) {
-				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.GETPOST($constvalue.'_NAME');
+				$newconstvalue = preg_replace('/-.*$/', '', $constvalue).'-'.preg_replace('/[^a-z]/', '', GETPOST($constvalue.'_NAME'));
 			}
 
 			if (GETPOSTISSET($constvalue.'_ID')) {
@@ -101,7 +101,9 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_URL')) {
-				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+				$cleanurl = GETPOST($constvalue.'_URL');
+				$cleanurl = preg_replace('/\/$/', '', $cleanurl);
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', $cleanurl, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -245,7 +247,7 @@ if ($action == 'delete') {
 }
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($title, $linkback, 'title_setup');
 
@@ -443,7 +445,7 @@ if (count($listinsetup) > 0) {
 		print '</tr>';
 
 		// Tenant
-		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2') {
+		if ($keybeforeprovider == 'MICROSOFT' || $keybeforeprovider == 'MICROSOFT2' || $keybeforeprovider == 'MICROSOFT3') {
 			print '<tr class="oddeven value">';
 			print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_TENANT").'</label></td>';
 			print '<td><input type="text" size="100" id="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" name="OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT" value="'.getDolGlobalString('OAUTH_'.$keybeforeprovider.($keyforprovider ? '-'.$keyforprovider : '').'_TENANT').'">';

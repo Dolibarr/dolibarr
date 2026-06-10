@@ -4,7 +4,7 @@
  * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016       Juan José Menent        <jmenent@2byte.es>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user, $langs;
 
@@ -268,24 +268,22 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetMinValue(0);
 					$dolgraph->SetData($dataseries);
 					$dolgraph->SetLegend($liststatus);
-					$dolgraph->setHideXValues(true);
+					$dolgraph->setHideXValues(false);
 					$dolgraph->setHideYValues(true);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
 					$dolgraph->setShowLegend(2);
-					if (!empty($conf->dol_optimize_smallscreen)) {
-						$dolgraph->SetWidth(320);
-					}
 					$dolgraph->setShowPercent(1);
 					$dolgraph->setMirrorGraphValues(true);
 					$dolgraph->setBorderWidth(2);
 					$dolgraph->setBorderSkip('false');
 					$dolgraph->SetType(array('horizontalbars'));
-					$dolgraph->SetHeight('200');
-					$dolgraph->SetWidth('600');
+					$dolgraph->SetHeight('150');
+					$dolgraph->SetWidth($conf->dol_optimize_smallscreen ? '300' : ((empty($_SESSION["dol_screenwidth"]) || $_SESSION["dol_screenwidth"] > 1600) ? '600' : '500'));
 					$dolgraph->setTooltipsTitles($liststatus);
 					$dolgraph->setTooltipsLabels($customlabels);
 					$dolgraph->mode = 'depth';
 					$dolgraph->draw('idgraphleadfunnel');
+
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
@@ -302,7 +300,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')'
+					'asis' => 1,
+					'text' => $langs->trans("OpportunityTotalAmount").'  <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>'
 				);
 				$this->info_box_contents[$line][] = array(
 					'tr' => 'class="oddeven"',
@@ -315,7 +314,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 					'tr' => 'class="oddeven"',
 					'td' => 'class="left "',
 					'maxlength' => 500,
-					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
+					'asis' => 1,
+					'text' => $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' <span class="opacitymedium hideonsmartphone">('.$langs->trans("WonLostExcluded").')</span>', $langs->trans("OpportunityPonderatedAmountDesc"), 1)
 
 				);
 				$this->info_box_contents[$line][] = array(

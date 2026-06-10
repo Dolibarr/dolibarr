@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,9 @@
  *  \brief      Description and activation file for the module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
+
 
 /**
  *	Class to describe a BlockedLog module
@@ -51,40 +55,42 @@ class modBlockedLog extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable a log on some business events into an unalterable log. This module may be mandatory for some countries.";
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = constant('DOLCERT_VERSION');
+		$this->version_if_core = 1;
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'technic';
+		$this->picto = 'blockedlog';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
 		// Config pages
 		//-------------
-		$this->config_page_url = array('blockedlog.php?withtab=1@blockedlog');
+		$this->config_page_url = array('registration.php?origin=setupmodule&withtab=1@blockedlog');
 
 		// Dependencies
 		//-------------
 		$this->hidden = false; // A condition to disable module
-		$this->depends = array('always'=>'modFacture'); // List of modules id that must be enabled if this module is enabled
+		$this->depends = array('always' => 'modFacture'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
 		$this->langfiles = array('blockedlog');
 
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_unactivation = array('FR'=>'BlockedLogAreRequiredByYourCountryLegislation');
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
+		$this->warnings_unactivation = array('FR' => 'BlockedLogAreRequiredByYourCountryLegislation');
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
 		/*if (getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY')) {
-			$tmp=explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
+			$tmp = explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 			$this->automatic_activation = array();
-			foreach($tmp as $key)
+			foreach($tmp as $countrycodekey)
 			{
-				$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+				$this->automatic_activation[$countrycodekey] = 'BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
 			}
 		}*/
 		//var_dump($this->automatic_activation);
@@ -97,7 +103,7 @@ class modBlockedLog extends DolibarrModules
 		// Constants
 		//-----------
 		$this->const = array(
-			1=>array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
+			1 => array('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', 'chaine', 'FR', 'This is list of country code where the module may be mandatory', 0, 'current', 0)
 		);
 
 		// New pages on tabs
@@ -123,19 +129,19 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$r = 0;
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'mainmenu'=>'tools',
-			'leftmenu'=>'blockedlogbrowser',
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'BrowseBlockedLog',
+			'fk_menu' => 'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'mainmenu' => 'tools',
+			'leftmenu' => 'blockedlogbrowser',
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'BrowseBlockedLog',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
-			'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>200,
-			'enabled'=>'isModEnabled("blockedlog")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->hasRight("blockedlog", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'url' => '/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
+			'langs' => 'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 200,
+			'enabled' => 'isModEnabled("blockedlog")', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("blockedlog", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 	}
@@ -148,9 +154,9 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function alreadyUsed()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-		$b = new BlockedLog($this->db);
-		return $b->alreadyUsed(1);
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+		return isBlockedLogUsed();
 	}
 
 
@@ -159,7 +165,7 @@ class modBlockedLog extends DolibarrModules
 	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *      It also creates data directories.
 	 *
-	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes', 'acceptredirect', 'forceinit')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -168,8 +174,63 @@ class modBlockedLog extends DolibarrModules
 
 		$sql = array();
 
-		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($this->db);
+
+		// any value of $options except 'acceptredirect' will bypass this redirection
+		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
+			// We first switch on registration page
+			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
+			exit;
+		}
+
+
+		$this->db->begin();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+		// Check that the HTTPS is forced
+		$s = $b->canBeEnabled();
+		if ($s) {	// Activation not allowed
+			$this->error = $s;
+			return 0;
+		}
+
+		// Create HMAC if it does not exists yet
+		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+		if (empty($hmac_encoded_secret_key)) {
+			// Add key
+			$randomsecret = bin2hex(random_bytes(32)); // 64 char hex - 256 bits
+
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;
+
+			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+
+			if ($result < 0) {
+				dol_print_error($this->db);
+				$this->db->rollback();
+
+				return 0;
+			}
+		} else {
+			// Decode the HMAC key
+			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+
+			if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+				$this->error = 'Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found in config parameters in database but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.';
+				$this->error .= 'Restore the value of $dolibarr_main_crypt_key that was used for encryption in database and restart the migration.';
+				$this->error .= 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+				$this->db->rollback();
+
+				return 0;
+			}
+		}
+
+		$this->db->commit();
+
+
+		// We add an entry to show we enable the module
 
 		$object = new stdClass();
 		$object->id = 0;
@@ -178,10 +239,9 @@ class modBlockedLog extends DolibarrModules
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
 
-		$b = new BlockedLog($this->db);
-
+		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
-		$result = $b->setObjectData($object, $action, 0);
+		$result = $b->setObjectData($object, $action, 0, $user, 0);
 
 		if ($result < 0) {
 			$this->error = $b->error;
@@ -189,14 +249,27 @@ class modBlockedLog extends DolibarrModules
 			return 0;
 		}
 
+		$this->db->begin();
+
 		$res = $b->create($user);
 		if ($res <= 0) {
+			$this->db->rollback();
+
 			$this->error = $b->error;
 			$this->errors = $b->errors;
 			return $res;
 		}
 
-		return $this->_init($sql, $options);
+		$resinit = $this->_init($sql, $options);
+		if ($resinit <= 0) {
+			$this->db->rollback();
+
+			return $resinit;
+		}
+
+		$this->db->commit();
+
+		return 1;
 	}
 
 	/**
@@ -204,8 +277,8 @@ class modBlockedLog extends DolibarrModules
 	 * The remove function removes tabs, constants, boxes, permissions and menus from Dolibarr database.
 	 * Data directories are not deleted
 	 *
-	 * @param      string	$options    Options when enabling module ('', 'noboxes')
-	 * @return     int             		1 if OK, 0 if KO
+	 * @param      string	$options    Options when enabling module ('', 'noboxes', 'forcedisable')
+	 * @return     int             		1 if OK, 0 if KO to cancel all actions
 	 */
 	public function remove($options = '')
 	{
@@ -216,15 +289,18 @@ class modBlockedLog extends DolibarrModules
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
+		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
+
 		$object = new stdClass();
 		$object->id = 1;
 		$object->element = 'module';
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
+		$object->label = 'Module disabled';
 
 		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
+		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, 0);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;
@@ -232,7 +308,16 @@ class modBlockedLog extends DolibarrModules
 		}
 
 		if ($b->alreadyUsed(1)) {
-			$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
+			// Unalterable log was already used.
+			if ($options != 'forcedisable' && !$b->canBeDisabled()) {
+				// Case we refuse to disable it
+				global $langs;
+				$this->error = $langs->trans('DisablingBlockedLogIsNotallowedOnceUsedExceptOnFullreset', $langs->transnoentitiesnoconv('BlockedLog'));
+				return 0;
+			} else {
+				// Case we disable it with a log
+				$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
+			}
 		} else {
 			$res = $b->create($user);
 		}
@@ -243,5 +328,57 @@ class modBlockedLog extends DolibarrModules
 		}
 
 		return $this->_remove($sql, $options);
+	}
+
+
+	/**
+	 * Overwrite the common getDesc() method
+	 *
+	 * @param 	int<0,1>	$foruseinpopupdesc  	If 1, we return a short description for use into popup window
+	 * @return 	string  							Translated module description
+	 */
+	public function getDesc($foruseinpopupdesc = 0)
+	{
+		global $langs, $mysoc;
+		$langs->load("admin");
+
+		// If module description translation exists
+		$s = $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
+
+		if ($foruseinpopupdesc) {
+			$langs->load("blockedlog");
+			$s .= '<br>';
+
+			// Special message for France
+			if ($mysoc->country_code == 'FR') {
+				$islne = isALNEQualifiedVersion(1, 1);
+
+				$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+				/*
+				if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
+					// Can add an edditional mention
+					$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
+				}
+				*/
+				$versionbadge .= '</span>';
+				if ($islne) {
+					if (preg_match('/\-/', DOL_VERSION)) {
+						// This is an alpha or beta version
+						$s .= info_admin($langs->trans("LNECandidateVersionForCertificationFR", $versionbadge), 0, 0, 'info');
+					} else {
+						$s .= info_admin($langs->trans("LNECertifiedVersionFR", $versionbadge), 0, 0, 'info');
+					}
+				} else {
+					$s .= info_admin($langs->trans("NotCertifiedVersionFR", $versionbadge), 0, 0, 'warning');
+				}
+			}
+
+			// Add warning to advice users to make regularly archives
+			if (in_array($mysoc->country_code, array('FR'))) {
+				$s .= info_admin($langs->trans("UnalterableLogTool1FR"), 0, 0, 'warning');
+			}
+		}
+
+		return $s;
 	}
 }

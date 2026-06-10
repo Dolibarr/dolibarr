@@ -37,7 +37,6 @@ ConfirmClonePage=Ingrese el código / alias de la página nueva y si es una trad
 PageIsANewTranslation=La nueva página es una traducción de la página actual?
 ParentPageId=ID de página padre
 CreateByFetchingExternalPage=Crear página / contenedor obteniendo página de URL externa ...
-OrEnterPageInfoManually=O crea una página desde cero o desde una plantilla de página ...
 ExportSite=Sitio web de exportación
 Banner=Bandera
 MyContainerTitle=El título de mi sitio web

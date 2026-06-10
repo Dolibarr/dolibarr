@@ -6,8 +6,9 @@
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-205   Nick Fragoulis
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -39,17 +48,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- * @var Societe $mysoc
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'propal', 'receptions', 'stocks', 'trips', 'orders'));
+$langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'propal', 'receptions', 'stocks', 'trips', 'orders', 'sendings'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -67,6 +67,10 @@ if ($modulepart == 'propal') {
 if ($modulepart == 'order') {
 	$diroffile = $conf->order->dir_output;
 	$varname = 'MAIN_INFO_ORDER_TERMSOFSALE';
+}
+if ($modulepart == 'contrat') {
+	$diroffile = $conf->contract->dir_output;
+	$varname = 'MAIN_INFO_CONTRACT_TERMSOFSALE';
 }
 if ($modulepart == 'invoice') {
 	$diroffile = $conf->invoice->dir_output;
@@ -119,6 +123,9 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
 		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_ORDER", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", 'int'), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
 		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_INVOICE", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", 'int'), 'chaine', 0, '', $conf->entity);
 	}
@@ -167,19 +174,27 @@ if ($action == 'update') {
 	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
 	}
-	// add file to concat
-	foreach (array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE') as $varname) {
-		if ($_FILES[$varname]["name"]) {
+	// add a file to concat
+	$concat_options = array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_CONTRACT_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE');
+	foreach ($concat_options as $varname) {
+		if (isset($_FILES[$varname]) && $_FILES[$varname]["name"]) {
 			if (!preg_match('/(\.pdf)$/i', $_FILES[$varname]["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 			} else {
-				if ($varname == 'MAIN_INFO_PROPAL_TERMSOFSALE') {
-					$diroffile = $conf->propal->dir_output;
-				} elseif ($varname == 'MAIN_INFO_ORDER_TERMSOFSALE') {
-					$diroffile = $conf->order->dir_output;
-				} elseif ($varname == 'MAIN_INFO_INVOICE_TERMSOFSALE') {
-					$diroffile = $conf->invoice->dir_output;
+				switch ($varname) {
+					case 'MAIN_INFO_PROPAL_TERMSOFSALE':
+						$diroffile = $conf->propal->dir_output;
+						break;
+					case 'MAIN_INFO_ORDER_TERMSOFSALE':
+						$diroffile = $conf->order->dir_output;
+						break;
+					case 'MAIN_INFO_CONTRACT_TERMSOFSALE':
+						$diroffile = $conf->contract->dir_output;
+						break;
+					case 'MAIN_INFO_INVOICE_TERMSOFSALE':
+						$diroffile = $conf->invoice->dir_output;
+						break;
 				}
 				if ($diroffile) {
 					$dirforterms = $diroffile.'/';
@@ -236,17 +251,17 @@ print "<br>\n";
 
 $maxfilesizearray = getMaxFileSizeArray();
 $tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
-$documenturl = DOL_URL_ROOT.'/document.php';
-if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-	$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
-}
+
+$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php');
 
 
-print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form enctype="multipart/form-data" method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
+	print '<div id="proposal" class="anchorundermenu"></div>';
+
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
@@ -314,11 +329,13 @@ if (isModEnabled('propal')) {
 		$modulepart = 'propal';
 		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_PROPAL_TERMSOFSALE" id="MAIN_INFO_PROPAL_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE");
 			if (file_exists($conf->propal->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->propal->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}
@@ -333,6 +350,8 @@ if (isModEnabled('propal')) {
 }
 
 if (isModEnabled('order')) {
+	print '<div id="order" class="anchorundermenu"></div>';
+
 	$langs->load("orders");
 	print load_fiche_titre($langs->trans('CustomersOrders'), '', 'order');
 
@@ -389,11 +408,13 @@ if (isModEnabled('order')) {
 		$modulepart = 'order';
 		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_ORDER_TERMSOFSALE" id="MAIN_INFO_ORDER_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE");
 			if (file_exists($conf->order->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->order->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}
@@ -408,8 +429,53 @@ if (isModEnabled('order')) {
 	print '<br>';
 }
 
+if (isModEnabled('contract')) {
+	print '<div id="contrat" class="anchorundermenu"></div>';
+
+	print load_fiche_titre($langs->trans("Contract"), '', 'contract');
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px"></td></tr>';
+
+	// Concat PDF
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT"), $tooltipconcatpdf);
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT', array(), null, 0, 0, 1);
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT'));
+	}
+
+	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT")) {
+		$modulepart = 'contrat';
+		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_CONTRACT_TERMSOFSALE" id="MAIN_INFO_CONTRACT_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
+		if (getDolGlobalString("MAIN_INFO_CONTRACT_TERMSOFSALE")) {
+			$termofsale = getDolGlobalString("MAIN_INFO_CONTRACT_TERMSOFSALE");
+			if (file_exists($conf->contract->dir_output.'/'.$termofsale)) {
+				$file = dol_dir_list($conf->contract->dir_output, 'files', 0, $termofsale);
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
+				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+			}
+		}
+		print '</div>';
+	}
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
+	print '<br>';
+}
+
 
 if (isModEnabled('invoice')) {
+	print '<div id="invoice" class="anchorundermenu"></div>';
+
 	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -462,13 +528,15 @@ if (isModEnabled('invoice')) {
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
 		$modulepart = 'invoice';
-		print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+		print '<div class="inline-block nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 		print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_INVOICE_TERMSOFSALE" id="MAIN_INFO_INVOICE_TERMSOFSALE" accept="application/pdf">';
+		print '</div>';
 		if (getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE")) {
 			$termofsale = getDolGlobalString("MAIN_INFO_INVOICE_TERMSOFSALE");
 			if (file_exists($conf->invoice->dir_output.'/'.$termofsale)) {
 				$file = dol_dir_list($conf->invoice->dir_output, 'files', 0, $termofsale);
-				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+				print ' ';
+				print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '').'</div>';
 				print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 			}
 		}
@@ -532,7 +600,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('PDF_INVOICE_SHOW_VAT_ANALYSIS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, $conf->global->PDF_INVOICE_SHOW_VAT_ANALYSIS);
+		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS'));
 	}
 	print '</td></tr>';
 
@@ -544,7 +612,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('PDF_INVOICE_SHOW_BALANCE_SUMMARY');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, $conf->global->PDF_INVOICE_SHOW_BALANCE_SUMMARY);
+		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, getDolGlobalInt('PDF_INVOICE_SHOW_BALANCE_SUMMARY'));
 	}
 	print '</td></tr>';
 
@@ -556,7 +624,7 @@ if (isModEnabled('invoice')) {
 		print ajax_constantonoff('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, $conf->global->SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT);
+		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT'));
 	}
 	print '</td></tr>';
 	*/
@@ -579,6 +647,8 @@ if (isModEnabled('invoice')) {
 
 
 if (isModEnabled('supplier_proposal')) {
+	print '<div id="supplier_proposal"></div>';
+
 	$langs->load("supplier_proposal");
 	print load_fiche_titre($langs->trans("SupplierProposal"), '', 'supplier_proposal');
 
@@ -616,6 +686,8 @@ if (isModEnabled('supplier_proposal')) {
 
 
 if (isModEnabled('supplier_order')) {
+	print '<div id="supplier_order"></div>';
+
 	$langs->load("supplier_order");
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
 
@@ -652,6 +724,8 @@ if (isModEnabled('supplier_order')) {
 }
 
 if (isModEnabled('shipping')) {
+	print '<div id="shipping"></div>';
+
 	print load_fiche_titre($langs->trans("Shipments"), '', 'shipment');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -675,6 +749,8 @@ if (isModEnabled('shipping')) {
 }
 
 if (isModEnabled('reception')) {
+	print '<div id="reception"></div>';
+
 	print load_fiche_titre($langs->trans("Receptions"), '', 'reception');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -720,6 +796,8 @@ if (isModEnabled('reception')) {
 }
 
 if (isModEnabled('stocktransfer')) {
+	print '<div id="stocktransfer"></div>';
+
 	print load_fiche_titre($langs->trans("StockTransfer"), '', 'stock');
 
 	print '<div class="div-table-responsive-no-min">';

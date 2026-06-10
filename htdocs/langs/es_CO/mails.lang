@@ -9,6 +9,7 @@ MailToUsers=Para usuario(s)
 MailCC=Copiar a
 MailToCCUsers=Copiar a al(los) usuario(s)
 MailCCC=Copia en caché en
+MailTopicShort=Tema
 MailDate=Fecha de E-mail
 MailFile=Archivos adjuntos
 SubjectNotIn=No en el tema

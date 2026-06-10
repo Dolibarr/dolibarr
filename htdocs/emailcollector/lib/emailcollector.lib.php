@@ -122,8 +122,10 @@ function getAttachments($jk, $mbox)
 
 	$fpos = 2;
 	$attachments = array();
-	$nb = count($parts);
-	if ($nb && !empty($parts)) {
+
+	if (!empty($parts)) {
+		$nb = count($parts);
+
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -140,6 +142,7 @@ function getAttachments($jk, $mbox)
 			$fpos++;
 		}
 	}
+
 	return $attachments;
 }
 
@@ -187,6 +190,8 @@ function saveAttachment($path, $filename, $data)
 		$i++;
 	}
 	file_put_contents($filepath, $data);
+	dolChmod($filepath);
+
 	return $filepath;
 }
 

@@ -62,7 +62,7 @@ class SocieteTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') {
+		if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') != 'mod_codeclient_monkey') {
 			print "\n".__METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '" . getDolGlobalString('SOCIETE_CODECLIENT_ADDON')."'.\n";
 			die(1);
 		}
@@ -225,10 +225,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 493861496;
 		$localobject->idprof2 = 49386149600021;
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK FR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK FR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 
@@ -236,17 +236,17 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'FR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO FR idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(2);    // Must be <= 0
 		print __METHOD__." KO FR idprof2 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
 		// KO ES
 		$localobject->country_code = 'ES';
 		$localobject->idprof1 = 'id1ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be <= 0
+		$result = $localobject->id_prof_check(1);    // Must be <= 0
 		print __METHOD__." KO ES idprof1 result=".$result."\n";
 		$this->assertLessThan(1, $result);
 
@@ -254,10 +254,10 @@ class SocieteTest extends CommonClassTest
 		$localobject->country_code = 'AR';
 		$localobject->idprof1 = 'id1ko';
 		$localobject->idprof2 = 'id2ko';
-		$result = $localobject->id_prof_check(1, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(1);    // Must be > 0
 		print __METHOD__." OK AR idprof1 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(0, $result);
-		$result = $localobject->id_prof_check(2, $localobject);    // Must be > 0
+		$result = $localobject->id_prof_check(2);    // Must be > 0
 		print __METHOD__." OK AR idprof2 result=".$result."\n";
 		$this->assertGreaterThanOrEqual(1, $result);
 

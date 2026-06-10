@@ -50,4 +50,5 @@ ToReplace=Sostituire
 CantMoveNonExistantSerial=Errore. Chiedi una mossa su un record per un seriale che non esiste più. È possibile che tu abbia preso lo stesso numero di serie nello stesso magazzino più volte nella stessa spedizione o sia stato utilizzato da un'altra spedizione. Rimuovi questa spedizione e preparane un'altra.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Riparazione esecuzione incompleta della tabella lotti con parametro '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= È richiesta la correzione dello stock perché il numero di serie numero è univoco.
-ErrorBatchesNeedStockManagement=Errore. Un prodotto con gestione batch/lotto deve essere gestito in magazzino.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=Un prodotto con gestione batch/lotto deve essere gestito in magazzino (gestione magazzino forzata a sì)

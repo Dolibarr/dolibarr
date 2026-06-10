@@ -1,0 +1,72 @@
+
+.color-manager {
+	max-width: 500px;
+}
+
+.controls {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.palette {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 15px;
+}
+
+.palette-color {
+	width: 28px;
+	height: 28px;
+	border-radius: 4px;
+	cursor: pointer;
+	border: 1px solid #ccc;
+}
+
+.colors-container {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-width: 300px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.color-badge {
+	width: 36px;
+	height: 36px;
+	border-radius: 6px;
+	position: relative;
+	border: 1px solid #ccc;
+	cursor: grab;
+
+}
+
+.color-badge.dragging {
+	opacity: 0.4;
+}
+
+.color-placeholder {
+	box-sizing: border-box;
+	width: 36px;
+	height: 36px;
+	border-radius: 6px;
+	position: relative;
+	border: 1px dashed #999;
+}
+
+.color-badge span {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	background: #000;
+	color: #fff;
+	width: 16px;
+	height: 16px;
+	font-size: 12px;
+	line-height: 16px;
+	text-align: center;
+	border-radius: 50%;
+	cursor: pointer;
+}

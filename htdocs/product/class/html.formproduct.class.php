@@ -152,7 +152,23 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= " ORDER BY ".$orderBy;
+		$reorderBy = explode(',', $orderBy);
+		$arraysortfield = array();
+		$arraysortorder = array();
+		foreach ($reorderBy as $element) {
+			$elementKey = explode(' ', $element)[0];
+			if ($elementKey) {
+				$arraysortfield[] = $elementKey;
+				if (isset($element[1])) {
+					$arraysortorder[] = $element[1];
+				} else {
+					$arraysortorder[] = 'ASC';
+				}
+			}
+		}
+		$sortfield = implode(',', $arraysortfield);
+		$sortorder = implode(',', $arraysortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -196,8 +212,6 @@ class FormProduct
 	 */
 	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
 	{
-		global $conf, $langs;
-
 		if (empty($fk_product) && count($this->cache_workstations)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
@@ -214,7 +228,7 @@ class FormProduct
 			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -564,7 +578,7 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$selected            Preselected value
+	 *  @param  int|string	$selected            Preselected value. Can be a numeric -3, 0, 3, ... 60, 3600, ... for time or a short label like 'm', 'm2', ...
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int<0,2>	$mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
@@ -575,6 +589,8 @@ class FormProduct
 		global $langs, $db;
 
 		$langs->load("other");
+
+		$selected = (string) $selected;
 
 		$return = '';
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
@@ -617,16 +633,17 @@ class FormProduct
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $selected) {
+				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
+
 				$return .= '>';
 				if ($measuring_style == 'time') {
-					$return .= $langs->trans(ucfirst($lines->label));
+					$return .= $langs->trans(ucfirst((string) $lines->label));
 				} else {
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 				}
 				$return .= '</option>';
 			}
@@ -695,7 +712,7 @@ class FormProduct
 					}
 
 					$return .= '>';
-					$return .= $langs->trans($lines->label);
+					$return .= $langs->trans((string) $lines->label);
 					$return .= '</option>';
 				}
 			}

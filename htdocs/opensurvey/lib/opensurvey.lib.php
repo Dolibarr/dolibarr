@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2013 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ function get_server_name()
 }
 
 /**
- * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
+ * Function to verify that an array key exists and is not empty.
  *
  * @param   string  $name       Key to test
  * @param   ?array<string,null|mixed|mixed[]>   $tableau    Array in which searching key ($_POST by default)
@@ -159,11 +159,11 @@ function issetAndNoEmpty($name, $tableau = null)
 
 
 /**
- * Fonction permettant de générer les URL pour les sondage
+ * Function for generating URLs for surveys.
  *
  * @param   string    $id     L'identifiant du sondage
  * @param   bool      $admin  True pour générer une URL pour l'administration d'un sondage, False pour un URL publique
- * @return  string            L'url pour le sondage
+ * @return  string            The url of the survey
  */
 function getUrlSondage($id, $admin = false)
 {
