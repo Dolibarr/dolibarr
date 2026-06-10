@@ -293,7 +293,7 @@ function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
  *
  * 	@param 		string		$chain		String to hash (not hashed string)
  * 	@param 		string		$hash		hash to compare
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, 'hash'). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'|'hash'	$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, 'hash'). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
  *  @see dol_hash()
  */
