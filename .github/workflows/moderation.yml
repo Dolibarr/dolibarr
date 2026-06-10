@@ -61,7 +61,7 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: issueNumber,
-                  body: `Comment removed: ${reason} violates repository guidelines.`
+                  body: `Comment auto removed: ${reason} violates repository guidelines.`
                 })
 
                 await github.rest.issues.deleteComment({

@@ -35,6 +35,13 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// The modules list is a setup hub: force the menu context to "home" when the
+// caller did not provide one, so the previously visited module's menu does not
+// stick when the user comes back to this page (issue 38058).
+if (!isset($_GET['mainmenu']) && !isset($_POST['mainmenu'])) {
+	$_GET['mainmenu'] = 'home';
+}
+
 // Load Dolibarr environment
 require '../main.inc.php';
 /**
@@ -942,12 +949,19 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// We discard showing according to filters
 		if ($search_keyword) {
 			$qualified = 0;
-			if (preg_match('/'.preg_quote($search_keyword, '/').'/i', $modulename)
-				|| preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduletechnicalname)
-				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
-				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
-				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
-			) {
+			$search_keyword_array = explode(' ', $search_keyword);
+			$foundkeyword = 1;
+			foreach ($search_keyword_array as $word) {
+				if (!preg_match('/'.preg_quote($word, '/').'/i', $modulename)
+					&& !preg_match('/'.preg_quote($word, '/').'/i', $moduletechnicalname)
+					&& !($moduledesc && preg_match('/'.preg_quote($word, '/').'/i', $moduledesc))
+					&& !($moduledesclong && preg_match('/'.preg_quote($word, '/').'/i', $moduledesclong))
+					&& !($moduleauthor && preg_match('/'.preg_quote($word, '/').'/i', $moduleauthor))
+				) {
+					$foundkeyword = 0;
+				}
+			}
+			if ($foundkeyword) {
 				$qualified = 1;
 			}
 			if (!$qualified) {

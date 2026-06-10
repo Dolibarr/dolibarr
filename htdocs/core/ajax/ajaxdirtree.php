@@ -96,6 +96,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 
 $websitekey = GETPOST('websitekey', 'alpha');
 $pageid = GETPOSTINT('pageid');
+$original_file = GETPOST("file");
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -117,7 +118,7 @@ if ($modulepart == 'ecm') {
 if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpathselecteddir)) {
 	dol_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
-	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", GETPOST("file")));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $original_file));
 	exit;
 }
 

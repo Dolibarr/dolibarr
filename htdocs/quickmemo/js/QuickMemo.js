@@ -21,6 +21,8 @@ class QuickMemo {
 			userDeleteRight: false,
 			elementId: 0,
 			autoResizeFontSize: true,
+			autoResizeFontMin: 1,
+			autoResizeFontMax: 1.2,
 			elementType: '',
 			context: '',
 			token: '',
@@ -67,9 +69,14 @@ class QuickMemo {
 	 */
 	async init() {
 		// Load translation files via Dolibarr tools
-		await Dolibarr.tools.langs.load('quickmemo');
-		await Dolibarr.tools.langs.load('main');
-		await Dolibarr.tools.langs.load('other');
+		const loadLangs = async function () {
+			await Dolibarr.tools.langs.load('quickmemo');
+			await Dolibarr.tools.langs.load('main');
+			await Dolibarr.tools.langs.load('other');
+		}
+
+		await loadLangs();
+		Dolibarr.on('tools:langs:CacheCleared', loadLangs);
 
 		// Load existing memos from server
 		this.loadMemos();
@@ -336,12 +343,66 @@ class QuickMemo {
 		actions.className = 'quickmemo-actions';
 
 		/* ===== ARCHIVE ===== */
+		const btnArchiveTitleLangs = {
+			QuickMemoActionDelete : await Dolibarr.tools.langs.transNoEntities('QuickMemoActionDelete'),
+			QuickMemoActionDeleteEmpty : await Dolibarr.tools.langs.transNoEntities('QuickMemoActionDeleteEmpty'),
+			QuickMemoActionArchive : await Dolibarr.tools.langs.transNoEntities('QuickMemoActionArchive'),
+		}
 
 		const btnArchive = document.createElement('button');
 		btnArchive.className = 'btn-low-emphasis --btn-icon quickmemo-btn-archive';
 		btnArchive.innerHTML = `<i class="${this.param.archiveFontAIcon}"></i>`;
-		btnArchive.title = await Dolibarr.tools.langs.transNoEntities('QuickMemoActionArchive');
+		btnArchive.title = btnArchiveTitleLangs.QuickMemoActionArchive;
 		this.initTooltips(btnArchive);
+
+		/** Updates btn txt based onshift key */
+		const updateBtnArchiveTitle = async () => {
+			let isHoverArchive = false;
+
+			const updateArchiveTitle = (forceDelete = false) => {
+				const textarea = note.querySelector('textarea');
+				const textLength = textarea.value.trim().length;
+
+				if (forceDelete) {
+					btnArchive.title = btnArchiveTitleLangs.QuickMemoActionDelete;
+				} else if (textLength === 0) {
+					btnArchive.title = btnArchiveTitleLangs.QuickMemoActionDeleteEmpty;
+				} else {
+					btnArchive.title = btnArchiveTitleLangs.QuickMemoActionArchive;
+				}
+
+				// Refresh tooltip if needed
+				btnArchive._quickmemoTooltipSync?.();
+			};
+
+			btnArchive.addEventListener('mouseenter', async (e) => {
+				isHoverArchive = true;
+
+				updateArchiveTitle(e.shiftKey);
+			});
+
+			btnArchive.addEventListener('mouseleave', () => {
+				isHoverArchive = false;
+			});
+
+			document.addEventListener('keydown', async (e) => {
+				if (e.key !== 'Shift' || !isHoverArchive) {
+					return;
+				}
+
+				updateArchiveTitle(true);
+			});
+
+			document.addEventListener('keyup', async (e) => {
+				if (e.key !== 'Shift' || !isHoverArchive) {
+					return;
+				}
+
+				updateArchiveTitle(false);
+			});
+		};
+		updateBtnArchiveTitle();
+
 		btnArchive.addEventListener('click', async (e) => {
 			e.stopPropagation();
 			this.removeTooltips(btnArchive); // JQUERY tooltip need to be destroy because it active at this moment
@@ -349,7 +410,7 @@ class QuickMemo {
 			try {
 				// If empty, delete permanently, otherwise archive
 				const textarea = note.querySelector('textarea');
-				const actionDelete = textarea.value.length ? 'archive' : 'delete';
+				const actionDelete =  (e.shiftKey || textarea.value.length === 0) ? 'delete' : 'archive';
 
 				if (actionDelete === 'delete') {
 					this.deleteWithAnimation(note);
@@ -957,6 +1018,8 @@ class QuickMemo {
 		const btnArchive = noteEl.querySelector('.quickmemo-btn-archive');
 		if (btnArchive) {
 			btnArchive.title = await Dolibarr.tools.langs.transNoEntities(textLength > 0 ? 'QuickMemoActionArchive' : 'QuickMemoActionDeleteEmpty');
+			// Refresh tooltip if needed
+			btnArchive._quickmemoTooltipSync?.();
 		}
 
 		// Calculate density
@@ -965,8 +1028,8 @@ class QuickMemo {
 		// Linearly map density to font-size
 		const densityMin = 0.0002;
 		const densityMax = 0.005;
-		const fontMin = 0.8;
-		const fontMax = 1.2;
+		const fontMin = this.param.autoResizeFontMin;
+		const fontMax = this.param.autoResizeFontMax;
 
 		// Clamp density between min & max
 		const clampedDensity = Math.max(densityMin, Math.min(densityMax, density));

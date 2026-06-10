@@ -266,7 +266,7 @@ class Members extends DolibarrApi
 	 * @param string    $typeid     		ID of the type of member
 	 * @param int		$category   		Use this param to filter list by category
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
-	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:>:'20160101') or (t.nature:is:NULL))"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array    					Array of member objects
