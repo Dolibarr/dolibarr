@@ -35,6 +35,13 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// The modules list is a setup hub: force the menu context to "home" when the
+// caller did not provide one, so the previously visited module's menu does not
+// stick when the user comes back to this page (issue 38058).
+if (!isset($_GET['mainmenu']) && !isset($_POST['mainmenu'])) {
+	$_GET['mainmenu'] = 'home';
+}
+
 // Load Dolibarr environment
 require '../main.inc.php';
 /**

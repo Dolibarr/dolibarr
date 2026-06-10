@@ -1165,12 +1165,13 @@ if ($action == 'edit') {
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
 		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
 		$errormsg = '';
 
 		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array($port, $listOfAllowedPorts)) {
+		if (!in_array((string) $port, $listOfAllowedPorts)) {
 			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
 		}
 
