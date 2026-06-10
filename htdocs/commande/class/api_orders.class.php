@@ -174,7 +174,7 @@ class Orders extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -320,6 +320,9 @@ class Orders extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of order
+	 * @throws RestException 403 Insufficiant rights
+	 * @throws RestException 404 Third party not found
+	 * @throws RestException 500 Error when creating order
 	 */
 	public function post($request_data = null)
 	{
@@ -336,10 +339,10 @@ class Orders extends DolibarrApi
 		$thirdpartytmp = new Societe($this->db);
 		$thirdparty_result = $thirdpartytmp->fetch($socid);
 		if ($thirdparty_result < 1) {
-			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+			throw new RestException(404, 'Third party with id='.$socid.' not found or not allowed');
 		}
 		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
-			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+			throw new RestException(404, 'Third party with id='.$thirdpartytmp->id.' not found or not allowed');
 		}
 
 		foreach ($request_data as $field => $value) {

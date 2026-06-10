@@ -175,7 +175,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($cancel) {
+	if ($cancel && !($action == 'updateline' && $usercancreate)) {
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -1379,7 +1379,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+	} elseif ($action == 'updateline' && $usercancreate && $cancel) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); //  To re-display card in edit mode
 		exit();
 	} elseif ($action == 'classin' && $usercancreate) {
@@ -2225,7 +2225,7 @@ if ($action == 'create') {
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
 		<input type="hidden" name="id" value="' . $object->id.'">
-		<input type="hidden" name="backtopage" value="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">
+		<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">
 		';
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == SupplierProposal::STATUS_DRAFT) {

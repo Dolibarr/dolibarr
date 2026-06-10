@@ -1053,7 +1053,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	}
 
 	print '<tr class="oddeven">';
-	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee), "%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $year_start), "%B")."</td>";
 	for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 		$annee_decalage = $annee;
 		if ($mois > 12) {

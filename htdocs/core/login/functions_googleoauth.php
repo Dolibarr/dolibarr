@@ -75,15 +75,25 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 			//global $dolibarr_main_url_root;
 			//$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 			//$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-			$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+			$urlwithroot = DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 			//$shortscope = 'userinfo_email,userinfo_profile';
 			$shortscope = 'openid,email,profile';	// For openid connect
 
 			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
 			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+			$backtourl = $_SERVER['REQUEST_URI'];	// Here we are using a relative URL.
 
-			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest);
+			// Clean the backtourl we can use after an OAuth authentication
+			$backtourl = preg_replace('/token=[^&]+/', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+			$backtourl = preg_replace('/action=[a-z0-9]+/i', '', $backtourl);	// We remove any token into url so we are sure only url with no action are qualified as call back urls.
+			$backtourl = preg_replace('/save_lastsearch_values=[a-z0-9]+/i', '', $backtourl);
+			$backtourl = preg_replace('/mainmenu=[a-z0-9]+/i', '', $backtourl);
+			$backtourl = preg_replace('/leftmenu=[a-z0-9]+/i', '', $backtourl);
+			$backtourl = preg_replace('/#.*$/i', '', $backtourl);	// We remove part after the #...
+
+
+			$url = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.urlencode($shortscope).'&state='.urlencode('forlogin-'.$shortscope.'-'.$oauthstateanticsrf).'&username='.urlencode($usertotest).'&backtourl='.urldecode($backtourl);
 
 			// we go on oauth provider authorization page
 			header('Location: '.$url);

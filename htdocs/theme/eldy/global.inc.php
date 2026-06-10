@@ -694,7 +694,6 @@ tr.tdsmallheight, tr.tdsmallheight td {
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
 	border: none;
-	border-bottom: solid 1px rgba(0,0,0,0.4);
 	margin-right: 1px !important;
 }
 td.onholidaymorning, td.onholidayafternoon {
@@ -6644,7 +6643,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;
