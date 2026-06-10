@@ -191,17 +191,17 @@ print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px
 // Presets For Chat Assistant
 print '<div>';
 print '<strong>' . $langs->trans('PresetsForChatAssistant') . ':</strong><br>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'all'), 1) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'readonly'), 1) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'none'), 1) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'ast', 'mode' => 'none'), true) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
 print '</div>';
 
 // Presets For MCP Server
 print '<div>';
 print '<strong>' . $langs->trans('PresetsForMcpServer') . ':</strong><br>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'all'), 1) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'readonly'), 1) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
-print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'none'), 1) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'all'), true) . '" style="margin:4px 2px;">' . $langs->trans('AllTools') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'readonly'), true) . '" style="margin:4px 2px;">' . $langs->trans('ViewOnly') . '</a>';
+print '<a class="button" href="' . dolBuildUrl($_SERVER['PHP_SELF'], array('action' => 'apply_preset', 'toolcontext' => 'mcp', 'mode' => 'none'), true) . '" style="margin:4px 2px;">' . $langs->trans('None') . '</a>';
 print '</div>';
 
 print '</div>';
