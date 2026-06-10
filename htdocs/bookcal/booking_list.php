@@ -55,6 +55,7 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
+$lineid = GETPOSTINT('lineid');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {

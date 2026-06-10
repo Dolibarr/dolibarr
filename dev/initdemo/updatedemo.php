@@ -115,7 +115,7 @@ if ($confirm == 'regenerate') {
 	$db->begin();
 
 	// Now restart request with all data, so without the limit(1) in sql request
-	$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
+	$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
 	$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 	$sql .= " WHERE entity = ".((int) $entity);
@@ -151,6 +151,7 @@ if ($confirm == 'regenerate') {
 
 			$block_static->action = $obj->action;
 			$block_static->module_source = $obj->module_source;
+			$block_static->pos_source = $obj->pos_source;
 
 			$block_static->amounts_taxexcl = is_null($obj->amounts_taxexcl) ? null : (float) $obj->amounts_taxexcl;	// Database store value with 8 digits, we cut ending 0 them with (flow)
 			$block_static->amounts = (float) $obj->amounts;															// Database store value with 8 digits, we cut ending 0 them with (flow)
@@ -266,6 +267,9 @@ if ($confirm == 'confirm') {
 if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog') {
 	$year = $tmp['year'];			// Old year in demo
 	$lastyear = $tmp['year'] - 2;	// New year in demo
+	if ($confirm == 'confirmemptyblockedlog') {
+		$lastyear = $tmp['year'];
+	}
 
 	// Upgrade dates from current year to current year - 2.
 	while ($year >= $lastyear) {
@@ -315,7 +319,7 @@ if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog'
 	}
 
 
-	$sql = "CREATE TABLE tmp_delete (SELECT pf.fk_paiement FROM llx_paiement_facture as pf WHERE pf.fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.datef < '2024-12-31'))";
+	$sql = "CREATE TABLE tmp_delete (SELECT pf.fk_paiement FROM llx_paiement_facture as pf WHERE pf.fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.datef < '".$lastyear."-12-31'))";
 	print $sql;
 	print "\n";
 	$db->query($sql);
@@ -325,7 +329,7 @@ if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog'
 	print "\n";
 	$db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid IN (SELECT fk_paiement FROM tmp_delete)";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid IN (SELECT fk_paiement FROM tmp_delete) OR rowid NOT IN (SELECT fk_paiement FROM ".MAIN_DB_PREFIX."paiement_facture)";
 	print $sql;
 	print "\n";
 	$db->query($sql);
@@ -335,7 +339,21 @@ if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog'
 	print "\n";
 	$db->query($sql);
 
+	$sql = "UPDATE llx_blockedlog SET pos_source = 1 WHERE module_source = 'takepos'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	//UPDATE llx_societe_remise_except SET fk_facture = NULL, fk_facture_source = NULL, fk_facture_line = NULL;
+
+	//DELETE FROM llx_facturedet WHERE fk_facture NOT IN (SELECT rowid FROM llx_facture);
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE datef < '".$lastyear."-12-31'";
+	print $sql;
+	print "\n";
+	$db->query($sql);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE date_creation < '".$lastyear."-12-31'";
 	print $sql;
 	print "\n";
 	$db->query($sql);

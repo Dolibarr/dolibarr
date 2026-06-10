@@ -146,7 +146,14 @@ $type = GETPOST("type", 'alpha');
 // Show/hide child product variants
 $show_childproducts = 0;
 if (isModEnabled('variants')) {
-	$show_childproducts = GETPOST('search_show_childproducts');
+	// An HTML checkbox does not submit anything when unchecked, so a hidden
+	// "search_show_childproducts=0" companion field is emitted next to the
+	// checkbox (see below). GETPOSTISSET() then let's us distinguish a
+	// resubmission with the checkbox off from a request that does not carry
+	// the filter at all, and the value is read as a strict 0/1 flag.
+	if (GETPOSTISSET('search_show_childproducts')) {
+		$show_childproducts = GETPOSTINT('search_show_childproducts');
+	}
 }
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
@@ -247,7 +254,7 @@ if (getDolGlobalString('PRODUCT_QUICKSEARCH_ON_FIELDS')) {
 
 if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 	$titlesellprice = $langs->trans("SellingPrice");
-	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$titlesellprice = $form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
 	}
 }
@@ -285,8 +292,8 @@ $arrayfields = array(
 	'p.volume_units' => array('label' => 'VolumeUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 31),
 	'cu.label' => array('label' => "DefaultUnitToShow", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && getDolGlobalString('PRODUCT_USE_UNITS')), 'position' => 32),
 	'p.fk_default_workstation' => array('label' => 'DefaultWorkstation', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('workstation') && $type == 1), 'position' => 33),
-	'p.sellprice' => array('label' => "SellingPrice", 'checked' => '1', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 40),
-	'p.tva_tx' => array('label' => "VATRate", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 41),
+	'p.sellprice' => array('label' => "SellingPrice", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')), 'position' => 40),
+	'p.tva_tx' => array('label' => "VATRate", 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')), 'position' => 41),
 	'p.minbuyprice' => array('label' => "BuyingPriceMinShort", 'checked' => '1', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 42),
 	'p.numbuyprice' => array('label' => "BuyingPriceNumShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 43),
 	'p.pmp' => array('label' => "PMPValueShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 44),
@@ -436,7 +443,8 @@ if (empty($reshook)) {
 		$search_date_modif_endday = "";
 		$search_date_modif_end = "";
 
-		$show_childproducts = '';
+		$show_childproducts = 0;
+
 		$search_import_key = '';
 		$search_stockable_product = '';
 		$search_accountancy_code_sell = '';
@@ -875,7 +883,7 @@ if ($fourn_id > 0) {
 	$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 }
 if ($show_childproducts) {
-	$param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
+	$param .= "&search_show_childproducts=".urlencode((string) $show_childproducts);
 }
 if ($type != '') {
 	$param .= '&type='.urlencode((string) ($type));
@@ -1081,7 +1089,11 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 // Show/hide child variant products
 if (isModEnabled('variants')) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
+	// Companion hidden field ensures search_show_childproducts is always
+	// posted, even when the checkbox below is unchecked, so the unchecked
+	// state survives the filter/pagination submit and is parsed as 0/1.
+	$moreforfilter .= '<input type="hidden" name="search_show_childproducts" value="0">';
+	$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts" value="1"'.($show_childproducts ? ' checked="checked"' : '').'>';
 	$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
 	$moreforfilter .= '</div>';
 }

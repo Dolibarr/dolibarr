@@ -149,6 +149,11 @@ class BlockedLog
 	public $ref_object = '';
 
 	/**
+	 * @var string
+	 */
+	public $type_code = '';
+
+	/**
 	 * @var ?stdClass
 	 */
 	public $object_data = null;
@@ -865,6 +870,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
+			$this->type_code = $this->object_data->type_code;
 			$this->linktype = $this->element;
 			$this->linktoref = '';
 
@@ -884,7 +890,7 @@ class BlockedLog
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				// Loop on each invoice the payment is part of to set the linktoref and the module_source and pos_source
 				$originofpayment = null;
-				$terminalofpayment = '';
+				$terminalofpayment = null;
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {
 					if (empty($amount)) {
@@ -926,19 +932,19 @@ class BlockedLog
 					// Set the ->module_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'module_source')) {
 						if (is_null($originofpayment)) {
-							$originofpayment = $tmpobject->module_source;
+							$originofpayment = (string) $tmpobject->module_source;
 						} elseif ($originofpayment != $tmpobject->module_source) {
-							$originofpayment = 'mix';	// the payment is on several invoices with different origins
+							$originofpayment = 'mix';	// the payment is on several invoices with different origins of module
 						} else {
 							$originofpayment = (string) $tmpobject->module_source;
 						}
 					}
 					// Set the ->pos_source of payment from origin object if relevant
 					if (property_exists($tmpobject, 'pos_source')) {
-						if (is_null($originofpayment)) {
-							$terminalofpayment = $tmpobject->pos_source;
-						} elseif ($originofpayment != $tmpobject->pos_source) {
-							$terminalofpayment = 'mix';	// the payment is on several invoices with different origins
+						if (is_null($terminalofpayment)) {
+							$terminalofpayment = (string) $tmpobject->pos_source;
+						} elseif ($terminalofpayment != $tmpobject->pos_source) {
+							$terminalofpayment = 'mix';	// the payment is on several invoices with same origin of module but different terminals
 						} else {
 							$terminalofpayment = (string) $tmpobject->pos_source;
 						}
@@ -1130,7 +1136,7 @@ class BlockedLog
 		}
 
 		$sql = "SELECT b.rowid, b.date_creation, b.action, b.module_source, b.pos_source, b.amounts_taxexcl, b.amounts, b.element, b.fk_object, b.entity,";
-		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
+		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.type_code, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) {
 			$sql .= " WHERE b.rowid = ".((int) $id);
@@ -1167,6 +1173,7 @@ class BlockedLog
 				//exit;
 
 				$this->ref_object = $obj->ref_object;
+				$this->type_code = $obj->type_code;
 				$this->linktoref = $obj->linktoref;
 				$this->linktype = $obj->linktype;
 
@@ -1360,6 +1367,7 @@ class BlockedLog
 		$sql .= " fk_object,";
 		$sql .= " date_object,";
 		$sql .= " ref_object,";
+		$sql .= " type_code,";
 		$sql .= " linktoref,";
 		$sql .= " linktype,";
 		$sql .= " object_data,";
@@ -1382,8 +1390,9 @@ class BlockedLog
 		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object, $tz)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
+		$sql .= "'".$this->db->escape($this->type_code)."',";
 		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktoref)."'" : "null").",";
-		$sql .= ($this->linktoref ? "'".$this->db->escape($this->linktype)."'" : "null").",";
+		$sql .= ($this->linktype ? "'".$this->db->escape($this->linktype)."'" : "null").",";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "'".$this->db->escape($this->object_format)."',";
@@ -1473,7 +1482,7 @@ class BlockedLog
 			dol_syslog($this->error, LOG_ERR);
 
 			if ($returnarray) {
-				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'error' => $this->error);
 			} else {
 				return false;
 			}
@@ -1519,7 +1528,11 @@ class BlockedLog
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 		} elseif ($format == 'V2') {
 			$s = $this->entity;
-			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			$s .= '|'.$this->date_creation.'|'.$this->action.'|'.$this->module_source.'|'.$this->pos_source.'|'.$this->amounts_taxexcl;
+			$s .= '|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
+			if ($this->type_code) {
+				$s .= '|'.(string) $this->type_code;
+			}
 			$s .= '|'.(string) $this->linktoref;
 			$s .= '|'.(string) $this->linktype;
 			return $s;
@@ -1561,6 +1574,8 @@ class BlockedLog
 	 */
 	private function buildFinalSignatureHash($clearstring, $format = '')
 	{
+		global $conf;
+
 		if (empty($format)) {
 			$format = $this->object_format;
 		}
@@ -1571,17 +1586,136 @@ class BlockedLog
 			return dol_hash($clearstring, '5');
 		} elseif ($format == 'V2') {
 			// BLOCKEDLOG_HMAC_KEY is a HMAC key starting with 'BLOCKEDLOGHMAC....', but it is not stored as a clear data. It will be decrypted later.
-			$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+			$hmac_encoded_secret_key = '';
+
+			// Get value of the $hmac_encoded_secret_key from the database
+			if (empty($conf->cache['hmac_encoded_secret_key'])) {
+				$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = 'BLOCKEDLOG_HMAC_KEY'";
+				$sql .= " AND entity IN (0, ".$this->entity.")";
+				$sql .= " ORDER BY entity DESC LIMIT 1";
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						$hmac_encoded_secret_key = $obj->value;
+					}
+				}
+
+				$conf->cache['hmac_encoded_secret_key'] = $hmac_encoded_secret_key;		// Save value in memory page cache (if we recall the same function in same page transaction).
+			} else {
+				$hmac_encoded_secret_key = $conf->cache['hmac_encoded_secret_key'];
+			}
 			if (empty($hmac_encoded_secret_key)) {
-				throw new Exception('Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of v23');
+				throw new Exception('Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of an old version');
 			}
-			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
-			if (!preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
-				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+
+			// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+			$hmac_secret_key = '';
+
+			// Get the obfuscation key from ping.dolibarr.org (used just after to decode HMAC secret key)
+			$obfuscationkey = $this->getObfuscationKey();	// Note: On network trouble, an Exception is thrown returning to caller
+			if ($obfuscationkey) {
+				// Decode the encrypted parameter using the obfuscation key to get the HMAC key in memory.
+				$hmac_secret_key = $this->dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey);
 			}
+
+			if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+				// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with previous versions).
+				// We test this and we force a migrate data if this is the case.
+				// Example with the old demo sample database:
+				// dolcrypt:AES-256-CTR:46cb611f00c4cff8:XVfEh15vX/JOYmpiw2QPNamcTQwdbBZJTcXBh9rMpzYJOpVPZubIWcgA8wHMXA== and instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0
+				/*if (!empty($conf->file->dolcrypt_key)) {
+					// If dolcrypt_key is defined, we used it in priority. Note: this param has never been set for the moment.
+					$oldobfuscationkey = $conf->file->dolcrypt_key;
+				} else {*/
+					// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+					$oldobfuscationkey = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
+				/* } */
+
+				$hmac_secret_key = $this->dolDecodeHMACKey($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
+
+				if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+					//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+					throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
+				} else {
+					// The old method is ok, we must update the data saving to use the new method.
+					// TODO insert/update into database the new value of the HMAC key obfuscated with $obfuscationkey.
+					//print 'rrrrrrrrr';
+				}
+			}
+
 			return hash_hmac('sha256', $clearstring, $hmac_secret_key);
 		} else {
 			throw new Exception('Error bad value "'.$this->object_format.'" for object_format');
+		}
+	}
+
+	/**
+	 * Return the obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key)
+	 *
+	 * @return 	string					Obfuscation key or '' if error.
+	 */
+	private function getObfuscationKey()
+	{
+		global $conf;
+
+		// If key found into the user session memory cache, we use it
+		if (!empty($_SESSION['hmac_secret_key'])) {
+			return (string) $_SESSION['hmac_secret_key'];
+		}
+		// If key found into the page memory cache, we use it
+		if (!empty($conf->cache['hmac_secret_key'])) {
+			return (string) $conf->cache['hmac_secret_key'];
+		}
+
+		// Value is not into cache, we must get it from ping.dolibarr.org
+		// TODO Note: On network trouble, an Exception must be thrown
+		// TODO
+		$obfuscationkey = '';
+
+		// Now store value in cache
+		$_SESSION['hmac_secret_key'] = $obfuscationkey;
+		$conf->cache['hmac_secret_key'] = $obfuscationkey;
+
+		return $obfuscationkey;
+	}
+
+	/**
+	 * Return the unobfuscated string of a HMAC obfuscated string.
+	 *
+	 * @param 	string	$hmac_encoded_secret_key	HMAC encrypted key in database. Example: 'dolcrypt:AES-256-CBC:12345678901234567890123456789012:12345678901234567890123456789012'
+	 * @param	string	$obfuscationkey				Obfuscation key
+	 * @return 	string								Decoded string
+	 */
+	private function dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey = '')
+	{
+		$reg = array();
+		if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $hmac_encoded_secret_key, $reg)) {
+			$ciphering = $reg[1];
+			if (function_exists('openssl_decrypt')) {
+				if (empty($obfuscationkey)) {
+					dol_syslog("Error dolDecodeHMACKey decrypt key is empty", LOG_WARNING);
+					return '';
+				}
+				$tmpexplode = explode(':', $reg[2]);
+				if (!empty($tmpexplode[1])) {
+					$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $obfuscationkey, 0, $tmpexplode[0]);
+				} else {
+					$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $obfuscationkey, 0, '');
+				}
+				// Test validity of decryption
+				if (!ascii_check($newchain)) {
+					dol_syslog("Error dolDecodeHMACKey failed: The string decoded with obfuscation key return a non valid value (not ascii)", LOG_ERR);
+					return '';
+				}
+			} else {
+				dol_syslog("Error dolDecodeHMACKey openssl_decrypt is not available", LOG_ERR);
+				return '';
+			}
+
+			return $newchain;
+		} else {
+			return '';
 		}
 	}
 
@@ -1683,9 +1817,10 @@ class BlockedLog
 	 *  @param	string			        $search_signature		Search signature
 	 *  @param	string			        $search_module_source	Search on module source
 	 *  @param	string			        $search_pos_source		Search on terminal
+	 *  @param	string					$search_type_code		Search on type code
 	 *	@return	BlockedLog[]|int<-2,-1>							Array of object log or <0 if error
 	 */
-	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '')
+	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '', $search_signature = '', $search_module_source = '', $search_pos_source = '', $search_type_code = '')
 	{
 		global $conf;
 		//global $cachedlogs;
@@ -1718,6 +1853,9 @@ class BlockedLog
 		}
 		if ($search_end > 0) {
 			$sql .= " AND date_creation <= '".$this->db->idate($search_end, 'gmt')."'";
+		}
+		if ($search_type_code) {
+			$sql .= natural_search("type_code", (string) $search_type_code);
 		}
 		if ($search_ref != '') {
 			$sql .= " AND (".natural_search("ref_object", $search_ref, 0, 1);
@@ -1784,12 +1922,18 @@ class BlockedLog
 				//if (!isset($cachedlogs[$obj->rowid]))
 				//{
 				$b = new BlockedLog($this->db);
-				$b->fetch($obj->rowid);
+				$result = $b->fetch($obj->rowid);
 				//$b->loadTrackedEvents();
 				//$cachedlogs[$obj->rowid] = $b;
 				//}
 
 				//$results[] = $cachedlogs[$obj->rowid];
+				if ($result < 0) {
+					$this->error = $b->error;
+					$this->errors = $b->errors;
+					return -1;
+				}
+
 				$results[] = $b;
 			}
 
@@ -1813,17 +1957,12 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			//$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 			$fingerprint = bin2hex(random_bytes(32)); // 64 char hex
 
-			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
+			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Initial signature fingerprint', $conf->entity);
 
 			$conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT = $fingerprint;
 		}
-
-		/*if (!getDolGlobalString('BLOCKEDLOG_LAST_RECORD_FINGERPRINT')) {
-			dolibarr_set_const($db, 'BLOCKEDLOG_LAST_RECORD_FINGERPRINT', '0:none', 'chaine', 0, 'Last record fingerprint', $conf->entity);
-		}*/
 
 		return getDolGlobalString('BLOCKEDLOG_ENTITY_FINGERPRINT');
 	}
@@ -1849,14 +1988,13 @@ class BlockedLog
 	 */
 	public function canBeEnabled()
 	{
-		global $dolibarr_main_force_https;
-
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 
-		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && empty($dolibarr_main_force_https)) {
-			return 'Error: The HTTPS must be forced by setting the $dolibarr_main_force_https into Dolibarr conf/conf.php file to allow the use of this module in France.';
+		if ($isqualified && ($isqualified != 'CERTIF_LNE_IS_2') && !isHTTPS()) {
+			return 'Error: The HTTPS must be enabled to allow the use of this module in France.';
 		}
 
 		return '';
@@ -1883,5 +2021,28 @@ class BlockedLog
 		}
 
 		return $canbedisabled;
+	}
+
+
+	/**
+	 * Return current number of records.
+	 *
+	 * @return  int		Number of recor for all instances
+	 */
+	public function countRecord()
+	{
+		$nb = 0;
+
+		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+		} else {
+			dol_print_error($this->db);
+		}
+		$this->db->free($resql);
+
+		return $nb;
 	}
 }

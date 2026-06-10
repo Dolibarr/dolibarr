@@ -1622,7 +1622,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 1);
 
 			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
@@ -1714,7 +1714,7 @@ if ($action == 'create') {
 		} else {
 			$taxlessUnitPriceDisabled = getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? ' disabled' : '';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip', 0, '', '', 0, '', 1);
 
 			$formconfirm = '';
 
