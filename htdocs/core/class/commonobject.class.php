@@ -7667,11 +7667,17 @@ abstract class CommonObject
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
+				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 				if ($this->array_options["options_".$key] === null) {
-					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
+					$sql.= " SET ".$this->db->sanitize($key)." = null";
+				} elseif (!empty($sanitizedGeoDataType['ST_Function'])) {
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
+					$sql .= " SET ".$this->db->sanitize($key)." = ".$this->db->sanitize($sanitizedGeoDataType['ST_Function'])."('".$this->db->escape($this->array_options["options_".$key])."')";
 				} else {
 					// TODO What about if field is type int or float ($attributeType = price, int, ...) ?
-					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
+					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
+					$sql .= " SET ".$this->db->sanitize($key)." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
 
