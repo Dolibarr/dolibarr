@@ -75,7 +75,7 @@ abstract class McpTool
 	 *
 	 * @return mixed The result of the tool execution.
 	 */
-	public function execute(string $toolName, array $args);
+	abstract public function execute(string $toolName, array $args);
 
 	/**
 	 * Return categories this tool belongs to.
@@ -86,6 +86,7 @@ abstract class McpTool
 	public function getCategories(): array
 	{
 		return ['global']; // Default
+	}
 
 	/**
 	 * Return true if this is a system/infrastructure tool that must always
