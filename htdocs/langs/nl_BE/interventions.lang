@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - interventions
 InterventionCard=Interventiedetails
 AddIntervention=Nieuwe interventie
-InterventionContact=Interventiecontactpersoon
 ValidateIntervention=Inteverntie valideren
 DocumentModelStandard=Standaard modeldocument voor interventies
 InterventionCardsAndInterventionLines=Inteventiebladen en -regels

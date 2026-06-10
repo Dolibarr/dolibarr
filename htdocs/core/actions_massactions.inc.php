@@ -335,19 +335,23 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			foreach ($listofobjectref[$thirdpartyid] as $objectid => $objectobj) {
 				//var_dump($thirdpartyid.' - '.$objectid.' - '.$objectobj->statut);
-				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT) {
+				// Honour the same per-object hidden constants used by the "Send by email"
+				// button on the card pages (comm/propal/card.php, commande/card.php,
+				// compta/facture/card.php) so the behaviour is consistent between the
+				// single-object action and the mass action.
+				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT && !getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT) {
+				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT && !getDolGlobalString('COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT) {
+				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT && !getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';

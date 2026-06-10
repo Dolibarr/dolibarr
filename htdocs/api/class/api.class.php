@@ -113,11 +113,15 @@ class DolibarrApi
 				'restrictiononfksoc', 'ismultientitymanaged', 'isextrafieldmanaged',
 				'module', 'error', 'errorhidden', 'errors', 'warning', 'warnings', 'validateFieldsErrors',
 				'oldcopy', 'oldref', 'newref', 'context',
-				'actionmsg', 'actionmsg2', 'thirdparty', 'user', 'import_key',
-				'specimen', 'tpl', 'extraparams',
+				'actionmsg', 'actionmsg2', 'thirdparty', 'user',
+				'tpl', 'extraparams',
 				'childtables', 'childtablesoncascade'
 			))) {
 				throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
+			}
+			if (in_array($field, array('specimen'))) {
+				// Allowed but not used
+				dol_syslog('Debug API _checkValForAPI, found use of field specimen', LOG_DEBUG, 0, '_api');
 			}
 
 			// Sanitize the value using its type declared into ->fields of $object
@@ -314,6 +318,7 @@ class DolibarrApi
 		unset($object->error);
 		unset($object->errors);
 		unset($object->errorhidden);
+		unset($object->warning);
 		unset($object->warnings);
 		unset($object->TRIGGER_PREFIX);
 
@@ -342,6 +347,7 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
+		unset($object->fk_multicurrency);
 		//unset($object->model_pdf);
 		unset($object->sendtoid);
 		unset($object->name_bis);
@@ -395,6 +401,7 @@ class DolibarrApi
 			unset($object->comments);
 		}
 
+		unset($object->module);
 		unset($object->origin_object);
 		unset($object->origin);
 		unset($object->element);
@@ -428,17 +435,22 @@ class DolibarrApi
 				unset($object->lines[$i]->country);
 				unset($object->lines[$i]->country_id);
 				unset($object->lines[$i]->country_code);
+				unset($object->lines[$i]->deposit_percent);
 				unset($object->lines[$i]->mode_reglement_id);
 				unset($object->lines[$i]->mode_reglement_code);
 				unset($object->lines[$i]->mode_reglement);
 				unset($object->lines[$i]->cond_reglement_id);
+				unset($object->lines[$i]->cond_reglement_supplier_id);
 				unset($object->lines[$i]->cond_reglement_code);
 				unset($object->lines[$i]->cond_reglement);
 				unset($object->lines[$i]->fk_delivery_address);
 				unset($object->lines[$i]->fk_projet);
 				unset($object->lines[$i]->fk_project);
+
 				unset($object->lines[$i]->thirdparty);
 				unset($object->lines[$i]->user);
+				unset($object->lines[$i]->product);
+
 				unset($object->lines[$i]->model_pdf);
 				unset($object->lines[$i]->note_public);
 				unset($object->lines[$i]->note_private);
@@ -521,7 +533,7 @@ class DolibarrApi
 	 *
 	 * @param  string[]	$matches    Array of found string by regex search.
 	 * 								Each entry is 1 and only 1 criteria.
-	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
+	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:>:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
