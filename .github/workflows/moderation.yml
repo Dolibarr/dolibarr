@@ -4,7 +4,6 @@ name: Moderation Bot
 on:
   issue_comment:
     types: [created, edited]
-
   pull_request_review_comment:
     types: [created, edited]
 
@@ -15,46 +14,63 @@ permissions:
 jobs:
   moderate:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Install franc
+        run: npm install franc
+
       - name: Moderate comments
         uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const franc = require('franc')
-
-            const comment = context.payload.comment.body || ''
-            const lower = comment.toLowerCase()
-
-            // Détection YouTube Music
             const forbiddenPatterns = [
               'music.youtube.com',
               'youtu.be',
               'youtube.com/watch'
             ]
 
-            const hasYoutubeMusic = forbiddenPatterns.some(p => lower.includes(p))
+            const profanityList = JSON.parse(process.env.PROFANITY_LIST || '[]')
+            const offTopicKeywords = JSON.parse(process.env.OFFTOPIC_LIST || '[]')
 
-            // Détection langue
+            const comment = context.payload.comment.body || ''
+            const commentAuthor = context.payload.comment.user.login
+            const repoOwner = context.repo.owner
+            const isOwner = commentAuthor === repoOwner
+
+            const isForbidden = forbiddenPatterns.some(p => comment.toLowerCase().includes(p))
+            const isProfane = profanityList.some(word => new RegExp(`\\b${word}\\b`, 'i').test(comment))
+            const isOffTopic = offTopicKeywords.some(kw => comment.toLowerCase().includes(kw.toLowerCase()))
+
             let isEnglish = true
-
             try {
+              const franc = require('franc')
               const lang = franc(comment)
-              isEnglish = lang === 'eng'
+              isEnglish = lang && lang.startsWith('eng')
             } catch (e) {
               console.log('Language detection failed:', e)
             }
 
-            console.log('Detected language:', isEnglish ? 'english' : 'not english')
+            if ((isForbidden || isProfane || isOffTopic || !isEnglish) && !isOwner) {
+              try {
+                const issueNumber = context.payload.issue?.number || context.payload.pull_request?.number
+                const reason = !isEnglish ? 'non-English comment' :
+                              isForbidden ? 'forbidden link' :
+                              isProfane ? 'profanity' : 'off-topic content'
 
-            #if (hasYoutubeMusic || !isEnglish) {
-            if (hasYoutubeMusic) {
-              console.log('Deleting comment...')
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: `Comment auto removed: ${reason} violates repository guidelines.`
+                })
 
-              await github.rest.issues.deleteComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: context.payload.comment.id
-              })
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: context.payload.comment.id
+                })
+              } catch (error) {
+                console.error('Moderation error:', error)
+                throw error
+              }
             }

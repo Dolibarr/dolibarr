@@ -34,3 +34,11 @@ UPDATE llx_user set flagdelsessionsbefore = NULL WHERE flagdelsessionsbefore IS 
 
 ***** To restore current date
 sudo timedatectl set-ntp true; sudo timedatectl status;
+ou
+systemctl stop/start ntp
+
+
+
+TODO
+
+Add column type_code in llx_blockedlog (for perf + filter on type_code)

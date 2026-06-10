@@ -46,7 +46,7 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
 
-global $db, $user;
+global $db, $user, $conf;
 
 top_httphead('application/json');
 
@@ -59,8 +59,9 @@ try {
 		throw new Exception("Invalid Request: No tool specified.");
 	}
 
-	// Initialize Handler
-	$mcp = new McpHandler($db, $user);
+	// Initialize Handler with the private assistant context so that the correct
+	// allow-list (AI_ASSISTANT_ALLOWED_TOOLS) is enforced on both schema and execution.
+	$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 
 	$result = $mcp->executeTool($input['tool'], $input['arguments'] ?? []);
 
