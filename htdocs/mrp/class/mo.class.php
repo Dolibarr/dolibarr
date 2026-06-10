@@ -1815,7 +1815,7 @@ class Mo extends CommonObject
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_product) && $line->fk_product > 0) {
 			$productstatic->fetch($line->fk_product);
-			$productstatic->load_virtual_stock();
+			$productstatic->load_stock(); // load_virtual_stock() is done in load_stock()
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {
