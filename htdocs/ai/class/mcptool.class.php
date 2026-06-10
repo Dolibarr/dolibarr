@@ -75,7 +75,7 @@ abstract class McpTool
 	 *
 	 * @return mixed The result of the tool execution.
 	 */
-	abstract public function execute(string $toolName, array $args);
+	public function execute(string $toolName, array $args);
 
 	/**
 	 * Return categories this tool belongs to.
