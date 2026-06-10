@@ -487,14 +487,14 @@ if ($release) {
 		print ": ".$hashunalterable_files."\n";
 	} else {
 		$inputfile = $outputfile;
-		if ($buildzip == '1' || $buildzip === 'zip') {
+		if ($buildzip === '1' || $buildzip === 'zip') {
 			$outputfile = $inputfile.'.zip';
 			$result = dol_compress_file($inputfile, $outputfile, 'zip');
 			if ($result > 0) {
 				dol_delete_file($outputfile);
 				print "File ".$outputfile." generated.\n";
 			}
-		} elseif ($buildzip == '2' || $buildzip === 'gz') {
+		} elseif ($buildzip === '2' || $buildzip === 'gz') {
 			$outputfile = $inputfile.'.gz';
 			$result = dol_compress_file($outputfile, $outputfile, 'gz');
 			if ($result > 0) {
