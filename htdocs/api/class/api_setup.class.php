@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cregion.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
@@ -80,12 +81,7 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if ($elementtype == 'thirdparty') {
-			$elementtype = 'societe';
-		}
-		if ($elementtype == 'contact') {
-			$elementtype = 'socpeople';
-		}
+		$elementtype = normalizeElementtype($elementtype);
 
 		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
@@ -1465,12 +1461,7 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
-		if ($elementtype == 'thirdparty') {
-			$elementtype = 'societe';
-		}
-		if ($elementtype == 'contact') {
-			$elementtype = 'socpeople';
-		}
+		$elementtype = normalizeElementtype($elementtype);
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable,";
@@ -1589,12 +1580,7 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Only an admin user can get list of extrafields');
 		}
 
-		if ($elementtype == 'thirdparty') {
-			$elementtype = 'societe';
-		}
-		if ($elementtype == 'contact') {
-			$elementtype = 'socpeople';
-		}
+		$elementtype = normalizeElementtype($elementtype);
 
 		$sql = "SELECT t.rowid as id, t.name, t.entity, t.elementtype, t.label, t.type, t.size, t.fieldcomputed, t.fielddefault,";
 		$sql .= " t.fieldunique, t.fieldrequired, t.perms, t.enabled, t.pos, t.alwayseditable, t.param, t.list, t.printable, t.showintooltip,";

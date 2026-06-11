@@ -3528,3 +3528,77 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
 		}
 	}
 }
+
+/**
+ * Normalize a canonical element type into the legacy elementtype value
+ *
+ * This is the counterpart of normalizeModulepart(): it converts canonical
+ * element type names back to the legacy identifiers
+ *
+ * @param  string $elementtype  Canonical element type (e.g. 'thirdparty', 'contact', 'order', ...)
+ * @return string               Legacy elementtype value used in database tables
+ */
+function normalizeElementtype($elementtype) {
+	// Guard empty
+	if (empty($elementtype)) {
+		return $elementtype;
+	}
+
+	// Lowercase input so matching is case-insensitive for callers
+	$elementtype = strtolower($elementtype);
+
+	// Convert canonical element type to legacy elementtype used in database tables
+	switch ($elementtype) {
+		case 'thirdparty':
+			$elementtype = 'societe';
+			break;
+		case 'contact':
+			$elementtype = 'socpeople';
+			break;
+		case 'proposal':
+			$elementtype = 'propal';
+			break;
+		case 'order':
+			$elementtype = 'commande';
+			break;
+		case 'order_supplier':
+		case 'supplier_order':
+			$elementtype = 'commande_fournisseur';
+			break;
+		case 'invoice':
+			$elementtype = 'facture';
+			break;
+		case 'invoice_supplier':
+		case 'supplier_invoice':
+			$elementtype = 'facture_fourn';
+			break;
+		case 'contract':
+			$elementtype = 'contrat';
+			break;
+		case 'intervention':
+			$elementtype = 'fichinter';
+			break;
+		case 'shipment':
+			$elementtype = 'expedition';
+			break;
+		case 'member':
+			$elementtype = 'adherent';
+			break;
+		case 'project':
+			$elementtype = 'projet';
+			break;
+		case 'project_task':
+			$elementtype = 'projet_task';
+			break;
+		case 'stockmovement':
+			$elementtype = 'stock_mouvement';
+			break;
+		case 'stock':
+			$elementtype = 'entrepot';
+			break;
+		case 'category':
+			$elementtype = 'categorie';
+			break;
+	}
+	return $elementtype;
+}
