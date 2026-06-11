@@ -243,7 +243,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 
 			if (preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name)) {
 				$type      = 'write';
-				$typeBadge = '<span class="badge badge-status8" style="display: inline-block;">' . $langs->trans('Modify') . '</span>';
+				$typeBadge = '<span class="badge badge-status2" style="display: inline-block;">' . $langs->trans('Modify') . '</span>';
 			} else {
 				$type      = 'read';
 				$typeBadge = '<span class="badge badge-status4" style="display: inline-block;">' . $langs->trans('ViewOnly') . '</span>';
@@ -273,15 +273,15 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 				print img_picto($langs->trans('Active'), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 			} else {
 				$actAst   = $isAstOn ? 'delrights' : 'addrights';
-				$pictoAst = $isAstOn ? 'switch_on' : 'switch_off';
+				$pictoAst = $isAstOn ? 'switch_on'.($type == 'write' ? '_warning' : '') : 'switch_off';
 				$urlAst   = dolBuildUrl($_SERVER["PHP_SELF"], [
 					'action'      => $actAst,
 					'toolcontext' => 'ast',
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-ast-link' . $lockCssClass . '" href="' . $urlAst . '">';
-				print img_picto($langs->trans($isAstOn ? 'Remove' : 'Add'), $pictoAst);
+				print '<a class="ctx-ast-link reposition' . $lockCssClass . '" href="' . $urlAst . '">';
+				print img_picto($langs->trans($isAstOn ? 'Remove' : 'Add'), $pictoAst, '', 0, 0, 0, '', !$isAstOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}
 			print '</td>';
@@ -292,15 +292,15 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 				print img_picto($langs->trans('Active'), 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 			} else {
 				$actMcp   = $isMcpOn ? 'delrights' : 'addrights';
-				$pictoMcp = $isMcpOn ? 'switch_on' : 'switch_off';
+				$pictoMcp = $isMcpOn ? 'switch_on'.($type == 'write' ? '_warning' : '') : 'switch_off';
 				$urlMcp   = dolBuildUrl($_SERVER["PHP_SELF"], [
 					'action'      => $actMcp,
 					'toolcontext' => 'mcp',
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-mcp-link' . $lockCssClass . '" href="' . $urlMcp . '">';
-				print img_picto($langs->trans($isMcpOn ? 'Remove' : 'Add'), $pictoMcp);
+				print '<a class="ctx-mcp-link reposition' . $lockCssClass . '" href="' . $urlMcp . '">';
+				print img_picto($langs->trans($isMcpOn ? 'Remove' : 'Add'), $pictoMcp, '', 0, 0, 0, '', !$isMcpOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}
 			print '</td>';

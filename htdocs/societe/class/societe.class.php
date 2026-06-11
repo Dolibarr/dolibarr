@@ -4170,6 +4170,36 @@ class Societe extends CommonObject
 		return array();
 	}
 
+	/**
+	 *	Get children for company
+	 *
+	 * @param   int         $company_id     ID of company to search children
+	 * @return	int[]
+	 */
+	public function getChildrenForCompany($company_id)
+	{
+		global $langs;
+
+		$children = array();
+		if ($company_id > 0) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE parent = ".((int) $company_id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$child = $obj->rowid;
+					if ($child > 0 && !in_array($child, $children)) {
+						$children[] = $child;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($this->db->lasterror(), 'errors');
+			}
+		}
+		// Return a default value when $company_id is not greater than 0
+		return $children;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns if a profid should be verified to be unique
@@ -5884,6 +5914,19 @@ class Societe extends CommonObject
 				$soc_origin->code_fournisseur = '';
 				$soc_origin->barcode = '';
 				$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+			}
+
+			// Children companies
+			if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
+				// Children
+				$children_ori = $this->getChildrenForCompany($soc_origin->id);
+				if (count($children_ori)) {
+					foreach ($children_ori as $child_id) {
+						$child = new Societe($this->db);
+						$child->id = $child_id;
+						$child->setParent($this->id);
+					}
+				}
 			}
 
 			// Update

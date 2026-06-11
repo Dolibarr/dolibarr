@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,12 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 }
 
 global $db, $user, $conf, $langs;
+
+// Same per-user gate as the Assistant page that calls this endpoint, so a
+// user without 'ai/assistant/use' cannot reach the LLM through direct AJAX.
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
+}
 
 ob_start();
 top_httphead('application/json');
