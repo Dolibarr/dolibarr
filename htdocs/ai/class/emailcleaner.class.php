@@ -20,8 +20,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class EmailCleaner
 {
-	private const TABLE_CLEANING = 'emailcollector_ai_cleaning';
-	private const TABLE_HANDOFF = 'emailcollector_ai_handoff';
+	private const TABLE_ACTIONCOMM_AI = 'actioncomm_ai';
 
 	/**
 	 * @var DoliDB
@@ -74,7 +73,6 @@ class EmailCleaner
 	{
 		global $conf, $dolibarr_main_data_root;
 
-		$this->ensureStorageTables();
 
 		$rawBody = self::normalizeText((string) ($parameters['messagetext'] ?? ''));
 		$subject = (string) ($parameters['subject'] ?? '');
@@ -237,8 +235,12 @@ class EmailCleaner
 			'date_cleaning_gmt' => dol_print_date(dol_now('gmt'), '%Y-%m-%d %H:%M:%S'),
 		);
 
-		$cleaningId = $this->insertCleaningRow(
+		$actioncommId = $this->findActionCommIdByMessageId($entity, $msgid);
+		$payload['fk_actioncomm'] = ($actioncommId > 0 ? $actioncommId : null);
+
+		$actioncommAiId = $this->insertActionCommAiRow(
 			$entity,
+			$actioncommId,
 			$collectorId,
 			$msgid,
 			$rawBody,
@@ -253,12 +255,17 @@ class EmailCleaner
 			$contextProfileVersion,
 			$emailContext,
 			$emailUnderstanding,
-			$handoffPayload
+			$handoffPayload,
+			$payload
 		);
-		if ($cleaningId > 0) {
-			$payload['cleaning_id'] = $cleaningId;
-			$handoffPayload['cleaning_id'] = $cleaningId;
+		if ($actioncommAiId > 0) {
+			$payload['actioncomm_ai_id'] = $actioncommAiId;
+			$handoffPayload['actioncomm_ai_id'] = $actioncommAiId;
 			$payload['handoff_payload_json'] = $handoffPayload;
+		} elseif ($actioncommId <= 0) {
+			$payload['actioncomm_ai_status'] = 'not_persisted_no_event';
+		} else {
+			$payload['actioncomm_ai_status'] = 'not_persisted_storage_unavailable';
 		}
 
 		$json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -273,61 +280,37 @@ class EmailCleaner
 	}
 
 	/**
-	 * Ensure SQL storage tables exist for cleaner handoff data.
+	 * Find the agenda event created for the collected email.
 	 *
-	 * @return void
+	 * @param int $entity Entity id
+	 * @param string $msgid Message id
+	 * @return int
 	 */
-	private function ensureStorageTables()
+	private function findActionCommIdByMessageId($entity, $msgid)
 	{
-		static $done = false;
-		if ($done) return;
+		$msgid = trim((string) $msgid);
+		if ($msgid === '') return 0;
 
-		$sql1 = "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX.self::TABLE_CLEANING." (";
-		$sql1 .= " rowid integer AUTO_INCREMENT PRIMARY KEY,";
-		$sql1 .= " entity integer DEFAULT 1 NOT NULL,";
-		$sql1 .= " collector_id integer,";
-		$sql1 .= " msgid varchar(255),";
-		$sql1 .= " raw_hash varchar(80),";
-		$sql1 .= " clean_hash varchar(80),";
-		$sql1 .= " clean_body MEDIUMTEXT,";
-		$sql1 .= " cleaning_json LONGTEXT,";
-		$sql1 .= " cleaning_confidence double,";
-		$sql1 .= " cleaning_model varchar(190),";
-		$sql1 .= " prompt_code varchar(128),";
-		$sql1 .= " prompt_version varchar(32),";
-		$sql1 .= " context_profile_code varchar(128),";
-		$sql1 .= " context_profile_version varchar(32),";
-		$sql1 .= " handoff_payload_json LONGTEXT,";
-		$sql1 .= " date_creation datetime,";
-		$sql1 .= " tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
-		$sql1 .= " ) ENGINE=innodb";
-		$this->db->query($sql1);
+		$sql = "SELECT id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+		$sql .= " WHERE entity = ".((int) $entity);
+		$sql .= " AND email_msgid = '".$this->db->escape($msgid)."'";
+		$sql .= " ORDER BY id DESC";
+		$sql .= $this->db->plimit(1);
 
-		$sql3 = "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX.self::TABLE_HANDOFF." (";
-		$sql3 .= " rowid integer AUTO_INCREMENT PRIMARY KEY,";
-		$sql3 .= " entity integer DEFAULT 1 NOT NULL,";
-		$sql3 .= " fk_cleaning integer,";
-		$sql3 .= " handoff_version varchar(64),";
-		$sql3 .= " consumer_code varchar(64),";
-		$sql3 .= " payload_json LONGTEXT,";
-		$sql3 .= " payload_hash varchar(80),";
-		$sql3 .= " quality_status varchar(32),";
-		$sql3 .= " low_confidence_json LONGTEXT,";
-		$sql3 .= " date_creation datetime,";
-		$sql3 .= " tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
-		$sql3 .= " ) ENGINE=innodb";
-		$this->db->query($sql3);
+		$resql = $this->db->query($sql);
+		if (!$resql) return 0;
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
 
-		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_CLEANING." ADD INDEX idx_emailcollector_ai_cleaning_entity_msgid (entity, msgid)");
-		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_HANDOFF." ADD INDEX idx_emailcollector_ai_handoff_entity_cleaning (entity, fk_cleaning)");
-
-		$done = true;
+		return ($obj && !empty($obj->id) ? (int) $obj->id : 0);
 	}
 
 	/**
-	 * Insert cleaner output row into SQL storage.
+	 * Insert cleaner output as AI metadata attached to an agenda event.
 	 *
 	 * @param int $entity Entity id
+	 * @param int $actioncommId Agenda event id
 	 * @param int $collectorId Collector id
 	 * @param string $msgid Message id
 	 * @param string $rawBody Raw message body
@@ -343,86 +326,93 @@ class EmailCleaner
 	 * @param array<string,mixed> $emailContext Extracted email context
 	 * @param array<string,mixed> $emailUnderstanding Structured email understanding
 	 * @param array<string,mixed> $handoffPayload Handoff payload
+	 * @param array<string,mixed> $payload Full cleaner payload
 	 * @return int
 	 */
-	private function insertCleaningRow($entity, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $emailUnderstanding, $handoffPayload)
+	private function insertActionCommAiRow($entity, $actioncommId, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $emailUnderstanding, $handoffPayload, $payload)
 	{
-		$cleaningJson = array(
+		global $user;
+
+		if ($actioncommId <= 0) return 0;
+		if (!$this->isActionCommAiTableAvailable()) return 0;
+
+		$inputMetadata = array(
+			'source' => 'emailcollector',
+			'collector_id' => (int) $collectorId,
+			'message_id' => (string) $msgid,
+			'raw_hash' => hash('sha256', (string) $rawBody),
+			'clean_hash' => hash('sha256', (string) $cleanedText),
+		);
+		$outputJson = array(
 			'clean_body' => $cleanedText,
 			'segments' => (is_array($segments) ? $segments : array()),
-			'confidence' => (float) $confidence,
+			'cleaning_confidence' => (float) $confidence,
+			'cleaning_model' => ($model !== null && $model !== '' ? (string) $model : null),
 			'engine' => (string) $engine,
+			'collector_id' => (int) $collectorId,
+			'message_id' => (string) $msgid,
+			'context_profile_code' => ($contextProfileCode !== '' ? (string) $contextProfileCode : null),
+			'context_profile_version' => ($contextProfileVersion !== '' ? (string) $contextProfileVersion : null),
 			'email_context' => (is_array($emailContext) ? $emailContext : array()),
 			'email_understanding' => (is_array($emailUnderstanding) ? $emailUnderstanding : array()),
+			'handoff_payload_json' => (is_array($handoffPayload) ? $handoffPayload : array()),
+			'cleaner_payload' => (is_array($payload) ? $payload : array()),
 		);
-		$cleaningJsonRaw = json_encode($cleaningJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		$handoffRaw = json_encode($handoffPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		if ($cleaningJsonRaw === false || $handoffRaw === false) return 0;
+		$inputMetadataRaw = json_encode($inputMetadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		$outputRaw = json_encode($outputJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		if ($inputMetadataRaw === false || $outputRaw === false) return 0;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_CLEANING."(";
-		$sql .= "entity,collector_id,msgid,raw_hash,clean_hash,clean_body,cleaning_json,cleaning_confidence,cleaning_model,prompt_code,prompt_version,context_profile_code,context_profile_version,handoff_payload_json,date_creation";
+		$inputHash = hash('sha256', (string) $msgid);
+		$outputHash = hash('sha256', $outputRaw);
+		$securityHash = hash('sha256', ((int) $entity).'|'.((int) $actioncommId).'|email_cleaner|'.$inputHash.'|'.$outputHash);
+		$minConfidence = (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60');
+		if ($minConfidence <= 0 || $minConfidence > 1) $minConfidence = 0.60;
+		$status = ((float) $confidence >= $minConfidence ? 'ok' : 'low_confidence');
+		if ((string) $engine === 'fallback') $status = 'fallback';
+		$privacyCode = ($contextProfileCode !== '' ? $contextProfileCode : 'emailcollector');
+		$privacyVersion = ($contextProfileVersion !== '' ? $contextProfileVersion : null);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI."(";
+		$sql .= "entity,fk_actioncomm,operation_code,operation_version,provider,model,prompt_code,prompt_version,prompt_hash,input_hash,output_hash,security_hash,confidence,status,privacy_profile_code,privacy_profile_version,pii_redaction_enabled,input_metadata_json,output_json,fk_user_creat,date_creation";
 		$sql .= ") VALUES (";
 		$sql .= (int) $entity;
-		$sql .= ",".(int) $collectorId;
-		$sql .= ",'".$this->db->escape((string) $msgid)."'";
-		$sql .= ",'".$this->db->escape(hash('sha256', (string) $rawBody))."'";
-		$sql .= ",'".$this->db->escape(hash('sha256', (string) $cleanedText))."'";
-		$sql .= ",'".$this->db->escape((string) $cleanedText)."'";
-		$sql .= ",'".$this->db->escape($cleaningJsonRaw)."'";
-		$sql .= ",".(float) $confidence;
+		$sql .= ",".(int) $actioncommId;
+		$sql .= ",'email_cleaner'";
+		$sql .= ",'2'";
+		$sql .= ",".((string) $engine === 'ai' ? "'dolibarr_ai'" : "'fallback'");
 		$sql .= ",".($model !== null && $model !== '' ? "'".$this->db->escape((string) $model)."'" : "NULL");
 		$sql .= ",".($promptCode !== '' ? "'".$this->db->escape((string) $promptCode)."'" : "NULL");
 		$sql .= ",".($promptVersion !== '' ? "'".$this->db->escape((string) $promptVersion)."'" : "NULL");
-		$sql .= ",".($contextProfileCode !== '' ? "'".$this->db->escape((string) $contextProfileCode)."'" : "NULL");
-		$sql .= ",".($contextProfileVersion !== '' ? "'".$this->db->escape((string) $contextProfileVersion)."'" : "NULL");
-		$sql .= ",'".$this->db->escape($handoffRaw)."'";
-		$sql .= ", '".$this->db->idate(dol_now())."'";
+		$sql .= ",'".$this->db->escape(hash('sha256', (string) $promptCode.'|'.(string) $promptVersion))."'";
+		$sql .= ",'".$this->db->escape($inputHash)."'";
+		$sql .= ",'".$this->db->escape($outputHash)."'";
+		$sql .= ",'".$this->db->escape($securityHash)."'";
+		$sql .= ",".(float) $confidence;
+		$sql .= ",'".$this->db->escape($status)."'";
+		$sql .= ",'".$this->db->escape((string) $privacyCode)."'";
+		$sql .= ",".($privacyVersion !== null ? "'".$this->db->escape((string) $privacyVersion)."'" : "NULL");
+		$sql .= ",".(getDolGlobalInt('AI_PRIVACY_REDACTION', 0) ? 1 : 0);
+		$sql .= ",'".$this->db->escape($inputMetadataRaw)."'";
+		$sql .= ",'".$this->db->escape($outputRaw)."'";
+		$sql .= ",".(!empty($user->id) ? (int) $user->id : "NULL");
+		$sql .= ",'".$this->db->idate(dol_now())."'";
 		$sql .= ")";
 		$res = $this->db->query($sql);
 		if (!$res) return 0;
-		$rowid = (int) $this->db->last_insert_id(MAIN_DB_PREFIX.self::TABLE_CLEANING);
-		if ($rowid > 0) {
-			$this->insertHandoffRow($entity, $rowid, $handoffPayload, (float) $confidence);
-		}
-		return $rowid;
+		return (int) $this->db->last_insert_id(MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI);
 	}
 
 	/**
-	 * Persist handoff payload in dedicated table.
+	 * Check if the shared event AI metadata table is available.
 	 *
-	 * @param int $entity Entity id
-	 * @param int $cleaningId Cleaning row id
-	 * @param array<string,mixed> $handoffPayload Handoff payload
-	 * @param float $confidence Cleaner confidence
-	 * @return void
+	 * @return bool
 	 */
-	private function insertHandoffRow($entity, $cleaningId, $handoffPayload, $confidence)
+	private function isActionCommAiTableAvailable()
 	{
-		$payloadRaw = json_encode($handoffPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		if ($payloadRaw === false) return;
-		$lowConfidence = array();
-		$minConfidence = (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60');
-		if ($minConfidence <= 0 || $minConfidence > 1) $minConfidence = 0.60;
-		if ((float) $confidence < $minConfidence) {
-			$lowConfidence[] = array('type' => 'cleaning_confidence', 'value' => (float) $confidence);
-		}
-		$lowRaw = json_encode($lowConfidence, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		if ($lowRaw === false) $lowRaw = '[]';
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_HANDOFF."(";
-		$sql .= "entity,fk_cleaning,handoff_version,consumer_code,payload_json,payload_hash,quality_status,low_confidence_json,date_creation";
-		$sql .= ") VALUES (";
-		$sql .= (int) $entity;
-		$sql .= ",".(int) $cleaningId;
-		$sql .= ",'emailcleaner_v2'";
-		$sql .= ",'generic'";
-		$sql .= ",'".$this->db->escape($payloadRaw)."'";
-		$sql .= ",'".$this->db->escape(hash('sha256', $payloadRaw))."'";
-		$sql .= ",".((float) $confidence >= $minConfidence ? "'ok'" : "'low_confidence'");
-		$sql .= ",'".$this->db->escape($lowRaw)."'";
-		$sql .= ",'".$this->db->idate(dol_now())."'";
-		$sql .= ")";
-		$this->db->query($sql);
+		static $available = null;
+		if ($available !== null) return $available;
+		$available = (bool) count($this->db->DDLInfoTable(MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI));
+		return $available;
 	}
 
 	/**
