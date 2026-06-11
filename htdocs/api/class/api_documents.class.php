@@ -6,7 +6,7 @@
  * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
  * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software you can redistribute it and/or modify
@@ -1015,7 +1015,7 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'holiday') {
 				require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$object = new Holiday($this->db);
-			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
+			} elseif ($modulepart == 'ficheinter' || $modulepart == 'fichinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
@@ -1029,7 +1029,7 @@ class Documents extends DolibarrApi
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
-			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
+			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'actioncomm' || $modulepart == 'event') {
 				$modulepart = 'agenda';
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 				$object = new ActionComm($this->db);
