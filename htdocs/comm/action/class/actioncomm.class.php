@@ -621,6 +621,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_contact,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
+		$sql .= "fk_task,";
 		$sql .= "label,percent,priority,fulldayevent,location,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
@@ -659,6 +660,7 @@ class ActionComm extends CommonObject
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
+		$sql .= (!empty($this->fk_task) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
 		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
@@ -891,6 +893,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
 		$sql .= " a.fk_user_action,";
+		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -962,6 +965,7 @@ class ActionComm extends CommonObject
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
+				$this->fk_task = $obj->fk_task;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -1281,6 +1285,7 @@ class ActionComm extends CommonObject
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_task = ".(!empty($this->fk_task) ? ((int) $this->fk_task) : "null");
 		if (!empty($this->fk_element)) {
 			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
