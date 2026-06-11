@@ -80,11 +80,6 @@ class Documents extends DolibarrApi
 			throw new RestException(400, 'bad value for parameter original_file');
 		}
 
-		// Normalize modulepart for project_task
-		if ($modulepart == 'task' || $modulepart == 'project_task') {
-			$modulepart = 'project_task';
-		}
-
 		//--- Finds and returns the document
 		$entity = $conf->entity;
 

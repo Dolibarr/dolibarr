@@ -3037,67 +3037,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 	}
 	// Fix modulepart for backward compatibility
-	switch ($modulepart) {
-		case 'company':
-		case 'societe':
-			$modulepart = 'thirdparty';
-			break;
-		case 'socpeople':
-			$modulepart = 'contact';
-			break;
-		case 'propal':
-		case 'propale':
-			$modulepart = 'proposal';
-			break;
-		case 'commande':
-			$modulepart = 'order';
-			break;
-		case 'commande_fournisseur':
-			$modulepart = 'order_supplier';
-			break;
-		case 'facture':
-			$modulepart = 'invoice';
-			break;
-		case 'facture_fournisseur':
-			$modulepart = 'invoice_supplier';
-			break;
-		case 'fichinter':
-		case 'ficheinter':
-			$modulepart = 'intervention';
-			break;
-		case 'users':
-			$modulepart = 'user';
-			break;
-		case 'tva':
-			$modulepart = 'tax-vat';
-			break;
-		case 'actions':
-			$modulepart = 'actioncomm';
-			break;
-		case 'apercufichinter':
-		case 'apercuficheinter':
-			$modulepart = 'apercufichinter';
-			break;
-		case 'expedition':
-		case 'shipping':
-			$modulepart = 'shipment';
-			break;
-		case 'livraison':
-			$modulepart = 'delivery';
-			break;
-		case 'produit':
-		case 'service':
-		case 'produit|service':
-			$modulepart = 'product';
-			break;
-		case 'produitlot':
-			$modulepart = 'product_batch';
-			break;
-		case 'mouvement':
-		case 'movement':
-			$modulepart = 'stockmovement';
-			break;
-	}
+	$modulepart = normalizeModulepart($modulepart);
 
 	// Fix modulepart for expedition/delivery
 	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
