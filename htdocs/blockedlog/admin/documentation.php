@@ -180,7 +180,7 @@ if (in_array($mysoc->country_code, array('FR')) && !userIsTaxAuditor()) {
 		print info_admin($htmltext, 0, 0, 'info');
 
 		// Show remind on good practices related to archives
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }

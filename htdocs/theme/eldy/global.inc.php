@@ -3661,8 +3661,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -6643,7 +6643,7 @@ td.small.cal_event {
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.7;
+	/* opacity: 0.7; */
 }
 td.event-past span  {
 	opacity: 0.5;

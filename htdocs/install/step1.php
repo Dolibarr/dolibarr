@@ -908,7 +908,7 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = md5(uniqid((string) mt_rand(), true)); // Generate random hash
+	$key = bin2hex(random_bytes(32));		// Generate a random hash (64 hex chars)
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {

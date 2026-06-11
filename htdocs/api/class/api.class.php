@@ -121,6 +121,7 @@ class DolibarrApi
 			}
 			if (in_array($field, array('specimen'))) {
 				// Allowed but not used
+				dol_syslog('Debug API _checkValForAPI, found use of field specimen', LOG_DEBUG, 0, '_api');
 			}
 
 			// Sanitize the value using its type declared into ->fields of $object

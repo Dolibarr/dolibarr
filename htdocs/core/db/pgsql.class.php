@@ -1550,7 +1550,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function prepare($sql)
 	{
-		$stmtname = uniqid('dolipgstmt_'); // Generate a unique identifier for the statement
+		$stmtname = 'dolipgstmt_' . bin2hex(random_bytes(8));	// Generate a unique identifier for the statement
 
 		$result = pg_prepare($this->db, $stmtname, $sql);
 		if (!$result) {

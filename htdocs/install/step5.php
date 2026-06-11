@@ -301,6 +301,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			$newuser = new User($db);
 			$newuser->lastname = 'SuperAdmin';
 			$newuser->firstname = '';
+			$newuser->ldap_sid = '';
 			$newuser->login = $login;
 			$newuser->pass = $pass;
 			$newuser->admin = 1;
