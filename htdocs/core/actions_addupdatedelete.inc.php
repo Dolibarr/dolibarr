@@ -39,6 +39,9 @@
 @phan-var-force string $hidedetails
 @phan-var-force string $hidedesc
 @phan-var-force string $hideref
+@phan-var-force ?string $confirm
+@phan-var-force ?int $lineid
+@phan-var-force ?int $id
 ';
 /**
  * @var Conf $conf
