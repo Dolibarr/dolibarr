@@ -519,7 +519,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && is_object($object->thirdparty)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -564,7 +564,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$newlang = !empty($object->thirdparty->default_lang) ? $object->thirdparty->default_lang : "";
 				}
 				if (!empty($newlang)) {
@@ -601,7 +601,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
