@@ -3160,18 +3160,27 @@ class Ticket extends CommonObject
 										}
 									}
 
-									if (!empty($sendto_manual)) {
-										$sendto = $sendto_manual;
-									}
+									$sendto = $sendto_manual;
 								}
 
 								// CC: start with TICKET_SEND_INTERNAL_CC, then append form selection
 								$sendtocc = array();
+								$sendtocc_emails = array(); // lowercase email index for case-insensitive dedup
 								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 									foreach (explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC")) as $cc_entry) {
 										$cc_entry = trim($cc_entry);
-										if ($cc_entry) {
+										if (!$cc_entry) {
+											continue;
+										}
+										// Extract bare email from optional "Name <email>" format
+										if (preg_match('/<\s*([^>]+)\s*>/', $cc_entry, $m)) {
+											$cc_email = strtolower(trim($m[1]));
+										} else {
+											$cc_email = strtolower($cc_entry);
+										}
+										if (!in_array($cc_email, $sendtocc_emails)) {
 											$sendtocc[] = $cc_entry;
+											$sendtocc_emails[] = $cc_email;
 										}
 									}
 								}
@@ -3181,8 +3190,9 @@ class Ticket extends CommonObject
 									if (is_array($receivercc_selected)) {
 										foreach ($receivercc_selected as $email) {
 											$email = trim((string) $email);
-											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $sendtocc)) {
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
 												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
 											}
 										}
 									}
@@ -3200,8 +3210,9 @@ class Ticket extends CommonObject
 											} else {
 												$email = $entry;
 											}
-											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $sendtocc)) {
+											if ($email && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($email), $sendtocc_emails)) {
 												$sendtocc[] = $email;
+												$sendtocc_emails[] = strtolower($email);
 											}
 										}
 									}

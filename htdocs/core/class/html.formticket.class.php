@@ -1744,6 +1744,7 @@ class FormTicket
 				print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailRecipients');
 				print ' '.$form->textwithpicto('', $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"), 1, 'help');
 				print '</td><td>';
+				$withto = array();
 				if ($res) {
 					$sendto_free = GETPOSTISSET('sendto') ? GETPOST('sendto', 'alphawithlgt') : '';
 					print '<input class="minwidth200" id="sendto" name="sendto" spellcheck="false" placeholder="email@domain.com" value="'.dol_escape_htmltag($sendto_free).'" />';
@@ -1751,8 +1752,6 @@ class FormTicket
 					// Build recipient list; keys are email addresses (used directly in newMessage())
 					$contacts = $ticketstat->getInfosTicketInternalContact(1);
 					$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact(1));
-
-					$withto = array();
 					$seen_emails = array();
 
 					if (is_array($contacts) && count($contacts) > 0) {
