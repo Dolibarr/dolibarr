@@ -453,6 +453,7 @@ class Task extends CommonObjectLine
 		$sql .= ", priority";
 		$sql .= ", billable";
 		$sql .= ", fk_statut";
+		$sql .= ", rang";
 		$sql .= ") VALUES (";
 		$sql .= (!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
 		$sql .= ", ".((int) $this->fk_project);
@@ -472,6 +473,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(($this->priority != '' && $this->priority >= 0) ? (int) $this->priority : 'null');
 		$sql .= ", ".((int) $this->billable);
 		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((!empty($this->rang)) ? ((int) $this->rang) : "0");
 		$sql .= ")";
 
 		$this->db->begin();
