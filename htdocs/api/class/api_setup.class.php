@@ -8,6 +8,7 @@
  * Copyright (C) 2024		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1585,8 +1586,9 @@ class Setup extends DolibarrApi
 	{
 		$answer = array();
 
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
 		if ($elementtype == 'thirdparty') {
