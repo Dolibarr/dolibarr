@@ -73,6 +73,14 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$module = GETPOST("module", 'alpha');
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+	$search_doc_date_start = '';
+	$search_doc_date_end = '';
+	if (GETPOSTISSET('search_doc_date_start') || GETPOSTISSET('search_doc_date_startday') || GETPOSTISSET('search_doc_date_startmonth') || GETPOSTISSET('search_doc_date_startyear')) {
+		$search_doc_date_start = GETPOSTDATE('search_doc_date_start');
+	}
+	if (GETPOSTISSET('search_doc_date_end') || GETPOSTISSET('search_doc_date_endday') || GETPOSTISSET('search_doc_date_endmonth') || GETPOSTISSET('search_doc_date_endyear')) {
+		$search_doc_date_end = GETPOSTDATE('search_doc_date_end', 'end');
+	}
 
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
@@ -279,7 +287,7 @@ if ($type == 'directory') {
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
-		$upload_dir = $conf->fournisseur->facture->dir_output;
+		$upload_dir = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
 		$upload_dir = $conf->propal->dir_output;
 	} elseif ($module == 'supplier_proposal') {
@@ -335,11 +343,31 @@ if ($type == 'directory') {
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
+		if (!empty($search_doc_date_start)) {
+			$param .= '&search_doc_date_startday='.dol_print_date($search_doc_date_start, '%d');
+			$param .= '&search_doc_date_startmonth='.dol_print_date($search_doc_date_start, '%m');
+			$param .= '&search_doc_date_startyear='.dol_print_date($search_doc_date_start, '%Y');
+		}
+		if (!empty($search_doc_date_end)) {
+			$param .= '&search_doc_date_endday='.dol_print_date($search_doc_date_end, '%d');
+			$param .= '&search_doc_date_endmonth='.dol_print_date($search_doc_date_end, '%m');
+			$param .= '&search_doc_date_endyear='.dol_print_date($search_doc_date_end, '%Y');
+		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
 		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+		if (!empty($search_doc_date_start) || !empty($search_doc_date_end)) {
+			foreach ($filearray as $key => $file) {
+				$filedate = empty($file['date']) ? 0 : (int) $file['date'];
+				if ((!empty($search_doc_date_start) && $filedate < $search_doc_date_start)
+					|| (!empty($search_doc_date_end) && $filedate > $search_doc_date_end)
+				) {
+					unset($filearray[$key]);
+				}
+			}
+		}
 		//var_dump($filearray);
 
 		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.

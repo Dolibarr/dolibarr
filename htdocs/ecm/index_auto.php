@@ -56,6 +56,14 @@ if (!$section) {
 $section_dir = GETPOST('section_dir', 'alpha');
 
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+$search_doc_date_start = '';
+$search_doc_date_end = '';
+if (GETPOSTISSET('search_doc_date_start') || GETPOSTISSET('search_doc_date_startday') || GETPOSTISSET('search_doc_date_startmonth') || GETPOSTISSET('search_doc_date_startyear')) {
+	$search_doc_date_start = GETPOSTDATE('search_doc_date_start');
+}
+if (GETPOSTISSET('search_doc_date_end') || GETPOSTISSET('search_doc_date_endday') || GETPOSTISSET('search_doc_date_endmonth') || GETPOSTISSET('search_doc_date_endyear')) {
+	$search_doc_date_end = GETPOSTDATE('search_doc_date_end', 'end');
+}
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -110,6 +118,8 @@ $result = restrictedArea($user, 'ecm', 0);
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_doc_ref = '';
+	$search_doc_date_start = '';
+	$search_doc_date_end = '';
 }
 
 // Add directory
@@ -287,6 +297,140 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	if ($adirwascreated) {
 		$sqltree = null;
 	}
+}
+
+// Download selected automatic ECM files for supplier invoices
+if ($action == 'download_selected' && $module == 'invoice_supplier' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
+	accessforbidden();
+}
+if ($action == 'download_selected' && $module == 'invoice_supplier' && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	$langs->loadLangs(array("errors", "accountancy"));
+
+	$selectedfiles = GETPOST('selectedfiles', 'array');
+	$selectedfiles = is_array($selectedfiles) ? $selectedfiles : array();
+	$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
+
+	if (count($selectedfiles) < 1) {
+		setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+	} elseif (count($selectedfiles) > $maxformassaction) {
+		setEventMessages($langs->trans("TooManyRecordForMassAction", $maxformassaction), null, 'errors');
+	} elseif (!class_exists('ZipArchive')) {
+		setEventMessages('ZipArchive PHP extension is not available', null, 'errors');
+	} else {
+		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
+		$upload_dir = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+		$basepath = realpath($upload_dir);
+		$basepathwithslash = ($basepath ? rtrim($basepath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR : '');
+		$filestoarchive = array();
+		$invoicecache = array();
+
+		foreach ($selectedfiles as $selectedfile) {
+			if (!is_scalar($selectedfile)) {
+				continue;
+			}
+
+			$relativefile = str_replace('\\', '/', (string) $selectedfile);
+			$relativefile = preg_replace('/\/+/', '/', $relativefile);
+			$relativefile = ltrim($relativefile, '/');
+
+			if ($relativefile == ''
+				|| preg_match('/(^|\/)\.\.(\/|$)/', $relativefile)
+				|| preg_match('/[<>|\x00-\x1F]/', $relativefile)
+				|| preg_match('/(^|\/)(temp|thumbs|CVS|payments)(\/|$)/i', $relativefile)
+				|| preg_match('/(\.meta|_preview.*\.png)$/i', $relativefile)
+			) {
+				continue;
+			}
+
+			$reg = array();
+			preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
+			$ref = (isset($reg[1]) ? $reg[1] : '');
+			$id = 0;
+			if ($ref === '') {
+				continue;
+			}
+			if (is_numeric($ref)) {
+				$id = (int) $ref;
+				$ref = '';
+			}
+
+			$cachekey = $id.'_'.$ref;
+			if (!array_key_exists($cachekey, $invoicecache)) {
+				$invoicecache[$cachekey] = false;
+				$objecttmp = new FactureFournisseur($db);
+				$result = 0;
+				if ($id > 0) {
+					$result = $objecttmp->fetch($id);
+				} else {
+					if (!($result = $objecttmp->fetch(0, $ref))) {
+						$result = $objecttmp->fetchOneLike($ref);
+					}
+				}
+				if ($result > 0 && (int) $objecttmp->entity === (int) $conf->entity) {
+					$invoicecache[$cachekey] = true;
+				}
+			}
+			if (empty($invoicecache[$cachekey])) {
+				continue;
+			}
+
+			$fullpath = realpath($upload_dir.'/'.$relativefile);
+			if (empty($basepath) || empty($fullpath) || strpos($fullpath, $basepathwithslash) !== 0 || !is_file($fullpath)) {
+				continue;
+			}
+
+			$filestoarchive[$relativefile] = $fullpath;
+		}
+
+		if (count($filestoarchive) < 1) {
+			setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
+		} else {
+			$tmpdir = DOL_DATA_ROOT.'/ecm/temp';
+			dol_mkdir($tmpdir);
+
+			if (!is_writable($tmpdir)) {
+				setEventMessages($langs->trans("ErrorFailedToWriteInDir", $tmpdir), null, 'errors');
+			} else {
+				$zipfilename = 'supplier_invoice_documents_'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
+				$zipfullpath = $tmpdir.'/'.$zipfilename;
+
+				$zip = new ZipArchive();
+				$result = $zip->open($zipfullpath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+				if ($result !== true) {
+					setEventMessages($langs->trans("ErrorFailedToBuildArchive", $zipfullpath), null, 'errors');
+				} else {
+					$errorarchive = 0;
+					foreach ($filestoarchive as $relativefile => $fullpath) {
+						$result = $zip->addFile($fullpath, $relativefile);
+						if (!$result) {
+							$errorarchive++;
+							setEventMessages($langs->trans("ErrorArchiveAddFile", $relativefile), null, 'errors');
+							break;
+						}
+					}
+					$closeok = $zip->close();
+
+					if ($errorarchive || !$closeok || !is_file($zipfullpath)) {
+						if (!$errorarchive) {
+							setEventMessages($langs->trans("ErrorFailedToBuildArchive", $zipfullpath), null, 'errors');
+						}
+						dol_delete_file($zipfullpath, 1, 0, 1, null, false, 0, 1);
+					} else {
+						top_httphead('application/zip');
+						header('Content-Disposition: attachment; filename="'.$zipfilename.'"');
+						header('Content-Length: '.filesize($zipfullpath));
+						readfile($zipfullpath);
+						dol_delete_file($zipfullpath, 1, 0, 1, null, false, 0, 1);
+						$db->close();
+						exit;
+					}
+				}
+			}
+		}
+	}
+
+	$action = '';
 }
 
 

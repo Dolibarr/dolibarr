@@ -1861,6 +1861,7 @@ class FormFile
 		global $conf, $langs, $hookmanager, $form;
 		global $sortfield, $sortorder;
 		global $search_doc_ref;
+		global $search_doc_date_start, $search_doc_date_end;
 		global $dolibarr_main_url_root;
 
 		dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
@@ -1873,10 +1874,18 @@ class FormFile
 			$url = $_SERVER["PHP_SELF"];
 		}
 
+		$enablebulkdownload = ($modulepart == 'invoice_supplier');
+
 		if (!empty($addfilterfields)) {
-			print '<form action="'.$_SERVER['PHP_SELF'].'">';
+			print '<form action="'.dol_escape_htmltag($url).'" method="'.($enablebulkdownload ? 'POST' : 'GET').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="module" value="'.$modulepart.'">';
+			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($modulepart).'">';
+			if ($sortfield) {
+				print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+			}
+			if ($sortorder) {
+				print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1884,6 +1893,11 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			if ($enablebulkdownload) {
+				print '<td class="liste_titre center">';
+				print $form->showCheckAddButtons('checkforselect', 0);
+				print '</td>';
+			}
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
@@ -1891,9 +1905,23 @@ class FormFile
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
-			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre center">';
+			if ($enablebulkdownload) {
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_start) ? $search_doc_date_start : '', 'search_doc_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrap">';
+				print $form->selectDate(!empty($search_doc_date_end) ? $search_doc_date_end : '', 'search_doc_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+			}
+			print '</td>';
 			// Shared and action column
 			print '<td class="liste_titre right">';
+			if ($enablebulkdownload) {
+				print '<button type="submit" class="button smallpaddingimp marginrightonly" name="action" value="download_selected">';
+				print img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download");
+				print '</button>';
+			}
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
 			print '</td>';
@@ -1901,6 +1929,9 @@ class FormFile
 		}
 
 		print '<tr class="liste_titre">';
+		if ($enablebulkdownload) {
+			print '<th class="liste_titre center maxwidthsearch"></th>';
+		}
 		$sortref = "fullname";
 		if ($modulepart == 'invoice_supplier') {
 			$sortref = 'level1name';
@@ -2127,9 +2158,17 @@ class FormFile
 				if ($found <= 0 || !is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
+				if ($modulepart == 'invoice_supplier' && (int) $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref]->entity !== (int) $conf->entity) {
+					continue;
+				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
+				if ($enablebulkdownload) {
+					print '<td class="center">';
+					print '<input type="checkbox" class="flat checkforselect" name="selectedfiles[]" value="'.dol_escape_htmltag($relativefile).'">';
+					print '</td>';
+				}
 				// Ref
 				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
@@ -2226,7 +2265,7 @@ class FormFile
 		}
 
 		if (count($filearray) == 0) {
-			print '<tr class="oddeven"><td colspan="5">';
+			print '<tr class="oddeven"><td colspan="'.($enablebulkdownload ? '6' : '5').'">';
 			if (empty($textifempty)) {
 				print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 			} else {
