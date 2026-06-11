@@ -20,7 +20,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  */
 class EmailCleaner
 {
-	private const TABLE_ACTIONCOMM_AI = 'actioncomm_ai';
+	private const TABLE_AI_REQUEST_LOG = 'ai_request_log';
 
 	/**
 	 * @var DoliDB
@@ -238,7 +238,7 @@ class EmailCleaner
 		$actioncommId = $this->findActionCommIdByMessageId($entity, $msgid);
 		$payload['fk_actioncomm'] = ($actioncommId > 0 ? $actioncommId : null);
 
-		$actioncommAiId = $this->insertActionCommAiRow(
+		$aiRequestLogId = $this->insertAiRequestLogRow(
 			$entity,
 			$actioncommId,
 			$collectorId,
@@ -258,14 +258,14 @@ class EmailCleaner
 			$handoffPayload,
 			$payload
 		);
-		if ($actioncommAiId > 0) {
-			$payload['actioncomm_ai_id'] = $actioncommAiId;
-			$handoffPayload['actioncomm_ai_id'] = $actioncommAiId;
+		if ($aiRequestLogId > 0) {
+			$payload['ai_request_log_id'] = $aiRequestLogId;
+			$handoffPayload['ai_request_log_id'] = $aiRequestLogId;
 			$payload['handoff_payload_json'] = $handoffPayload;
 		} elseif ($actioncommId <= 0) {
-			$payload['actioncomm_ai_status'] = 'not_persisted_no_event';
+			$payload['ai_request_log_status'] = 'not_persisted_no_event';
 		} else {
-			$payload['actioncomm_ai_status'] = 'not_persisted_storage_unavailable';
+			$payload['ai_request_log_status'] = 'not_persisted_storage_unavailable';
 		}
 
 		$json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -307,7 +307,7 @@ class EmailCleaner
 	}
 
 	/**
-	 * Insert cleaner output as AI metadata attached to an agenda event.
+	 * Insert cleaner output in the shared AI request log.
 	 *
 	 * @param int $entity Entity id
 	 * @param int $actioncommId Agenda event id
@@ -329,12 +329,12 @@ class EmailCleaner
 	 * @param array<string,mixed> $payload Full cleaner payload
 	 * @return int
 	 */
-	private function insertActionCommAiRow($entity, $actioncommId, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $emailUnderstanding, $handoffPayload, $payload)
+	private function insertAiRequestLogRow($entity, $actioncommId, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $emailUnderstanding, $handoffPayload, $payload)
 	{
 		global $user;
 
 		if ($actioncommId <= 0) return 0;
-		if (!$this->isActionCommAiTableAvailable()) return 0;
+		if (!$this->isAiRequestLogTableAvailable()) return 0;
 
 		$inputMetadata = array(
 			'source' => 'emailcollector',
@@ -342,6 +342,10 @@ class EmailCleaner
 			'message_id' => (string) $msgid,
 			'raw_hash' => hash('sha256', (string) $rawBody),
 			'clean_hash' => hash('sha256', (string) $cleanedText),
+			'prompt_code' => (string) $promptCode,
+			'prompt_version' => (string) $promptVersion,
+			'context_profile_code' => ($contextProfileCode !== '' ? (string) $contextProfileCode : null),
+			'context_profile_version' => ($contextProfileVersion !== '' ? (string) $contextProfileVersion : null),
 		);
 		$outputJson = array(
 			'clean_body' => $cleanedText,
@@ -367,51 +371,46 @@ class EmailCleaner
 		$securityHash = hash('sha256', ((int) $entity).'|'.((int) $actioncommId).'|email_cleaner|'.$inputHash.'|'.$outputHash);
 		$minConfidence = (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60');
 		if ($minConfidence <= 0 || $minConfidence > 1) $minConfidence = 0.60;
-		$status = ((float) $confidence >= $minConfidence ? 'ok' : 'low_confidence');
-		if ((string) $engine === 'fallback') $status = 'fallback';
-		$privacyCode = ($contextProfileCode !== '' ? $contextProfileCode : 'emailcollector');
-		$privacyVersion = ($contextProfileVersion !== '' ? $contextProfileVersion : null);
+		$status = ((float) $confidence >= $minConfidence ? 'Success' : 'LowConfidence');
+		if ((string) $engine === 'fallback') $status = 'Fallback';
+		$provider = ((string) $engine === 'ai' ? 'dolibarr_ai' : 'fallback');
+		$queryText = 'EmailCleaner message '.$msgid;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI."(";
-		$sql .= "entity,fk_actioncomm,operation_code,operation_version,provider,model,prompt_code,prompt_version,prompt_hash,input_hash,output_hash,security_hash,confidence,status,privacy_profile_code,privacy_profile_version,pii_redaction_enabled,input_metadata_json,output_json,fk_user_creat,date_creation";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_AI_REQUEST_LOG."(";
+		$sql .= "entity,date_request,fk_user,fk_actioncomm,query_text,tool_name,provider,execution_time,confidence,status,error_msg,input_hash,output_hash,security_hash,raw_request_payload,raw_response_payload";
 		$sql .= ") VALUES (";
 		$sql .= (int) $entity;
+		$sql .= ",'".$this->db->idate(dol_now())."'";
+		$sql .= ",".(!empty($user->id) ? (int) $user->id : 0);
 		$sql .= ",".(int) $actioncommId;
+		$sql .= ",'".$this->db->escape($queryText)."'";
 		$sql .= ",'email_cleaner'";
-		$sql .= ",'2'";
-		$sql .= ",".((string) $engine === 'ai' ? "'dolibarr_ai'" : "'fallback'");
-		$sql .= ",".($model !== null && $model !== '' ? "'".$this->db->escape((string) $model)."'" : "NULL");
-		$sql .= ",".($promptCode !== '' ? "'".$this->db->escape((string) $promptCode)."'" : "NULL");
-		$sql .= ",".($promptVersion !== '' ? "'".$this->db->escape((string) $promptVersion)."'" : "NULL");
-		$sql .= ",'".$this->db->escape(hash('sha256', (string) $promptCode.'|'.(string) $promptVersion))."'";
+		$sql .= ",'".$this->db->escape($provider)."'";
+		$sql .= ",0";
+		$sql .= ",".(float) $confidence;
+		$sql .= ",'".$this->db->escape($status)."'";
+		$sql .= ",''";
 		$sql .= ",'".$this->db->escape($inputHash)."'";
 		$sql .= ",'".$this->db->escape($outputHash)."'";
 		$sql .= ",'".$this->db->escape($securityHash)."'";
-		$sql .= ",".(float) $confidence;
-		$sql .= ",'".$this->db->escape($status)."'";
-		$sql .= ",'".$this->db->escape((string) $privacyCode)."'";
-		$sql .= ",".($privacyVersion !== null ? "'".$this->db->escape((string) $privacyVersion)."'" : "NULL");
-		$sql .= ",".(getDolGlobalInt('AI_PRIVACY_REDACTION', 0) ? 1 : 0);
 		$sql .= ",'".$this->db->escape($inputMetadataRaw)."'";
 		$sql .= ",'".$this->db->escape($outputRaw)."'";
-		$sql .= ",".(!empty($user->id) ? (int) $user->id : "NULL");
-		$sql .= ",'".$this->db->idate(dol_now())."'";
 		$sql .= ")";
 		$res = $this->db->query($sql);
 		if (!$res) return 0;
-		return (int) $this->db->last_insert_id(MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI);
+		return (int) $this->db->last_insert_id(MAIN_DB_PREFIX.self::TABLE_AI_REQUEST_LOG);
 	}
 
 	/**
-	 * Check if the shared event AI metadata table is available.
+	 * Check if the shared AI request log table is available.
 	 *
 	 * @return bool
 	 */
-	private function isActionCommAiTableAvailable()
+	private function isAiRequestLogTableAvailable()
 	{
 		static $available = null;
 		if ($available !== null) return $available;
-		$available = (bool) count($this->db->DDLInfoTable(MAIN_DB_PREFIX.self::TABLE_ACTIONCOMM_AI));
+		$available = (bool) count($this->db->DDLInfoTable(MAIN_DB_PREFIX.self::TABLE_AI_REQUEST_LOG));
 		return $available;
 	}
 
