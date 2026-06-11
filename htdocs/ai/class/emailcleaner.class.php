@@ -21,7 +21,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 class EmailCleaner
 {
 	private const TABLE_CLEANING = 'emailcollector_ai_cleaning';
-	private const TABLE_QUEUE_PDF = 'ai_unassigned_pdf_queue';
 	private const TABLE_HANDOFF = 'emailcollector_ai_handoff';
 
 	/**
@@ -136,7 +135,7 @@ class EmailCleaner
 				'has_quoted_context' => ($quotedContext !== '' ? 1 : 0),
 			),
 		);
-		$attachmentRows = self::collectAttachmentRowsForQueue(
+		$attachmentRows = self::collectAttachmentRows(
 			(isset($parameters['attachments']) && is_array($parameters['attachments']) ? $parameters['attachments'] : array()),
 			(isset($parameters['savedattachments']) && is_array($parameters['savedattachments']) ? $parameters['savedattachments'] : array()),
 			(string) ($parameters['savedattachmentsdir'] ?? '')
@@ -157,6 +156,20 @@ class EmailCleaner
 		$fallbackUsed = !empty($cleanResult['fallback_used']);
 		$hCleanup = self::buildNoiseSummaryFromSegments($segments);
 		$complianceMeta = self::buildComplianceMetadata($engine, $fallbackUsed, $confidence);
+		$pdfAttachmentItems = array();
+		if ($hasPdfAttachments) {
+			foreach ($attachmentRows as $attRow) {
+				if (empty($attRow['is_pdf'])) continue;
+				$pdfAttachmentItems[] = array(
+					'name' => (string) ($attRow['name'] ?? ''),
+					'relative_path' => (string) ($attRow['relative_path'] ?? ''),
+					'sha256' => (string) ($attRow['sha256'] ?? ''),
+					'detected_doc_type' => self::detectPdfDocTypeFromAttachmentNameAndText((string) ($attRow['name'] ?? ''), $cleanedText),
+					'linking_target' => 'actioncomm',
+					'final_object_attachment_pending' => 1,
+				);
+			}
+		}
 		$handoffPayload = array(
 			'handoff_version' => 'emailcleaner_v1',
 			'email' => array(
@@ -182,7 +195,8 @@ class EmailCleaner
 			'excluded_noise_summary' => $hCleanup,
 			'compliance' => $complianceMeta,
 			'needs_reprocessing' => ($fallbackUsed || $confidence < (float) getDolGlobalString('AI_EMAILCLEANER_MIN_CONFIDENCE', '0.60') ? 1 : 0),
-			'needs_pdf_review' => ($hasPdfAttachments ? 1 : 0),
+			'needs_pdf_linking' => ($hasPdfAttachments ? 1 : 0),
+			'pdf_attachments' => $pdfAttachmentItems,
 		);
 
 		$baseDir = (!empty($conf->ai->dir_output) ? $conf->ai->dir_output : $dolibarr_main_data_root.'/ai');
@@ -219,50 +233,6 @@ class EmailCleaner
 			'date_cleaning_gmt' => dol_print_date(dol_now('gmt'), '%Y-%m-%d %H:%M:%S'),
 		);
 
-		$queuedPdfItems = array();
-		if ($hasPdfAttachments && getDolGlobalInt('AI_UNASSIGNED_PDF_QUEUE_ENABLED', 1)) {
-			foreach ($attachmentRows as $attRow) {
-				if (empty($attRow['is_pdf'])) continue;
-				$docType = self::detectPdfDocTypeFromAttachmentNameAndText((string) ($attRow['name'] ?? ''), $cleanedText);
-				$qid = $this->insertUnassignedPdfQueueRow(
-					$entity,
-					$collectorId,
-					$msgid,
-					$from,
-					$subject,
-					(string) ($headerDate !== '' ? $headerDate : ''),
-					$attRow,
-					$docType,
-					$confidence
-				);
-				if ($qid > 0) {
-					$queuedPdfItems[] = array(
-						'queue_id' => $qid,
-						'name' => (string) ($attRow['name'] ?? ''),
-						'sha256' => (string) ($attRow['sha256'] ?? ''),
-						'detected_doc_type' => $docType,
-					);
-					$this->appendUnassignedPdfQueueEventJsonl($entity, array(
-						'event' => 'queued',
-						'ts' => dol_print_date(dol_now('gmt'), '%Y-%m-%d %H:%M:%S'),
-						'queue_id' => $qid,
-						'entity' => $entity,
-						'message_id' => $msgid,
-						'attachment_sha256' => (string) ($attRow['sha256'] ?? ''),
-						'status' => 'queued',
-						'confidence' => $confidence,
-						'actor' => 'cron',
-						'note' => 'queued_by_emailcleaner',
-					));
-				}
-			}
-		}
-		if (!empty($queuedPdfItems)) {
-			$handoffPayload['queued_pdf_items'] = $queuedPdfItems;
-			$handoffPayload['needs_pdf_review'] = 1;
-			$payload['handoff_payload_json'] = $handoffPayload;
-		}
-
 		$cleaningId = $this->insertCleaningRow(
 			$entity,
 			$collectorId,
@@ -298,7 +268,7 @@ class EmailCleaner
 	}
 
 	/**
-	 * Ensure SQL storage tables exist for cleaner and unassigned PDF queue.
+	 * Ensure SQL storage tables exist for cleaner handoff data.
 	 *
 	 * @return void
 	 */
@@ -328,37 +298,6 @@ class EmailCleaner
 		$sql1 .= " ) ENGINE=innodb";
 		$this->db->query($sql1);
 
-		$sql2 = "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF." (";
-		$sql2 .= " rowid integer AUTO_INCREMENT PRIMARY KEY,";
-		$sql2 .= " entity integer DEFAULT 1 NOT NULL,";
-		$sql2 .= " status varchar(32) DEFAULT 'queued' NOT NULL,";
-		$sql2 .= " priority integer DEFAULT 50,";
-		$sql2 .= " source varchar(32) DEFAULT 'emailcollector' NOT NULL,";
-		$sql2 .= " collector_id integer,";
-		$sql2 .= " message_id varchar(255),";
-		$sql2 .= " email_date varchar(190),";
-		$sql2 .= " email_from varchar(255),";
-		$sql2 .= " email_subject varchar(255),";
-		$sql2 .= " attachment_name varchar(255),";
-		$sql2 .= " attachment_relpath varchar(1024),";
-		$sql2 .= " attachment_sha256 varchar(80),";
-		$sql2 .= " detected_doc_type varchar(32) DEFAULT 'unknown',";
-		$sql2 .= " extraction_json LONGTEXT,";
-		$sql2 .= " matching_json LONGTEXT,";
-		$sql2 .= " proposed_object_type varchar(64),";
-		$sql2 .= " proposed_object_id integer,";
-		$sql2 .= " confidence double,";
-		$sql2 .= " needs_human_review integer DEFAULT 1,";
-		$sql2 .= " review_note varchar(255),";
-		$sql2 .= " attempts integer DEFAULT 0,";
-		$sql2 .= " last_error varchar(255),";
-		$sql2 .= " fk_user_review integer,";
-		$sql2 .= " date_review datetime,";
-		$sql2 .= " datec datetime,";
-		$sql2 .= " tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
-		$sql2 .= " ) ENGINE=innodb";
-		$this->db->query($sql2);
-
 		$sql3 = "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX.self::TABLE_HANDOFF." (";
 		$sql3 .= " rowid integer AUTO_INCREMENT PRIMARY KEY,";
 		$sql3 .= " entity integer DEFAULT 1 NOT NULL,";
@@ -375,9 +314,6 @@ class EmailCleaner
 		$this->db->query($sql3);
 
 		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_CLEANING." ADD INDEX idx_emailcollector_ai_cleaning_entity_msgid (entity, msgid)");
-		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF." ADD INDEX idx_ai_unassigned_pdf_queue_entity_status (entity, status, priority, rowid)");
-		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF." ADD INDEX idx_ai_unassigned_pdf_queue_msgid (entity, message_id)");
-		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF." ADD INDEX idx_ai_unassigned_pdf_queue_sha (entity, attachment_sha256)");
 		$this->db->query("ALTER TABLE ".MAIN_DB_PREFIX.self::TABLE_HANDOFF." ADD INDEX idx_emailcollector_ai_handoff_entity_cleaning (entity, fk_cleaning)");
 
 		$done = true;
@@ -445,73 +381,6 @@ class EmailCleaner
 	}
 
 	/**
-	 * Insert one unassigned PDF queue row.
-	 *
-	 * @param int $entity Entity id
-	 * @param int $collectorId Collector id
-	 * @param string $msgid Message id
-	 * @param string $emailFrom Email sender
-	 * @param string $emailSubject Email subject
-	 * @param string $emailDate Email date header
-	 * @param array<string,mixed> $attRow Attachment metadata
-	 * @param string $docType Detected document type
-	 * @param float $confidence Cleaner confidence
-	 * @return int
-	 */
-	private function insertUnassignedPdfQueueRow($entity, $collectorId, $msgid, $emailFrom, $emailSubject, $emailDate, $attRow, $docType, $confidence)
-	{
-		$attachmentSha = (string) ($attRow['sha256'] ?? '');
-		if ($msgid !== '' && $attachmentSha !== '') {
-			$sqlCheck = "SELECT rowid FROM ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF;
-			$sqlCheck .= " WHERE entity = ".((int) $entity);
-			$sqlCheck .= " AND message_id = '".$this->db->escape((string) $msgid)."'";
-			$sqlCheck .= " AND attachment_sha256 = '".$this->db->escape($attachmentSha)."'";
-			$sqlCheck .= $this->db->plimit(1);
-			$resCheck = $this->db->query($sqlCheck);
-			if ($resCheck) {
-				$objCheck = $this->db->fetch_object($resCheck);
-				$this->db->free($resCheck);
-				if ($objCheck && !empty($objCheck->rowid)) {
-					return (int) $objCheck->rowid;
-				}
-			}
-		}
-
-		$extract = array(
-			'name' => (string) ($attRow['name'] ?? ''),
-			'relative_path' => (string) ($attRow['relative_path'] ?? ''),
-			'sha256' => $attachmentSha,
-		);
-		$extractRaw = json_encode($extract, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		if ($extractRaw === false) $extractRaw = '{}';
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF."(";
-		$sql .= "entity,status,priority,source,collector_id,message_id,email_date,email_from,email_subject,attachment_name,attachment_relpath,attachment_sha256,detected_doc_type,extraction_json,confidence,needs_human_review,datec";
-		$sql .= ") VALUES (";
-		$sql .= (int) $entity;
-		$sql .= ",'queued'";
-		$sql .= ",50";
-		$sql .= ",'emailcollector'";
-		$sql .= ",".(int) $collectorId;
-		$sql .= ",'".$this->db->escape((string) $msgid)."'";
-		$sql .= ",".($emailDate !== '' ? "'".$this->db->escape((string) $emailDate)."'" : "NULL");
-		$sql .= ",'".$this->db->escape((string) $emailFrom)."'";
-		$sql .= ",'".$this->db->escape((string) $emailSubject)."'";
-		$sql .= ",'".$this->db->escape((string) ($attRow['name'] ?? ''))."'";
-		$sql .= ",".(!empty($attRow['relative_path']) ? "'".$this->db->escape((string) $attRow['relative_path'])."'" : "NULL");
-		$sql .= ",".(!empty($attRow['sha256']) ? "'".$this->db->escape((string) $attRow['sha256'])."'" : "NULL");
-		$sql .= ",'".$this->db->escape((string) $docType)."'";
-		$sql .= ",'".$this->db->escape((string) $extractRaw)."'";
-		$sql .= ",".(float) $confidence;
-		$sql .= ",1";
-		$sql .= ", '".$this->db->idate(dol_now())."'";
-		$sql .= ")";
-		$res = $this->db->query($sql);
-		if (!$res) return 0;
-		return (int) $this->db->last_insert_id(MAIN_DB_PREFIX.self::TABLE_QUEUE_PDF);
-	}
-
-	/**
 	 * Persist handoff payload in dedicated table.
 	 *
 	 * @param int $entity Entity id
@@ -547,25 +416,6 @@ class EmailCleaner
 		$sql .= ",'".$this->db->idate(dol_now())."'";
 		$sql .= ")";
 		$this->db->query($sql);
-	}
-
-	/**
-	 * Append one JSONL event line for PDF queue.
-	 *
-	 * @param int $entity Entity id
-	 * @param array<string,mixed> $event Event payload
-	 * @return void
-	 */
-	private function appendUnassignedPdfQueueEventJsonl($entity, $event)
-	{
-		global $conf, $dolibarr_main_data_root;
-		$baseDir = (!empty($conf->ai->dir_output) ? $conf->ai->dir_output : $dolibarr_main_data_root.'/ai');
-		$jsonlDir = rtrim($baseDir, '/').'/unassigned_pdf_queue';
-		dol_mkdir($jsonlDir);
-		$file = $jsonlDir.'/entity_'.((int) $entity).'.jsonl';
-		$line = json_encode($event, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-		if ($line === false) return;
-		@file_put_contents($file, $line."\n", FILE_APPEND);
 	}
 
 	/**
@@ -643,7 +493,7 @@ class EmailCleaner
 	 * @param string $savedDir Directory where attachments were saved
 	 * @return array<int,array<string,mixed>>
 	 */
-	public static function collectAttachmentRowsForQueue($attachments, $savedAttachments, $savedDir = '')
+	public static function collectAttachmentRows($attachments, $savedAttachments, $savedDir = '')
 	{
 		$out = array();
 		$savedByName = array();
