@@ -509,6 +509,7 @@ class ExternalModules
 			}
 
 			// free or pay ?
+			$install_link = '';
 			if (array_key_exists('price_ht', $product) && price2num($product["price_ht"]) > 0) {
 				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 
