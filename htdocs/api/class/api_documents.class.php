@@ -558,8 +558,6 @@ class Documents extends DolibarrApi
 
 			$upload_dir = getMultidirOutput($object). "/".get_exdir(0, 0, 0, 1, $object, 'commande');
 		} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
-			$modulepart = 'supplier_order';
-
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'commande', 'lire') && !DolibarrApiAccess::$user->hasRight('supplier_order', 'lire')) {
@@ -602,8 +600,6 @@ class Documents extends DolibarrApi
 
 			$upload_dir = getMultidirOutput($object) . "/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 		} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice') {
-			$modulepart = 'supplier_invoice';
-
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('fournisseur', 'facture', 'lire') && !DolibarrApiAccess::$user->hasRight('supplier_invoice', 'lire')) {
@@ -756,7 +752,6 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->ficheinter->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'ficheinter');
 		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
-			$modulepart = 'project';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 			$object = new Project($this->db);
@@ -766,7 +761,6 @@ class Documents extends DolibarrApi
 			}
 			$upload_dir = $conf->project->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} elseif ($modulepart == 'task' || $modulepart == 'project_task') {
-			$modulepart = 'project_task';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
@@ -787,7 +781,6 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->project->dir_output . "/" . dol_sanitizeFileName((string) $object->project->ref) . "/" . dol_sanitizeFileName((string) $object->ref);
 		} elseif ($modulepart == 'mrp') {
-			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 
 			$object = new Mo($this->db);
@@ -798,7 +791,6 @@ class Documents extends DolibarrApi
 
 			$upload_dir = getMultidirOutput($object) . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
-			$modulepart = 'contact';
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 			$object = new Contact($this->db);

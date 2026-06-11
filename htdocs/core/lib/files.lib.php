@@ -3517,14 +3517,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif ($modulepart == 'order_supplier' && !empty($conf->fournisseur->commande->dir_output)) {
+	} elseif ($modulepart == 'supplier_order' && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping for purchase orders
 		if ($fuser->hasRight('fournisseur', 'commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-	} elseif ($modulepart == 'invoice_supplier' && !empty($conf->fournisseur->facture->dir_output)) {
+	} elseif ($modulepart == 'supplier_invoice' && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3615,7 +3615,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
-	} elseif ($modulepart == 'entrepot') {
+	} elseif ($modulepart == 'stock') {
 		// Wrapping for stock warehouse
 		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -4328,13 +4328,15 @@ function normalizeModulepart($modulepart) {
 			$modulepart = 'order';
 			break;
 		case 'commande_fournisseur':
-			$modulepart = 'order_supplier';
+		case 'order_supplier':
+			$modulepart = 'supplier_order';
 			break;
 		case 'facture':
 			$modulepart = 'invoice';
 			break;
 		case 'facture_fournisseur':
-			$modulepart = 'invoice_supplier';
+		case 'invoice_supplier':
+			$modulepart = 'supplier_invoice';
 			break;
 		case 'fichinter':
 		case 'ficheinter':
@@ -4350,6 +4352,8 @@ function normalizeModulepart($modulepart) {
 		case 'tax':
 			$modulepart = 'tax-vat';
 			break;
+		case 'agenda':
+		case 'event':
 		case 'actions':
 			$modulepart = 'actioncomm';
 			break;
@@ -4376,12 +4380,18 @@ function normalizeModulepart($modulepart) {
 		case 'movement':
 			$modulepart = 'stockmovement';
 			break;
+		case 'entrepot':
+			$modulepart = 'stock';
+			break;
 		case 'projet':
 			$modulepart = 'project';
 			break;
 		case 'tache':
 		case 'task':
 			$modulepart = 'project_task';
+			break;
+		case 'categorie':
+			$modulepart = 'category';
 			break;
 	}
 	return $modulepart;
