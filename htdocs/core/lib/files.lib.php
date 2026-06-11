@@ -3037,27 +3037,71 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 	}
 	// Fix modulepart for backward compatibility
-	if ($modulepart == 'facture') {
-		$modulepart = 'invoice';
-	} elseif ($modulepart == 'users') {
-		$modulepart = 'user';
-	} elseif ($modulepart == 'tva') {
-		$modulepart = 'tax-vat';
-	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
-		// Fix modulepart delivery
+	switch ($modulepart) {
+		case 'company':
+		case 'societe':
+			$modulepart = 'thirdparty';
+			break;
+		case 'socpeople':
+			$modulepart = 'contact';
+			break;
+		case 'propal':
+		case 'propale':
+			$modulepart = 'proposal';
+			break;
+		case 'commande':
+			$modulepart = 'order';
+			break;
+		case 'commande_fournisseur':
+			$modulepart = 'order_supplier';
+			break;
+		case 'facture':
+			$modulepart = 'invoice';
+			break;
+		case 'facture_fournisseur':
+			$modulepart = 'invoice_supplier';
+			break;
+		case 'fichinter':
+		case 'ficheinter':
+			$modulepart = 'intervention';
+			break;
+		case 'users':
+			$modulepart = 'user';
+			break;
+		case 'tva':
+			$modulepart = 'tax-vat';
+			break;
+		case 'actions':
+			$modulepart = 'actioncomm';
+			break;
+		case 'apercufichinter':
+		case 'apercuficheinter':
+			$modulepart = 'apercufichinter';
+			break;
+		case 'expedition':
+		case 'shipping':
+			$modulepart = 'shipment';
+			break;
+		case 'livraison':
+			$modulepart = 'delivery';
+			break;
+		case 'produit':
+		case 'service':
+		case 'produit|service':
+			$modulepart = 'product';
+			break;
+		case 'produitlot':
+			$modulepart = 'product_batch';
+			break;
+		case 'mouvement':
+		case 'movement':
+			$modulepart = 'stockmovement';
+			break;
+	}
+
+	// Fix modulepart for expedition/delivery
+	if ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		$modulepart = 'delivery';
-	} elseif ($modulepart == 'propale') {
-		$modulepart = 'propal';
-	} elseif ($modulepart == 'commande') {
-		$modulepart = 'order';
-	} elseif ($modulepart == 'socpeople') {
-		$modulepart = 'contact';
-	} elseif ($modulepart == 'facture_fournisseur') {
-		$modulepart = 'invoice_supplier';
-	} elseif ($modulepart == 'commande_fournisseur') {
-		$modulepart = 'order_supplier';
-	} elseif ($modulepart == 'fichinter' || $modulepart == 'ficheinter') {
-		$modulepart = 'intervention';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -3202,7 +3246,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
-	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif ($modulepart == 'apercufichinter' && !empty($conf->ficheinter->dir_output)) {
 		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
@@ -3314,14 +3358,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
-	} elseif (in_array($modulepart, array('tax', 'tax-vat', 'tva')) && !empty($conf->tax->dir_output)) {
+	} elseif ($modulepart == 'tax-vat' && !empty($conf->tax->dir_output)) {
 		// Wrapping for taxes
 		if ($fuser->hasRight('tax', 'charges', $lire)) {
 			$accessallowed = 1;
 		}
-		$modulepartsuffix = str_replace('tax-', '', $modulepart);
-		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
-	} elseif (($modulepart == 'actions' || $modulepart == 'actioncomm') && !empty($conf->agenda->dir_output)) {
+		$original_file = $conf->tax->dir_output.'/vat/'.$original_file;
+	} elseif ($modulepart == 'actioncomm' && !empty($conf->agenda->dir_output)) {
 		// Wrapping for events
 		if ($fuser->hasRight('agenda', 'myactions', $read)) {
 			$accessallowed = 1;
@@ -3392,7 +3435,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->multidir_output[$entity])) {
+	} elseif ($modulepart == 'thirdparty' && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for third parties
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -3493,14 +3536,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
+	} elseif ($modulepart == 'proposal' && isset($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les propales
 		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
-	} elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->order->multidir_output[$entity])) {
+	} elseif ($modulepart == 'order' && !empty($conf->order->multidir_output[$entity])) {
 		// Wrapping pour les commandes
 		if ($fuser->hasRight('commande', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3578,14 +3621,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
-	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
+	} elseif ($modulepart == 'shipment' && !empty($conf->expedition->dir_output)) {
 		// Wrapping pour les expedition
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->expedition->dir_output."/".(strpos($original_file, 'sending/') === 0 ? '' : 'sending/').$original_file;
 		//$original_file = $conf->expedition->dir_output."/".$original_file;
-	} elseif (($modulepart == 'livraison' || $modulepart == 'delivery') && !empty($conf->expedition->dir_output)) {
+	} elseif ($modulepart == 'delivery' && !empty($conf->expedition->dir_output)) {
 		// Delivery Note Wrapping
 		if ($fuser->hasRight('expedition', 'delivery', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -3597,7 +3640,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->agenda->dir_temp."/".$original_file;
-	} elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service') {
+	} elseif ($modulepart == 'product') {
 		// Wrapping for products and services
 		if (empty($entity) || (empty($conf->product->multidir_output[$entity]) && empty($conf->service->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -3610,7 +3653,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} elseif (isModEnabled("service")) {
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
-	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {
+	} elseif ($modulepart == 'product_batch') {
 		// Wrapping for product lots
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
@@ -3621,7 +3664,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (isModEnabled('productbatch')) {
 			$original_file = $conf->productbatch->multidir_output[$entity].'/'.$original_file;
 		}
-	} elseif ($modulepart == 'movement' || $modulepart == 'mouvement') {
+	} elseif ($modulepart == 'stockmovement') {
 		// Wrapping for stock movements
 		if (empty($entity) || empty($conf->stock->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
