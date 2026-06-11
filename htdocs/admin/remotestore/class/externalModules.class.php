@@ -509,10 +509,11 @@ class ExternalModules
 			}
 
 			// free or pay ?
+			$install_link = '';
 			if (array_key_exists('price_ht', $product) && price2num($product["price_ht"]) > 0) {
 				$price = '<h3>'.price(price2num($product["price_ht"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
 
-				$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
+				$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
 				$download_link .= img_picto('', 'url', 'class="size2x paddingright"');
 				$download_link .= '</a>';
 			} else {
@@ -539,13 +540,13 @@ class ExternalModules
 				}
 
 				if ($product['source'] === 'githubcommunity') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
+					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
 					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright colorgrey"');
 					$download_link .= '</a>';
 
 					$urlview = $product["dolistore-download"];		// View on Dolistore
 					if ($urlview) {
-						$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
+						$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
 						$download_link .= img_picto('', 'url', 'class="size2x"');
 						$download_link .= '</a>';
 					}
@@ -554,7 +555,7 @@ class ExternalModules
 						$reg = array();
 						if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
 							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
-							$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+							$download_link .= '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
 							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
 							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
 							$download_link .= '</a>';
@@ -563,7 +564,7 @@ class ExternalModules
 				} elseif ($product['source'] === 'dolistore') {
 					$urlview = $this->shop_url.'/product.php?id='.((int) $product["id"]);
 					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
-					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
+					$download_link = '<a class="paddingleft paddingright valignmiddle" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'">';
 					$download_link .= img_picto('', 'url', 'class="size2x"');
 					$download_link .= '</a>';
 					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
@@ -581,8 +582,8 @@ class ExternalModules
 					foreach ($product as $key => $value) {
 						$fields['producttoinstall['.$key.']'] = $value;
 					}
-					$download_link .= '<hr class="margintopbottomonly"/>';
-					$download_link .= '<button class="' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
+
+					$install_link = '<button class="valignmiddle ' . ($disableInstall ? 'butActionRefused' : 'butAction') . ' paddingleft paddingright"'
 						. ($disableInfo     ? ' title="' . dol_escape_htmltag($disableInfo) . '"' : '')
 						. (!$disableInstall ? ' data-confirm' : '')
 						. (!$disableInstall ? ' data-fields="' . dol_escape_htmltag(json_encode($fields)) . '"' : '')
@@ -667,6 +668,12 @@ class ExternalModules
 			// Price - do not load if display none
 			$html .= '<td class="margeCote center amount'.(getDolOptimizeSmallScreen() ? ' left" colspan="2"' : '"').'>';
 			$html .= $price;
+			if (($product['direct-download'] && $product['direct-download'] == 'yes')
+				|| ($product['source'] === 'dolistore' && empty((float) $product['price_ht']))) {
+				if ($install_link) {
+					$html .= $install_link;
+				}
+			}
 
 			if (!getDolOptimizeSmallScreen()) {
 				$html .= '</td>';

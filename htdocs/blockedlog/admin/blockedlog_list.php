@@ -78,6 +78,7 @@ $search_code = GETPOST('search_code', 'array:alpha');
 $search_module_source = GETPOST('search_module_source', 'array:alpha');
 $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_type_code = GETPOST('search_type_code', 'aZ09');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
 $withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
@@ -239,11 +240,12 @@ $nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
 $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
-$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 
 $htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR").'</span><br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'</span><br>';
+} else {
+	$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 }
 
 print info_admin($htmltext, 0, 0, 'warning');
@@ -433,6 +435,7 @@ print '</tr>';
 
 $checkresult = array();
 $checkdetail = array();
+$checkerror = array();
 $loweridinerror = 0;
 
 if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
@@ -453,6 +456,9 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 
 			$checkresult[$block->id] = $checksignature; // false if error
 			$checkdetail[$block->id] = $tmpcheckresult;
+			if (!empty($tmpcheckresult['error'])) {
+				$checkerror[$block->id] = $tmpcheckresult['error'];
+			}
 
 			if (!$checksignature) {
 				if (empty($loweridinerror)) {
@@ -582,9 +588,16 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidityButChainIsKo').'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">OK</span>';
+				} elseif ($block->action == 'MODULE_RESET') {
+					// Old action code on old version.
+					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
 				} else {
-					print '<span class="badge badge-status8 badge-status" title="'.$langs->trans('KoCheckFingerprintValidity').'">KO</span>';
+					print '<span class="badge badge-status8 badge-status" title="';
+					if (!empty($checkerror[$block->id])) {
+						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
+					}
+					print dolPrintHTMLForAttribute($langs->trans('KoCheckFingerprintValidity')).'">KO</span>';
 				}
 			} else {
 				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
@@ -598,12 +611,6 @@ if (is_array($blocks)) {
 					}
 				}
 			}
-
-			/*
-			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
-				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
-			}
-			*/
 			print '</td>';
 
 			// Link to debug information object

@@ -1050,10 +1050,6 @@ class Memo extends CommonObject
 			$return .= '	</div>';
 		}
 
-		$this->date_archived = dol_now();
-		$this->fk_user_archived = (int) $this->user->id;
-
-
 		$return .= '</div>';
 
 
@@ -1646,6 +1642,18 @@ class Memo extends CommonObject
 			return false;
 		}
 
+		$autoResizeFontMin = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1);
+		$autoResizeFontMax = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE', 1.4);
+
+		// Apply safety limits
+		$autoResizeFontMin = max($autoResizeFontMin, 0.3);
+		$autoResizeFontMax = min($autoResizeFontMax, 5);
+
+		// Ensure min value is always lower than max value
+		if ($autoResizeFontMin >= $autoResizeFontMax) {
+			$autoResizeFontMin = max(0.3, $autoResizeFontMax - 0.1);
+		}
+
 		$defaultJsConfVars = [
 			'interfaceUrl' => dol_buildpath('quickmemo/interface.php', 1),
 			'archivesUrl' => dol_buildpath('quickmemo/memo_list.php', 1) . '?mode=kanban&search_status='.Memo::STATUS_ARCHIVED . ($jsConfVars['archivesUrlParams'] ?? ''),
@@ -1656,7 +1664,10 @@ class Memo extends CommonObject
 			'colors' => Memo::getColorPreset(),
 			'userReadRight' => $user->hasRight('quickmemo', 'memo', 'read'),
 			'userWriteRight' => $user->hasRight('quickmemo', 'memo', 'write'),
-			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete')
+			'userDeleteRight' => $user->hasRight('quickmemo', 'memo', 'delete'),
+			'autoResizeFontSize' => !getDolGlobalInt('QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE'),
+			'autoResizeFontMin' => $autoResizeFontMin,
+			'autoResizeFontMax' => $autoResizeFontMax,
 		];
 		$jsConfVars = array_merge($defaultJsConfVars, $jsConfVars);
 

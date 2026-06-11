@@ -87,6 +87,8 @@ require_once 'filefunc.inc.php';
  * @var ?string $dolibarr_main_demo
  */
 
+include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
 // DOL_AUTOSET_COOKIE=cookiename:val1,val2 and  cookiename_val1=aaa cookiename_val2=bbb will set cookie_name with value json_encode(array('val1'=> , ))
@@ -3977,7 +3979,8 @@ if (!function_exists("llxFooter")) {
 							'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
 							'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
 							'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
-							'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+							'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1'),
+							'provider_idprof2' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2')
 						);
 						printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayofdata, $forceregistration);
 					} else {

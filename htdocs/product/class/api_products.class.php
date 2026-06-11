@@ -766,7 +766,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
@@ -812,7 +812,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		if (!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 

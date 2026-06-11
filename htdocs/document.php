@@ -406,7 +406,7 @@ if ($modulepart == 'facture') {
 			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
 
 			// $object->pos_print_counter is current value. We increase it here.
-			if ($object->status == $object::STATUS_CLOSED) {
+			if ($invoice->status == Facture::STATUS_CLOSED) {
 				// Increase counter by 1
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
 				$sql .= " WHERE rowid = ".((int) $invoice->id);

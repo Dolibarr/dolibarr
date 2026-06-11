@@ -769,8 +769,10 @@ if (empty($reshook)) {
 
 		$result = $objectline->update($user);
 		if ($result < 0) {
-			dol_print_error($db);
-			exit;
+			// Surface validation errors (e.g. mandatory extrafield left empty) as an
+			// event message on the same page instead of breaking with a full Dolibarr
+			// error screen that loses the user's edit context.
+			setEventMessages($objectline->error, $objectline->errors, 'errors');
 		}
 
 		// Define output language

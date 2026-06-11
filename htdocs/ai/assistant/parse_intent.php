@@ -249,10 +249,16 @@ try {
 
 	if ($serviceKey && $serviceKey !== '-1') {
 		$providerUsed = $serviceKey;
-		$mcp = new McpHandler($db, $user);
+		$mcp = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
 
-		// Fetch all tools
+		// Two schemas are maintained:
+		//   $allToolsSchema  — full list including system tools; used ONLY for post-LLM validation.
+		//   $llmToolsBase   — system tools excluded (is_system=>true filtered out in McpHandler);
+		//                     used for category filtering and as the LLM tool list.
+		// This separation guarantees ask_for_confirmation, respond_to_user, etc. are
+		// never visible to the model, preventing the LLM from calling them directly.
 		$allToolsSchema = $mcp->getToolsSchema();
+		$llmToolsBase   = $mcp->getToolsSchemaForLLM();
 
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($query);
@@ -260,15 +266,15 @@ try {
 		$toolsSchema = [];
 
 		if ($isComplex) {
-			// We send ALL tools to ensure accuracy.
+			// Non-Latin: send full LLM-safe schema (system tools already excluded)
 			dol_syslog("AI Pro: Non-Latin language detected. Sending full (cleaned) schema.");
-			$toolsSchema = $allToolsSchema;
+			$toolsSchema = $llmToolsBase;
 		} else {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($query, $langs);
 
-			// Filter Logic
-			$toolsSchema = filterToolsProfessional($allToolsSchema, $detectedCategories);
+			// Category filter applied to $llmToolsBase — system tools already excluded
+			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
 
 			dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.");
 		}
@@ -402,7 +408,7 @@ try {
 
 				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
 				if ($intentJSON && isset($intentJSON['tool'])) {
-					$validToolNames = array_column($toolsSchema, 'name');
+					$validToolNames = array_column($allToolsSchema, 'name');
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
 						dol_syslog("AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Send error message via respond_to_user.", LOG_WARNING);
 

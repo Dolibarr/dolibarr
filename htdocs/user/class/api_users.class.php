@@ -901,6 +901,12 @@ class Users extends DolibarrApi
 			$group_static->loadRights();
 		}
 
+		if ($load_members > 0 && is_array($group_static->members) && count($group_static->members) > 0) {
+			foreach ($group_static->members as &$member) {
+				$member = $this->_cleanObjectDatas($member);
+			}
+		}
+
 		return $this->_cleanUserGroup($group_static);
 	}
 
