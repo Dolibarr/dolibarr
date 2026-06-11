@@ -4355,6 +4355,7 @@ function normalizeModulepart($modulepart) {
 		case 'agenda':
 		case 'event':
 		case 'actions':
+		case 'action':
 			$modulepart = 'actioncomm';
 			break;
 		case 'apercufichinter':
