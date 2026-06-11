@@ -1769,6 +1769,7 @@ class EmailCollector extends CommonObject
 			foreach ($richarrayofemail as $tmpval) {
 				$iforemailloop++;
 
+				try {
 				$imapemail = $tmpval['imapemail'];
 				$header = $tmpval['header'];
 				$overview = $tmpval['overview'];
@@ -3704,6 +3705,17 @@ class EmailCollector extends CommonObject
 					$error++;
 
 					$this->db->rollback();
+				}
+				} catch (Throwable $e) {
+					// Skip this 'poison' email and keep processing the rest. Without this, an exception aborts the
+					// whole foreach mid-run, the processing lock stays set and the collector is stuck until cleared.
+					try {
+						$this->db->rollback();
+					} catch (Throwable $eInner) {
+						dol_syslog("EmailCollector loop catch rollback failed: ".$eInner->getMessage(), LOG_ERR);
+					}
+					dol_syslog("EmailCollector loop caught exception on one email, skipping: ".$e->getMessage(), LOG_WARNING);
+					$operationslog .= '<br>** Exception while processing email #'.dol_escape_htmltag((string) $iforemailloop).' - '.dol_escape_htmltag($e->getMessage()).' (skipped)';
 				}
 			}
 
