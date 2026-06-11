@@ -2077,6 +2077,9 @@ if ($action == 'create' && $usercancreate) {
 								$qtylValue = $deliverableQty;
 								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 									$qtylValue = '';
+								} elseif (is_numeric($qtylValue)) {
+									// Render as locale number so GETPOSTFLOAT() on submit reads it back via price2num option=2 without confusing '.' for a thousand separator in es_ES.
+									$qtylValue = price($qtylValue);
 								}
 								print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" class="qtyl right" type="text" size="4" value="' . $qtylValue . '">';
 							} else {
@@ -2220,6 +2223,8 @@ if ($action == 'create' && $usercancreate) {
 									$qtylValue = $deliverableQty;
 									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 										$qtylValue = '';
+									} elseif (is_numeric($qtylValue)) {
+										$qtylValue = price($qtylValue);
 									}
 									print '<input class="qtyl ' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $qtylValue . '">';
 									print '</td>';
@@ -2337,6 +2342,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
@@ -2468,6 +2475,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl right ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '</td>';
