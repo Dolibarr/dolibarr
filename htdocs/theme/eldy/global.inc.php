@@ -3661,8 +3661,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
