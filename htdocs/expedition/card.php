@@ -168,6 +168,18 @@ $warehouse_id = null;
 $note_public = null;
 $note_private = null;
 
+$shipmentLineMatchesOrigin = static function ($line, $shipmentOrigin) {
+	if (empty($shipmentOrigin) || empty($line->fk_elementdet) || empty($line->element_type)) {
+		return false;
+	}
+
+	if ($shipmentOrigin == 'commande') {
+		return in_array($line->element_type, array('commande', 'order'), true);
+	}
+
+	return $line->element_type == $shipmentOrigin;
+};
+
 /*
  * Actions
  */
@@ -850,14 +862,16 @@ if (empty($reshook)) {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
-		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
+		if ($object->fetch($id) <= 0) {
+			dol_print_error($db);
+		}
+		$object->fetch_thirdparty();
+		$origin = $object->origin;
+		$origin_id = $object->origin_id;
+
+		if (!$origin_id && getDolGlobalString('SHIPMENT_STANDALONE')) {
 			// Update a line
 			// Clean parameters
-
-			if (!$object->fetch($id) > 0) {
-				dol_print_error($db);
-			}
-			$object->fetch_thirdparty();
 
 			$qty = GETPOST('qty', 'alpha');
 			$description = '';
@@ -1151,7 +1165,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // To redisplay the form being edited
 		exit();
-	} elseif ($action == 'addline' && !$origin && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {	// Add a new line
+	} elseif ($action == 'addline' && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {	// Add a new line
 		$langs->load('errors');
 		$error = 0;
 		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
@@ -3137,8 +3151,11 @@ if ($action == 'create' && $usercancreate) {
 		}
 	}
 
+	$showoriginlines = ($object->origin_id > 0);
+	$showmixedfreeaddform = ($showoriginlines && $object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline' && getDolGlobalString('SHIPMENT_STANDALONE'));
+
 	// Lines of products of origin
-	if (!empty($object->origin) && $object->origin_id > 0) {
+	if ($showoriginlines) {
 		if ($action == 'editline') {
 			print '	<form name="updateline" id="updateline" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;lineid=' . $line_id . '" method="POST">
 			<input type="hidden" name="token" value="' . newToken() . '">
@@ -3287,6 +3304,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			if (empty($reshook) && $lines[$i]->product_type != "9") {
+				$linehasorigin = ($origin_id > 0 && $shipmentLineMatchesOrigin($lines[$i], $origin));
 				print '<!-- origin line id = ' . $lines[$i]->origin_line_id . ' -->'; // id of order line
 				print '<tr class="oddeven" id="row-' . $lines[$i]->id . '" data-id="' . $lines[$i]->id . '" data-element="' . $lines[$i]->element . '" >';
 
@@ -3370,43 +3388,55 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Qty ordered
-				print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
+				if ($origin_id > 0) {
+					if ($linehasorigin) {
+						print '<td class="center linecolqty">' . $lines[$i]->qty_asked . ' ' . $unit_order . '</td>';
+					} else {
+						print '<td class="center linecolqty">&nbsp;</td>';
+					}
+				}
 
 				// Qty in other shipments (with shipment and warehouse used)
 				if ($origin_id > 0) {
 					print '<td class="linecolqtyinothershipments center nowrap">';
 					$htmltooltip = '';
 					$qtyalreadysent = 0;
-					foreach ($alreadysent as $key => $val) {
-						if ($lines[$i]->fk_elementdet == $key) {
-							$j = 0;
-							foreach ($val as $shipmentline_id => $shipmentline_var) {
-								if ($shipmentline_var['shipment_id'] == $lines[$i]->fk_expedition) {
-									continue; // We want to show only "other shipments"
-								}
+					if ($linehasorigin) {
+						foreach ($alreadysent as $key => $val) {
+							if ($lines[$i]->fk_elementdet == $key) {
+								$j = 0;
+								foreach ($val as $shipmentline_id => $shipmentline_var) {
+									if ($shipmentline_var['shipment_id'] == $lines[$i]->fk_expedition) {
+										continue; // We want to show only "other shipments"
+									}
 
-								$j++;
-								if ($j > 1) {
-									$htmltooltip .= '<br>';
-								}
-								$shipment_static->fetch($shipmentline_var['shipment_id']);
-								$htmltooltip .= $shipment_static->getNomUrl(1, '', 0, 0, 1);
-								$htmltooltip .= ' - ' . $shipmentline_var['qty_shipped'];
-								$htmltooltip .= ' - ' . $langs->trans("DateValidation") . ' : ' . (empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
-								/*if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
-									$warehousestatic->fetch($shipmentline_var['warehouse']);
-									$htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
-								}*/
-								//print ' '.$form->textwithpicto('', $htmltext, 1);
+									$j++;
+									if ($j > 1) {
+										$htmltooltip .= '<br>';
+									}
+									$shipment_static->fetch($shipmentline_var['shipment_id']);
+									$htmltooltip .= $shipment_static->getNomUrl(1, '', 0, 0, 1);
+									$htmltooltip .= ' - ' . $shipmentline_var['qty_shipped'];
+									$htmltooltip .= ' - ' . $langs->trans("DateValidation") . ' : ' . (empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
+									/*if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
+										$warehousestatic->fetch($shipmentline_var['warehouse']);
+										$htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
+									}*/
+									//print ' '.$form->textwithpicto('', $htmltext, 1);
 
-								$qtyalreadysent += $shipmentline_var['qty_shipped'];
-							}
-							if ($j) {
-								$htmltooltip = $langs->trans("QtyInOtherShipments") . '...<br><br>' . $htmltooltip . '<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+									$qtyalreadysent += $shipmentline_var['qty_shipped'];
+								}
+								if ($j) {
+									$htmltooltip = $langs->trans("QtyInOtherShipments") . '...<br><br>' . $htmltooltip . '<br><input type="submit" name="dummyhiddenbuttontogetfocus" style="display:none" autofocus>';
+								}
 							}
 						}
 					}
-					print $form->textwithpicto((string) $qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip' . $lines[$i]->id);
+					if ($linehasorigin) {
+						print $form->textwithpicto((string) $qtyalreadysent, $htmltooltip, 1, 'info', '', 0, 3, 'tooltip' . $lines[$i]->id);
+					} else {
+						print '&nbsp;';
+					}
 					print '</td>';
 				}
 
@@ -3637,7 +3667,7 @@ if ($action == 'create' && $usercancreate) {
 							$product = $conf->cache['product'][$product_id];
 						}
 
-						if ($product->hasFatherOrChild(1)) {
+						if ($linehasorigin && $product->hasFatherOrChild(1)) {
 							$edit_url = dol_buildpath('/expedition/dispatch.php?id=' . $object->id, 1);
 						}
 					}
@@ -3699,6 +3729,34 @@ if ($action == 'create' && $usercancreate) {
 		print '</tbody>';
 		print "</table>\n";
 		print '</div>';
+
+		if ($showmixedfreeaddform) {
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
+			<input type="hidden" name="token" value="' . newToken().'">
+			<input type="hidden" name="action" value="addline">
+			<input type="hidden" name="mode" value="">
+			<input type="hidden" name="page_y" value="">
+			<input type="hidden" name="id" value="' . $object->id.'">
+			';
+
+			if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+			}
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder noshadow centpercent" width="100%">';
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+			if (empty($reshook)) {
+				$object->formAddObjectLine(1, $mysoc, $soc);
+			}
+			print '</table>';
+			print '</div>';
+			print "</form>\n";
+		}
 
 		$object->fetchObjectLinked($object->id, $object->element);
 	}
