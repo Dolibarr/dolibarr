@@ -3538,7 +3538,8 @@ function analyzeDirContents($dir, $search = array(), &$results = array(), &$coun
  * @param  string $elementtype  Canonical element type (e.g. 'thirdparty', 'contact', 'order', ...)
  * @return string               Legacy elementtype value used in database tables
  */
-function normalizeElementtype($elementtype) {
+function normalizeElementtype($elementtype)
+{
 	// Guard empty
 	if (empty($elementtype)) {
 		return $elementtype;

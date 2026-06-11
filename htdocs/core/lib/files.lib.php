@@ -4299,7 +4299,8 @@ function removeLastLine($fullpath)
  * @param  string $modulepart  Incoming modulepart value (possibly legacy)
  * @return string              Normalized / canonical modulepart
  */
-function normalizeModulepart($modulepart) {
+function normalizeModulepart($modulepart)
+{
 	// Guard empty
 	if (empty($modulepart)) {
 		return $modulepart;
