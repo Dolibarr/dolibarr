@@ -3104,7 +3104,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			print '<div class="div-table-responsive-no-min">';
-			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline' && getDolGlobalString('SHIPMENT_STANDALONE'))) {
+			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 				print '<table id="tablelines" class="noborder noshadow" width="100%">';
 			}
 
@@ -3113,7 +3113,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			// Form to add new line
-			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && getDolGlobalString('SHIPMENT_STANDALONE')) {
+			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
 					// Add products/services form
 
@@ -3128,7 +3128,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 			}
 
-			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline' && getDolGlobalString('SHIPMENT_STANDALONE'))) {
+			if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 				print '</table>';
 			}
 			print '</div>';
