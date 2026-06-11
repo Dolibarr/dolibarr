@@ -89,7 +89,9 @@ $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
-$label = $somme = array();
+$label = [];
+$nb = [];
+$somme = [];
 
 $totalnb = $totalsum = 0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
