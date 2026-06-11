@@ -152,6 +152,7 @@ class EmailCleaner
 		$cleanedText = (string) ($cleanResult['clean_body'] ?? '');
 		$confidence = (float) ($cleanResult['confidence'] ?? 0.0);
 		$segments = (!empty($cleanResult['segments']) && is_array($cleanResult['segments'])) ? $cleanResult['segments'] : array();
+		$emailUnderstanding = (!empty($cleanResult['email_understanding']) && is_array($cleanResult['email_understanding'])) ? $cleanResult['email_understanding'] : self::buildFallbackEmailUnderstanding($cleanedText);
 		$engine = (string) ($cleanResult['engine'] ?? 'fallback');
 		$fallbackUsed = !empty($cleanResult['fallback_used']);
 		$hCleanup = self::buildNoiseSummaryFromSegments($segments);
@@ -171,7 +172,7 @@ class EmailCleaner
 			}
 		}
 		$handoffPayload = array(
-			'handoff_version' => 'emailcleaner_v1',
+			'handoff_version' => 'emailcleaner_v2',
 			'email' => array(
 				'subject' => $subject,
 				'from' => $from,
@@ -187,10 +188,12 @@ class EmailCleaner
 					'source' => 'clean_body',
 				),
 			),
+			'email_understanding' => $emailUnderstanding,
 			'conversation_context' => $emailContext,
 			'supporting_evidence' => array(
 				'segment_count' => count($segments),
 				'fallback_used' => ($fallbackUsed ? 1 : 0),
+				'understanding_source' => ($engine === 'ai' ? 'ai_structured_preprocess' : 'fallback_clean_text'),
 			),
 			'excluded_noise_summary' => $hCleanup,
 			'compliance' => $complianceMeta,
@@ -221,13 +224,14 @@ class EmailCleaner
 			'segments' => $segments,
 			'cleaning_confidence' => $confidence,
 			'cleaning_model' => ($engine === 'ai' ? 'auto' : null),
-			'prompt_code' => 'email_cleaner_v1',
-			'prompt_version' => '1',
+			'prompt_code' => 'email_cleaner_v2',
+			'prompt_version' => '2',
 			'context_profile_code' => ($contextProfileCode !== '' ? $contextProfileCode : null),
 			'context_profile_version' => ($contextProfileVersion !== '' ? $contextProfileVersion : null),
 			'engine' => $engine,
 			'fallback_used' => ($fallbackUsed ? 1 : 0),
 			'email_context' => $emailContext,
+			'email_understanding' => $emailUnderstanding,
 			'compliance' => $complianceMeta,
 			'handoff_payload_json' => $handoffPayload,
 			'date_cleaning_gmt' => dol_print_date(dol_now('gmt'), '%Y-%m-%d %H:%M:%S'),
@@ -243,11 +247,12 @@ class EmailCleaner
 			$confidence,
 			$engine,
 			($engine === 'ai' ? 'auto' : null),
-			'email_cleaner_v1',
-			'1',
+			'email_cleaner_v2',
+			'2',
 			$contextProfileCode,
 			$contextProfileVersion,
 			$emailContext,
+			$emailUnderstanding,
 			$handoffPayload
 		);
 		if ($cleaningId > 0) {
@@ -336,10 +341,11 @@ class EmailCleaner
 	 * @param string $contextProfileCode Context profile code
 	 * @param string $contextProfileVersion Context profile version
 	 * @param array<string,mixed> $emailContext Extracted email context
+	 * @param array<string,mixed> $emailUnderstanding Structured email understanding
 	 * @param array<string,mixed> $handoffPayload Handoff payload
 	 * @return int
 	 */
-	private function insertCleaningRow($entity, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $handoffPayload)
+	private function insertCleaningRow($entity, $collectorId, $msgid, $rawBody, $cleanedText, $segments, $confidence, $engine, $model, $promptCode, $promptVersion, $contextProfileCode, $contextProfileVersion, $emailContext, $emailUnderstanding, $handoffPayload)
 	{
 		$cleaningJson = array(
 			'clean_body' => $cleanedText,
@@ -347,6 +353,7 @@ class EmailCleaner
 			'confidence' => (float) $confidence,
 			'engine' => (string) $engine,
 			'email_context' => (is_array($emailContext) ? $emailContext : array()),
+			'email_understanding' => (is_array($emailUnderstanding) ? $emailUnderstanding : array()),
 		);
 		$cleaningJsonRaw = json_encode($cleaningJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$handoffRaw = json_encode($handoffPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -407,7 +414,7 @@ class EmailCleaner
 		$sql .= ") VALUES (";
 		$sql .= (int) $entity;
 		$sql .= ",".(int) $cleaningId;
-		$sql .= ",'emailcleaner_v1'";
+		$sql .= ",'emailcleaner_v2'";
 		$sql .= ",'generic'";
 		$sql .= ",'".$this->db->escape($payloadRaw)."'";
 		$sql .= ",'".$this->db->escape(hash('sha256', $payloadRaw))."'";
@@ -591,10 +598,12 @@ class EmailCleaner
 	 */
 	public function runEmailCleaner($subject, $from, $rawBody)
 	{
+		$fallbackCleanBody = self::fallbackCleanBody($rawBody);
 		$out = array(
-			'clean_body' => self::fallbackCleanBody($rawBody),
+			'clean_body' => $fallbackCleanBody,
 			'confidence' => 0.40,
 			'segments' => array(),
+			'email_understanding' => self::buildFallbackEmailUnderstanding($fallbackCleanBody),
 			'engine' => 'fallback',
 			'fallback_used' => true,
 		);
@@ -623,11 +632,14 @@ class EmailCleaner
 			}
 		}
 
-		$prompt = "You are an EmailCleaner for ERP ingestion.\n";
-		$prompt .= "Task: separate current message content from quoted thread and repetitive noise.\n";
+		$prompt = "You are an EmailCleaner and structured email preprocessor for ERP ingestion.\n";
+		$prompt .= "Task: separate current message content from quoted thread/noise and extract neutral understanding of the email.\n";
 		$prompt .= "Important constraints:\n";
 		$prompt .= "- Do NOT classify business intent and do NOT decide any action.\n";
+		$prompt .= "- Do NOT create, update, approve, reject, match, or route business objects.\n";
+		$prompt .= "- Extract only explicit information present in the email. Do not guess missing dates, amounts, references, contacts, or meaning.\n";
 		$prompt .= "- Be conservative: when unsure, keep text in clean_body.\n";
+		$prompt .= "- Put quoted/forwarded old thread content in segments, but keep only current-message facts in email_understanding.\n";
 		$prompt .= "- Return valid JSON only.\n";
 		$prompt .= "JSON schema:\n";
 		$prompt .= "{\n";
@@ -635,8 +647,34 @@ class EmailCleaner
 		$prompt .= "  \"segments\": [\n";
 		$prompt .= "    {\"type\":\"main_content|quoted_thread|signature|legal_disclaimer|system_noise|unknown\",\"text\":string}\n";
 		$prompt .= "  ],\n";
+		$prompt .= "  \"email_understanding\": {\n";
+		$prompt .= "    \"key_points\": string[],\n";
+		$prompt .= "    \"standardized\": {\n";
+		$prompt .= "      \"dates\": string[],\n";
+		$prompt .= "      \"amounts\": string[],\n";
+		$prompt .= "      \"references\": string[],\n";
+		$prompt .= "      \"contacts\": string[],\n";
+		$prompt .= "      \"languages\": string[]\n";
+		$prompt .= "    },\n";
+		$prompt .= "    \"categories\": {\n";
+		$prompt .= "      \"business_topics\": string[],\n";
+		$prompt .= "      \"document_mentions\": string[],\n";
+		$prompt .= "      \"requested_actions\": string[],\n";
+		$prompt .= "      \"risks_or_warnings\": string[],\n";
+		$prompt .= "      \"noise_types\": string[]\n";
+		$prompt .= "    },\n";
+		$prompt .= "    \"structured\": {\n";
+		$prompt .= "      \"decision_relevant_elements\": string[],\n";
+		$prompt .= "      \"payment_or_document_elements\": string[],\n";
+		$prompt .= "      \"other_elements\": string[]\n";
+		$prompt .= "    }\n";
+		$prompt .= "  },\n";
 		$prompt .= "  \"confidence\": number\n";
 		$prompt .= "}\n";
+		$prompt .= "Constraints:\n";
+		$prompt .= "- clean_body max 2000 chars.\n";
+		$prompt .= "- key_points max 8 items, each max 160 chars.\n";
+		$prompt .= "- every standardized/categories/structured list max 10 items, each max 180 chars.\n";
 		$prompt .= "Email metadata:\n";
 		$prompt .= "FROM: ".$fromForPrompt."\n";
 		$prompt .= "SUBJECT: ".$subjectForPrompt."\n";
@@ -680,6 +718,7 @@ class EmailCleaner
 			$out['clean_body'] = self::fallbackCleanBody($rawBody);
 			$out['confidence'] = $confidence;
 			$out['segments'] = $segments;
+			$out['email_understanding'] = self::sanitizeEmailUnderstanding($decoded['email_understanding'] ?? array(), $out['clean_body']);
 			$out['engine'] = 'ai_low_confidence_fallback';
 			$out['fallback_used'] = true;
 			return $out;
@@ -688,8 +727,141 @@ class EmailCleaner
 		$out['clean_body'] = $cleanBody;
 		$out['confidence'] = $confidence;
 		$out['segments'] = $segments;
+		$out['email_understanding'] = self::sanitizeEmailUnderstanding($decoded['email_understanding'] ?? array(), $cleanBody);
 		$out['engine'] = 'ai';
 		$out['fallback_used'] = false;
+
+		return $out;
+	}
+
+	/**
+	 * Build a minimal understanding payload when AI structured preprocessing is unavailable.
+	 *
+	 * @param string $cleanBody Cleaned body
+	 * @return array<string,mixed>
+	 */
+	private static function buildFallbackEmailUnderstanding($cleanBody)
+	{
+		$cleanBody = self::normalizeText((string) $cleanBody);
+		$keyPoints = array();
+		if ($cleanBody !== '') {
+			$lines = preg_split("/\n/", $cleanBody);
+			if (is_array($lines)) {
+				foreach ($lines as $line) {
+					$line = trim((string) $line);
+					if ($line === '') continue;
+					$line = preg_replace('/\s+/', ' ', $line);
+					if (strlen($line) > 160) $line = substr($line, 0, 160);
+					$keyPoints[] = $line;
+					if (count($keyPoints) >= 5) break;
+				}
+			}
+		}
+
+		return array(
+			'key_points' => $keyPoints,
+			'standardized' => array(
+				'dates' => array(),
+				'amounts' => array(),
+				'references' => array(),
+				'contacts' => array(),
+				'languages' => array(),
+			),
+			'categories' => array(
+				'business_topics' => array(),
+				'document_mentions' => array(),
+				'requested_actions' => array(),
+				'risks_or_warnings' => array(),
+				'noise_types' => array(),
+			),
+			'structured' => array(
+				'decision_relevant_elements' => $keyPoints,
+				'payment_or_document_elements' => array(),
+				'other_elements' => array(),
+			),
+		);
+	}
+
+	/**
+	 * Sanitize structured understanding returned by AI.
+	 *
+	 * @param mixed $raw Raw AI understanding payload
+	 * @param string $fallbackCleanBody Cleaned body used as fallback
+	 * @return array<string,mixed>
+	 */
+	private static function sanitizeEmailUnderstanding($raw, $fallbackCleanBody = '')
+	{
+		if (!is_array($raw)) {
+			return self::buildFallbackEmailUnderstanding($fallbackCleanBody);
+		}
+
+		$out = self::buildFallbackEmailUnderstanding('');
+		$out['key_points'] = self::sanitizeStringList($raw['key_points'] ?? array(), 8, 160);
+
+		$standardized = (isset($raw['standardized']) && is_array($raw['standardized'])) ? $raw['standardized'] : array();
+		$out['standardized'] = array(
+			'dates' => self::sanitizeStringList($standardized['dates'] ?? array(), 10, 80),
+			'amounts' => self::sanitizeStringList($standardized['amounts'] ?? array(), 10, 80),
+			'references' => self::sanitizeStringList($standardized['references'] ?? array(), 10, 120),
+			'contacts' => self::sanitizeStringList($standardized['contacts'] ?? array(), 10, 160),
+			'languages' => self::sanitizeStringList($standardized['languages'] ?? array(), 5, 40),
+		);
+
+		$categories = (isset($raw['categories']) && is_array($raw['categories'])) ? $raw['categories'] : array();
+		$out['categories'] = array(
+			'business_topics' => self::sanitizeStringList($categories['business_topics'] ?? array(), 10, 160),
+			'document_mentions' => self::sanitizeStringList($categories['document_mentions'] ?? array(), 10, 160),
+			'requested_actions' => self::sanitizeStringList($categories['requested_actions'] ?? array(), 10, 160),
+			'risks_or_warnings' => self::sanitizeStringList($categories['risks_or_warnings'] ?? array(), 10, 180),
+			'noise_types' => self::sanitizeStringList($categories['noise_types'] ?? array(), 10, 80),
+		);
+
+		$structured = (isset($raw['structured']) && is_array($raw['structured'])) ? $raw['structured'] : array();
+		$out['structured'] = array(
+			'decision_relevant_elements' => self::sanitizeStringList($structured['decision_relevant_elements'] ?? array(), 12, 180),
+			'payment_or_document_elements' => self::sanitizeStringList($structured['payment_or_document_elements'] ?? array(), 12, 180),
+			'other_elements' => self::sanitizeStringList($structured['other_elements'] ?? array(), 12, 180),
+		);
+
+		if (empty($out['key_points']) && empty($out['structured']['decision_relevant_elements'])) {
+			return self::buildFallbackEmailUnderstanding($fallbackCleanBody);
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Sanitize a list of short strings.
+	 *
+	 * @param mixed $items Raw list
+	 * @param int $maxItems Maximum number of items
+	 * @param int $maxLen Maximum item length
+	 * @return array<int,string>
+	 */
+	private static function sanitizeStringList($items, $maxItems, $maxLen)
+	{
+		$items = is_array($items) ? $items : array();
+		$maxItems = max(0, (int) $maxItems);
+		$maxLen = max(1, (int) $maxLen);
+		$out = array();
+		$seen = array();
+
+		foreach ($items as $item) {
+			$item = trim((string) $item);
+			if ($item === '' || strtolower($item) === 'null') continue;
+			$item = preg_replace('/\s+/', ' ', $item);
+			$item = trim((string) $item);
+			if ($item === '') continue;
+			if (strlen($item) > $maxLen) {
+				$item = substr($item, 0, $maxLen);
+				$item = rtrim($item, " \t\r\n,;:");
+			}
+			$key = strtolower($item);
+			if (!empty($seen[$key])) continue;
+			$seen[$key] = 1;
+			$out[] = $item;
+			if (count($out) >= $maxItems) break;
+		}
 
 		return $out;
 	}
