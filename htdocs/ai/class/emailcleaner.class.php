@@ -165,7 +165,7 @@ class EmailCleaner
 					'name' => (string) ($attRow['name'] ?? ''),
 					'relative_path' => (string) ($attRow['relative_path'] ?? ''),
 					'sha256' => (string) ($attRow['sha256'] ?? ''),
-					'detected_doc_type' => self::detectPdfDocTypeFromAttachmentNameAndText((string) ($attRow['name'] ?? ''), $cleanedText),
+					'detected_doc_type' => self::detectPdfDocTypeFromAttachmentName((string) ($attRow['name'] ?? '')),
 					'linking_target' => 'actioncomm',
 					'final_object_attachment_pending' => 1,
 				);
@@ -180,7 +180,7 @@ class EmailCleaner
 				'raw_hash' => hash('sha256', $rawBody),
 				'message_id' => $msgid,
 			),
-			'decision_relevant_text' => array(
+			'relevant_text' => array(
 				array(
 					'type' => 'main_content',
 					'text' => $cleanedText,
@@ -573,19 +573,15 @@ class EmailCleaner
 	}
 
 	/**
-	 * Detect document-like type from attachment name and cleaned text.
+	 * Detect a generic document-like type from attachment metadata.
 	 *
 	 * @param string $filename Attachment filename
-	 * @param string $cleanedText Cleaned email text
 	 * @return string
 	 */
-	public static function detectPdfDocTypeFromAttachmentNameAndText($filename, $cleanedText)
+	public static function detectPdfDocTypeFromAttachmentName($filename)
 	{
-		$nameLow = strtolower(dol_string_nospecial((string) $filename));
-		$textLow = strtolower(dol_string_nospecial((string) $cleanedText));
-		if (preg_match('/\b(invoice|factura|fatura|fattura|facture)\b/', $nameLow.' '.$textLow)) return 'invoice_like';
-		if (preg_match('/\b(order|pedido|booking|reserva|reservation|proforma|pro forma)\b/', $nameLow.' '.$textLow)) return 'order_like';
-		return 'unknown';
+		$ext = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+		return ($ext === 'pdf' ? 'pdf_document' : 'unknown');
 	}
 
 	/**
@@ -657,15 +653,15 @@ class EmailCleaner
 		$prompt .= "      \"languages\": string[]\n";
 		$prompt .= "    },\n";
 		$prompt .= "    \"categories\": {\n";
-		$prompt .= "      \"business_topics\": string[],\n";
-		$prompt .= "      \"document_mentions\": string[],\n";
-		$prompt .= "      \"requested_actions\": string[],\n";
+		$prompt .= "      \"topics\": string[],\n";
+		$prompt .= "      \"referenced_items\": string[],\n";
+		$prompt .= "      \"requested_operations\": string[],\n";
 		$prompt .= "      \"risks_or_warnings\": string[],\n";
 		$prompt .= "      \"noise_types\": string[]\n";
 		$prompt .= "    },\n";
 		$prompt .= "    \"structured\": {\n";
-		$prompt .= "      \"decision_relevant_elements\": string[],\n";
-		$prompt .= "      \"payment_or_document_elements\": string[],\n";
+		$prompt .= "      \"primary_elements\": string[],\n";
+		$prompt .= "      \"secondary_elements\": string[],\n";
 		$prompt .= "      \"other_elements\": string[]\n";
 		$prompt .= "    }\n";
 		$prompt .= "  },\n";
@@ -768,15 +764,15 @@ class EmailCleaner
 				'languages' => array(),
 			),
 			'categories' => array(
-				'business_topics' => array(),
-				'document_mentions' => array(),
-				'requested_actions' => array(),
+				'topics' => array(),
+				'referenced_items' => array(),
+				'requested_operations' => array(),
 				'risks_or_warnings' => array(),
 				'noise_types' => array(),
 			),
 			'structured' => array(
-				'decision_relevant_elements' => $keyPoints,
-				'payment_or_document_elements' => array(),
+				'primary_elements' => $keyPoints,
+				'secondary_elements' => array(),
 				'other_elements' => array(),
 			),
 		);
@@ -809,21 +805,21 @@ class EmailCleaner
 
 		$categories = (isset($raw['categories']) && is_array($raw['categories'])) ? $raw['categories'] : array();
 		$out['categories'] = array(
-			'business_topics' => self::sanitizeStringList($categories['business_topics'] ?? array(), 10, 160),
-			'document_mentions' => self::sanitizeStringList($categories['document_mentions'] ?? array(), 10, 160),
-			'requested_actions' => self::sanitizeStringList($categories['requested_actions'] ?? array(), 10, 160),
+			'topics' => self::sanitizeStringList($categories['topics'] ?? array(), 10, 160),
+			'referenced_items' => self::sanitizeStringList($categories['referenced_items'] ?? array(), 10, 160),
+			'requested_operations' => self::sanitizeStringList($categories['requested_operations'] ?? array(), 10, 160),
 			'risks_or_warnings' => self::sanitizeStringList($categories['risks_or_warnings'] ?? array(), 10, 180),
 			'noise_types' => self::sanitizeStringList($categories['noise_types'] ?? array(), 10, 80),
 		);
 
 		$structured = (isset($raw['structured']) && is_array($raw['structured'])) ? $raw['structured'] : array();
 		$out['structured'] = array(
-			'decision_relevant_elements' => self::sanitizeStringList($structured['decision_relevant_elements'] ?? array(), 12, 180),
-			'payment_or_document_elements' => self::sanitizeStringList($structured['payment_or_document_elements'] ?? array(), 12, 180),
+			'primary_elements' => self::sanitizeStringList($structured['primary_elements'] ?? array(), 12, 180),
+			'secondary_elements' => self::sanitizeStringList($structured['secondary_elements'] ?? array(), 12, 180),
 			'other_elements' => self::sanitizeStringList($structured['other_elements'] ?? array(), 12, 180),
 		);
 
-		if (empty($out['key_points']) && empty($out['structured']['decision_relevant_elements'])) {
+		if (empty($out['key_points']) && empty($out['structured']['primary_elements'])) {
 			return self::buildFallbackEmailUnderstanding($fallbackCleanBody);
 		}
 
