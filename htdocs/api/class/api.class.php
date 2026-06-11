@@ -120,7 +120,7 @@ class DolibarrApi
 				throw new RestException(400, 'Parameter '.$field.' is not allowed in request');
 			}
 
-      if (in_array($field, array('specimen'))) {
+			if (in_array($field, array('specimen'))) {
 				// Allowed but not used
 				dol_syslog('Debug API _checkValForAPI, found use of field specimen', LOG_DEBUG, 0, '_api');
 			}
