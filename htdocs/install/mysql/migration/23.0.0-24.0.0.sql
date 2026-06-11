@@ -550,6 +550,41 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
+-- Add AI metadata on agenda events
+CREATE TABLE llx_actioncomm_ai
+(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,
+	fk_actioncomm integer NOT NULL,
+	operation_code varchar(64) NOT NULL,
+	operation_version varchar(32),
+	provider varchar(64),
+	model varchar(190),
+	prompt_code varchar(128),
+	prompt_version varchar(32),
+	prompt_hash varchar(80),
+	input_hash varchar(80),
+	output_hash varchar(80),
+	security_hash varchar(128),
+	confidence double,
+	status varchar(32),
+	privacy_profile_code varchar(128),
+	privacy_profile_version varchar(32),
+	pii_redaction_enabled smallint DEFAULT 0,
+	input_metadata_json LONGTEXT,
+	output_json LONGTEXT,
+	error_message varchar(255),
+	fk_user_creat integer,
+	date_creation datetime,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=innodb;
+
+ALTER TABLE llx_actioncomm_ai ADD INDEX idx_actioncomm_ai_fk_actioncomm (fk_actioncomm);
+ALTER TABLE llx_actioncomm_ai ADD INDEX idx_actioncomm_ai_entity_operation (entity, operation_code, status);
+ALTER TABLE llx_actioncomm_ai ADD INDEX idx_actioncomm_ai_input_hash (entity, input_hash);
+ALTER TABLE llx_actioncomm_ai ADD INDEX idx_actioncomm_ai_security_hash (entity, security_hash);
+ALTER TABLE llx_actioncomm_ai ADD CONSTRAINT fk_actioncomm_ai_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm (id);
+
 
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
