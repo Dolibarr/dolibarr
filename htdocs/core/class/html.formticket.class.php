@@ -1781,7 +1781,7 @@ class FormTicket
 							'labelhtml' => dol_escape_htmltag($email).' <span class="opacitymedium">('.$langs->trans('TicketEmailOriginIssuer').')</span>',
 						);
 						$seen_emails[] = strtolower($email);
-					} elseif ($ticketstat->origin_email && !in_array(strtolower($ticketstat->origin_email), $seen_emails)) {
+					} elseif ($ticketstat->origin_email && !in_array(strtolower((string) $ticketstat->origin_email), $seen_emails)) {
 						$email = (string) $ticketstat->origin_email;
 						$withto[$email] = array(
 							'id'        => $email,
@@ -1794,8 +1794,8 @@ class FormTicket
 					if ($ticketstat->fk_soc > 0) {
 						$ticketstat->socid = $ticketstat->fk_soc;
 						$ticketstat->fetch_thirdparty();
-						if (!empty($ticketstat->thirdparty->email) && !in_array(strtolower($ticketstat->thirdparty->email), $seen_emails)) {
-							$email = $ticketstat->thirdparty->email;
+						if (!empty($ticketstat->thirdparty->email) && !in_array(strtolower((string) $ticketstat->thirdparty->email), $seen_emails)) {
+							$email = (string) $ticketstat->thirdparty->email;
 							$withto[$email] = array(
 								'id'        => $email,
 								'label'     => $email,
@@ -1958,7 +1958,9 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($fromPublicInterface ? 2 : 1));		// 0=no, 1=from backoffice only, 2=from backoffice+public (very dangerous)
+		// 0=no, 1=backoffice only, 2=backoffice+public. showMessageForm() is always email context, so also honour FCKEDITOR_ENABLE_MAIL.
+		$ckeditorenabledforticket = (getDolGlobalString('FCKEDITOR_ENABLE_TICKET') >= ($fromPublicInterface ? 2 : 1))
+			|| (!$fromPublicInterface && getDolGlobalString('FCKEDITOR_ENABLE_MAIL'));
 
 		print '<!-- Message line from showMessageForm -->';
 		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
