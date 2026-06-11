@@ -1097,4 +1097,92 @@ class CodingPhpTest extends CommonClassTest
 		}
 		return $linenbr;
 	}
+
+	/**
+	 * Data provider for testPHP SQL injection detection verification
+	 *
+	 * @return array<array{content:string,shouldFail:bool,expectedMsg:string}> List of tests for sql injection
+	 */
+	public function testPhpSqlInjectionProvider()
+	{
+		return [
+		'ternary without cast' => [
+			'content' => '<?php $sql .= " VALUES (".(!isset($this->id) ? "NULL" : $this->id).")";',
+			true,
+			'ternary operator in SQL string without proper casting/quoting'
+		],
+		'ternary with int cast' => [
+			'content' => '<?php $sql .= " VALUES (".(!isset($this->id) ? "NULL" : (int) $this->id).")";',
+			false,
+			''
+		],
+		'ternary with float cast' => [
+			'content' => '<?php $sql .= " VALUES (".(!isset($this->qty) ? "0" : (float) $this->qty).")";',
+			false,
+			''
+		],
+		'ternary with escape' => [
+			'content' => '<?php $sql .= " VALUES (\'".$db->escape($this->name)."\')";',
+			false,
+			''
+		],
+		'direct variable without cast' => [
+			'content' => '<?php $sql = "SELECT * FROM t WHERE id=".$id;',
+			true,
+			'non escaped or not casted string'
+		],
+		'direct variable with cast' => [
+			'content' => '<?php $sql = "SELECT * FROM t WHERE id=".((int) $id);',
+			false,
+			''
+		],
+		];
+	}
+
+	/**
+	 * Test that testPHP correctly detects SQL injection patterns
+	 *
+	 * @param string $content       PHP content to test
+	 * @param bool   $shouldFail    Whether testPHP should fail (detect issue)
+	 * @param string $expectedMsg   Part of expected error message
+	 * @return void
+	 *
+	 * @doesNotPerformAssertions
+	 * @dataProvider testPhpSqlInjectionProvider
+	 */
+	public function testTestPhpSqlDetection($content, $shouldFail, $expectedMsg)
+	{
+
+		global $conf;
+
+		$tempFile = tempnam($conf->admin->dir_temp, 'testphp_');
+		file_put_contents($tempFile, $content);
+
+		try {
+			$file = [
+			'name' => 'test.php',
+			'path' => dirname($tempFile),
+			'level1name' => '',
+			'relativename' => 'test/test.php',
+			'fullname' => $tempFile,
+			'date' => date('Y-m-d'),
+			'size' => filesize($tempFile),
+			'perm' => 0644,
+			'type' => 'file'
+			];
+
+			if ($shouldFail) {
+				$this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+				if (!empty($expectedMsg)) {
+					$this->expectExceptionMessageMatches('/'.preg_quote($expectedMsg, '/').'/');
+				}
+			}
+
+			$this->testPHP($file);
+		} finally {
+			if (file_exists($tempFile)) {
+				unlink($tempFile);
+			}
+		}
+	}
 }
