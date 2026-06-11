@@ -101,7 +101,7 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	string		   $sortorder			Sort order
 	 * @param 	int			   $limit				Limit for list
 	 * @param 	int			   $page				Page number
-	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of MyObject objects
 	 * @phan-return array<int,MyObject>
@@ -416,7 +416,7 @@ class MyModuleApi extends DolibarrApi
 
 		unset($object->rowid);
 		unset($object->canvas);
-
+		//BEGIN MODULEBUILDER LINES
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
@@ -427,7 +427,7 @@ class MyModuleApi extends DolibarrApi
 				unset($object->lines[$i]->note);
 			}
 		}
-
+		//END MODULEBUILDER LINES
 		return $object;
 	}
 }

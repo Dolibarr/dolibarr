@@ -266,7 +266,7 @@ class Members extends DolibarrApi
 	 * @param string    $typeid     		ID of the type of member
 	 * @param int		$category   		Use this param to filter list by category
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
-	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:>:'20160101') or (t.nature:is:NULL))"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array    					Array of member objects
@@ -614,6 +614,17 @@ class Members extends DolibarrApi
 			unset($object->total_ttc);
 		}
 
+		// Expose POST-friendly aliases on the Subscription GET response so the
+		// payload returned by GET /members/{id}/subscriptions matches the field
+		// names POST /members/{id}/subscriptions expects (see issue #38279).
+		// $dateh / $datef stay in the response for backward compatibility with
+		// existing consumers; date_start / date_end are the documented names
+		// used by the rest of the codebase (e.g. tasks, expenses, holidays).
+		if ($object instanceof Subscription) {
+			$object->date_start = $object->dateh;
+			$object->date_end = $object->datef;
+		}
+
 		return $object;
 	}
 
@@ -666,6 +677,7 @@ class Members extends DolibarrApi
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Member not found
 	 * @throws	RestException	422		Malformed data
+	 * @throws	RestException	500		server error
 	 */
 	public function createSubscription($id, $start_date, $end_date, $amount, $label = '')
 	{
@@ -675,6 +687,9 @@ class Members extends DolibarrApi
 		if (!is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
 			throw new RestException(422, 'Malformed data: subscription start or end date, or subscription amount, is not numeric');
 		}
+		if ($start_date > $end_date) {
+			throw new RestException(422, 'Malformed data: subscription start is not larger than end date');
+		}
 
 		$member = new Adherent($this->db);
 		$result = $member->fetch($id);
@@ -682,7 +697,12 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
-		return $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
+		if ($result < 1) {
+			throw new RestException(500, $member->error);
+		} else {
+			return $result;
+		}
 	}
 
 	/**

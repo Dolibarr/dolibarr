@@ -43,13 +43,18 @@
        	#require valid-user
 	</Directory>
 
-	# Leaving /public, /dav and /.well_known directory accessible to everyone
-    <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
+	# Leaving /public, /api, /dav and /.well_known directory accessible to everyone (out of the HTTP basic auth if defined)
+    <Directory /home/admin/wwwroot/dolibarr/htdocs/api/>
         AuthType None
         Satisfy any
         Require all granted
     </Directory>
     <Directory /home/admin/wwwroot/dolibarr/htdocs/dav/>
+        AuthType None
+        Satisfy any
+        Require all granted
+    </Directory>
+    <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
         AuthType None
         Satisfy any
         Require all granted

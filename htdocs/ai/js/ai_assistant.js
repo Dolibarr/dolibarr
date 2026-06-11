@@ -589,7 +589,20 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const { getDocument } = await getPdfLib();
             const arrayBuffer = await file.arrayBuffer();
-            const pdf = await getDocument({ data: arrayBuffer }).promise;
+            // cMapUrl + standardFontDataUrl are REQUIRED for PDFs that ship with
+            // custom CID fonts referencing ToUnicode CMaps (extremely common with
+            // generators like TCPDF, wkhtmltopdf, iText, etc.). Without these,
+            // getTextContent() returns raw glyph codes that look like garbled
+            // base64. jsdelivr is used here because cdnjs (used elsewhere for the
+            // pdf.js bundle) does not distribute the cmaps/ and standard_fonts/
+            // resource directories.
+            const PDFJS_RES = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.4.149';
+            const pdf = await getDocument({
+                data: arrayBuffer,
+                cMapUrl: PDFJS_RES + '/cmaps/',
+                cMapPacked: true,
+                standardFontDataUrl: PDFJS_RES + '/standard_fonts/',
+            }).promise;
 
             let fullText = "";
             const totalPages = pdf.numPages; // Get total pages
@@ -688,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 class SpeechPipeline {
                     static task = 'automatic-speech-recognition';
-                    static model = 'Xenova/whisper-small.en'; 
+                    static model = 'Xenova/whisper-small.en';
                     static instance = null;
 
                     static async getInstance(progress_callback = null) {
@@ -931,8 +944,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleConfirmation(action, details, originalIntent) {
-        pendingIntent = originalIntent.arguments.original_intent || originalIntent;
-        const toolName = pendingIntent.tool || 'unknown tool';
+		// original_intent must be provided by parse_intent.php.
+		// If missing, treat as a malformed confirmation and abort.
+		if (!originalIntent.arguments || !originalIntent.arguments.original_intent) {
+			appendMsg('error', t('AIError') + ': malformed confirmation response (missing original_intent). Please try again.');
+			input.disabled = false;
+			input.focus();
+			return;
+		}
+		pendingIntent = originalIntent.arguments.original_intent;
+		const toolName = pendingIntent.tool || 'unknown tool';
         let template = t('ConfirmAiAction');
         let messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
@@ -1009,6 +1030,17 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMsg('system', `<span class="fa fa-circle-notch fa-spin"></span> ${t('ExecutingTool')} ${pendingIntent.tool || ''}...`);
         const loadingMsg = chat.lastElementChild;
         input.disabled = true;
+		// PendingIntent must be a real action tool, never a system tool.
+		// This catches the edge case where handleConfirmation stored the wrong intent.
+		const systemTools = ['ask_for_confirmation', 'ask_for_clarification', 'respond_to_user', 'reject_general_question'];
+		if (!pendingIntent || !pendingIntent.tool || systemTools.includes(pendingIntent.tool)) {
+			loadingMsg.remove();
+			appendMsg('error', t('AIError') + ': cannot execute system tool "' + (pendingIntent && pendingIntent.tool || 'unknown') + '" as an action. Please try again.');
+			pendingIntent = null;
+			input.disabled = false;
+			input.focus();
+			return;
+		}
         try {
             const toolRes = await fetch('execute_tool.php', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },

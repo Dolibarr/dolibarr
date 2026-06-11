@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	// return DOL_VERSION;
 	return constant('DOLCERT_VERSION');
 }
 
@@ -130,7 +129,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
- * Must be the samefields than the one defined as mandatory into the registration form.
+ * Must be the same fields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
@@ -142,9 +141,10 @@ function isRegistrationDataSaved()
 	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
 	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
 	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$companyidprof2 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
-	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
 		return false;
 	}
 
@@ -232,15 +232,15 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  */
 function isALNERunningVersion($blockedlogtestalreadydone = 0)
 {
-	// For Debug help: Constant set by developer to force all LNE restrictions
-	// even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, the enabling of the LNE restrictions,
-	// but there is no way to force the disabling of the LNE restriction.
+	// For Debug help: Constant CERTIF_LNE can be set 2 by developer to force all LNE restrictions
+	// even if the country is not France, so we can test the restrictions on any dev instance.
+	// Note that you can force, with this constant, the enabling of the restrictions,
+	// but there is no way to force the disabling of a restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
 		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1		// Value is 1 when version is certified
 		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
@@ -345,17 +345,17 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
  */
 function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {
-	// Init to avoid warnings if not initialized yet
-	if (!isset($totalamount[$block->action][$block->module_source])) {
-		$totalhtamount[$block->action][$block->module_source] = 0;
-		$totalvatamount[$block->action][$block->module_source] = 0;
-		$totalamount[$block->action][$block->module_source] = 0;
-	}
-
 	if ($block->action == 'BILL_VALIDATE') {
 		$total_ht = $block->object_data->total_ht;
 		$total_vat = $block->object_data->total_tva;
 		$total_ttc = $block->object_data->total_ttc;
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$block->action][$block->module_source])) {
+			$totalhtamount[$block->action][$block->module_source] = 0;
+			$totalvatamount[$block->action][$block->module_source] = 0;
+			$totalamount[$block->action][$block->module_source] = 0;
+		}
 
 		// We add total for the invoice if "invoice validate event" not yet met.
 		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
@@ -372,6 +372,13 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 		//$actionkey = $block->action;
 		$actionkey = 'PAYMENT_CUSTOMER';
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$actionkey][$block->module_source])) {
+			$totalhtamount[$actionkey][$block->module_source] = 0;
+			$totalvatamount[$actionkey][$block->module_source] = 0;
+			$totalamount[$actionkey][$block->module_source] = 0;
+		}
 
 		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
 		$totalvatamount[$actionkey][$block->module_source] += $total_vat;

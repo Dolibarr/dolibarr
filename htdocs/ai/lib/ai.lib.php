@@ -423,9 +423,23 @@ function aiAdminPrepareHead()
 	$h++;
 
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
+		$head[$h][1] = $langs->trans("Assistant");
+		$head[$h][2] = 'assistant';
+		$h++;
+	}
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
 		$head[$h][1] = $langs->trans("MCPServer");
 		$head[$h][2] = 'servermcp';
+		$h++;
+	}
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/configure_tools.php", 1);
+		$head[$h][1] = $langs->trans("ToolAccessControl");
+		$head[$h][2] = 'tools';
 		$h++;
 	}
 

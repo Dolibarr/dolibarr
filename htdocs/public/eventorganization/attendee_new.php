@@ -684,19 +684,22 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-			$sendto = $thirdparty->email;
+			$sendto = !empty($thirdparty->email) ? $thirdparty->email :
+				$confattendee->email;
+
 			$from = getDolGlobalString('MAILING_EMAIL_FROM');
 			$urlback = $_SERVER["REQUEST_URI"];
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
-
-			$result = $mailfile->sendfile();
-			if ($result) {
-				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-			} else {
-				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			if (!empty($sendto)) {
+				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
+				$result = $mailfile->sendfile();
+				if ($result) {
+					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+				} else {
+					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+				}
 			}
 
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
@@ -733,7 +736,7 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center'
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '<span class="eventlabel large">'.dolPrintHTML($project->title . ' '. $conference->label).'</span><br>';
 print '</div>';
 
 // Help text
@@ -765,7 +768,7 @@ if ($project->date_start_event || $project->date_end_event) {
 	print '<br>';
 }
 if ($project->location) {
-	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dol_escape_htmltag($project->location).'<br>';
+	print '<span class="fa fa-map-marked-alt pictofixedwidth opacitymedium"></span>'.dolPrintHTML($project->location).'<br>';
 }
 if ($project->note_public) {
 	print '<br><span class="opacitymedium">'.dol_htmlentitiesbr($project->note_public).'</span><br>';
@@ -805,7 +808,10 @@ if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 dol_htmloutput_errors($errmsg, $errors);
 
 if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS_CONFIRMED) || (!empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
-	if (empty($maxattendees) || $currentnbofattendees < $maxattendees) {
+	if (empty($maxattendees) ||
+		($currentnbofattendees < $maxattendees &&
+			(!getDolGlobalString('EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED') || (getDolGlobalString('EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED') == GETPOST('EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED')))
+		)) {
 		// Print form
 		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
 		print '<input type="hidden" name="token" value="' . newToken() . '" / >';
@@ -815,6 +821,9 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<input type="hidden" name="id" value="' . $conference->id . '" />';
 		print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
 		print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
+		if (GETPOST('EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED')) {
+			print '<input type="hidden" name="EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED" value="' . GETPOST('EVENTORGANIZATION_ALLOW_REGISTRATION_WHEN_MAX_REACHED') . '" />';
+		}
 
 		print '<br>';
 		print '<br>';
