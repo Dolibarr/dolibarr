@@ -889,16 +889,66 @@ class EmailCollector extends CommonObject
 	 */
 	public function doCollect()
 	{
-		global $user;
+		global $conf, $db, $user;
 
 		$nbErrors = 0;
+		$deadlineTs = 0;
+		$cronMaxSeconds = (int) getDolGlobalInt('EMAILCOLLECTOR_CRON_MAX_SECONDS', 0);
+		if ($cronMaxSeconds <= 0) {
+			$phpMaxExecutionTime = (int) ini_get('max_execution_time');
+			if ($phpMaxExecutionTime > 30) {
+				$cronMaxSeconds = $phpMaxExecutionTime - 20;
+			}
+		}
+		if ($cronMaxSeconds > 0) {
+			$deadlineTs = time() + $cronMaxSeconds;
+		}
+		$deadlineGraceSeconds = (int) getDolGlobalInt('EMAILCOLLECTOR_DEADLINE_GRACE_SECONDS', 30);
+		if ($deadlineGraceSeconds < 0) {
+			$deadlineGraceSeconds = 0;
+		}
+		if (!function_exists('dolibarr_set_const')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		}
 
 		$arrayofcollectors = $this->fetchAll($user, 1);
+		$lastCollectorId = (int) getDolGlobalInt('EMAILCOLLECTOR_CRON_LAST_COLLECTOR_ID', 0);
+		if ($lastCollectorId > 0 && count($arrayofcollectors) > 1) {
+			$collectorsAfterLast = array();
+			$collectorsBeforeLast = array();
+			foreach ($arrayofcollectors as $emailcollector) {
+				if ((int) $emailcollector->id > $lastCollectorId) {
+					$collectorsAfterLast[] = $emailcollector;
+				} else {
+					$collectorsBeforeLast[] = $emailcollector;
+				}
+			}
+			if (!empty($collectorsAfterLast)) {
+				$arrayofcollectors = array_merge($collectorsAfterLast, $collectorsBeforeLast);
+			}
+		}
+
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
-			$result = $emailcollector->doCollectOneCollector(0);
+			if ($deadlineTs > 0 && time() >= ($deadlineTs - $deadlineGraceSeconds)) {
+				$msg = 'EmailCollector cron time budget reached before collector ID '.$emailcollector->id.'; remaining collectors deferred';
+				dol_syslog($msg, LOG_WARNING);
+				$this->output .= $msg.'<br>';
+				break;
+			}
+
+			$options = array();
+			if ($deadlineTs > 0) {
+				$options['deadline_ts'] = $deadlineTs;
+				$options['deadline_grace_seconds'] = $deadlineGraceSeconds;
+			}
+
+			$result = $emailcollector->doCollectOneCollector(0, $options);
 
 			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
+			if (function_exists('dolibarr_set_const')) {
+				dolibarr_set_const($db, 'EMAILCOLLECTOR_CRON_LAST_COLLECTOR_ID', (string) $emailcollector->id, 'chaine', 0, '', (int) $conf->entity);
+			}
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
 			if (!empty($emailcollector->errors)) {
@@ -1118,12 +1168,164 @@ class EmailCollector extends CommonObject
 	}
 
 	/**
+	 * Normalize an OAuth service key so it can be used with Dolibarr OAuth constants.
+	 *
+	 * @param	string	$oauthService			OAuth service key from email collector or token storage
+	 * @param	array<string,array<string,string>>	$supportedoauth2array	List returned by getSupportedOauth2Array()
+	 * @return	string							Normalized key, or empty string if unsupported
+	 */
+	protected function normalizeOAuthServiceKey($oauthService, $supportedoauth2array)
+	{
+		$oauthService = trim((string) $oauthService);
+		if ($oauthService === '') {
+			return '';
+		}
+
+		if (preg_match('/^OAUTH_(.*)_ID$/', $oauthService, $reg)) {
+			$oauthService = $reg[1];
+		}
+
+		if (preg_match('/^.*-/', $oauthService)) {
+			$keyforprovider = preg_replace('/^.*-/', '', $oauthService);
+		} else {
+			$keyforprovider = '';
+		}
+
+		$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($oauthService));
+		$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+		if (empty($supportedoauth2array[$keyforsupportedoauth2array])) {
+			return '';
+		}
+
+		$callbackfile = empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? '' : strtoupper($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']);
+		if ($callbackfile === '') {
+			return '';
+		}
+
+		return $callbackfile.($keyforprovider ? '-'.$keyforprovider : '');
+	}
+
+	/**
+	 * Add a normalized OAuth service candidate to a set.
+	 *
+	 * @param	array<string,int>	$candidates				Candidates set
+	 * @param	string				$oauthService			OAuth service key
+	 * @param	array<string,array<string,string>>	$supportedoauth2array	List returned by getSupportedOauth2Array()
+	 * @return	void
+	 */
+	protected function addOAuthServiceCandidate(&$candidates, $oauthService, $supportedoauth2array)
+	{
+		$oauthService = $this->normalizeOAuthServiceKey($oauthService, $supportedoauth2array);
+		if ($oauthService !== '') {
+			$candidates[$oauthService] = 1;
+		}
+	}
+
+	/**
+	 * Return the only OAuth service candidate if the set is unambiguous.
+	 *
+	 * @param	array<string,int>	$candidates		Candidates set
+	 * @return	string								OAuth service key, or empty string
+	 */
+	protected function getSingleOAuthServiceCandidate($candidates)
+	{
+		if (count($candidates) !== 1) {
+			return '';
+		}
+
+		$oauthServiceKeys = array_keys($candidates);
+		return (string) $oauthServiceKeys[0];
+	}
+
+	/**
+	 * Resolve an OAuth service for legacy/malformed collectors missing oauth_service.
+	 *
+	 * @param	array<string,array<string,string>>	$supportedoauth2array	List returned by getSupportedOauth2Array()
+	 * @return	string							OAuth service key, or empty string if it cannot be resolved safely
+	 */
+	protected function resolveOAuthServiceForCollector($supportedoauth2array)
+	{
+		$oauthService = $this->normalizeOAuthServiceKey($this->oauth_service, $supportedoauth2array);
+		if ($oauthService !== '') {
+			return $oauthService;
+		}
+
+		/** @var array<string,int> $candidates */
+		$candidates = array();
+		$entity = empty($this->entity) ? 0 : (int) $this->entity;
+
+		// First, reuse the service already configured on collectors for the same mailbox.
+		$sql = "SELECT DISTINCT oauth_service";
+		$sql .= " FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector";
+		$sql .= " WHERE acces_type = 1";
+		$sql .= " AND oauth_service IS NOT NULL AND oauth_service <> ''";
+		if ($entity > 0) {
+			$sql .= " AND entity = ".((int) $entity);
+		} else {
+			$sql .= " AND entity IN (".getEntity('emailcollector').")";
+		}
+		if (!empty($this->host)) {
+			$sql .= " AND host = '".$this->db->escape($this->host)."'";
+		}
+		if (!empty($this->login)) {
+			$sql .= " AND login = '".$this->db->escape($this->login)."'";
+		}
+		if (!empty($this->id)) {
+			$sql .= " AND rowid <> ".((int) $this->id);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->addOAuthServiceCandidate($candidates, $obj->oauth_service, $supportedoauth2array);
+			}
+			$this->db->free($resql);
+		} else {
+			dol_syslog(__METHOD__." failed to read emailcollector OAuth candidates: ".$this->db->lasterror(), LOG_WARNING);
+		}
+
+		$oauthService = $this->getSingleOAuthServiceCandidate($candidates);
+		if ($oauthService !== '') {
+			return $oauthService;
+		}
+
+		// If no peer collector gives a unique answer, fall back to the token stored for this entity.
+		/** @var array<string,int> $candidates */
+		$candidates = array();
+		$sql = "SELECT DISTINCT service";
+		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
+		$sql .= " WHERE service IS NOT NULL AND service <> ''";
+		if ($entity > 0) {
+			$sql .= " AND entity = ".((int) $entity);
+		} else {
+			$sql .= " AND entity IN (".getEntity('oauth_token').")";
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->addOAuthServiceCandidate($candidates, $obj->service, $supportedoauth2array);
+			}
+			$this->db->free($resql);
+		} else {
+			dol_syslog(__METHOD__." failed to read OAuth token candidates: ".$this->db->lasterror(), LOG_WARNING);
+		}
+
+		return $this->getSingleOAuthServiceCandidate($candidates);
+	}
+
+	/**
 	 * Execute collect for current collector loaded previously with fetch.
 	 *
+	 * Supported option keys:
+	 * - deadline_ts (int): Stop cleanly before this unix timestamp
+	 * - deadline_grace_seconds (int): Safety margin before deadline
+	 *
 	 * @param	int<0,2>	$mode	0=Mode production, 1=Mode test (read IMAP and try SQL update then rollback), 2=Mode test with no SQL updates
+	 * @param	array<string,int>	$options Optional options
 	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
-	public function doCollectOneCollector($mode = 0)
+	public function doCollectOneCollector($mode = 0, $options = array())
 	{
 		global $db, $conf, $langs, $user;
 		global $hookmanager;
@@ -1131,9 +1333,6 @@ class EmailCollector extends CommonObject
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
-		}
 
 		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_INFO);
 
@@ -1143,6 +1342,69 @@ class EmailCollector extends CommonObject
 		$this->output = '';
 		$this->error = '';
 		$this->debuginfo = '';
+
+		$wantPhpImap = (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP') > 0);
+		$usePhpImap = $wantPhpImap;
+		$phpImapLoadError = '';
+		if ($wantPhpImap) {
+			$collectorMemoryLimit = trim(getDolGlobalString('EMAILCOLLECTOR_MEMORY_LIMIT', ''));
+			if ($collectorMemoryLimit !== '') {
+				@ini_set('memory_limit', $collectorMemoryLimit);
+			}
+
+			$autoloadFile = DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
+			if (!file_exists($autoloadFile)) {
+				$usePhpImap = false;
+				$phpImapLoadError = 'PHP-IMAP autoloader not found at '.$autoloadFile;
+			} else {
+				try {
+					require_once $autoloadFile;
+				} catch (\Throwable $e) {
+					$usePhpImap = false;
+					$phpImapLoadError = $e->getMessage();
+				}
+			}
+
+			if ($usePhpImap && !class_exists('Webklex\\PHPIMAP\\ClientManager')) {
+				$usePhpImap = false;
+				$phpImapLoadError = 'Class Webklex\\PHPIMAP\\ClientManager not found after loading '.$autoloadFile;
+			}
+
+			if (!$usePhpImap) {
+				$this->debuginfo .= 'MAIN_IMAP_USE_PHPIMAP is enabled but PHP-IMAP could not be loaded: '.dol_escape_htmltag($phpImapLoadError).'<br>';
+				dol_syslog("EmailCollector::doCollectOneCollector PHP-IMAP not available: ".$phpImapLoadError, LOG_WARNING);
+			}
+		}
+
+		// OAuth collectors need PHP-IMAP library.
+		if ((int) $this->acces_type === 1 && !$usePhpImap) {
+			$this->error = 'This Email Collector uses OAuth2 but the PHP-IMAP mode is not available. '.($wantPhpImap ? $phpImapLoadError : 'Option MAIN_IMAP_USE_PHPIMAP is disabled.');
+			$this->errors[] = $this->error;
+			dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$options = (is_array($options) ? $options : array());
+		$deadlineTs = (!empty($options['deadline_ts']) ? (int) $options['deadline_ts'] : 0);
+		$deadlineGraceSeconds = (!empty($options['deadline_grace_seconds']) ? (int) $options['deadline_grace_seconds'] : 30);
+		if ($deadlineGraceSeconds < 0) {
+			$deadlineGraceSeconds = 0;
+		}
+		$collectorMaxSeconds = (empty($mode) ? (int) getDolGlobalInt('EMAILCOLLECTOR_COLLECTOR_MAX_SECONDS', 0) : 0);
+		if ($collectorMaxSeconds > 0) {
+			$collectorDeadlineTs = time() + $collectorMaxSeconds;
+			if ($deadlineTs <= 0 || $collectorDeadlineTs < $deadlineTs) {
+				$deadlineTs = $collectorDeadlineTs;
+			}
+		}
+		$timeBudgetReached = false;
+		$timeBudgetReason = '';
+
+		$maxEmailsThisRun = (int) $this->maxemailpercollect;
+		$initialMaxEmails = (int) getDolGlobalInt('EMAILCOLLECTOR_INITIAL_MAX_EMAILS', 0);
+		if ($initialMaxEmails > 0 && empty($this->datelastresult) && ($maxEmailsThisRun <= 0 || $maxEmailsThisRun > $initialMaxEmails)) {
+			$maxEmailsThisRun = $initialMaxEmails;
+		}
 
 		$search = '';
 		$searchhead = '';
@@ -1165,6 +1427,15 @@ class EmailCollector extends CommonObject
 
 		$now = dol_now();
 		$datelastok = $now;
+		$previousDatelastok = $this->datelastok;
+		$lastProcessedEmailDate = 0;
+		$initialLookbackDays = (int) getDolGlobalInt('EMAILCOLLECTOR_INITIAL_LOOKBACK_DAYS', 0);
+		if ($initialLookbackDays < 0) {
+			$initialLookbackDays = 0;
+		}
+		if ($initialLookbackDays > 3650) {
+			$initialLookbackDays = 3650;
+		}
 
 		if (empty($this->host)) {
 			$this->error = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('EMailHost'));
@@ -1207,7 +1478,7 @@ class EmailCollector extends CommonObject
 			$this->debuginfo .= 'IMAP timeouts: connect='.$timeoutconnect.'s, read='.$timeoutread.'s<br>';
 		}
 
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+		if ($usePhpImap) {
 			if ($this->acces_type == 1) {
 				// Mode OAUth2 (access_type == 1) with PHP-IMAP
 				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=1 (OAUTH2)<br>';
@@ -1216,7 +1487,20 @@ class EmailCollector extends CommonObject
 
 				$supportedoauth2array = getSupportedOauth2Array();
 
-				$keyforsupportedoauth2array = $this->oauth_service;
+				$resolvedOauthService = $this->resolveOAuthServiceForCollector($supportedoauth2array);
+				if ($resolvedOauthService === '') {
+					$this->error = 'OAuth service is missing or unsupported for this Email Collector. Set field oauth_service on collector id '.((int) $this->id).'.';
+					$this->errors[] = $this->error;
+					dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
+					return -1;
+				}
+				if ((string) $this->oauth_service !== $resolvedOauthService) {
+					$this->debuginfo .= 'Recovered missing OAuth service as '.dol_escape_htmltag($resolvedOauthService).'<br>';
+					dol_syslog("EmailCollector::doCollectOneCollector recovered missing oauth_service for collector id=".((int) $this->id)." as ".$resolvedOauthService, LOG_WARNING);
+					$this->oauth_service = $resolvedOauthService;
+				}
+
+				$keyforsupportedoauth2array = $resolvedOauthService;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 				} else {
@@ -1224,16 +1508,18 @@ class EmailCollector extends CommonObject
 				}
 				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
-
-				if (!empty($supportedoauth2array)) {
-					$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
-					$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
-					$OAUTH_SERVICENAME = $nameofservice;
-				} else {
-					$OAUTH_SERVICENAME = 'Unknown';
+				if (empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'])) {
+					$this->error = 'OAuth service '.$resolvedOauthService.' is not supported by this Dolibarr installation.';
+					$this->errors[] = $this->error;
+					dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
+					return -1;
 				}
 
-				$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+				$nameofservice = ucfirst(strtolower((string) $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+				$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+				$OAUTH_SERVICENAME = $nameofservice;
+
+				$keyforparamtenant = 'OAUTH_'.strtoupper((string) $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
@@ -1258,9 +1544,9 @@ class EmailCollector extends CommonObject
 					if (is_object($tokenobj) && $expire) {
 						$this->debuginfo .= 'Refresh token '.$OAUTH_SERVICENAME.'<br>';
 						$credentials = new Credentials(
-							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
-							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLCALLBACK')
+							getDolGlobalString('OAUTH_'.$resolvedOauthService.'_ID'),
+							getDolGlobalString('OAUTH_'.$resolvedOauthService.'_SECRET'),
+							getDolGlobalString('OAUTH_'.$resolvedOauthService.'_URLCALLBACK')
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1376,7 +1662,7 @@ class EmailCollector extends CommonObject
 		}
 
 		$criteria = array();
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+		if ($usePhpImap) {
 			// Use PHPIMAP external library
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			foreach ($this->filters as $rule) {
@@ -1565,6 +1851,8 @@ class EmailCollector extends CommonObject
 				$fromdate = 0;
 				if ($this->datelastok) {
 					$fromdate = $this->datelastok;
+				} elseif ($initialLookbackDays > 0) {
+					$fromdate = $now - ($initialLookbackDays * 86400);
 				}
 				if ($fromdate > 0) {
 					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
@@ -1768,6 +2056,8 @@ class EmailCollector extends CommonObject
 				$fromdate = 0;
 				if ($this->datelastok) {
 					$fromdate = $this->datelastok;
+				} elseif ($initialLookbackDays > 0) {
+					$fromdate = $now - ($initialLookbackDays * 86400);
 				}
 				if ($fromdate > 0) {
 					// IMAP SINCE works by day; keep a 1-day overlap so we don't miss emails left unprocessed (e.g. discarded by filters).
@@ -1794,7 +2084,7 @@ class EmailCollector extends CommonObject
 		$arrayofemail = array();
 		$Query = 0;
 
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
+		if ($usePhpImap && is_object($client)) {
 			try {
 				// Uncomment this to output debug info
 				//$client->getConnection()->enableDebug();
@@ -1843,7 +2133,10 @@ class EmailCollector extends CommonObject
 				if ($mode > 0) {
 					$Query->leaveUnread();
 				}
-				$arrayofemail = $Query->limit($this->maxemailpercollect)->setFetchOrder("asc")->get();
+				if ($maxEmailsThisRun > 0) {
+					$Query->limit($maxEmailsThisRun);
+				}
+				$arrayofemail = $Query->setFetchOrder("asc")->get();
 				dol_syslog("EmailCollector::doCollectOneCollector nb arrayofemail ".(is_array($arrayofemail) ? count($arrayofemail) : 'Not array'));	// @phpstan-ignore-line
 			} catch (Exception $e) {
 				$this->error = $e->getMessage();
@@ -1891,12 +2184,17 @@ class EmailCollector extends CommonObject
 			$richarrayofemail = array();
 
 			foreach ($arrayofemail as $imapemail) {
+				if ($deadlineTs > 0 && time() >= ($deadlineTs - $deadlineGraceSeconds)) {
+					$timeBudgetReached = true;
+					$timeBudgetReason = 'before fetching more headers';
+					break;
+				}
 				if ($nbemailprocessed > 1000) {
 					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
 				}
 
 				// GET header and overview datas
-				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					$header = $imapemail->getHeader()->raw;  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					$overview = $imapemail->getAttributes();
@@ -1922,6 +2220,11 @@ class EmailCollector extends CommonObject
 
 			$iforemailloop = 0;
 			foreach ($richarrayofemail as $tmpval) {
+				if ($deadlineTs > 0 && time() >= ($deadlineTs - $deadlineGraceSeconds)) {
+					$timeBudgetReached = true;
+					$timeBudgetReason = 'before processing next email';
+					break;
+				}
 				$iforemailloop++;
 
 				$imapemail = $tmpval['imapemail'];
@@ -1942,9 +2245,14 @@ class EmailCollector extends CommonObject
 					$headers['Subject'] = $headers['subject'];
 				}
 
+				$currentEmailDate = !empty($headers['Date']) ? strtotime($headers['Date']) : 0;
+				if ($currentEmailDate === false) {
+					$currentEmailDate = 0;
+				}
+
 				$headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
-				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					$emailto = (string) $overview['to'];
 				} else {
 					$emailto = $this->decodeSMTPSubject($overview[0]->to);
@@ -1952,7 +2260,7 @@ class EmailCollector extends CommonObject
 
 				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
-				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
@@ -2130,7 +2438,7 @@ class EmailCollector extends CommonObject
 				$candidaturefoundby = '';
 
 
-				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					$dateformated = dol_print_date($overview['date'], 'dayrfc', 'gmt');		// May generate a warning "dol_print_date($overview['date'], 'dayrfc', 'gmt')" in log
 					dol_syslog("msgid=".$overview['message_id']." date=".$dateformated." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
@@ -2149,7 +2457,7 @@ class EmailCollector extends CommonObject
 				// GET IMAP email structure/content
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
-				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
 					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					// Reset message body globals to prevent carryover from previous email in loop
@@ -2239,7 +2547,7 @@ class EmailCollector extends CommonObject
 				$fromstring = '';
 				$replytostring = '';
 
-				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+				if ($usePhpImap) {
 					$fromstring = $this->decodeSMTPSubject((string) ($overview['from'] ?? ''));
 					$replytostring = !empty($headers['Reply-To']) ? $this->decodeSMTPSubject($headers['Reply-To']) : '';
 
@@ -3262,7 +3570,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+												if ($usePhpImap) {
 													foreach ($attachments as $attachment) {
 														$attachment->save($destdir.'/');
 													}
@@ -3280,7 +3588,7 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
-							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+							if ($usePhpImap) {
 								foreach ($attachments as $attachment) {
 									if ($attachment->getName() === 'undefined') {
 										continue;
@@ -3578,7 +3886,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+												if ($usePhpImap) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -3739,7 +4047,7 @@ class EmailCollector extends CommonObject
 												if (!dol_is_dir($destdir)) {
 													dol_mkdir($destdir);
 												}
-												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+												if ($usePhpImap) {
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
 														$typeattachment = (string) $attachment->getDisposition();
@@ -3919,7 +4227,7 @@ class EmailCollector extends CommonObject
 				// Error for email or not ?
 				if (!$errorforactions) {
 					if (!empty($targetdir)) {
-						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+						if ($usePhpImap) {
 							// Move mail using PHP-IMAP
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".($imapemail->getHeader()->get('subject'))." to ".$targetdir, LOG_DEBUG);
 							$operationslog .= '<br>Move mail '.($this->uidAsString($imapemail)).' - '.$msgid.' - '.$imapemail->getHeader()->get('subject').' to '.$targetdir;
@@ -3934,7 +4242,7 @@ class EmailCollector extends CommonObject
 							// Note: Real move is done later using $arrayofemailtodelete
 						}
 					} else {
-						if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+						if ($usePhpImap) {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." '".($imapemail->getHeader()->get('subject'))."' using this->host=".$this->host.", this->access_type=".$this->acces_type." was set to read", LOG_DEBUG);
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".($this->uidAsString($imapemail))." to ".$connectstringtarget." was set to read", LOG_DEBUG);
@@ -3951,6 +4259,9 @@ class EmailCollector extends CommonObject
 				unset($contactstatic);
 
 				$nbemailprocessed++;
+				if ($currentEmailDate > 0) {
+					$lastProcessedEmailDate = $currentEmailDate;
+				}
 
 				if (!$errorforemail) {
 					$nbactiondone += $nbactiondoneforemail;
@@ -3963,7 +4274,7 @@ class EmailCollector extends CommonObject
 					}
 
 					// Stop the loop to process email if we reach maximum collected per collect
-					if ($this->maxemailpercollect > 0 && $nbemailok >= $this->maxemailpercollect) {
+					if ($maxEmailsThisRun > 0 && $nbemailok >= $maxEmailsThisRun) {
 						dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
 						$datelastok = strtotime($headers['Date']); // Set datetime
 						break;
@@ -3976,6 +4287,10 @@ class EmailCollector extends CommonObject
 			}
 
 			$output = $langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
+			if ($timeBudgetReached) {
+				$output .= ' - Time budget reached'.($timeBudgetReason !== '' ? ' ('.$timeBudgetReason.')' : '').'; remaining emails deferred';
+				$operationslog .= '<br>Time budget reached'.($timeBudgetReason !== '' ? ' ('.dol_escape_htmltag($timeBudgetReason).')' : '').'; remaining emails deferred';
+			}
 
 			dol_syslog("End of loop on emails", LOG_INFO, -1);
 		} else {
@@ -3985,7 +4300,7 @@ class EmailCollector extends CommonObject
 		}
 
 		// Disconnect
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+		if ($usePhpImap) {
 			// We sort to move/delete array with the more recent first (with higher number) so renumbering does not affect number of others to delete
 			krsort($arrayofemailtodelete, SORT_NUMERIC);
 
@@ -4054,7 +4369,7 @@ class EmailCollector extends CommonObject
 
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
-		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+		if ($usePhpImap) {
 			$this->debuginfo .= 'IMAP search array used : '.$search;
 		} else {
 			$this->debuginfo .= 'IMAP search string used : '.$search;
@@ -4067,6 +4382,13 @@ class EmailCollector extends CommonObject
 		}
 
 		if (empty($error) && empty($mode)) {
+			if ($timeBudgetReached) {
+				if ($lastProcessedEmailDate > 0) {
+					$datelastok = $lastProcessedEmailDate;
+				} elseif (!empty($previousDatelastok)) {
+					$datelastok = $previousDatelastok;
+				}
+			}
 			$this->datelastok = $datelastok;
 		}
 
