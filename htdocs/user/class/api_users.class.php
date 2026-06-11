@@ -723,6 +723,12 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Group not found');
 		}
 
+		if ($load_members > 0 && is_array($group_static->members) && count($group_static->members) > 0) {
+			foreach ($group_static->members as &$member) {
+				$member = $this->_cleanObjectDatas($member);
+			}
+		}
+
 		return $this->_cleanObjectDatas($group_static);
 	}
 

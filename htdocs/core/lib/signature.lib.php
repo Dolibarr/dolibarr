@@ -204,6 +204,11 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".(empty($obj->entity) ? '' : (int) $obj->entity); // Check the entity because we may have the same reference in several entities
+	} elseif ($mode == 0) {
+		// Bcrypt output (dol_hash type '0') can legitimately end with '.' or '/', which Gmail and several mobile mail
+		// clients strip from autolinked URLs and break the signature link. Append a stable trailing parameter that
+		// the receiver ignores so the URL never ends with the hash. Only for the real URL (mode 0), not the preview.
+		$out .= "&_=1";
 	}
 
 	return $out;
