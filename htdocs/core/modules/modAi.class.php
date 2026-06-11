@@ -158,49 +158,49 @@ class modAi extends DolibarrModules
 				5 => array('AI_EMAILCLEANER_ISOLATED_MODE', 'yesno', '1', 'Force isolated cleaner runtime (no business decision / no cross-module side effects)', 0, 'current'),
 			);
 
-		// Some keys to add into the overwriting translation tables
-		/*$this->overwrite_translation = array(
+			// Some keys to add into the overwriting translation tables
+			/*$this->overwrite_translation = array(
 			'en_US:ParentCompany'=>'Parent company or reseller',
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
-		)*/
+			)*/
 
-		if (!isset($conf->ai) || !isset($conf->ai->enabled)) {
-			$conf->ai = new stdClass();
-			$conf->ai->enabled = 0;
-		}
+			if (!isset($conf->ai) || !isset($conf->ai->enabled)) {
+				$conf->ai = new stdClass();
+				$conf->ai->enabled = 0;
+			}
 
-		// Array to add new pages in new tabs
-		$this->tabs = array();
-		// Example:
-		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@ai:$user->hasRight('ai','read'):/ai/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@ai:$user->hasRight('othermodule','read'):/ai/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-		//
-		// Where objecttype can be
-		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-		// 'contact'          to add a tab in contact view
-		// 'contract'         to add a tab in contract view
-		// 'group'            to add a tab in group view
-		// 'intervention'     to add a tab in intervention view
-		// 'invoice'          to add a tab in customer invoice view
-		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in foundation member view
-		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
-		// 'order_supplier'   to add a tab in supplier order view
-		// 'payment'		  to add a tab in payment view
-		// 'payment_supplier' to add a tab in supplier payment view
-		// 'product'          to add a tab in product view
-		// 'propal'           to add a tab in propal view
-		// 'project'          to add a tab in project view
-		// 'stock'            to add a tab in stock view
-		// 'thirdparty'       to add a tab in third party view
-		// 'user'             to add a tab in user view
+			// Array to add new pages in new tabs
+			$this->tabs = array();
+			// Example:
+			// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@ai:$user->hasRight('ai','read'):/ai/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
+			// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@ai:$user->hasRight('othermodule','read'):/ai/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+			// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+			//
+			// Where objecttype can be
+			// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
+			// 'contact'          to add a tab in contact view
+			// 'contract'         to add a tab in contract view
+			// 'group'            to add a tab in group view
+			// 'intervention'     to add a tab in intervention view
+			// 'invoice'          to add a tab in customer invoice view
+			// 'invoice_supplier' to add a tab in supplier invoice view
+			// 'member'           to add a tab in foundation member view
+			// 'opensurveypoll'	  to add a tab in opensurvey poll view
+			// 'order'            to add a tab in customer order view
+			// 'order_supplier'   to add a tab in supplier order view
+			// 'payment'		  to add a tab in payment view
+			// 'payment_supplier' to add a tab in supplier payment view
+			// 'product'          to add a tab in product view
+			// 'propal'           to add a tab in propal view
+			// 'project'          to add a tab in project view
+			// 'stock'            to add a tab in stock view
+			// 'thirdparty'       to add a tab in third party view
+			// 'user'             to add a tab in user view
 
-		// Dictionaries
-		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
+			// Dictionaries
+			$this->dictionaries = array();
+			/* Example:
+			$this->dictionaries=array(
 			'langs'=>'ai@ai',
 			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
@@ -222,23 +222,23 @@ class modAi extends DolibarrModules
 			'tabcond'=>array($conf->ai->enabled, $conf->ai->enabled, $conf->ai->enabled)
 			// Help tooltip for each fields of the dictionary
 			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp')))
-		);
-		*/
+			);
+			*/
 
-		// Boxes/Widgets
-		// Add here list of php file(s) stored in ai/core/boxes that contains a class to show a widget.
-		$this->boxes = array(
+			// Boxes/Widgets
+			// Add here list of php file(s) stored in ai/core/boxes that contains a class to show a widget.
+			$this->boxes = array(
 			//  0 => array(
 			//      'file' => 'aiwidget1.php@ai',
 			//      'note' => 'Widget provided by Ai',
 			//      'enabledbydefaulton' => 'Home',
 			//  ),
 			//  ...
-		);
+			);
 
-		// Cronjobs (List of cron jobs entries to add when module is enabled)
-		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
-		$this->cronjobs = array(
+			// Cronjobs (List of cron jobs entries to add when module is enabled)
+			// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+			$this->cronjobs = array(
 			//  0 => array(
 			//      'label' => 'MyJob label',
 			//      'jobtype' => 'method',
@@ -253,104 +253,104 @@ class modAi extends DolibarrModules
 			//      'test' => 'isModEnabled('ai')',
 			//      'priority' => 50,
 			//  ),
-		);
-		// Example: $this->cronjobs=array(
-		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'$conf->ai->enabled', 'priority'=>50),
-		//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'$conf->ai->enabled', 'priority'=>50)
-		// );
+			);
+			// Example: $this->cronjobs=array(
+			//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'$conf->ai->enabled', 'priority'=>50),
+			//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'$conf->ai->enabled', 'priority'=>50)
+			// );
 
-		// Permissions provided by this module
-		$this->rights = array();
-		$r = 0;
-		// Add here entries to declare new permissions
-		/* BEGIN MODULEBUILDER PERMISSIONS */
-		// Right to use the AI Assistant chat (read-level access to the AI workflow).
-		//
-		// NOT granted by default: per the GDPR / EU AI Act discussion on
-		// issue #38331 (and feedback by @sonikf and @eldy on this PR),
-		// AI Assistant usage must be attributed explicitly by an admin to
-		// the users/groups who are authorized to send organisational data
-		// to the configured LLM provider. The admin is typically the GDPR
-		// DPO officer who is also the de-facto DPA for the AI module, and
-		// owns the per-user authorization decision.
-		//
-		// Setup access intentionally remains a hard $user->admin check
-		// (technical setup, no dedicated right declared) so that the
-		// API-key configuration of the AI module stays in admin scope,
-		// in line with how every other Dolibarr module is configured.
-		$this->rights[$r][0] = $this->numero + 1;
-		$this->rights[$r][1] = 'Use the AI Assistant';
-		$this->rights[$r][3] = 0;	// default: NOT granted
-		$this->rights[$r][4] = 'assistant';
-		$this->rights[$r][5] = 'use';
-		$r++;
-		/* END MODULEBUILDER PERMISSIONS */
+			// Permissions provided by this module
+			$this->rights = array();
+			$r = 0;
+			// Add here entries to declare new permissions
+			/* BEGIN MODULEBUILDER PERMISSIONS */
+			// Right to use the AI Assistant chat (read-level access to the AI workflow).
+			//
+			// NOT granted by default: per the GDPR / EU AI Act discussion on
+			// issue #38331 (and feedback by @sonikf and @eldy on this PR),
+			// AI Assistant usage must be attributed explicitly by an admin to
+			// the users/groups who are authorized to send organisational data
+			// to the configured LLM provider. The admin is typically the GDPR
+			// DPO officer who is also the de-facto DPA for the AI module, and
+			// owns the per-user authorization decision.
+			//
+			// Setup access intentionally remains a hard $user->admin check
+			// (technical setup, no dedicated right declared) so that the
+			// API-key configuration of the AI module stays in admin scope,
+			// in line with how every other Dolibarr module is configured.
+			$this->rights[$r][0] = $this->numero + 1;
+			$this->rights[$r][1] = 'Use the AI Assistant';
+			$this->rights[$r][3] = 0;	// default: NOT granted
+			$this->rights[$r][4] = 'assistant';
+			$this->rights[$r][5] = 'use';
+			$r++;
+			/* END MODULEBUILDER PERMISSIONS */
 
-		// Main menu entries to add
-		$this->menu = array();
-		$r = 0;
-		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
-		/* END MODULEBUILDER TOPMENU */
+			// Main menu entries to add
+			$this->menu = array();
+			$r = 0;
+			// Add here entries to declare new menus
+			/* BEGIN MODULEBUILDER TOPMENU */
+			/* END MODULEBUILDER TOPMENU */
 
-		/* BEGIN MODULEBUILDER LEFTMENU AI */
-		/* END MODULEBUILDER LEFTMENU AI */
+			/* BEGIN MODULEBUILDER LEFTMENU AI */
+			/* END MODULEBUILDER LEFTMENU AI */
 
-		/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
-		/* END MODULEBUILDER LEFTMENU AVAILABILITIES */
+			/* BEGIN MODULEBUILDER LEFTMENU AVAILABILITIES
+			/* END MODULEBUILDER LEFTMENU AVAILABILITIES */
 
-		// Exports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT AVAILABILITIES */
-		/*
-		$langs->load("agenda");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='availabilities@ai';
-		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'Availabilities'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilities@ai';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
-		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		//$keyforclass = 'AvailabilitiesLine'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilitiesline@ai'; $keyforalias='tl';
-		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@ai';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$keyforselect='availabilitiesline'; $keyforaliasextra='extraline'; $keyforelement='availabilitiesline@ai';
-		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r] = array('availabilitiesline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		//$this->export_special_array[$r] = array('t.field'=>'...');
-		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
-		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'availabilities as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'availabilities_line as tl ON tl.fk_availabilities = t.rowid';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('availabilities').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT AVAILABILITIES */
+			// Exports profiles provided by this module
+			$r = 1;
+			/* BEGIN MODULEBUILDER EXPORT AVAILABILITIES */
+			/*
+			$langs->load("agenda");
+			$this->export_code[$r]=$this->rights_class.'_'.$r;
+			$this->export_label[$r]='AvailabilitiesLines';  // Translation key (used only if key ExportDataset_xxx_z not found)
+			$this->export_icon[$r]='availabilities@ai';
+			// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
+			$keyforclass = 'Availabilities'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilities@ai';
+			include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+			//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
+			//unset($this->export_fields_array[$r]['t.fieldtoremove']);
+			//$keyforclass = 'AvailabilitiesLine'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilitiesline@ai'; $keyforalias='tl';
+			//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+			$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@ai';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+			//$keyforselect='availabilitiesline'; $keyforaliasextra='extraline'; $keyforelement='availabilitiesline@ai';
+			//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+			//$this->export_dependencies_array[$r] = array('availabilitiesline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+			//$this->export_special_array[$r] = array('t.field'=>'...');
+			//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
+			//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
+			$this->export_sql_start[$r]='SELECT DISTINCT ';
+			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'availabilities as t';
+			//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'availabilities_line as tl ON tl.fk_availabilities = t.rowid';
+			$this->export_sql_end[$r] .=' WHERE 1 = 1';
+			$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('availabilities').')';
+			$r++; */
+			/* END MODULEBUILDER EXPORT AVAILABILITIES */
 
-		// Imports profiles provided by this module
-		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
-		/*
-		$langs->load("agenda");
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]='AvailabilitiesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->import_icon[$r]='availabilities@ai';
-		$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'ai_availabilities', 'extra' => MAIN_DB_PREFIX.'ai_availabilities_extrafields');
-		$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
-		$import_sample = array();
-		$keyforclass = 'Availabilities'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilities@ai';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
-		$import_extrafield_sample = array();
-		$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@ai';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'ai_availabilities');
-		$this->import_regex_array[$r] = array();
-		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
-		$this->import_convertvalue_array[$r] = array(
+			// Imports profiles provided by this module
+			$r = 1;
+			/* BEGIN MODULEBUILDER IMPORT AVAILABILITIES */
+			/*
+			$langs->load("agenda");
+			$this->import_code[$r]=$this->rights_class.'_'.$r;
+			$this->import_label[$r]='AvailabilitiesLines';  // Translation key (used only if key ExportDataset_xxx_z not found)
+			$this->import_icon[$r]='availabilities@ai';
+			$this->import_tables_array[$r] = array('t' => MAIN_DB_PREFIX.'ai_availabilities', 'extra' => MAIN_DB_PREFIX.'ai_availabilities_extrafields');
+			$this->import_tables_creator_array[$r] = array('t' => 'fk_user_author'); // Fields to store import user id
+			$import_sample = array();
+			$keyforclass = 'Availabilities'; $keyforclassfile='/ai/class/availabilities.class.php'; $keyforelement='availabilities@ai';
+			include DOL_DOCUMENT_ROOT.'/core/commonfieldsinimport.inc.php';
+			$import_extrafield_sample = array();
+			$keyforselect='availabilities'; $keyforaliasextra='extra'; $keyforelement='availabilities@ai';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
+			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'ai_availabilities');
+			$this->import_regex_array[$r] = array();
+			$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+			$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
+			$this->import_convertvalue_array[$r] = array(
 			't.ref' => array(
 				'rule'=>'getrefifauto',
 				'class'=>(empty($conf->global->BOOKCAL_AVAILABILITIES_ADDON) ? 'mod_availabilities_standard' : $conf->global->BOOKCAL_AVAILABILITIES_ADDON),
@@ -361,9 +361,9 @@ class modAi extends DolibarrModules
 			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
 			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),
-		);
-		$r++; */
-		/* END MODULEBUILDER IMPORT AVAILABILITIES */
+			);
+			$r++; */
+			/* END MODULEBUILDER IMPORT AVAILABILITIES */
 	}
 
 	/**
