@@ -663,6 +663,13 @@ if ($action == "importSignature") {
 						if ($last_modelpdf == 'sepamandate') {
 							$newpdffilename = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . "_signed-" . $date . ".pdf";
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
+						} else {
+							// Fallback for setups using a non-default bank PDF model (eg. "ban"): take the last
+							// generated main document as source and append "_signed-<date>" before the extension.
+							// Without this the signed PDF is never built and the download link keeps pointing at
+							// the unsigned original.
+							$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
+							$newpdffilename = preg_replace('/\.pdf$/i', '_signed-' . $date . '.pdf', $sourcefile);
 						}
 						if (dol_is_file($sourcefile)) {
 							$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
