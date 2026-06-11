@@ -614,6 +614,17 @@ class CodingPhpTest extends CommonClassTest
 			 $this->assertTrue($ok, 'Found non escaped or non casted string in building of a sql request (case 4) in '.$file['relativename'].': '.$found.' - Bad.');
 		 */
 
+		// Check for ternary operators in SQL strings without proper casting/quoting
+		$ok = true;
+		$matches = array();
+		preg_match_all('/(\$sql\s*\.?=\s*[\'"][^\n]*\.\s*\([^\)]*\?[^:]*:[^\)]*\$(?!this->db->|db->|\(int\)|\(float\)|escape|sanitize|encrypt|ifsql|prefix|plimit|idate)[^),;]*)/', $filecontent, $matches, PREG_SET_ORDER);
+		$lines = [];
+		foreach ($matches as $key => $val) {
+			$ok = false;
+			$lines[] = self::reportAndGetLine($val[1], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[2]}...`)");
+		}
+		$this->assertTrue($ok, 'Found ternary operator in SQL string without proper casting/quoting in file '.$file['relativename'].' - Bad. Lines:'.implode(',', $lines));
+
 		// Checks with IN
 
 		// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize' and without int or float cast. It means we forgot a db->sanitize when forging a sql request.
@@ -1103,7 +1114,7 @@ class CodingPhpTest extends CommonClassTest
 	 *
 	 * @return array<array{content:string,shouldFail:bool,expectedMsg:string}> List of tests for sql injection
 	 */
-	public function testPhpSqlInjectionProvider()
+	public function phpSqlInjectionProvider()
 	{
 		return [
 		'ternary without cast' => [
@@ -1147,8 +1158,7 @@ class CodingPhpTest extends CommonClassTest
 	 * @param string $expectedMsg   Part of expected error message
 	 * @return void
 	 *
-	 * @doesNotPerformAssertions
-	 * @dataProvider testPhpSqlInjectionProvider
+	 * @dataProvider phpSqlInjectionProvider
 	 */
 	public function testTestPhpSqlDetection($content, $shouldFail, $expectedMsg)
 	{
@@ -1160,15 +1170,15 @@ class CodingPhpTest extends CommonClassTest
 
 		try {
 			$file = [
-			'name' => 'test.php',
-			'path' => dirname($tempFile),
-			'level1name' => '',
-			'relativename' => 'test/test.php',
-			'fullname' => $tempFile,
-			'date' => date('Y-m-d'),
-			'size' => filesize($tempFile),
-			'perm' => 0644,
-			'type' => 'file'
+				'name' => 'test.php',
+				'path' => dirname($tempFile),
+				'level1name' => '',
+				'relativename' => 'test/test.class.php',
+				'fullname' => $tempFile,
+				'date' => date('Y-m-d'),
+				'size' => filesize($tempFile),
+				'perm' => 0644,
+				'type' => 'file'
 			];
 
 			if ($shouldFail) {
