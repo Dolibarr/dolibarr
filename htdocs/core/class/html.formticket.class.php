@@ -916,7 +916,7 @@ class FormTicket
 		 * so we transform before each record into $list to be printable with ajaxcombo by replacing <> into ()
 		 * $list['senderprofile_0_0'] = ['label'=>'rrr', 'data-html'=>'rrr &lt;aaaa&gt;'];
 		 */
-		$emailReplaceFunction = function ($email) {
+		$emailReplaceFunction = function (string $email = '') {
 			return str_replace(['&lt;', '&gt;'], ['<span class="opacitymedium">(', ')</span>'], $email);
 		};
 
