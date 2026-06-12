@@ -366,6 +366,19 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 	/**
+	 *	Return true if the unit price was originally entered including tax (TTC mode).
+	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
+	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
+	 *	which empty() treats as non-empty.
+	 *
+	 *	@return	bool
+	 */
+	public function wasEnteredIncludingTax()
+	{
+		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
+	}
+
+	/**
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
