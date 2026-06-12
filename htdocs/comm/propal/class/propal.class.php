@@ -1959,7 +1959,7 @@ class Propal extends CommonObject
 		if ($sqlforgedfilters) {
 			$sql .= $sqlforgedfilters;
 		}
-		$sql .= ' ORDER by d.rang';
+		$sql .= ' ORDER BY d.rang, d.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);

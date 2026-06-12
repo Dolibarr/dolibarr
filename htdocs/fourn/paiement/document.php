@@ -54,6 +54,8 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers', 'other'));
 
+$hookmanager->initHooks(array('paymentsupplierdocument', 'globalcard'));
+
 
 // Get Parameters
 $id = GETPOSTINT('id');
