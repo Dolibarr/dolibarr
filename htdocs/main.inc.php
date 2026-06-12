@@ -2738,7 +2738,7 @@ function top_menu_ai()
 	// the standalone page ai/assistant/index.php uses the same pattern).
 	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
 
-	// Toggle icon. The accesskey "a" keeps the Ctrl+Alt+A shortcut: its browser
+	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
 	// activation fires the click handler below, so it toggles the popover.
 	$html .= '<!-- div for AI Assistant link (opens the AI chat popover) -->
 	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
