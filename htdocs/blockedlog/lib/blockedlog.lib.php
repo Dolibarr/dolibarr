@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	// return DOL_VERSION;
 	return constant('DOLCERT_VERSION');
 }
 
@@ -40,7 +40,7 @@ function getBlockedLogVersionToShow()
 /**
  *  Define head array for tabs of blockedlog tools setup pages
  *
- *  @param	string		$withtabsetup					Add also the tab "Setup"
+ *  @param	int		$withtabsetup					Add also the tab "Setup"
  *  @return	array<array{0:string,1:string,2:string}>	Array of head
  */
 function blockedlogadmin_prepare_head($withtabsetup)
@@ -129,7 +129,7 @@ function blockedlogadmin_prepare_head($withtabsetup)
 
 /**
  * Return if the KYC mandatory parameters are set
- * Must be the samefields than the one defined as mandatory into the registration form.
+ * Must be the same fields than the one defined as mandatory into the registration form.
  *
  * @return boolean		True or false
  */
@@ -141,9 +141,10 @@ function isRegistrationDataSaved()
 	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
 	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
 	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$companyidprof2 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
-	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
 		return false;
 	}
 
@@ -190,21 +191,21 @@ function getHashUniqueIdOfRegistration($algo = 'sha256')
  * the restrictions (it is not a check to say if we are or not in a mode with restrictions activated, but if we are in a context that has a sense to activate them).
  * It can be used to show warnings or alerts to end users.
  *
- * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version
+ * @param   int<0,1>	$ignoredev			Set this to 1 to ignore the fact the version is an alpha or beta version (to avoid return false on such version)
  * @param   int<0,1>	$ignoremodule		Set this to 1 to not take into account if module BlockedLog is on, so function can be used during module activation.
- * @return 	string							'' if false or a string if true
+ * @return 	string							'' if false, or a string if true
  */
 function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 {
 	global $mysoc;
 
-	// For Debug help: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
+	// For Dev/Debug purpose: Constant set by developer to force all LNE restrictions even if country is not France so we can test them on any dev instance.
 	// Note that you can force, with this option, the enabling of the LNE restrictions, but there is no way to force the disabling of the LNE restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2) {
 		return 'CERTIF_LNE_IS_2';
 	}
 
-	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version, it can't be the certified versions.
 		return '';
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -217,7 +218,8 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return '';
 	}
 
-	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');	// all conditions are ok to become a LNE certified version
+	// all conditions are ok to become a LNE certified version
+	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');
 }
 
 
@@ -225,20 +227,20 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done
+ * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done and we suppose it is true.
  * @return 	boolean								True or false
  */
 function isALNERunningVersion($blockedlogtestalreadydone = 0)
 {
-	// For Debug help: Constant set by developer to force all LNE restrictions
-	// even if country is not France so we can test them on any dev instance.
-	// Note that you can force, with this option, the enabling of the LNE restrictions,
-	// but there is no way to force the disabling of the LNE restriction.
+	// For Debug help: Constant CERTIF_LNE can be set 2 by developer to force all LNE restrictions
+	// even if the country is not France, so we can test the restrictions on any dev instance.
+	// Note that you can force, with this constant, the enabling of the restrictions,
+	// but there is no way to force the disabling of a restriction.
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
 		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1		// Value is 1 when version is certified
 		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
@@ -343,17 +345,17 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
  */
 function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamount, &$totalvatamount, &$totalamount, &$total_ht, &$total_vat, &$total_ttc)
 {
-	// Init to avoid warnings if not initialized yet
-	if (!isset($totalamount[$block->action][$block->module_source])) {
-		$totalhtamount[$block->action][$block->module_source] = 0;
-		$totalvatamount[$block->action][$block->module_source] = 0;
-		$totalamount[$block->action][$block->module_source] = 0;
-	}
-
 	if ($block->action == 'BILL_VALIDATE') {
 		$total_ht = $block->object_data->total_ht;
 		$total_vat = $block->object_data->total_tva;
 		$total_ttc = $block->object_data->total_ttc;
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$block->action][$block->module_source])) {
+			$totalhtamount[$block->action][$block->module_source] = 0;
+			$totalvatamount[$block->action][$block->module_source] = 0;
+			$totalamount[$block->action][$block->module_source] = 0;
+		}
 
 		// We add total for the invoice if "invoice validate event" not yet met.
 		// If we already met the event for this object, we keep only first one but this should not happen because edition of validated invoice is not allowed on secured versions.
@@ -370,6 +372,13 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 		//$actionkey = $block->action;
 		$actionkey = 'PAYMENT_CUSTOMER';
+
+		// Init to avoid warnings if not initialized yet
+		if (!isset($totalamount[$actionkey][$block->module_source])) {
+			$totalhtamount[$actionkey][$block->module_source] = 0;
+			$totalvatamount[$actionkey][$block->module_source] = 0;
+			$totalamount[$actionkey][$block->module_source] = 0;
+		}
 
 		$totalhtamount[$actionkey][$block->module_source] += $total_ht;
 		$totalvatamount[$actionkey][$block->module_source] += $total_vat;
@@ -508,7 +517,8 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 	// Transaction ID
 	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
 		if ($object->status > $object::STATUS_DRAFT) {
-			$unalterablelogid = 'UNDEFINED';
+			$unalterablelogid = 'UNDEFINED'; // By default
+
 			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
 			$sql .= $db->order('rowid', 'DESC');
@@ -523,26 +533,26 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 			}
 
 			if ($unalterablelogid != 'UNDEFINED') {
-				$posy += 5;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+				$posy += 3;
 			}
 
 			$isADuplicata = ($object->pos_print_counter >= 2);
 			if ($isADuplicata) {
-				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, '*** '.$outputlangs->trans("DUPLICATA").(getDolGlobalString('TAKEPOS_SHOW_PRINT_COUNTER_ON_RECEIPT') ? ' (no '.($object->pos_print_counter - 1).')' : '').' ***', '', 'R');
+				$posy += 3;
 			}
 		}
 
 		if ($object->status == $object::STATUS_DRAFT) {
-			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, '*** '.strtoupper($outputlangs->trans("TemporaryReceipt")).' ***', '', 'R');
+			$posy += 3;
 		}
 	}
 }

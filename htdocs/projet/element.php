@@ -742,6 +742,21 @@ $listofreferent = array(
 		'testnew' => $user->hasRight('project', 'creer'),
 		'test' => isModEnabled('project') && $user->hasRight('projet', 'lire') && !getDolGlobalString('PROJECT_HIDE_TASKS')
 	),
+	'stocktransfer' => array(
+		'name' => "StockTransfer",
+		'title' => "ListStockTransferProject",
+		'class' => 'StockTransfer',
+		'table' => 'stocktransfer_stocktransfer',
+		'datefieldname' => 'datem',
+		'margin' => '',
+		'project_field' => 'fk_project',
+		'disableamount' => 1,
+		'urlnew' => DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
+		'lang' => 'stocks',
+		'buttonnew' => 'StockTransferNew',
+		'testnew' => $user->hasRight('stocktransfer', 'stocktransfer', 'write'),
+		'test' => isModEnabled('stocktransfer') && $user->hasRight('stocktransfer', 'stocktransfer', 'read')
+	),
 	'stock_mouvement' => array(
 		'name' => "MouvementStockAssociated",
 		'title' => "ListMouvementStockProject",
@@ -882,7 +897,7 @@ if (!$showdatefilter) {
 
 $langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
 
-if (isModEnabled('stock')) {
+if (isModEnabled('stock') || isModEnabled('stocktransfer')) {
 	$langs->load('stocks');
 }
 
@@ -1114,6 +1129,8 @@ foreach ($listofreferent as $key => $value) {
 			print '<td class="right">';
 			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			} elseif ($key == 'stocktransfer') {
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("NoAmountforStockTransfer")).'</span>';
 			} else {
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
@@ -1125,6 +1142,8 @@ foreach ($listofreferent as $key => $value) {
 			print '<td class="right">';
 			if ($key == 'intervention' && !$margin) {
 				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			} elseif ($key == 'stocktransfer') {
+				print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("NoAmountforStockTransfer")).'</span>';
 			} else {
 				if ($key == 'propal') {
 					print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
@@ -1326,26 +1345,41 @@ foreach ($listofreferent as $key => $value) {
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
+		$stocktransfercolstyle = ($key == 'stocktransfer' ? ' style="width: 9%"' : '');
 		// Remove link column
 		print '<td style="width: 24px"></td>';
 		// Ref
-		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		if ($key == 'stocktransfer') {
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("Ref").'</td>';
+		} else {
+			print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		}
 		// Product and qty on stock_movement
 		if ('MouvementStock' == $classname) {
 			print '<td style="width: 200px">'.$langs->trans("Product").'</td>';
 			print '<td style="width: 50px">'.$langs->trans("Qty").'</td>';
 		}
 		// Date
-		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
-		if (in_array($tablename, array('projet_task'))) {
-			print $langs->trans("TimeSpent");
+		if ($key != 'stocktransfer') {
+			print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
+			if (in_array($tablename, array('projet_task'))) {
+				print $langs->trans("TimeSpent");
+			}
+			if (!in_array($tablename, array('projet_task'))) {
+				print $langs->trans("Date");
+			}
+			print '</td>';
 		}
-		if (!in_array($tablename, array('projet_task'))) {
-			print $langs->trans("Date");
+		if ($key == 'stocktransfer') {
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("WarehouseSource").'</td>';
+			print '<td'.$stocktransfercolstyle.'>'.$langs->trans("WarehouseDestination").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DatePrevueDepart").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DateReelleDepart").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DatePrevueArrivee").'</td>';
+			print '<td class="center"'.$stocktransfercolstyle.'>'.$langs->trans("DateReelleArrivee").'</td>';
 		}
-		print '</td>';
 		// Thirdparty or user
-		print '<td>';
+		print '<td'.($key == 'stocktransfer' ? $stocktransfercolstyle : '').'>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
@@ -1383,24 +1417,44 @@ foreach ($listofreferent as $key => $value) {
 		if ($key == 'loan') {
 			print '<td class="right" width="120">'.$langs->trans("LoanCapital").'</td>';
 		} elseif (empty($value['disableamount'])) {
-			print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("AmountHT").'</td>';
+			} else {
+				print '<td class="right" width="120">'.$langs->trans("AmountHT").'</td>';
+			}
 		} else {
-			print '<td width="120"></td>';
+			if ($key == 'stocktransfer') {
+				print '<td'.$stocktransfercolstyle.'></td>';
+			} else {
+				print '<td width="120"></td>';
+			}
 		}
 		// Amount TTC
 		//if (empty($value['disableamount']) && ! in_array($tablename, array('projet_task'))) print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		if ($key == 'loan') {
 			print '<td class="right" width="120">'.$langs->trans("RemainderToPay").'</td>';
 		} elseif (empty($value['disableamount'])) {
-			print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("AmountTTC").'</td>';
+			} else {
+				print '<td class="right" width="120">'.$langs->trans("AmountTTC").'</td>';
+			}
 		} else {
-			print '<td width="120"></td>';
+			if ($key == 'stocktransfer') {
+				print '<td'.$stocktransfercolstyle.'></td>';
+			} else {
+				print '<td width="120"></td>';
+			}
 		}
 		// Status
 		if (in_array($tablename, array('projet_task'))) {
 			print '<td class="right" width="200">'.$langs->trans("ProgressDeclared").'</td>';
 		} else {
-			print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
+			if ($key == 'stocktransfer') {
+				print '<td class="right"'.$stocktransfercolstyle.'>'.$langs->trans("Status").'</td>';
+			} else {
+				print '<td class="right" width="200">'.$langs->trans("Status").'</td>';
+			}
 		}
 		print '</tr>';
 
@@ -1607,24 +1661,45 @@ foreach ($listofreferent as $key => $value) {
 					$date = $element->datestart;
 				}
 
-				print '<td class="center">';
-				if ($tablename == 'actioncomm') {
-					'@phan-var-force ActionComm $element';
-					print dol_print_date($element->datep, 'dayhour');
-					if ($element->datef && $element->datef > $element->datep) {
-						print " - ".dol_print_date($element->datef, 'dayhour');
+				if ($key != 'stocktransfer') {
+					print '<td class="center">';
+					if ($tablename == 'actioncomm') {
+						'@phan-var-force ActionComm $element';
+						print dol_print_date($element->datep, 'dayhour');
+						if ($element->datef && $element->datef > $element->datep) {
+							print " - ".dol_print_date($element->datef, 'dayhour');
+						}
+					} elseif (in_array($tablename, array('projet_task'))) {
+						'@phan-var-force Task $element';
+						$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee); // $element is a task. $elementuser may be empty
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
+						print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
+						print '</a>';
+						$total_time_by_line = $tmpprojtime['nbseconds'];
+					} else {
+						print dol_print_date($date, 'day');
 					}
-				} elseif (in_array($tablename, array('projet_task'))) {
-					'@phan-var-force Task $element';
-					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', (string) $dates, (string) $datee); // $element is a task. $elementuser may be empty
-					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
-					print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
-					print '</a>';
-					$total_time_by_line = $tmpprojtime['nbseconds'];
-				} else {
-					print dol_print_date($date, 'day');
+					print '</td>';
 				}
-				print '</td>';
+
+				if ($key == 'stocktransfer') {
+					$warehouseSource = new Entrepot($db);
+					$warehouseDestination = new Entrepot($db);
+					print '<td class="tdoverflowmax150">';
+					if (!empty($element->fk_warehouse_source) && $warehouseSource->fetch($element->fk_warehouse_source) > 0) {
+						print $warehouseSource->getNomUrl(1);
+					}
+					print '</td>';
+					print '<td class="tdoverflowmax150">';
+					if (!empty($element->fk_warehouse_destination) && $warehouseDestination->fetch($element->fk_warehouse_destination) > 0) {
+						print $warehouseDestination->getNomUrl(1);
+					}
+					print '</td>';
+					print '<td class="center">'.dol_print_date($element->date_prevue_depart, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_reelle_depart, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_prevue_arrivee, 'day').'</td>';
+					print '<td class="center">'.dol_print_date($element->date_reelle_arrivee, 'day').'</td>';
+				}
 
 				// Third party or user
 				print '<td class="tdoverflowmax150">';
@@ -1884,6 +1959,9 @@ foreach ($listofreferent as $key => $value) {
 				if (in_array($tablename, array('projet_task'))) {
 					$colspan = 2;
 				}
+				if ($key == 'stocktransfer') {
+					$colspan = 9;
+				}
 
 				print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 				if (in_array($tablename, array('projet_task'))) {
@@ -1934,6 +2012,9 @@ foreach ($listofreferent as $key => $value) {
 				$colspan = 7;
 				if ($tablename == 'fichinter') {
 					$colspan++;
+				}
+				if ($key == 'stocktransfer') {
+					$colspan = 12;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}

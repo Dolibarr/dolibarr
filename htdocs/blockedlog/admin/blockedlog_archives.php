@@ -46,16 +46,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'cashdesk', 'compta', 'other'));
 
 // Get Parameters
-$action      = GETPOST('action', 'aZ09');
-$confirm     = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.php
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'aZ09');	// Used by the actions_linkedfiles.inc.php
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-//$hmacexportkey = GETPOST('hmacexportkey', 'password');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 $search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
@@ -652,7 +652,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -672,7 +672,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -689,7 +689,7 @@ if (!userIsTaxAuditor()) {
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
-$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+$head = blockedlogadmin_prepare_head($withtab);
 
 print dol_get_fiche_head($head, 'archives', '', -1);
 
@@ -766,7 +766,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		if (GETPOST('inputregistrationnumber')) {
 			$inputregistrationnumber = GETPOST('inputregistrationnumber');
-			print 'We will use this value as full registration number ';
+			print $langs->trans("WeWillUseThisValueAsNumber");
 			print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
 
 			$secretkey = $inputregistrationnumber;	// We will use the entered value to check authenticity
@@ -1187,9 +1187,20 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 	$htmltext = '';
 
 	if (!userIsTaxAuditor()) {
-		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+		$nbrecorddone = $block_static->countRecord();
+		$mindisksize = 50;	// Gb
+		$maxtranspermonth = 10000;
+		$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+		$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
+		$htmltext = '';
+		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
+		$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+
 		if ($mysoc->country_code == 'FR') {
-			$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+			$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'</span><br>';
+		} else {
+			$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 		}
 		//$htmltext .= $langs->trans("UnalterableLogTool1");
 		//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";

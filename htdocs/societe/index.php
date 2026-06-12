@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,6 @@ $langs->load("companies");
 
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
 

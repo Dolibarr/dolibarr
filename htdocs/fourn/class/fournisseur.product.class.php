@@ -832,7 +832,7 @@ class ProductFournisseur extends Product
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
 		// phpcs:enable
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
+		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
@@ -863,6 +863,7 @@ class ProductFournisseur extends Product
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
 				$prodfourn->status = $record["status"];
 				$prodfourn->status_buy = $record["status_buy"];
+				$prodfourn->status_batch = $record["status_batch"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
 				$prodfourn->ref_supplier = $record["ref_fourn"];
@@ -1466,11 +1467,11 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return	string 			       	Label of status
 	 */
-	public function getLibStatut($mode = 0, $type = 0)		// must be compatible with getLibStatut of inherited Product
+	/*  public function getLibStatut($mode = 0, $type = 0)      // must be compatible with getLibStatut of inherited Product
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
-
+	*/
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
@@ -1480,6 +1481,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return string 			       	Label of status
 	 */
+	/*
 	public function LibStatut($status, $mode = 0, $type = 0)
 	{
 		// phpcs:enable
@@ -1500,6 +1502,7 @@ class ProductFournisseur extends Product
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
+	*/
 
 	/**
 	 * Private function to log price history

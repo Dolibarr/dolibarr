@@ -65,8 +65,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 // Other security check
-$childids = $user->getAllChildIds();
-$childids[] = $user->id;
+$childids = $user->getAllChildIds(1);
 if ($userid > 0) {
 	if (!$user->hasRight('deplacement', 'readall') && !$user->hasRight('deplacement', 'lire_tous') && !in_array($userid, $childids)) {
 		accessforbidden();
@@ -93,7 +92,7 @@ llxHeader();
 $title = $langs->trans("TripsAndExpensesStatistics");
 $dir = $conf->deplacement->dir_temp;
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title);
 
 dol_mkdir($dir);
 

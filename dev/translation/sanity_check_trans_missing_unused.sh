@@ -63,9 +63,8 @@ exit_code=0
 grep --no-filename -r -oP -- '^([^#=]+?)(?=\s*=.*)' "${LANG_DIR}" \
 	| grep -x -v -F -f "${EXCLUDE_KEYS_SRC_FILE}" \
 	| sort > "${AVAILABLE_FILE_NODEDUP}"
-sort -u \
-	< "${AVAILABLE_FILE_NODEDUP}" \
-	> "${AVAILABLE_FILE}"
+# sort -u is buggued in ubutnu 26.04. The line StatusProspect-1 and StatusProspect1 are treated as similar lines Replaced with "uniq".
+uniq < "${AVAILABLE_FILE_NODEDUP}" > "${AVAILABLE_FILE}"
 
 
 # Combine strings found in sources with pre-determined dynamic string values.
@@ -74,7 +73,7 @@ sort -u \
 #
 EXTRACT_STR=""
 JOIN_STR=""
-for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel'; do
+for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel' 'Dolibarr.tools.langs.trans' 'Dolibarr.tools.langs.transNoEntities'; do
 	MATCH_STR="$MATCH_STR$JOIN_STR$t"
 	EXTRACT_STR="$EXTRACT_STR$JOIN_STR(?<=${t}\\([\"'])([^\"']+)(?=[\"']\$)"
 	JOIN_STR="|"
@@ -90,7 +89,7 @@ done
 	# With std grep: `grep --no-filename -r ${GREP_OPTS} -- '->trans(' . `
 	# Using git grep avoiding to look into unversioned files
 	# transnoentitiesnoconv
-	git grep -h -r -P -- "${MATCH_STR}\\(" ':*.php' ':*.html' \
+	git grep -h -r -P -- "${MATCH_STR}\\(" ':*.php' ':*.html' ':*.js' \
 		| sed 's@\(^#\|[^:]//\|/\*\|^\s*\*\).*@@' \
 	| sed 's@)\|\(['"'"'"]\)\(,\)@\1\n@g' \
 		| grep -aPo "$EXTRACT_STR(?=.$)"
@@ -162,9 +161,9 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 
 	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
 
-	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
+	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' ':*.js' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 error - Missing translation; @' > "${MISSING_FILE}.result"
 
 	if [ -s "${MISSING_FILE}.result" ] ; then
 		exit_code=1

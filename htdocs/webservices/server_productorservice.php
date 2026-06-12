@@ -1028,9 +1028,9 @@ function getProductsForCategory($authentication, $id, $lang = '')
 			if ($result > 0) {
 				$table = "product";
 				$field = "product";
-				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+				$sql  = "SELECT fk_".$db->sanitize($field)." FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($table);
 				$sql .= " WHERE fk_categorie = ".((int) $id);
-				$sql .= " ORDER BY fk_".$field." ASC";
+				$sql .= " ORDER BY fk_".$db->sanitize($field)." ASC";
 
 
 				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);

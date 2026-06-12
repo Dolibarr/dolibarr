@@ -1323,10 +1323,11 @@ print '<script type="text/javascript">
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
+        					type: "POST",
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
        					 	}});
 							return false;
 						});

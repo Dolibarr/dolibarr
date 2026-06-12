@@ -1,0 +1,504 @@
+/* Container */
+.ai-chat-container {
+    /* max-width: 900px; */
+    /* margin: 20px auto; */
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+    min-height: 650px;
+}
+
+/* Header */
+.chat-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background: #fdfdfd;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.engine-select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+    color: #555;
+    background: #fff;
+}
+
+/* Top Icons (Trash) */
+.icon-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.2s;
+    font-size: 0.9em;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.icon-btn:hover {
+    background: #f0f0f0;
+    color: #d32f2f;
+    border-color: #d32f2f;
+}
+
+/* Chat History */
+.chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    scroll-behavior: smooth;
+}
+
+/* Messages */
+.msg {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 85%;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.msg.user {
+    background: #e3f2fd;
+    color: #0d47a1;
+    margin-left: auto;
+    border-bottom-right-radius: 2px;
+    text-align: right;
+}
+
+.msg.bot {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    color: #333;
+    margin-right: auto;
+    border-bottom-left-radius: 2px;
+}
+
+.msg.system {
+    text-align: center;
+    background: transparent;
+    color: #888;
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 5px;
+    margin: 10px auto;
+    border: none;
+}
+
+.msg.error {
+    background: #ffebee;
+    color: #c62828;
+    margin: 10px auto;
+    text-align: center;
+    border: 1px solid #ef9a9a;
+}
+
+.msg.clarification {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    margin: 10px auto;
+}
+
+.msg.confirmation {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    margin: 10px auto;
+}
+
+/* Footer / Controls */
+.chat-controls {
+    padding: 15px 20px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+#mic-wrapper,
+#upload-wrapper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* Prevents buttons from squishing when the screen is small */
+}
+
+/* Round Buttons (Mic & Upload) */
+.round-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.round-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* Mic Specific States */
+.mic-btn.listening {
+    background: #ff5252;
+    color: white;
+    border-color: #ff5252;
+    animation: pulse 1.5s infinite;
+}
+
+.mic-btn.processing {
+    background: #ff9800;
+    color: white;
+    border-color: #ff9800;
+    animation: spin 1s infinite linear;
+    cursor: pointer !important;
+}
+
+.mic-btn.processing:hover {
+    background: #f57c00;
+    border-color: #f57c00;
+}
+
+.mic-btn.cancelling {
+    background: #9e9e9e;
+    color: white;
+    border-color: #9e9e9e;
+    animation: spin 1s infinite linear;
+}
+
+.mic-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Input Field */
+#user-input {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    transition: border-color 0.2s;
+
+    /* Allow expansion, but set limits */
+    height: 44px;
+    /* Initial height */
+    min-height: 44px;
+    /* Minimum height */
+    max-height: 150px;
+    /* Max height before scrolling */
+
+    box-sizing: border-box;
+    min-width: 0;
+
+    /* Prevent manual resize and hide scrollbar until max height */
+    resize: none;
+    overflow-y: auto;
+
+    font-family: inherit;
+    /* Match the font of the page */
+    line-height: 1.4;
+    /* Better readability for multi-line */
+}
+
+#user-input:focus {
+    border-color: #2196f3;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Helpers */
+.hidden {
+    display: none !important;
+}
+
+#status-bar {
+    font-size: 0.75rem;
+    color: #999;
+    text-align: right;
+    padding: 0 20px 10px;
+    background: #fff;
+    border-radius: 0 0 8px 8px;
+    min-height: 20px;
+}
+
+/* Tables in chat */
+.chat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.chat-table th {
+    background: #f0f0f0;
+    padding: 8px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+    color: #555;
+}
+
+.chat-table td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.chat-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Action buttons in messages */
+.msg-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.msg-action-btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    color: #495057;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.msg-action-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.msg-action-btn.primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.msg-action-btn.primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+}
+
+.msg-action-btn.danger {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.msg-action-btn.danger:hover {
+    background: #c82333;
+    border-color: #c82333;
+}
+
+/* Confirmation Dialog Styles */
+.confirmation-dialog {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-header {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.confirmation-header i {
+    color: #17a2b8;
+}
+
+.confirmation-body {
+    padding: 15px;
+}
+
+.confirmation-details {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 10px 0;
+}
+
+.voice-hint {
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.voice-feedback {
+    background: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+
+/* -------------------------------------------------------------------------
+ * Popup mode (loaded via dol_openinpopup URL param from the top-toolbar
+ * AI icon -> dolButtonToOpenUrlInDialogPopup() iframe).
+ *
+ * Dolibarr core adds the body class "dol_openinpopup" when this param is
+ * set (htdocs/main.inc.php), so we can target popup-only tweaks here
+ * without touching index.php.
+ *
+ * Sizing strategy:
+ * The chat-container in standalone mode uses "height: 70vh; min-height:
+ * 650px" which is great on a full page but causes the dialog iframe to
+ * overflow on small windows. In popup mode we make the chat-container
+ * fill the iframe viewport exactly (height: 100% of body, body itself
+ * pinned to 100vh of iframe) and drop the 650px floor; .chat-history
+ * keeps its flex-grow:1 + overflow-y:auto so message scroll still works
+ * INTERNALLY without an iframe-level scrollbar.
+ *
+ * We also flatten the visual chrome (border, shadow, rounded corners,
+ * capped max-width, top margin) that is now redundant with the dialog
+ * frame, and hide the duplicate "AI Assistant" H2 (the dialog title bar
+ * already shows it).
+ * ------------------------------------------------------------------------- */
+body.dol_openinpopup {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* In popup mode the DOM is:
+ *   body > #id-container > .fiche > .ai-chat-container
+ * (top_menu and left_menu blocks are skipped by main.inc.php when
+ *  dol_openinpopup is set, but #id-container and .fiche are always
+ *  emitted). For "height: 100%" on .ai-chat-container to resolve to
+ *  the iframe viewport, every ancestor in the chain must also be
+ *  100% high. */
+body.dol_openinpopup #id-container,
+body.dol_openinpopup .fiche {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body.dol_openinpopup .ai-chat-container {
+    max-width: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+}
+
+/* Flexbox shrink fix: a flex-grow:1 child defaults to min-height:auto
+ * (content-based), which prevents the chat-history from shrinking below
+ * its message-content height and causes the WHOLE container to overflow
+ * the iframe after a long response. Forcing min-height:0 lets the
+ * chat-history shrink to fit the available column space and scroll
+ * INTERNALLY (overflow-y:auto is already on .chat-history). */
+body.dol_openinpopup .chat-history {
+    min-height: 0;
+}
+
+/* The dialog title bar already shows "AI Assistant", so hide the redundant
+ * H2 inside .chat-header but keep .header-controls (Clear + mode select). */
+body.dol_openinpopup .chat-header {
+    border-radius: 0;
+    justify-content: flex-end;
+}
+
+body.dol_openinpopup .chat-header h2 {
+    display: none;
+}

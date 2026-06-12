@@ -299,7 +299,7 @@ class Commande extends CommonOrder
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
 	 *  'enabled' is a condition when the field must be managed.
@@ -324,7 +324,7 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -1046,7 +1046,7 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".($user->id > 0 ? ((int) $user->id) : "null");
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1116,7 +1116,7 @@ class Commande extends CommonOrder
 					if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 						$originid = $line->origin_id;
 						$origintype = empty($line->origin_type) ? $line->origin : $line->origin_type;
-					} else {
+					} else {	// old but bugged version (we store id of line and type of parent object)
 						$originid = $line->id;
 						$origintype = $this->element;
 					}
@@ -1805,7 +1805,9 @@ class Commande extends CommonOrder
 				$this->line->special_code = 3;
 			}
 			$this->line->origin = $origin;
+			$this->line->origin_type = $origin;
 			$this->line->origin_id = $origin_id;
+
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 
@@ -1852,9 +1854,10 @@ class Commande extends CommonOrder
 
 						$this->lines[] = $this->line;
 					} else {
-						foreach ($this->lines as $line) {
-							if ($line->id == $origin_id) {
-								$this->line->extraparams = $line->extraparams;
+						// Loop on all lines of parent object
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->id == $origin_id && $tmpline->element = $origin) {
+								$this->line->extraparams = $tmpline->extraparams;
 								$this->line->setExtraParameters();
 							}
 						}
@@ -2215,10 +2218,10 @@ class Commande extends CommonOrder
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.product_type, l.fk_commande, l.label as custom_label, l.description, l.price, l.qty, l.vat_src_code, l.tva_tx, l.ref_ext,';
-		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
+		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.fk_remise_except, l.remise_percent, l.subprice, l.subprice_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.rang, l.info_bits, l.special_code,';
 		$sql .= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 		$sql .= ' l.fk_unit, l.extraparams,';
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_ttc, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units, p.packaging';
@@ -2264,7 +2267,8 @@ class Commande extends CommonOrder
 				$line->total_tva        = $objp->total_tva;
 				$line->total_localtax1  = $objp->total_localtax1;
 				$line->total_localtax2  = $objp->total_localtax2;
-				$line->subprice         = $objp->subprice;
+				$line->subprice         = (float) $objp->subprice;
+				$line->subprice_ttc     = (float) $objp->subprice_ttc;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
 				$line->price            = $objp->price;
@@ -2311,6 +2315,7 @@ class Commande extends CommonOrder
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc 	= $objp->multicurrency_subprice_ttc;
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
@@ -4328,7 +4333,7 @@ class Commande extends CommonOrder
 	 * @return  array<string,mixed>        Array with keys: has_product, shippable, texticon, textinfo, warning
 	 * /
 	 */
-	public function getShippableInfos(array $options = array()) : array
+	public function getShippableInfos(array $options = array()): array
 	{
 		global $conf, $langs;
 

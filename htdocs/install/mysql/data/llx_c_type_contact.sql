@@ -38,8 +38,8 @@
 
 -- Contract / Contrat
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'internal', 'SALESREPFOLL',  'Contract manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'external', 'BILLING',       'Customer billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'external', 'CUSTOMER',      'Customer contract manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'external', 'BILLING',       'Customer billing manager', 1);
 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'internal', 'SALESREPSIGN',  'Contract signatory', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('contrat', 'external', 'SALESREPSIGN',  'Contract signatory customer', 1);
@@ -49,18 +49,19 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'CUSTOMER',      'Customer pricing and quotation manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'BILLING',       'Customer billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'SHIPPING',      'Customer shipping manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('propal',  'external', 'SERVICE',       'Customer contact performing the service', 0);
 
 -- Customer Invoice / Facture
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'internal', 'SALESREPFOLL',  'Billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'BILLING',       'Customer billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'SHIPPING',      'Customer shipping manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'SERVICE',       'Client account contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'SERVICE',       'Customer contact performing the service', 0);
 
 -- Supplier Invoice
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'internal', 'SALESREPFOLL',  'Invoicing manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'internal', 'SALESREPFOLL',  'Billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'external', 'BILLING',       'Supplier billing manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'external', 'SHIPPING',      'Supplier shipping manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'external', 'SERVICE',       'Supplier account contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('invoice_supplier', 'external', 'SERVICE',       'Supplier contact performing the service', 0);
 
 -- Agenda
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('agenda', 'internal', 'ACTOR', 'Owner', 1);
@@ -70,16 +71,17 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 
 -- Customer Order / Commande
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'internal', 'SALESREPFOLL',  'Order fulfillment manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'CUSTOMER',      'Customer order fulfillment manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'BILLING',       'Customer billing manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'CUSTOMER',      'Customer order manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'SHIPPING',      'Customer shipping manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'SERVICE',       'Customer contact performing the service', 0);
 
 -- Shipment / Expedition
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'internal', 'SALESREPFOLL',  'Shipping Operations Manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'internal', 'SALESREPFOLL',  'Shipping operations manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer shipping operations manager', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Customer loading contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 0);
 
 -- Intervention / Fichinter
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('fichinter', 'internal', 'INTERREPFOLL',  'Intervention manager', 1);
@@ -90,10 +92,10 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 -- Supplier Order
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'internal', 'SALESREPFOLL',  'Purchase order fulfillment manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'internal', 'SHIPPING',      'Purchase order shipping manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'external', 'CUSTOMER',      'Purchase order fulfillment manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'external', 'BILLING',       'Supplier billing manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'external', 'CUSTOMER',      'Supplier Order Fulfillment Manager', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'external', 'SHIPPING',      'Supplier shipping manager', 1);
-
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('order_supplier', 'external', 'SERVICE',       'Supplier contact performing the service', 0);
 -- Resource
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('dolresource', 'internal', 'USERINCHARGE',    'In charge of resource', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('dolresource', 'external', 'THIRDINCHARGE',   'In charge of resource', 1);
@@ -124,9 +126,10 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 
 -- Supplier proposal
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'internal', 'SALESREPFOLL',  'Pricing and Quotation manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'BILLING',       'Billing manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'SHIPPING',      'Shipping manager', 1);
-insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'SERVICE',       'Supplier account contact', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'BILLING',       'Supplier billing manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'CUSTOMER',      'Pricing and quotation manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'SHIPPING',      'Supplier shipping manager', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('supplier_proposal', 'external', 'SERVICE',       'Supplier contact performing the service', 0);
 
 -- Event Organization
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('conferenceorbooth', 'internal', 'MANAGER',      'Conference or Booth manager', 1);

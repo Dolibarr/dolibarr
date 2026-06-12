@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $withtab    = GETPOSTINT('withtab');
 $origin     = GETPOST('origin');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
 
 // Access Control
 if (!$user->admin || !isModEnabled('blockedlog')) {
@@ -114,7 +116,7 @@ if (!isRegistrationDataSavedAndPushed()) {
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
+	$head = blockedlogadmin_prepare_head($withtab);
 	print dol_get_fiche_head($head, 'technicalinfo', '', -1);
 }
 
@@ -171,7 +173,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 
 		// Show remind on good practices related to archives
 		/*
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 		*/
 	}
@@ -187,15 +189,16 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td></td>';
 print "</tr>\n";
 
+// Initial signature
+// Generated randomly when doing the first insert by blockedlog.class.php, and saved into BLOCKEDLOG_ENTITY_FINGERPRINT
 print '<tr class="oddeven">';
-print '<td class="titlefieldmiddle">';
-print $langs->trans("CompanyInitialKey").'</td><td>';
+print '<td class="titlefieldmiddle" title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
+print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
 /*
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td class="right" width="300">';

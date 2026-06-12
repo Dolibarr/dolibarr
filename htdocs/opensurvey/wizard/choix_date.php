@@ -427,7 +427,7 @@ if (issetAndNoEmpty('choixjourajout')) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			$choixjourajout = GETPOST("choixjourajout");
-			if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"])) {
+			if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], (int) $choixjourajout[0], $_SESSION["annee"])) {
 				$journeuf = false;
 			}
 		}
@@ -436,9 +436,9 @@ if (issetAndNoEmpty('choixjourajout')) {
 	// If the validation is ok, add a field to the session variables that holds all the dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
 		$choixjourajout = GETPOST("choixjourajout");
-		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]));
+		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], (int) $choixjourajout[0], $_SESSION["annee"]));
 		sort($_SESSION["totalchoixjour"]);
-		$cle = array_search(dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
+		$cle = array_search(dol_mktime(0, 0, 0, $_SESSION["mois"], (int) $choixjourajout[0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
 
 		//On sauvegarde les heures deja entrées
 		for ($i = 0; $i < $cle; $i++) {
@@ -479,7 +479,7 @@ if (issetAndNoEmpty('choixjourretrait')) {
 
 	for ($i = 0; $i < $nbofchoice; $i++) {
 		$choixjourretrait = GETPOST('choixjourretrait');
-		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $choixjourretrait[0], $_SESSION["annee"])) {
+		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], (int) $choixjourretrait[0], $_SESSION["annee"])) {
 			for ($j = $i; $j < $nbofchoice; $j++) {
 				$k = $j + 1;
 				$_SESSION["horaires$j"] = $_SESSION["horaires$k"];

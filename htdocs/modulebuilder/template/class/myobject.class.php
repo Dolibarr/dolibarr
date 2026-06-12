@@ -92,7 +92,7 @@ class MyObject extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -130,7 +130,8 @@ class MyObject extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => 'Id', 'lang' => 'mymodule@mymodule'),
-		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 15, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => 'Reference of object', 'lang' => 'mymodule@mymodule'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => 'Help text', 'showoncombobox' => 2, 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'amount' => array('type' => 'price', 'label' => 'Amount', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'default' => 'null', 'isameasure' => 1, 'help' => 'Help text for amount', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => 'Help text for quantity', 'validate' => 1, 'lang' => 'mymodule@mymodule'),
@@ -204,43 +205,42 @@ class MyObject extends CommonObject
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
-
+	//BEGIN MODULEBUILDER LINES
 	// If this object has a subtable with lines
 
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'mymodule_myobjectline';
+	 /**
+	  * @var string    Name of subtable line
+	  */
+	 public $table_element_line = 'mymodule_myobjectline';
 
-	// /**
-	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
-	//  */
-	// public $fk_element = 'fk_myobject';
+	 /**
+	  * @var string    Field with ID of parent key if this object has a parent
+	  */
+	 public $fk_element = 'fk_myobject';
 
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'MyObjectline';
+	 /**
+	  * @var string    Name of subtable class that manage subtable lines
+	  */
+	 public $class_element_line = 'MyObjectline';
 
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
+	 /**
+	  * @var array<array<string>|string>		List of child tables. To test if we can delete object.
+	  */
+	 protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
-	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
-	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
-	//  */
-	// protected $childtablesoncascade = array('mymodule_myobjectdet');
+	 /**
+	  * @var string[]	List of child tables. To know object to delete on cascade.
+	  *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	  *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	  */
+	 protected $childtablesoncascade = array('mymodule_myobjectdet');
 
-	// /**
-	//  * @var MyObjectLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
+	 /**
+	  * @var MyObjectLine[]     Array of subtable lines
+	  */
+	 public $lines = array();
 
-
+	//END MODULEBUILDER LINES
 
 	/**
 	 * Constructor
@@ -326,14 +326,15 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
 
 		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
-
+		foreach ($this->lines as $line)
+			$line->fetch_optionals();
+		//END MODULEBUILDER LINES
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -417,9 +418,11 @@ class MyObject extends CommonObject
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
 		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}
+		//END MODULEBUILDER LINES
 		return $result;
 	}
 
@@ -436,8 +439,7 @@ class MyObject extends CommonObject
 		$result = $this->fetchLinesCommon('', $noextrafields);
 		return $result;
 	}
-
-
+	//END MODULEBUILDER LINES
 	/**
 	 * Load list of objects in memory from the database.
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
@@ -544,6 +546,7 @@ class MyObject extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 *  Delete a line of object in database
 	 *
@@ -561,6 +564,7 @@ class MyObject extends CommonObject
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
+	//END MODULEBUILDER LINES
 
 
 	/**
@@ -1106,10 +1110,11 @@ class MyObject extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
+	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return	array<CommonObjectLine>|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1122,10 +1127,12 @@ class MyObject extends CommonObject
 			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
+			/** @phpstan-ignore-next-line */
 			$this->lines = $result;
 			return $this->lines;
 		}
 	}
+	//END MODULEBUILDER LINES
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1256,7 +1263,7 @@ class MyObject extends CommonObject
 
 		dol_syslog(__METHOD__." start", LOG_INFO);
 
-		$now = dol_now();
+		//$now = dol_now();
 
 		$this->db->begin();
 
@@ -1272,7 +1279,7 @@ class MyObject extends CommonObject
 
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
+//BEGIN MODULEBUILDER LINES
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
@@ -1315,3 +1322,4 @@ class MyObjectLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
+//END MODULEBUILDER LINES

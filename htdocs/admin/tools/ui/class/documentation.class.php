@@ -264,6 +264,12 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+				'UxDolibarrContextKnowsHooks' => array(
+					'url' => dol_buildpath($this->baseUrl.'/dolibarr-context/knows-hooks.php', 1),
+					'icon' => 'fa fa-anchor',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -380,7 +386,7 @@ class Documentation
 	/**
 	 * Recursive function to set Menu
 	 *
-	 * @param array<string, array{url?: string, icon?: string, summary?: array<string,string>, submenu?: array<string,array>}> 	$menu 	Menu entry or submenu
+	 * @param array<string, mixed> 	$menu 	Menu entry or submenu
 	 * @param int   $level 		Level of menu
 	 * @return void
 	 */
@@ -402,7 +408,7 @@ class Documentation
 			print ((!empty($item['submenu'])) ? '<i class="submenu-toggle fas fa-chevron-right" aria-hidden="true"></i>' : '');
 			print '</a>';
 			if (!empty($item['submenu'])) {
-				$this->displayMenu($item['submenu'], $level); // Appel récursif pour afficher les sous-menus
+				$this->displayMenu($item['submenu'], $level); // Recursive call to show submenu
 			}
 			echo '</li>';
 		}
@@ -410,7 +416,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output breadcrumb
+	 * Output breadcrumb
+	 *
 	 * @return void
 	 */
 	public function showBreadcrumb()
@@ -475,7 +482,7 @@ class Documentation
 	/**
 	 * Recursive function for Automatic Summary
 	 *
-	 * @param array{summary?: array<string,string>, submenu?: array<string,array>} 	$menu 	Array $this->menu or submenus
+	 * @param array<string,mixed> 	$menu 	Menu entry or submenu
 	 * @param int   $level 					Level of menu
 	 * @param int   $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int   $showsubmenu_summary 	Show summary of sub menus: 0 = No, 1 = Yes
@@ -527,10 +534,10 @@ class Documentation
 	}
 
 	/**
-	 *    Output a View Code area
+	 * Output a View Code area
 	 *
-	 * @param array<int,string> $lines Lines of code to show
-	 * @param string $option Source code language ('html', 'php' etc)
+	 * @param array<int,string> 	$lines 		Lines of code to show
+	 * @param string 				$option 	Source code language ('html', 'php' etc)
 	 * @return void
 	 */
 	public function showCode($lines = array(), $option = 'html')
@@ -557,7 +564,6 @@ class Documentation
 	 * @param int  $paragraphCount nb paragraph you need
 	 * @param int  $wordsPerParagraph nb words per paragraph you need
 	 * @param bool $html return html formatted paragraph
-	 *
 	 * @return string
 	 */
 	static public function generateLoremIpsum($paragraphCount = 3, $wordsPerParagraph = 50, $html = true)

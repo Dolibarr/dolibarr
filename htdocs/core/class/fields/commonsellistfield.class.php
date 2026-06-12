@@ -233,7 +233,7 @@ class CommonSellistField extends CommonField
 						$keyList .= ', ' . implode(', ', $optionsParams['labelFullFields']);
 					}
 
-					$sql = "SELECT " . $keyList;
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
 					$sql .= " FROM " . $this->db->sanitize($this->db->prefix() . $optionsParams['tableName']);
 					if ($hasExtra) {
 						$sql .= " AS main";
@@ -298,12 +298,12 @@ class CommonSellistField extends CommonField
 					// Manage dependency list (from AJAX)
 					if (isset($fieldInfos->optionsSqlDependencyValue)) {
 						// TODO rework for dependency with a date or a multiselect
-						$sql .= " AND " . $optionsParams['parentField'] . " = '" . $this->db->escape($fieldInfos->optionsSqlDependencyValue) . "'";
+						$sql .= " AND " . $this->db->sanitize($optionsParams['parentField']) . " = '" . $this->db->escape($fieldInfos->optionsSqlDependencyValue) . "'";
 					}
 					// Only selected values
 					if (!empty($selectedValues)) {
 						$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $selectedValues)) . "'";
-						$sql .= " AND " . $keyField . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+						$sql .= " AND " . $this->db->sanitize($keyField) . " IN (" . $this->db->sanitize($tmp, 1) . ")";
 					}
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'

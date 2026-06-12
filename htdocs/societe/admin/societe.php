@@ -657,7 +657,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center">'.$langs->trans("MustBeUnique").'</td>';
-print '<td class="center">'.$langs->trans("MustBeMandatory").'</td>';
+print '<td class="center">'.$langs->trans("MustBeMandatory").'<br><span class="opacitymedium">'.$langs->trans("MustBeMandatory2").'</span></td>';
 print '<td class="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
@@ -857,9 +857,8 @@ if (!$conf->use_javascript_ajax) {
 print '</tr>';
 
 
-
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddRefInList"), $langs->trans("AddRefInListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
@@ -887,7 +886,7 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddAdressInList"), $langs->trans("AddAdressInListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
@@ -901,7 +900,7 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddEmailPhoneTownInContactList"), $langs->trans("AddEmailPhoneTownInContactListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {

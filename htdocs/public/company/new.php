@@ -122,7 +122,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
  */
 function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $conf, $langs, $mysoc;
+	global $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -297,7 +297,7 @@ print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"'
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext opacitymedium justify">';
+print '<div class="center subscriptionformhelptext opacitymedium">';
 if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
 	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
@@ -362,7 +362,7 @@ if ($object->particulier || $private) {
 */
 print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">'; // text appreas left
 print '<input type="hidden" name="ThirdPartyName" value="' . $langs->trans('ThirdPartyName') . '">';
-print '<span id="TypeName" class="fieldrequired"  title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('Company', 'name', '', $object, 0) . '<span class="star"> *</span></span>';
+print '<span id="TypeName" title="' .dol_escape_htmltag($langs->trans("FieldsWithAreMandatory", '*')) . '" >' . $form->editfieldkey('Company', 'name', '', $object, 0) . '<span class="star"> *</span></span>';
 print '</td><td>'; // inline input
 print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="' . dol_escape_htmltag($object->name) . '" autofocus="autofocus">';
 //

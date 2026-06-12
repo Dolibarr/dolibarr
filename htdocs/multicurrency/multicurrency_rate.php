@@ -307,7 +307,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '</td>';
 
 	print '<td> '.$langs->trans('Currency').'</td>';
-	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape(getDolCurrency())."'", true).'</td>';
+	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, "(code:<>:'".$db->escape(getDolCurrency())."')", true).'</td>';
 
 	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" id="rateinput" name="rateinput" value="'.dol_escape_htmltag((string) $rateinput).'"></td>';
@@ -538,7 +538,7 @@ if ($resql) {
 	// code
 	if (!empty($arrayfields['m.code']['checked'])) {
 		print '<td class="liste_titre" align="left">';
-		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, " code != '".getDolCurrency()."'", true);
+		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, "(code:<>:'".getDolCurrency()."')", true);
 		print '</td>';
 	}
 	// rate
@@ -612,7 +612,7 @@ if ($resql) {
 				print '</td>';
 			}
 			print '<td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
-			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".getDolCurrency()."'", true) . '</td>';
+			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, "(code:<>:'".getDolCurrency()."')", true) . '</td>';
 			print '<td><input type="text" min="0" step="any" class="maxwidth100" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '">';
 			print '<input type="hidden" name="page" value="'.dol_escape_htmltag((string) $page).'">';
 			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';

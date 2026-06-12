@@ -242,7 +242,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("ManufacturingOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$key_word=$outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ManufacturingOrder");
 				if (isset($object->thirdparty->name) && $object->thirdparty->name !== "") {
 					$key_word.=" ".$outputlangs->convToOutputCharset($object->thirdparty->name);

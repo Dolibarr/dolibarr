@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,14 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public $fk_charge;
 
+	/**
+	 * @var int|''  Date of creation
+	 */
 	public $datec = '';
+
+	/**
+	 * @var int|''  Date of payment
+	 */
 	public $datep = '';
 
 	/**
@@ -137,7 +144,7 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
-	 * @var int|string datepaye
+	 * @var int|'' Payment date when creating
 	 */
 	public $datepaye;
 

@@ -12,7 +12,7 @@
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Eric Seigne					<eric.seigne@cap-rel.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ if ($result) {
 		// in case option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on, payment could be for more than one third-partie
 		// so we have to find which part of the payment is affected to each third-parties
 		// (because in this case $obj-amount = the total of the paiement and not the paiement for each third-parties)
-		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1) ) {
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1)) {
 			if ($lineisapurchase == 1) {
 				$sqlamount = "SELECT SUM(pf.amount) as amount";
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn AS pf";
@@ -404,7 +404,9 @@ if ($result) {
 			$resultamount = $db->query($sqlamount);
 			if ($resultamount) {
 				$objamount = $db->fetch_object($resultamount);
-				if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
+				if (!empty($objamount->amount)) {
+					$amounttouse = $objamount->amount;
+				}
 			}
 		}
 
@@ -478,7 +480,7 @@ if ($result) {
 						// we will pass here n times for each payment line
 						// so we have to add $amoutouse only if the line $links[$key] correspond to the payment line we are in used ( socid correspondinf at the payment line $links)
 						// if FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is off we add $amounttouse
-						if (!getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') || $obj->socid == $links[$key]['url_id']){
+						if (!getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') || $obj->socid == $links[$key]['url_id']) {
 							if (empty($tabtp[$obj->rowid][$compta_soc])) {
 								$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
 							} else {
@@ -774,7 +776,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $ref;
 					$bookkeeping->doc_type = 'bank';
-					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_doc = (int) $key;
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 
 					$bookkeeping->numero_compte = $k;
@@ -836,7 +838,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $ref;
 						$bookkeeping->doc_type = 'bank';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = $val["fk_bank"];
 
 						$bookkeeping->label_operation = $reflabel;
@@ -1003,7 +1005,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $ref;
 						$bookkeeping->doc_type = 'bank';
-						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_doc = (int) $key;
 						$bookkeeping->fk_docdet = $val["fk_bank"];
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';

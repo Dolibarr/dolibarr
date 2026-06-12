@@ -47,7 +47,7 @@ class Mailing extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'email';
+	public $picto = 'mail-bulk';
 
 	/**
 	 * @var string Type of message ('email', 'sms')

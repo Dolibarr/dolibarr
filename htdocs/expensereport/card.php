@@ -1622,7 +1622,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 1);
 
 			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
@@ -1714,7 +1714,7 @@ if ($action == 'create') {
 		} else {
 			$taxlessUnitPriceDisabled = getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? ' disabled' : '';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip', 0, '', '', 0, '', 1);
 
 			$formconfirm = '';
 
@@ -2104,10 +2104,11 @@ if ($action == 'create') {
 			print "</table>";
 			print '</div>';
 
+			print '<div class="clearboth"></div>';
 			print '</div>';
 
 
-			print '<div class="clearboth"></div><br><br>';
+			print '<br><br>';
 
 			print '<div style="clear: both;"></div>';
 
@@ -2931,7 +2932,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
