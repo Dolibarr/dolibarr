@@ -891,6 +891,58 @@ class FormTicket
 	}
 
 	/**
+	 * Return a combo list with active email sender profiles.
+	 *
+	 * @param	int		$selected		Selected sender profile id
+	 * @param	string	$htmlname		HTML select name
+	 * @param	string	$defaultEmail	Default email used if no selection
+	 * @return	void
+	 */
+	public function selectEmailSenderProfiles($htmlname, $defaultEmail, $selected = 0)
+	{
+		global $langs, $user;
+
+		$form = new Form($this->db);
+		$list = array();
+
+		$sql = "SELECT rowid, label, email";
+		$sql .= " FROM ".$this->db->prefix()."c_email_senderprofile";
+		$sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).") AND entity IN (".getEntity('c_email_senderprofile').")";
+		$sql .= " ORDER BY position";
+
+		/**
+		 * @see FormMail::get_form()
+		 * Using ajaxcombo here make the '<email>' no more visible on list because <emailofuser> is not a valid html tag,
+		 * so we transform before each record into $list to be printable with ajaxcombo by replacing <> into ()
+		 * $list['senderprofile_0_0'] = ['label'=>'rrr', 'data-html'=>'rrr &lt;aaaa&gt;'];
+		 */
+		$emailReplaceFunction = function($email) {
+			return str_replace(['&lt;', '&gt;'], ['<span class="opacitymedium">(', ')</span>'], $email);
+		};
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$value = $obj->label.' &lt;'.$obj->email.'&gt;';
+					$list[(int) $obj->rowid] = ['label' => $value, 'data-html' =>  $emailReplaceFunction($value)];
+				}
+				$i++;
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+		$emptyValue = $langs->trans("Default") . ' &lt;' . $defaultEmail . '&gt;';
+		$moreparamonempty = sprintf(' data-html="%s" ', dol_escape_htmltag($emailReplaceFunction($emptyValue)));
+
+		print $form->selectarray($htmlname, $list, $selected, dol_escape_htmltag($emptyValue), 0, 0, '', 0, 0, 0, '', 'minwidth300 maxwidth500', 1, $moreparamonempty);
+	}
+
+	/**
 	 *      Return html list of tickets type
 	 *
 	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
@@ -1730,9 +1782,16 @@ class FormTicket
 				print ' <span class="opacitymedium">('.$langs->trans("MailReply").')</span>';
 			}
 			print '</span></td>';
-			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from;
-			if ($replyto) {
-				print ' <span class="opacitymedium">('.$replyto.')</span>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"');
+			if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES')) {
+				$this->selectEmailSenderProfiles('mail_senderprofile_from', getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM'), GETPOSTINT('email_senderprofile_from'));
+				print ' <span class="opacitymedium">('.$langs->trans("MailReply").')</span> ';
+				$this->selectEmailSenderProfiles('mail_senderprofile_replyto', getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO'), GETPOSTINT('email_senderprofile_replyto'));
+			} else {
+				print dol_escape_htmltag($from);
+				if ($replyto) {
+					print ' <span class="opacitymedium">('.dol_escape_htmltag($replyto).')</span>';
+				}
 			}
 			print '</span></td></tr>';
 
