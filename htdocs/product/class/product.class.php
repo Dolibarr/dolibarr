@@ -3869,25 +3869,23 @@ class Product extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT e.fk_soc) as nb_customers, COUNT(DISTINCT e.rowid) as nb,";
 		$sql .= " COUNT(ed.rowid) as nb_rows, SUM(ed.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."expeditiondet as ed";
-		$sql .= ", ".$this->db->prefix()."commandedet as cd";
-		$sql .= ", ".$this->db->prefix()."commande as c";
-		$sql .= ", ".$this->db->prefix()."expedition as e";
-		$sql .= ", ".$this->db->prefix()."societe as s";
-		$sql .= " WHERE e.rowid = ed.fk_expedition";
-		$sql .= " AND c.rowid = cd.fk_commande";
-		$sql .= " AND e.fk_soc = s.rowid";
-		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
-		$sql .= " AND ed.fk_elementdet = cd.rowid";
-		$sql .= " AND cd.fk_product = ".((int) $this->id);
-		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {	// For external user, restriction is done on filter on fk_soc directly
+		$sql .= " FROM ".$this->db->prefix()."societe as s";
+		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as e ON e.fk_soc = s.rowid";
+		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."commande as c ON c.rowid = cd.fk_commande";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
+		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
 			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
+		$sql .= " WHERE 1 = 1";
+		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
+		$sql .= " AND COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) = ".((int) $this->id);
 		if ($socid > 0) {
 			$sql .= " AND e.fk_soc = ".((int) $socid);
 		}
 		if ($filtrestatut != '') {
-			$sql .= " AND c.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
+			$sql .= " AND (c.fk_statut IN (".$this->db->sanitize($filtrestatut).") OR c.rowid IS NULL)";
 		}
 		if (!empty($filterShipmentStatus)) {
 			$sql .= " AND e.fk_statut IN (".$this->db->sanitize($filterShipmentStatus).")";
