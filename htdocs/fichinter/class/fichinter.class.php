@@ -507,7 +507,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.datec, f.dateo, f.datee, f.datet,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
-		$sql .= " f.fk_user_author, f.fk_user_modif";
+		$sql .= " f.fk_user_author, f.fk_user_modif,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
