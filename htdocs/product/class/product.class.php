@@ -3867,28 +3867,58 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $user, $hookmanager, $action;
 
-		$sql = "SELECT COUNT(DISTINCT e.fk_soc) as nb_customers, COUNT(DISTINCT e.rowid) as nb,";
-		$sql .= " COUNT(ed.rowid) as nb_rows, SUM(ed.qty) as qty";
-		$sql .= " FROM ".$this->db->prefix()."societe as s";
-		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as e ON e.fk_soc = s.rowid";
-		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON ed.fk_expedition = e.rowid";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."commande as c ON c.rowid = cd.fk_commande";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
+		$sqlwhere = " WHERE e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
 		if (empty($user->fk_soc) && !$user->hasRight('societe', 'client', 'voir') && !$forVirtualStock) {
-			$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sqljoinrights = " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id);
+		} else {
+			$sqljoinrights = "";
 		}
-		$sql .= " WHERE 1 = 1";
-		$sql .= " AND e.entity IN (".getEntity($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE') ? 'stock' : 'expedition').")";
-		$sql .= " AND COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) = ".((int) $this->id);
 		if ($socid > 0) {
-			$sql .= " AND e.fk_soc = ".((int) $socid);
-		}
-		if ($filtrestatut != '') {
-			$sql .= " AND (c.fk_statut IN (".$this->db->sanitize($filtrestatut).") OR c.rowid IS NULL)";
+			$sqlwhere .= " AND e.fk_soc = ".((int) $socid);
 		}
 		if (!empty($filterShipmentStatus)) {
-			$sql .= " AND e.fk_statut IN (".$this->db->sanitize($filterShipmentStatus).")";
+			$sqlwhere .= " AND e.fk_statut IN (".$this->db->sanitize($filterShipmentStatus).")";
+		}
+
+		$sqlunion = array();
+
+		$sqlcommande = "SELECT e.fk_soc, e.rowid as expeditionid, ed.rowid as edrowid, ed.qty, c.fk_statut as order_status";
+		$sqlcommande .= " FROM ".$this->db->prefix()."societe as s";
+		$sqlcommande .= " INNER JOIN ".$this->db->prefix()."expedition as e ON e.fk_soc = s.rowid";
+		$sqlcommande .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+		$sqlcommande .= " INNER JOIN ".$this->db->prefix()."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
+		$sqlcommande .= " LEFT JOIN ".$this->db->prefix()."commande as c ON c.rowid = cd.fk_commande";
+		$sqlcommande .= $sqljoinrights;
+		$sqlcommande .= $sqlwhere;
+		$sqlcommande .= " AND cd.fk_product = ".((int) $this->id);
+		$sqlunion[] = $sqlcommande;
+
+		$sqlpropal = "SELECT e.fk_soc, e.rowid as expeditionid, ed.rowid as edrowid, ed.qty, NULL as order_status";
+		$sqlpropal .= " FROM ".$this->db->prefix()."societe as s";
+		$sqlpropal .= " INNER JOIN ".$this->db->prefix()."expedition as e ON e.fk_soc = s.rowid";
+		$sqlpropal .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+		$sqlpropal .= " INNER JOIN ".$this->db->prefix()."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
+		$sqlpropal .= $sqljoinrights;
+		$sqlpropal .= $sqlwhere;
+		$sqlpropal .= " AND pd.fk_product = ".((int) $this->id);
+		$sqlunion[] = $sqlpropal;
+
+		$sqlfree = "SELECT e.fk_soc, e.rowid as expeditionid, ed.rowid as edrowid, ed.qty, NULL as order_status";
+		$sqlfree .= " FROM ".$this->db->prefix()."societe as s";
+		$sqlfree .= " INNER JOIN ".$this->db->prefix()."expedition as e ON e.fk_soc = s.rowid";
+		$sqlfree .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+		$sqlfree .= $sqljoinrights;
+		$sqlfree .= $sqlwhere;
+		$sqlfree .= " AND (ed.element_type NOT IN ('commande', 'order', 'propal') OR ed.element_type IS NULL OR ed.element_type = '')";
+		$sqlfree .= " AND ed.fk_product = ".((int) $this->id);
+		$sqlunion[] = $sqlfree;
+
+		$sql = "SELECT COUNT(DISTINCT src.fk_soc) as nb_customers, COUNT(DISTINCT src.expeditionid) as nb,";
+		$sql .= " COUNT(src.edrowid) as nb_rows, SUM(src.qty) as qty";
+		$sql .= " FROM (".implode(" UNION ALL ", $sqlunion).") as src";
+		$sql .= " WHERE 1 = 1";
+		if ($filtrestatut != '') {
+			$sql .= " AND (src.order_status IN (".$this->db->sanitize($filtrestatut).") OR src.order_status IS NULL)";
 		}
 
 		$result = $this->db->query($sql);

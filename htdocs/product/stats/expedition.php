@@ -149,32 +149,76 @@ if ($id > 0 || !empty($ref)) {
 
 
 		if ($user->hasRight('shipping', 'lire')) {
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, e.ref, e.ref_customer";
-			$sql .= ", e.date_creation, e.date_delivery, e.fk_statut as statut, e.rowid as expeditionid, ed.rowid";
-			$sql .= ", ed.qty, COALESCE(cd.subprice * (100 - cd.remise_percent) / 100 * ed.qty, pd.subprice * (100 - pd.remise_percent) / 100 * ed.qty, 0) AS total_ht";
+			$sortfieldalias = array(
+				'e.rowid' => 'expeditionid',
+				's.nom' => 'name',
+				's.code_client' => 'code_client',
+				'e.date_creation' => 'date_creation',
+				'e.date_delivery' => 'date_delivery',
+				'ed.qty' => 'qty',
+				'e.fk_statut' => 'statut',
+				'total_ht' => 'total_ht',
+			);
+
+			$sqlunion = array();
+			$sqlselect = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, e.ref, e.ref_customer";
+			$sqlselect .= ", e.date_creation, e.date_delivery, e.fk_statut as statut, e.rowid as expeditionid, ed.rowid";
+			$sqlselect .= ", ed.qty";
 			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-				$sql .= ", sc.fk_soc, sc.fk_user ";
+				$sqlselect .= ", sc.fk_soc, sc.fk_user";
 			}
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-			}
-			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-			$sql .= " AND COALESCE(cd.fk_product, pd.fk_product, ed.fk_product) = ".((int) $product->id);
+			$sqlwhere = " WHERE e.entity IN (".getEntity('expedition').")";
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(e.date_creation) ='.((int) $search_month);
+				$sqlwhere .= ' AND MONTH(e.date_creation) ='.((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(e.date_creation) ='.((int) $search_year);
+				$sqlwhere .= ' AND YEAR(e.date_creation) ='.((int) $search_year);
 			}
 			if ($socid) {
-				$sql .= " AND e.fk_soc = ".((int) $socid);
+				$sqlwhere .= " AND e.fk_soc = ".((int) $socid);
 			}
-			$sql .= $db->order($sortfield, $sortorder);
+
+			$sqlcommande = $sqlselect;
+			$sqlcommande .= ", cd.subprice * (100 - cd.remise_percent) / 100 * ed.qty AS total_ht";
+			$sqlcommande .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sqlcommande .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
+			$sqlcommande .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+			$sqlcommande .= " INNER JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND ed.element_type IN ('commande', 'order')";
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sqlcommande .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			$sqlcommande .= $sqlwhere;
+			$sqlcommande .= " AND cd.fk_product = ".((int) $product->id);
+			$sqlunion[] = $sqlcommande;
+
+			$sqlpropal = $sqlselect;
+			$sqlpropal .= ", pd.subprice * (100 - pd.remise_percent) / 100 * ed.qty AS total_ht";
+			$sqlpropal .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sqlpropal .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
+			$sqlpropal .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+			$sqlpropal .= " INNER JOIN ".MAIN_DB_PREFIX."propaldet as pd ON pd.rowid = ed.fk_elementdet AND ed.element_type = 'propal'";
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sqlpropal .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			$sqlpropal .= $sqlwhere;
+			$sqlpropal .= " AND pd.fk_product = ".((int) $product->id);
+			$sqlunion[] = $sqlpropal;
+
+			$sqlfree = $sqlselect;
+			$sqlfree .= ", 0 AS total_ht";
+			$sqlfree .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sqlfree .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
+			$sqlfree .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sqlfree .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			$sqlfree .= $sqlwhere;
+			$sqlfree .= " AND (ed.element_type NOT IN ('commande', 'order', 'propal') OR ed.element_type IS NULL OR ed.element_type = '')";
+			$sqlfree .= " AND ed.fk_product = ".((int) $product->id);
+			$sqlunion[] = $sqlfree;
+
+			$sql = "SELECT * FROM (".implode(" UNION ALL ", $sqlunion).") as sending_src";
+			$sql .= $db->order($sortfieldalias[$sortfield] ?? 'date_creation', $sortorder);
 
 			//Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
