@@ -45,12 +45,13 @@ require_once DOL_DOCUMENT_ROOT . '/ai/class/mcp.class.php';
 if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
 }
+
+global $db, $user, $conf;
+
 // Per-user gate: same right as the assistant page and parse_intent.php
 if (!$user->hasRight('ai', 'assistant', 'use')) {
 	accessforbidden();
 }
-
-global $db, $user, $conf;
 
 top_httphead('application/json');
 
