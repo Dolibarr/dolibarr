@@ -10161,7 +10161,7 @@ function dol_concat($text1, $text2)
 /**
  * Add a function to replace array_map with allowed callback
  *
- * @param	string				$callback	Function
+ * @param	string|mixed		$callback	Function
  * @param	array<mixed,mixed>	$array		Array
  * @return	array<mixed,mixed>				The array after the array_map
  */
