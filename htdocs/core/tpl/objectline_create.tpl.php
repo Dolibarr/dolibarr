@@ -1278,11 +1278,27 @@ if (!empty($object->thirdparty)) {
 							}
 						});
 
-
 						// Execute js context Dolibarr Hooks
 						if (typeof Dolibarr != 'undefined') {
 							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
 						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
