@@ -603,7 +603,12 @@ function getAiChatAssistantHtml($mode = 'page')
 
 	// Header
 	$out .= '<div class="chat-header">';
-	$out .= '<h2>'.img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant").'</h2>';
+	$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
+	if ($mode === 'popover') {
+		// In the popover the title links to the full standalone page
+		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+	}
+	$out .= '<h2>'.$title.'</h2>';
 	$out .= '<div class="header-controls">';
 	// Clear Button
 	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';

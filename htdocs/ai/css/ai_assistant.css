@@ -54,6 +54,16 @@
     text-overflow: ellipsis;
 }
 
+/* Popover only: the title links to the full standalone page */
+.ai-header-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ai-header-link:hover {
+    color: var(--ai-accent);
+}
+
 .header-controls {
     display: flex;
     align-items: center;
