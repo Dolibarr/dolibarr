@@ -293,14 +293,22 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
-		// Delete proposal
-		$result = $object->delete($user);
-		if ($result > 0) {
-			header('Location: ' . dolBuildUrl(DOL_URL_ROOT . '/comm/propal/list.php', ['restore_lastsearch_values' => 1]));
-			exit();
-		} else {
+		// Delete proposal — blocked if signed or linked to an order
+		if ($object->status == Propal::STATUS_SIGNED) {
 			$langs->load("errors");
-			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($langs->trans('ErrorPropalSignedCantDelete'), null, 'errors');
+		} elseif ($object->countNbOfOrders() > 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans('ErrorPropalLinkedToOrderCantDelete'), null, 'errors');
+		} else {
+			$result = $object->delete($user);
+			if ($result > 0) {
+				header('Location: ' . dolBuildUrl(DOL_URL_ROOT . '/comm/propal/list.php', ['restore_lastsearch_values' => 1]));
+				exit();
+			} else {
+				$langs->load("errors");
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		// Remove line
@@ -3555,6 +3563,7 @@ if ($action == 'create') {
 
 	if ($action != 'presend') {
 		$numlines = count($object->lines);
+		$numorders = isModEnabled('order') ? $object->countNbOfOrders() : 0;
 		print '<div class="tabsAction">';
 
 		$parameters = array();
@@ -3753,8 +3762,16 @@ if ($action == 'create') {
 					print '<a class="butAction butActionClone" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&socid=' . $object->socid . '&action=clone&token=' . newToken() . '&object=' . $object->element . '">' . $langs->trans("ToClone") . '</a>';
 				}
 
-				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $usercandelete);
+				// Delete — blocked if signed or linked to an order
+				if ($usercandelete) {
+					if ($object->status == Propal::STATUS_SIGNED) {
+						print dolGetButtonAction($langs->trans('PropalSignedCantDelete'), $langs->trans('Delete'), 'default', '#', '', false);
+					} elseif ($numorders > 0) {
+						print dolGetButtonAction($langs->trans('PropalLinkedToOrderCantDelete'), $langs->trans('Delete'), 'default', '#', '', false);
+					} else {
+						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', true);
+					}
+				}
 			}
 		}
 

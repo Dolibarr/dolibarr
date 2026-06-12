@@ -3242,6 +3242,28 @@ class Propal extends CommonObject
 	}
 
 	/**
+	 *  Return the number of orders linked to this proposal
+	 *
+	 *  @return int		Number of linked orders, or 0 if none
+	 */
+	public function countNbOfOrders()
+	{
+		$sql = 'SELECT COUNT(*) as nb';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_element';
+		$sql .= ' WHERE fk_source = '.((int) $this->id);
+		$sql .= " AND sourcetype = 'propal'";
+		$sql .= " AND targettype = 'commande'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_object($resql);
+			return (int) $row->nb;
+		}
+
+		return 0;
+	}
+
+	/**
 	 *  Change the delivery time
 	 *
 	 *  @param	int	$availability_id	Id of new delivery time
