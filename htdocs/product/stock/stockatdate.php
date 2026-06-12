@@ -380,10 +380,10 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 	//print $sql;
 	if ($ext != 'csv') {
 		$sql .= $db->plimit($limit + 1, $offset);
-		$resql = $db->query($sql);
 	} else {
 		$limit = 0;
 	}
+	$resql = $db->query($sql);
 	if (empty($resql)) {
 		dol_print_error($db);
 		exit;
