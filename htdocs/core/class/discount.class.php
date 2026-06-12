@@ -249,7 +249,7 @@ class DiscountAbsolute extends CommonObject
 		$sql = "SELECT sr.rowid, sr.fk_soc, sr.discount_type,";
 		$sql .= " sr.fk_user,";
 		$sql .= " sr.amount_ht, sr.amount_tva, sr.amount_localtax1, sr.amount_localtax2, sr.amount_ttc, sr.tva_tx, sr.localtax1_tx, sr.localtax1_type, sr.localtax2_tx, sr.localtax2_type, sr.vat_src_code,";
-		$sql .= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_localtax1, sr.multicurrency_amount_localtax2, sr.multicurrency_amount_ttc,";
+		$sql .= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
 		$sql .= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
 		$sql .= " sr.datec,";
 		$sql .= " f.ref as ref_facture_source, f.type as type_facture_source,";
@@ -281,7 +281,7 @@ class DiscountAbsolute extends CommonObject
 
 				$this->total_ht = $obj->amount_ht;
 				$this->total_tva = $obj->amount_tva;
-				$this->total_locatax1 = $obj->amount_localtax1;
+				$this->total_localtax1 = $obj->amount_localtax1;
 				$this->total_localtax2 = $obj->amount_localtax2;
 				$this->total_ttc = $obj->amount_ttc;
 				// For backward compatibility
@@ -291,8 +291,6 @@ class DiscountAbsolute extends CommonObject
 
 				$this->multicurrency_total_ht = $this->multicurrency_subprice = $obj->multicurrency_amount_ht;
 				$this->multicurrency_total_tva = $obj->multicurrency_amount_tva;
-				$this->multicurrency_total_localtax1 = $obj->multicurrency_amount_localtax1;
-				$this->multicurrency_total_localtax2 = $obj->multicurrency_amount_localtax2;
 				$this->multicurrency_total_ttc = $obj->multicurrency_amount_ttc;
 				// For backward compatibility
 				$this->multicurrency_amount_ht = $this->multicurrency_total_ht;
@@ -398,13 +396,16 @@ class DiscountAbsolute extends CommonObject
 		$sql = "INSERT INTO ".$this->db->prefix()."societe_remise_except";
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_localtax1, amount_localtax2, amount_ttc, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, vat_src_code,";
-		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_localtax1_tva multicurrency_amount_localtax2 multicurrency_amount_ttc,";
+		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
-		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ".price2num($this->amount_localtax1).", ".price2num($this->amount_localtax2).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
-		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ".price2num($this->localtax2_tx).", ".price2num($this->localtax2_type).", '".$this->db->escape($this->vat_src_code)."',";
-		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ".price2num($this->multicurrency_amount_localtax1).", ".price2num($this->multicurrency_amount_localtax2).", ".price2num($this->multicurrency_amount_ttc).", ";
+		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
+		$sql .= " ".($this->amount_localtax1 ? price2num($this->amount_localtax1) : 0).", ".($this->amount_localtax2 ? price2num($this->amount_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
+		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
+		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
+		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
+		$sql .= " ".price2num($this->multicurrency_amount_ttc).", ";
 		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
 		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";

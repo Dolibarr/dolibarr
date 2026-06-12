@@ -270,9 +270,10 @@ class DiscountTest extends CommonClassTest
 	 * @return array values and expectations data
 	 */
 	public function providerSplitRemiseData() {
+		// Soit une remise dont le total est taxé
 		// array(total_amount, splitamount_1, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, ex_ht_amount1, ex_total_amount1, ex_ht_amount2, ex_total_amount2),
 		return array(
-			array(1234,1000,5,9.975,1,0,0,11,11,11,11)
+			array(1468.15,1000,5,9.975,1,0,0,869.75,1000,407.18,468.15)
 		);
 	}
 
