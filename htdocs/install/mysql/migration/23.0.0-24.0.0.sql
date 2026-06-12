@@ -126,6 +126,7 @@ CREATE TABLE llx_ai_request_log
   entity				        integer DEFAULT 1 NOT NULL,
   date_request			    	datetime,
   fk_user     			    	integer NOT NULL,
+  fk_actioncomm			    	integer,
   query_text        	  		text,
   tool_name     		    	varchar(255),
   provider   			      	varchar(50),
@@ -133,6 +134,9 @@ CREATE TABLE llx_ai_request_log
   confidence        	  		float,
   status            	  		varchar(50),
   error_msg         	  		text,
+  input_hash         	  		varchar(80),
+  output_hash        	  		varchar(80),
+  security_hash      	  		varchar(80),
   raw_request_payload   		MEDIUMTEXT,
   raw_response_payload			MEDIUMTEXT
 )ENGINE=innodb;
@@ -142,7 +146,10 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN tms timestamp DEFAULT CURRENT_TIMEST
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_fk_actioncomm (fk_actioncomm);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_input_hash (input_hash);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_security_hash (security_hash);
 
 -- Add parent group support for usergroup inheritance
 ALTER TABLE llx_usergroup ADD COLUMN fk_parent integer DEFAULT NULL AFTER entity;

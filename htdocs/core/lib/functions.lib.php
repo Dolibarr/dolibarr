@@ -10161,19 +10161,19 @@ function dol_concat($text1, $text2)
 /**
  * Add a function to replace array_map with allowed callback
  *
- * @param	callable			$callback	Function
+ * @param	string|mixed		$callback	Function
  * @param	array<mixed,mixed>	$array		Array
  * @return	array<mixed,mixed>				The array after the array_map
  */
-function safeArrayMap(callable $callback, array $array)
+function safeArrayMap($callback, array $array)
 {
-	if (!is_callable($callback)) {
+	if (!is_string($callback)) {
 		throw new InvalidArgumentException("Les callbacks sont désactivés.");
 	}
-	// Vérifie que $callback est une fonction "sûre" (ex: dans une liste blanche)
+	// Check that $callback is a sure function
 	$allowed_callbacks = ['strtolower', 'strtoupper', 'intval'];
-	if (is_string($callback) && !in_array($callback, $allowed_callbacks, true)) {
-		throw new InvalidArgumentException("Callback non autorisé.");
+	if (!in_array($callback, $allowed_callbacks, true)) {
+		throw new InvalidArgumentException("Callback function not allowed.");
 	}
 	return array_map($callback, $array);
 }
