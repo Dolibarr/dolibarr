@@ -57,17 +57,15 @@ NEW: Add button more on membership stat page
 NEW: Add captcha on webportail (#37726)
 NEW: Add column einvoice_vate on VAT dictionary
 NEW: Add condition to exclude unpaid invoices from profit (#36693)
-NEW: Add count tool for AI
+NEW: Add count tool for API
 NEW: Add default bank account field on third party creation form (#37866)
 NEW: Add direct debit to close on home thumbs
 NEW: Add end date of membership on list of partnership
 NEW: Add field 'Commentaires' in formconfirm when adding a payment on invoices from massaction. (#37594)
-NEW: Add label column to a members subscription list (#38289)
+NEW: Add label/note column to the members subscription list (#38289)
 NEW: Add lifetime amount on the list of blockedlog
 NEW: Add mass mailing tab - with counts to project tabs (#37703)
 NEW: Add member on list of partnership
-NEW: Add method calculateVATNumberFromProperties()
-NEW: Add method dolOutputDates()
 NEW: Add method formatLogObject to allow logs in 1 line #37135
 NEW: Add new EUID number (#36997)
 NEW: Add page to control last line deletion
@@ -189,6 +187,8 @@ NEW: API endpoint for getting product price logs (#38420)
 NEW: API get country: load region and load states now an option (#37715)
 NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
 NEW: Category - API - Add type list (#38207)
+NEW: Add method calculateVATNumberFromProperties()
+NEW: Add method dolOutputDates()
 
 
 WARNING:
