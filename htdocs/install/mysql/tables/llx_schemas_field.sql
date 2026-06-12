@@ -1,7 +1,8 @@
 -- Table with all fields description to be able to request it like dolibarr native extrafields
 --
+
 CREATE TABLE llx_schemas_field (
-    rowid 			integer AUTO_INCREMENT PRIMARY KEY,
+	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
     name 			varchar(64) NOT NULL,
     entity 			integer DEFAULT 1 NOT NULL,
     label 			varchar(255) NOT NULL,
@@ -13,7 +14,7 @@ CREATE TABLE llx_schemas_field (
     fieldcomputed 	text,
     fielddefault 	text,
     fieldunique 	integer DEFAULT 0,
-    fieldrequired 	integer DEFAULT,
+    fieldrequired 	integer DEFAULT 0,
     perms 			varchar(255),
     enabled 		varchar(255),
     pos 			integer DEFAULT 0,
@@ -21,7 +22,7 @@ CREATE TABLE llx_schemas_field (
     emptyonclone 	integer DEFAULT 0,
     param 			text,
     list 			varchar(255) DEFAULT '1',
-	printegerable 	integer DEFAULT 0,
+	printable 		integer DEFAULT 0,
 	-- is the extrafield output on tooltip
 	showintooltip	integer DEFAULT 0,
     totalizable 	boolean default false,
