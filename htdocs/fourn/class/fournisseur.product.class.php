@@ -1198,9 +1198,9 @@ class ProductFournisseur extends Product
 		}
 		$dbs->free($resql);
 
-		if (!empty($colliding)) {
+		foreach ($colliding as $rowid) {
 			$sqldel = "DELETE FROM ".$dbs->prefix()."product_fournisseur_price";
-			$sqldel .= " WHERE rowid IN (".$dbs->sanitize(implode(',', $colliding)).")";
+			$sqldel .= " WHERE rowid = ".((int) $rowid);
 			if (!$dbs->query($sqldel)) {
 				return false;
 			}
