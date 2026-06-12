@@ -46,6 +46,7 @@ class LanguageOfCommentsSniff implements Sniff
 		' entier ',
 		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
+		' fonction ',
 		' ligne ',
 		' lignes ',
 		' modèle ',
