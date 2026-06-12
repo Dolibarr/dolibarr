@@ -3,7 +3,7 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -349,7 +349,7 @@ class BankCateg // extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".$conf->entity." AND type = ".((int) $catTypeID)." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie WHERE entity = ".((int) $conf->entity)." AND type = ".((int) $catTypeID)." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

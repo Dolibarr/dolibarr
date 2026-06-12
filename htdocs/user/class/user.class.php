@@ -2195,10 +2195,10 @@ class User extends CommonObject
 		}
 		$i = 0;
 		while ($i < $num) {
-			$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
+			$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id=".((int) $rd[$i]);
 			$result = $this->db->query($sql);
 
-			$sql = "INSERT INTO ".$this->db->prefix()."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+			$sql = "INSERT INTO ".$this->db->prefix()."user_rights (fk_user, fk_id) VALUES (".((int) $this->id).", ".((int) $rd[$i]).")";
 			$result = $this->db->query($sql);
 			if (!$result) {
 				return -1;

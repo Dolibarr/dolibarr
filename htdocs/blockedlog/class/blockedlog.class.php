@@ -2228,16 +2228,16 @@ class BlockedLog
 
 		if ($element == 'all') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity;
+			 WHERE entity = ".((int) $conf->entity);
 		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 0";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 0";
 		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 1";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND element = '".$this->db->escape($element)."'";
+			 WHERE entity = ".((int) $conf->entity)." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {
