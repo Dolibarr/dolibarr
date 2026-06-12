@@ -1287,6 +1287,12 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$object->fetch($fromid);
+		// fetch() clears $object->thirdparty, but the subsequent $object->create() path
+		// reaches addLine() -> getLocalTaxesFromRate() -> get_localtax() and uses the
+		// buyer thirdparty to decide whether IRPF/localtax2 applies. Without this fetch,
+		// get_localtax() sees $thirdparty_buyer = null, returns 0 and the cloned lines
+		// lose their localtax2_tx (see issue #29052).
+		$object->fetch_thirdparty();
 
 		// Load source object
 		$objFrom = clone $object;
@@ -5808,7 +5814,7 @@ class Facture extends CommonInvoice
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
 		$sql .= ' AND situation_counter < '.((int) $this->situation_counter);
-		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
+		$sql .= ' AND entity = '.($this->entity > 0 ? ((int) $this->entity) : ((int) $conf->entity));
 		$resql = $this->db->query($sql);
 		$res = array();
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -5886,7 +5892,7 @@ class Facture extends CommonInvoice
 			// No point in testing anything if we're not inside a cycle
 			$sql = 'SELECT max(situation_counter) FROM '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
-			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
+			$sql .= ' AND entity = '.($this->entity > 0 ? ((int) $this->entity) : ((int) $conf->entity));
 			$resql = $this->db->query($sql);
 
 			if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {

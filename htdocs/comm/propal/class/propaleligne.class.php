@@ -19,7 +19,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -801,7 +801,7 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);

@@ -123,6 +123,11 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
 	}
+	if ($tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty) <= 0) {
+		$langs->loadLangs(array("errors", "companies"));
+		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof2, $langs->transcountry("ProfId2Short", $tmpthirdparty->country_code)), null, 'errors');
+		$error++;
+	}
 
 	$company_name = GETPOST("BLOCKEDLOG_REGISTRATION_NAME");
 	$company_email = GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL");
@@ -138,6 +143,7 @@ if ($action == 'update') {
 	$provider_email = GETPOST("MAIN_INFO_ITPROVIDER_MAIL");
 	$provider_country_id = GETPOST("MAIN_INFO_ITPROVIDER_COUNTRY");
 	$provider_idprof1 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF1");
+	$provider_idprof2 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF2");
 	$provider_address = GETPOST("MAIN_INFO_ITPROVIDER_ADDRESS");
 	$provider_state = GETPOST("MAIN_INFO_ITPROVIDER_STATE");
 	$provider_zip = GETPOST("MAIN_INFO_ITPROVIDER_ZIP");
@@ -196,6 +202,10 @@ if ($action == 'update') {
 			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", $provider_idprof1, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF2", $provider_idprof1, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -388,7 +398,8 @@ if ($mode == "forceregistration") {
 		'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
 		'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
 		'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
-		'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+		'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1'),
+		'provider_idprof2' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2')
 	);
 
 	// Output js code to register data.
@@ -500,6 +511,10 @@ if (empty($mode)) {
 	//IT provider IDPROF1
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF1');
 	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1');
+
+	//IT provider IDPROF1
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF2');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2');
 
 	//IT provider country code
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_COUNTRY');
