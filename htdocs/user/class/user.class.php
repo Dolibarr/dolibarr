@@ -1419,7 +1419,7 @@ class User extends CommonObject
 				// @FIXME Test on MULTICOMPANY_BACKWARD_COMPATIBILITY is a very strange business rules because the select should be always the
 				// same than into user->loadRights() in user/perms.php and user/group/perms.php
 				// We should never use and remove this case.
-				$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
+				$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").((int) $conf->entity).")";
 			} else {
 				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and inserted during module activation.
 				// So we must include the filter on entity on both table r. and ur.
@@ -1484,7 +1484,7 @@ class User extends CommonObject
 				// same than into user->loadRights() in user/perms.php and user/group/perms.php
 				// We should never use and remove this case.
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+					$sql .= " AND gu.entity IN (0,".((int) $conf->entity).")";
 				} else {
 					$sql .= " AND r.entity = ".((int) $conf->entity);
 				}
@@ -1493,7 +1493,7 @@ class User extends CommonObject
 				// The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
 				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
 				// other entities, so we are forced to add a filter on gu here
-				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
+				$sql .= " AND gu.entity IN (0,".((int) $conf->entity).")";
 				$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 			}
 			// End of strange business rule
@@ -2391,10 +2391,10 @@ class User extends CommonObject
 		if (!empty($user->admin) && empty($user->entity) && $user->id != $this->id) {
 			$sql .= ", entity = ".((int) $this->entity); // entity flag can be set/unset only by an another superadmin user
 		}
-		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
-		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
-		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
-		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? $this->fk_establishment : "null");
+		$sql .= ", default_range = ".($this->default_range > 0 ? ((int) $this->default_range) : 'null');
+		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? ((int) $this->default_c_exp_tax_cat) : 'null');
+		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? ((int) $this->fk_warehouse) : "null");
+		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? ((int) $this->fk_establishment) : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 		$sql .= ", force_pass_change = ".($this->force_pass_change ? ((int) $this->force_pass_change) : "0");
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2950,7 +2950,7 @@ class User extends CommonObject
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_clicktodial";
 		$sql .= " (fk_user,url,login,pass,poste)";
-		$sql .= " VALUES (".$this->id;
+		$sql .= " VALUES (".((int) $this->id);
 		$sql .= ", '".$this->db->escape($this->clicktodial_url)."'";
 		$sql .= ", '".$this->db->escape($this->clicktodial_login)."'";
 		$sql .= ", '".$this->db->escape($this->clicktodial_password)."'";

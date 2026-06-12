@@ -1821,7 +1821,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = '')
 		$sql .= ", note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE ".$db->decrypt('name')." = '".$db->escape($const)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 		$sql .= " ORDER BY name ASC, entity DESC";
 		$result = $db->query($sql);
 

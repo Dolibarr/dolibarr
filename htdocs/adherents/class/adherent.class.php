@@ -1539,7 +1539,7 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE login='".$this->db->escape($login)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1568,7 +1568,7 @@ class Adherent extends CommonObject
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE firstname='".$this->db->escape($firstname)."'";
 		$sql .= " AND lastname='".$this->db->escape($lastname)."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

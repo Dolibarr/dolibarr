@@ -12,7 +12,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2009,7 +2009,7 @@ class Contact extends CommonObject
 						$sql .= "fk_soc,";
 						$sql .= "fk_c_type_contact,";
 						$sql .= "fk_socpeople) ";
-						$sql .= " VALUES (".$conf->entity.",";
+						$sql .= " VALUES (".((int) $conf->entity).",";
 						$sql .= "'".$this->db->idate(dol_now())."',";
 						$sql .= $socid.", ";
 						$sql .= $idrole." , ";

@@ -384,7 +384,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
 		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
 		$sql .= ")";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
 		$sql .= " ".($this->total_localtax1 ? price2num($this->total_localtax1) : 0).", ".($this->total_localtax2 ? price2num($this->total_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
@@ -704,7 +704,7 @@ class DiscountAbsolute extends CommonObject
 		if (empty($reshook)) {
 			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
 			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
-			$sql .= " WHERE rc.entity = ".$conf->entity;
+			$sql .= " WHERE rc.entity = ".((int) $conf->entity);
 			$sql .= " AND rc.discount_type=".((int) $discount_type);
 			if (!empty($discount_type)) {
 				$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier

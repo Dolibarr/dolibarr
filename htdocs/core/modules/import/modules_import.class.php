@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1200,11 +1200,11 @@ class ModeleImports
 
 									if ($isidorref == 'ref') {
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-											$class = $objimport->array_import_convertvalue[0][$val]['class'];
-											$method = $objimport->array_import_convertvalue[0][$val]['method'];
-											$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
-											$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-											$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
+										$class = $objimport->array_import_convertvalue[0][$val]['class'];
+										$method = $objimport->array_import_convertvalue[0][$val]['method'];
+										$codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
+										$code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
+										$cachekey = $file.'_'.$class.'_'.$method.'_'.$code;
 										if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
 											$newval = $this->cacheconvert[$cachekey][$newval];
 										} else {
@@ -1237,11 +1237,11 @@ class ModeleImports
 										$newval = '0';
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits') {
-										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
-										$class = $objimport->array_import_convertvalue[0][$val]['class'];
-										$method = $objimport->array_import_convertvalue[0][$val]['method'];
-										$units = $objimport->array_import_convertvalue[0][$val]['units'];
-										$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
+									$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+									$class = $objimport->array_import_convertvalue[0][$val]['class'];
+									$method = $objimport->array_import_convertvalue[0][$val]['method'];
+									$units = $objimport->array_import_convertvalue[0][$val]['units'];
+									$cachekey = $file.'_'.$class.'_'.$method.'_'.$units;
 									if (isset($this->cacheconvert[$cachekey][$newval]) && $this->cacheconvert[$cachekey][$newval] != '') {
 										$newval = $this->cacheconvert[$cachekey][$newval];
 									} else {
@@ -1351,8 +1351,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$val]) ? ((int) $arrayfield[$val]) : 0;
-										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
+									$computedFieldPos = isset($arrayfield[$val]) ? ((int) $arrayfield[$val]) : 0;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$newval = $res; 	// We get new value computed.
 									} else {
@@ -1527,8 +1527,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
-										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
+									$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$fieldArr = explode('.', $fieldname);
 										if (count($fieldArr) > 0) {
@@ -1745,17 +1745,17 @@ class ModeleImports
 							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
 							if (!empty($tablewithentity_cache[$tablename])) {
 								$sqlstart .= ", entity";
-								$sqlend .= ", ".$conf->entity;
+								$sqlend .= ", ".((int) $conf->entity);
 							}
 							if (!empty($objimport->array_import_tables_creator[0][$alias])) {
 								$sqlstart .= ", ".$objimport->array_import_tables_creator[0][$alias];
 								$sqlend .= ", ".$user->id;
 							}
-								$sql = $sqlstart.$sqlend.")";
-								//dol_syslog("import_csv.modules", LOG_DEBUG);
+							$sql = $sqlstart.$sqlend.")";
+							//dol_syslog("import_csv.modules", LOG_DEBUG);
 
-								// Run insert request
-								$resql = $this->db->query($sql);
+							// Run insert request
+							$resql = $this->db->query($sql);
 							if ($resql) {
 								if (!$is_table_category_link) {
 									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).

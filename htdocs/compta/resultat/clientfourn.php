@@ -317,7 +317,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$sql .= " WHERE 1=1";
 	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
-	$sql .= " AND f.entity = ".$conf->entity;
+	$sql .= " AND f.entity = ".((int) $conf->entity);
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."'";
 		$sql .= " AND f.doc_date <= '".$db->idate($date_end)."'";
@@ -777,7 +777,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 	}
-	$sql .= " AND cs.entity = ".$conf->entity;
+	$sql .= " AND cs.entity = ".((int) $conf->entity);
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
 	if ($newsortfield == 's.nom, s.rowid') {
@@ -868,7 +868,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 		}
-		$sql .= " AND cs.entity = ".$conf->entity;
+		$sql .= " AND cs.entity = ".((int) $conf->entity);
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(p.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -880,7 +880,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
-		$sql .= " AND cs.entity = ".$conf->entity;
+		$sql .= " AND cs.entity = ".((int) $conf->entity);
 	}
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
 	$newsortfield = $sortfield;
@@ -1376,7 +1376,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND f.entity = ".$conf->entity;
+			$sql .= " AND f.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
@@ -1430,7 +1430,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
@@ -1485,7 +1485,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {

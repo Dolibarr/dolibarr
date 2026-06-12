@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ class InfoBox
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes as b, ".$dbs->prefix()."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
-			$sql .= " AND b.entity IN (0,".$conf->entity.")";
+			$sql .= " AND b.entity IN (0,".((int) $conf->entity).")";
 			if ($zone >= 0) {
 				$sql .= " AND b.position = ".((int) $zone);
 			}
@@ -118,7 +118,7 @@ class InfoBox
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".$dbs->prefix()."boxes_def as d";
-			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
+			$sql .= " WHERE d.entity IN (0, ".((int) $conf->entity).")";
 		}
 
 		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
@@ -260,7 +260,7 @@ class InfoBox
 
 		// Delete all lines
 		$sql = "DELETE FROM ".$dbs->prefix()."boxes";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND fk_user = ".((int) $userid);
 		$sql .= " AND position = ".((int) $zone);
 

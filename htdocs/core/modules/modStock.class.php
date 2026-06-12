@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -320,7 +320,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 				'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
 				'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration",
-				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Nature',
+				'p.datec' => 'DateCreation', 'p.tms' => 'DateModification', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label' => 'Nature',
 				'pb.rowid' => 'Id', 'pb.batch' => 'Batch', 'pb.qty' => 'Qty',
 				'pl.eatby' => 'EatByDate', 'pl.sellby' => 'SellByDate', 'none.dateLastMovement' => 'LastMovement'
 			);
@@ -331,7 +331,7 @@ class modStock extends DolibarrModules
 				'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.lieu' => 'Text', 'e.description' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 				'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 				'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree",
-				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label'=>'Text',
+				'p.datec' => 'Date', 'p.tms' => 'Date', 'p.pmp' => 'PMPValue', 'p.cost_price' => 'CostPrice', 'lcpn.label' => 'Text',
 				'pb.batch' => 'Text', 'pb.qty' => 'Numeric',
 				'pl.eatby' => 'Date', 'pl.sellby' => 'Date', 'none.dateLastMovement' => 'Date'
 			);
@@ -341,12 +341,12 @@ class modStock extends DolibarrModules
 			$this->export_entities_array[$r] = array(
 				'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
 				'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product",
-				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product', 'lcpn.label'=>'product',
+				'p.datec' => 'product', 'p.tms' => 'product', 'p.pmp' => 'product', 'p.cost_price' => 'product', 'lcpn.label' => 'product',
 				'pb.rowid' => 'batch', 'pb.batch' => 'batch', 'pb.qty' => 'batch', 'none.dateLastMovement' => 'movement',
 				'pl.eatby' => 'batch', 'pl.sellby' => 'batch'
 			);	// We define here only fields that use another icon that the one defined into export_icon
 			$this->export_special_array[$r] = array(
-				'none.dateLastMovement'=>array('rule'=>'compute', 'classfile'=>'/product/stock/class/mouvementstock.class.php', 'class'=>'MouvementStock', 'method'=>'getDateLastMovementProductBatch', 'method_params'=>['e_rowid', 'p_rowid', 'pb_batch']),
+				'none.dateLastMovement' => array('rule' => 'compute', 'classfile' => '/product/stock/class/mouvementstock.class.php', 'class' => 'MouvementStock', 'method' => 'getDateLastMovementProductBatch', 'method_params' => ['e_rowid', 'p_rowid', 'pb_batch']),
 			);
 			if (isModEnabled('barcode')) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
@@ -501,7 +501,7 @@ class modStock extends DolibarrModules
 		$this->import_regex_array[$r] = array('e.statut' => '^[0|1]');
 		// Add extra fields
 		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'entrepot' AND entity IN (0, ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

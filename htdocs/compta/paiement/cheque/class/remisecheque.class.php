@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016  Juanjo Menent        	<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ class RemiseCheque extends CommonObject
 		$sql .= " ba.label as account_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
-		$sql .= " WHERE bc.entity = ".$conf->entity;
+		$sql .= " WHERE bc.entity = ".((int) $conf->entity);
 		if ($id) {
 			$sql .= " AND bc.rowid = ".((int) $id);
 		}
@@ -333,7 +333,7 @@ class RemiseCheque extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
 		$sql .= " WHERE rowid = ".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -633,7 +633,7 @@ class RemiseCheque extends CommonObject
 			$sql .= " WHERE b.fk_account = ba.rowid";
 			$sql .= " AND b.fk_bordereau = bc.rowid";
 			$sql .= " AND bc.rowid = ".((int) $this->id);
-			$sql .= " AND bc.entity = ".$conf->entity;
+			$sql .= " AND bc.entity = ".((int) $conf->entity);
 			$sql .= " ORDER BY b.dateo ASC, b.rowid ASC";
 
 			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);

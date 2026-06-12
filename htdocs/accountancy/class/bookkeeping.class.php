@@ -350,7 +350,7 @@ class BookKeeping extends CommonObject
 		if (!empty($this->subledger_account)) {
 			$sql .= " AND subledger_account = '".$this->db->escape($this->subledger_account)."'";
 		}
-		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
+		$sql .= " AND entity = ".((int) $conf->entity); // Do not use getEntity for accounting features
 
 		// Allow duplicates in incomes or loss statements
 		$accountProfit = getDolGlobalString('ACCOUNTING_RESULT_PROFIT');
@@ -377,7 +377,7 @@ class BookKeeping extends CommonObject
 					$sqlnum .= " AND fk_docdet = ".((int) $this->fk_docdet);
 				}
 				$sqlnum .= " AND doc_ref = '".$this->db->escape($this->doc_ref)."'"; // ref of source object
-				$sqlnum .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
+				$sqlnum .= " AND entity = ".((int) $conf->entity); // Do not use getEntity for accounting features
 
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);

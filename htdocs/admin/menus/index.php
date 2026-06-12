@@ -3,7 +3,7 @@
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ if ($action == 'up') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
 	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
@@ -153,7 +153,7 @@ if ($action == 'up') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
 	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
@@ -291,7 +291,7 @@ $data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' =
 $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 $sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 //$sql.= " AND fk_menu >= 0";
 $sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
 

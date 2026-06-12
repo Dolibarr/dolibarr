@@ -7,6 +7,7 @@
  * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +275,7 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -402,7 +403,7 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -466,7 +467,7 @@ class modFacture extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array(
 				'fd.rowid' => 'Row Id',
 				'fd.fk_facture' => 'Invoice Id',
-				'fd.fk_product'=> 'ProductRef'
+				'fd.fk_product' => 'ProductRef'
 			);
 			$this->import_convertvalue_array[$r] = array(
 				'fd.fk_facture' => array(
@@ -477,11 +478,11 @@ class modFacture extends DolibarrModules
 					'element' => 'facture'
 				),
 				'fd.fk_product' => array(
-					'rule'=>'fetchidfromref',
-					'classfile'=>'/product/class/product.class.php',
-					'class'=>'Product',
-					'method'=>'fetch',
-					'element'=>'Product'
+					'rule' => 'fetchidfromref',
+					'classfile' => '/product/class/product.class.php',
+					'class' => 'Product',
+					'method' => 'fetch',
+					'element' => 'Product'
 				),
 				'fd.fk_projet' => array(
 					'rule' => 'fetchidfromref',

@@ -464,7 +464,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -473,7 +473,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -482,7 +482,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -492,7 +492,7 @@ class EcmFiles extends CommonObject
 			} else {
 				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
 			}
-			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
+			//$sql .= " AND t.entity = ".((int) $conf->entity);							// hashforshare already unique
 			$filterfound++;
 		}
 		if ($src_object_type && $src_object_id) {
@@ -500,7 +500,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}

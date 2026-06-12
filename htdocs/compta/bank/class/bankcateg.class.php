@@ -159,7 +159,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity." AND t.type = " . ((int) $catTypeID);
+		$sql .= " AND t.entity = ".((int) $conf->entity)." AND t.type = " . ((int) $catTypeID);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -203,7 +203,7 @@ class BankCateg // extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$this->db->begin();
 

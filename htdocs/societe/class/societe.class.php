@@ -2827,7 +2827,7 @@ class Societe extends CommonObject
 		} else {
 			$sql .= " FROM ".$this->db->prefix()."facture as f";
 		}
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND paye = 0 AND fk_statut = 1";
 		$sql .= " AND f.type = ".CommonInvoice::TYPE_CREDIT_NOTE;
 		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."societe_remise_except as rc";

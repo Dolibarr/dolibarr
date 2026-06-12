@@ -239,7 +239,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= ",1,".$conf->entity.")";
+		$sql .= ",1,".((int) $conf->entity).")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -326,7 +326,7 @@ if ($action == $acts[0]) {
 	} elseif ($code) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE code = '".$db->escape($code)."'";
 	}
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$result = $db->query($sql);
 	if (!$result) {
@@ -348,7 +348,7 @@ if ($action == $acts[1]) {
 	} elseif ($code) {
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 
 	$result = $db->query($sql);
 	if (!$result) {
