@@ -1029,6 +1029,12 @@ if (empty($reshook)) {
 			if ($resql) {	// Add is ok
 				setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
+				// PostgreSQL: when we forced the rowid we must bump the matching <table>_<rowid_col>_seq
+				// so the next auto-increment insert does not collide with our chosen value (#36510).
+				if ($db->type == 'pgsql' && $tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
+					$db->query("SELECT setval(pg_get_serial_sequence('".$db->escape(MAIN_DB_PREFIX.$db->sanitize($tablename))."', '".$db->escape($tabrowid[$id])."'), GREATEST((SELECT MAX(".$db->sanitize($tabrowid[$id]).") FROM ".MAIN_DB_PREFIX.$db->sanitize($tablename)."), 1))");
+				}
+
 				// Clean $_POST array, we keep only id of dictionary
 				if ($id == DICT_TVA && GETPOSTINT('country') > 0) {
 					$search_country_id = GETPOSTINT('country');
