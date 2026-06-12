@@ -319,6 +319,7 @@ if (empty($reshook)) {
 				}
 
 				// For compatibility
+				$classname = '';
 				if ($element == 'order') {
 					$element = $subelement = 'commande';
 				}
@@ -329,6 +330,17 @@ if (empty($reshook)) {
 				if ($element == 'invoice' || $element == 'facture') {
 					$element = 'compta/facture';
 					$subelement = 'facture';
+				}
+				if ($element == 'facturerec' || $element == 'facture_rec') {
+					// FactureRec lives in compta/facture/class/facture-rec.class.php (#34775)
+					$element = 'compta/facture';
+					$subelement = 'facture-rec';
+					$classname = 'FactureRec';
+				}
+				if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+					$element = 'fourn';
+					$subelement = 'fournisseur.facture-rec';
+					$classname = 'FactureFournisseurRec';
 				}
 
 				$object->origin    = $origin;
@@ -344,7 +356,9 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-					$classname = ucfirst($subelement);
+					if (empty($classname)) {
+						$classname = ucfirst($subelement);
+					}
 					$srcobject = new $classname($db);
 					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 
@@ -1188,10 +1202,23 @@ if ($action == 'create') {
 				$element = 'compta/facture';
 				$subelement = 'facture';
 			}
+			$classname = '';
+			if ($element == 'facturerec' || $element == 'facture_rec') {
+				$element = 'compta/facture';
+				$subelement = 'facture-rec';
+				$classname = 'FactureRec';
+			}
+			if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.facture-rec';
+				$classname = 'FactureFournisseurRec';
+			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-			$classname = ucfirst($subelement);
+			if (empty($classname)) {
+				$classname = ucfirst($subelement);
+			}
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Facture $objectsrc';
 			$objectsrc->fetch($originid);
