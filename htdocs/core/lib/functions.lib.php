@@ -3410,6 +3410,28 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
 			}
 		}
+	} elseif ($object->element == 'stock') {
+		/** @var Entrepot $object */
+		'@phan-var-force Entrepot $object';
+		$width = 80;
+		$cssclass = 'photowithmargin photoref';
+		$showimage = $object->is_photo_available($conf->stock->multidir_output[$entity]);
+		$maxvisiblephotos = getDolGlobalInt('STOCK_MAX_VISIBLE_PHOTO', 5);
+		if ($conf->browser->layout == 'phone') {
+			$maxvisiblephotos = 1;
+		}
+
+		if ($showimage) {
+			$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">' . $object->show_photos('stock', $conf->stock->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, 0, $width, 0, '') . '</div>';
+		} else {
+			if (getDolGlobalString('STOCK_NODISPLAYIFNOPHOTO')) {
+				$nophoto = '';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			} else {    // Show no photo link
+				$nophoto = '/public/theme/common/nophoto.png';
+				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo' . $modulepart . ($cssclass ? ' ' . $cssclass : '') . '" title="' . dol_escape_htmltag($langs->trans("UploadAnImageToSeeAPhotoHere", $langs->transnoentitiesnoconv("Documents"))) . '" alt="No photo"' . ($width ? ' style="width: ' . $width . 'px"' : '') . ' src="' . DOL_URL_ROOT . $nophoto . '"></div>';
+			}
+		}
 	} elseif ($object->element == 'category') {
 		/** @var Categorie $object */
 		'@phan-var-force Categorie $object';

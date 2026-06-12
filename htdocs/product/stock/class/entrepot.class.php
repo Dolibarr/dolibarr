@@ -41,6 +41,11 @@ class Entrepot extends CommonObject
 	public $element = 'stock';
 
 	/**
+	 * @var string Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_stock';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'entrepot';
@@ -324,6 +329,41 @@ class Entrepot extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if at least one photo is available
+	 *
+	 * @param  string $sdir Directory to scan
+	 * @return boolean                 True if at least one photo is available, False if not
+	 */
+	public function is_photo_available($sdir)
+	{
+		// phpcs:enable
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+		$dir = $sdir;
+		$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'stock');
+		
+
+		$dir_osencoded = dol_osencode($dir);
+		if (file_exists($dir_osencoded)) {
+			$handle = opendir($dir_osencoded);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (!utf8_check($file)) {
+						$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1'); // To be sure data is stored in UTF8 in memory
+					}
+					if (dol_is_file($dir.$file) && image_format_supported($file) >= 0) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
