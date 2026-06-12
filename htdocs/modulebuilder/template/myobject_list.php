@@ -766,7 +766,7 @@ print '<script>
 					url: \''.DOL_URL_ROOT.'/core/ajax/changepositionfields.php?positionfields=\'+positionfields+\'&token='.newToken().'&action=listafterchangingpositionfields&contextpage='.$varpage.'&userid='.$user->id.'\',
 					async: false,
 					success: function () {
-						// realod page
+						// reaload page
 						window.location.href = "'.$_SERVER["PHP_SELF"].'";
 					}
 				});
