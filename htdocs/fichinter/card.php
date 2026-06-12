@@ -1063,7 +1063,7 @@ if ($action == 'create') {
 		}
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		$filter = '((s.client:IN:1,3) AND (s.status:=:1))';
+		$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
 		print $form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
