@@ -893,9 +893,9 @@ class FormTicket
 	/**
 	 * Return a combo list with active email sender profiles.
 	 *
-	 * @param	int		$selected		Selected sender profile id
 	 * @param	string	$htmlname		HTML select name
 	 * @param	string	$defaultEmail	Default email used if no selection
+	 * @param	int		$selected		Selected sender profile id
 	 * @return	void
 	 */
 	public function selectEmailSenderProfiles($htmlname, $defaultEmail, $selected = 0)
@@ -916,7 +916,7 @@ class FormTicket
 		 * so we transform before each record into $list to be printable with ajaxcombo by replacing <> into ()
 		 * $list['senderprofile_0_0'] = ['label'=>'rrr', 'data-html'=>'rrr &lt;aaaa&gt;'];
 		 */
-		$emailReplaceFunction = function($email) {
+		$emailReplaceFunction = function ($email) {
 			return str_replace(['&lt;', '&gt;'], ['<span class="opacitymedium">(', ')</span>'], $email);
 		};
 
