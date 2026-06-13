@@ -375,7 +375,11 @@ class DataPolicyCron
 			$object = clone $object;
 			$object->fetch($obj->rowid);
 
-			if (!empty($object->childtables) && method_exists($object, 'isObjectUsed') && $object->isObjectUsed() != 0) {
+			// isObjectUsed() is a referential-integrity guard for deletion (cannot drop a
+			// thirdparty that still has quotes/orders/contracts pointing at it). Anonymization
+			// must still be allowed: personal data has to be erasable even when commercial
+			// documents from the retention period are kept (#38786).
+			if ($action === 'delete' && !empty($object->childtables) && method_exists($object, 'isObjectUsed') && $object->isObjectUsed() != 0) {
 				continue; // Not an error, just skipping.
 			}
 
