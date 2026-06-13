@@ -54,6 +54,7 @@ export function initAiAssistant(container) {
     const chat = container.querySelector('#chat-history');
     const statusBar = container.querySelector('#status-bar');
     const sendBtn = container.querySelector('#send-btn');
+    const welcome = container.querySelector('.chat-welcome'); // empty-state screen (full page only)
 
     // 3. Application State
     let isRecording = false;
@@ -103,6 +104,14 @@ export function initAiAssistant(container) {
     input.focus();
     engineSelect.value = CONFIG_MODE;
     updateInterfaceMode(CONFIG_MODE);
+
+    // Welcome screen quick cards: send the localized ready-made prompt on click
+    container.querySelectorAll('.ai-quick-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            input.value = card.dataset.prompt || '';
+            handleQuery();
+        });
+    });
 
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
@@ -191,7 +200,14 @@ export function initAiAssistant(container) {
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            // Remove conversation messages; keep the welcome element so it can be
+            // shown again on the full page (the popover has no welcome screen).
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) {
+                welcome.style.display = '';
+            } else {
+                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
             input.focus();
@@ -1137,6 +1153,7 @@ export function initAiAssistant(container) {
     async function handleQuery() {
         const query = input.value.trim();
         if (!query) return;
+        if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
         appendMsg('user', query);
         input.value = '';
         input.style.height = '44px';

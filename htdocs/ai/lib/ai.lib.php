@@ -672,7 +672,37 @@ function getAiChatAssistantHtml($mode = 'page')
 
 	// Chat History
 	$out .= '<div id="chat-history" class="chat-history">';
-	$out .= '<div class="msg system">'.$langs->trans("AIWelcomeMessage").'</div>';
+	if ($mode === 'popover') {
+		// Compact greeting line for the narrow popover
+		$out .= '<div class="msg system">'.$langs->trans("AIWelcomeMessage").'</div>';
+	} else {
+		// Full page: rich empty-state welcome screen (hidden by JS as soon as the
+		// conversation starts, restored on Clear). Quick cards send a localized
+		// ready-made prompt on click (data-prompt).
+		$welcomename = $user->firstname ? $user->firstname : (is_object($user) ? $user->login : '');
+		$quickcards = array(
+			array('icon' => 'fa-file-invoice-dollar', 'key' => 'Invoices'),
+			array('icon' => 'fa-shopping-cart', 'key' => 'Orders'),
+			array('icon' => 'fa-users', 'key' => 'Thirdparties'),
+			array('icon' => 'fa-box', 'key' => 'Stock'),
+		);
+		$out .= '<div class="chat-welcome">';
+		$out .= '<div class="chat-welcome-avatar">'.img_picto('', 'fa-robot').'</div>';
+		$out .= '<h2 class="chat-welcome-title">'.dol_escape_htmltag($langs->trans("AIGreeting", $welcomename)).'</h2>';
+		$out .= '<p class="chat-welcome-subtitle">'.dol_escape_htmltag($langs->trans("AIGreetingSubtitle")).'</p>';
+		$out .= '<div class="chat-welcome-actions">';
+		foreach ($quickcards as $card) {
+			$out .= '<button type="button" class="ai-quick-card" data-prompt="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AIQuick".$card['key']."Prompt")).'">';
+			$out .= '<span class="ai-quick-icon">'.img_picto('', $card['icon']).'</span>';
+			$out .= '<span class="ai-quick-text">';
+			$out .= '<span class="ai-quick-title">'.dol_escape_htmltag($langs->trans("AIQuick".$card['key']."Title")).'</span>';
+			$out .= '<span class="ai-quick-desc">'.dol_escape_htmltag($langs->trans("AIQuick".$card['key']."Desc")).'</span>';
+			$out .= '</span>';
+			$out .= '</button>';
+		}
+		$out .= '</div>';
+		$out .= '</div>';
+	}
 	$out .= '</div>';
 
 	// Controls: a single rounded "pill" holding the attach/mic buttons, the

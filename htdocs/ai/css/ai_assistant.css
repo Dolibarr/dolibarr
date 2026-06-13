@@ -352,6 +352,106 @@ body.ai-fullpage {
     max-width: 100%;
 }
 
+/* ---------------------------------------------------------------------------
+ * Welcome / empty-state screen (full page only). Centered vertically in the
+ * flex column via margin:auto; hidden by JS once the conversation starts.
+ * ------------------------------------------------------------------------- */
+.chat-welcome {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 720px;
+    padding: 24px 0;
+}
+
+.chat-welcome-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--colorbackhmenu1, #2b2f3a);
+    color: var(--colortextbackhmenu, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.chat-welcome-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ai-text);
+}
+
+.chat-welcome-subtitle {
+    margin: -6px 0 6px;
+    font-size: 0.92rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+}
+
+.chat-welcome-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+}
+
+.ai-quick-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    padding: 14px 16px;
+    border: 1px solid var(--ai-border);
+    border-radius: 8px;
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.ai-quick-card:hover {
+    background: var(--ai-surface-2);
+    border-color: var(--ai-accent);
+}
+
+.ai-quick-icon {
+    flex-shrink: 0;
+    color: var(--ai-text);
+    opacity: 0.7;
+    font-size: 1rem;
+    margin-top: 2px;
+}
+
+.ai-quick-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ai-quick-title {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.ai-quick-desc {
+    font-size: 0.8rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+}
+
+@media (max-width: 560px) {
+    .chat-welcome-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
 .msg.error {
     background: #ffebee;
     color: #c62828;
