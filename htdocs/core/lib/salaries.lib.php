@@ -3,7 +3,7 @@
  * Copyright (C) 2015	    Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2019	    Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,9 +103,8 @@ function salaries_prepare_head($object)
  */
 function salaries_admin_prepare_head()
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $extrafields, $langs, $user;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('salary');
 
 	$h = 0;
