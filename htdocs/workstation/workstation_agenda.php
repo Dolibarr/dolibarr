@@ -26,19 +26,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -82,7 +82,7 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Workstation($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('workstationagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 

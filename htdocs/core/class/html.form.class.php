@@ -5140,6 +5140,7 @@ class Form
 				$i++;
 			}
 
+			// @phan-suppress-next-line PhanTypeMismatchProperty PhanTypeMismatchDimFetch
 			$this->cache_availability = dol_sort_array($this->cache_availability, 'position', 'asc', 0, 0, 1);
 
 			return $num;
