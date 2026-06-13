@@ -7129,12 +7129,11 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $p
  *  @param	int<0,1>	$disablesortlink			1=Disable sort link
  *  @param	?string		$tooltip 					Text of tooltip with syntax 'Tooltip' or 'Tooltip:[keytoenabledtheonclicktooltip]:[tooltipdirection]'
  *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
- *  @param	int<0,1>		$draganddrop				Enable drag and drop feature (0 by default and drag and drop disabled), !=0 drag and drop enabled
  *	@return	string
  */
-function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0, $draganddrop = 0)
+function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $disablesortlink = 0, $tooltip = '', $forcenowrapcolumntitle = 0)
 {
-	global $langs, $form, $user;
+	global $langs, $form;
 	//print "$name, $file, $field, $begin, $options, $moreattrib, $sortfield, $sortorder<br>\n";
 
 	if ($moreattrib == 'class="right"') {
@@ -7177,7 +7176,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$tagstart = '<' . $tag . (!empty($field) ? ' id="'.$field.'"' : '') .' class="'. (!empty($draganddrop) ? 'fieldsortable' : '').' '. $prefix . $liste_titre . '" ' . $moreattrib;
+	$tagstart = '<' . $tag .' class="'. $prefix . $liste_titre . '" ' . $moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
 	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
 	$tagstart .= '>';
@@ -7237,9 +7236,6 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^ASC/', $sortorder)) {
 				$sortimg .= '<span class="nowrap">' . img_down("A-Z", 0, 'paddingright') . '</span>';
 			}
-		}
-		if (!empty($draganddrop)) {
-			$out .= img_picto($langs->trans("MoveField", !empty($name) ? $name : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 		}
 	}
 
