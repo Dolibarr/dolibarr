@@ -419,6 +419,7 @@ AIWelcomeMessage=Hi! I'm your Dolibarr assistant. How can I help you today?
 AIExpandPanel=Enlarge panel
 AIReducePanel=Reduce panel
 AIOpenFullPage=Open the assistant in a full page
+AIProviderInUse=AI provider in use
 TotalValue=Total Value
 Expenses=Expenses
 ClearChatHistoryTitle=Clear Chat History

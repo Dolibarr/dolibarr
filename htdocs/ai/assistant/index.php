@@ -50,7 +50,9 @@ global $langs;
 $langs->loadLangs(array("main", "other", "dict"));
 
 $page_name = $langs->trans("AIAssistant");
-llxHeader('', $page_name);
+// 'ai-fullpage' body class: lets the chat fill the whole content area (no .fiche
+// padding, full height) so the assistant looks like a full-page app, see ai_assistant.css.
+llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 ?>
 
 <!-- CSS & JS INCLUDES -->

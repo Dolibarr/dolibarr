@@ -466,14 +466,34 @@ function aiAdminPrepareHead()
 }
 
 /**
+ * Resolve the AI provider/service currently configured for the AI Assistant
+ * (e.g. "ChatGPT (OpenAI)", "Google Gemini", "Anthropic (Claude)"), so it can be
+ * displayed in the chat header. The precise model name is intentionally not
+ * shown here, only which AI is in use.
+ *
+ * @return string	The provider label, or '' if no service is configured
+ */
+function getAiAssistantProviderLabel()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+
+	return isset($services[$serviceKey]['label']) ? (string) $services[$serviceKey]['label'] : (string) $serviceKey;
+}
+
+/**
  * Build the configuration array consumed by the AI Assistant chat frontend (ai/js/ai_assistant.js).
  * It is serialized as JSON into the data-ai-config attribute of the chat container.
  *
- * @return array{mode:string,labels:array<string,string>,baseUrl:string,token:string}
+ * @return array{mode:string,labels:array<string,string>,baseUrl:string,token:string,userInitial:string}
  */
 function getAiChatAssistantConfig()
 {
-	global $langs;
+	global $langs, $user;
 
 	$keys = array(
 		// General UI
@@ -566,6 +586,13 @@ function getAiChatAssistantConfig()
 		"Whisper"
 	);
 
+	// First letter of the current user name, shown in the "user" message avatar
+	$userinitial = '';
+	if (is_object($user)) {
+		$namesource = $user->firstname ? $user->firstname : ($user->login ? $user->login : '');
+		$userinitial = dol_strtoupper(dol_substr($namesource, 0, 1));
+	}
+
 	return array(
 		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
 		'labels' => $ai_translations,
@@ -574,6 +601,7 @@ function getAiChatAssistantConfig()
 		// from /ai/assistant/index.php.
 		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
 		'token' => newToken(),
+		'userInitial' => $userinitial,
 	);
 }
 
@@ -603,18 +631,26 @@ function getAiChatAssistantHtml($mode = 'page')
 
 	// Header
 	$out .= '<div class="chat-header">';
-	$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
 	if ($mode === 'popover') {
 		// In the popover the title links to the full standalone page
+		$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
 		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+		$out .= '<h2>'.$title.'</h2>';
+	} else {
+		// Full page: assistant identity (avatar + title + current LLM model)
+		$out .= '<div class="chat-header-id">';
+		$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
+		$out .= '<span class="chat-header-text">';
+		$out .= '<span class="chat-header-title">'.$langs->trans("AIAssistant").'</span>';
+		$aiprovider = getAiAssistantProviderLabel();
+		if ($aiprovider !== '') {
+			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
+		}
+		$out .= '</span>';
+		$out .= '</div>';
 	}
-	$out .= '<h2>'.$title.'</h2>';
 	$out .= '<div class="header-controls">';
-	// Clear Button
-	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
-	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
-	$out .= '</button>';
-	// Engine Switcher
+	// Engine Switcher (restyled as a pill with a sparkle icon)
 	$out .= '<select id="engine-select" class="engine-select">';
 	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
 	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
@@ -622,6 +658,10 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<option value="local_docs">'.$langs->transnoentitiesnoconv("OptionLocalParsing").'</option>';
 	$out .= '<option value="cloud_docs">'.$langs->transnoentitiesnoconv("OptionCloudParsing").'</option>';
 	$out .= '</select>';
+	// Clear Button
+	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
+	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
+	$out .= '</button>';
 	if ($mode === 'popover') {
 		// Window controls of the popover (handled by the bootstrap JS in main.inc.php)
 		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-expand="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-reduce="'.dol_escape_htmltag($langs->trans("AIReducePanel")).'"><i class="fa fa-expand-alt"></i></button>';
@@ -635,21 +675,24 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="msg system">'.$langs->trans("AIWelcomeMessage").'</div>';
 	$out .= '</div>';
 
-	// Controls
+	// Controls: a single rounded "pill" holding the attach/mic buttons, the
+	// textarea and the send button.
 	$out .= '<div class="chat-controls">';
-	// Microphone Wrapper (Visible only in Voice modes)
-	$out .= '<div id="mic-wrapper" class="mic-wrapper hidden">';
-	$out .= '<button type="button" id="mic-btn" class="round-btn mic-btn" title="'.dol_escape_htmltag($langs->trans("ToggleMicrophone")).'">'.img_picto('', 'fa-microphone').'</button>';
-	$out .= '</div>';
+	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (Visible only in Doc modes)
 	$out .= '<div id="upload-wrapper" class="upload-wrapper hidden">';
 	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
+	// Microphone Wrapper (Visible only in Voice modes)
+	$out .= '<div id="mic-wrapper" class="mic-wrapper hidden">';
+	$out .= '<button type="button" id="mic-btn" class="round-btn mic-btn" title="'.dol_escape_htmltag($langs->trans("ToggleMicrophone")).'">'.img_picto('', 'fa-microphone').'</button>';
+	$out .= '</div>';
 	// Text Input
 	$out .= '<textarea id="user-input" rows="1" placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'" autocomplete="off"></textarea>';
 	// Send Button
-	$out .= '<button type="button" id="send-btn" class="button button-save" title="'.dol_escape_htmltag($langs->trans("SendPrompt")).'">'.img_picto('', 'fa-paper-plane').'</button>';
+	$out .= '<button type="button" id="send-btn" class="chat-send-btn" title="'.dol_escape_htmltag($langs->trans("SendPrompt")).'">'.img_picto('', 'fa-paper-plane').'</button>';
+	$out .= '</div>';
 	$out .= '</div>';
 
 	$out .= '<div id="status-bar"></div>';

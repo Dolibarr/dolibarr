@@ -463,6 +463,21 @@ try {
 	$needsConfirmation = false;
 	$toolName = $intentJSON['tool'] ?? '';
 
+	// Normalize the text answer key: some models (e.g. GPT-4o) fill
+	// respond_to_user / reject_general_question under 'response', 'text',
+	// 'answer'... instead of the 'message' key the frontend reads, which
+	// otherwise surfaces as "Empty AI Response".
+	if (in_array($toolName, array('respond_to_user', 'reject_general_question'), true) && isset($intentJSON['arguments']) && is_array($intentJSON['arguments'])) {
+		if (empty($intentJSON['arguments']['message'])) {
+			foreach (array('response', 'text', 'answer', 'content', 'reply', 'output') as $altkey) {
+				if (!empty($intentJSON['arguments'][$altkey])) {
+					$intentJSON['arguments']['message'] = $intentJSON['arguments'][$altkey];
+					break;
+				}
+			}
+		}
+	}
+
 	if ($askForConfirmation > 0) {
 		$isModifyOperation = preg_match('/(create|update|delete|add|remove|modify|edit)/i', $toolName);
 
