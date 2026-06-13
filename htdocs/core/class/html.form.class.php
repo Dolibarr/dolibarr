@@ -10726,6 +10726,29 @@ class Form
             </dd>
         </dl>
 
+		<script>
+			function updateFieldOrder() {
+				var positionfields = $(".sortable").sortable("toArray");
+				$.ajax({
+					url: \''.DOL_URL_ROOT.'/core/ajax/changepositionfields.php?positionfields=\'+positionfields+\'&token='.newToken().'&action=listafterchangingpositionfields&contextpage='.$varpage.'&userid='.$user->id.'\',
+					async: false,
+					success: function () {
+						// reload page
+						window.location.href = "'.$_SERVER["PHP_SELF"].'";
+					}
+				});
+			}
+			$( ".sortable" ).sortable({
+				handle: \'.boxhandle\',
+				revert: \'invalid\',
+				items: \'.fieldsortable\',
+				stop: function(event, ui) {
+					console.log("We moved box so we call updateBoxOrder with ajax actions");
+					updateFieldOrder();  /* 1 to avoid message after a move */
+				}
+			});
+		</script>
+
         <script nonce="' . getNonce() . '" type="text/javascript">
 			jQuery(document).ready(function () {
 				$(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on("click", function () {
