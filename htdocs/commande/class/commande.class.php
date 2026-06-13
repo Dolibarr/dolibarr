@@ -1404,7 +1404,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromProposal($object, User $user)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
@@ -1543,7 +1543,20 @@ class Commande extends CommonOrder
 				// Validate immediately the order
 				if (getDolGlobalString('ORDER_VALID_AFTER_CLOSE_PROPAL')) {
 					$this->fetch($ret);
-					$this->valid($user);
+					$result = $this->valid($user);
+					if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$this->fetch($this->id);
+						$this->fetch_thirdparty();
+
+						$outputlangs = $langs;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->thirdparty->default_lang)) {
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang($this->thirdparty->default_lang);
+							$outputlangs->loadLangs(array('main', 'orders'));
+						}
+
+						$this->generateDocument($this->model_pdf, $outputlangs);
+					}
 				}
 				return $ret;
 			} else {

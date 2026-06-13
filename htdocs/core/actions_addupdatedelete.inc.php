@@ -468,7 +468,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoed
 }
 
 // Action to delete
-if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 	if (!($object->id > 0)) {
 		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;

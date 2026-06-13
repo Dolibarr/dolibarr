@@ -5140,6 +5140,7 @@ class Form
 				$i++;
 			}
 
+			// @phan-suppress-next-line PhanTypeMismatchProperty PhanTypeMismatchDimFetch
 			$this->cache_availability = dol_sort_array($this->cache_availability, 'position', 'asc', 0, 0, 1);
 
 			return $num;
@@ -5541,7 +5542,7 @@ class Form
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$out = '';
 
@@ -7211,7 +7212,12 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_availability();
-				print $this->cache_availability[$selected]['label'];
+				// @phan-suppress-next-line PhanTypeMismatchProperty
+				if (isset($this->cache_availability[$selected])) {
+					print $this->cache_availability[$selected]['label'];
+				} else {
+					print "&nbsp;";
+				}
 			} else {
 				print "&nbsp;";
 			}
