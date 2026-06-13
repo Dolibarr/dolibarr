@@ -2,6 +2,7 @@
 /* Copyright (C) 2022		Alice Adminson			<aadminson@example.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify

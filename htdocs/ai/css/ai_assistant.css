@@ -684,9 +684,9 @@ body.ai-fullpage {
 /* Circular send button (dark) */
 #send-btn {
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
     padding: 0;
     border: none;
     border-radius: 5px;
