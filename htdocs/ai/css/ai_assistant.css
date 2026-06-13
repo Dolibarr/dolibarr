@@ -76,11 +76,21 @@ body.ai-fullpage {
     padding-right: max(16px, calc(50% - 410px));
 }
 
-/* Full page: the input pill floats on the page, no divider line above it,
- * with some breathing room below so it is not stuck to the viewport bottom. */
+/* Full page: the input pill floats on the page, no divider line above it. The
+ * bottom breathing room lives on the status bar below (so the status line sits
+ * right under the input, not pushed far down). */
 .ai-chat-container:not(.ai-in-popover) .chat-controls {
     border-top: none;
-    padding-bottom: 36px;
+    padding-bottom: 6px;
+}
+
+/* Full page: status line centered just under the input; keep the bottom
+ * breathing room even when the line is empty (text-only mode). */
+.ai-chat-container:not(.ai-in-popover) #status-bar,
+.ai-chat-container:not(.ai-in-popover) #status-bar:empty {
+    text-align: center;
+    padding: 2px 16px 30px;
+    min-height: 0;
 }
 
 /* Header */
@@ -668,6 +678,14 @@ body.ai-fullpage {
     border: none;
     box-shadow: none;
     font-size: 1.05rem;
+}
+
+/* The pill bottom-aligns its items (so the send button stays at the bottom when
+ * the textarea grows); the left mic/upload icons must stay vertically centered
+ * on a single-line input instead of sitting low. */
+.chat-input-pill #mic-wrapper,
+.chat-input-pill #upload-wrapper {
+    align-self: center;
 }
 
 .chat-input-pill .round-btn:not(.listening):not(.processing):not(.cancelling) {

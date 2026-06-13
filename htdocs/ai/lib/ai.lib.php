@@ -683,9 +683,9 @@ function getAiChatAssistantHtml($mode = 'page')
 		$welcomename = $user->firstname ? $user->firstname : (is_object($user) ? $user->login : '');
 		$quickcards = array(
 			array('icon' => 'fa-file-invoice-dollar', 'key' => 'Invoices'),
-			array('icon' => 'fa-shopping-cart', 'key' => 'Orders'),
-			array('icon' => 'fa-users', 'key' => 'Thirdparties'),
-			array('icon' => 'fa-box', 'key' => 'Stock'),
+			array('icon' => 'fa-chart-line', 'key' => 'Revenue'),
+			array('icon' => 'fa-coins', 'key' => 'Finance'),
+			array('icon' => 'fa-warehouse', 'key' => 'Inventory'),
 		);
 		$out .= '<div class="chat-welcome">';
 		$out .= '<div class="chat-welcome-avatar">'.img_picto('', 'fa-robot').'</div>';
