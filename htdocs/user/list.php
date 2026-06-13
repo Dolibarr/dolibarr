@@ -34,6 +34,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -78,7 +79,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
