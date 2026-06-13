@@ -10698,7 +10698,7 @@ class Form
 				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
 				$listoffieldsforselection .= '</label>';
 				if (!empty($draganddrop)) {
-					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($name) ? $name : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 				}
 				$listoffieldsforselection .='</li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
