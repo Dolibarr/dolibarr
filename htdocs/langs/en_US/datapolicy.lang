@@ -57,3 +57,4 @@ NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
 QualifiedNumber=Qualified record count
+DATAPOLICY_AnonymizeDelayInvoiceWarning=Warning: a third party is anonymized once its most recent invoice is older than the delay set below. If this delay is shorter than the legal retention period for invoices, you may anonymize third parties whose invoice data must still be kept. Set the delay accordingly.

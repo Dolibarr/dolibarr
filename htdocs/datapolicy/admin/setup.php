@@ -157,7 +157,13 @@ if (!isModEnabled('cron')) {
 		// TODO Show last date/result of execution of the cron job
 	}
 }
-print '<br><br>';
+print '<br>';
+
+// A third party is qualified for anonymization once its last invoice is older than the configured delay.
+// Warn the admin that a delay shorter than the legal retention period for invoices may anonymize third
+// parties whose invoices must still be kept as clear data (#38785).
+print info_admin($langs->trans("DATAPOLICY_AnonymizeDelayInvoiceWarning"), 0, 0, 'warning');
+print '<br>';
 
 print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
