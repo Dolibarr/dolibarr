@@ -2162,6 +2162,21 @@ class CommandeFournisseur extends CommonOrder
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'warnings');
 						}
 					}
+
+					// Enforce the supplier minimum purchase quantity on top of packaging
+					// rounding. The packaging block above only ensures qty is a packaging
+					// multiple, not that it satisfies pfp.quantity (=qty_min). If the line
+					// is below the supplier minimum, round qty_min itself up to the next
+					// packaging multiple so we end up with the smallest valid order qty (#38783).
+					if (!empty($prod->fourn_qty) && abs((float) $qty) < (float) $prod->fourn_qty) {
+						if (!empty($prod->packaging) && (float) price2num(fmod((float) $prod->fourn_qty, (float) $prod->packaging), 'MS')) {
+							$coeff = intval((float) $prod->fourn_qty / (float) $prod->packaging) + 1;
+							$qty = (float) price2num((float) $prod->packaging * $coeff, 'MS');
+						} else {
+							$qty = (float) $prod->fourn_qty;
+						}
+						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
+					}
 				}
 			}
 
