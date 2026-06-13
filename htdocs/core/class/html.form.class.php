@@ -7212,8 +7212,8 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_availability();
+				// @phan-suppress-next-line PhanTypeMismatchProperty
 				if (isset($this->cache_availability[$selected])) {
-					// @phan-suppress-next-line PhanTypeMismatchProperty
 					print $this->cache_availability[$selected]['label'];
 				} else {
 					print "&nbsp;";
