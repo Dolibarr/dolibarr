@@ -10640,10 +10640,12 @@ class Form
 	 * @param array<string,array{label:string,checked?:string,enabled?:string,type?:string,langfile?:string,position?:int,help?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
 	 * @param string 		$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
 	 * @param int|string 	$pos 		Position of the colon in list: 1 or 'left' or '' (meaning 'right').
+	 *  @param	int<0,1>	$draganddrop				Enable drag and drop feature (0 by default and drag and drop disabled), !=0 drag and drop enabled
+	 *
 	 * @return string            		HTML multiselect string
 	 * @see selectarray()
 	 */
-	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
+	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '', $draganddrop = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -10697,10 +10699,14 @@ class Form
 				}
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
+				$listoffieldsforselection .= '<li '.(!empty($draganddrop) ? 'class="fieldsortable" id="'.$key : '').'"><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
 				$listoffieldsforselection .= '<label for="checkbox' . $key . '" class="paddingleft">';
 				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
-				$listoffieldsforselection .= '</label></li>';
+				$listoffieldsforselection .= '</label>';
+				if (!empty($draganddrop)) {
+					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+				}
+				$listoffieldsforselection .='</li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}
@@ -10716,7 +10722,7 @@ class Form
             </dt>
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul class="'.$htmlname.(((string) $pos == '1' || (string) $pos == 'left') ? 'left' : '').'">
+                    <ul class="'.$htmlname.(((string) $pos == '1' || (string) $pos == 'left') ? 'left' : '').(!empty($draganddrop) ? ' sortable' : '').'">
                     <li class="liinputsearch">
 						<input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'">
 					</li>
@@ -10725,6 +10731,29 @@ class Form
                 </div>
             </dd>
         </dl>
+
+		<script>
+			function updateFieldOrder() {
+				var positionfields = $(".sortable").sortable("toArray");
+				$.ajax({
+					url: \''.DOL_URL_ROOT.'/core/ajax/changepositionfields.php?positionfields=\'+positionfields+\'&token='.newToken().'&action=listafterchangingpositionfields&contextpage='.$varpage.'&userid='.$user->id.'\',
+					async: false,
+					success: function () {
+						// reload page
+						window.location.href = "'.$_SERVER["PHP_SELF"].'";
+					}
+				});
+			}
+			$( ".sortable" ).sortable({
+				handle: \'.boxhandle\',
+				revert: \'invalid\',
+				items: \'.fieldsortable\',
+				stop: function(event, ui) {
+					console.log("We moved box so we call updateBoxOrder with ajax actions");
+					updateFieldOrder();  /* 1 to avoid message after a move */
+				}
+			});
+		</script>
 
         <script nonce="' . getNonce() . '" type="text/javascript">
 			jQuery(document).ready(function () {

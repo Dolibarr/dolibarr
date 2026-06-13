@@ -413,6 +413,7 @@ ShowBookmark = Show bookmark
 UrlOrLink = URL
 UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
 SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+MoveField=Move the field %s
 ThirdpartyDetails=Thirdparty Details
 NoDataAvailable=No Data Available
 AIWelcomeMessage=Hi! I'm your Dolibarr assistant. How can I help you today?
