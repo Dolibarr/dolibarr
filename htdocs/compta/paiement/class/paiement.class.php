@@ -566,22 +566,22 @@ class Paiement extends CommonObject
 											}
 										}
 
-										foreach ($amount_ht as $key => $xxx) {
-											$parts = explode('|', (string) $key, 2);
+										foreach ($amount_ht as $keyfordiscount => $xxx) {
+											$parts = explode('|', (string) $keyfordiscount, 2);
 											$tva_tx = $parts[0];
 											$vat_src_code = isset($parts[1]) ? $parts[1] : '';
-											$discount->amount_ht = abs($amount_ht[$key]);
-											$discount->total_ht = abs($amount_ht[$key]);
-											$discount->amount_tva = abs($amount_tva[$key]);
-											$discount->total_tva = abs($amount_tva[$key]);
-											$discount->amount_ttc = abs($amount_ttc[$key]);
-											$discount->total_ttc = abs($amount_ttc[$key]);
-											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$key]);
-											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$key]);
-											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$key]);
-											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$key]);
-											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$key]);
-											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$key]);
+											$discount->amount_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->total_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->amount_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->total_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->amount_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->total_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
 											$discount->tva_tx = abs((float) $tva_tx);
 											$discount->vat_src_code = $vat_src_code;
 
