@@ -901,7 +901,20 @@ IMG;
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+				// Windows / IIS specifics (#38651):
+				// 1. soffice may not be on PATH for the IIS/PHP worker even when present
+				//    for an interactive admin shell; expose MAIN_SOFFICE_PATH so the admin
+				//    can hardcode the full path (typically "C:\Program Files\LibreOffice\program\soffice.com").
+				// 2. The LibreOffice UserInstallation URI must use forward slashes
+				//    (file:///C:/path/...). Backslashes from a Windows tempdir would produce
+				//    an invalid URI and soffice falls back to the default profile.
+				$soffice = getDolGlobalString('MAIN_SOFFICE_PATH', 'soffice.com');
+				$userinstallpath = str_replace('\\', '/', dol_sanitizePathName($conf->user->dir_temp)).'/odtaspdf';
+				$command = escapeshellarg($soffice).' --headless -env:UserInstallation=file:///'.escapeshellarg($userinstallpath).' --convert-to pdf --outdir '.escapeshellarg(dirname($name)).' '.escapeshellarg($name);
+			} else {
+				$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			}
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// This feature is now disabled by default. Must set var in conf.php to allow it.
 			global $dolibarr_main_allow_unoconv;
