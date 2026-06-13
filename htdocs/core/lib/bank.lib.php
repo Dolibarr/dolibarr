@@ -200,11 +200,10 @@ function bank_report_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("compta"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
 	$extrafields->fetch_name_optionals_label('paiement');
