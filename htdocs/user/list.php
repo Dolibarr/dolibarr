@@ -1057,8 +1057,8 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = $obj->status;
-	$object->status = $obj->status;
+	$object->statut = (int) $obj->status;
+	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
 	$object->job = $obj->job;
@@ -1247,7 +1247,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
