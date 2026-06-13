@@ -1,12 +1,30 @@
+/* ===========================================================================
+ * AI Assistant chat stylesheet
+ * Used by the standalone page (ai/assistant/index.php) and by the topbar
+ * popover (#topmenu-ai-popover shell emitted by top_menu_ai() in main.inc.php).
+ *
+ * Colors are mapped onto the theme CSS custom properties defined by the theme
+ * (htdocs/theme/eldy/global.inc.php) so the chat follows the active palette,
+ * including dark mode, with hardcoded values only as fallbacks.
+ * ======================================================================== */
+
+.ai-chat-container,
+.ai-popover {
+    --ai-accent: var(--colortextlink, #2b6cb0);
+    --ai-surface: var(--colorbackbody, #fff);
+    --ai-surface-2: var(--colorbackgrey, #f4f5f7);
+    --ai-text: var(--colortext, #333);
+    --ai-border: var(--inputbordercolor, rgba(0, 0, 0, 0.15));
+    --ai-input-bg: var(--inputbackgroundcolor, #fff);
+}
+
 /* Container */
 .ai-chat-container {
-    /* max-width: 900px; */
-    /* margin: 20px auto; */
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    background: var(--ai-surface);
+    color: var(--ai-text);
+    border: 1px solid var(--ai-border);
+    border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    font-family: 'Roboto', sans-serif;
     display: flex;
     flex-direction: column;
     height: 70vh;
@@ -15,46 +33,66 @@
 
 /* Header */
 .chat-header {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-    background: #fdfdfd;
-    border-radius: 8px 8px 0 0;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ai-border);
+    background: #f8f8f8;
+    border-radius: 12px 12px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .chat-header h2 {
     margin: 0;
-    font-size: 1.2rem;
-    color: #333;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ai-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Popover only: the title links to the full standalone page */
+.ai-header-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ai-header-link:hover {
+    color: var(--ai-accent);
 }
 
 .header-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .engine-select {
-    padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 0.85rem;
-    color: #555;
-    background: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--ai-border);
+    font-size: 0.8rem;
+    color: var(--ai-text);
+    background: var(--ai-input-bg);
+    max-width: 160px;
+    min-width: 0;
 }
 
-/* Top Icons (Trash) */
+/* Header buttons (Clear, and popover window controls) */
 .icon-btn {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 5px 8px;
     cursor: pointer;
-    color: #666;
-    transition: all 0.2s;
-    font-size: 0.9em;
+    color: var(--ai-text);
+    opacity: 0.7;
+    transition: opacity 0.15s, background-color 0.15s;
+    font-size: 0.85em;
     text-decoration: none !important;
     display: inline-flex;
     align-items: center;
@@ -62,57 +100,68 @@
 }
 
 .icon-btn:hover {
-    background: #f0f0f0;
+    background: var(--ai-surface-2);
+    opacity: 1;
+}
+
+#clear-btn:hover {
     color: #d32f2f;
-    border-color: #d32f2f;
 }
 
 /* Chat History */
 .chat-history {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 20px;
-    background: #f8f9fa;
+    padding: 16px;
+    background: var(--ai-surface);
     scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Messages */
 .msg {
-    margin-bottom: 15px;
-    padding: 12px 16px;
-    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
     max-width: 85%;
     line-height: 1.5;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     position: relative;
     word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .msg.user {
-    background: #e3f2fd;
-    color: #0d47a1;
+    background: var(--ai-accent);
+    color: #fff;
     margin-left: auto;
-    border-bottom-right-radius: 2px;
-    text-align: right;
+    border-bottom-right-radius: 4px;
+}
+
+.msg.user a {
+    color: #fff;
+    text-decoration: underline;
 }
 
 .msg.bot {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    color: #333;
+    background: var(--ai-surface-2);
+    color: var(--ai-text);
     margin-right: auto;
-    border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 4px;
 }
 
 .msg.system {
     text-align: center;
     background: transparent;
-    color: #888;
-    font-size: 0.85rem;
+    color: var(--ai-text);
+    opacity: 0.6;
+    font-size: 0.82rem;
     font-style: italic;
-    padding: 5px;
-    margin: 10px auto;
+    padding: 4px;
+    margin: 8px auto;
     border: none;
+    max-width: 100%;
 }
 
 .msg.error {
@@ -137,19 +186,60 @@
     margin: 10px auto;
 }
 
-/* Footer / Controls */
-.chat-controls {
-    padding: 15px 20px;
-    background: #fff;
-    border-top: 1px solid #eee;
-    border-radius: 0 0 8px 8px;
-    display: flex;
+/* Typing indicator (three animated dots shown while waiting for the AI) */
+.msg.typing-indicator {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
+    gap: 4px;
+    padding: 14px 16px;
+    margin-right: auto;
 }
 
+.typing-indicator span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ai-text);
+    opacity: 0.4;
+    animation: ai-typing 1.2s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes ai-typing {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 0.9;
+    }
+}
+
+/* Footer / Controls */
+.chat-controls {
+    padding: 12px 14px;
+    background: #f8f8f8;
+    border-top: 1px solid var(--ai-border);
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
 
 #mic-wrapper,
 #upload-wrapper {
@@ -161,26 +251,24 @@
 
 /* Round Buttons (Mic & Upload) */
 .round-btn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     border-radius: 50%;
-    border: 1px solid #ddd;
-    background: #fff;
-    color: #555;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-input-bg);
+    color: var(--ai-text);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: all 0.2s ease;
     outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .round-btn:hover {
-    background: #f5f5f5;
-    color: #333;
+    background: var(--ai-surface-2);
 }
 
 /* Mic Specific States */
@@ -219,19 +307,18 @@
 /* Input Field */
 #user-input {
     flex-grow: 1;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
+    padding: 11px 15px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-input-bg);
+    color: var(--ai-text);
     border-radius: 20px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
     /* Allow expansion, but set limits */
     height: 44px;
-    /* Initial height */
     min-height: 44px;
-    /* Minimum height */
     max-height: 150px;
-    /* Max height before scrolling */
 
     box-sizing: border-box;
     min-width: 0;
@@ -240,14 +327,43 @@
     resize: none;
     overflow-y: auto;
 
+    /* Hide the scrollbar while keeping scroll (Firefox + IE/Edge legacy) */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
     font-family: inherit;
-    /* Match the font of the page */
+    font-size: 0.92rem;
     line-height: 1.4;
-    /* Better readability for multi-line */
+}
+
+/* Hide the scrollbar while keeping scroll (Chrome/Safari/WebKit) */
+#user-input::-webkit-scrollbar {
+    display: none;
 }
 
 #user-input:focus {
-    border-color: #2196f3;
+    border-color: var(--ai-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ai-accent) 20%, transparent);
+}
+
+/* Send button: replicate the themed Dolibarr button style. The core rule that
+ * styles primary buttons (#mainbody input.button / a.button in theme/md) does not
+ * match here because this is a native <button> AND the popover is moved outside
+ * #mainbody (into document.body), so we reuse the same theme variables directly. */
+#send-btn {
+    flex-shrink: 0;
+    background: var(--butactionbg);
+    color: var(--textbutaction) !important;
+    border: none;
+    border-radius: 20px;
+    text-shadow: none;
+    text-transform: uppercase;
+    height: 44px;
+    padding: 0 16px;
+}
+
+#send-btn:hover {
+    box-shadow: 0 0 6px 1px rgba(50, 50, 50, 0.4);
 }
 
 /* Animations */
@@ -278,12 +394,20 @@
 
 #status-bar {
     font-size: 0.75rem;
-    color: #999;
+    color: var(--ai-text);
+    opacity: 0.6;
     text-align: right;
-    padding: 0 20px 10px;
-    background: #fff;
-    border-radius: 0 0 8px 8px;
-    min-height: 20px;
+    padding: 0 16px 8px;
+    background: var(--ai-surface);
+    border-radius: 0 0 12px 12px;
+    min-height: 18px;
+    flex-shrink: 0;
+}
+
+/* Collapse the status bar when empty so it leaves no blank space below the input */
+#status-bar:empty {
+    padding: 0;
+    min-height: 0;
 }
 
 /* Tables in chat */
@@ -295,16 +419,16 @@
 }
 
 .chat-table th {
-    background: #f0f0f0;
+    background: var(--ai-surface);
     padding: 8px;
     text-align: left;
-    border-bottom: 2px solid #ddd;
-    color: #555;
+    border-bottom: 2px solid var(--ai-border);
+    color: var(--ai-text);
 }
 
 .chat-table td {
     padding: 8px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ai-border);
 }
 
 .chat-table tr:last-child td {
@@ -321,10 +445,10 @@
 
 .msg-action-btn {
     padding: 5px 12px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background: #f8f9fa;
-    color: #495057;
+    border-radius: 6px;
+    border: 1px solid var(--ai-border);
+    background: var(--ai-surface);
+    color: var(--ai-text);
     cursor: pointer;
     font-size: 0.85rem;
     text-decoration: none;
@@ -335,19 +459,17 @@
 }
 
 .msg-action-btn:hover {
-    background: #e9ecef;
-    border-color: #adb5bd;
+    background: var(--ai-surface-2);
 }
 
 .msg-action-btn.primary {
-    background: #007bff;
+    background: var(--ai-accent);
     color: white;
-    border-color: #007bff;
+    border-color: var(--ai-accent);
 }
 
 .msg-action-btn.primary:hover {
-    background: #0056b3;
-    border-color: #0056b3;
+    filter: brightness(0.9);
 }
 
 .msg-action-btn.danger {
@@ -363,18 +485,18 @@
 
 /* Confirmation Dialog Styles */
 .confirmation-dialog {
-    border: 1px solid #ddd;
+    border: 1px solid var(--ai-border);
     border-radius: 8px;
     overflow: hidden;
     margin: 10px 0;
-    background: white;
+    background: var(--ai-surface);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .confirmation-header {
-    background: #f8f9fa;
+    background: var(--ai-surface-2);
     padding: 10px 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ai-border);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -389,7 +511,7 @@
 }
 
 .confirmation-details {
-    background: #f8f9fa;
+    background: var(--ai-surface-2);
     padding: 8px;
     border-radius: 4px;
     font-size: 0.9em;
@@ -398,7 +520,8 @@
 
 .voice-hint {
     font-size: 0.85em;
-    color: #6c757d;
+    color: var(--ai-text);
+    opacity: 0.7;
     margin-top: 10px;
     display: flex;
     align-items: center;
@@ -428,77 +551,98 @@
 }
 
 
-/* -------------------------------------------------------------------------
- * Popup mode (loaded via dol_openinpopup URL param from the top-toolbar
- * AI icon -> dolButtonToOpenUrlInDialogPopup() iframe).
+/* ===========================================================================
+ * Topbar popover (#topmenu-ai-popover, shell emitted by top_menu_ai()).
  *
- * Dolibarr core adds the body class "dol_openinpopup" when this param is
- * set (htdocs/main.inc.php), so we can target popup-only tweaks here
- * without touching index.php.
- *
- * Sizing strategy:
- * The chat-container in standalone mode uses "height: 70vh; min-height:
- * 650px" which is great on a full page but causes the dialog iframe to
- * overflow on small windows. In popup mode we make the chat-container
- * fill the iframe viewport exactly (height: 100% of body, body itself
- * pinned to 100vh of iframe) and drop the 650px floor; .chat-history
- * keeps its flex-grow:1 + overflow-y:auto so message scroll still works
- * INTERNALLY without an iframe-level scrollbar.
- *
- * We also flatten the visual chrome (border, shadow, rounded corners,
- * capped max-width, top margin) that is now redundant with the dialog
- * frame, and hide the duplicate "AI Assistant" H2 (the dialog title bar
- * already shows it).
- * ------------------------------------------------------------------------- */
-body.dol_openinpopup {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
+ * Anchored top-right under the top menu (--ai-popover-top is set by the
+ * bootstrap JS from the real topbar height). Show/hide uses opacity +
+ * visibility instead of display so the width/height transition of the
+ * .expanded state can animate. z-index 1010 = above the menu bar (eldy).
+ * ======================================================================== */
+.ai-popover {
+    position: fixed;
+    top: var(--ai-popover-top, 48px);
+    right: 12px;
+    width: 380px;
+    height: min(560px, calc(100vh - var(--ai-popover-top, 48px) - 16px));
+    z-index: 1010;
+    display: flex;
+    flex-direction: column;
+    background: var(--ai-surface);
+    border: 1px solid var(--ai-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
     overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s,
+        width 0.25s ease, height 0.25s ease;
 }
 
-/* In popup mode the DOM is:
- *   body > #id-container > .fiche > .ai-chat-container
- * (top_menu and left_menu blocks are skipped by main.inc.php when
- *  dol_openinpopup is set, but #id-container and .fiche are always
- *  emitted). For "height: 100%" on .ai-chat-container to resolve to
- *  the iframe viewport, every ancestor in the chain must also be
- *  100% high. */
-body.dol_openinpopup #id-container,
-body.dol_openinpopup .fiche {
+.ai-popover.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+/* Enlarged state: same top-right anchor, grows leftwards/downwards */
+.ai-popover.expanded {
+    width: min(720px, calc(100vw - 24px));
+    height: min(80vh, calc(100vh - var(--ai-popover-top, 48px) - 16px));
+}
+
+.ai-popover-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+}
+
+.ai-popover-loading {
+    margin: auto;
+    font-size: 1.4rem;
+    color: var(--ai-text);
+    opacity: 0.5;
+}
+
+/* Chat container injected inside the popover: fill the panel, drop the
+ * standalone chrome. min-height:0 lets .chat-history shrink and scroll
+ * internally instead of overflowing the panel (flexbox min-height:auto fix). */
+.ai-in-popover {
+    width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-body.dol_openinpopup .ai-chat-container {
-    max-width: none;
-    margin: 0;
+    min-height: 0;
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    height: 100%;
-    min-height: 0;
-    max-height: 100%;
 }
 
-/* Flexbox shrink fix: a flex-grow:1 child defaults to min-height:auto
- * (content-based), which prevents the chat-history from shrinking below
- * its message-content height and causes the WHOLE container to overflow
- * the iframe after a long response. Forcing min-height:0 lets the
- * chat-history shrink to fit the available column space and scroll
- * INTERNALLY (overflow-y:auto is already on .chat-history). */
-body.dol_openinpopup .chat-history {
+.ai-in-popover .chat-history {
     min-height: 0;
 }
 
-/* The dialog title bar already shows "AI Assistant", so hide the redundant
- * H2 inside .chat-header but keep .header-controls (Clear + mode select). */
-body.dol_openinpopup .chat-header {
-    border-radius: 0;
-    justify-content: flex-end;
-}
-
-body.dol_openinpopup .chat-header h2 {
+/* Compact header in the popover: keep controls tight, hide the Clear label */
+.ai-in-popover .ai-btn-label {
     display: none;
+}
+
+.ai-in-popover .engine-select {
+    max-width: 110px;
+}
+
+.ai-popover.expanded .engine-select {
+    max-width: 160px;
+}
+
+/* Small screens: full-width panel */
+@media (max-width: 480px) {
+
+    .ai-popover,
+    .ai-popover.expanded {
+        right: 0;
+        left: 0;
+        width: auto;
+        border-radius: 0;
+        height: calc(100vh - var(--ai-popover-top, 48px));
+    }
 }

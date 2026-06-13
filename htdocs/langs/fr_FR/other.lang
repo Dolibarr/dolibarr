@@ -407,3 +407,4 @@ ShowBookmark = Afficher marque-page
 UrlOrLink = URL
 UseAnExternalHttpLinkOrRelativeDolibarrLink = Utilisez un lien externe/absolu (https://externalurl.com) ou un lien interne/relatif (/mapage.php). Vous pouvez également utiliser un lien de téléphone comme tel:0123456.
 SubscribeToFoundation=Aidez le projet Dolibarr, adhérez à l'association Dolibarr
+AIWelcomeMessage=Bonjour, je suis votre assistant Dolibarr. Comment puis-je vous aider aujourd'hui ?

@@ -4,34 +4,56 @@
  * \ingroup ai
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Initialize the AI Assistant chat on a given container (.ai-chat-container).
+ * Called explicitly by the topbar popover bootstrap (main.inc.php) after AJAX
+ * injection, or automatically for server-rendered containers carrying the
+ * data-ai-autoinit attribute (standalone page ai/assistant/index.php).
+ *
+ * @param {HTMLElement} container The .ai-chat-container element
+ */
+export function initAiAssistant(container) {
+    if (!container || container.dataset.aiInit) return;
+    container.dataset.aiInit = '1';
 
     // =========================================================================
     // CONFIGURATION & INITIALIZATION
     // =========================================================================
 
-    // 1. Load configuration passed from PHP
-    const config = window.AI_CONFIG || {};
+    // 1. Load configuration emitted by PHP (getAiChatAssistantConfig) as a data
+    // attribute: inline <script> config cannot travel inside an innerHTML fragment.
+    let config = {};
+    try {
+        config = JSON.parse(container.dataset.aiConfig || '{}');
+    } catch (e) {
+        console.error('AI Assistant: invalid data-ai-config attribute', e);
+    }
+    if (!config.labels && window.AI_CONFIG) config = window.AI_CONFIG; // Legacy fallback
     const CONFIG_MODE = config.mode || 'text';
     const aiLabels = config.labels || {};
 
     // Helper for safe translation retrieval
     const t = (key) => aiLabels[key] || key;
 
-    // 2. Select DOM Elements
-    const micBtn = document.getElementById('mic-btn');
-    const micWrapper = document.getElementById('mic-wrapper');
+    // Absolute endpoint URL: the chat may run injected into any Dolibarr page
+    // (topbar popover), so relative URLs would resolve against the wrong path.
+    const epUrl = (file) => (config.baseUrl || '') + file + (config.token ? '?token=' + encodeURIComponent(config.token) : '');
 
-    const uploadBtn = document.getElementById('upload-btn');
-    const uploadWrapper = document.getElementById('upload-wrapper');
-    const fileInput = document.getElementById('file-upload');
+    // 2. Select DOM Elements (scoped to the container so several chat instances
+    // can coexist on the same page, e.g. popover opened over the standalone page)
+    const micBtn = container.querySelector('#mic-btn');
+    const micWrapper = container.querySelector('#mic-wrapper');
 
-    const clearBtn = document.getElementById('clear-btn');
-    const engineSelect = document.getElementById('engine-select');
-    const input = document.getElementById('user-input');
-    const chat = document.getElementById('chat-history');
-    const statusBar = document.getElementById('status-bar');
-    const sendBtn = document.getElementById('send-btn');
+    const uploadBtn = container.querySelector('#upload-btn');
+    const uploadWrapper = container.querySelector('#upload-wrapper');
+    const fileInput = container.querySelector('#file-upload');
+
+    const clearBtn = container.querySelector('#clear-btn');
+    const engineSelect = container.querySelector('#engine-select');
+    const input = container.querySelector('#user-input');
+    const chat = container.querySelector('#chat-history');
+    const statusBar = container.querySelector('#status-bar');
+    const sendBtn = container.querySelector('#send-btn');
 
     // 3. Application State
     let isRecording = false;
@@ -71,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDocParsingUI();
 
     // Listen for custom event to trigger PDF download from buttons
-    document.addEventListener('triggerPdf', () => {
+    // (scoped to the container: each chat instance reacts only to its own buttons)
+    container.addEventListener('triggerPdf', () => {
         if (lastResult.data) {
             downloadPdf(lastResult);
         } else {
@@ -84,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     const autoResizeInput = () => {
-        const input = document.getElementById('user-input');
         if (!input) return;
 
         // 1. Reset height to 'auto' to shrink the box if text is deleted
@@ -910,13 +932,23 @@ document.addEventListener('DOMContentLoaded', () => {
         chat.scrollTop = chat.scrollHeight;
     }
 
+    // Animated three-dot "typing" bubble shown while waiting for the AI answer
+    function appendTyping() {
+        const div = document.createElement('div');
+        div.className = 'msg bot typing-indicator';
+        div.innerHTML = '<span></span><span></span><span></span>';
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+        return div;
+    }
+
     function handleClarification(question, context) {
         clarificationContext = context;
         let html = `<div><strong>${question}</strong></div><input type="text" id="clarification-input" placeholder="${t('TypeResponse')}" style="width:100%; margin-top:10px; padding:8px; border:1px solid #ccc; border-radius:4px;">`;
         const actions = [
             {
                 text: t('Submit'), class: 'primary', icon: 'fa-check', onclick: () => {
-                    const response = document.getElementById('clarification-input').value;
+                    const response = container.querySelector('#clarification-input').value;
                     if (response.trim()) {
                         const msg = chat.lastElementChild;
                         if (msg && msg.classList.contains('clarification')) msg.remove();
@@ -934,7 +966,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
         appendMsg('clarification', html, actions);
-        const clarInput = document.getElementById('clarification-input');
+        const clarInput = container.querySelector('#clarification-input');
         if (clarInput) clarInput.focus();
     }
 
@@ -1013,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showVoiceFeedback(message) {
-        const dialog = document.querySelector('.confirmation-dialog .confirmation-body');
+        const dialog = container.querySelector('.confirmation-dialog .confirmation-body');
         if (dialog) {
             let fb = dialog.querySelector('.voice-feedback');
             if (!fb) { fb = document.createElement('div'); fb.className = 'voice-feedback'; dialog.appendChild(fb); }
@@ -1042,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			return;
 		}
         try {
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(pendingIntent)
             });
@@ -1063,10 +1095,10 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
         input.style.height = '44px';
         input.disabled = true;
-        appendMsg('system', '<span class="fa fa-circle-notch fa-spin"></span> Thinking...');
+        appendTyping();
         const loadingMsg = chat.lastElementChild;
         try {
-            const intentRes = await fetch('parse_intent.php', {
+            const intentRes = await fetch(epUrl('parse_intent.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: query })
             });
@@ -1080,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
                 const loadingNav = chat.lastElementChild;
-                const navRes = await fetch('execute_tool.php', {
+                const navRes = await fetch(epUrl('execute_tool.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(intent)
                 });
@@ -1093,7 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             appendMsg('system', t('FetchingData'));
             const loadingData = chat.lastElementChild;
-            const toolRes = await fetch('execute_tool.php', {
+            const toolRes = await fetch(epUrl('execute_tool.php'), {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(intent)
             });
@@ -1119,7 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { reportTitle = resultObj.tool.replace(/_/g, ' '); }
         let filename = reportTitle.replace(/[\/\\:*?"<>|]/g, '_').substring(0, 50) + '_' + new Date().toISOString().slice(0, 10) + '.pdf';
         const form = document.createElement('form');
-        form.method = 'POST'; form.action = 'download_pdf.php'; form.target = '_blank';
+        form.method = 'POST'; form.action = epUrl('download_pdf.php'); form.target = '_blank';
         const addField = (name, val) => {
             const i = document.createElement('input'); i.type = 'hidden'; i.name = name; i.value = val; form.appendChild(i);
         };
@@ -1174,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isRecursive) {
             let toolbarContent = '';
             if (isArray) {
-                toolbarContent = `<button class="msg-action-btn" onclick="document.dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
+                toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
                 toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" style="display:inline-flex; align-items:center; gap:5px; text-decoration:none;" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
             }
@@ -1182,4 +1214,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return content;
     }
-});
+}
+
+// Auto-init for server-rendered containers (standalone page mode). The topbar
+// popover path calls initAiAssistant() explicitly after the AJAX injection.
+// Module scripts are deferred, so the DOM may already be ready when this runs.
+function aiAutoInit() {
+    document.querySelectorAll('.ai-chat-container[data-ai-autoinit]').forEach((el) => initAiAssistant(el));
+}
+if (document.readyState !== 'loading') {
+    aiAutoInit();
+} else {
+    document.addEventListener('DOMContentLoaded', aiAutoInit);
+}

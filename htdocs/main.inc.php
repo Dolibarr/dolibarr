@@ -2711,51 +2711,132 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 }
 
 /**
- * Build the tooltip on top menu quick add.
- * Called when option MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN is set
+ * Build the HTML for the AI Assistant entry of the top menu: a toggle icon and
+ * a floating popover panel (vanilla JS + CSS) whose chat content is loaded once
+ * via AJAX from /ai/assistant/popover.php, then kept in the DOM so the
+ * conversation persists across open/close while staying on the same page.
  *
  * @return  string                  HTML content
  */
 function top_menu_ai()
 {
-	global $conf, $langs;
-
-	// Button disabled on text browser
-	/*if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-		return '';
-	}*/
+	global $conf, $langs, $user;
 
 	$html = '';
 
-	if (isModEnabled('ai') && getDolGlobalString('AI_ASSISTANT_ENABLED')) {
-		// Open the AI Assistant in a popup overlay rather than navigating away,
-		// so the user keeps their current page context while interacting with
-		// the assistant. Uses the standard Dolibarr helper which builds an
-		// iframe-in-jQuery-UI-dialog (modal, 80% width, height-150) and auto-
-		// appends dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=NAME
-		// so the embedded page renders without the surrounding chrome.
-		// JS-disabled fallback: the helper degrades to target="_blank".
-		// $label is used by dolButtonToOpenUrlInDialogPopup() both for the
-		// title="" tooltip on the <a> AND for the jQuery UI dialog title.
-		// Include the keyboard-shortcut hint (matching the convention used
-		// e.g. by the PublicVirtualCardUrl call earlier in this file and by
-		// bookmark/quickadd/search) so the icon tooltip on hover reads e.g.
-		// "AI Assistant (Ctrl Alt a)" -- the dialog title shows the same.
-		$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
-		$aibtn = dolButtonToOpenUrlInDialogPopup(
-			'aiassistant',
-			$ailabel,
-			'<i class="fa fa-magic"></i>',
-			'/ai/assistant/index.php',
-			'',
-			'nofocusvisible',
-			'',
-			'',
-			'a'
-		);
-		$html .= '<!-- div for quick ai link (opens AI Assistant in popup) -->
-	    <div id="topmenu-tool" class="atoplogin dropdown inline-block">'.$aibtn.'</div>';
+	if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || empty($conf->use_javascript_ajax)) {
+		return $html;
 	}
+	// Per-user gate: same right as the assistant page and its endpoints
+	if (!$user->hasRight('ai', 'assistant', 'use')) {
+		return $html;
+	}
+
+	$ailabel = $langs->trans('AIAssistant').' ('.$conf->browser->stringforfirstkey.' a)';
+
+	// Chat CSS is needed on every page showing the icon (link-in-body is valid HTML5,
+	// the standalone page ai/assistant/index.php uses the same pattern).
+	$html .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/ai/css/ai_assistant.css">';
+
+	// Toggle icon. The accesskey "a" keeps the Alt+A shortcut: its browser
+	// activation fires the click handler below, so it toggles the popover.
+	$html .= '<!-- div for AI Assistant link (opens the AI chat popover) -->
+	<div id="topmenu-ai-dropdown" class="atoplogin dropdown inline-block">
+	<a accesskey="a" href="#" id="topmenu-ai-toggle" class="login-dropdown-a nofocusvisible" title="'.dol_escape_htmltag($ailabel).'"><i class="fa fa-magic"></i></a>
+	</div>';
+
+	// Popover shell (hidden by CSS until .open). The chat fragment is fetched on
+	// first open; afterwards open/close only toggles visibility so the
+	// conversation survives. Moved to <body> on first use by the script below.
+	$html .= '<div id="topmenu-ai-popover" class="ai-popover" role="dialog" aria-modal="false" aria-label="'.dol_escape_htmltag($langs->trans('AIAssistant')).'">
+	<div class="ai-popover-body"><div class="ai-popover-loading"><i class="fa fa-circle-notch fa-spin"></i></div></div>
+	</div>';
+
+	// Cache-busting version for the JS module: filemtime invalidates the browser
+	// cache whenever the file actually changes (e.g. after a branch switch),
+	// avoiding a stale module without the initAiAssistant() export.
+	$aijsfile = DOL_DOCUMENT_ROOT.'/ai/js/ai_assistant.js';
+	$aijsver = @filemtime($aijsfile);
+	$aijsurl = DOL_URL_ROOT.'/ai/js/ai_assistant.js?v='.urlencode((string) ($aijsver ? $aijsver : DOL_VERSION));
+
+	$html .= '<script nonce="'.getNonce().'">
+	(function () {
+		var toggle = document.getElementById("topmenu-ai-toggle");
+		var popover = document.getElementById("topmenu-ai-popover");
+		if (!toggle || !popover) { return; }
+		var body = popover.querySelector(".ai-popover-body");
+		var loaded = false;
+		var loading = false;
+
+		function positionPopover() {
+			var top = document.getElementById("id-top");
+			var anchor = (top ? top.getBoundingClientRect().bottom : 44) + 4;
+			popover.style.setProperty("--ai-popover-top", anchor + "px");
+		}
+
+		function loadChat() {
+			if (loaded || loading) { return; }
+			loading = true;
+			fetch("'.DOL_URL_ROOT.'/ai/assistant/popover.php", { credentials: "same-origin" })
+				.then(function (resp) {
+					if (!resp.ok) { throw new Error("HTTP " + resp.status); }
+					return resp.text();
+				})
+				.then(function (htmlcontent) {
+					body.innerHTML = htmlcontent;
+					return import("'.dol_escape_js($aijsurl).'").then(function (mod) {
+						mod.initAiAssistant(body.querySelector(".ai-chat-container"));
+					});
+				})
+				.then(function () {
+					loaded = true;
+					focusInput();
+				})
+				.catch(function (e) {
+					console.error("AI Assistant popover load failed", e);
+					body.innerHTML = "<div class=\"ai-popover-loading\">'.dol_escape_js($langs->trans('Error')).'</div>";
+				})
+				.finally(function () { loading = false; });
+		}
+
+		function focusInput() {
+			var input = body.querySelector("#user-input");
+			if (input) { input.focus(); }
+		}
+
+		toggle.addEventListener("click", function (event) {
+			event.preventDefault();
+			// position:fixed can be hijacked by a transformed ancestor: hosting the
+			// panel directly under <body> guarantees viewport coordinates.
+			if (popover.parentNode !== document.body) { document.body.appendChild(popover); }
+			positionPopover();
+			var isOpen = popover.classList.toggle("open");
+			if (isOpen) {
+				loadChat();
+				if (loaded) { focusInput(); }
+			}
+		});
+
+		popover.addEventListener("click", function (event) {
+			var closeBtn = event.target.closest("#ai-close-btn");
+			var expandBtn = event.target.closest("#ai-expand-btn");
+			if (closeBtn) {
+				popover.classList.remove("open");
+			} else if (expandBtn) {
+				var expanded = popover.classList.toggle("expanded");
+				var icon = expandBtn.querySelector("i");
+				if (icon) { icon.className = expanded ? "fa fa-compress-alt" : "fa fa-expand-alt"; }
+				expandBtn.title = expanded ? (expandBtn.dataset.titleReduce || "") : (expandBtn.dataset.titleExpand || "");
+			}
+		});
+
+		document.addEventListener("keydown", function (event) {
+			if (event.key === "Escape" && popover.classList.contains("open")) {
+				popover.classList.remove("open");
+			}
+		});
+	})();
+	</script>';
 
 	return $html;
 }

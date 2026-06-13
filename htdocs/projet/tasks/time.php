@@ -313,7 +313,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_date = $timespent_date;
 				$object->timespent_withhour = 0;
 			}
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
@@ -348,7 +351,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_withhour = 0;
 			}
 
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
