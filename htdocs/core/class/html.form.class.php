@@ -5134,9 +5134,9 @@ class Form
 
 				// If a translation exists, we use is, otherwise, we take the label by default
 				$label = ($langs->trans("AvailabilityType" . $obj->code) != "AvailabilityType" . $obj->code ? $langs->trans("AvailabilityType" . $obj->code) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_availability[(int) $obj->rowid]['code'] = (string) $obj->code;
-				$this->cache_availability[(int) $obj->rowid]['label'] = (string) $label;
-				$this->cache_availability[(int) $obj->rowid]['position'] = (int) $obj->position;
+				$this->cache_availability[$obj->rowid]['code'] = (string) $obj->code;
+				$this->cache_availability[$obj->rowid]['label'] = (string) $label;
+				$this->cache_availability[$obj->rowid]['position'] = (int) $obj->position;
 				$i++;
 			}
 
@@ -5542,7 +5542,7 @@ class Form
 	public function select_types_paiements($selected = '', $htmlname = 'paiementtype', $filtertype = '', $format = 0, $empty = 1, $noadmininfo = 0, $maxlength = 0, $active = 1, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $langs, $user, $conf;
+		global $langs, $user;
 
 		$out = '';
 
