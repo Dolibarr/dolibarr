@@ -1317,9 +1317,9 @@ class BlockedLog
 		}
 
 		$tz = 'gmt';
-		if (empty($this->object_format) || $this->object_format == 'V1') {
-			$tz = 'tzserver';
-		}
+		// if (empty($this->object_format) || $this->object_format == 'V1') {
+		// 	$tz = 'tzserver';
+		// }
 
 		$previoushash = '';
 		$previousid = 0;
