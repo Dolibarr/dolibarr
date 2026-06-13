@@ -457,7 +457,8 @@ function checkBanForAccount($account)
 		// Separation du rib en 3 groups de 7 + 1 group de 2.
 		// Multiplication of each group by the coefficients in the array.
 
-		for ($i = 0, $s = 0; $i < 3; $i++) {
+		$s = 0;
+		for ($i = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
