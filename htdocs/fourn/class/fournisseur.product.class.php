@@ -1174,6 +1174,39 @@ class ProductFournisseur extends Product
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		// llx_product_fournisseur_price has a UNIQUE INDEX uk_product_fournisseur_price_ref
+		// on (ref_fourn, fk_soc, quantity, entity). A blind UPDATE fk_soc = dest on every
+		// origin row fails on rows where dest already has the same (ref_fourn, quantity, entity),
+		// blocking the whole merge with a 1062 Duplicate entry error (see #38456).
+		// Drop the colliding origin rows first - they would become exact duplicates of dest
+		// rows so the merge has nothing to lose by keeping the dest version.
+		$sqlselect = "SELECT pfp_origin.rowid";
+		$sqlselect .= " FROM ".$dbs->prefix()."product_fournisseur_price AS pfp_origin";
+		$sqlselect .= " INNER JOIN ".$dbs->prefix()."product_fournisseur_price AS pfp_dest";
+		$sqlselect .= " ON pfp_dest.fk_soc = ".((int) $dest_id);
+		$sqlselect .= " AND pfp_dest.ref_fourn = pfp_origin.ref_fourn";
+		$sqlselect .= " AND pfp_dest.quantity = pfp_origin.quantity";
+		$sqlselect .= " AND pfp_dest.entity = pfp_origin.entity";
+		$sqlselect .= " WHERE pfp_origin.fk_soc = ".((int) $origin_id);
+
+		$resql = $dbs->query($sqlselect);
+		if (!$resql) {
+			return false;
+		}
+		$colliding = array();
+		while ($obj = $dbs->fetch_object($resql)) {
+			$colliding[] = (int) $obj->rowid;
+		}
+		$dbs->free($resql);
+
+		foreach ($colliding as $rowid) {
+			$sqldel = "DELETE FROM ".$dbs->prefix()."product_fournisseur_price";
+			$sqldel .= " WHERE rowid = ".((int) $rowid);
+			if (!$dbs->query($sqldel)) {
+				return false;
+			}
+		}
+
 		$tables = array(
 			'product_fournisseur_price'
 		);
