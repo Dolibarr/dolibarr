@@ -615,7 +615,7 @@ function getAiChatAssistantConfig()
  */
 function getAiChatAssistantHtml($mode = 'page')
 {
-	global $langs;
+	global $langs, $user;
 
 	$out = '';
 
