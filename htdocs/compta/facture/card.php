@@ -1165,7 +1165,6 @@ if (empty($reshook)) {
 				}
 
 				foreach ($amount_ht as $tva_tx => $xxx) {
-
 					// Get localtaxes from TVA tx
 					$taxes = getTaxesFromId($tva_tx, $object->thirdparty, $mysoc, 0);
 
