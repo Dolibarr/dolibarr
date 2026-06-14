@@ -3135,14 +3135,33 @@ class Propal extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error = 0;
 
 		$this->db->begin();
 
-		if (!$notrigger) {
+		// Test we can delete: forbid removal when a customer order or invoice
+		// references this proposal, otherwise the next proposal would reuse the
+		// freed ref (MAX(ref)+1 in mod_propale_*) and the deleted document
+		// would be quietly resurrected with new content (#38672).
+		$sql = "SELECT sourcetype, COUNT(*) as nb FROM ".MAIN_DB_PREFIX."element_element";
+		$sql .= " WHERE fk_source = ".((int) $this->id)." AND sourcetype = '".$this->db->escape($this->element)."'";
+		$sql .= " AND targettype IN ('commande', 'facture')";
+		$sql .= " GROUP BY sourcetype";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql) > 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorRecordHasChildren');
+				$this->errors[] = $this->error;
+				$error++;
+			}
+			$this->db->free($resql);
+		}
+
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PROPAL_DELETE', $user);
 			if ($result < 0) {
