@@ -441,7 +441,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 UPDATE llx_const SET name = 'MAIN_AUTHENTICATION_OIDC_ON' WHERE name = 'MAIN_MODULE_OPENIDCONNECT';
 
 -- this table was created only during fresh install
-CREATE llx_workstation_workstation_extrafields
+CREATE TABLE llx_workstation_workstation_extrafields
 (
     rowid           integer     AUTO_INCREMENT PRIMARY KEY,
     tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
