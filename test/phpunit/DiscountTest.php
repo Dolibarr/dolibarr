@@ -135,7 +135,7 @@ class DiscountTest extends CommonClassTest
 	 * test the scenario of action 'confirm_split' in remx.php
 	 * also support 'confirm_split_more'
 	 * @param	float 	$total_amount initial amount of discount to split
-	 * @param	float 	$splitamount_1 first half of splitted discount
+	 * @param	float 	$splitamount_1 first half of split discount
 	 * @param	float	$tva_tx vat rate
 	 * @param	float	$localtax1_tx localtax1 rate
 	 * @param	int		$localtax1_type localtax1 type
@@ -228,9 +228,9 @@ class DiscountTest extends CommonClassTest
 
 		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
 
-		$this->assertEquals($ex_total_ht,$localobject->amount_ht);
-		$this->assertEquals($ex_total_ttc,$localobject->amount_ttc);
-		$this->assertEquals($ex_total_tva,$localobject->amount_tva);
+		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
+		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
+		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
 		$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
 		$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
 		$result = 1;
@@ -245,7 +245,8 @@ class DiscountTest extends CommonClassTest
 	 *
 	 * @return array values and expectations data
 	 */
-	public function providerRemiseData() {
+	public function providerRemiseData()
+	{
 		// array(amount, vat_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, price_base, ex_total_tva, ex_total_localtax1, ex_total_localtax2, ex_total_ttc, ex_total_ht),
 		return array(
 			array(1234,5,9.975,1,0,0,'HT',61.7,123.09,0,1418.79,1234),
@@ -264,8 +265,9 @@ class DiscountTest extends CommonClassTest
 	 *
 	 * @return array values and expectations data
 	 */
-	public function providerSplitRemiseData() {
-		// Soit une remise dont le total est taxé
+	public function providerSplitRemiseData()
+	{
+		// Soit une remise avec le total taxé
 		// array(total_amount, splitamount_1, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, ex_ht_amount1, ex_total_amount1, ex_ht_amount2, ex_total_amount2),
 		return array(
 			array(1468.15,1000,5,9.975,1,0,0,869.75,1000,407.18,468.15)
