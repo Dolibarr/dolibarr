@@ -394,7 +394,7 @@ class DiscountAbsolute extends CommonObject
 		$sql .= ")";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
 		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
-		$sql .= " ".($this->amount_localtax1 ? price2num($this->amount_localtax1) : 0).", ".($this->amount_localtax2 ? price2num($this->amount_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
+		$sql .= " ".($this->total_localtax1 ? price2num($this->total_localtax1) : 0).", ".($this->total_localtax2 ? price2num($this->total_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
 		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
@@ -996,15 +996,15 @@ class DiscountAbsolute extends CommonObject
 		$this->tva_tx = $tva_tx;
 
 		if ($localtax1_type2 == 0) {
-			$this->total_localtax1 = $this->amount_ht * $localtax1_tx_pct;
+			$this->total_localtax1 = (float) $this->amount_ht * $localtax1_tx_pct;
 		} elseif ($localtax1_type2 == 1) {
-			$this->total_localtax1 = ($this->amount_ht + $this->amount_tva) * $localtax1_tx_pct;
+			$this->total_localtax1 = ((float) $this->amount_ht + (float) $this->amount_tva) * $localtax1_tx_pct;
 		}
 
 		if ($localtax2_type2 == 0) {
-			$this->total_localtax2 = $this->amount_ht * $localtax2_tx_pct;
+			$this->total_localtax2 = (float) $this->amount_ht * $localtax2_tx_pct;
 		} elseif ($localtax2_type2 == 1) {
-			$this->total_localtax2 = ($this->amount_ht + $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct;
+			$this->total_localtax2 = ((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct;
 		}
 
 		if (empty($this->amount_ttc)) {

@@ -195,7 +195,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	}
 	if (!$error) {
 		// Split a discount in two
-		$newDiscounts = $discount->splitAmount($amount_ttc_1, $amount_ttc_2);
+		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);
 		$newdiscount1 = $newDiscounts[0];
 		$newdiscount2 = $newDiscounts[1];
 
