@@ -2768,7 +2768,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], $taxes['localtax1_type'], $taxes['localtax2_type']);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
 
 			$discount->vat_src_code = $vat_src_code;
 
