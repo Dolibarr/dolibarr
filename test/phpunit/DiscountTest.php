@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ class DiscountTest extends CommonClassTest
 	 * testDiscountScenarioConfirmSplit
 	 *
 	 * test the scenario of action 'confirm_split' in remx.php
-	 *
+	 * also support 'confirm_split_more'
 	 * @param	float 	$total_amount initial amount of discount to split
 	 * @param	float 	$splitamount_1 first half of splitted discount
 	 * @param	float	$tva_tx vat rate
@@ -159,46 +160,19 @@ class DiscountTest extends CommonClassTest
 		 * Create a DiscountAbsolute object from spec, split it and
 		 * test results with expected.
 		 */
-
 		$localobject = new DiscountAbsolute($db);
-		$result = 1;
-
-		print __METHOD__." result=".$result."\n";
-
-		return $result;
-	}
-
-	/**
-	 * testDiscountScenarioConfirmSplitMore
-	 *
-	 * test the scenario of action 'confirm_split_more' in remx.php
-	 * @param	float 	$total_amount initial amount of discount to split
-	 * @param	float 	$splitamount_1 first half of splitted discount
-	 * @param	float	$tva_tx vat rate
-	 * @param	float	$localtax1_tx localtax1 rate
-	 * @param	int		$localtax1_type localtax1 type
-	 * @param	float	$localtax2_tx localtax2 rate
-	 * @param	int		$localtax2_type localtax1 type
-	 * @param	float	$ex_ht_amount1 expected amount 1 HT
-	 * @param	float	$ex_total_amount1 expected amount 1 TTC
-	 * @param	float	$ex_ht_amount2 expected amount 2 HT
-	 * @param	float	$ex_total_amount2 expected amount 2 TTC
-	 * @return	int
-	 * @dataProvider providerSplitRemiseData
-	 */
-	public function testDiscountSplitScenarioConfirmSplitMore($total_amount, $splitamount_1, $tva_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $ex_ht_amount1, $ex_total_amount1, $ex_ht_amount2, $ex_total_amount2)
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		/**
-		 * Create a DiscountAbsolute object from spec, split it and
-		 * test results with expected.
-		 */
-		$localobject = new DiscountAbsolute($db);
+		$localobject->tva_tx = $tva_tx;
+		$localobject->localtax1_tx = $localtax1_tx;
+		$localobject->localtax1_type = $localtax1_type;
+		$localobject->localtax2_tx = $localtax2_tx;
+		$localobject->localtax2_type = $localtax2_type;
+		$newDiscounts = $localobject->splitAmount($splitamount_1, $total_amount - $splitamount_1);
+		$newdiscount1 = $newDiscounts[0];
+		$newdiscount2 = $newDiscounts[1];
+		$this->assertEquals($ex_ht_amount1, $newdiscount1->amount_ht);
+		$this->assertEquals($ex_total_amount1, $newdiscount1->amount_ttc);
+		$this->assertEquals($ex_ht_amount2, $newdiscount2->amount_ht);
+		$this->assertEquals($ex_total_amount2, $newdiscount2->amount_ttc);
 		$result = 1;
 
 		print __METHOD__." total_amount=".$total_amount." splitamount_1=".$splitamount_1." tva_tx=".$tva_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." result=".$result."\n";
@@ -238,6 +212,27 @@ class DiscountTest extends CommonClassTest
 		 * Create a DiscountAbsolute object with spec and test with expected result
 		 */
 		$localobject = new DiscountAbsolute($db);
+
+		$localtax1_type2 = 0;
+		if ($localtax1_type > 0 && $localtax1_type % 2 == 0) {
+			$localtax1_type2 = 1;
+		}
+		$localtax2_type2 = 0;
+		if ($localtax2_type > 0 && $localtax2_type % 2 == 0) {
+			$localtax2_type2 = 1;
+		}
+
+		if ($localtax1_type2 && $price_base == '') {
+			$a = 0;
+		}
+
+		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
+
+		$this->assertEquals($ex_total_ht,$localobject->amount_ht);
+		$this->assertEquals($ex_total_ttc,$localobject->amount_ttc);
+		$this->assertEquals($ex_total_tva,$localobject->amount_tva);
+		$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
+		$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
 		$result = 1;
 
 		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base." result=".$result."\n";
@@ -254,13 +249,13 @@ class DiscountTest extends CommonClassTest
 		// array(amount, vat_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, price_base, ex_total_tva, ex_total_localtax1, ex_total_localtax2, ex_total_ttc, ex_total_ht),
 		return array(
 			array(1234,5,9.975,1,0,0,'HT',61.7,123.09,0,1418.79,1234),
-			array(1418.79,5,9.975,1,0,0,0,'',61.7,123.09,0,1418.79,1234),
+			array(1418.79,5,9.975,1,0,0,'',61.7,123.09,0,1418.79,1234),
 			array(1234,5,9.975,1,4,1,'HT',61.7,123.09,49.36,1468.15,1234),
 			array(1468.15,5,9.975,1,4,1,'',61.7,123.09,49.36,1468.15,1234),
 			array(1234,5,9.975,2,0,0,'HT',61.7,129.25,0,1424.95,1234),
-			array(1424.95,5,9.975,2,0,0,0,'',61.7,129.25,0,1424.95,1234),
-			array(1234,5,9.975,2,4,2,'HT',61.7,123.09,57,1475.79,1234),
-			array(1475.79,5,9.975,2,4,2,'',61.7,123.09,57,1475.79,1234)
+			array(1424.95,5,9.975,2,0,0,'',61.7,129.25,0,1424.95,1234),
+			array(1234,5,9.975,2,4,2,'HT',61.7,129.25,57,1481.95,1234),
+			array(1481.95,5,9.975,2,4,2,'',61.7,129.25,57,1481.95,1234)
 		);
 	}
 

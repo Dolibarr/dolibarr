@@ -5,6 +5,7 @@
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW				            <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		    Anthony Damhet				      <a.damhet@progiseize.fr>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,10 +130,19 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$newdiscount->discount_type = $discount->discount_type;
 			$newdiscount->datec = $discount->datec;
 			$newdiscount->tva_tx = $discount->tva_tx;
+			$newdiscount->localtax1_tx = $discount->localtax1_tx;
+			$newdiscount->localtax1_type = $discount->localtax1_type;
+			$newdiscount->localtax2_tx = $discount->localtax2_tx;
+			$newdiscount->localtax2_type = $discount->localtax2_type;
 			$newdiscount->vat_src_code = $discount->vat_src_code;
 			$newdiscount->amount_ttc = price2num($value);
-			$newdiscount->amount_ht = price2num($newdiscount->amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
-			$newdiscount->amount_tva = price2num($newdiscount->amount_ttc - $newdiscount->amount_ht);
+
+			$localtax1_type2 = ((int) $newdiscount->localtax1_type > 0 && (int) $newdiscount->localtax1_type % 2 == 0 ? 1 : 0);
+			$localtax2_type2 = ((int) $newdiscount->localtax2_type > 0 && (int) $newdiscount->localtax2_type % 2 == 0 ? 1 : 0);
+
+			// Calculate localtaxes and VAT amounts
+			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx,$newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $localtax1_type2, $localtax2_type2);
+
 			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
 			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
 			$newdiscount->multicurrency_amount_tva = price2num($newdiscount->multicurrency_amount_ttc - $newdiscount->multicurrency_amount_ht);
@@ -184,55 +194,11 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
 	}
 	if (!$error) {
-		$newdiscount1 = new DiscountAbsolute($db);
-		$newdiscount2 = new DiscountAbsolute($db);
-		$newdiscount1->fk_facture_source = $discount->fk_facture_source;
-		$newdiscount2->fk_facture_source = $discount->fk_facture_source;
-		$newdiscount1->fk_facture = $discount->fk_facture;
-		$newdiscount2->fk_facture = $discount->fk_facture;
-		$newdiscount1->fk_facture_line = $discount->fk_facture_line;
-		$newdiscount2->fk_facture_line = $discount->fk_facture_line;
-		$newdiscount1->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
-		$newdiscount2->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
-		$newdiscount1->fk_invoice_supplier = $discount->fk_invoice_supplier;
-		$newdiscount2->fk_invoice_supplier = $discount->fk_invoice_supplier;
-		$newdiscount1->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
-		$newdiscount2->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
-		if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)') {
-			$newdiscount1->description = $discount->description;
-			$newdiscount2->description = $discount->description;
-		} else {
-			$newdiscount1->description = $discount->description.' (1)';
-			$newdiscount2->description = $discount->description.' (2)';
-		}
 
-		$newdiscount1->fk_user = $discount->fk_user;
-		$newdiscount2->fk_user = $discount->fk_user;
-		$newdiscount1->fk_soc = $discount->fk_soc;
-		$newdiscount1->socid = $discount->socid;
-		$newdiscount2->fk_soc = $discount->fk_soc;
-		$newdiscount2->socid = $discount->socid;
-		$newdiscount1->discount_type = $discount->discount_type;
-		$newdiscount2->discount_type = $discount->discount_type;
-		$newdiscount1->datec = $discount->datec;
-		$newdiscount2->datec = $discount->datec;
-		$newdiscount1->tva_tx = $discount->tva_tx;
-		$newdiscount2->tva_tx = $discount->tva_tx;
-		$newdiscount1->vat_src_code = $discount->vat_src_code;
-		$newdiscount2->vat_src_code = $discount->vat_src_code;
-		$newdiscount1->amount_ttc = $amount_ttc_1;
-		$newdiscount2->amount_ttc = price2num($discount->amount_ttc - $newdiscount1->amount_ttc);
-		$newdiscount1->amount_ht = price2num($newdiscount1->amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
-		$newdiscount2->amount_ht = price2num($newdiscount2->amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
-		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
-		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
-
-		$newdiscount1->multicurrency_amount_ttc = (float) $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
-		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
-		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
-		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
-		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
-		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
+		// Split a discount in two
+		$newDiscounts = $discount->splitAmount($amount_ttc_1, $amount_ttc_2);
+		$newdiscount1 = $newDiscounts[0];
+		$newdiscount2 = $newDiscounts[1];
 
 		$db->begin();
 

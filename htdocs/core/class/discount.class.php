@@ -5,6 +5,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -945,4 +946,139 @@ class DiscountAbsolute extends CommonObject
 
 		return 1;
 	}
+
+	/**
+	 * Helper method to create a discount from an amount.
+	 * Used by Service.class:set_remise_except()
+	 * @param float		$amount 			Currency amount to process
+	 * @param int<0,1> 	$amount_type		0 = Amount includes no taxes, 1 = Amount includes all the taxes
+	 * @param float 	$tva_tx 			TVA (main tax) percentage (>1)
+	 * @param float 	$localtax1_tx 		localtax1 percentage (>1)
+	 * @param float 	$localtax2_tx 		localtax2 percentage (>1)
+	 * @param int<0,1> 	$localtax1_type2 	is localtax1 a 'type 2' (localtax type is 2,4 or 6), default = no
+	 * @param int<0,1> 	$localtax2_type2 	is localtax2 a 'type 2' (localtax type is 2,4 or 6), default = no
+	 * @return int 	OK = >= 0, KO = < 0
+	 */
+	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2 = 0, $localtax2_type2 = 0) {
+		$localtax1_tx_pct = (float)($localtax1_tx / 100);
+		$localtax2_tx_pct = (float)($localtax2_tx / 100);
+		$tva_tx_pct = (float)($tva_tx / 100);
+		$err = 0;
+		if ($amount_type == 1) {
+			// TTC
+			$this->multicurrency_amount_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_ht = price2num(((float) $amount / (1 + $tva_tx_pct)) * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_tva = price2num(((float) $this->amount_ttc - (float) $this->amount_ht) * (float) $this->multicurrency_tx, 'MT');
+
+			$this->amount_ttc = price2num($amount, 'MT');
+
+			if (!$localtax1_type2 && !$localtax2_type2) {
+				$diviseur = 1 + $tva_tx_pct + $localtax1_tx_pct + $localtax2_tx_pct;
+				$this->amount_ht = price2num((float) $amount / $diviseur, 'MT');
+			} else {
+				$diviseur = 1 + $tva_tx_pct * ($localtax1_tx_pct > 0 ? $localtax1_tx_pct : 1) * ($localtax2_tx_pct > 0 ? $localtax2_tx_pct : 1);
+				$lt1 = 0; $lt2 = 0; $ttc = (float) $this->amount_ttc;
+				if ($localtax2_tx_pct > 0) {
+					$lt2 = $ttc - $ttc / (1 + $localtax2_tx_pct);
+				}
+				if ($localtax1_tx_pct > 0) {
+					$lt1 = $ttc - $lt2 - ($ttc - $lt2)/ (1 + $localtax1_tx_pct);
+				}
+				$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
+				$this->amount_tva = price2num($tva,'MT');
+				$this->total_localtax1 = price2num($lt1,'MT');
+				$this->total_localtax2 = price2num($lt2,'MT');
+				$this->amount_ht = price2num((float) $this->amount_ttc- (float) $this->total_localtax1 - (float) $this->total_localtax2 - (float) $this->amount_tva, 'MT');
+			}
+
+		} else if ($amount_type == 0){
+			// HT
+			$this->amount_ht = price2num($amount, 'MT');
+
+			$this->multicurrency_amount_ht = price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_tva = price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_ttc = price2num(((float) $this->amount_ht + (float) $this->amount_tva) * (float) $this->multicurrency_tx, 'MT');
+		}
+
+		$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct , 'MT');
+		$this->tva_tx = $tva_tx;
+
+		if ($localtax1_type2 == 0) {
+			$this->total_localtax1 = price2num($this->amount_ht * $localtax1_tx_pct,'MT');
+		} else if ($localtax1_type2 == 1) {
+			$this->total_localtax1 = price2num(($this->amount_ht + $this->amount_tva) * $localtax1_tx_pct,'MT');
+		}
+
+		if ($localtax2_type2 == 0) {
+			$this->total_localtax2 = price2num($this->amount_ht * $localtax2_tx_pct,'MT');
+		} else if ($localtax2_type2 == 1) {
+			$this->total_localtax2 = price2num(($this->amount_ht + $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct,'MT');
+		}
+
+		if(empty($this->amount_ttc)) {
+			// Dans le cas où le montant ttc vient d'une remise scindée on le prend tel quel
+			// car de recalculer le montant ttc à partir du montant ht créé des erreurs de précision.
+			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + (float) $this->total_localtax1 + (float) $this->total_localtax2, 'MT');
+		}
+
+		return $err;
+	}
+
+	/**
+	 * Helper method to create two new discounts from split amount.
+	 *
+	 * @param float		$amount_ttc1 		Currency amount 1
+	 * @param float 	$amount_ttc2		Currency amount 2
+	 * @return array 	Array of 2 DiscountAbsolute, representing the splits
+	 */
+	public function splitAmount($amount_ttc1, $amount_ttc2) {
+
+		// Moved from remx.php :: domain-related operations within action confirm_split
+		$newdiscount1 = new DiscountAbsolute($this->db);
+		$newdiscount2 = new DiscountAbsolute($this->db);
+		$newdiscount1->fk_facture_source = $this->fk_facture_source;
+		$newdiscount2->fk_facture_source = $this->fk_facture_source;
+		$newdiscount1->fk_facture = $this->fk_facture;
+		$newdiscount2->fk_facture = $this->fk_facture;
+		$newdiscount1->fk_facture_line = $this->fk_facture_line;
+		$newdiscount2->fk_facture_line = $this->fk_facture_line;
+		$newdiscount1->fk_invoice_supplier_source = $this->fk_invoice_supplier_source;
+		$newdiscount2->fk_invoice_supplier_source = $this->fk_invoice_supplier_source;
+		$newdiscount1->fk_invoice_supplier = $this->fk_invoice_supplier;
+		$newdiscount2->fk_invoice_supplier = $this->fk_invoice_supplier;
+		$newdiscount1->fk_invoice_supplier_line = $this->fk_invoice_supplier_line;
+		$newdiscount2->fk_invoice_supplier_line = $this->fk_invoice_supplier_line;
+		if ($this->description == '(CREDIT_NOTE)' || $this->description == '(DEPOSIT)') {
+			$newdiscount1->description = $this->description;
+			$newdiscount2->description = $this->description;
+		} else {
+			$newdiscount1->description = $this->description.' (1)';
+			$newdiscount2->description = $this->description.' (2)';
+		}
+		$newdiscount1->fk_user = $this->fk_user;
+		$newdiscount2->fk_user = $this->fk_user;
+		$newdiscount1->fk_soc = $this->fk_soc;
+		$newdiscount1->socid = $this->socid;
+		$newdiscount2->fk_soc = $this->fk_soc;
+		$newdiscount2->socid = $this->socid;
+		$newdiscount1->discount_type = $this->discount_type;
+		$newdiscount2->discount_type = $this->discount_type;
+		$newdiscount1->datec = $this->datec;
+		$newdiscount2->datec = $this->datec;
+		$newdiscount1->tva_tx = $this->tva_tx;
+		$newdiscount2->tva_tx = $this->tva_tx;
+		$newdiscount1->localtax1_tx = $this->localtax1_tx;
+		$newdiscount2->localtax1_tx = $this->localtax1_tx;
+		$newdiscount1->localtax2_tx = $this->localtax2_tx;
+		$newdiscount2->localtax2_tx = $this->localtax2_tx;
+		$newdiscount1->vat_src_code = $this->vat_src_code;
+		$newdiscount2->vat_src_code = $this->vat_src_code;
+
+		$newdiscount1->generateFromAmount($amount_ttc1,1,$newdiscount1->tva_tx,$newdiscount1->localtax1_tx,$newdiscount1->localtax2_tx);
+		$newdiscount2->generateFromAmount($amount_ttc2,1,$newdiscount1->tva_tx,$newdiscount1->localtax1_tx,$newdiscount1->localtax2_tx);
+
+		return array($newdiscount1, $newdiscount2);
+
+	}
+
 }
