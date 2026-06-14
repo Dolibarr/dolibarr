@@ -979,9 +979,9 @@ class DiscountAbsolute extends CommonObject
 				}
 				$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
 				$this->amount_tva = price2num($tva, 'MT');
-				$this->total_localtax1 = price2num($lt1, 'MT');
-				$this->total_localtax2 = price2num($lt2, 'MT');
-				$this->amount_ht = price2num((float) $this->amount_ttc- (float) $this->total_localtax1 - (float) $this->total_localtax2 - (float) $this->amount_tva, 'MT');
+				$this->total_localtax1 = $lt1;
+				$this->total_localtax2 = $lt2;
+				$this->amount_ht = price2num((float) $this->amount_ttc- $this->total_localtax1 - $this->total_localtax2 - (float) $this->amount_tva, 'MT');
 			}
 		} elseif ($amount_type == 0) {
 			// HT
@@ -996,21 +996,21 @@ class DiscountAbsolute extends CommonObject
 		$this->tva_tx = $tva_tx;
 
 		if ($localtax1_type2 == 0) {
-			$this->total_localtax1 = price2num($this->amount_ht * $localtax1_tx_pct, 'MT');
+			$this->total_localtax1 = $this->amount_ht * $localtax1_tx_pct;
 		} elseif ($localtax1_type2 == 1) {
-			$this->total_localtax1 = price2num(($this->amount_ht + $this->amount_tva) * $localtax1_tx_pct, 'MT');
+			$this->total_localtax1 = ($this->amount_ht + $this->amount_tva) * $localtax1_tx_pct;
 		}
 
 		if ($localtax2_type2 == 0) {
-			$this->total_localtax2 = price2num($this->amount_ht * $localtax2_tx_pct, 'MT');
+			$this->total_localtax2 = $this->amount_ht * $localtax2_tx_pct;
 		} elseif ($localtax2_type2 == 1) {
-			$this->total_localtax2 = price2num(($this->amount_ht + $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct, 'MT');
+			$this->total_localtax2 = ($this->amount_ht + $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct;
 		}
 
 		if (empty($this->amount_ttc)) {
 			// Dans le cas où le montant ttc vient d'une remise scindée on le prend tel quel
 			// car de recalculer le montant ttc à partir du montant ht créé des erreurs de précision.
-			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + (float) $this->total_localtax1 + (float) $this->total_localtax2, 'MT');
+			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
 		}
 
 		return $err;

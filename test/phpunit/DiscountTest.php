@@ -222,17 +222,13 @@ class DiscountTest extends CommonClassTest
 			$localtax2_type2 = 1;
 		}
 
-		if ($localtax1_type2 && $price_base == '') {
-			$a = 0;
-		}
-
 		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
 
 		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
 		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
 		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
-		$this->assertEquals($ex_total_localtax1, $localobject->total_localtax1);
-		$this->assertEquals($ex_total_localtax2, $localobject->total_localtax2);
+		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1,'MT'));
+		$this->assertEquals($ex_total_localtax2, price2num($localobject->total_localtax2,'MT'));
 		$result = 1;
 
 		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base." result=".$result."\n";
@@ -255,8 +251,8 @@ class DiscountTest extends CommonClassTest
 			array(1468.15,5,9.975,1,4,1,'',61.7,123.09,49.36,1468.15,1234),
 			array(1234,5,9.975,2,0,0,'HT',61.7,129.25,0,1424.95,1234),
 			array(1424.95,5,9.975,2,0,0,'',61.7,129.25,0,1424.95,1234),
-			array(1234,5,9.975,2,4,2,'HT',61.7,129.25,57,1481.95,1234),
-			array(1481.95,5,9.975,2,4,2,'',61.7,129.25,57,1481.95,1234)
+			array(1234,5,9.975,2,4,2,'HT',61.7,129.25,57,1481.94,1234),
+			array(1481.94,5,9.975,2,4,2,'',61.7,129.25,57,1481.94,1234)
 		);
 	}
 
