@@ -239,7 +239,7 @@ class DiscountTest extends CommonClassTest
 	/**
 	 * Provide test data for AbsoluteDiscount
 	 *
-	 * @return array values and expectations data
+	 * @return array<mixed> values and expectations data
 	 */
 	public function providerRemiseData()
 	{
@@ -259,7 +259,7 @@ class DiscountTest extends CommonClassTest
 	/**
 	 * Provide test data for AbsoluteDiscount splitting
 	 *
-	 * @return array values and expectations data
+	 * @return array<mixed> values and expectations data
 	 */
 	public function providerSplitRemiseData()
 	{

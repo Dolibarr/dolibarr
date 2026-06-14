@@ -1021,7 +1021,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 * @param float		$amount_ttc1 		Currency amount 1
 	 * @param float 	$amount_ttc2		Currency amount 2
-	 * @return array 	Array of 2 DiscountAbsolute, representing the splits
+	 * @return array<DiscountAbsolute> 	Array of 2 DiscountAbsolute, representing the splits
 	 */
 	public function splitAmount($amount_ttc1, $amount_ttc2)
 	{
