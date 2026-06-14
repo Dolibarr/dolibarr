@@ -2755,7 +2755,6 @@ class Societe extends CommonObject
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
 			}
 
-			// Find corresponding VAT in tax dictionnary
 			$taxes = getTaxesFromId($vatrate);
 			$localtax1_tx = $taxes['localtax1'];
 			$localtax1_type2 = ((int) $taxes['localtax1_type'] > 0 && (int) $taxes['localtax1_type'] % 2 == 0 ? 1 : 0);
