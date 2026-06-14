@@ -119,7 +119,8 @@ Scope is the web application (backoffice) and the APIs.
 * SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.
+* Vulnerabilities of type XSS exploited by using Javascript into a website page of the website module is not a vulnerability when user has the permission "Edit page" (being able to set javascript in the CMS is the expected behaviour in the website module).
+* Vulnerabilities that allow to run PHP code on the server into a website page is not a vulnerability when user has the superpermission "Edit PHP content in website page" (being able to run php code is the expected behaviour in the website module), except if the command is a RCE command (and $dolibarr_website_allow_custom_php remains to 0 or 1).
 
 
 ## Be informed of a new vulnerability
