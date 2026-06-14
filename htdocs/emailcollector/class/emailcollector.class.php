@@ -1654,7 +1654,17 @@ class EmailCollector extends CommonObject
 
 				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
+					// getFolders does a sourcedir* match so INBOX also returns INBOX.Traites
+					// etc. Pick the folder whose full_name matches the requested source
+					// before falling back to the first result, otherwise polling can land
+					// on an empty subfolder instead of INBOX (#37357).
 					$folder = $f[0];
+					foreach ($f as $candidate) {
+						if ($candidate instanceof Webklex\PHPIMAP\Folder && $candidate->full_name === $tmpsourcedir) {
+							$folder = $candidate;
+							break;
+						}
+					}
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
 						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					} else {
