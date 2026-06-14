@@ -47,8 +47,8 @@ CREATE TABLE llx_budgetsheet_lines (
    total_ttc            double(24,8) DEFAULT 0 NOT NULL,
 
    date_start           date NOT NULL,
-   date_end             date,
-   date_payment_expected date NOT NULL,
+   date_end             date DEFAULT NULL,
+   date_payment_expected date DEFAULT NULL,
 
    docnumber            varchar(128),
    info_bits            integer DEFAULT 0,
