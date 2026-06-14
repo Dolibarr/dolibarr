@@ -2747,7 +2747,8 @@ class Societe extends CommonObject
 
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
-			$taxes = getTaxesFromId($vatrate, $mysoc, $mysoc, 0);
+			// Discount type determines who is buyer and seller
+			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
