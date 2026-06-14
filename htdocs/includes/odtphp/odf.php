@@ -903,15 +903,15 @@ IMG;
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 				// Windows / IIS specifics (#38651):
-				// 1. soffice may not be on PATH for the IIS/PHP worker even when present
-				//    for an interactive admin shell; expose MAIN_SOFFICE_PATH so the admin
-				//    can hardcode the full path (typically "C:\Program Files\LibreOffice\program\soffice.com").
-				// 2. The LibreOffice UserInstallation URI must use forward slashes
-				//    (file:///C:/path/...). Backslashes from a Windows tempdir would produce
-				//    an invalid URI and soffice falls back to the default profile.
-				$soffice = getDolGlobalString('MAIN_SOFFICE_PATH', 'soffice.com');
+				// - Use soffice.com (the CLI entry) instead of soffice (the GUI entry); the
+				//   GUI variant detaches from the parent process on Windows and the conversion
+				//   never finishes for the PHP worker. The binary must still be on PATH for the
+				//   webserver user; this is a server admin / install responsibility (no setting
+				//   exposed to the Dolibarr admin to avoid turning a constant into an RCE vector).
+				// - Normalise backslashes in the UserInstallation path so the URI stays a valid
+				//   file:///C:/.../odtaspdf and soffice does not fall back to its default profile.
 				$userinstallpath = str_replace('\\', '/', dol_sanitizePathName($conf->user->dir_temp)).'/odtaspdf';
-				$command = escapeshellarg($soffice).' --headless -env:UserInstallation=file:///'.escapeshellarg($userinstallpath).' --convert-to pdf --outdir '.escapeshellarg(dirname($name)).' '.escapeshellarg($name);
+				$command = 'soffice.com --headless -env:UserInstallation=file:///'.escapeshellarg($userinstallpath).' --convert-to pdf --outdir '.escapeshellarg(dirname($name)).' '.escapeshellarg($name);
 			} else {
 				$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 			}
