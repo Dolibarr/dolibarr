@@ -48,6 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
+// @phan-suppress-next-line PhanUndeclaredExtendedClass
 class DiscountTest extends CommonClassTest
 {
 	/**
@@ -66,6 +67,8 @@ class DiscountTest extends CommonClassTest
 		$soc = new Societe($db);
 		$soc->name = "CommandeTest Unittest";
 		$socid = $soc->create($user);
+
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertLessThan($socid, 0, $soc->errorsToString());
 
 		$localobject = new DiscountAbsolute($db);
@@ -73,6 +76,7 @@ class DiscountTest extends CommonClassTest
 		$localobject->socid = $socid;
 		$result = $localobject->create($user);
 
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 		return $result;
@@ -98,6 +102,7 @@ class DiscountTest extends CommonClassTest
 		$localobject = new DiscountAbsolute($db);
 		$result = $localobject->fetch($id);
 
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertLessThan($result, 0);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $id;
@@ -125,6 +130,7 @@ class DiscountTest extends CommonClassTest
 		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
@@ -169,9 +175,13 @@ class DiscountTest extends CommonClassTest
 		$newDiscounts = $localobject->splitAmount($splitamount_1, $total_amount - $splitamount_1);
 		$newdiscount1 = $newDiscounts[0];
 		$newdiscount2 = $newDiscounts[1];
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_ht_amount1, $newdiscount1->amount_ht);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_amount1, $newdiscount1->amount_ttc);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_ht_amount2, $newdiscount2->amount_ht);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_amount2, $newdiscount2->amount_ttc);
 		$result = 1;
 
@@ -224,10 +234,15 @@ class DiscountTest extends CommonClassTest
 
 		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
 
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1, 'MT'));
+		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_localtax2, price2num($localobject->total_localtax2, 'MT'));
 		$result = 1;
 
