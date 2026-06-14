@@ -1424,7 +1424,7 @@ class BOM extends CommonObject
 				// Treat the DECIMAL DDL default "0.00000000" the same as NULL when
 				// deciding whether to fall back to pmp - empty((double)"0.00000000")
 				// is true, while empty("0.00000000") is false (#38378).
-				$unit_cost = (float) (empty((double) $tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+				$unit_cost = (float) (empty((double) $tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);	// @phpstan-ignore-line phpstan tracks cost_price as the 0 default set above, missing that fetch() mutates it.
 				if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 						if ($productFournisseur->fourn_remise_percent != "0") {
