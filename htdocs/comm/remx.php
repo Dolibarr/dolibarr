@@ -141,7 +141,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$localtax2_type2 = ((int) $newdiscount->localtax2_type > 0 && (int) $newdiscount->localtax2_type % 2 == 0 ? 1 : 0);
 
 			// Calculate localtaxes and VAT amounts
-			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx,$newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $localtax1_type2, $localtax2_type2);
+			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx, $newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $localtax1_type2, $localtax2_type2);
 
 			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
 			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
@@ -194,7 +194,6 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
 	}
 	if (!$error) {
-
 		// Split a discount in two
 		$newDiscounts = $discount->splitAmount($amount_ttc_1, $amount_ttc_2);
 		$newdiscount1 = $newDiscounts[0];

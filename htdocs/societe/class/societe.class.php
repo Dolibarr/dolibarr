@@ -2746,7 +2746,6 @@ class Societe extends CommonObject
 		}
 
 		if ($this->id > 0) {
-
 			// Separate VAT code from VAT rate string
 			$reg = array();
 			$vat_src_code = '';
@@ -2774,7 +2773,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise,($price_base_type == 'TTC' ? 1 : 0), $vat_tx,$localtax1_tx,$localtax2_tx,$localtax1_type2,$localtax2_type2);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
 
 			$discount->vat_src_code = $vat_src_code;
 

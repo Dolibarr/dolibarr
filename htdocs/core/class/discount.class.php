@@ -1078,7 +1078,5 @@ class DiscountAbsolute extends CommonObject
 		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx);
 
 		return array($newdiscount1, $newdiscount2);
-
 	}
-
 }
