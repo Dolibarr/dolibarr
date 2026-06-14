@@ -1069,8 +1069,8 @@ class DiscountAbsolute extends CommonObject
 		$newdiscount1->vat_src_code = $this->vat_src_code;
 		$newdiscount2->vat_src_code = $this->vat_src_code;
 
-		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type);
-		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax2_type);
+		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
+		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
 
 		return array($newdiscount1, $newdiscount2);
 	}
