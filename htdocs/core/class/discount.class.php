@@ -283,10 +283,10 @@ class DiscountAbsolute extends CommonObject
 				$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
 
 				$this->tva_tx = $obj->tva_tx;
-				$this->tva_localtax1_tx = $obj->localtax1_tx;
-				$this->tva_localtax1_type = $obj->localtax1_type;
-				$this->tva_localtax2_tx = $obj->localtax2_tx;
-				$this->tva_localtax2_type = $obj->localtax2_type;
+				$this->localtax1_tx = $obj->localtax1_tx;
+				$this->localtax1_type = $obj->localtax1_type;
+				$this->localtax2_tx = $obj->localtax2_tx;
+				$this->localtax2_type = $obj->localtax2_type;
 				$this->vat_src_code = $obj->vat_src_code;
 
 				$this->fk_user = $obj->fk_user;
