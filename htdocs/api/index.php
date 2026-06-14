@@ -419,7 +419,13 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		exit(0);
 	}
 
-	if (class_exists($classname)) {
+	// Match the discovery loop above which accepts both "Foo" and "FooApi" class
+	// names (see line ~308). Without the Api suffix branch, a module file named
+	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
+	// even though the api explorer lists it (#37282).
+	if (class_exists($classname.'Api')) {
+		$api->r->addAPIClass($classname.'Api');
+	} elseif (class_exists($classname)) {
 		$api->r->addAPIClass($classname);
 	}
 }
