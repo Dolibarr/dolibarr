@@ -142,7 +142,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.situation_cycle_ref, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty, f.revenuestamp, f.situation_final,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.localtax1_tx, fd.localtax2_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code, fd.info_bits,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.fk_pays,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
@@ -251,8 +251,15 @@ if ($result) {
 		// $compta_revenuestamp = getDolGlobalString('ACCOUNTING_REVENUESTAMP_SOLD_ACCOUNT', 'NotDefined');
 
 		$tax_id = $obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : '');
-		if (array_key_exists($tax_id, $vatdata_cache)) {
-			$vatdata = $vatdata_cache[$tax_id];
+		// SERVICE_ARE_ECOMMERCE_200238EC makes the chosen accountancy code depend on the buyer country,
+		// so the cache key must include the buyer country to avoid serving a previous buyer's result.
+		if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
+			$vatdata_cache_key = $tax_id.'_'.(int) $obj->fk_pays;
+		} else {
+			$vatdata_cache_key = $tax_id;
+		}
+		if (array_key_exists($vatdata_cache_key, $vatdata_cache)) {
+			$vatdata = $vatdata_cache[$vatdata_cache_key];
 		} else {
 			if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {
 				$buyer = new Societe($db);
@@ -262,7 +269,7 @@ if ($result) {
 			}
 			$seller = $mysoc;
 			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0);
-			$vatdata_cache[$tax_id] = $vatdata;
+			$vatdata_cache[$vatdata_cache_key] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 		$compta_localtax1 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cptlocaltax1);

@@ -11694,6 +11694,12 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  */
 function isStringVarMatching($var, $regextext, $matchrule = 1)
 {
+	// Tolerate callers (custom modules, older code) that already pass a full regex with delimiters
+	// like '/^(aaa|bbb)/' instead of the bare body. Without this, the function would build
+	// '/^/^(aaa|bbb)//' which trips preg_match() with 'Unknown modifier ^'.
+	$regextext = preg_replace('#^/\^?#', '', (string) $regextext);
+	$regextext = preg_replace('#\$?/[imsxuADSUXJ]*$#', '', $regextext);
+
 	if ($matchrule == 1) {
 		if ($var == 'mainmenu') {
 			global $mainmenu;

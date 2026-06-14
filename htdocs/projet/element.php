@@ -1071,8 +1071,11 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order.
+				// Skip when the element already participates to the margin computation via margin='minus'
+				// (line 1095 below will revert sign too, and double-negation would silently flip the value
+				// back to positive - see PROJECT_ELEMENTS_FOR_MINUS_MARGIN=order_supplier in #34684).
+				if (($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') && $margin !== 'minus') {
 					$total_ht_by_line = -$total_ht_by_line;
 					$total_ttc_by_line = -$total_ttc_by_line;
 				}

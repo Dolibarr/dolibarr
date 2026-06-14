@@ -4716,7 +4716,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 			$apply_abs_price_on_credit_note = false;
-			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
 

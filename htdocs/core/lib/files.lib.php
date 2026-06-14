@@ -2074,8 +2074,11 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
-				// Check extension is allowed for upload
-				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", implode(',', getExecutableContent()));
+				// Check extension is allowed for upload.
+				// Guard against partial upgrades where files.lib.php has been refreshed
+				// but functions.lib.php has not been reloaded with getExecutableContent() yet.
+				$defaultexecutableextensions = function_exists('getExecutableContent') ? implode(',', getExecutableContent()) : 'htm,html,shtml,js,phar,php,php3,php4,php5,phtml,pht,pl,py,cgi,ksh,sh,bash,bat,cmd,wpk,exe';
+				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", $defaultexecutableextensions);
 				if (!empty($fileextensionrestriction)) {
 					$arrayofregexextension = explode(",", $fileextensionrestriction);
 
