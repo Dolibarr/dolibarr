@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
- * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2024  Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -1028,7 +1028,6 @@ if ($action == 'create') {
 		$draft = new FactureFournisseur($db);
 		$draft->fetch(GETPOSTINT('facid'));
 
-		$extralabels = new ExtraFields($db);
 		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
 		if ($draft->fetch_optionals() > 0) {
 			$object->array_options = array_merge($object->array_options, $draft->array_options);
