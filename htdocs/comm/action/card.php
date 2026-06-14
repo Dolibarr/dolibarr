@@ -126,6 +126,12 @@ if ($user->socid && ($socid != $user->socid)) {
 
 $error = GETPOST("error");
 $donotclearsession = GETPOST('donotclearsession') ? GETPOST('donotclearsession') : 0;
+// Per-event session keys to avoid cross-tab assignee bleed (see issue #30326).
+// When two tabs edit different events, both used to share the same flat
+// assignedtouser / assignedtoresource session buckets, so saving one event
+// could overwrite its assignees with the working set from the other tab.
+$sessionkeyassignedtouser = 'assignedtouser_'.($id > 0 ? $id : 'new');
+$sessionkeyassignedtoresource = 'assignedtoresource_'.($id > 0 ? $id : 'new');
 
 // Initialize Objects
 $object = new ActionComm($db);
@@ -219,8 +225,8 @@ $assignedtouser = [];
 if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')) {
 	$idtoremove = GETPOST('removedassigned');
 
-	if (!empty($_SESSION['assignedtouser'])) {
-		$tmpassigneduserids = json_decode($_SESSION['assignedtouser'], true);
+	if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+		$tmpassigneduserids = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 	} else {
 		$tmpassigneduserids = [];
 	}
@@ -231,7 +237,7 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 		}
 	}
 
-	$_SESSION['assignedtouser'] = json_encode($tmpassigneduserids);
+	$_SESSION[$sessionkeyassignedtouser] = json_encode($tmpassigneduserids);
 	$donotclearsession = 1;
 	if ($action == 'add') {		// Test on permission not required here
 		$action = 'create';
@@ -246,8 +252,8 @@ if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned')
 if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedassignedresource') == '0')) {
 	$idtoremove = GETPOST('removedassignedresource');
 
-	if (!empty($_SESSION['assignedtoresource'])) {
-		$tmpassignedresourceids = json_decode($_SESSION['assignedtoresource'], true);
+	if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+		$tmpassignedresourceids = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 	} else {
 		$tmpassignedresourceids = [];
 	}
@@ -258,7 +264,7 @@ if (empty($reshook) && (GETPOST('removedassignedresource') || GETPOST('removedas
 		}
 	}
 
-	$_SESSION['assignedtoresource'] = json_encode($tmpassignedresourceids);
+	$_SESSION[$sessionkeyassignedtoresource] = json_encode($tmpassignedresourceids);
 
 	if ($action == 'add' && $usercancreate) {
 		$action = 'create';
@@ -275,11 +281,11 @@ if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedt
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0) {
 		$assignedtouser = [];
-		if (!empty($_SESSION['assignedtouser'])) {
-			$assignedtouser = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$assignedtouser = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 		$assignedtouser[GETPOST('assignedtouser')] = array('id' => GETPOSTINT('assignedtouser'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
-		$_SESSION['assignedtouser'] = json_encode($assignedtouser);
+		$_SESSION[$sessionkeyassignedtouser] = json_encode($assignedtouser);
 	}
 	$donotclearsession = 1;
 	if ($action == 'add' && $usercancreate) {
@@ -297,11 +303,11 @@ if (empty($reshook) && (GETPOST('addassignedtoresource') || GETPOST('updateassig
 	// Add a new user
 	if (GETPOST('assignedtoresource') > 0) {
 		$assignedtoresource = [];
-		if (!empty($_SESSION['assignedtoresource'])) {
-			$assignedtoresource = json_decode($_SESSION['assignedtoresource'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+			$assignedtoresource = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 		}
 		$assignedtoresource[GETPOST('assignedtoresource')] = array('id' => GETPOSTINT('assignedtoresource'), 'transparency' => GETPOST('transparency'), 'mandatory' => 1);
-		$_SESSION['assignedtoresource'] = json_encode($assignedtoresource);
+		$_SESSION[$sessionkeyassignedtoresource] = json_encode($assignedtoresource);
 	}
 	$donotclearsession = 1;
 	if ($action == 'add' && $usercancreate) {
@@ -483,12 +489,12 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 
 		$listofuserid = [];
-		if (!empty($_SESSION['assignedtouser'])) {
-			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 
-		if (!empty($_SESSION['assignedtoresource'])) {
-			$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+			$listofresourceid = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 		}
 
 		$i = 0;
@@ -519,7 +525,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 	// Check parameters
-	if (empty($object->userownerid) && empty($_SESSION['assignedtouser'])) {
+	if (empty($object->userownerid) && empty($_SESSION[$sessionkeyassignedtouser])) {
 		$error++;
 		$donotclearsession = 1;
 		$action = 'create';
@@ -676,7 +682,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					}
 				}
 
-				unset($_SESSION['assignedtoresource']);
+				unset($_SESSION[$sessionkeyassignedtoresource]);
 
 
 				// Category association
@@ -685,7 +691,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					$object->setCategories($categories);
 				}
 
-				unset($_SESSION['assignedtouser']);
+				unset($_SESSION[$sessionkeyassignedtouser]);
 
 				if ($user->id != $object->userownerid) {
 					$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
@@ -806,7 +812,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 						$categories = GETPOST('categories', 'array');
 						$finalobject->setCategories($categories);
 
-						unset($_SESSION['assignedtouser']);
+						unset($_SESSION[$sessionkeyassignedtouser]);
 
 						$moreparam = '';
 						if ($user->id != $finalobject->userownerid) {
@@ -1043,9 +1049,9 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 		// Users
 		$listofuserid = [];
-		if (!empty($_SESSION['assignedtouser'])) {	// Now concat assigned users
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {	// Now concat assigned users
 			// Restore array with key with same value than param 'id'
-			$tmplist1 = json_decode($_SESSION['assignedtouser'], true);
+			$tmplist1 = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			foreach ($tmplist1 as $key => $val) {
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) {
 					$listofuserid[$val['id']] = $val;
@@ -1215,8 +1221,8 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 				}
 
 				if (!$error) {
-					unset($_SESSION['assignedtouser']);
-					unset($_SESSION['assignedtoresource']);
+					unset($_SESSION[$sessionkeyassignedtouser]);
+					unset($_SESSION[$sessionkeyassignedtoresource]);
 
 					$db->commit();
 				} else {
@@ -1232,7 +1238,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 
 	if (!$error) {
 		if (!empty($backtopage)) {
-			unset($_SESSION['assignedtouser']);
+			unset($_SESSION[$sessionkeyassignedtouser]);
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -1690,10 +1696,10 @@ if ($action == 'create') {
 		}
 		//$listofuserid[$user->id] = array('id'=>$user->id, 'mandatory'=>0, 'transparency'=>(GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1)); // 1 by default at first init
 		$listofuserid[$assignedtouser]['transparency'] = (GETPOSTISSET('transparency') ? GETPOST('transparency', 'alpha') : 1); // 1 by default at first init
-		$_SESSION['assignedtouser'] = json_encode($listofuserid);
+		$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 	} else {
-		if (!empty($_SESSION['assignedtouser'])) {
-			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+		if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+			$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 		}
 		if (!is_array($listofuserid)) {
 			$listofuserid = [];
@@ -1719,10 +1725,10 @@ if ($action == 'create') {
 			if ($assignedtoresource) {
 				$listofresourceid[$assignedtoresource] = array('id' => $assignedtoresource, 'mandatory' => 0); // Owner first
 			}
-			$_SESSION['assignedtoresource'] = json_encode($listofresourceid);
+			$_SESSION[$sessionkeyassignedtoresource] = json_encode($listofresourceid);
 		} else {
-			if (!empty($_SESSION['assignedtoresource'])) {
-				$listofresourceid = json_decode($_SESSION['assignedtoresource'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtoresource])) {
+				$listofresourceid = json_decode($_SESSION[$sessionkeyassignedtoresource], true);
 			}
 			if (!is_array($listofresourceid)) {
 				$listofresourceid = [];
@@ -2331,10 +2337,10 @@ if ($id > 0 && $action != 'create') {
 					}
 				}
 			}
-			$_SESSION['assignedtouser'] = json_encode($listofuserid);
+			$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 		} else {
-			if (!empty($_SESSION['assignedtouser'])) {
-				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+				$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			}
 		}
 
@@ -2843,10 +2849,10 @@ if ($id > 0 && $action != 'create') {
 					}
 				}
 			}
-			$_SESSION['assignedtouser'] = json_encode($listofuserid);
+			$_SESSION[$sessionkeyassignedtouser] = json_encode($listofuserid);
 		} else {
-			if (!empty($_SESSION['assignedtouser'])) {
-				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
+			if (!empty($_SESSION[$sessionkeyassignedtouser])) {
+				$listofuserid = json_decode($_SESSION[$sessionkeyassignedtouser], true);
 			}
 		}
 

@@ -93,8 +93,13 @@ $conditions = [
 $max_depth = 0;
 
 foreach ($modules as $const => $desc) {
-	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH');
-	$max_depth = max($const_depth, $max_depth);
+	$const_depth = getDolGlobalString('SUBTOTAL_' . $const . '_MAX_DEPTH', 2);
+
+	$constante_title = 'SUBTOTAL_TITLE_' . $const;
+	$constante_subtotal = 'SUBTOTAL_' . $const;
+	if (getDolGlobalString($constante_title) || getDolGlobalString($constante_subtotal)) {
+		$max_depth = max($const_depth, $max_depth);
+	}
 }
 
 $colors = array();

@@ -92,7 +92,7 @@ llxHeader();
 $title = $langs->trans("TripsAndExpensesStatistics");
 $dir = $conf->deplacement->dir_temp;
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title);
 
 dol_mkdir($dir);
 

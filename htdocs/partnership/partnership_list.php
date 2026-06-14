@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 	Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion				<contact@nextgestion.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -74,7 +75,7 @@ $pagenext = $page + 1;
 
 // Initialize technical objects
 $object = new Partnership($db);
-$extrafields = new ExtraFields($db);
+
 $adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {

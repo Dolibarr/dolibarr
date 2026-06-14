@@ -227,6 +227,7 @@ if ($release) {
 }
 if ($checklock) {
 	print "Working on files into               : ".DOL_DOCUMENT_ROOT."\n";
+	print "Version of running Dolibarr         : ".DOL_VERSION."\n";
 	print "Version to check in lockedfiles.txt : ".$checklockmajorversion."\n";		// For example 2.0.0
 	print "Scope name to check                 : ".$checksource."\n";				// For example unalterable_files
 }
@@ -283,7 +284,7 @@ if ($release) {
 
 	// Define qualified files (must be same than into generate_filelist_xml.php and in api_setup.class.php)
 	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install\/doctemplates|install\/filelist.*|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install\/doctemplates|install\/mysql\/migration|install\/filelist.*|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 
 	$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 

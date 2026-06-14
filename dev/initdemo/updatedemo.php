@@ -267,6 +267,9 @@ if ($confirm == 'confirm') {
 if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog') {
 	$year = $tmp['year'];			// Old year in demo
 	$lastyear = $tmp['year'] - 2;	// New year in demo
+	if ($confirm == 'confirmemptyblockedlog') {
+		$lastyear = $tmp['year'];
+	}
 
 	// Upgrade dates from current year to current year - 2.
 	while ($year >= $lastyear) {
@@ -326,7 +329,7 @@ if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog'
 	print "\n";
 	$db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid IN (SELECT fk_paiement FROM tmp_delete)";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE rowid IN (SELECT fk_paiement FROM tmp_delete) OR rowid NOT IN (SELECT fk_paiement FROM ".MAIN_DB_PREFIX."paiement_facture)";
 	print $sql;
 	print "\n";
 	$db->query($sql);
@@ -341,12 +344,16 @@ if ($confirm == 'confirmcleanblockedlog' || $confirm == 'confirmemptyblockedlog'
 	print "\n";
 	$db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."pos_cash_fence";
+	//UPDATE llx_societe_remise_except SET fk_facture = NULL, fk_facture_source = NULL, fk_facture_line = NULL;
+
+	//DELETE FROM llx_facturedet WHERE fk_facture NOT IN (SELECT rowid FROM llx_facture);
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE datef < '".$lastyear."-12-31'";
 	print $sql;
 	print "\n";
 	$db->query($sql);
 
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE datef < '".$lastyear."-12-31'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE date_creation < '".$lastyear."-12-31'";
 	print $sql;
 	print "\n";
 	$db->query($sql);
