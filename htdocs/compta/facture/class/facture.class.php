@@ -2916,9 +2916,9 @@ class Facture extends CommonInvoice
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
 			$facligne->localtax1_tx = $remise->localtax1_tx;
-			$facligne->localtax1_type = $remise->localtax1_type;
+			$facligne->localtax1_type = (int) $remise->localtax1_type;
 			$facligne->localtax2_tx = $remise->localtax1_tx;
-			$facligne->localtax2_type = $remise->localtax1_type;
+			$facligne->localtax2_type = (int) $remise->localtax1_type;
 			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
