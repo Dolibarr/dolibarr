@@ -141,6 +141,10 @@ CREATE TABLE llx_ai_request_log
   raw_response_payload			MEDIUMTEXT
 )ENGINE=innodb;
 
+ALTER TABLE llx_ai_request_log ADD COLUMN fk_actioncomm integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN input_hash varchar(80);
+ALTER TABLE llx_ai_request_log ADD COLUMN security_hash varchar(80);
+
 ALTER TABLE llx_prelevement_bons ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
