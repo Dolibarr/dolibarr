@@ -226,16 +226,7 @@ class DiscountTest extends CommonClassTest
 		 */
 		$localobject = new DiscountAbsolute($db);
 
-		$localtax1_type2 = 0;
-		if ($localtax1_type > 0 && $localtax1_type % 2 == 0) {
-			$localtax1_type2 = 1;
-		}
-		$localtax2_type2 = 0;
-		if ($localtax2_type > 0 && $localtax2_type % 2 == 0) {
-			$localtax2_type2 = 1;
-		}
-
-		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
+		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_ht, $localobject->amount_ht);

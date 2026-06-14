@@ -943,23 +943,26 @@ class DiscountAbsolute extends CommonObject
 	 * @param int<0,1> 	$localtax2_type2 	is localtax2 a 'type 2' (localtax type is 2,4 or 6), default = no
 	 * @return int 	OK = >= 0, KO = < 0
 	 */
-	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2 = 0, $localtax2_type2 = 0)
+	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type = 1, $localtax2_type = 1)
 	{
 		$localtax1_tx_pct = (float) ($localtax1_tx / 100);
 		$localtax2_tx_pct = (float) ($localtax2_tx / 100);
 		$tva_tx_pct = (float) ($tva_tx / 100);
 		$err = 0;
+
+		// Test if localtax type is 2, 4 or 6 (compond tax calculation)
+		$localtax1_type2 = ((int) $localtax1_type > 0 && (int) $localtax1_type % 2 == 0 ? 1 : 0);
+		$localtax2_type2 = ((int) $localtax2_type > 0 && (int) $localtax2_type % 2 == 0 ? 1 : 0);
+
 		if ($amount_type == 1) {
 			// TTC
-			$this->multicurrency_amount_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_amount_ht = price2num(((float) $amount / (1 + $tva_tx_pct)) * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_amount_tva = price2num(((float) $this->amount_ttc - (float) $this->amount_ht) * (float) $this->multicurrency_tx, 'MT');
 
 			$this->amount_ttc = price2num($amount, 'MT');
 
 			if (!$localtax1_type2 && !$localtax2_type2) {
 				$diviseur = 1 + $tva_tx_pct + $localtax1_tx_pct + $localtax2_tx_pct;
 				$this->amount_ht = price2num((float) $amount / $diviseur, 'MT');
+				$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct, 'MT');
 			} else {
 				$diviseur = 1 + $tva_tx_pct * ($localtax1_tx_pct > 0 ? $localtax1_tx_pct : 1) * ($localtax2_tx_pct > 0 ? $localtax2_tx_pct : 1);
 				$lt1 = 0; $lt2 = 0; $ttc = (float) $this->amount_ttc;
@@ -975,17 +978,25 @@ class DiscountAbsolute extends CommonObject
 				$this->total_localtax2 = $lt2;
 				$this->amount_ht = price2num((float) $this->amount_ttc- $this->total_localtax1 - $this->total_localtax2 - (float) $this->amount_tva, 'MT');
 			}
+
+			$this->multicurrency_amount_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_ht = $this->amount_ht;
+			$this->multicurrency_amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct * (float) $this->multicurrency_tx, 'MT');
+
 		} elseif ($amount_type == 0) {
 			// HT
 			$this->amount_ht = price2num($amount, 'MT');
+			$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct, 'MT');
 
 			$this->multicurrency_amount_ht = price2num($amount * (float) $this->multicurrency_tx, 'MT');
 			$this->multicurrency_amount_tva = price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_amount_ttc = price2num(((float) $this->amount_ht + (float) $this->amount_tva) * (float) $this->multicurrency_tx, 'MT');
 		}
 
-		$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct, 'MT');
 		$this->tva_tx = $tva_tx;
+		$this->localtax1_tx = $localtax1_tx;
+		$this->localtax1_type = $localtax1_type;
+		$this->localtax2_tx = $localtax2_tx;
+		$this->localtax2_type = $localtax2_type;
 
 		if ($localtax1_type2 == 0) {
 			$this->total_localtax1 = (float) $this->amount_ht * $localtax1_tx_pct;
@@ -1003,6 +1014,7 @@ class DiscountAbsolute extends CommonObject
 			// Dans le cas où le montant ttc vient d'une remise scindée on le prend tel quel
 			// car de recalculer le montant ttc à partir du montant ht créé des erreurs de précision.
 			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
+			$this->multicurrency_amount_ttc = price2num(((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2)  * (float) $this->multicurrency_tx, 'MT');
 		}
 
 		return $err;
@@ -1058,8 +1070,8 @@ class DiscountAbsolute extends CommonObject
 		$newdiscount1->vat_src_code = $this->vat_src_code;
 		$newdiscount2->vat_src_code = $this->vat_src_code;
 
-		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx);
-		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx);
+		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type);
+		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax2_type);
 
 		return array($newdiscount1, $newdiscount2);
 	}

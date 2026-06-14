@@ -2729,7 +2729,7 @@ class Societe extends CommonObject
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $mysoc;
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
@@ -2747,18 +2747,13 @@ class Societe extends CommonObject
 
 		if ($this->id > 0) {
 			// Separate VAT code from VAT rate string
+			$taxes = getTaxesFromId($vatrate, $mysoc, $mysoc, 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
 			}
-
-			$taxes = getTaxesFromId($vatrate);
-			$localtax1_tx = $taxes['localtax1'];
-			$localtax1_type2 = ((int) $taxes['localtax1_type'] > 0 && (int) $taxes['localtax1_type'] % 2 == 0 ? 1 : 0);
-			$localtax2_tx = $taxes['localtax2'];
-			$localtax2_type2 = ((int) $taxes['localtax2_type'] > 0 && (int) $taxes['localtax2_type'] % 2 == 0 ? 1 : 0);
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -2773,7 +2768,7 @@ class Societe extends CommonObject
 
 			$vat_tx = (float) price2num($vatrate);
 
-			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type2, $localtax2_type2);
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], $taxes['localtax1_type'], $taxes['localtax2_type']);
 
 			$discount->vat_src_code = $vat_src_code;
 

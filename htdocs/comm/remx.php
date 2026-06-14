@@ -137,11 +137,8 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$newdiscount->vat_src_code = $discount->vat_src_code;
 			$newdiscount->amount_ttc = price2num($value);
 
-			$localtax1_type2 = ((int) $newdiscount->localtax1_type > 0 && (int) $newdiscount->localtax1_type % 2 == 0 ? 1 : 0);
-			$localtax2_type2 = ((int) $newdiscount->localtax2_type > 0 && (int) $newdiscount->localtax2_type % 2 == 0 ? 1 : 0);
-
 			// Calculate localtaxes and VAT amounts
-			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx, $newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $localtax1_type2, $localtax2_type2);
+			$newdiscount->generateFromAmount($newdiscount->amount_ttc, 1, $newdiscount->tva_tx, $newdiscount->localtax1_tx, $newdiscount->localtax2_tx, $newdiscount->localtax1_type, $newdiscount->localtax2_type);
 
 			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
 			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
