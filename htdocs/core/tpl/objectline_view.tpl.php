@@ -417,7 +417,7 @@ print $tooltiponpriceend;
 // Multicurrency HT
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
-	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
+	$upinctax = !empty($line->subprice_ttc) ? $line->subprice_ttc : null;
 	// On a situation invoice line whose progress is not 100%, total_ttc is the
 	// situation total, not the full PU TTC. Fall back to subprice * (1+vat) so
 	// the unit price displayed is the contract unit price, not the partial one.
@@ -440,7 +440,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 // Multicurrency TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
-	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
+	$multicurrency_upinctax = !empty($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
 	$lineprogress = isset($line->situation_percent) ? (float) $line->situation_percent : 100;
 	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty && $lineprogress >= 100) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
