@@ -90,14 +90,6 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public $multicurrency_total_ttc;
 	/**
-	 * @var float
-	 */
-	public $multicurrency_total_localtax1;
-	/**
-	 * @var float
-	 */
-	public $multicurrency_total_localtax2;
-	/**
 	 * @var string|float
 	 * @deprecated
 	 */
