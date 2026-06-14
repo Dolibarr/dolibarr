@@ -3304,7 +3304,7 @@ class Commande extends CommonOrder
 			}
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
@@ -3312,8 +3312,10 @@ class Commande extends CommonOrder
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
 						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
+						// Use abs() to keep the rounding consistent for negative qty,
+						// matching what addline() at line 1725 already does (#38782 bug 5).
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
+						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
