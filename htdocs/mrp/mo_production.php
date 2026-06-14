@@ -1083,7 +1083,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if ($object->qty > 0) {
 						// add free consume line cost to $bomcostupdated
-						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						// Cast to (double) before empty() so DECIMAL string "0.00000000" is
+						// recognized as zero - empty("0.00000000") is false in PHP, which
+						// previously made cost_price=0 silently win over a real pmp (#38378).
+						$costprice = price2num((!empty((double) $tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($costprice)) {
 							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 							$productFournisseur = new ProductFournisseur($db);
