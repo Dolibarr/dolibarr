@@ -2395,8 +2395,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
-						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-						print '<th class="liste_titre right">';
+						print '<tr class="liste_titre">';
+						//print '<th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre right" colspan="2">';
 						if ($permissiontoeditgroup) {
 							print $form->select_dolgroups(0, 'group', 1, $exclude, 0, '', array(), (string) $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';

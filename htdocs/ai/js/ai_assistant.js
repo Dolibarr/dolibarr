@@ -54,6 +54,7 @@ export function initAiAssistant(container) {
     const chat = container.querySelector('#chat-history');
     const statusBar = container.querySelector('#status-bar');
     const sendBtn = container.querySelector('#send-btn');
+    const welcome = container.querySelector('.chat-welcome'); // empty-state screen (full page only)
 
     // 3. Application State
     let isRecording = false;
@@ -85,9 +86,32 @@ export function initAiAssistant(container) {
     // -------------------------------------------------------------------------
     // BOOTSTRAP
     // -------------------------------------------------------------------------
+    // Full page only: make the chat fill exactly from its top down to the
+    // viewport bottom, whatever the real top menu bar height is (no magic
+    // offset, so no scrollbar nor blank strip). The popover sizes itself.
+    if (!container.classList.contains('ai-in-popover')) {
+        const fitPageHeight = () => {
+            const top = container.getBoundingClientRect().top;
+            // clientHeight excludes any scrollbar, so the chat fits exactly
+            // without re-triggering a page scrollbar.
+            const vh = document.documentElement.clientHeight;
+            container.style.height = Math.max(420, vh - top) + 'px';
+        };
+        fitPageHeight();
+        window.addEventListener('resize', fitPageHeight);
+    }
+
     input.focus();
     engineSelect.value = CONFIG_MODE;
     updateInterfaceMode(CONFIG_MODE);
+
+    // Welcome screen quick cards: send the localized ready-made prompt on click
+    container.querySelectorAll('.ai-quick-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            input.value = card.dataset.prompt || '';
+            handleQuery();
+        });
+    });
 
     // Initialize Doc Parsing UI Listeners
     initDocParsingUI();
@@ -176,7 +200,14 @@ export function initAiAssistant(container) {
     // Clear Chat History
     clearBtn.addEventListener('click', () => {
         if (confirm(t('ClearChatHistoryTitle'))) {
-            chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            // Remove conversation messages; keep the welcome element so it can be
+            // shown again on the full page (the popover has no welcome screen).
+            chat.querySelectorAll('.msg').forEach((n) => n.remove());
+            if (welcome) {
+                welcome.style.display = '';
+            } else {
+                chat.innerHTML = `<div class="msg system">${t('HistoryCleared')}</div>`;
+            }
             lastResult = { data: null, tool: '', query: '' };
             clarificationContext = null;
             input.focus();
@@ -913,30 +944,61 @@ export function initAiAssistant(container) {
     // CHAT UI RENDERING
     // =========================================================================
 
+    // Build the contextual action buttons row (e.g. "Download PDF", "Open record")
+    function buildActions(actions) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'msg-actions';
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = `msg-action-btn ${action.class || ''}`;
+            btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
+            btn.onclick = action.onclick;
+            actionsDiv.appendChild(btn);
+        });
+        return actionsDiv;
+    }
+
+    // Build the avatar element shown next to user/bot messages
+    function buildAvatar(type) {
+        const avatar = document.createElement('div');
+        avatar.className = `msg-avatar ${type}`;
+        avatar.innerHTML = (type === 'bot')
+            ? '<span class="fa fa-robot"></span>'
+            : (config.userInitial || '<span class="fa fa-user"></span>');
+        return avatar;
+    }
+
     function appendMsg(type, html, actions = null) {
         const div = document.createElement('div');
         div.className = `msg ${type}`;
-        div.innerHTML = html;
-        if (actions) {
-            const actionsDiv = document.createElement('div'); actionsDiv.className = 'msg-actions';
-            actions.forEach(action => {
-                const btn = document.createElement('button');
-                btn.className = `msg-action-btn ${action.class || ''}`;
-                btn.innerHTML = action.icon ? `<span class="fa ${action.icon}"></span> ${action.text}` : action.text;
-                btn.onclick = action.onclick;
-                actionsDiv.appendChild(btn);
-            });
-            div.appendChild(actionsDiv);
+
+        if (type === 'user' || type === 'bot') {
+            // Row layout: avatar + bubble (CSS reverses the row for the user)
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.innerHTML = html;
+            if (actions) bubble.appendChild(buildActions(actions));
+            div.appendChild(buildAvatar(type));
+            div.appendChild(bubble);
+        } else {
+            // system / error / clarification / confirmation: flat, centered, no avatar
+            div.innerHTML = html;
+            if (actions) div.appendChild(buildActions(actions));
         }
+
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
     }
 
-    // Animated three-dot "typing" bubble shown while waiting for the AI answer
+    // Animated three-dot "typing" bubble (avatar + dots) shown while waiting
     function appendTyping() {
         const div = document.createElement('div');
         div.className = 'msg bot typing-indicator';
-        div.innerHTML = '<span></span><span></span><span></span>';
+        div.appendChild(buildAvatar('bot'));
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        bubble.innerHTML = '<span></span><span></span><span></span>';
+        div.appendChild(bubble);
         chat.appendChild(div);
         chat.scrollTop = chat.scrollHeight;
         return div;
@@ -1091,6 +1153,7 @@ export function initAiAssistant(container) {
     async function handleQuery() {
         const query = input.value.trim();
         if (!query) return;
+        if (welcome) welcome.style.display = 'none'; // leave the empty-state once a message is sent
         appendMsg('user', query);
         input.value = '';
         input.style.height = '44px';
@@ -1107,7 +1170,7 @@ export function initAiAssistant(container) {
             if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
 
             if (intent.tool === 'ask_for_clarification') { handleClarification(intent.arguments.question, query); input.disabled = false; input.focus(); return; }
-            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const msg = (intent.arguments && intent.arguments.message) ? intent.arguments.message : t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
+            if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
             if (intent.tool === 'generate_navigation_url') {
                 appendMsg('system', t('GeneratingLink'));
@@ -1175,7 +1238,7 @@ export function initAiAssistant(container) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid');
-            content += '<div style="overflow-x:auto;"><table class="chat-table"><thead><tr>';
+            content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             keys.forEach(k => content += `<th>${k.replace(/_/g, ' ').toUpperCase()}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
@@ -1183,7 +1246,7 @@ export function initAiAssistant(container) {
                 keys.forEach(k => {
                     let val = row[k];
                     if (row.url && ['ref', 'name', 'nom', 'label', 'customer', 'supplier', 'subject'].includes(k)) {
-                        val = `<a href="${row.url}" target="_blank" style="color:#0055aa; text-decoration:none; font-weight:bold;">${val}</a>`;
+                        val = `<a href="${row.url}" target="_blank" class="chat-link">${val}</a>`;
                     }
                     content += `<td>${val}</td>`;
                 });
@@ -1194,7 +1257,7 @@ export function initAiAssistant(container) {
         else if (typeof data === 'object') {
             isObject = true;
             objectUrl = data.url || null;
-            content += '<div style="background:#f9f9f9; padding:10px; border-radius:5px;"><ul style="padding-left:20px; margin:0;">';
+            content += '<div class="chat-object"><ul>';
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'url') continue;
                 if (typeof value !== 'object') { content += `<li><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</li>`; }
@@ -1208,9 +1271,9 @@ export function initAiAssistant(container) {
             if (isArray) {
                 toolbarContent = `<button class="msg-action-btn" onclick="this.closest('.ai-chat-container').dispatchEvent(new CustomEvent('triggerPdf'))" title="${t('DownloadPdf')}"><span class="fa fa-file-pdf-o"></span> ${t('downloadPdf')}</button>`;
             } else if (isObject && objectUrl) {
-                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" style="display:inline-flex; align-items:center; gap:5px; text-decoration:none;" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
+                toolbarContent = `<a href="${objectUrl}" target="_blank" class="msg-action-btn primary" title="${t('OpenVerb')}"><span class="fa fa-external-link"></span> ${t('openRecord')}</a>`;
             }
-            if (toolbarContent) { content += `<div style="margin-top:8px; border-top:1px solid #eee; padding-top:5px; text-align:right;">${toolbarContent}</div>`; }
+            if (toolbarContent) { content += `<div class="msg-toolbar">${toolbarContent}</div>`; }
         }
         return content;
     }

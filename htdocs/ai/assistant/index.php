@@ -2,6 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026	Anthony Damhet			<a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,9 @@ global $langs;
 $langs->loadLangs(array("main", "other", "dict"));
 
 $page_name = $langs->trans("AIAssistant");
-llxHeader('', $page_name);
+// 'ai-fullpage' body class: lets the chat fill the whole content area (no .fiche
+// padding, full height) so the assistant looks like a full-page app, see ai_assistant.css.
+llxHeader('', $page_name, '', '', 0, 0, '', '', '', 'ai-fullpage');
 ?>
 
 <!-- CSS & JS INCLUDES -->
