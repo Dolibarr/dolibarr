@@ -418,8 +418,17 @@ print $tooltiponpriceend;
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
-	if (!$upinctax && $line->total_ttc && $line->qty) {
+	// On a situation invoice line whose progress is not 100%, total_ttc is the
+	// situation total, not the full PU TTC. Fall back to subprice * (1+vat) so
+	// the unit price displayed is the contract unit price, not the partial one.
+	$lineprogress = isset($line->situation_percent) ? (float) $line->situation_percent : 100;
+	if (!$upinctax && $line->total_ttc && $line->qty && $lineprogress >= 100) {
 		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
+	}
+	if (!$upinctax && $lineprogress < 100 && $line->subprice) {
+		// On a situation invoice line whose progress < 100, total_ttc is partial.
+		// Recompute from subprice so the customer sees the full unit price (#37438).
+		$upinctax = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 	}
 	if (!$upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
@@ -432,7 +441,8 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
-	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty) {
+	$lineprogress = isset($line->situation_percent) ? (float) $line->situation_percent : 100;
+	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty && $lineprogress >= 100) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
 	}
 	if (!$multicurrency_upinctax) {

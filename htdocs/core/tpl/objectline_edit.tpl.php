@@ -268,8 +268,15 @@ $coldisplay++;
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
-		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
+		// On a situation invoice line whose progress is not 100%, total_ttc is the
+		// situation total, not the full PU TTC. Fall back to subprice * (1+vat) so
+		// the unit price displayed is the contract unit price, not the partial one.
+		$lineprogress = isset($line->situation_percent) ? (float) $line->situation_percent : 100;
+		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES') && $lineprogress >= 100) {
 			$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
+		}
+		if (!$upinctax && $lineprogress < 100 && $line->subprice) {
+			$upinctax = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 		}
 		print '<td class="right"><input type="text" class="flat right width75" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
