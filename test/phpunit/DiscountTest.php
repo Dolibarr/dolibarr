@@ -227,8 +227,8 @@ class DiscountTest extends CommonClassTest
 		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
 		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
 		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
-		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1,'MT'));
-		$this->assertEquals($ex_total_localtax2, price2num($localobject->total_localtax2,'MT'));
+		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1, 'MT'));
+		$this->assertEquals($ex_total_localtax2, price2num($localobject->total_localtax2, 'MT'));
 		$result = 1;
 
 		print __METHOD__." amount=".$amount." vat_tx=".$vat_tx." localtax1_tx=".$localtax1_tx." localtax1_type=".$localtax1_type." localtax2_tx=".$localtax2_tx." localtax2_type=".$localtax2_type." price_base=".$price_base." result=".$result."\n";
