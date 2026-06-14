@@ -93,3 +93,7 @@ DialogAskConfirm = Confirmation
 QuickMemoDeleteModel = Supprimer le modèle
 ShowMemo = Consulter le mémo
 QUICKMEMO_COLORS_PRESET=Définissez ici vos couleurs de mémo personnalisées
+QUICKMEMO_DISABLE_AUTO_RESIZE_FONT_SIZE = Désactiver l’ajustement automatique de la taille du texte selon la densité du contenu de la note
+QUICKMEMO_AUTO_RESIZE_FONT_SIZE_SECTION = Options de redimensionnement automatique du texte
+QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE = Taille minimale du texte
+QUICKMEMO_AUTO_RESIZE_MAX_FONT_SIZE = Taille maximale du texte

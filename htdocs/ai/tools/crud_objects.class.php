@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 /**
  * Tool class for CRUD operations on Dolibarr objects
+ * TODO Remove all tools in this file. Must be into the objectname.class.php
+ * to follow the same structure than APIs.
  */
 class ToolCrudObjects extends McpTool
 {

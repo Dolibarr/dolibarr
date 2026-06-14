@@ -1059,6 +1059,20 @@ if (!empty($object->thirdparty)) {
 								jQuery("#price_ht").val(data.price_ht);
 							}
 
+							// useful to retrieve percent from customer specific price
+							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
+								var remisePercentInput = jQuery('#remise_percent');
+								if (remisePercentInput.length > 0) {
+									console.log("Remise spécifique client trouvée : " + data.discount + "%");
+									remisePercentInput
+									.val(data.discount)
+									.trigger('input')
+									.trigger('change');
+								} else {
+									console.warn("Champ #remise_percent introuvable, remise non appliquée");
+								}
+							}
+
 							// Set values for any fields in the form options_SOMETHING
 							for (var key in data.array_options) {
 								if (data.array_options.hasOwnProperty(key)) {
@@ -1118,19 +1132,27 @@ if (!empty($object->thirdparty)) {
 								$('#tva_tx').val(tva_tx);
 							}
 
-							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
+							// Sync the measuring unit dropdown with the product's default fk_unit
+							// (issue #34610). Without this, the dropdown keeps the static initial
+							// value (the first c_units row, typically "Kg") regardless of what
+							// the selected product is configured with.
+							if (typeof data.fk_unit != 'undefined' && data.fk_unit != null && $("#units").length) {
+								$("#units").val(data.fk_unit).trigger('change');
+							} else if (typeof data.default_unit != 'undefined' && data.default_unit != null && $("#units").length) {
+								$("#units").val(data.default_unit).trigger('change');
+							}
+
+							if (jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
 								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
 									var proddesc = data.desc_trans;
-								}
-								else {
+								} else {
 									var proddesc = data.desc;
 								}
 
 								console.log("objectline_create.tpl Load description into text area : "+proddesc);
 
-								if(jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
-									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-									{
+								if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 										var editor = CKEDITOR.instances['dp_desc'];
 										if (editor) {
 											editor.setData(proddesc);
@@ -1256,11 +1278,27 @@ if (!empty($object->thirdparty)) {
 							}
 						});
 
-
 						// Execute js context Dolibarr Hooks
 						if (typeof Dolibarr != 'undefined') {
 							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
 						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
