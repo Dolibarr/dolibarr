@@ -939,8 +939,8 @@ class DiscountAbsolute extends CommonObject
 	 * @param float 	$tva_tx 			TVA (main tax) percentage (>1)
 	 * @param float 	$localtax1_tx 		localtax1 percentage (>1)
 	 * @param float 	$localtax2_tx 		localtax2 percentage (>1)
-	 * @param int<0,1> 	$localtax1_type2 	is localtax1 a 'type 2' (localtax type is 2,4 or 6), default = no
-	 * @param int<0,1> 	$localtax2_type2 	is localtax2 a 'type 2' (localtax type is 2,4 or 6), default = no
+	 * @param int<0,1> 	$localtax1_type 	localtax1 type
+	 * @param int<0,1> 	$localtax2_type 	localtax2 type
 	 * @return int 	OK = >= 0, KO = < 0
 	 */
 	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type = 1, $localtax2_type = 1)
@@ -982,7 +982,6 @@ class DiscountAbsolute extends CommonObject
 			$this->multicurrency_amount_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
 			$this->multicurrency_amount_ht = $this->amount_ht;
 			$this->multicurrency_amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct * (float) $this->multicurrency_tx, 'MT');
-
 		} elseif ($amount_type == 0) {
 			// HT
 			$this->amount_ht = price2num($amount, 'MT');
