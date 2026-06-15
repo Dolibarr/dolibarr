@@ -489,7 +489,7 @@ ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_me
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
-ALTER TABLE product_price_product DROP FOREIGN KEY fk_product_price_product;
+ALTER TABLE llx_product_price_product DROP FOREIGN KEY fk_product_price_product;
 
 ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
 
