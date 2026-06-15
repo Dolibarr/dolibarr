@@ -1589,25 +1589,8 @@ class BlockedLog
 			return dol_hash($clearstring, '5');
 		} elseif ($format == 'V2') {
 			// BLOCKEDLOG_HMAC_KEY is a HMAC key starting with 'BLOCKEDLOGHMAC....', but it is not stored as a clear data. It will be decrypted later.
-			$hmac_encoded_secret_key = '';
+			$hmac_encoded_secret_key = $this->getEncodedHMACSecretKey();
 
-			// Get value of the $hmac_encoded_secret_key from the database
-			if (empty($conf->cache['hmac_encoded_secret_key'])) {
-				$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = 'BLOCKEDLOG_HMAC_KEY'";
-				$sql .= " AND entity IN (0, ".$this->entity.")";
-				$sql .= " ORDER BY entity DESC LIMIT 1";
-				$resql = $this->db->query($sql);
-				if ($resql) {
-					$obj = $this->db->fetch_object($resql);
-					if ($obj) {
-						$hmac_encoded_secret_key = $obj->value;
-					}
-				}
-
-				$conf->cache['hmac_encoded_secret_key'] = $hmac_encoded_secret_key;		// Save value in memory page cache (if we recall the same function in same page transaction).
-			} else {
-				$hmac_encoded_secret_key = $conf->cache['hmac_encoded_secret_key'];
-			}
 			if (empty($hmac_encoded_secret_key)) {
 				throw new Exception('Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of an old version');
 			}
@@ -1662,11 +1645,47 @@ class BlockedLog
 	}
 
 	/**
-	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key)
+	 * Get the encoded HMAC secret key.
+	 * Use a memory cache to avoid repeated db access.
 	 *
 	 * @return 	string					Obfuscation key or '' if not found.
 	 */
-	private function getObfuscationKey()
+	public function getEncodedHMACSecretKey()
+	{
+		global $conf;
+
+		$hmac_encoded_secret_key = '';
+
+		// Get value of the $hmac_encoded_secret_key from the database
+		if (empty($conf->cache['hmac_encoded_secret_key'])) {
+			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = 'BLOCKEDLOG_HMAC_KEY'";
+			$sql .= " AND entity IN (0, ".$this->entity.")";
+			$sql .= " ORDER BY entity DESC LIMIT 1";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$hmac_encoded_secret_key = $obj->value;
+				}
+			} else {
+				return 'ERROR '.$this->db->lasterror();
+			}
+
+			$conf->cache['hmac_encoded_secret_key'] = $hmac_encoded_secret_key;		// Save value in memory page cache (if we recall the same function in same page transaction).
+		} else {
+			$hmac_encoded_secret_key = $conf->cache['hmac_encoded_secret_key'];
+		}
+
+		return $hmac_encoded_secret_key;
+	}
+
+	/**
+	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
+	 * Use a memory cache to avoid repeated db access.
+	 *
+	 * @return 	string					Obfuscation key or '' if not found.
+	 */
+	public function getObfuscationKey()
 	{
 		global $conf, $mysoc;
 
@@ -1692,8 +1711,10 @@ class BlockedLog
 			}
 
 			// Now store value in cache
-			$_SESSION['hmac_secret_key'] = $obfuscationkey;
-			$conf->cache['hmac_secret_key'] = $obfuscationkey;
+			if ($obfuscationkey) {
+				$_SESSION['hmac_secret_key'] = $obfuscationkey;
+				$conf->cache['hmac_secret_key'] = $obfuscationkey;
+			}
 		}
 
 		return $obfuscationkey;
@@ -1701,13 +1722,13 @@ class BlockedLog
 
 	/**
 	 * Return the unobfuscated string of a HMAC obfuscated string using the key.
-	 * This function is called by getObfuscationKey() that use a memory cache.
+	 * This function is called by getObfuscationKey(). No cache here, already inside the getObfuscationKey().
 	 *
 	 * @param 	string	$hmac_encoded_secret_key	HMAC encrypted key in database. Example: 'dolcrypt:AES-256-CBC:12345678901234567890123456789012:12345678901234567890123456789012'
 	 * @param	string	$obfuscationkey				Obfuscation key
 	 * @return 	string								Decoded string
 	 */
-	private function dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey = '')
+	public function dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey = '')
 	{
 		$reg = array();
 		if (preg_match('/^(dolobfuscationv1|dolcrypt):([^:]+):(.+)$/', $hmac_encoded_secret_key, $reg)) {		// deprecated code

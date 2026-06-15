@@ -30,7 +30,7 @@ define('DOLCERT_VERSION', '3.0.0');
 // 0 was used for old version, for version not certified but compliant with the law by using an attestation of an IT provider that guarantee
 //     the the software is compliant. WARNING: In this case, you must find an IT company that give you the attestation of conformity.
 if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '0');
+	define('CERTIF_LNE', '1');
 }
 
 
