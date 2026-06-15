@@ -715,7 +715,10 @@ export function initAiAssistant(container) {
             cloudRecognition.lang = navigator.language || 'en-US';
 
             cloudRecognition.onstart = () => { setMicState('listening'); statusBar.innerText = t('Listening'); };
-            cloudRecognition.onend = () => { if (isRecording && engineSelect.value === 'cloud') stopRecording(); };
+            // When recognition ends without a result (user stopped, or silence
+            // timeout), return to idle instead of looping on stopRecording (which
+            // left the button stuck in the orange 'processing' state).
+            cloudRecognition.onend = () => { if (engineSelect.value === 'cloud' && isRecording) { resetUI(); } };
             cloudRecognition.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
                 let errorMsg = t('Error') + ": " + event.error;
@@ -730,7 +733,7 @@ export function initAiAssistant(container) {
             cloudRecognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 input.value = transcript;
-                setMicState('idle');
+                resetUI(); // clears isRecording/isProcessing so onend won't re-fire a reset
                 statusBar.innerText = t('Transcribed');
                 handleQuery();
             };
@@ -936,7 +939,7 @@ export function initAiAssistant(container) {
         micBtn.classList.remove('listening', 'processing', 'cancelling');
         micBtn.disabled = false;
         if (state === 'listening') { micBtn.classList.add('listening'); micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; }
-        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-o-notch fa-spin"></span>'; }
+        else if (state === 'processing') { micBtn.classList.add('processing'); micBtn.innerHTML = '<span class="fa fa-circle-notch fa-spin"></span>'; }
         else { micBtn.innerHTML = '<span class="fa fa-microphone"></span>'; micBtn.title = "Start Recording"; }
     }
 

@@ -1384,7 +1384,6 @@ if ($action == 'create') {
 		$draft = new Facture($db);
 		$draft->fetch(GETPOSTINT('facid'));
 
-		$extralabels = new ExtraFields($db);
 		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
 		if ($draft->fetch_optionals() > 0) {
 			$sourceInvoice->array_options = array_merge($sourceInvoice->array_options, $draft->array_options);
