@@ -214,13 +214,15 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
-
+*/
 print '<tr class="oddeven">';
 print '<td class="titlefieldmiddle" title="Debug obfuscation key">';
 print "Debug obfuscation key".'</td><td title="Debug obfuscation key" class="small">';
 try {
 	$a = $block_static->getObfuscationKey();
-	print $a;
+	print 'block_static->getObfuscationKey(): '.$a;
+	print '<br>';
+	print '$_SESSION[obfuscationkey_'.((int) $conf->entity).']: '.$_SESSION['obfuscationkey_'.((int) $conf->entity)];
 	print '<br>';
 	$b = $block_static->getEncodedHMACSecretKey();
 	print $b;
@@ -231,11 +233,12 @@ try {
 		print dolDecrypt($b, $a);
 	}
 	print '<br>';
-} catch(Exception $e) {
+	print '$conf->cache[obfuscationkey_'.((int) $conf->entity).']: '.$conf->cache['obfuscationkey_'.((int) $conf->entity)];
+} catch (Exception $e) {
 	print $e->getMessage();
 }
 print '</td></tr>';
-*/
+
 
 
 // Show the input of countries not allowed for disabling
