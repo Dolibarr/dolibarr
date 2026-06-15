@@ -21,6 +21,7 @@
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2728,7 +2729,7 @@ class Societe extends CommonObject
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $mysoc;
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
@@ -2745,7 +2746,9 @@ class Societe extends CommonObject
 		}
 
 		if ($this->id > 0) {
-			// Clean vat code
+			// Separate VAT code from VAT rate string
+			// Discount type determines who is buyer and seller
+			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2764,25 +2767,10 @@ class Societe extends CommonObject
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
-			if ($price_base_type == 'TTC') {
-				$discount->multicurrency_amount_ttc = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ht = price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $discount->amount_ttc - (float) $discount->amount_ht) * (float) $discount->multicurrency_tx, 'MT');
+			$vat_tx = (float) price2num($vatrate);
 
-				$discount->amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
-				$discount->amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
-			} else {
-				$discount->amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
-				$discount->amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
 
-				$discount->multicurrency_amount_ht = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ttc = price2num(((float) $discount->amount_ht + (float) $discount->amount_tva) * (float) $discount->multicurrency_tx, 'MT');
-			}
-
-			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;

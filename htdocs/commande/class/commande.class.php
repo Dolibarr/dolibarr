@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2183,6 +2184,10 @@ class Commande extends CommonOrder
 			$line->desc = $remise->description; // Description for the order line
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
+			$line->localtax1_tx = $remise->localtax1_tx;
+			$line->localtax1_type = $remise->localtax1_type;
+			$line->localtax2_tx = $remise->localtax1_tx;
+			$line->localtax2_type = $remise->localtax1_type;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->price = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Predefined Product ID
@@ -2194,6 +2199,8 @@ class Commande extends CommonOrder
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
+			$line->total_localtax1 = -(float) $remise->total_localtax1;
+			$line->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $line->insert();
 			if ($result > 0) {
