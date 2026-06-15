@@ -527,10 +527,14 @@ if (is_array($blocks)) {
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
 			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
 
+			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
+			$total_ht = $total_vat = $total_ttc = 0;
+			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
+
 			// Ref
-			print '<td class="nowraponall"><div class="smallheight">';
+			print '<td class="nowraponall"><div class="smallheight" title="'.dolPrintHTMLForAttribute(price($total_ttc)).'">';
 			if (!empty($block->ref_object)) {
-				print dol_escape_htmltag($block->ref_object);
+				print dolPrintHTML($block->ref_object);
 				if ($block->linktype && $block->linktoref) {
 					if ($block->linktype == 'payment') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("PaymentOf").' '.$block->linktoref.'</span>';
@@ -549,12 +553,6 @@ if (is_array($blocks)) {
 
 			// Payment mode
 			//print '<td>'.dolPrintHTML($block->type_code).'</td>';
-
-			//$tmpobj = json_decode($block->object_data);
-
-			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
-			$total_ht = $total_vat = $total_ttc = 0;
-			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
 
 			// Amount
 			print '<td class="right nowraponall"><span class="amount">';
