@@ -221,10 +221,10 @@ if (!$sortorder && getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER') && $
 	$sortorder = getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER');
 }
 if (!$sortorder) {
-	$sortorder = 'DESC';
+	$sortorder = getDolGlobalString('INVOICE_DEFAULT_SORT_ORDER', 'DESC');
 }
 if (!$sortfield) {
-	$sortfield = 'f.datef,f.rowid';
+	$sortfield = getDolGlobalString('INVOICE_DEFAULT_SORT_FIELD', 'f.datef');
 }
 $pageprev = $page - 1;
 $pagenext = $page + 1;
