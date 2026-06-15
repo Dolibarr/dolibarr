@@ -301,19 +301,19 @@ if (getDolGlobalString('ONLINE_SIGN_NEWFORM_TEXT')) {
 if (empty($text)) {
 	if ($source == 'proposal') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageProposal", $mysoc->name).'</strong></td></tr>'."\n";
-		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromProposal", $creditor).'<br><br></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromProposal", $creditor).'<br><br></td></tr>'."\n";
 	} elseif ($source == 'contract') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageContract", $mysoc->name).'</strong></td></tr>'."\n";
-		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromContract", $creditor).'<br><br></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromContract", $creditor).'<br><br></td></tr>'."\n";
 	} elseif ($source == 'fichinter') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageFichinter", $mysoc->name).'</strong></td></tr>'."\n";
-		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromFichinter", $creditor).'<br><br></td></tr>'."\n";
 	} elseif ($source == 'expedition') {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePageExpedition", $mysoc->name).'</strong></td></tr>'."\n";
-		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromExpedition", $creditor).'<br><br></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFromExpedition", $creditor).'<br><br></td></tr>'."\n";
 	} else {
 		$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage".dol_ucfirst($source), $mysoc->name).'</strong></td></tr>'."\n";
-		$text .= '<tr><td class="textpublicpayment opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom".dol_ucfirst($source), $creditor).'<br><br></td></tr>'."\n";
+		$text .= '<tr><td class="textpublicpayment small opacitymedium">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom".dol_ucfirst($source), $creditor).'<br><br></td></tr>'."\n";
 	}
 }
 print $text;
@@ -322,15 +322,15 @@ print $text;
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
 if ($source == 'proposal') {
-	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignProposal").' :</td></tr>'."\n";
+	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignProposal").'<br><br></td></tr>'."\n";
 } elseif ($source == 'contract') {
-	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").' :</td></tr>'."\n";
+	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignContract").'<br><br></td></tr>'."\n";
 } elseif ($source == 'fichinter') {
-	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").' :</td></tr>'."\n";
+	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignFichinter").'<br><br></td></tr>'."\n";
 } elseif ($source == 'expedition') {
-	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignExpedition").' :</td></tr>'."\n";
+	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSignExpedition").'<br><br></td></tr>'."\n";
 } else {
-	print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign".dol_ucfirst($source)).' :</td></tr>'."\n";
+	print '<tr><td colspan="2" class="left small opacitymedium">'.$langs->trans("ThisIsInformationOnDocumentToSign".dol_ucfirst($source)).'<br><br></td></tr>'."\n";
 }
 $found = false;
 $error = 0;
