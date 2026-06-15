@@ -5956,8 +5956,6 @@ table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	/* padding-top: 5px;
-	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5969,7 +5967,7 @@ div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
