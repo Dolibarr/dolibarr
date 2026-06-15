@@ -1419,11 +1419,12 @@ class BlockedLog
 				// The new ID
 				$this->id = $id;
 
-				$error = 0;
-
 				$this->db->commit();
 
 				// Call remote API service to record the last counter
+				/*
+				$error = 0;
+
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				try {
 					$resultcall = callApiToPushCounter((int) $this->id, $this->signature, $this->date_creation, 0, (int) $previousid, $previoushash, $previousdatecreation);
@@ -1437,6 +1438,8 @@ class BlockedLog
 				} else {
 					return -3;
 				}
+				*/
+				return $this->id;
 			} else {
 				$this->db->rollback();
 				return -2;

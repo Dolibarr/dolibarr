@@ -4079,6 +4079,7 @@ if (!function_exists("llxFooter")) {
 
 		// Add code for the asynchronous emulation of pushing a tracking counter of the use of the BlockedLog module trigger(for test purposes)
 		// You can use &forceregistration=1 in parameters to force also the recall if the call was already sent.
+		/*
 		$forcepushcounter = GETPOSTINT('forcepushcounter');
 
 		if (isModEnabled('blockedlog') && ($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') && $forcepushcounter) {
@@ -4111,6 +4112,8 @@ if (!function_exists("llxFooter")) {
 				}
 			}
 		}
+		*/
+
 
 
 		$parameters = array();

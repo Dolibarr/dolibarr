@@ -394,6 +394,73 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 /**
  * Call remote API service to push the last counter and signature
  *
+ * @param 	string	$idprof1				Counter ID/value of ne record
+ * @param 	string	$registrationnumber		Registration number
+ * @param	string	$force					False. Use true for tests.
+ * @return	string							Obfuscationkey
+ */
+function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = false)
+{
+	global $mysoc, $conf;
+
+	$obfuscationkey = 'ERROR';
+
+	if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+		$algo = 'sha256';
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
+
+		$t = microtime(true);
+		$micro = sprintf("%06d", (int) (($t - floor($t)) * 1000000));
+
+		$data = '';
+		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
+		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+		$data .= '&action=dolibarrgetkeyobfuscation';
+		$data .= '&datesys='.urlencode(dol_print_date(dol_now('gmt'), 'standard', 'gmt').'.'.$micro);
+		$data .= '&version='.(float) DOL_VERSION;
+		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&versionblockedlog='.(float) getBlockedLogVersionToShow();
+		$data .= '&versionblockedlog_full='.urlencode(getBlockedLogVersionToShow());
+
+		$data .= '&entity='.(int) $conf->entity;
+
+		$data .= '&profid1='.(int) $idprof1;
+		$data .= '&registrationnumber='.urlencode($registrationnumber);
+
+		$addheaders = array();
+		$timeoutconnect = 1;
+		$timeoutresponse = 1;
+
+		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		try {
+			$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrgetkeyobfuscation');
+			usleep(1000);
+
+			// Add a warning in log in case of error
+			if ($tmpresult['http_code'] != 200) {
+				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+			} else {
+				$obfuscationkey = $tmpresult['content'];
+			}
+		} catch (Exception $e) {
+			$obfuscationkey .= ' '.$e->getMessage();
+			dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
+		}
+	}
+
+	return $obfuscationkey;
+}
+
+
+/**
+ * Call remote API service to push the last counter and signature
+ *
  * @param 	int		$id						Counter ID/value of ne record
  * @param 	string	$signature				Signature of new record
  * @param	int		$datecreation			Date creation of new record

@@ -217,40 +217,42 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 
 // Show the input of countries not allowed for disabling
-print '<tr class="oddeven">';
-print '<td>';
-print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
-print '</td>';
-print '<td>';
+if ($mysoc->country_code != 'FR' || !isALNERunningVersion()) {
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+	print '</td>';
+	print '<td>';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
-print '<input type="hidden" name="withtab" value="'.$withtab.'">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
+	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
-$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
-$sql .= " WHERE active > 0";
+	$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+	$sql .= " WHERE active > 0";
 
-$countryArray = array();
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+	$countryArray = array();
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+		}
 	}
+
+	$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
+
+	// Can module be disabled
+	$canbedisabled = $block_static->canBeDisabled();
+
+	print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
+	print '</form>';
+
+	print '</td>';
+	print '</tr>';
 }
-
-$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
-
-// Can module be disabled
-$canbedisabled = $block_static->canBeDisabled();
-
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
-print '</form>';
-
-print '</td>';
-
 
 print '<tr class="oddeven">';
 print '<td class="">';
@@ -290,11 +292,26 @@ print ajax_autoselect('forceregistration');
 
 print '<br>';
 
+/*
 $urlforcepushcounter = DOL_MAIN_URL_ROOT.'/index.php?forcepushcounter=1';
 print $langs->trans("URLToForcePushOfBlockedLogCounter").'<br>';
 print '<div class="urllink"><input type="text" id="forcepushcounter" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforcepushcounter.'"><a class="" href="'.$urlforcepushcounter.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcepushcounter');
+*/
 
+$urltogetkeyobfuscation = DOL_MAIN_URL_ROOT.'/blockedlog/admin/blockedlog.php?forcegetkeyobfuscation=1&token='.newToken();
+print $langs->trans("URLToGetObfuscationkey").'<br>';
+print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcegetkeyobfuscation');
+
+if (GETPOST('forcegetkeyobfuscation')) {
+	$resultcall = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber, true);
+	if (preg_match('/^ERROR/', $resultcall)) {
+		print '<div class="error">'.$resultcall.'</div>';
+	} else {
+		print "\n<!-- API TO GET OBFUSCATION KEY RETURNED result: ".$resultcall." -->\n";
+	}
+}
 
 
 if ($withtab) {
