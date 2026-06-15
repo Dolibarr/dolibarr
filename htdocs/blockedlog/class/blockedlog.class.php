@@ -1662,9 +1662,9 @@ class BlockedLog
 	}
 
 	/**
-	 * Return the obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key)
+	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key)
 	 *
-	 * @return 	string					Obfuscation key or '' if error.
+	 * @return 	string					Obfuscation key or '' if not found.
 	 */
 	private function getObfuscationKey()
 	{
@@ -1679,18 +1679,22 @@ class BlockedLog
 			return (string) $conf->cache['hmac_secret_key'];
 		}
 
-		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		$registrationnumber = getHashUniqueIdOfRegistration();
+		$obfuscationkey = '';
 
-		// Value is not into cache, we must get it from ping.dolibarr.org
-		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
-		if (empty($obfuscationkey) || strpos($obfuscationkey, 'ERROR') === 0) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid or the server is down. Re-try later.');
+		if (isALNERunningVersion(1)) {
+			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+			$registrationnumber = getHashUniqueIdOfRegistration();
+
+			// Value is not into cache, we must get it from ping.dolibarr.org
+			$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
+			if (empty($obfuscationkey) || strpos($obfuscationkey, 'ERROR') === 0) {
+				throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid or the server is down. Re-try later.');
+			}
+
+			// Now store value in cache
+			$_SESSION['hmac_secret_key'] = $obfuscationkey;
+			$conf->cache['hmac_secret_key'] = $obfuscationkey;
 		}
-
-		// Now store value in cache
-		$_SESSION['hmac_secret_key'] = $obfuscationkey;
-		$conf->cache['hmac_secret_key'] = $obfuscationkey;
 
 		return $obfuscationkey;
 	}
