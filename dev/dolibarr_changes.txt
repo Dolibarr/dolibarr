@@ -446,3 +446,13 @@ Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug:
 JS JCROP:
 ----------
 * Remove analytics tag into file index.html
+
+
+PHP MIKE42 ESCPOS:
+------------------
+* In htdocs/includes/mike42/escpos-php/src/Mike42/Escpos/GdEscposImage.php
+Replace:
+	if (!is_resource($im)) {
+With:
+	if (!($im instanceof \GdImage) && !is_resource($im)) {
+PHP 8.0+ returns GdImage objects from imagecreate*; the upstream guard with is_resource() alone fails on PHP 8 and throws 'Failed to load image' on receipts that contain an image.
