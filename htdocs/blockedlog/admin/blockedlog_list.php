@@ -559,13 +559,9 @@ if (is_array($blocks)) {
 			// Amount
 			print '<td class="right nowraponall"><span class="amount">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
-				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
-				if ($ingrey) {
-					print '<span class="opacitymedium">';
-				}
-				print price($total_ttc);
-				if ($ingrey) {
-					print '</span>';
+				$showamount = in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
+				if ($showamount) {
+					print price($total_ttc);
 				}
 			}
 			print '</span></td>';
