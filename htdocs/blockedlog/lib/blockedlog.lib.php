@@ -426,8 +426,8 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 
 		$data .= '&entity='.(int) $conf->entity;
 
-		$data .= '&profid1='.(int) $idprof1;
-		$data .= '&registrationnumber='.urlencode($registrationnumber);
+		$data .= '&profid1='.urlencode(dol_sanitizeKeyCode($idprof1));
+		$data .= '&registrationnumber='.urlencode(dol_sanitizeKeyCode($registrationnumber));
 
 		$addheaders = array();
 		$timeoutconnect = 1;
@@ -470,6 +470,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
  * @param	int		$previousdatecreation	Date creation of previous record
  * @return	int								Return <0 if KO, 0 if nothing done, >0 if OK
  */
+/*
 function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid, $previoussignature, $previousdatecreation)
 {
 	global $mysoc, $conf;
@@ -548,6 +549,8 @@ function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid
 
 	return 0;
 }
+*/
+
 
 /**
  * Return if user is a tax auditor.
