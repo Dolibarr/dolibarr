@@ -5928,7 +5928,7 @@ span.buttonpaymentsmall {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 20px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

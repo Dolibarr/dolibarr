@@ -17,6 +17,7 @@
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,6 +389,10 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->fk_remise_except = $remise->id;
 			$supplier_proposalligne->desc = $remise->description; // Description of the proposal line
 			$supplier_proposalligne->tva_tx = $remise->tva_tx;
+			$supplier_proposalligne->localtax1_tx = $remise->localtax1_tx;
+			$supplier_proposalligne->localtax1_type = $remise->localtax1_type;
+			$supplier_proposalligne->localtax2_tx = $remise->localtax1_tx;
+			$supplier_proposalligne->localtax2_type = $remise->localtax1_type;
 			$supplier_proposalligne->subprice = -(float) $remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Predefined Product ID
 			$supplier_proposalligne->qty = 1;
@@ -398,6 +403,8 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->total_ht  = -(float) $remise->amount_ht;
 			$supplier_proposalligne->total_tva = -(float) $remise->amount_tva;
 			$supplier_proposalligne->total_ttc = -(float) $remise->amount_ttc;
+			$supplier_proposalligne->total_localtax1 = -(float) $remise->total_localtax1;
+			$supplier_proposalligne->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $supplier_proposalligne->insert();
 			if ($result > 0) {

@@ -314,7 +314,7 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 		$isalne = isALNEQualifiedVersion(); // If necessary, we could replace with "if isALNERunningVersion()"
 		if ($isalne == 'CERTIF_LNE_IS_2') {
 			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECandidatePOSSystem");
-		} else {
+		} elseif ($isalne) {
 			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
 		}
 
