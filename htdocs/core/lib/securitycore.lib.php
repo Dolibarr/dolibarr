@@ -121,7 +121,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
+ *	@param   string		$key		Key to use to decode.
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -134,9 +134,11 @@ function dolDecrypt($chain, $key = '')
 		return '';
 	}
 
+	$savkey = $key;
+
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+			// If dolcrypt_key is defined, we used it in priority. Note: this param has never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
@@ -152,7 +154,7 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	// New method
-	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^dol[^:]+:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
 
@@ -170,13 +172,18 @@ function dolDecrypt($chain, $key = '')
 			}
 			// Test validity of decryption
 			if (!ascii_check($newchain)) {
-				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				if (empty($savkey)) {
+					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				} else {
+					dol_syslog("Error dolDecrypt failed: The string decoded with the key return a non valid value (not ascii)", LOG_ERR);
+				}
 				return $chain;
 			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
 			return $chain;
 		}
+
 		return $newchain;
 	} else {
 		return $chain;

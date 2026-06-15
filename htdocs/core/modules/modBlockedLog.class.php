@@ -205,12 +205,12 @@ class modBlockedLog extends DolibarrModules
 			// No key yet, we generate one.
 			$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
-			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+			//$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
 
 			$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory. If not found, it will be created.
 
-			// gitleaks:allow
-			$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->profid1, $obfuscationkey); 	// gitleaks:allow
+			$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
 			//$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
 
 			if ($result < 0) {

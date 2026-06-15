@@ -95,11 +95,11 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE")), null, 'errors');
 		$error++;
 	}
-	if (!GETPOST("MAIN_INFO_SIREN")) {
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId1", $mysoc->country_code)), null, 'errors');
 		$error++;
 	}
-	if (!GETPOST("MAIN_INFO_SIRET")) {
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId2", $mysoc->country_code)), null, 'errors');
 		$error++;
 	}
@@ -111,6 +111,7 @@ if ($action == 'update') {
 		// Check we can change country
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 		if ($mysoc->country_code == 'FR' && $tmparray['code'] != $mysoc->country_code && isALNERunningVersion()) {
+			// Trying to change the country. We refuse.
 			$langs->load("blockedlog");
 			setEventMessages($langs->trans("BlockedLogCountryChangeNotAllowedFR"), null, 'errors');
 			$error++;
@@ -125,8 +126,8 @@ if ($action == 'update') {
 			$tmpthirdparty->country_code = $mysoc->country_code;
 			$tmpthirdparty->country_id = $mysoc->country_id;
 			$tmpthirdparty->country_label = $mysoc->country_label;
-			$tmpthirdparty->idprof1 = GETPOST("MAIN_INFO_SIREN");
-			$tmpthirdparty->idprof2 = GETPOST("MAIN_INFO_SIRET");
+			$tmpthirdparty->idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+			$tmpthirdparty->idprof2 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2");
 
 			activateModulesRequiredByCountry($mysoc->country_code);
 		}
@@ -160,8 +161,8 @@ if ($action == 'update') {
 	$company_name = GETPOST("BLOCKEDLOG_REGISTRATION_NAME");
 	$company_email = GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL");
 	$company_country_code = $tmparray['code'];
-	$company_idprof1 = GETPOST("MAIN_INFO_SIREN");
-	$company_idprof2 = GETPOST("MAIN_INFO_SIRET");
+	$company_idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+	$company_idprof2 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2");
 	$company_address = GETPOST("BLOCKEDLOG_REGISTRATION_ADDRESS");
 	$company_state = GETPOST("BLOCKEDLOG_REGISTRATION_STATE");
 	$company_zip = GETPOST("BLOCKEDLOG_REGISTRATION_ZIP");
@@ -252,6 +253,26 @@ if ($action == 'update') {
 	}
 	if (!$error) {
 		$db->commit();
+
+		// If HMAC key was not saved, we do it now
+
+		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($db);
+
+		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+
+		if (empty($hmac_encoded_secret_key)) {
+			// No key yet, we generate one.
+			$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
+
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+			$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
+
+			$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory. If not found, it will be created.
+
+			$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
+		}
+
 
 		//setEventMessages("SetupSaved", null, 'mesgs');
 		$urltouse = $_SERVER["PHP_SELF"]."?mode=forceregistration";
