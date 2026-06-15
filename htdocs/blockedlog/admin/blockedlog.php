@@ -214,7 +214,7 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
-*/
+
 print '<tr class="oddeven">';
 print '<td class="titlefieldmiddle" title="Debug obfuscation key">';
 print "Debug obfuscation key".'</td><td title="Debug obfuscation key" class="small">';
@@ -238,7 +238,7 @@ try {
 	print $e->getMessage();
 }
 print '</td></tr>';
-
+*/
 
 
 // Show the input of countries not allowed for disabling
