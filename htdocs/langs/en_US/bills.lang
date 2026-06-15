@@ -28,7 +28,6 @@ InvoiceStandardAsk2=(or template)
 InvoiceStandardDesc=This kind of invoice is the common invoice.
 InvoiceStandardShort=Standard
 InvoiceDeposit=Deposit invoice
-InvoiceDepositAsk=Deposit invoice
 InvoiceDepositDesc=This kind of invoice is done when a down payment has been received.
 InvoiceProForma=Proforma invoice
 InvoiceProFormaAsk=Proforma invoice
