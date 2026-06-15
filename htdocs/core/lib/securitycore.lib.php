@@ -51,15 +51,16 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
- *	@param   string		$chain		String to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
- *  @param	 string		$ciphering	Default ciphering algorithm
- *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
+ *	@param   string		$chain				String to encode
+ *	@param   string		$key				If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
+ *  @param	 string		$ciphering			Default ciphering algorithm
+ *  @param	 string		$forceseed			To force the seed
+ *  @param	 string		$obfuscationmode	'dolcrypt' or 'dolobfuscatev1'
+ *	@return  string							Encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfuscationmode = 'dolcrypt')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -69,12 +70,12 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 	}
 
 	$reg = array();
-	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
-		// The $chain is already a encrypted string
+	if (preg_match('/^(dolobfuscatev1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
+		// The $chain is already an encrypted string
 		return $chain;
 	}
 
-	if (empty($key)) {
+	if (empty($key)) {		// This may happen only with $obfuscationmode = 'dolcrypt'
 		if (!empty($conf->file->dolcrypt_key)) {
 			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
@@ -108,7 +109,8 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
-		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
+
+		return $obfuscationmode.':'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
 		return $chain;
 	}

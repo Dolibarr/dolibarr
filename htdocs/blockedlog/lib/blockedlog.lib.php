@@ -443,14 +443,19 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 			usleep(10000);
 
 			// Add a warning in log in case of error
-			if ($tmpresult['http_code'] != 200) {
+			if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
+				$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
+				$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+			} elseif ($tmpresult['http_code'] != 200) {
 				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
 				$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			} else {
 				$reg = array();
-				if (preg_match('/dolobfuscatev1:([a-zA-Z0-9]+)/', $tmpresult['content'], $reg)) {
+				if (preg_match('/dolobfuscationv1[^:]+:(.*)$/', $tmpresult['content'], $reg)) {
 					$obfuscationkey = $reg[1];
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
