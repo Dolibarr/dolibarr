@@ -190,6 +190,22 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 	}
 	*/
 
+	if (!$error) {
+		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
+		$isqualified = isALNERunningVersion(1);
+		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+			$errmsg = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS is mandatory to be allowed to record any event (Your hosting does not match the install requirements).';
+			dol_syslog($errmsg, LOG_ERR);
+
+			setEventMessages($errmsg, null, 'errors');
+			$error++;
+		}
+	}
+
 	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
 	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
 
@@ -615,6 +631,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$object->totallifetime_collected = ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
 
 				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+
+				// There is no trigger for export of archive files, so we force the action code here
 
 				$action = 'BLOCKEDLOG_EXPORT';
 
