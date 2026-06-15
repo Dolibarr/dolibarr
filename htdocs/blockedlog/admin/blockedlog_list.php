@@ -75,7 +75,7 @@ if (GETPOST('search_endyear') != '') {
 	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'array:alpha');
-$search_module_source = GETPOST('search_module_source', 'array:alpha');
+$search_module_source = GETPOSTISSET('search_module_source') ? GETPOST('search_module_source', 'array:alpha') : (isModEnabled('takepos') ? array('takepos') : array());
 $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_type_code = GETPOST('search_type_code', 'aZ09');
@@ -142,10 +142,10 @@ $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_id = '';
 	$search_fk_user = '';
-	$search_start = -1;
+	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
 	$search_end = -1;
 	$search_code = array();
-	$search_module_source = '';
+	$search_module_source = isModEnabled('takepos') ? array('takepos') : array();
 	$search_pos_source = '';
 	$search_ref = '';
 	$search_type_code = '';			// Type of payment
@@ -312,7 +312,7 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
-print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -357,7 +357,13 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+//print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+print '<input type="text" class="maxwidth100" name="search_module_source" list="search_module_sources" value="'.dol_escape_htmltag($search_module_source[0]).'">';
+if (isModEnabled('takepos')) {
+	print '<datalist id="search_module_sources">
+	    <option value="takepos">
+	</datalist>';
+}
 print '</td>';
 
 // POS source
