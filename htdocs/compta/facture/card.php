@@ -20,6 +20,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Lenin Rivas					<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -723,9 +724,15 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$newremaintopay = $object->getRemainToPay(0);
-				if ($newremaintopay == 0) {
-					$object->setPaid($user);
+				// Only mark as paid when the invoice is already validated. On a still-draft
+				// invoice the discount link reduces the remain_to_pay but the invoice is not
+				// yet a legally issued document (ref is still PROV-...), so closing it would
+				// leave it stuck as paid+PROV (see #37744).
+				if ($object->status == Facture::STATUS_VALIDATED) {
+					$newremaintopay = $object->getRemainToPay(0);
+					if ($newremaintopay == 0) {
+						$object->setPaid($user);
+					}
 				}
 			}
 		}
@@ -1012,7 +1019,7 @@ if (empty($reshook)) {
 		if ($canconvert) {
 			$db->begin();
 
-			$amount_ht = $amount_tva = $amount_ttc = array();
+			$amount_ht = $amount_tva = $amount_ttc = $amount_localtax1 = $amount_localtax2 = array();
 			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
@@ -1029,6 +1036,14 @@ if (empty($reshook)) {
 						$amount_tva[$keyforvatrate] = 0;
 					}
 					$amount_tva[$keyforvatrate] += $line->total_tva;
+					if (!isset($amount_localtax1[$keyforvatrate])) {
+						$amount_localtax1[$keyforvatrate] = 0;
+					}
+					$amount_localtax1[$keyforvatrate] += $line->total_localtax1;
+					if (!isset($amount_localtax2[$keyforvatrate])) {
+						$amount_localtax2[$keyforvatrate] = 0;
+					}
+					$amount_localtax2[$keyforvatrate] += $line->total_localtax2;
 					if (!isset($amount_ttc[$keyforvatrate])) {
 						$amount_ttc[$keyforvatrate] = 0;
 					}
@@ -1051,6 +1066,8 @@ if (empty($reshook)) {
 			'@phan-var-force array<string,float> $amount_ht
 			 @phan-var-force array<string,float> $amount_tva
 			 @phan-var-force array<string,float> $amount_ttc
+			 @phan-var-force array<string,float> $amount_localtax1
+			 @phan-var-force array<string,float> $amount_localtax2
 			 @phan-var-force array<string,float> $multicurrency_amount_ht
 			 @phan-var-force array<string,float> $multicurrency_amount_tva
 			 @phan-var-force array<string,float> $multicurrency_amount_ttc';
@@ -1064,6 +1081,8 @@ if (empty($reshook)) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
+						$amount_localtax1[$vatrate] = price2num($amount_localtax1[$vatrate] * $ratio, 'MU');
+						$amount_localtax2[$vatrate] = price2num($amount_localtax2[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
@@ -1130,6 +1149,10 @@ if (empty($reshook)) {
 				$discount->amount_tva = 0;
 				$discount->amount_ht = $discount->amount_ttc;
 				$discount->tva_tx = 0;
+				$discount->localtax1_tx = 0;
+				$discount->localtax1_type = 0;
+				$discount->localtax2_tx = 0;
+				$discount->localtax2_type = 0;
 				$discount->vat_src_code = '';
 
 				if ($discount->amount_ttc > 0) {
@@ -1149,12 +1172,17 @@ if (empty($reshook)) {
 				}
 
 				foreach ($amount_ht as $tva_tx => $xxx) {
+					// Get localtaxes from TVA tx
+					$taxes = getTaxesFromId($tva_tx, $object->thirdparty, $mysoc, 0);
+
 					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
 						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
 						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
 						$discount->total_ht = -((float) $amount_ht[$tva_tx]);
 						$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->total_localtax1 = -((float) $amount_localtax1[$tva_tx]);
+						$discount->total_localtax2 = -((float) $amount_localtax2[$tva_tx]);
 						$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
 						$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
 						$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
@@ -1169,6 +1197,8 @@ if (empty($reshook)) {
 						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
 						$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
 						$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->total_localtax1 = abs((float) $amount_localtax1[$tva_tx]);
+						$discount->total_localtax2 = abs((float) $amount_localtax2[$tva_tx]);
 						$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
 						$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
 						$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
@@ -1187,6 +1217,10 @@ if (empty($reshook)) {
 					}
 
 					$discount->tva_tx = abs((float) $tva_tx);
+					$discount->localtax1_tx = $taxes['localtax1'];
+					$discount->localtax1_type = $taxes['localtax1_type'];
+					$discount->localtax2_tx = $taxes['localtax2'];
+					$discount->localtax2_type = $taxes['localtax2_type'];
 					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
@@ -1986,6 +2020,12 @@ if (empty($reshook)) {
 										$discount->total_tva = abs($lines[$i]->total_tva);
 										$discount->total_ttc = abs($lines[$i]->total_ttc);
 										$discount->tva_tx = $lines[$i]->tva_tx;
+										$discount->localtax1_tx = $lines[$i]->localtax1_tx;
+										$discount->localtax2_tx = $lines[$i]->localtax2_tx;
+										$discount->localtax1_type = $lines[$i]->localtax1_type;
+										$discount->localtax2_type = $lines[$i]->localtax2_type;
+										$discount->total_localtax1 = abs($lines[$i]->total_localtax1);
+										$discount->total_localtax2 = abs($lines[$i]->total_localtax2);
 										$discount->fk_user = $user->id;
 										$discount->description = $desc;
 										$discount->multicurrency_subprice = abs($lines[$i]->multicurrency_subprice);

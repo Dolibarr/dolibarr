@@ -75,7 +75,7 @@ if (GETPOST('search_endyear') != '') {
 	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'array:alpha');
-$search_module_source = GETPOST('search_module_source', 'array:alpha');
+$search_module_source = GETPOSTISSET('search_module_source') ? GETPOST('search_module_source', 'array:alpha') : (isModEnabled('takepos') ? array('takepos') : array());
 $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_type_code = GETPOST('search_type_code', 'aZ09');
@@ -142,10 +142,10 @@ $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_id = '';
 	$search_fk_user = '';
-	$search_start = -1;
+	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
 	$search_end = -1;
 	$search_code = array();
-	$search_module_source = '';
+	$search_module_source = isModEnabled('takepos') ? array('takepos') : array();
 	$search_pos_source = '';
 	$search_ref = '';
 	$search_type_code = '';			// Type of payment
@@ -312,7 +312,7 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
-print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -357,7 +357,13 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+//print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+print '<input type="text" class="maxwidth100" name="search_module_source" list="search_module_sources" value="'.dol_escape_htmltag($search_module_source[0]).'">';
+if (isModEnabled('takepos')) {
+	print '<datalist id="search_module_sources">
+	    <option value="takepos">
+	</datalist>';
+}
 print '</td>';
 
 // POS source
@@ -435,6 +441,7 @@ print '</tr>';
 
 $checkresult = array();
 $checkdetail = array();
+$checkerror = array();
 $loweridinerror = 0;
 
 if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
@@ -455,6 +462,9 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 
 			$checkresult[$block->id] = $checksignature; // false if error
 			$checkdetail[$block->id] = $tmpcheckresult;
+			if (!empty($tmpcheckresult['error'])) {
+				$checkerror[$block->id] = $tmpcheckresult['error'];
+			}
 
 			if (!$checksignature) {
 				if (empty($loweridinerror)) {
@@ -523,10 +533,14 @@ if (is_array($blocks)) {
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
 			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
 
+			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
+			$total_ht = $total_vat = $total_ttc = 0;
+			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
+
 			// Ref
-			print '<td class="nowraponall"><div class="smallheight">';
+			print '<td class="nowraponall"><div class="smallheight" title="'.dolPrintHTMLForAttribute(price($total_ttc)).'">';
 			if (!empty($block->ref_object)) {
-				print dol_escape_htmltag($block->ref_object);
+				print dolPrintHTML($block->ref_object);
 				if ($block->linktype && $block->linktoref) {
 					if ($block->linktype == 'payment') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("PaymentOf").' '.$block->linktoref.'</span>';
@@ -546,22 +560,12 @@ if (is_array($blocks)) {
 			// Payment mode
 			//print '<td>'.dolPrintHTML($block->type_code).'</td>';
 
-			//$tmpobj = json_decode($block->object_data);
-
-			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
-			$total_ht = $total_vat = $total_ttc = 0;
-			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
-
 			// Amount
 			print '<td class="right nowraponall"><span class="amount">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
-				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
-				if ($ingrey) {
-					print '<span class="opacitymedium">';
-				}
-				print price($total_ttc);
-				if ($ingrey) {
-					print '</span>';
+				$showamount = in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
+				if ($showamount) {
+					print price($total_ttc);
 				}
 			}
 			print '</span></td>';
@@ -584,9 +588,16 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidityButChainIsKo').'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">OK</span>';
+				} elseif ($block->action == 'MODULE_RESET') {
+					// Old action code on old version.
+					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
 				} else {
-					print '<span class="badge badge-status8 badge-status" title="'.$langs->trans('KoCheckFingerprintValidity').'">KO</span>';
+					print '<span class="badge badge-status8 badge-status" title="';
+					if (!empty($checkerror[$block->id])) {
+						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
+					}
+					print dolPrintHTMLForAttribute($langs->trans('KoCheckFingerprintValidity')).'">KO</span>';
 				}
 			} else {
 				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
@@ -600,12 +611,6 @@ if (is_array($blocks)) {
 					}
 				}
 			}
-
-			/*
-			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
-				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
-			}
-			*/
 			print '</td>';
 
 			// Link to debug information object

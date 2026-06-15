@@ -372,8 +372,8 @@ if ($mode == 'overwrite') {
 	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
 	$infoOnTransProcess = info_admin($text);
 
-	$infoOnTransProcess .= '<div class="justify">';
-	$infoOnTransProcess .= '<span class="opacitymedium">';
+	$infoOnTransProcess .= '<div class="justify info">';
+	$infoOnTransProcess .= '<span class="">';
 	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	$infoOnTransProcess .= '</span></div>';
@@ -400,7 +400,7 @@ if ($mode == 'overwrite') {
 	if (isModEnabled('multicompany') && !$user->entity) {
 		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print '<td align="center"></td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 

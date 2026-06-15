@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -43,12 +43,12 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -56,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -116,7 +115,6 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 $object = new Expedition($db);
 $objectorder = new Commande($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -2125,6 +2123,9 @@ if ($action == 'create' && $usercancreate) {
 								$qtylValue = $deliverableQty;
 								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 									$qtylValue = '';
+								} elseif (is_numeric($qtylValue)) {
+									// Render as locale number so GETPOSTFLOAT() on submit reads it back via price2num option=2 without confusing '.' for a thousand separator in es_ES.
+									$qtylValue = price($qtylValue);
 								}
 								print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" class="qtyl right" type="text" size="4" value="' . $qtylValue . '">';
 							} else {
@@ -2268,6 +2269,8 @@ if ($action == 'create' && $usercancreate) {
 									$qtylValue = $deliverableQty;
 									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 										$qtylValue = '';
+									} elseif (is_numeric($qtylValue)) {
+										$qtylValue = price($qtylValue);
 									}
 									print '<input class="qtyl ' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $qtylValue . '">';
 									print '</td>';
@@ -2385,6 +2388,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
@@ -2516,6 +2521,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl right ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '</td>';

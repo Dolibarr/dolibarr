@@ -3661,8 +3661,8 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 }
 .login_table #tdpasswordlogin #togglepassword {
 	position: absolute;
-	top: 0.8em;
-	right: 11px;
+	top: 1.1em;
+	right: 20px;
 	background: none;
 	border: none;
 	opacity: 0.3;
@@ -5956,8 +5956,6 @@ table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 1.1em;
 	text-decoration: none;
-	/* padding-top: 5px;
-	padding-bottom: 5px; */
 	font-weight: 400;
 }
 div.titre.small {
@@ -5969,7 +5967,7 @@ div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
@@ -6036,7 +6034,7 @@ div.backgreypublicpayment {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 25px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

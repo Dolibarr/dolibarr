@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +33,12 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));

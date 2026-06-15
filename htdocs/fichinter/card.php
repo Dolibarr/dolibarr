@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
@@ -40,6 +40,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -64,7 +65,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
@@ -94,10 +94,10 @@ $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalStri
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('interventioncard', 'globalcard'));
+$hookmanager->initHooks(array('fichintercard', 'interventioncard', 'globalcard'));
 
 $object = new Fichinter($db);
-$extrafields = new ExtraFields($db);
+
 $objectsrc = null;
 
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -114,8 +114,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 

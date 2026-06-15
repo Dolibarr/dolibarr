@@ -585,15 +585,17 @@ function ClickProduct(position, qty = 1, qty_std = 0) {
 		if (idproduct == "") {
 			return;
 		}
+
 		addInvoiceLine = function(qty, qty_std_inner = 0) {
 			// Call page invoice.php to generate the section with product lines
-			$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
+			  $("#poslines").load("invoice.php?action=addline&token=<?php echo newToken(); ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty+"&invoiceid="+invoiceid+(qty_std_inner ? '&qty_std=1' : ''), function() {
 				idproduct = "";
 				<?php if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 					echo "CustomerDisplay();";
 				}?>
 			});
 		};
+
 		// call WeighingScale() if product is a product that need to measure weight
 		<?php if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) { ?>
 			if ($('#prodiv'+position).data('unit') == 2) {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
@@ -32,9 +32,8 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");

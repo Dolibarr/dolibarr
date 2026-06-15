@@ -5851,15 +5851,12 @@ table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 14px;
 	text-decoration: none;
-	/*padding-top: 5px;
-	padding-bottom: 5px;*/
 	text-transform: uppercase;
-	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 div.titre.small {
 	font-size: 1em;
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 
@@ -5928,7 +5925,7 @@ span.buttonpaymentsmall {
 	width: 100%;
 	padding: 20px;
 	margin-bottom: 20px;
-	border-radius: 4px;
+	border-radius: 10px;
 }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }

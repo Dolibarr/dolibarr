@@ -217,40 +217,42 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 
 // Show the input of countries not allowed for disabling
-print '<tr class="oddeven">';
-print '<td>';
-print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
-print '</td>';
-print '<td>';
+if ($mysoc->country_code != 'FR' || !isALNERunningVersion()) {
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+	print '</td>';
+	print '<td>';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
-print '<input type="hidden" name="withtab" value="'.$withtab.'">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
+	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
-$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
-$sql .= " WHERE active > 0";
+	$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+	$sql .= " WHERE active > 0";
 
-$countryArray = array();
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+	$countryArray = array();
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+		}
 	}
+
+	$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
+
+	// Can module be disabled
+	$canbedisabled = $block_static->canBeDisabled();
+
+	print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
+	print '</form>';
+
+	print '</td>';
+	print '</tr>';
 }
-
-$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
-
-// Can module be disabled
-$canbedisabled = $block_static->canBeDisabled();
-
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
-print '</form>';
-
-print '</td>';
-
 
 print '<tr class="oddeven">';
 print '<td class="">';
@@ -290,11 +292,71 @@ print ajax_autoselect('forceregistration');
 
 print '<br>';
 
+/*
 $urlforcepushcounter = DOL_MAIN_URL_ROOT.'/index.php?forcepushcounter=1';
 print $langs->trans("URLToForcePushOfBlockedLogCounter").'<br>';
 print '<div class="urllink"><input type="text" id="forcepushcounter" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforcepushcounter.'"><a class="" href="'.$urlforcepushcounter.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcepushcounter');
+*/
 
+$urltogetkeyobfuscation = DOL_MAIN_URL_ROOT.'/blockedlog/admin/blockedlog.php?forcegetkeyobfuscation=1&token='.newToken();
+print $langs->trans("URLToGetObfuscationkey").'<br>';
+print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcegetkeyobfuscation');
+
+if (GETPOST('forcegetkeyobfuscation')) {
+	unset($_SESSION['hmac_secret_key']);
+	unset($conf->cache['hmac_secret_key']);
+
+	$block_static->entity = $conf->entity;
+
+	try {
+		$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
+		print "\n<!-- READ TO GET HMAC KEY RETURNED result: ".$hmac_encoded_secret_key." -->\n";
+	} catch (Exception $e) {
+		print '<div class="error">'.$e->getMessage().'</div>';
+	}
+
+	try {
+		$obfuscationkey = $block_static->getObfuscationKey();					// Note: use the $mysoc->idprof1 and $registrationnumber. On network trouble, an Exception is thrown to the caller
+		print "\n<!-- API TO GET REMOTE OBFUSCATION KEY RETURNED result: ".$obfuscationkey." -->\n";
+	} catch (Exception $e) {
+		print '<div class="error">'.$e->getMessage().'</div>';
+	}
+
+	// Now test the keyfor debug purpose..
+
+	// Decode the encrypted parameter using the obfuscation key to get the HMAC key in memory.
+	$hmac_secret_key = $block_static->dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey);
+
+	if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+		print '<!-- Failed to decode the encoded HMAC key using the remote obfuscation key -->';
+		// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with previous versions).
+		// Example with the old demo sample database:
+		//  dolcrypt:AES-256-CTR:46cb611f00c4cff8:XVfEh15vX/JOYmpiw2QPNamcTQwdbBZJTcXBh9rMpzYJOpVPZubIWcgA8wHMXA==
+		//  instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0
+		//  HMAC key=BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A
+
+		// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+		$oldobfuscationkey = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
+
+		$hmac_secret_key = $block_static->dolDecodeHMACKey($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
+
+		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+			//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+			print '<!-- HMAC key can t be decoded -->';
+		} else {	// $hmac_secret_key start with 'BLOCKEDLOGHMAC...' so it is a valid value
+			print '<!-- Success to decode HMAC key. It is encrypted with an old obfuscation method, we migrate it. -->';
+			print '<!-- '.$hmac_secret_key.' -->';
+			if ($obfuscationkey) {
+				$result = $block_static->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		// gitleaks:allow  Save the HMAC key
+				print '<!-- Result to save the new HMAC key: '.$result.' -->';
+			}
+		}
+	} else {
+		print '<!-- Success to decode HMAC key from the remote obfuscation key, nothing to do more -->';
+	}
+}
 
 
 if ($withtab) {

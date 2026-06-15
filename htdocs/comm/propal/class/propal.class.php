@@ -20,7 +20,7 @@
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
- *
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -568,6 +568,10 @@ class Propal extends CommonObject
 			$line->desc = $remise->description; // Line Description
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
+			$line->localtax1_tx = $remise->localtax1_tx;
+			$line->localtax1_type = $remise->localtax1_type;
+			$line->localtax2_tx = $remise->localtax1_tx;
+			$line->localtax2_type = $remise->localtax1_type;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Product Id predefined
 			$line->qty = 1;
@@ -578,6 +582,8 @@ class Propal extends CommonObject
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
+			$line->total_localtax1 = -(float) $remise->total_localtax1;
+			$line->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -808,6 +814,8 @@ class Propal extends CommonObject
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->total_ht = (float) $total_ht;
@@ -1040,6 +1048,8 @@ class Propal extends CommonObject
 			$this->line->localtax2_type 	= empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= (float) $pu_ht;
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc		= ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->info_bits			= $info_bits;
 
 			$this->line->total_ht			= (float) $total_ht;
@@ -1966,7 +1976,7 @@ class Propal extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
+		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.subprice_ttc, d.fk_product,';
 		$sql .= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
 		$sql .= ' d.fk_unit,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
@@ -1984,7 +1994,7 @@ class Propal extends CommonObject
 		if ($sqlforgedfilters) {
 			$sql .= $sqlforgedfilters;
 		}
-		$sql .= ' ORDER by d.rang';
+		$sql .= ' ORDER BY d.rang, d.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2014,6 +2024,7 @@ class Propal extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice         = $objp->subprice;
+				$line->subprice_ttc     = $objp->subprice_ttc;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
 
