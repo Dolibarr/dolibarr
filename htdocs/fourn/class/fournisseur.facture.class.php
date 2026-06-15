@@ -1277,6 +1277,15 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(dol_strlen((string) $this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen((string) $this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		// Only write tms explicitly when the caller wants to import a specific
+		// modification date. Falling back to $this->tms (the value that was
+		// previously fetched into memory) would defeat the ON UPDATE
+		// CURRENT_TIMESTAMP defined on llx_facture_fourn.tms and freeze the
+		// modification date at the loaded value, so a UI edit that does not
+		// touch date_modification would never refresh tms (#31531).
+		if (dol_strlen((string) $this->date_modification) != 0) {
+			$sql .= " tms='".$this->db->idate($this->date_modification)."',";
+		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " paye=".(isset($this->paid) ? ((int) $this->paid) : "0").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
