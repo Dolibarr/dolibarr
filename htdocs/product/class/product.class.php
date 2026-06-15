@@ -6682,37 +6682,40 @@ class Product extends CommonObject
 				}
 			}
 
-			if (!empty($stockByComponentList)) {
-				foreach ($stockByComponentList as $componentId => $stockByComponentArr) {
-					if (!isset($productCachedList[$componentId])) {
-						$componentStatic = new self($this->db);
-						$componentStatic->fetch($componentId);
-						$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
-						$productCachedList[$componentId] = $componentStatic;
-					}
-					$component = $productCachedList[$componentId];
+			if (empty($stockByComponentList)) {
+				$this->load_stock($option);
+				return 1;
+			}
+
+			foreach ($stockByComponentList as $componentId => $stockByComponentArr) {
+				if (!isset($productCachedList[$componentId])) {
+					$componentStatic = new self($this->db);
+					$componentStatic->fetch($componentId);
+					$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+					$productCachedList[$componentId] = $componentStatic;
+				}
+				$component = $productCachedList[$componentId];
 
 
-					if ($component->stock_reel < $stockByComponentArr['qty_need']) {
-						// not enough stock for this component to assemble this virtual product
-						$error++;
-						$this->error = 'Not enough component [id='.$componentId.'] in stock, real='.$component->stock_reel.' and need='.$stockByComponentArr['qty_need'];
-						$this->errors[] = $this->error;
-						dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
-					} else {
-						if (!empty($component->stock_warehouse)) {
-							foreach ($component->stock_warehouse as $warehouseId => $warehouseObj) {
-								$kitWarehouseAvailable = new stdClass();
-								$kitWarehouseAvailable->id = $warehouseObj->id;
-								$kitWarehouseAvailable->real = $qtyWish;
-								$this->stock_warehouse[$warehouseId] = $kitWarehouseAvailable;
-							}
+				if ($component->stock_reel < $stockByComponentArr['qty_need']) {
+					// not enough stock for this component to assemble this virtual product
+					$error++;
+					$this->error = 'Not enough component [id='.$componentId.'] in stock, real='.$component->stock_reel.' and need='.$stockByComponentArr['qty_need'];
+					$this->errors[] = $this->error;
+					dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+				} else {
+					if (!empty($component->stock_warehouse)) {
+						foreach ($component->stock_warehouse as $warehouseId => $warehouseObj) {
+							$kitWarehouseAvailable = new stdClass();
+							$kitWarehouseAvailable->id = $warehouseObj->id;
+							$kitWarehouseAvailable->real = $qtyWish;
+							$this->stock_warehouse[$warehouseId] = $kitWarehouseAvailable;
 						}
 					}
+				}
 
-					if ($error) {
-						break;
-					}
+				if ($error) {
+					break;
 				}
 			}
 		}
