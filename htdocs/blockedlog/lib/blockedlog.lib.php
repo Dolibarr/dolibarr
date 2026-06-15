@@ -426,7 +426,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 
 		$data .= '&entity='.(int) $conf->entity;
 
-		$data .= '&profid1='.urlencode(dol_sanitizeKeyCode($idprof1));
+		$data .= '&company_idprof1='.urlencode(dol_sanitizeKeyCode($idprof1));
 		$data .= '&registrationnumber='.urlencode(dol_sanitizeKeyCode($registrationnumber));
 
 		$addheaders = array();
