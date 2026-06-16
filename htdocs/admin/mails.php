@@ -697,8 +697,6 @@ if ($action == 'edit') {
 	}
 
 	print '</div>';
-	//print "<br>\n";
-	//print "<br>\n";
 	print "<br>\n";
 
 

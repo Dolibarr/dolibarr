@@ -583,8 +583,6 @@ if ($action == 'edit') {
 		}
 	}
 	print '</div>';
-	//print "<br>\n";
-	//print "<br>\n";
 	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
