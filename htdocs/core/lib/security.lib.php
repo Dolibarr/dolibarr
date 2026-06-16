@@ -105,7 +105,7 @@ function dol_decode($chain, $key = '1')
  */
 function dolGetRandomBytes($length)
 {
-	if (function_exists('random_bytes')) {	// Available with PHP 7 only.
+	if (function_exists('random_bytes')) {	// Available with PHP 7+ only.
 		return bin2hex(random_bytes((int) floor($length / 2)));	// the bin2hex will double the number of bytes so we take length / 2
 	}
 

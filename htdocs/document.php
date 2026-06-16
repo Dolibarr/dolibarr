@@ -399,7 +399,7 @@ if ($modulepart == 'facture') {
 		// We are on the download or print of the main document
 		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
 			$action = 'DOC_DOWNLOAD';
-			if (GETPOSTISSET('attachement')) {
+			if (GETPOSTISSET('attachement') || GETPOST('preview')) {
 				$action = 'DOC_PREVIEW';
 			}
 

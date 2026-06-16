@@ -24,6 +24,8 @@
  *  			because it is used at low code level.
  */
 
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 
 /**
  * Return if we are using a HTTPS connection
@@ -44,8 +46,6 @@ function isHTTPS()
 	return $isSecure;
 }
 
-define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
-
 /**
  *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
@@ -54,7 +54,7 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *	@param   string		$chain				String to encode
  *	@param   string		$key				If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering			Default ciphering algorithm
- *  @param	 string		$forceseed			To force the seed
+ *  @param	 string		$forceseed			To force the seed. Keep always empty on new versions.
  *  @param	 string		$obfuscationmode	'dolcrypt' or 'dolobfuscatev1'
  *	@return  string							Encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
@@ -70,14 +70,13 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
 	}
 
 	$reg = array();
-	if (preg_match('/^(dolobfuscatev1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^(dolobfuscationv1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
 		// The $chain is already an encrypted string
 		return $chain;
 	}
 
 	if (empty($key)) {		// This may happen only with $obfuscationmode = 'dolcrypt'
-		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+		if (!empty($conf->file->dolcrypt_key)) {	// This code was to prepare a renaming of option but has been abandoned. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
