@@ -1653,7 +1653,7 @@ class BlockedLog
 	 * @param	string	$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
 	 * @param	string	$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
 	 * @param	string	$obfuscationkey			Obfuscation key
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								Return int <0 if KO, >0 if OK
 	 */
 	public function saveHMACSecretKey($hmac_secret_key, $obfuscationmode, $obfuscationkey)
 	{
