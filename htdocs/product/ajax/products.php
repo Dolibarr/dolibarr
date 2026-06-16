@@ -286,6 +286,10 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
+			// Return the product's default measuring unit so the order/proposal/invoice
+			// line form can preselect it when the user picks a product, instead of
+			// always falling back to the first entry of llx_c_units (issue #34610).
+			'fk_unit' => $object->fk_unit,
 			'array_options'=>$object->array_options
 		);
 	}

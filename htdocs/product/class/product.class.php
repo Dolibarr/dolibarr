@@ -1026,6 +1026,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 		// Barcode value
 		$this->barcode = trim($this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
@@ -1440,6 +1453,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 
 		$this->db->begin();
 
@@ -1454,7 +1480,8 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
+			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
 				$this->oldcopy = dol_clone($this, 1);
 			}
 			// Test if batch management is activated on existing product

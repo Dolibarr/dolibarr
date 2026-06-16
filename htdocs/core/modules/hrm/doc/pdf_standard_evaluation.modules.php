@@ -167,14 +167,14 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 		if ($conf->hrm->dir_output) {
 			// Definition of $dir and $file
+			$entity = isset($object->entity) ? $object->entity : 1;
+			$basedir = empty($conf->hrm->multidir_output[$entity]) ? $conf->hrm->dir_output : $conf->hrm->multidir_output[$entity];
 			if ($object->specimen) {
-				//$dir = $conf->hrm->dir_output;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation';
+				$dir = $basedir.'/evaluation';
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				//$dir = $conf->hrm->dir_output."/".$objectref;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation'."/".$objectref;
+				$dir = $basedir.'/evaluation'."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
