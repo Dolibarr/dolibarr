@@ -58,6 +58,7 @@
  * @var int[] $toselect
  * @var int[] $arrayofselected
  * @var ?string $search_all
+ * @var ?string $param
  */
 '
 @phan-var-force string $string
@@ -72,13 +73,20 @@
 @phan-var-force string $trackid
 @phan-var-force string $modelmail
 @phan-var-force ?string $search_all
+@phan-var-force ?string $param
 @phan-var-force ?Task $taskstatic
 ';
 
 if (!empty($sall) || !empty($search_all)) {
 	$search_all = empty($sall) ? $search_all : $sall;
-
-	print '<input type="hidden" name="search_all" value="'.$search_all.'">';
+	$arraySearch = explode('&', $param);
+	foreach ($arraySearch as $value) {
+		$searchValue = explode('=', $value);
+		if (strpos($searchValue[0], 'search_') !== false &&$searchValue[1] != -1) {
+			print '<input type="hidden" name="search_all" value="'.$search_all.'">';
+			break;
+		}
+	}
 }
 
 if ($massaction == 'predeletedraft') {
