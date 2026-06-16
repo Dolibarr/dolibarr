@@ -326,7 +326,7 @@ print ajax_autoselect('forcepushcounter');
 
 $urltogetkeyobfuscation = DOL_MAIN_URL_ROOT.'/blockedlog/admin/blockedlog.php?forcegetkeyobfuscation=1&token='.newToken();
 print $langs->trans("URLToGetObfuscationkey").'<br>';
-print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="reposition" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcegetkeyobfuscation');
 
 if (GETPOST('forcegetkeyobfuscation')) {
