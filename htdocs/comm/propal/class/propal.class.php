@@ -640,6 +640,7 @@ class Propal extends CommonObject
 	 * 		@param		float			$pu_ht_devise		Unit price in currency
 	 * 		@param		int    			$fk_remise_except	Id discount if line is from a discount
 	 *  	@param		int				$noupdateafterinsertline	No update after insert of line
+	 *      @param		int				$is_option			1 if the line is an option (kept with a real quantity but excluded from document totals)
 	 *    	@return    	int         		    			Return >0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
@@ -670,7 +671,8 @@ class Propal extends CommonObject
 		$origin_id = 0,
 		$pu_ht_devise = 0,
 		$fk_remise_except = 0,
-		$noupdateafterinsertline = 0
+		$noupdateafterinsertline = 0,
+		$is_option = 0
 	) {
 		global $mysoc, $langs;
 
@@ -824,6 +826,7 @@ class Propal extends CommonObject
 			$this->line->total_localtax2 = (float) $total_localtax2;
 			$this->line->total_ttc = (float) $total_ttc;
 			$this->line->special_code = $special_code;
+			$this->line->is_option = ($is_option ? 1 : 0);
 			$this->line->fk_parent_line = $fk_parent_line;
 			$this->line->fk_unit = $fk_unit;
 
@@ -843,11 +846,6 @@ class Propal extends CommonObject
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// Set the line as optional
-			if (empty($qty) && empty($special_code)) {
-				$this->line->special_code = 3;
-			}
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -930,9 +928,10 @@ class Propal extends CommonObject
 	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		int				$notrigger			Disable line update trigger
 	 *	@param      int				$rang   			Line rank
+	 *  @param		int				$is_option			1 if the line is an option (kept with a real quantity but excluded from document totals)
 	 *  @return     int     							Return 0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0, $is_option = 0)
 	{
 		global $mysoc, $langs;
 
@@ -951,12 +950,6 @@ class Propal extends CommonObject
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
 		$pa_ht = price2num($pa_ht);  // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
-		if (empty($qty) && empty($special_code)) {
-			$special_code = 3; // Set option tag
-		}
-		if (!empty($qty) && $special_code == 3) {
-			$special_code = 0; // Remove option tag
-		}
 		if (empty($type)) {
 			$type = 0;
 		}
@@ -1058,6 +1051,7 @@ class Propal extends CommonObject
 			$this->line->total_localtax2	= (float) $total_localtax2;
 			$this->line->total_ttc			= (float) $total_ttc;
 			$this->line->special_code = $special_code;
+			$this->line->is_option = ($is_option ? 1 : 0);
 			$this->line->fk_parent_line		= $fk_parent_line;
 			$this->line->skip_update_total = $skip_update_total;
 			$this->line->fk_unit = $fk_unit;
@@ -1396,7 +1390,8 @@ class Propal extends CommonObject
 							$originid,
 							0,
 							0,
-							1
+							1,
+							(empty($line->is_option) ? 0 : 1)
 						);
 
 						if ($result < 0) {
@@ -1952,7 +1947,7 @@ class Propal extends CommonObject
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.subprice_ttc, d.fk_product,';
-		$sql .= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,';
+		$sql .= ' d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.is_option, d.rang, d.product_type,';
 		$sql .= ' d.fk_unit,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
@@ -2015,6 +2010,7 @@ class Propal extends CommonObject
 				$line->marge_tx			= $marginInfos[1];
 				$line->marque_tx		= $marginInfos[2];
 				$line->special_code     = $objp->special_code;
+				$line->is_option        = (int) $objp->is_option;
 				$line->rang             = $objp->rang;
 
 				$line->fk_product       = $objp->fk_product;
