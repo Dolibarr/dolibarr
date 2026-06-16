@@ -170,7 +170,7 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $user;
+		global $conf, $mysoc, $user;
 
 		$sql = array();
 
@@ -184,6 +184,7 @@ class modBlockedLog extends DolibarrModules
 			exit;
 		}
 
+		// If we are here, it means the registration has been done.
 
 		$this->db->begin();
 
@@ -197,15 +198,20 @@ class modBlockedLog extends DolibarrModules
 			return 0;
 		}
 
-		// Create HMAC if it does not exists yet
+		// Generate and save the HMAC key if it does not exists yet
 		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+
 		if (empty($hmac_encoded_secret_key)) {
-			// Add key
-			$randomsecret = bin2hex(random_bytes(32)); // 64 char hex - 256 bits
+			// No key yet, we generate one.
+			$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
-			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+			//$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
 
-			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+			$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory. If not found, it will be created.
+
+			$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
+			//$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
 
 			if ($result < 0) {
 				dol_print_error($this->db);
@@ -214,7 +220,7 @@ class modBlockedLog extends DolibarrModules
 				return 0;
 			}
 		} else {
-			// Decode the HMAC key
+			// Decode the existing HMAC key to check it is valid
 			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
 
 			if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
@@ -352,7 +358,15 @@ class modBlockedLog extends DolibarrModules
 			// Special message for France
 			if ($mysoc->country_code == 'FR') {
 				$islne = isALNEQualifiedVersion(1, 1);
-				$versionbadge = '<span class="badge-text badge-secondary">'.DOL_VERSION.'</span>';
+
+				$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+				/*
+				if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
+					// Can add an edditional mention
+					$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
+				}
+				*/
+				$versionbadge .= '</span>';
 				if ($islne) {
 					if (preg_match('/\-/', DOL_VERSION)) {
 						// This is an alpha or beta version

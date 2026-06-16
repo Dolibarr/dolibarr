@@ -79,10 +79,10 @@ if (GETPOST('cancel', 'alpha')) {
 
 if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
-		if (!$account_number) {
+		if ((string) $account_number === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
 			$action = 'create';
-		} elseif (!$label) {
+		} elseif ((string) $label === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 		} else {
@@ -134,10 +134,10 @@ if ($action == 'add' /* && $user->hasRight('accounting', 'chartofaccount') // al
 	}
 } elseif ($action == 'edit' /* && $user->hasRight('accounting', 'chartofaccount') // already checked */) {
 	if (!$cancel) {
-		if (!$account_number) {
+		if ((string) $account_number === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
 			$action = 'update';
-		} elseif (!$label) {
+		} elseif ((string) $label === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'update';
 		} else {

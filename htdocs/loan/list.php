@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024  Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  *
@@ -26,8 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -35,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta", "loan"));

@@ -71,8 +71,8 @@ $fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));

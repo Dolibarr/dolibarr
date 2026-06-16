@@ -1403,7 +1403,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").removeClass("hidden").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery(".divattachnewfile input[type=\'file\']").first().click();} void(0);';	// scope file picker click to the just-shown form to avoid triggering native file dialog twice when other input[type=file] exist on the page; removeClass keeps the toggle effective when a theme stylesheet ships a `.hidden { display: none !important }` rule (see #34780, #36782)
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 

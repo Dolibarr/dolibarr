@@ -5,7 +5,7 @@
  * Copyright (C) 2016	    Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025	    William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,7 @@ class DolibarrApi
 			}
 			if (in_array($field, array('specimen'))) {
 				// Allowed but not used
+				dol_syslog('Debug API _checkValForAPI, found use of field specimen', LOG_DEBUG, 0, '_api');
 			}
 
 			// Sanitize the value using its type declared into ->fields of $object
@@ -199,10 +200,10 @@ class DolibarrApi
 				if (strpos($typeOfExtraField, 'int') || strpos($typeOfExtraField, 'double') || in_array($typeOfExtraField, array('real', 'price', 'stock'))) {
 					return sanitizeVal($value, 'int');
 				}
-				if ($object->array_options[$field]['type'] == 'html') {
+				if ($typeOfExtraField == 'html') {
 					return sanitizeVal($value, 'restricthtml');
 				}
-				if ($object->array_options[$field]['type'] == 'select') {
+				if ($typeOfExtraField == 'select') {
 					// TODO Check values are in the list of possible 'options'
 					return sanitizeVal($value, 'alphanohtml');
 				}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -27,6 +27,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -79,9 +80,8 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Fichinter($db);
-$extrafields = new ExtraFields($db);
 
-$hookmanager->initHooks(array('myobjectagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('fichinteragenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -92,8 +92,8 @@ $permissiontoread = $user->hasRight("fichinter", "lire");
 $permissiontoadd = $user->hasRight("fichinter", "creer");
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'ficheinter', $object->id, 'fichinter', '', 'fk_soc', 'rowid', $isdraft);

@@ -761,7 +761,7 @@ if (empty($reshook)) {
 
 		$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty') : 1;
+		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty', '', GETPOSTINT('qty_std') ? 1 : 2) : 1;
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];

@@ -792,6 +792,10 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+// Same check as the email templates editor in admin/mails_templates.php so the
+// local media browser is shown consistently in both places.
+$acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
+
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader(
 	'',
@@ -957,7 +961,7 @@ if ($action == 'create') {	// aaa
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -1438,7 +1442,7 @@ if ($action == 'create') {	// aaa
 				$readonly = 1;
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%', $readonly);
 				$doleditor->Create();
 			} else {
 				print dol_htmlentitiesbr($object->body);
@@ -1724,19 +1728,19 @@ if ($action == 'create') {	// aaa
 						$object->body = '<div style="background-color: #'.$object->bgcolor.'; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; margin-top:-10px; padding: 10px;">'.$object->body.'</div>';
 					}
 				}
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edittxt') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 0, 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 0, 20, '100%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml') {
 				// HTML source editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, 'ace', 20, '100%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, $acceptlocallinktomedia, 'ace', 20, '100%');
 				$doleditor->Create(0, '', false, 'HTML Source', 'php');
 			}
 

@@ -39,6 +39,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -900,7 +901,7 @@ class Reception extends CommonObject
 				// qty wished in origin (purchase order, ...)
 				foreach ($this->origin_object->lines as $origin_line) {
 					// exclude lines not qualified for reception
-					if ((!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') && $origin_line->product_type > 0) || $origin_line->product_type > 1) {
+					if (($origin_line->product_type > 0 && (!getDolGlobalInt('STOCK_SUPPORTS_SERVICES') || empty($origin_line->stockable_product))) || $origin_line->product_type > 1) {
 						continue;
 					}
 					if (array_key_exists($origin_line->fk_product, $qty_wished)) {
