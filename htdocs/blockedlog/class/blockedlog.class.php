@@ -1766,7 +1766,7 @@ class BlockedLog
 			}
 		}
 
-		return $obfuscationkey;
+		return (string) $obfuscationkey;
 	}
 
 	/**
