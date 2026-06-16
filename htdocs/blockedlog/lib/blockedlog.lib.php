@@ -147,7 +147,6 @@ function isRegistrationDataSaved()
 	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
 		return false;
 	}
-
 	/*
 	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
 
@@ -205,7 +204,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return 'CERTIF_LNE_IS_2';
 	}
 
-	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version, it can't be the certified versions.
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version (dev version), it can't be the certified versions.
 		return '';
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -218,14 +217,14 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return '';
 	}
 
-	// all conditions are ok to become a LNE certified version
+	// All conditions are ok to become a LNE certified version
 	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');
 }
 
 
 /**
  * Return if the application is executed with the LNE requirements on.
- * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
+ * This function can be used to block some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
  * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done and we suppose it is true.
  * @return 	boolean								True or false

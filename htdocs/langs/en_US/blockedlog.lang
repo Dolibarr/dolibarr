@@ -174,3 +174,4 @@ UseThisFormToUpdate=Use this form to update your registration information
 ControlFile=Checking the file
 ControlSignals=Checking signals
 OtherControl=Other checks
+ErrorFailedToGetObfuscationKey=Failed to get the obfuscation key from the Dolibarr server. Thanks to retry later.

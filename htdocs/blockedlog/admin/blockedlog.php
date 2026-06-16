@@ -242,7 +242,7 @@ print '</td></tr>';
 
 
 // Show the input of countries not allowed for disabling
-if ($mysoc->country_code != 'FR' || !isALNERunningVersion()) {
+if ($mysoc->country_code != 'FR' || !isALNERunningVersion() || constant('CERTIF_LNE') != '1') {
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
