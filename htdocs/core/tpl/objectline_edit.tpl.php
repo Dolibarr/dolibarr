@@ -214,6 +214,13 @@ $coldisplay++;
 		}
 	}
 
+	// Option flag (proposals only): line kept with a real quantity but excluded from document totals
+	if ($object->element == 'propal') {
+		$lineisoptionchecked = GETPOSTISSET('is_option') ? GETPOSTINT('is_option') : (!empty($line->is_option) ? 1 : 0);
+		print '<div class="clearboth"></div>';
+		print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.($lineisoptionchecked ? ' checked="checked"' : '').'> '.dol_escape_htmltag($langs->trans('LineIsOption')).'</label>';
+	}
+
 	// Show autofill date for recurring invoices
 	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
 		if ($line->element == 'invoice_supplier_det_rec') {

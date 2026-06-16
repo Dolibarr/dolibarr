@@ -466,7 +466,9 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
-if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
+// Option line detection: is_option is the source of truth (proposals), legacy special_code=3 tolerated for backward compatibility
+$lineisoption = (!empty($line->is_option) || $line->special_code == 3);
+if ((($line->info_bits & 2) != 2) && !$lineisoption) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
@@ -517,7 +519,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print $label;
 	print '</td>';
 }
-if (!empty($line->remise_percent) && $line->special_code != 3) {
+if (!empty($line->remise_percent) && !$lineisoption) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -564,7 +566,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($line->special_code == 3) {
+if ($lineisoption) {
 	$coldisplay++;
 	$colspanOptions	= '';
 	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
