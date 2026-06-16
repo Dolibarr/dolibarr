@@ -872,6 +872,7 @@ print '<input type="text" class="minwidth500 valignmiddle" name="exampletodecryp
 print '<input type="submit" class="reposition button small smallpaddingimp valignmiddle" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
+	$decryptedstring = $exampletodecrypt;
 	if (preg_match('/^dolobfuscationv1/', $exampletodecrypt)) {
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($db);

@@ -57,7 +57,7 @@ function isValidLuhn($str)
  *  @return		boolean						True if valid, False otherwise
  *  @since		Dolibarr V20
  */
-function isValidSiren($siren, $lengthonly = false)
+function isValidSiren($siren, $lengthonly = 0)
 {
 	$siren = trim($siren);
 	$siren = preg_replace('/(\s)/', '', $siren);
@@ -78,7 +78,7 @@ function isValidSiren($siren, $lengthonly = false)
  *  @return		boolean						True if valid, False otherwise
  *  @since		Dolibarr V20
  */
-function isValidSiret($siret, $lengthonly = false)
+function isValidSiret($siret, $lengthonly = 0)
 {
 	$siret = trim($siret);
 	$siret = preg_replace('/(\s)/', '', $siret);
@@ -258,7 +258,7 @@ function isValidTinForES($str)
  *  @param  int			$lenghtonly		Make surface test only (length, ...)
  *  @return int             			Return integer <=0 if KO, >0 if OK
  */
-function isValidProfIds($idprof, $thirdparty, $lenghtonly = false)
+function isValidProfIds($idprof, $thirdparty, $lenghtonly = 0)
 {
 	$ok = 1;
 

@@ -381,12 +381,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formadmin = new FormAdmin($db);
 
-print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
+print load_fiche_titre($form->textwithpicto($langs->trans("GUISetup"), $langs->trans("DisplayDesc")), '', 'title_setup');
 
-print '<div class="info nomargintop nomarginbottom">'.$langs->trans("DisplayDesc")."</div>\n";
-print '<br>';
 
-//WYSIWYG Editor
+// WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 print '<form enctype="multipart/form-data" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
