@@ -1389,6 +1389,33 @@ class pdf_azur extends ModelePDFPropales
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc, 0, $outputlangs), $useborder, 'R', true);
+
+				// Totals including option lines (proposals only, shown only when at least one option line exists)
+				$optTotals = pdf_getTotalsIncludingOptions($object);
+				if (!empty($optTotals['hasoption'])) {
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->SetTextColor(0, 0, 60);
+					$pdf->SetFillColor(255, 255, 255);
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTIncludingOptions"), 0, 'L', false);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ht'], 0, $outputlangs), 0, 'R', false);
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalVATIncludingOptions"), 0, 'L', false);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['tva'], 0, $outputlangs), 0, 'R', false);
+
+					$index++;
+					$pdf->SetFillColor(224, 224, 224);
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTCIncludingOptions"), $useborder, 'L', true);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ttc'], 0, $outputlangs), $useborder, 'R', true);
+				}
 			}
 		}
 

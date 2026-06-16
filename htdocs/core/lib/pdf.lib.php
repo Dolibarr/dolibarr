@@ -2567,7 +2567,7 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2607,7 +2607,7 @@ function pdf_getlineqty_asked($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2647,7 +2647,7 @@ function pdf_getlineqty_shipped($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2687,7 +2687,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2772,7 +2772,7 @@ function pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2815,7 +2815,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
@@ -2847,6 +2847,52 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 		}
 	}
 	return $result;
+}
+
+/**
+ *	Return whether a document line must be rendered as an option.
+ *	Phase N: is_option is the source of truth (proposals), legacy special_code=3 is tolerated for backward compatibility.
+ *
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object		Object
+ *	@param	int			$i					Current line number
+ *	@return	bool							True if the line is an option
+ */
+function pdf_isoptionline($object, $i)
+{
+	if (empty($object->lines[$i])) {
+		return false;
+	}
+	return !empty($object->lines[$i]->is_option) || (int) $object->lines[$i]->special_code === 3;
+}
+
+/**
+ *	Compute document totals including option lines (HT, VAT, TTC), honouring multicurrency.
+ *	Used to display a "including options" total block on proposal PDFs.
+ *
+ *	@param	Propal|Commande|Facture		$object		Object with ->lines
+ *	@return	array{ht:float,tva:float,ttc:float,hasoption:bool}	Totals including options and whether at least one option line exists
+ */
+function pdf_getTotalsIncludingOptions($object)
+{
+	$ht = 0.0;
+	$tva = 0.0;
+	$ttc = 0.0;
+	$hasoption = false;
+
+	$usemulti = (isModEnabled('multicurrency') && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1);
+
+	if (!empty($object->lines) && is_array($object->lines)) {
+		foreach ($object->lines as $i => $line) {
+			$ht  += (float) ($usemulti ? $line->multicurrency_total_ht  : $line->total_ht);
+			$tva += (float) ($usemulti ? $line->multicurrency_total_tva : $line->total_tva);
+			$ttc += (float) ($usemulti ? $line->multicurrency_total_ttc : $line->total_ttc);
+			if (pdf_isoptionline($object, $i)) {
+				$hasoption = true;
+			}
+		}
+	}
+
+	return array('ht' => $ht, 'tva' => $tva, 'ttc' => $ttc, 'hasoption' => $hasoption);
 }
 
 /**
@@ -2884,7 +2930,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if (!empty($object->lines[$i]) && $object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
@@ -2934,7 +2980,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		}
 	}
 	if (empty($reshook)) {
-		if ($object->lines[$i]->special_code == 3) {
+		if (pdf_isoptionline($object, $i)) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
@@ -3197,7 +3243,7 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 		$sign = -1;
 	}
-	if ($object->lines[$i]->special_code == 3) {
+	if (pdf_isoptionline($object, $i)) {
 		// If option
 		return $outputlangs->transnoentities("Option");
 	} else {
