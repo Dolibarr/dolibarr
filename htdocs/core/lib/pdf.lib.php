@@ -2293,7 +2293,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	// Use a filled tag (not just bold text) so the status reads as distinct and survives black & white printing.
 	if (!empty($object->lines[$i]->is_option)) {
 		$optionlabel = dol_escape_htmltag($outputlangs->transnoentities('LineIsOption'));
-		$libelleproduitservice .= '<br><span style="background-color:#EAEAEA;color:#555555;"><b>&nbsp;'.$optionlabel.'&nbsp;</b></span>';
+		$libelleproduitservice .= '<br><span style="background-color:#EAEAEA;color:#555555;font-size:7.5pt;"><b>&nbsp;'.$optionlabel.'&nbsp;</b></span>';
 	}
 
 	return $libelleproduitservice;
