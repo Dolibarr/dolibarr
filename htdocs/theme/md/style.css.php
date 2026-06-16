@@ -4353,8 +4353,8 @@ a.tab:hover
 	/*
 	background: var(--colorbacktabcard1) url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png', 1); ?>) 50% 0 repeat-x;
 	color: var(--colortextbacktab);
-	*/
 	text-decoration: underline;
+	*/
 }
 a.tabimage {
 	color: #434956;
@@ -5851,15 +5851,12 @@ table.table-fiche-title tr.toptitle {
 div.titre {
 	font-size: 14px;
 	text-decoration: none;
-	/*padding-top: 5px;
-	padding-bottom: 5px;*/
 	text-transform: uppercase;
-	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
 div.titre.small {
 	font-size: 1em;
 }
-div.titre {
+div.titre, tr.liste_titre .print-barre-liste {
 	color: var(--colortexttitlenotab);
 }
 

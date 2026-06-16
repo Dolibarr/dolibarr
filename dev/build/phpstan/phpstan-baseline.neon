@@ -3421,12 +3421,6 @@ parameters:
 			path: ../../../htdocs/core/lib/agenda.lib.php
 
 		-
-			message: '#^Variable \$s might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/lib/bank.lib.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
@@ -4513,12 +4507,6 @@ parameters:
 			path: ../../../htdocs/cron/class/cronjob.class.php
 
 		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/cron/list.php
-
-		-
 			message: '#^Variable \$baseUri in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -4861,12 +4849,6 @@ parameters:
 			path: ../../../htdocs/fichinter/card-rec.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fichinter/card-rec.php
-
-		-
 			message: '#^Call to function is_object\(\) with FichinterLigne will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -5063,12 +5045,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
 
 		-
 			message: '#^Call to function method_exists\(\) with FactureFournisseur and ''setCategories'' will always evaluate to true\.$#'
@@ -6567,12 +6543,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
-
-		-
-			message: '#^Variable \$backtopageforcancel might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/inventory/card.php
 
@@ -8173,34 +8143,10 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_applications.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_note.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -8260,12 +8206,6 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
-			path: ../../../htdocs/salaries/list.php
-
-		-
-			message: '#^Variable \$selected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/salaries/list.php
 
 		-
