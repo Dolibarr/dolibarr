@@ -381,10 +381,9 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formadmin = new FormAdmin($db);
 
-print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
+print load_fiche_titre($form->textwithpicto($langs->trans("GUISetup"), $langs->trans("DisplayDesc")), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n";
-print "<br>\n";
+//print '<div class="info"><span class="">'.$langs->trans("DisplayDesc")."</span></div><br>\n";
 
 //WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
