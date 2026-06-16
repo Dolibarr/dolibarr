@@ -54,8 +54,8 @@ create table llx_propaldet
     buy_price_ht					double(24,8)    DEFAULT 0,      -- buying price
     fk_product_fournisseur_price	integer         DEFAULT NULL,   -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
 
-    special_code					integer         DEFAULT 0,      -- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
-    is_option						integer         NOT NULL DEFAULT 0,	-- 1 = line is an option (excluded from document totals, displayed as "Option" on PDF). Proposals only.
+    special_code					integer         DEFAULT 0,      -- code for special lines (may be 1=transport, 2=ecotax, moduleid=...). 3=option is DEPRECATED, use is_option instead.
+    is_option						integer         NOT NULL DEFAULT 0,	-- 1 = line is an option: kept with its real quantity/price but excluded from the document totals (total_ht here is real, just not summed into the document total). Proposals only.
     rang							integer         DEFAULT 0,      -- order display on the propal
     fk_unit                         integer         DEFAULT NULL,   -- link to table of units
 

@@ -8,7 +8,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Proposal lines can be flagged as "option" with a real quantity (excluded from document totals, shown as "Option" on PDF with a separate "including options" total) (#18378)
+NEW: Proposal lines can be flagged as "option": they keep their real quantity and price (shown on screen and PDF with an "Option" badge) but are excluded from the document total, with a separate "including options" total on the PDF (#18378)
 WARNING: Proposal lines with qty=0 are no longer automatically tagged as option. Use the new "Option" checkbox instead. Existing legacy lines (special_code=3) are migrated to the new is_option flag.
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)

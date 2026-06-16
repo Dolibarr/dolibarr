@@ -132,3 +132,4 @@ LineIsOption=Option
 TotalHTIncludingOptions=Total (net of tax) incl. options
 TotalVATIncludingOptions=Total VAT incl. options
 TotalTTCIncludingOptions=Total (inc. tax) incl. options
+LineIsOptionHelp=When checked, this line keeps its quantity and price but is excluded from the document total, shown as an option (with a separate "including options" total on the PDF), and unchecked by default when creating an order from the proposal.

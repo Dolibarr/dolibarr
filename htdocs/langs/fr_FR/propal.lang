@@ -132,3 +132,4 @@ LineIsOption=Option
 TotalHTIncludingOptions=Total HT (options incluses)
 TotalVATIncludingOptions=Total TVA (options incluses)
 TotalTTCIncludingOptions=Total TTC (options incluses)
+LineIsOptionHelp=Si cochée, la ligne conserve sa quantité et son prix mais est exclue du total du document, affichée comme option (avec un total « options incluses » distinct sur le PDF), et décochée par défaut lors de la création d'une commande depuis la proposition.

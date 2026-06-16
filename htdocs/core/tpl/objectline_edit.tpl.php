@@ -218,7 +218,7 @@ $coldisplay++;
 	if ($object->element == 'propal') {
 		$lineisoptionchecked = GETPOSTISSET('is_option') ? GETPOSTINT('is_option') : (!empty($line->is_option) ? 1 : 0);
 		print '<div class="clearboth"></div>';
-		print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.($lineisoptionchecked ? ' checked="checked"' : '').'> '.dol_escape_htmltag($langs->trans('LineIsOption')).'</label>';
+		print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.($lineisoptionchecked ? ' checked="checked"' : '').'> '.$form->textwithpicto($langs->trans('LineIsOption'), $langs->trans('LineIsOptionHelp')).'</label>';
 	}
 
 	// Show autofill date for recurring invoices

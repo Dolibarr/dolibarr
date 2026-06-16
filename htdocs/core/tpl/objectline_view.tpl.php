@@ -279,6 +279,12 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 
+	// Option badge (proposals): the line keeps its real quantity/price but is excluded from the document total
+	if ($object->element == 'propal' && !empty($line->is_option)) {
+		print '<div class="clearboth"></div>';
+		print dolGetBadge($langs->trans('LineIsOption'), '', 'warning');
+	}
+
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
 	$reshook = $hookmanager->executeHooks('objectLineView_BeforeProductExtrafield', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -468,7 +474,10 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php
 // Option line detection: is_option is the source of truth (proposals), legacy special_code=3 tolerated for backward compatibility
 $lineisoption = (!empty($line->is_option) || $line->special_code == 3);
-if ((($line->info_bits & 2) != 2) && !$lineisoption) {
+// New-style option lines (is_option) display their real quantity/price and are marked with a badge.
+// Only legacy special_code=3 lines keep the old fully-masked rendering (backward compatibility).
+$lineisoptionlegacy = (empty($line->is_option) && $line->special_code == 3);
+if ((($line->info_bits & 2) != 2) && !$lineisoptionlegacy) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
@@ -519,7 +528,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print $label;
 	print '</td>';
 }
-if (!empty($line->remise_percent) && !$lineisoption) {
+if (!empty($line->remise_percent) && !$lineisoptionlegacy) {
 	print '<td class="linecoldiscount right">';
 	$coldisplay++;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -566,7 +575,7 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 }
 
 // Price total without tax
-if ($lineisoption) {
+if ($lineisoptionlegacy) {
 	$coldisplay++;
 	$colspanOptions	= '';
 	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {

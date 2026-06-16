@@ -481,7 +481,7 @@ if ($nolinesbefore) {
 		// Option flag (proposals only): line kept with a real quantity but excluded from document totals
 		if ($object->element == 'propal') {
 			print '<div class="clearboth"></div>';
-			print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.(GETPOSTINT('is_option') ? ' checked="checked"' : '').'> '.dol_escape_htmltag($langs->trans('LineIsOption')).'</label>';
+			print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.(GETPOSTINT('is_option') ? ' checked="checked"' : '').'> '.$form->textwithpicto($langs->trans('LineIsOption'), $langs->trans('LineIsOptionHelp')).'</label>';
 		}
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
