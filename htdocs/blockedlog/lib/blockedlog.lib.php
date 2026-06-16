@@ -139,9 +139,9 @@ function isRegistrationDataSaved()
 
 	$companyname = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name);
 	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
-	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
-	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
-	$companyidprof2 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2);
+	$companycountrycode = $mysoc->country_code;
+	$companyidprof1 = getDolGlobalString('MAIN_INFO_SIREN', $mysoc->idprof1);
+	$companyidprof2 = getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
 	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
@@ -392,7 +392,8 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 
 /**
- * Call remote API service to push the last counter and signature
+ * Call remote API service to get the obfuscation key.
+ * This function is called by blockedlog->getObfuscationKey();
  *
  * @param 	string	$idprof1				Counter ID/value of ne record
  * @param 	string	$registrationnumber		Registration number
@@ -430,28 +431,47 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		$data .= '&registrationnumber='.urlencode(dol_sanitizeKeyCode($registrationnumber));
 
 		$addheaders = array();
-		$timeoutconnect = 1;
-		$timeoutresponse = 1;
+		$timeoutconnect = 3;
+		$timeoutresponse = 3;
 
 		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG);
+		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		try {
-			$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array(), '_dolibarrgetkeyobfuscation');
-			usleep(1000);
+			$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
+			usleep(10000);
 
 			// Add a warning in log in case of error
-			if ($tmpresult['http_code'] != 200) {
+			if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
+				$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
+				$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+			} elseif ($tmpresult['http_code'] != 200) {
 				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
 				$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			} else {
-				$obfuscationkey = $tmpresult['content'];
+				$reg = array();
+				if (preg_match('/dolobfuscationv1[^:]+:(.*)$/', $tmpresult['content'], $reg)) {
+					$obfuscationkey = $reg[1];
+					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
+					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+				} else {
+					$obfuscationkey .= ' '.$tmpresult['content'];
+					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
+					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+				}
 			}
 		} catch (Exception $e) {
 			$obfuscationkey .= ' '.$e->getMessage();
 			dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
+			dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
 		}
+	} else {
+		$obfuscationkey = '';
 	}
 
 	return $obfuscationkey;

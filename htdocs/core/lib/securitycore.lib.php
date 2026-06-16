@@ -51,15 +51,16 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
- *	@param   string		$chain		String to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
- *  @param	 string		$ciphering	Default ciphering algorithm
- *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
+ *	@param   string		$chain				String to encode
+ *	@param   string		$key				If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
+ *  @param	 string		$ciphering			Default ciphering algorithm
+ *  @param	 string		$forceseed			To force the seed
+ *  @param	 string		$obfuscationmode	'dolcrypt' or 'dolobfuscatev1'
+ *	@return  string							Encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfuscationmode = 'dolcrypt')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -69,12 +70,12 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 	}
 
 	$reg = array();
-	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
-		// The $chain is already a encrypted string
+	if (preg_match('/^(dolobfuscatev1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
+		// The $chain is already an encrypted string
 		return $chain;
 	}
 
-	if (empty($key)) {
+	if (empty($key)) {		// This may happen only with $obfuscationmode = 'dolcrypt'
 		if (!empty($conf->file->dolcrypt_key)) {
 			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
@@ -108,7 +109,8 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 		}
 
 		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
-		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
+
+		return $obfuscationmode.':'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
 		return $chain;
 	}
@@ -119,7 +121,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
+ *	@param   string		$key		Key to use to decode.
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -132,9 +134,11 @@ function dolDecrypt($chain, $key = '')
 		return '';
 	}
 
+	$savkey = $key;
+
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority. Note: this param was never been set for the moment.
+			// If dolcrypt_key is defined, we used it in priority. Note: this param has never been set for the moment.
 			$key = $conf->file->dolcrypt_key;
 		} else {
 			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
@@ -150,7 +154,7 @@ function dolDecrypt($chain, $key = '')
 	}
 
 	// New method
-	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^dol[^:]+:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
 
@@ -168,13 +172,18 @@ function dolDecrypt($chain, $key = '')
 			}
 			// Test validity of decryption
 			if (!ascii_check($newchain)) {
-				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				if (empty($savkey)) {
+					dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
+				} else {
+					dol_syslog("Error dolDecrypt failed: The string decoded with the key return a non valid value (not ascii)", LOG_ERR);
+				}
 				return $chain;
 			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
 			return $chain;
 		}
+
 		return $newchain;
 	} else {
 		return $chain;
