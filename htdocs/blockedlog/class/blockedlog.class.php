@@ -1635,7 +1635,8 @@ class BlockedLog
 				$hmac_secret_key = $this->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
 			} catch (Exception $e) {
 				$firsterrormessage = $e->getMessage();
-				// Another chance to auto-migrate old versions when HMAC was saved using the old method (dolcrypt)
+
+				// Another chance to get HMAC to resave it with a different obfucation when it was saved using the old method (dolcrypt)
 				$hmac_encoded_secret_key_alt = $this->getEncodedHMACSecretKey(1, 1);
 				if (!empty($hmac_encoded_secret_key_alt)) {
 					try {
@@ -1668,9 +1669,11 @@ class BlockedLog
 				}
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
-				} else {
-					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
 				}
+				/* We must not throw an error here, because the main goal of this function is to get the signature of the line and we got it.
+				else {
+					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
+				}*/
 			}
 
 			// Here HMAC secret key is a long string starting with BLOCKEDLOGHMAC..., we can use it to sign the data.
@@ -1829,7 +1832,9 @@ class BlockedLog
 					$hmac_encoded_secret_key = $obj->value;
 
 					// Save value in memory page cache (if we recall the same function in same page transaction).
-					$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;
+					if (empty($nocache)) {
+						$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;
+					}
 				}
 			} else {
 				return 'ERROR '.$this->db->lasterror();
@@ -1869,7 +1874,7 @@ class BlockedLog
 			}
 		}
 
-		if (preg_match('/^dolcrypt/', $hmac_encoded_secret_key) || !preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+		if (preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {
 			// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with old versions).
 			// We test this and we force a migration of data to use the new storage if this is the case.
 			// Example with the old demo sample database:
