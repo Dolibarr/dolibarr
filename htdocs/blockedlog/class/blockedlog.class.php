@@ -1762,6 +1762,7 @@ class BlockedLog
 	/**
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
 	 * Use a memory cache to avoid repeated db access.
+	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
 	 *
 	 * @return 	string					Obfuscation key or '' if not found.
 	 */
