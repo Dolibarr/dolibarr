@@ -1435,7 +1435,7 @@ class BlockedLog
 						$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $this->signature;
 						$stringtowriteencoded = dolEncrypt($stringtowrite, $obfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
 
-						if (fwrite($lockhandle, $stringtowriteencoded) === false) {
+						if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
 							throw new Exception("Cannot write to the blockedlog head file ".$lockfile);
 						}
 
