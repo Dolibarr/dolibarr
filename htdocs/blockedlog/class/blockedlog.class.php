@@ -1604,6 +1604,7 @@ class BlockedLog
 
 			// Get the obfuscation key from ping.dolibarr.org (used just after to decode HMAC secret key)
 			$errormsg = '';
+			$obfuscationkey = '';
 			try {
 				$obfuscationkey = $this->getObfuscationKey();	// Get obfuscation key providing $mysoc->idprof1 and $registrationnumber. Note: On network trouble, an Exception is thrown to the caller
 			} catch (Exception $e) {

@@ -342,6 +342,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 		print '<div class="error">'.$e->getMessage().'</div>';
 	}
 
+	$obfuscationkey = '';
 	try {
 		$obfuscationkey = $block_static->getObfuscationKey();					// Note: use the $mysoc->idprof1 and $registrationnumber. On network trouble, an Exception is thrown to the caller
 		print "\n<!-- API TO GET REMOTE OBFUSCATION KEY RETURNED result: ".$obfuscationkey." -->\n";
