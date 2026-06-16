@@ -4107,7 +4107,7 @@ abstract class CommonObject
 			$sql .= ', situation_percent';
 		}
 		if ($this->table_element_line == 'propaldet') {
-			$sql .= ', is_option';	// Option lines are excluded from the document totals (proposals only)
+			$sql .= ', is_option, special_code';	// Option lines (is_option=1 or legacy special_code=3) are excluded from the document totals (proposals only)
 		}
 		$sql .= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix().$this->db->sanitize($this->table_element_line);
@@ -4147,8 +4147,9 @@ abstract class CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				// Proposal option lines keep a real quantity but must be excluded from the document totals.
-				// The per-line rounding fix below is still applied so the line stays internally consistent.
-				$lineisoption = ($this->table_element_line == 'propaldet' && !empty($obj->is_option));
+				// is_option is the source of truth; legacy special_code=3 is tolerated so totals stay consistent
+				// with what the line view and PDF render as "Option". The per-line rounding fix below still runs.
+				$lineisoption = ($this->table_element_line == 'propaldet' && (!empty($obj->is_option) || (int) $obj->special_code === 3));
 
 				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = '0'
 				$parameters = array('fk_element' => $obj->rowid);

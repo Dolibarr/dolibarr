@@ -317,4 +317,35 @@ class PropalTest extends CommonClassTest
 
 		print __METHOD__." total_ht=".$propal->total_ht." total_ttc=".$propal->total_ttc."\n";
 	}
+
+	/**
+	 * Legacy option lines (special_code=3, is_option=0) with a real quantity must also be excluded
+	 * from the totals, so the standard total stays consistent with what the view/PDF render as "Option".
+	 *
+	 * @return void
+	 */
+	public function testPropalTotalsExcludeLegacyOptionCode()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		// Normal line: 100 HT
+		$propal->addline('Normal', 100, 1, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 0);
+		// Legacy option line: special_code=3 (14th arg), is_option=0 (last), real qty>0 — must be excluded
+		$propal->addline('LegacyOption', 500, 2, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 3, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 0);
+
+		$propal->fetch($propal->id);
+
+		$this->assertEquals(100, (float) $propal->total_ht, 'Legacy special_code=3 line must be excluded from total_ht');
+
+		print __METHOD__." total_ht=".$propal->total_ht."\n";
+	}
 }
