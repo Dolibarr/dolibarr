@@ -58,7 +58,7 @@
  * @var int[] $toselect
  * @var int[] $arrayofselected
  * @var ?string $search_all
- * @var ?string $param
+ * @var string $param
  */
 '
 @phan-var-force string $string
