@@ -383,8 +383,8 @@ $formadmin = new FormAdmin($db);
 
 print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info nomargintop nomarginbottom">'.$langs->trans("DisplayDesc")."</div>\n";
+print '<br>';
 
 //WYSIWYG Editor
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -511,13 +511,13 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Hide unauthorized menus
-	print '<tr class="oddeven"><td>' . $langs->trans("HideUnauthorizedMenu") . '</td><td>';
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';
 
 	// Hide unauthorized button
-	print '<tr class="oddeven"><td>' . $langs->trans("ButtonHideUnauthorized") . '</td><td>';
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("ButtonHideUnauthorized"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
 	print '</tr>';

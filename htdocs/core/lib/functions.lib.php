@@ -3161,8 +3161,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
 	}
-	if (!empty($conf->dol_optimize_smallscreen)) {
-		$limittoshow = 2;
+	if (!empty($conf->dol_optimize_smallscreen)) {	// If on smartphone, we limit to 1 tab to show
+		$limittoshow = 1;
 	}
 
 	$displaytab = 0;
@@ -3260,7 +3260,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 		$out .= '<div id="moretabs' . $tabsname . '" class="inline-block tabsElem valignmiddle">';
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">' . $langs->trans("More") . '</span>... (' . $nbintab . ')</a></div>'; // Do not use "reposition" class in the "More".
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
 		}
 		$out .= '<div id="moretabsList' . $tabsname . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
