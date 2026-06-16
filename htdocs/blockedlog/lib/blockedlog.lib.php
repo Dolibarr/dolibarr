@@ -398,7 +398,7 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
  *
  * @param 	string	$idprof1				Counter ID/value of ne record
  * @param 	string	$registrationnumber		Registration number
- * @param	string	$force					False. Use true for tests.
+ * @param	boolean	$force					False. Use true for tests.
  * @return	string							Obfuscationkey or 'ERROR ...' if error.
  */
 function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = false)
