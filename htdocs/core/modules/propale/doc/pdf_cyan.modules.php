@@ -788,6 +788,14 @@ class pdf_cyan extends ModelePDFPropales
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
+					// Option lines are excluded from the document totals, so exclude them from the VAT / local tax breakdown too
+					$lineisoptionpdf = pdf_isoptionline($object, $i);
+					if ($lineisoptionpdf) {
+						$tvaligne = 0;
+						$localtax1ligne = 0;
+						$localtax2ligne = 0;
+					}
+
 					// TODO remise_percent is an obsolete field for object parent
 					/*if ($object->remise_percent) {
 					$tvaligne -= ($tvaligne * $object->remise_percent) / 100;
@@ -829,16 +837,18 @@ class pdf_cyan extends ModelePDFPropales
 						$vatrate .= '*';
 					}
 
-					// Fill $this->tva and $this->tva_array
-					if (!isset($this->tva[$vatrate])) {
-						$this->tva[$vatrate] = 0;
+					// Fill $this->tva and $this->tva_array (option lines excluded so the VAT breakdown matches the document totals)
+					if (!$lineisoptionpdf) {
+						if (!isset($this->tva[$vatrate])) {
+							$this->tva[$vatrate] = 0;
+						}
+						$this->tva[$vatrate] += $tvaligne;
+						$vatcode = $object->lines[$i]->vat_src_code;
+						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+						}
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
-					$this->tva[$vatrate] += $tvaligne;
-					$vatcode = $object->lines[$i]->vat_src_code;
-					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
-						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
-					}
-					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 
 
