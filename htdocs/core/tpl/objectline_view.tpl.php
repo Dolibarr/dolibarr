@@ -282,7 +282,7 @@ if (($line->info_bits & 2) == 2) {
 	// Option badge (proposals): the line keeps its real quantity/price but is excluded from the document total
 	if ($object->element == 'propal' && !empty($line->is_option)) {
 		print '<div class="clearboth"></div>';
-		print dolGetBadge($langs->trans('LineIsOption'), '', 'warning');
+		print dolGetBadge($langs->trans('LineIsOption'), '', 'secondary');
 	}
 
 	$parameters = ['line' => $line, 'i' => & $i, 'coldisplay' => & $coldisplay];
