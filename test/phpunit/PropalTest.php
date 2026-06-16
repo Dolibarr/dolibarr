@@ -225,4 +225,96 @@ class PropalTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 		return $result;
 	}
+
+	/**
+	 * Option line is persisted with a real quantity (is_option=1, qty kept).
+	 *
+	 * @return void
+	 */
+	public function testPropalLineIsOptionPersistence()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$resultcreate = $propal->create($user);
+		$this->assertGreaterThan(0, $resultcreate, 'Propal creation must succeed');
+
+		// Option line with a real quantity (is_option = last argument)
+		$lineid = $propal->addline('Option line', 100, 3, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 1);
+		$this->assertGreaterThan(0, $lineid, 'addline with is_option=1 must succeed');
+
+		$line = new PropaleLigne($db);
+		$line->fetch($lineid);
+		$this->assertEquals(1, (int) $line->is_option, 'is_option must be persisted and refetched');
+		$this->assertEquals(3, (float) $line->qty, 'qty must stay real (not forced to 0)');
+		$this->assertTrue($line->isOptionLine(), 'isOptionLine() must return true');
+
+		print __METHOD__." lineid=".$lineid."\n";
+	}
+
+	/**
+	 * Backward ABI compatibility: a legacy positional addline() call without is_option must keep working (default 0).
+	 *
+	 * @return void
+	 */
+	public function testPropalAddlineAbiCompat()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		$lineid = $propal->addline('Legacy call', 50, 1, 20);
+		$this->assertGreaterThan(0, $lineid, 'Legacy addline call must succeed');
+
+		$line = new PropaleLigne($db);
+		$line->fetch($lineid);
+		$this->assertEquals(0, (int) $line->is_option, 'is_option must default to 0 for legacy calls');
+
+		print __METHOD__." lineid=".$lineid."\n";
+	}
+
+	/**
+	 * Option lines are excluded from the proposal totals computed by update_price().
+	 *
+	 * @return void
+	 */
+	public function testPropalTotalsExcludeOptions()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		// Normal line: 100 HT x 2 @ 20% => 200 HT / 40 VAT / 240 TTC
+		$propal->addline('Normal', 100, 2, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 0);
+		// Option line: 500 HT x 1, excluded from totals
+		$propal->addline('Option', 500, 1, 20, 0, 0, 0, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 0, '', '', '', array(), null, '', 0, 0, 0, 0, 1);
+
+		$propal->fetch($propal->id);
+
+		$this->assertEquals(200, (float) $propal->total_ht, 'Option line must be excluded from total_ht');
+		$this->assertEquals(40, (float) $propal->total_tva, 'Option VAT must be excluded from total_tva');
+		$this->assertEquals(240, (float) $propal->total_ttc, 'Option line must be excluded from total_ttc');
+
+		print __METHOD__." total_ht=".$propal->total_ht." total_ttc=".$propal->total_ttc."\n";
+	}
 }

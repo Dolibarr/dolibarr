@@ -128,3 +128,7 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+LineIsOption=Option
+TotalHTIncludingOptions=Total (net of tax) incl. options
+TotalVATIncludingOptions=Total VAT incl. options
+TotalTTCIncludingOptions=Total (inc. tax) incl. options

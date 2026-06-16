@@ -111,4 +111,32 @@ class PdfDocTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 10.4);
 	}
+
+	/**
+	 * testPdfIsOptionLine
+	 *
+	 * @return void
+	 */
+	public function testPdfIsOptionLine()
+	{
+		$object = new stdClass();
+
+		$l0 = new stdClass();
+		$l0->is_option = 0;
+		$l0->special_code = 0;	// normal line
+		$l1 = new stdClass();
+		$l1->is_option = 1;
+		$l1->special_code = 0;	// option (phase N)
+		$l2 = new stdClass();
+		$l2->is_option = 0;
+		$l2->special_code = 3;	// legacy option
+		$object->lines = array($l0, $l1, $l2);
+
+		$this->assertFalse(pdf_isoptionline($object, 0), 'Normal line is not an option');
+		$this->assertTrue(pdf_isoptionline($object, 1), 'is_option=1 line is an option');
+		$this->assertTrue(pdf_isoptionline($object, 2), 'Legacy special_code=3 line is an option');
+		$this->assertFalse(pdf_isoptionline($object, 99), 'Out-of-range index is not an option');
+
+		print __METHOD__." ok\n";
+	}
 }
