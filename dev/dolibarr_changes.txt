@@ -467,6 +467,14 @@ NOTES   :
     REASON : Use swagger 2 provided into /explorer.
     CHANGE : Content of file changed.
 
+==> FILE   : Data/Validator.php, function validate()
+    REASON : A PHPDoc union type (datetime|string, string|float) is stored as an array in
+             ValidationInfo::type, and using it as a key of $preFilters is a fatal "Illegal offset
+             type". Skip the prefilters for those, so the existing union-type validation handles them.
+    DIFF   :
+        +   !is_array($info->type) &&
+            isset(static::$preFilters[$info->type]) &&
+
 
 
 ####################################################################################################
