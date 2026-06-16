@@ -312,6 +312,25 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
+
+// Make some tests on config validity.
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
+if (empty($hmac_encoded_secret_key)) {
+	print '<div class="error">';
+	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of an old version.';
+	print '</div>';
+}
+// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+$hmac_secret_key = '';
+try {
+	$hmac_secret_key = $block_static->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
+} catch (Exception $e) {
+	print '<div class="error">';
+	print $e->getMessage();
+	print '</div>';
+}
+
+
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
 if ($optioncss != '') {

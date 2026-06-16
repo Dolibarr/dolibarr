@@ -1610,7 +1610,7 @@ class BlockedLog
 	 */
 	private function buildFinalSignatureHash($clearstring, $format = '')
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (empty($format)) {
 			$format = $this->object_format;
