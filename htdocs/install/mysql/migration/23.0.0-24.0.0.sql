@@ -561,6 +561,12 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
+-- Add is_option flag on proposal lines (option lines kept with a real quantity but excluded from document totals)
+ALTER TABLE llx_propaldet ADD COLUMN is_option integer NOT NULL DEFAULT 0 AFTER special_code;
+-- Backfill: migrate legacy option lines (special_code=3) to the new flag, then neutralize the legacy code on migrated lines only
+UPDATE llx_propaldet SET is_option = 1 WHERE special_code = 3;
+UPDATE llx_propaldet SET special_code = 0 WHERE special_code = 3 AND is_option = 1;
+
 
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
