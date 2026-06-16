@@ -579,6 +579,13 @@ class pdf_azur extends ModelePDFPropales
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
+					// Option lines are excluded from the firm total: mute their amount columns in grey so the
+					// figures do not read as part of the document total (the "Option" tag marks the line itself).
+					$lineisoptionpdf = pdf_isoptionline($object, $i);
+					if ($lineisoptionpdf) {
+						$pdf->SetTextColor(128, 128, 128);
+					}
+
 					// VAT Rate
 					if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
@@ -616,6 +623,10 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', false);
 
+					if ($lineisoptionpdf) {
+						$pdf->SetTextColor(0, 0, 0);
+					}
+
 					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
@@ -631,7 +642,6 @@ class pdf_azur extends ModelePDFPropales
 					$localtax2_type = $object->lines[$i]->localtax2_type;
 
 					// Option lines are excluded from the document totals, so exclude them from the VAT / local tax breakdown too
-					$lineisoptionpdf = pdf_isoptionline($object, $i);
 					if ($lineisoptionpdf) {
 						$tvaligne = 0;
 						$localtax1ligne = 0;
@@ -1403,8 +1413,10 @@ class pdf_azur extends ModelePDFPropales
 				// Totals including option lines (proposals only, shown only when at least one option line exists)
 				$optTotals = pdf_getTotalsIncludingOptions($object);
 				if (!empty($optTotals['hasoption'])) {
+					// Render the "including options" totals as a secondary, non-committing block in muted grey:
+					// the firm Total TTC above stays the single highlighted figure (the actual commitment).
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->SetTextColor(0, 0, 60);
+					$pdf->SetTextColor(128, 128, 128);
 					$pdf->SetFillColor(255, 255, 255);
 
 					$index++;
@@ -1420,11 +1432,10 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['tva'], 0, $outputlangs), 0, 'R', false);
 
 					$index++;
-					$pdf->SetFillColor(224, 224, 224);
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTCIncludingOptions"), $useborder, 'L', true);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTCIncludingOptions"), 0, 'L', false);
 					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ttc'], 0, $outputlangs), $useborder, 'R', true);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($optTotals['ttc'], 0, $outputlangs), 0, 'R', false);
 				}
 			}
 		}

@@ -395,6 +395,9 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponpriceendmultiprice = '</span>';
 }
 
+// Option lines (proposals): mute their monetary amounts so they don't visually add up into the document total
+$optioncellmutecss = (!empty($line->is_option) ? ' opacitymedium' : '');
+
 // VAT Rate
 print '<td class="linecolvat nowrap right">';
 $coldisplay++;
@@ -416,7 +419,7 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 print $tooltiponpriceend;
 ?></td>
 
-<td class="linecoluht nowraponall right">
+<td class="linecoluht nowraponall right<?php echo $optioncellmutecss; ?>">
 	<?php
 	$coldisplay++;
 	if (empty($line->fk_remise_except)) {
@@ -428,7 +431,7 @@ print $tooltiponpriceend;
 </td>
 
 <?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowraponall right">
+	<td class="linecoluht_currency nowraponall right<?php echo $optioncellmutecss; ?>">
 	<?php $coldisplay++;
 	if (empty($line->fk_remise_except)) {
 		print price($sign * $line->multicurrency_subprice);
@@ -441,7 +444,7 @@ print $tooltiponpriceend;
 
 // Multicurrency HT
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc nowraponall right<?php echo $optioncellmutecss; ?>"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {
 		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
@@ -457,7 +460,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 
 // Multicurrency TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
-	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
+	<td class="linecoluttc_currency nowraponall right<?php echo $optioncellmutecss; ?>"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
 	if (!$multicurrency_upinctax && $line->multicurrency_total_ttc && $line->qty) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
@@ -584,14 +587,14 @@ if ($lineisoptionlegacy) {
 	}
 	print '<td class="linecoloption nowrap right"'.$colspanOptions.'>'.$langs->trans('Option').'</td>';
 } else {
-	print '<td class="linecolht nowrap right">';
+	print '<td class="linecolht nowrap right'.$optioncellmutecss.'">';
 	$coldisplay++;
 	print $tooltiponprice;
 	print price($sign * $line->total_ht);
 	print $tooltiponpriceend;
 	print '</td>';
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecoltotalht_currency nowrap right">';
+		print '<td class="linecoltotalht_currency nowrap right'.$optioncellmutecss.'">';
 		print $tooltiponpricemultiprice;
 		print price($sign * $line->multicurrency_total_ht);
 		print $tooltiponpriceendmultiprice;

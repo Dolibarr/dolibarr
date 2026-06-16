@@ -3521,18 +3521,18 @@ if ($action == 'create') {
 			$usemcurrency = (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
 
 			print '<tr>';
-			print '<td class="opacitymedium">' . $langs->trans('TotalHTIncludingOptions') . '</td>';
-			print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->total_ht + $optionTotalHt, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			print '<td>' . $form->textwithpicto($langs->trans('TotalHTIncludingOptions'), $langs->trans('TotalIncludingOptionsHelp')) . '</td>';
+			print '<td class="nowrap amountcard right">' . price((float) $object->total_ht + $optionTotalHt, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 			if ($usemcurrency) {
-				print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->multicurrency_total_ht + $optionMcTotalHt, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right">' . price((float) $object->multicurrency_total_ht + $optionMcTotalHt, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 
 			print '<tr>';
-			print '<td class="opacitymedium">' . $langs->trans('TotalTTCIncludingOptions') . '</td>';
-			print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->total_ttc + $optionTotalTtc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			print '<td>' . $langs->trans('TotalTTCIncludingOptions') . '</td>';
+			print '<td class="nowrap amountcard right"><b>' . price((float) $object->total_ttc + $optionTotalTtc, 0, $langs, 1, -1, -1, $conf->currency) . '</b></td>';
 			if ($usemcurrency) {
-				print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->multicurrency_total_ttc + $optionMcTotalTtc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowrap amountcard right"><b>' . price((float) $object->multicurrency_total_ttc + $optionMcTotalTtc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</b></td>';
 			}
 			print '</tr>';
 		}

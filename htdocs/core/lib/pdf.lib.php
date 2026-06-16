@@ -2289,9 +2289,11 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 	$libelleproduitservice = dol_htmlentitiesbr($libelleproduitservice, 1);
 
-	// Mark proposal option lines: the line keeps its real quantity/price but is excluded from the document total
+	// Mark proposal option lines: the line keeps its real quantity/price but is excluded from the document total.
+	// Use a filled tag (not just bold text) so the status reads as distinct and survives black & white printing.
 	if (!empty($object->lines[$i]->is_option)) {
-		$libelleproduitservice .= '<br><b>'.dol_escape_htmltag($outputlangs->transnoentities('LineIsOption')).'</b>';
+		$optionlabel = dol_escape_htmltag($outputlangs->transnoentities('LineIsOption'));
+		$libelleproduitservice .= '<br><span style="background-color:#7D3F00;color:#FFFFFF;"><b>&nbsp;'.$optionlabel.'&nbsp;</b></span>';
 	}
 
 	return $libelleproduitservice;
