@@ -532,7 +532,7 @@ if (empty($mode)) {
 		$state_id = $tmp[0];
 	}
 	$stateid = getDolGlobalInt('BLOCKEDLOG_REGISTRATION_STATE', (int) $state_id);
-	$item->fieldInputOverride = $formcompany->select_state($stateid, $country_code, "BLOCKEDLOG_REGISTRATION_STATE");
+	$item->fieldInputOverride = $formcompany->select_state($stateid, $mysoc->country_code, "BLOCKEDLOG_REGISTRATION_STATE");
 
 	//Company zip
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_ZIP');
