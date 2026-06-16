@@ -1265,7 +1265,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('blockedlog');
 
@@ -1423,9 +1423,34 @@ class BlockedLog
 				// The new ID
 				$this->id = $id;
 
-				// Store the signature of this new line
-				$this->getObfuscationKey();
+				// Store the signature of this new line in the head file.
+				try {
+					$obfuscationkey = $this->getObfuscationKey();
 
+					$lockfile = $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.head';
+
+					$lockhandle = fopen($lockfile, "w");
+					if (flock($lockhandle, LOCK_EX)) {  // acquire an exclusive lock
+						// Lock acquired
+						$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $this->signature;
+						$stringtowriteencoded = dolEncrypt($stringtowrite, $obfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+
+						if (fwrite($lockhandle, $stringtowriteencoded) === false) {
+							throw new Exception("Cannot write to the blockedlog head file ".$lockfile);
+						}
+
+						fclose($lockhandle);	// Remove the lock
+					} else {
+						throw new Exception("Cannot record the blockedlog HEAD file ".$lockfile.'. Transaction aborted.');
+					}
+				} catch (Exception $e) {
+					$this->error = $e->getMessage();
+
+					dol_syslog($this->error, LOG_ERR);
+
+					$this->db->rollback();
+					return -1;
+				}
 
 				$this->db->commit();
 
@@ -1609,7 +1634,21 @@ class BlockedLog
 			try {
 				$hmac_secret_key = $this->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
 			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
+				$firsterrormessage = $e->getMessage();
+				// Another chance to auto-migrate old versions when HMAC was saved using the old method (dolcrypt)
+				$hmac_encoded_secret_key_alt = $this->getEncodedHMACSecretKey(1, 1);
+				if (!empty($hmac_encoded_secret_key_alt)) {
+					try {
+						$hmac_secret_key_alt = $this->getClearHMACSecretKey($hmac_encoded_secret_key_alt);		// Note: On network trouble, an Exception is thrown to the caller
+						if (preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key_alt)) {	// Alternative is ok
+							$hmac_secret_key = $hmac_secret_key_alt;
+						}
+					} catch (Exception $e) {
+						throw new Exception($firsterrormessage);
+					}
+				} else {
+					throw new Exception($firsterrormessage);
+				}
 			}
 
 			// Last check on validity of key
@@ -1763,18 +1802,24 @@ class BlockedLog
 	 * Get the encoded HMAC secret key.
 	 * Use a memory cache to avoid repeated db access.
 	 *
+	 * @param	int 	$nocache		Use 1 to force to not use cache.
+	 * @param 	int		$noentity		Use 1 to search without entity.
 	 * @return 	string					Encoded HMAC secret key.
 	 */
-	public function getEncodedHMACSecretKey()
+	public function getEncodedHMACSecretKey($nocache = 0, $noentity = 0)
 	{
 		global $conf;
 
 		$hmac_encoded_secret_key = '';
 
 		// Get value of the $hmac_encoded_secret_key from the database
-		if (empty($conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)])) {
+		if ($nocache || empty($conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)])) {
 			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = 'BLOCKEDLOG_HMAC_KEY'";
-			$sql .= " AND entity IN (0, ".((int) $this->entity).")";
+			if ($noentity) {
+				$sql .= " AND entity IN (0)";	// To force to get value on old instances that may have been saved with entity = 0
+			} else {
+				$sql .= " AND entity IN (0, ".((int) $this->entity).")";
+			}
 			$sql .= " ORDER BY entity DESC LIMIT 1";
 
 			$resql = $this->db->query($sql);
@@ -1782,12 +1827,13 @@ class BlockedLog
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$hmac_encoded_secret_key = $obj->value;
+
+					// Save value in memory page cache (if we recall the same function in same page transaction).
+					$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;
 				}
 			} else {
 				return 'ERROR '.$this->db->lasterror();
 			}
-
-			$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;		// Save value in memory page cache (if we recall the same function in same page transaction).
 		} else {
 			$hmac_encoded_secret_key = $conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)];
 		}

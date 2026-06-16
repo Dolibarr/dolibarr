@@ -456,7 +456,7 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 			// Enable this log to get information used to recalculate the signature
 			//var_dump($block->id.' '.$block->signature, $block->object_data);
 
-			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order and filter is various
 
 			$checksignature = $tmpcheckresult['checkresult'];
 
