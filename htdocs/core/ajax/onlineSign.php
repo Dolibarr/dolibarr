@@ -66,7 +66,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
-$ref = GETPOST('ref', 'aZ09');
+// Match the filter the producer uses in newonlinesign.php:97 ('alpha').
+// Refs such as PR2601-0003 contain a dash, which aZ09 strips. After stripping
+// the dash, dol_verifyHash fails because the security key was built from the
+// full reference, so onlineSign answered 403 even on valid submissions (#31464).
+$ref = GETPOST('ref', 'alpha');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 $online_sign_name = GETPOST("onlinesignname");
