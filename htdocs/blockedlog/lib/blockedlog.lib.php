@@ -310,6 +310,7 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 
 	if (in_array($seller->country_code, array('FR'))) {
 		$outputlangs->load("blockedlog");
+		$blockedlog_mention = '';
 
 		$isalne = isALNEQualifiedVersion(); // If necessary, we could replace with "if isALNERunningVersion()"
 		if ($isalne == 'CERTIF_LNE_IS_2') {
