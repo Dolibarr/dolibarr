@@ -3499,6 +3499,44 @@ if ($action == 'create') {
 		}
 		print '</tr>';
 
+		// Totals including option lines: option lines are excluded from the amounts above, so we show a
+		// reconciling "including options" total to avoid the line totals looking inconsistent with the base total.
+		$optionTotalHt = 0;
+		$optionTotalTtc = 0;
+		$optionMcTotalHt = 0;
+		$optionMcTotalTtc = 0;
+		$hasOptionLine = false;
+		if (is_array($object->lines)) {
+			foreach ($object->lines as $optline) {
+				if (!empty($optline->is_option) || (int) $optline->special_code === 3) {
+					$hasOptionLine = true;
+					$optionTotalHt += (float) $optline->total_ht;
+					$optionTotalTtc += (float) $optline->total_ttc;
+					$optionMcTotalHt += (float) $optline->multicurrency_total_ht;
+					$optionMcTotalTtc += (float) $optline->multicurrency_total_ttc;
+				}
+			}
+		}
+		if ($hasOptionLine) {
+			$usemcurrency = (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency);
+
+			print '<tr>';
+			print '<td class="opacitymedium">' . $langs->trans('TotalHTIncludingOptions') . '</td>';
+			print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->total_ht + $optionTotalHt, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			if ($usemcurrency) {
+				print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->multicurrency_total_ht + $optionMcTotalHt, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+
+			print '<tr>';
+			print '<td class="opacitymedium">' . $langs->trans('TotalTTCIncludingOptions') . '</td>';
+			print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->total_ttc + $optionTotalTtc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+			if ($usemcurrency) {
+				print '<td class="nowrap amountcard right opacitymedium">' . price((float) $object->multicurrency_total_ttc + $optionMcTotalTtc, 0, $langs, 1, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+		}
+
 		print '</table>';
 
 		// Margin Infos
