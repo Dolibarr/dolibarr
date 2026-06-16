@@ -287,6 +287,45 @@ class PropalTest extends CommonClassTest
 	}
 
 	/**
+	 * updateline() must be able to toggle the is_option flag on an existing line, both ways.
+	 *
+	 * @return void
+	 */
+	public function testPropalUpdatelineIsOption()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$propal = new Propal($db);
+		$propal->initAsSpecimen(array('tosell' => 1));
+		$propal->lines = array();
+		$propal->create($user);
+
+		// Start as a normal line (is_option defaults to 0)
+		$lineid = $propal->addline('Line to toggle', 100, 1, 20);
+		$this->assertGreaterThan(0, $lineid, 'addline must succeed');
+
+		// Toggle it to option via updateline (is_option = last argument)
+		$resup = $propal->updateline($lineid, 100, 1, 0, 20, 0, 0, 'Line to toggle', 'HT', 0, 0, 0, 0, 0, 0, '', 0, '', '', array(), null, 0, 0, 0, 1);
+		$this->assertGreaterThan(0, $resup, 'updateline with is_option=1 must succeed');
+		$line = new PropaleLigne($db);
+		$line->fetch($lineid);
+		$this->assertEquals(1, (int) $line->is_option, 'is_option must be set to 1 after updateline');
+
+		// Toggle it back to a normal line
+		$resback = $propal->updateline($lineid, 100, 1, 0, 20, 0, 0, 'Line to toggle', 'HT', 0, 0, 0, 0, 0, 0, '', 0, '', '', array(), null, 0, 0, 0, 0);
+		$this->assertGreaterThan(0, $resback, 'updateline with is_option=0 must succeed');
+		$line2 = new PropaleLigne($db);
+		$line2->fetch($lineid);
+		$this->assertEquals(0, (int) $line2->is_option, 'is_option must be cleared back to 0 after updateline');
+
+		print __METHOD__." lineid=".$lineid."\n";
+	}
+
+	/**
 	 * Option lines are excluded from the proposal totals computed by update_price().
 	 *
 	 * @return void
