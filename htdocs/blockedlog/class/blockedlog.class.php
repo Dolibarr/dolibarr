@@ -1323,11 +1323,15 @@ class BlockedLog
 
 		$this->object_version = DOL_VERSION;
 
-		// The object_format define the formatting rules into buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
-		$this->object_format = 'V2';	// TODO Switch to V2 for every version
+		// The object_format defines the formatting rules and syntax into
+		// buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
+		// This may vary when the Immutable Log module version is modified, but only if algorithm has changed.
+		$this->object_format = 'V2';
+		/*
 		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
 			$this->object_format = 'V2';
 		}
+		*/
 
 		$tz = 'gmt';
 		// if (empty($this->object_format) || $this->object_format == 'V1') {
@@ -1461,7 +1465,7 @@ class BlockedLog
 						throw new Exception("Cannot write into the blockedlog .end file ".$lockfile.' to update it. Is the file writable by the running user and not open by another process? Transaction aborted.');
 					}
 
-					// Check and update the .end flag file.
+					// Check the .end flag file.
 					$headstring = '';
 					$remoteobfuscationkey = '';
 					if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration)
@@ -1498,7 +1502,7 @@ class BlockedLog
 						throw new Exception("Failed to decode the content of the head file ".$lockfile." with the obfuscation key, so we can't record the head file so we abort the transaction.");
 					}
 
-					// If a different signature has been forced to generate an error.
+					// If a note has been added to track an anomaly (signature is also different in this case).
 					if ($finalsignature != $this->signature) {
 						// For debug info (we can clean this field later)
 						if (getDolGlobalString('BLOCKEDLOG_ADD_DEBUG_INFO')) {
@@ -1519,12 +1523,16 @@ class BlockedLog
 
 					// Lock acquired, we can now write the new .end file
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
-					$remoteobfuscationkey = $this->getObfuscationKey();
-					if (empty($remoteobfuscationkey)) {
-						throw new Exception("Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.");
-					}
 
-					$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+					if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+						$remoteobfuscationkey = $this->getObfuscationKey();
+						if (empty($remoteobfuscationkey)) {
+							throw new Exception("Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.");
+						}
+						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+					} else {
+						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+					}
 
 					// Update or create the .end file.
 					$lockhandle = fopen($lockfile, 'w+');

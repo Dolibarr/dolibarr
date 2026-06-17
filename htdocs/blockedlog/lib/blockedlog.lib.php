@@ -646,3 +646,100 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 		}
 	}
 }
+
+
+/**
+ * Migrate an old database to add the .end file.
+ *
+ * @return  int		Return -1 if KO, 1 if OK
+ */
+function migrate_blockedlog_add_end_file()
+{
+	global $conf, $db, $langs,$mysoc;
+
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	$blocklog_static = new BlockedLog($db);
+
+	// Loop on all entities found in llx_blockedlog
+	$listofentities = array();
+	$sql = "SELECT DISTINCT entity FROM ".MAIN_DB_PREFIX."blockedlog";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$listofentities[] = $obj->entity;
+		}
+	} else {
+		print '<tr class="trforrunsql"><td colspan="4">';
+		print '<b>'.$langs->trans('InitEndFlagFile')."</b>:\n";
+		print 'Error: Failed to get list of entities in blockedlog table';
+		print '</td></tr>';
+		return -1;
+	}
+
+	foreach ($listofentities as $entity) {
+		print '<tr class="trforrunsql"><td colspan="4">';
+		print '<b>'.$langs->trans('InitEndFlagFile')." (entity = ".$entity.")</b>:\n";
+
+		// Load the data of company (country, ...). Erase current one so this function can be used by migration script only.
+		$conf->setEntityValues($db, $entity);
+		$mysoc = new Societe($db);
+		$mysoc->setMysoc($conf);
+
+		$maxid = 0;
+		$sql = "SELECT MAX(rowid) as maxid FROM ".MAIN_DB_PREFIX."blockedlog WHERE entity = ".((int) $entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$maxid = $obj->maxid;
+			}
+		} else {
+			print 'Error: Failed to get max id of blockedlog table';
+			print '</td></tr>';
+			return -1;
+		}
+
+		$blocklog_static->fetch($maxid);
+
+		$lockfile = $blocklog_static->getEndOfChainFlagFile();
+
+		// Lock acquired, we can now write the new .end file
+		$stringtowrite = 'BLOCKEDLOGHEAD '.$blocklog_static->id." ".dol_print_date($blocklog_static->date_creation, 'dayhourrfc', 'gmt')." ".(string) $blocklog_static->signature;
+
+		if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+			$remoteobfuscationkey = $blocklog_static->getObfuscationKey();
+			if (empty($remoteobfuscationkey)) {
+				print "Error: Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.";
+				print '</td></tr>';
+				return -1;
+			}
+
+			$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+		} else {
+			$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+		}
+
+		// Update or create the .end file.
+		$lockhandle = fopen($lockfile, 'w+');
+		if ($lockhandle) {
+			if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
+				print "Cannot write to the blockedlog .end file ".$lockfile;
+				print '</td></tr>';
+				return -1;
+			}
+
+			fclose($lockhandle);	// Remove the lock
+			dolChmod($lockfile);
+		} else {
+			print "Cannot open for writing the blockedlog .end file ".$lockfile;
+			print '</td></tr>';
+			return -1;
+		}
+
+		print $langs->trans("Done");
+		print '</td></tr>';
+	}
+
+	return 1;
+}

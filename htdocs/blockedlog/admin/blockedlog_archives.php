@@ -383,7 +383,12 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				*/
 
 				if ($checksignature) {
-					$statusofrecord = $langs->transnoentitiesnoconv('StatusValid');
+					if (!empty($block_static->note)) {	// signature ok but end of chain deletion detected
+						$statusofrecord = 'KO';
+						$statusofrecordnote = $block_static->note;
+					} else {
+						$statusofrecord = $langs->transnoentitiesnoconv('StatusValid');
+					}
 					if ($loweridinerror > 0) {
 						$statusofrecordnote = 'ValidButFoundAPreviousKO';
 					} else {

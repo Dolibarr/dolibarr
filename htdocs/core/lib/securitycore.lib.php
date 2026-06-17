@@ -103,7 +103,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
 		}
 		if (empty($forceseed)) {
 			$ivseed = dolGetRandomBytes($ivlen);
-		} else {
+		} else {	// This case has been abandoned
 			$ivseed = dol_substr(md5($forceseed), 0, $ivlen, 'ascii', 1);
 		}
 

@@ -2911,3 +2911,4 @@ McpServer=MCP Server
 NoMcpToolsDiscovered=No MCP tools discovered. Please ensure the AI module is correctly configured.
 ViewOnly=View only
 ToolActionType=Action Type
+InitEndFlagFile=Init the .end file to protect end of the blockedlog chain
