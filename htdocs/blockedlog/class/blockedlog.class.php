@@ -1586,7 +1586,7 @@ class BlockedLog
 	 *
 	 * @return string
 	 */
-	public function getEndOfChainflagFile()
+	public function getEndOfChainFlagFile()
 	{
 		global $conf, $mysoc;
 
