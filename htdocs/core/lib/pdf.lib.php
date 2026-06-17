@@ -2892,31 +2892,38 @@ function pdf_isoptionlinelegacy($object, $i)
 /**
  *	Compute document totals including option lines (HT, VAT, TTC), honouring multicurrency.
  *	Used to display a "including options" total block on proposal PDFs.
+ *	Starts from the document firm totals (option lines already excluded) and adds the option lines,
+ *	so the result stays consistent with the highlighted document Total shown just above and with the
+ *	card "including options" block (firm total + options), free of any per-line rounding drift.
  *
  *	@param	Propal|Commande|Facture		$object		Object with ->lines
  *	@return	array{ht:float,tva:float,ttc:float,hasoption:bool}	Totals including options and whether at least one option line exists
  */
 function pdf_getTotalsIncludingOptions($object)
 {
-	$ht = 0.0;
-	$tva = 0.0;
-	$ttc = 0.0;
+	$optionht = 0.0;
+	$optiontva = 0.0;
+	$optionttc = 0.0;
 	$hasoption = false;
 
 	$usemulti = (isModEnabled('multicurrency') && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1);
 
 	if (!empty($object->lines) && is_array($object->lines)) {
 		foreach ($object->lines as $i => $line) {
-			$ht  += (float) ($usemulti ? $line->multicurrency_total_ht  : $line->total_ht);
-			$tva += (float) ($usemulti ? $line->multicurrency_total_tva : $line->total_tva);
-			$ttc += (float) ($usemulti ? $line->multicurrency_total_ttc : $line->total_ttc);
 			if (pdf_isoptionline($object, $i)) {
 				$hasoption = true;
+				$optionht  += (float) ($usemulti ? $line->multicurrency_total_ht  : $line->total_ht);
+				$optiontva += (float) ($usemulti ? $line->multicurrency_total_tva : $line->total_tva);
+				$optionttc += (float) ($usemulti ? $line->multicurrency_total_ttc : $line->total_ttc);
 			}
 		}
 	}
 
-	return array('ht' => $ht, 'tva' => $tva, 'ttc' => $ttc, 'hasoption' => $hasoption);
+	$baseht  = (float) ($usemulti ? $object->multicurrency_total_ht  : $object->total_ht);
+	$basetva = (float) ($usemulti ? $object->multicurrency_total_tva : $object->total_tva);
+	$basettc = (float) ($usemulti ? $object->multicurrency_total_ttc : $object->total_ttc);
+
+	return array('ht' => $baseht + $optionht, 'tva' => $basetva + $optiontva, 'ttc' => $basettc + $optionttc, 'hasoption' => $hasoption);
 }
 
 /**
