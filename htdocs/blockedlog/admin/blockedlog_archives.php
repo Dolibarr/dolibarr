@@ -383,7 +383,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				*/
 
 				if ($checksignature) {
-					$statusofrecord = 'Valid';
+					$statusofrecord = $langs->transnoentitiesnoconv('StatusValid');
 					if ($loweridinerror > 0) {
 						$statusofrecordnote = 'ValidButFoundAPreviousKO';
 					} else {
@@ -485,7 +485,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 		$statusofrecord = '';
 
-		fwrite($fh, 'SUMMARY TURNOVER BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
+		fwrite($fh, 'SUMMARY PERIOD BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
 			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
@@ -521,9 +521,10 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->object_version = '';
 		$block_static->object_format = '';
 		$block_static->signature = '';
+
 		$statusofrecord = '';
 
-		fwrite($fh, 'SUMMARY TURNOVER PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
+		fwrite($fh, 'SUMMARY PERIOD PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
 			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
@@ -998,10 +999,10 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					// We are on a line for summary information
 					$lineanalyzed = 1;
 					/*
-					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
+					if (preg_match('/^SUMMARY PERIOD BILLED/', (string) $line[0])) {
 						// Do nothing, we recalculate amount from previous lines
 					}
-					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
+					if (preg_match('/^SUMMARY PERIOD PAID/', (string) $line[0])) {
 						// Do nothing, we recalculate amount from previous lines
 					}
 					*/

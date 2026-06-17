@@ -436,7 +436,7 @@ print '<td class="liste_titre"><input type="text" class="maxwidth50" name="searc
 
 // Status
 print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
-$array = array("1" => "OnlyNonValid");
+$array = array("1" => $langs->trans("OnlyNonValid").' (KO)');
 print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
@@ -487,36 +487,34 @@ print '</tr>';
 $checkresult = array();
 $checkdetail = array();
 $checkerror = array();
-$loweridinerror = 0;
+$loweridinerror = 0;		// The lower rowid we found an anomaly (for debug or analysis purposes only)
 
-if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
-	// This is version that is faster but require more memory and report errors that are outside the filter range
+// This is the algorithm that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
+if (is_array($blocks)) {
+	foreach ($blocks as &$block) {
+		// Enable this log to get information used to recalculate the signature
+		//var_dump($block->id.' '.$block->signature, $block->object_data);
 
-	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
-	// to find the $loweridinerror.
-} else {
-	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
-	if (is_array($blocks)) {
-		foreach ($blocks as &$block) {
-			// Enable this log to get information used to recalculate the signature
-			//var_dump($block->id.' '.$block->signature, $block->object_data);
+		$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order and filter is various
 
-			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order and filter is various
+		$checksignature = $tmpcheckresult['checkresult'];
 
-			$checksignature = $tmpcheckresult['checkresult'];
+		$checkresult[$block->id] = $checksignature; // false if error
+		$checkdetail[$block->id] = $tmpcheckresult;
 
-			$checkresult[$block->id] = $checksignature; // false if error
-			$checkdetail[$block->id] = $tmpcheckresult;
-			if (!empty($tmpcheckresult['error'])) {
-				$checkerror[$block->id] = $tmpcheckresult['error'];
-			}
+		if (!empty($tmpcheckresult['error'])) {
+			$checkerror[$block->id] = $tmpcheckresult['error'];
+		}
+		if (!empty($block->note)) {
+			$checkresult[$block->id] = false;
+			//$checkerror[$block->id] = $block->note;
+		}
 
-			if (!$checksignature) {
-				if (empty($loweridinerror)) {
-					$loweridinerror = $block->id;
-				} else {
-					$loweridinerror = min($loweridinerror, $block->id);
-				}
+		if (!$checksignature) {
+			if (empty($loweridinerror)) {
+				$loweridinerror = $block->id;
+			} else {
+				$loweridinerror = min($loweridinerror, $block->id);
 			}
 		}
 	}
@@ -539,7 +537,7 @@ if (is_array($blocks)) {
 	}
 
 	// Check that there was no deletion on the end of chain.
-	$lockfile = $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.head';
+	$lockfile = $block_static->getEndOfChainFlagFile();
 
 	if (!file_exists($lockfile)) {
 		$error++;
@@ -571,7 +569,7 @@ if (is_array($blocks)) {
 		$headstring = dolDecrypt($line, $remoteobfuscationkey);
 
 		$reg = array();
-		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9]+)/', $headstring, $reg)) {	// Failed to decypt the head
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
 			// Get last line
 			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			$sql .= " WHERE entity = ".((int) $conf->entity);
@@ -706,7 +704,7 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
 				} elseif ($block->action == 'MODULE_RESET') {
 					// Old action code on old version.
 					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
@@ -715,13 +713,20 @@ if (is_array($blocks)) {
 					if (!empty($checkerror[$block->id])) {
 						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
 					}
-					print dolPrintHTMLForAttribute($langs->trans('KoCheckFingerprintValidity')).'">KO</span>';
+					$alt = $langs->trans('KoCheckFingerprintValidity');
+					if ($block->note) {
+						$notetoshow = $block->note;
+						$notetoshow = str_replace('EndOfChainDeletionDetected', $langs->trans("EndOfChainDeletionDetected"), $notetoshow);
+						$alt .= "\n".' '.$langs->trans("AddtionalInformation").': '.$notetoshow;
+					}
+
+					print dolPrintHTMLForAttribute($alt).'">KO</span>';
 				}
 			} else {
-				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
+				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">'.$langs->trans("StatusValid").'</span>';
 			}
 
-			// Note
+			// Add debug information
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
 					if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
@@ -754,13 +759,21 @@ if (is_array($blocks)) {
 		}
 	}
 
-	// Show total line
+	// Show total lines
 	if ($nbshown == 0) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
+
+		$showturnover = 0;
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
+				$showturnover++;
+			}
+		}
+
+		foreach ($totalamount as $key => $totalamountperref) {
+			if ($showturnover) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -778,6 +791,7 @@ if (is_array($blocks)) {
 				} elseif ($key == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
+				print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
 				print '</td>';
 
 				// Action
@@ -931,7 +945,10 @@ if (is_array($blocks)) {
 
 				print '</tr>';
 			}
-			if (empty($search_code) || in_array('PAYMENT_CUSTOMER_CREATE', $search_code) || in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
+			if (empty($search_code)
+				|| in_array('PAYMENT_CUSTOMER', $search_code)				// Filter for both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+				|| in_array('PAYMENT_CUSTOMER_CREATE', $search_code)
+				|| in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
