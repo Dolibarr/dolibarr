@@ -461,7 +461,7 @@ class BlockedLog
 			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
-		} elseif ($this->action == 'MODULE_RESET') {
+		} elseif ($this->action == 'MODULE_RESET') {	// This case should not happen. Paranoiac protection against possible bug that forces a record that will return a non valid entry.
 			if ($this->signature == '0000000000') {
 				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabled").'</i>';
 			} else {
