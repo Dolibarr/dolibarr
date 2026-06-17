@@ -1786,7 +1786,7 @@ class BlockedLog
 
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1 ?? '', $registrationnumber);
-		if (empty($obfuscationkey)) {
+		if (empty($obfuscationkey)) { // can't be empty after this test
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done. Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
@@ -1794,10 +1794,8 @@ class BlockedLog
 		}
 
 		// Now store value in cache
-		if ($obfuscationkey) {
-			$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-			$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-		}
+		$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
+		$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
 
 		return (string) $obfuscationkey;
 	}
