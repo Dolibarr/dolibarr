@@ -15,6 +15,7 @@ return [
     // PhanTypeMismatchProperty : 15+ occurrences
     // PhanTypeInvalidDimOffset : 10+ occurrences
     // PhanTypeMismatchDimFetch : 10+ occurrences
+    // SqlInjection : 9 occurrences
     // PhanTypeArraySuspiciousNull : 5 occurrences
     // PhanTypeExpectedObjectPropAccess : 5 occurrences
     // PhanUndeclaredMethod : 5 occurrences
@@ -53,12 +54,14 @@ return [
         'htdocs/core/class/CMailFile.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/class/canvas.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/core/class/cgenericdic.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/commonobject.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/class/commoninvoice.class.php' => ['SqlInjection'],
+        'htdocs/core/class/commonobject.class.php' => ['PhanUndeclaredProperty', 'SqlInjection'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/emailsenderprofile.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/class/html.form.class.php' => ['PhanParamTooMany'],
         'htdocs/core/class/html.formcompany.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/html.formmail.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/openid.class.php' => ['PhanTypeMismatchArgument'],
@@ -82,6 +85,7 @@ return [
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/modules/import/modules_import.class.php' => ['SqlInjection'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
@@ -143,7 +147,7 @@ return [
         'htdocs/partnership/partnership_card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/partnership/partnership_list.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/class/api_products.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchReturn', 'PhanUndeclaredProperty'],
-        'htdocs/product/class/html.formproduct.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/product/class/html.formproduct.class.php' => ['PhanUndeclaredProperty', 'SqlInjection'],
         'htdocs/product/class/productfournisseurprice.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/product/inventory/class/inventory.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/price.php' => ['PhanUndeclaredProperty'],
@@ -202,6 +206,7 @@ return [
         'htdocs/variants/tpl/productattributevalueline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/webhook/class/target.class.php' => ['PhanUndeclaredMethod'],
         'htdocs/webhook/target_card.php' => ['PhanUndeclaredGlobalVariable'],
+        'htdocs/webportal/class/html.formwebportal.class.php' => ['SqlInjection'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.
