@@ -1265,7 +1265,7 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$langs->load('blockedlog');
 
@@ -1423,9 +1423,34 @@ class BlockedLog
 				// The new ID
 				$this->id = $id;
 
-				// Store the signature of this new line
-				$this->getObfuscationKey();
+				// Store the signature of this new line in the head file.
+				try {
+					$obfuscationkey = $this->getObfuscationKey();
 
+					$lockfile = $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.head';
+
+					$lockhandle = fopen($lockfile, "w");
+					if (flock($lockhandle, LOCK_EX)) {  // acquire an exclusive lock
+						// Lock acquired
+						$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $this->signature;
+						$stringtowriteencoded = dolEncrypt($stringtowrite, $obfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+
+						if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
+							throw new Exception("Cannot write to the blockedlog head file ".$lockfile);
+						}
+
+						fclose($lockhandle);	// Remove the lock
+					} else {
+						throw new Exception("Cannot record the blockedlog HEAD file ".$lockfile.'. Transaction aborted.');
+					}
+				} catch (Exception $e) {
+					$this->error = $e->getMessage();
+
+					dol_syslog($this->error, LOG_ERR);
+
+					$this->db->rollback();
+					return -1;
+				}
 
 				$this->db->commit();
 
@@ -1585,7 +1610,7 @@ class BlockedLog
 	 */
 	private function buildFinalSignatureHash($clearstring, $format = '')
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (empty($format)) {
 			$format = $this->object_format;
@@ -1609,7 +1634,22 @@ class BlockedLog
 			try {
 				$hmac_secret_key = $this->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
 			} catch (Exception $e) {
-				throw new Exception($e->getMessage());
+				$firsterrormessage = $e->getMessage();
+
+				// Another chance to get HMAC to resave it with a different obfucation when it was saved using the old method (dolcrypt)
+				$hmac_encoded_secret_key_alt = $this->getEncodedHMACSecretKey(1, 1);
+				if (!empty($hmac_encoded_secret_key_alt)) {
+					try {
+						$hmac_secret_key_alt = $this->getClearHMACSecretKey($hmac_encoded_secret_key_alt);		// Note: On network trouble, an Exception is thrown to the caller
+						if (preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key_alt)) {	// Alternative is ok
+							$hmac_secret_key = $hmac_secret_key_alt;
+						}
+					} catch (Exception $e) {
+						throw new Exception($firsterrormessage);
+					}
+				} else {
+					throw new Exception($firsterrormessage);
+				}
 			}
 
 			// Last check on validity of key
@@ -1629,9 +1669,11 @@ class BlockedLog
 				}
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
-				} else {
-					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
 				}
+				/* We must not throw an error here, because the main goal of this function is to get the signature of the line and we got it.
+				else {
+					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
+				}*/
 			}
 
 			// Here HMAC secret key is a long string starting with BLOCKEDLOGHMAC..., we can use it to sign the data.
@@ -1720,6 +1762,7 @@ class BlockedLog
 	/**
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
 	 * Use a memory cache to avoid repeated db access.
+	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
 	 *
 	 * @return 	string					Obfuscation key or '' if not found.
 	 */
@@ -1744,10 +1787,10 @@ class BlockedLog
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid or the server is down. Re-try later.');
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done. Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid or the server is down. Re-try later. '.$obfuscationkey);
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done. Re-try later. '.$obfuscationkey);
 		}
 
 		// Now store value in cache
@@ -1763,18 +1806,24 @@ class BlockedLog
 	 * Get the encoded HMAC secret key.
 	 * Use a memory cache to avoid repeated db access.
 	 *
+	 * @param	int 	$nocache		Use 1 to force to not use cache.
+	 * @param 	int		$noentity		Use 1 to search without entity.
 	 * @return 	string					Encoded HMAC secret key.
 	 */
-	public function getEncodedHMACSecretKey()
+	public function getEncodedHMACSecretKey($nocache = 0, $noentity = 0)
 	{
 		global $conf;
 
 		$hmac_encoded_secret_key = '';
 
 		// Get value of the $hmac_encoded_secret_key from the database
-		if (empty($conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)])) {
+		if ($nocache || empty($conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)])) {
 			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = 'BLOCKEDLOG_HMAC_KEY'";
-			$sql .= " AND entity IN (0, ".((int) $this->entity).")";
+			if ($noentity) {
+				$sql .= " AND entity IN (0)";	// To force to get value on old instances that may have been saved with entity = 0
+			} else {
+				$sql .= " AND entity IN (0, ".((int) $this->entity).")";
+			}
 			$sql .= " ORDER BY entity DESC LIMIT 1";
 
 			$resql = $this->db->query($sql);
@@ -1782,12 +1831,15 @@ class BlockedLog
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$hmac_encoded_secret_key = $obj->value;
+
+					// Save value in memory page cache (if we recall the same function in same page transaction).
+					if (empty($nocache)) {
+						$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;
+					}
 				}
 			} else {
 				return 'ERROR '.$this->db->lasterror();
 			}
-
-			$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;		// Save value in memory page cache (if we recall the same function in same page transaction).
 		} else {
 			$hmac_encoded_secret_key = $conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)];
 		}
@@ -1823,7 +1875,7 @@ class BlockedLog
 			}
 		}
 
-		if (preg_match('/^dolcrypt/', $hmac_encoded_secret_key) || !preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+		if (preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {
 			// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with old versions).
 			// We test this and we force a migration of data to use the new storage if this is the case.
 			// Example with the old demo sample database:

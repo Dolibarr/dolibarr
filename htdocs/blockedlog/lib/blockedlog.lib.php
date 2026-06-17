@@ -455,7 +455,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			} else {
 				$reg = array();
-				if (preg_match('/dolobfuscationv1[^:]+:(.*)$/', $tmpresult['content'], $reg)) {
+				if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// $tmpresult['content'] May contains text comment before the line 'DOLOBFUSCKEY...'
 					$obfuscationkey = $reg[1];
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
