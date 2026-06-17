@@ -475,8 +475,6 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicu
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
-// Option line detection: is_option is the source of truth (proposals), legacy special_code=3 tolerated for backward compatibility
-$lineisoption = (!empty($line->is_option) || $line->special_code == 3);
 // New-style option lines (is_option) display their real quantity/price and are marked with a badge.
 // Only legacy special_code=3 lines keep the old fully-masked rendering (backward compatibility).
 $lineisoptionlegacy = (empty($line->is_option) && $line->special_code == 3);
