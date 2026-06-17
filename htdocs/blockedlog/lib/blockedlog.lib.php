@@ -267,7 +267,7 @@ function isBlockedLogUsed($ignoresystem = 0)
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log is disallowed
+		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log will never be allowed
 		if ($ignoresystem) {
 			$sql .= " AND action NOT IN ('MODULE_SET', 'MODULE_RESET')";
 		}

@@ -133,6 +133,8 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
 $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
+$error = 0;
+
 
 /*
  * Actions
@@ -312,22 +314,44 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
+// Clear memory cache of the obfuscation key
+if (GETPOST('clearcache')) {
+	unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+	unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+}
 
-// Make some tests on config validity.
-$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
-if (empty($hmac_encoded_secret_key)) {
-	print '<div class="error">';
-	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration of an old version.';
+// Get the remoteobfuscation key
+$remoteobfuscationkey = '';
+try {
+	$remoteobfuscationkey = $block_static->getObfuscationKey();
+} catch (Exception $e) {
+	$error++;
+
+	print '<div class="error mess1">';
+	print $e->getMessage();
+	print '<br>';
+	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
 	print '</div>';
 }
+
+// Get the encoded HMAC key.
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old dolcrypt:... or dolobfuscationv1...
+if (empty($hmac_encoded_secret_key)) {
+	print '<div class="error mess2">';
+	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration from a very old version.';
+	print '</div>';
+}
+
 // Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
 $hmac_secret_key = '';
-try {
-	$hmac_secret_key = $block_static->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
-} catch (Exception $e) {
-	print '<div class="error">';
-	print $e->getMessage();
-	print '</div>';
+if (!$error) {
+	try {
+		$hmac_secret_key = $block_static->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
+	} catch (Exception $e) {
+		print '<div class="error mess3">';
+		print $e->getMessage();
+		print '</div>';
+	}
 }
 
 
@@ -419,6 +443,7 @@ print '</td>';
 // Link to debug information object
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 }
 
 // Action column
@@ -450,6 +475,7 @@ print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
@@ -506,6 +532,75 @@ if (is_array($blocks)) {
 	$object_link = '';
 	$object_link_title = '';
 
+	$colspan = 12;
+	if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
+		$colspan++;
+		$colspan++;
+	}
+
+	// Check that there was no deletion on the end of chain.
+	$lockfile = $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.head';
+
+	if (!file_exists($lockfile)) {
+		$error++;
+
+		print '<tr><td class="center" colspan="'.$colspan.'">';
+		if ($mysoc->country_code == 'FR') {
+			print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+		} else {
+			print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+		}
+		print '</td></tr>';
+	} else {
+		$line = trim(file_get_contents($lockfile));
+		if (preg_match('/^dolobfuscation/', $line)) {
+			if (empty($remoteobfuscationkey)) {
+				$error++;
+
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+				print '<span class="warning">'.$langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping).'</span>';
+				print ' ';
+				print '<span class="warning">'.$langs->trans("CantValidateEndOfChain").'</span>';
+				print '</td></tr>';
+			}
+		}
+	}
+
+	if (! $error) {
+		$headstring = dolDecrypt($line, $remoteobfuscationkey);
+
+		$reg = array();
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9]+)/', $headstring, $reg)) {	// Failed to decypt the head
+			// Get last line
+			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$resql = $db->query($sql);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$lastrowid = $obj->rowid;
+				$lastdate = $db->jdate($obj->date_creation, 'gmt');
+				$lastsignature = $obj->signature;
+			}
+
+			if ($reg[1] > $lastrowid || $reg[3] != $lastsignature) {
+				$error++;
+
+				// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastdate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
+				print '</td></tr>';
+			}
+		} else {
+			$error++;
+
+			print '<tr><td class="center" colspan="'.$colspan.'">';
+			print '<span class="error">'.$langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable").'</span>';
+			print '</td></tr>';
+		}
+	}
+
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id]) {
@@ -550,7 +645,11 @@ if (is_array($blocks)) {
 
 			// Action
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($labelofaction).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall small">';
+			print dolPrintHTML($labelofaction);
+			print '</div>';
+			print '</td>';
 
 			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
 			$total_ht = $total_vat = $total_ttc = 0;
@@ -634,8 +733,13 @@ if (is_array($blocks)) {
 
 			// Link to debug information object
 			if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+				print '<td class="nowraponall">';
+				print '<!-- version -->';	// $object_link can be a '<a href' link or a text
+				print '<span class="small">'.$block->object_version. '<br>'.$block->object_format.'</span>';
+				print '</td>';
+
 				print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
-				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text with more information
 				print $object_link;
 				print '</td>';
 			}
@@ -652,10 +756,6 @@ if (is_array($blocks)) {
 
 	// Show total line
 	if ($nbshown == 0) {
-		$colspan = 11;
-		if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
-			$colspan++;
-		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
@@ -729,6 +829,8 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td></td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -815,6 +917,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -867,6 +972,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}

@@ -227,7 +227,8 @@ class modBlockedLog extends DolibarrModules
 
 				if (empty($obfuscationkey)) {
 					$error++;
-					setEventMessages('ErrorFailedToGetObfuscationKey', null, 'errors');
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					setEventMessages($langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping), null, 'errors');
 				}
 
 				if (!$error) {
@@ -267,7 +268,8 @@ class modBlockedLog extends DolibarrModules
 
 				if (empty($obfuscationkey)) {
 					$error++;
-					$this->error = $langs->trans('ErrorFailedToGetObfuscationKey');
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					$this->error = $langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping);
 				}
 
 				$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $obfuscationkey);

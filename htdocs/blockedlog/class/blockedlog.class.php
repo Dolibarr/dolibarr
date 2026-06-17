@@ -461,7 +461,7 @@ class BlockedLog
 			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
-		} elseif ($this->action == 'MODULE_RESET') {
+		} elseif ($this->action == 'MODULE_RESET') {	// This case should not happen. Paranoiac protection against possible bug that forces a record that will return a non valid entry.
 			if ($this->signature == '0000000000') {
 				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabled").'</i>';
 			} else {
@@ -1423,25 +1423,65 @@ class BlockedLog
 				// The new ID
 				$this->id = $id;
 
-				// Store the signature of this new line in the head file.
+				// Check and store the signature of this new line in the head file.
 				try {
-					$obfuscationkey = $this->getObfuscationKey();
-
 					$lockfile = $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.head';
 
-					$lockhandle = fopen($lockfile, "w");
+					$lockhandle = fopen($lockfile, "c+");
 					if (flock($lockhandle, LOCK_EX)) {  // acquire an exclusive lock
-						// Lock acquired
-						$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $this->signature;
-						$stringtowriteencoded = dolEncrypt($stringtowrite, $obfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+						$line = trim(fgets($lockhandle, 4096));		// Read first line
+
+						if (preg_match('/^dolcrypt/', $line)) {		// Old method (does not happen after migration)
+							$headstring = dolDecrypt($line);
+						} elseif (preg_match('/^dolobfuscation/', $line)) {
+							$remoteobfuscationkey = $this->getObfuscationKey();
+							if (empty($remoteobfuscationkey)) {
+								throw new Exception("Failed to get the remote obfuscation key. We can't record the head file so we abort the transaction.");
+							}
+							$headstring = dolDecrypt($line, $remoteobfuscationkey);
+						}
+
+						$finalsignature = $this->signature;
+
+						$reg = array();
+						if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9]+)/', $headstring, $reg)) {
+							// We succeed in decypting the head
+							$previousidheadflag = $reg[1];
+							$previousdatecreationheadflag = $reg[2];
+							$previoushashheadflag = $reg[3];
+
+							// Check the signature of the previous line
+							if ($previousid < $previousidheadflag || $previoushash != $previoushashheadflag) {
+								// We detect that old record were removed. We force a non valid signature on the new record.
+								$finalsignature = 'EndOfChainDeletionDetected ['.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').' - '.dol_print_date($previousdatecreationheadflag, 'dayhourrfc', 'gmt').']';
+								// We update the record we have just inserted to set the new "error" signature
+								$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog SET signature = '".$this->db->escape($finalsignature)."' WHERE rowid = ".((int) $this->id);
+								$resql = $this->db->query($sql);
+								if (!$resql) {
+									throw new Exception("End of chain deletion detected but we failed to update the signature of the record ".$this->id." to set the new signature ".$finalsignature." to track this.");
+								}
+							}
+						} else {
+							// Failed to decrypt the head
+							throw new Exception("Failed to decode the content of the head file ".$lockfile." with the obfuscation key, so we can't record the head file so we abort the transaction.");
+						}
+
+						// Lock acquired, we can now write the new head
+						$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
+						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+
+						rewind($lockhandle);
+						//ftruncate($lockhandle, 0);
 
 						if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
 							throw new Exception("Cannot write to the blockedlog head file ".$lockfile);
 						}
 
 						fclose($lockhandle);	// Remove the lock
+						dolChmod($lockfile);
 					} else {
-						throw new Exception("Cannot record the blockedlog HEAD file ".$lockfile.'. Transaction aborted.');
+						// Go to the catch()
+						throw new Exception("Cannot lock the blockedlog HEAD file ".$lockfile.' to update it. Is the file writable by running user and not open by another process? Transaction aborted.');
 					}
 				} catch (Exception $e) {
 					$this->error = $e->getMessage();
