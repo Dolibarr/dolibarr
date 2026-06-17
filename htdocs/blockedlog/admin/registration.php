@@ -283,7 +283,8 @@ if ($action == 'update') {
 				}
 				if (empty($obfuscationkey)) {
 					$error++;
-					setEventMessages('ErrorFailedToGetObfuscationKey', null, 'errors');
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					setEventMessages($langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping), null, 'errors');
 				}
 
 				if (!$error) {
