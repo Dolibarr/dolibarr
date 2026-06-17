@@ -124,8 +124,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				// warning; the test page use its own call
-				global $dolibarr_allow_localurl_for_webhooks;
-				$localurl = empty($dolibarr_allow_localurl_for_webhooks) ? 0 : 2;
+				$localurl = getDolGlobalInt('WEBHOOK_ALLOW_LOCALURL') ? 2 : 0;
 				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), $localurl, -1);
 
 				$errormsg = "";
