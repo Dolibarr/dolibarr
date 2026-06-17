@@ -2860,7 +2860,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
  *	Return whether a document line must be rendered as an option.
  *	Phase N: is_option is the source of truth (proposals), legacy special_code=3 is tolerated for backward compatibility.
  *
- *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object		Object
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Delivery	$object		Object
  *	@param	int			$i					Current line number
  *	@return	bool							True if the line is an option
  */
@@ -2877,7 +2877,7 @@ function pdf_isoptionline($object, $i)
  *	Legacy option lines keep the old fully-masked rendering (no qty/price shown); new is_option
  *	lines display their real quantity/price and are only marked with an "Option" label.
  *
- *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal	$object		Object
+ *	@param	Commande|Facture|Propal|FactureFournisseur|CommandeFournisseur|SupplierProposal|Delivery	$object		Object
  *	@param	int			$i					Current line number
  *	@return	bool							True if the line is a legacy (masked) option
  */
