@@ -70,6 +70,12 @@ if (!class_exists('FormSetup')) {
 
 $formSetup = new FormSetup($db);
 
+// Add WEBHOOK_ALLOW_LOCALURL configuration
+$item = $formSetup->newItem('WEBHOOK_ALLOW_LOCALURL');
+$item->setAsYesNo();
+$item->nameText = $langs->trans("WEBHOOK_ALLOW_LOCALURL");
+$item->helpText = $langs->trans("WEBHOOK_ALLOW_LOCALURLHelp");
+
 $setupnotempty = count($formSetup->items);
 
 
