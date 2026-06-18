@@ -1785,16 +1785,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	// Status management: if unchecked at creation, prune all status-anchored regions (class + card).
 	// Must run BEFORE rebuildObjectClass so the pruned $fields['status'] entry is not regenerated.
 	if (!$error && !GETPOST('statusmanaged', 'aZ09')) {
-		$statuspattern = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
-		$statusfiles = array(
-			$destdir.'/class/'.strtolower($objectname).'.class.php',
-			$destdir.'/'.$ncObj->applyToFilename('myobject_card.php'),
-		);
-		foreach ($statusfiles as $statusfile) {
-			if (file_exists($statusfile) && !removePatternFromFile($statusfile, $statuspattern)) {
-				$error++;
-				dol_syslog("modulebuilder: failed to purge STATUS sections in ".$statusfile, LOG_ERR);
-			}
+		if (pruneModuleBuilderStatusRegions($destdir, $objectname) > 0) {
+			$error++;
 		}
 	}
 
@@ -2192,16 +2184,8 @@ if ($dirins && $action == 'confirm_disablestatus' && $module && $tabobj && GETPO
 	$destdir = $dirins.'/'.strtolower($module);
 
 	// 1) Prune every status-anchored region in the already-generated class and card files.
-	$statuspattern = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
-	$statusfiles = array(
-		$destdir.'/class/'.strtolower($objectname).'.class.php',
-		$destdir.'/'.strtolower($objectname).'_card.php',
-	);
-	foreach ($statusfiles as $statusfile) {
-		if (file_exists($statusfile) && !removePatternFromFile($statusfile, $statuspattern)) {
-			$error++;
-			dol_syslog("modulebuilder: failed to purge STATUS sections in ".$statusfile, LOG_ERR);
-		}
+	if (pruneModuleBuilderStatusRegions($destdir, $objectname) > 0) {
+		$error++;
 	}
 
 	// 2) Drop the status field from the class properties and regenerate class + SQL.
@@ -2231,7 +2215,7 @@ if ($dirins && $action == 'confirm_disablestatus' && $module && $tabobj && GETPO
 		clearstatcache(true);
 
 		// Make a redirect to reload all data
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname);
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($objectname));
 		exit;
 	}
 }
