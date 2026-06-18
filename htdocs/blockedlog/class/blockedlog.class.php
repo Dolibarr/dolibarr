@@ -1443,6 +1443,7 @@ class BlockedLog
 					$finalnote = '';
 
 					$lockfile = $this->getEndOfChainFlagFile();
+					dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
 					// If the .end file does not exists (has been removed), we track the record as error.
 					if (!file_exists($lockfile)) {

@@ -729,7 +729,8 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
+					//print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidity')).'">'.$langs->trans("StatusValid").'</span>';
 				} elseif ($block->action == 'MODULE_RESET') {
 					// Old action code on old version.
 					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
@@ -796,6 +797,7 @@ if (is_array($blocks)) {
 				$showturnover++;
 			}
 		}
+		//var_dump($totalamount);
 
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($showturnover) {
