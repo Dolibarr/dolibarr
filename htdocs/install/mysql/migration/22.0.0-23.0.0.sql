@@ -451,4 +451,6 @@ CREATE TABLE llx_workstation_workstation_extrafields
 
 ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);
 
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
 -- end of migration
