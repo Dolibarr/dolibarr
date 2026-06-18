@@ -177,6 +177,8 @@ For developers:
 NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
 NEW: Replace MyObject MyModule occurrences (#38370)
 NEW: ModuleBuilder - Allow selecting which optional tabs (contact, note, document, agenda) are generated for an object (#38570)
+NEW: ModuleBuilder - Derive object status labels from the status field arrayofkeyval so badge, list filter and select stay consistent
+NEW: ModuleBuilder - Use explicit MODULE_OBJECT_ACTION trigger naming in generated objects instead of generic codes
 NEW: add hooks in reception card (#37214)
 NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
 NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)
