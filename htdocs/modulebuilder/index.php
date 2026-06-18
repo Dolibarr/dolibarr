@@ -2182,6 +2182,60 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 	}
 }
 
+if ($dirins && $action == 'confirm_disablestatus' && $module && $tabobj && GETPOST('confirm', 'aZ09') == 'yes' /* && $user->hasRight("modulebuilder", "run") // already checked */) {
+	$objectname = $tabobj;
+
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
+	$srcdir = $dirread.'/'.strtolower($module);
+	$destdir = $dirins.'/'.strtolower($module);
+
+	// 1) Prune every status-anchored region in the already-generated class and card files.
+	$statuspattern = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
+	$statusfiles = array(
+		$destdir.'/class/'.strtolower($objectname).'.class.php',
+		$destdir.'/'.strtolower($objectname).'_card.php',
+	);
+	foreach ($statusfiles as $statusfile) {
+		if (file_exists($statusfile) && !removePatternFromFile($statusfile, $statuspattern)) {
+			$error++;
+			dol_syslog("modulebuilder: failed to purge STATUS sections in ".$statusfile, LOG_ERR);
+		}
+	}
+
+	// 2) Drop the status field from the class properties and regenerate class + SQL.
+	$object = null;
+	if (!$error) {
+		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), 'status');
+
+		if (is_numeric($object) && $object <= 0) {
+			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
+			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error && $object !== null) {
+		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
+
+		if ($result <= 0) {
+			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans('StatusManagementDisabled'), null);
+
+		clearstatcache(true);
+
+		// Make a redirect to reload all data
+		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname);
+		exit;
+	}
+}
+
 if ($dirins && $action == 'confirm_deletemodule' /* && $user->hasRight("modulebuilder", "run") // already checked */) {
 	if (preg_match('/[^a-z0-9_]/i', $module)) {
 		$error++;
@@ -4830,6 +4884,26 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 							print '<input class="button smallpaddingimp" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+
+							// Status management is inferred from the presence of the 'status' field in the generated class.
+							$statusmanaged = isset($reflectorpropdefault['fields']['status']);
+							if ($statusmanaged) {
+								print ' &nbsp; <a class="button smallpaddingimp" href="'.$_SERVER['PHP_SELF'].'?action=disablestatus&token='.newToken().'&tab=objects&module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($tabobj).'">'.dol_escape_htmltag($langs->trans('DisableStatusManagement')).'</a>';
+							} else {
+								print ' &nbsp; <span class="opacitymedium">'.dol_escape_htmltag($langs->trans('StatusManagementDisabled')).'</span>';
+							}
+							if ($statusmanaged && $action == 'disablestatus') {
+								print $form->formconfirm(
+									$_SERVER['PHP_SELF'].'?module='.urlencode($module.($forceddirread ? '@'.$dirread : '')).'&tabobj='.urlencode($tabobj).'&tab=objects',
+									$langs->trans('DisableStatusManagement'),
+									$langs->trans('ConfirmDisableStatusManagement'),
+									'confirm_disablestatus',
+									'',
+									0,
+									1
+								);
+							}
+
 							print '<br><br class="clearboth">';
 							print '<br class="clearboth">';
 
