@@ -489,7 +489,7 @@ ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_me
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
-ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
+ALTER TABLE llx_product_price DROP FOREIGN KEY fk_product_price_product;
 
 ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
 
@@ -679,7 +679,7 @@ ALTER TABLE llx_product_lot_extrafields CHANGE COLUMN tms tms timestamp DEFAULT 
 ALTER TABLE llx_product_lot CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_price_by_qty CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_price CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-ALTER TABLE llx_product_stock_entrepot CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE llx_product_warehouse_properties CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_stock CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_projet_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_projet CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
