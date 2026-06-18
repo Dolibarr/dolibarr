@@ -123,6 +123,37 @@ class ModuleBuilderStatusToggleTest extends PHPUnit\Framework\TestCase // @phan-
 	}
 
 	/**
+	 * After prune, the card template must contain no residual status reference.
+	 *
+	 * @return void
+	 */
+	public function testPruneRemovesCardStatusSites()
+	{
+		$tmp = $this->pruneToTmp(self::CARD_TPL);
+		$content = file_get_contents($tmp);
+		unlink($tmp);
+		// Runtime status references only. The "// Actions ... confirm_setdraft, confirm_reopen" comment
+		// (line ~205) documents the core actions_addupdatedelete.inc.php include and is intentionally kept:
+		// those core actions exist regardless of this feature and are simply never triggered without buttons.
+		$this->assertSame(0, preg_match('/->status\b|STATUS_DRAFT\b|STATUS_VALIDATED\b|STATUS_CANCELED\b|STATUS_ENABLED\b/', $content), 'Residual status reference found in pruned card');
+	}
+
+	/**
+	 * The pruned card template must still be valid PHP.
+	 *
+	 * @return void
+	 */
+	public function testPrunedCardIsPhpValid()
+	{
+		$tmp = $this->pruneToTmp(self::CARD_TPL);
+		$out = array();
+		$code = 0;
+		exec('php -l '.escapeshellarg($tmp).' 2>&1', $out, $code);
+		unlink($tmp);
+		$this->assertSame(0, $code, 'Pruned card fails php -l: '.implode("\n", $out));
+	}
+
+	/**
 	 * STATUS markers must be balanced and never nested in either template.
 	 *
 	 * @return void
