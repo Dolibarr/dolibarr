@@ -411,7 +411,9 @@ if (empty($reshook)) {
 		// We check invoice sign
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 			// If a credit note, the sign must be negative
-			if ($object->total_ht > 0) {
+			// Note: total_ht can be positive when total_ttc is 0 or negative (mirror of the
+			// invoice case below), e.g. a refund of a 0 VAT gift card line cancelling a VAT line.
+			if ($object->total_ttc > 0) {
 				setEventMessages($langs->trans("ErrorInvoiceAvoirMustBeNegative"), null, 'errors');
 				$action = '';
 			}
