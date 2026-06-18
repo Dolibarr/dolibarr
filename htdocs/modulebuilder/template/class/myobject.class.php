@@ -1017,12 +1017,14 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			// Build status labels from the 'status' field arrayofkeyval so that the badge (LibStatut),
+			// the list filter and the select all show the same, configurable labels.
+			if (!empty($this->fields['status']['arrayofkeyval']) && is_array($this->fields['status']['arrayofkeyval'])) {
+				foreach ($this->fields['status']['arrayofkeyval'] as $statuskey => $statuslabel) {
+					$this->labelStatus[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+					$this->labelStatusShort[$statuskey] = $langs->transnoentitiesnoconv($statuslabel);
+				}
+			}
 		}
 
 		$statusType = 'status'.$status;
