@@ -305,6 +305,7 @@ class modBlockedLog extends DolibarrModules
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
+		$object->label = 'Module enabled';
 
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
@@ -355,6 +356,7 @@ class modBlockedLog extends DolibarrModules
 
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($this->db);
 
 		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
 
@@ -366,8 +368,9 @@ class modBlockedLog extends DolibarrModules
 		$object->date = dol_now();
 		$object->label = 'Module disabled';
 
-		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, 0);
+		// Add entry in unalterable Log to track that module was activated
+		$action = 'MODULE_RESET';
+		$result = $b->setObjectData($object, $action, 0, $user, 0);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;
