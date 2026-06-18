@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: ModuleBuilder - Option to manage statuses per object (excludes all status-management code when disabled)
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)
