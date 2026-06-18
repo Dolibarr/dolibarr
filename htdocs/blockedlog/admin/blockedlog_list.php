@@ -844,7 +844,7 @@ if (is_array($blocks)) {
 		krsort($showtotalfor);
 
 		// Show the lifetime payment only if filters are ok
-		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature);
 
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
