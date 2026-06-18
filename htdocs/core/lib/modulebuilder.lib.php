@@ -26,6 +26,54 @@
 require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php';
 
 /**
+ * Resolve the database foreign key target (table.primarykey) of a ModuleBuilder field declared with a
+ * link type such as 'integer:ClassName:relative/path/to/class.php[:AddButton[:Filter[:Sortfield]]]'.
+ * The referenced table is read from the linked object's $table_element (so 'Project' resolves to 'projet',
+ * not 'project'), and the primary key is the Dolibarr convention 'rowid'.
+ *
+ * @param	string		$type	Field 'type' value (e.g. 'integer:Societe:societe/class/societe.class.php:1:(...)')
+ * @param	DoliDB		$db		Database handler
+ * @return	string				Foreign key target as 'table.rowid', or '' when the type is not a resolvable link
+ */
+function getFieldForeignKeyTargetFromType($type, $db)
+{
+	if (empty($type) || strpos($type, ':') === false) {
+		return '';
+	}
+	// [0] base type (integer/sellist...), [1] ClassName, [2] relative class path, [3+] options
+	$infos = explode(':', $type);
+	if (empty($infos[1]) || empty($infos[2])) {
+		return '';
+	}
+	$classname = $infos[1];
+	$classpath = $infos[2];
+	dol_include_once($classpath);
+	if (!class_exists($classname)) {
+		return '';
+	}
+	$tmpobject = new $classname($db);
+	if (empty($tmpobject->table_element)) {
+		return '';
+	}
+	return $tmpobject->table_element.'.rowid';
+}
+
+/**
+ * Truncate a generated SQL identifier (index or constraint name) to stay within the MySQL/MariaDB 64-character
+ * limit, keeping it unique by appending a short hash of the original name when truncation is required.
+ *
+ * @param	string	$identifier		Candidate identifier
+ * @return	string					Identifier guaranteed to be at most 64 characters long
+ */
+function dolModuleBuilderTruncSqlIdentifier($identifier)
+{
+	if (strlen($identifier) <= 64) {
+		return $identifier;
+	}
+	return substr($identifier, 0, 55).'_'.substr(md5($identifier), 0, 8);
+}
+
+/**
  * 	Regenerate files .class.php
  *
  *  @param	string	$destdir		Directory
@@ -33,7 +81,7 @@ require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php'
  *  @param	string	$objectname		Name of object
  * 	@param	string	$newmask		New mask
  *  @param	string	$readdir		Directory source (use $destdir when not defined)
- *  @param	array{}|array{name:string,key:string,type:string,label:string,picot?:string,enabled:int<0,1>,notnull:int<0,1>,position:int,visible:int,noteditable?:int<0,1>,alwayseditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,1>,disabled?:int<0,1>,autofocusoncreate?:int<0,1>,arrayofkeyval?:array<string,string>,validate?:int<0,1>,comment?:string}	$addfieldentry	Array of 1 field entry to add
+ *  @param	array{}|array{name:string,key:string,type:string,label:string,picot?:string,enabled:int<0,1>,notnull:int<0,1>,position:int,visible:int,noteditable?:int<0,1>,alwayseditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,unique?:int,ondelete?:string,searchall?:int,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,1>,disabled?:int<0,1>,autofocusoncreate?:int<0,1>,arrayofkeyval?:array<string,string>,validate?:int<0,1>,comment?:string}	$addfieldentry	Array of 1 field entry to add
  *  @param	string	$delfieldentry	Id of field to remove
  * 	@return	int<-7,-1>|CommonObject	Return integer <=0 if KO, Object if OK
  *  @see rebuildObjectSql()
@@ -424,13 +472,16 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			// uniqueness is scoped per entity by adding the entity column to the composite index.
 			$isuniqueindex = (!empty($val['unique']) || $key == 'ref');
 			if (!empty($val['index']) || !empty($val['unique'])) {
-				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($isuniqueindex ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($isuniqueindex && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
+				// Index name is bounded to the MySQL/MariaDB 64-char identifier limit (long module/object/field names).
+				$indexname = dolModuleBuilderTruncSqlIdentifier(($isuniqueindex ? "uk_" : "idx_").strtolower($module).'_'.strtolower($objectname)."_".$key);
+				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($isuniqueindex ? "UNIQUE INDEX " : "INDEX ").$indexname." (".$key.($isuniqueindex && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
 				$texttoinsert .= "\n";
 			}
 			if (!empty($val['foreignkey'])) {
 				$tmp = explode('.', $val['foreignkey']);
 				if (!empty($tmp[0]) && !empty($tmp[1])) {
-					$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES llx_".preg_replace('/^llx_/', '', $tmp[0])."(".$tmp[1].")";
+					$constraintname = dolModuleBuilderTruncSqlIdentifier("llx_".strtolower($module).'_'.strtolower($objectname)."_".$key);
+					$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT ".$constraintname." FOREIGN KEY (".$key.") REFERENCES llx_".preg_replace('/^llx_/', '', $tmp[0])."(".$tmp[1].")";
 					// ON DELETE policy (opt-in). Default RESTRICT emits no clause (InnoDB default behaviour).
 					$ondeletenorm = !empty($val['ondelete']) ? preg_replace('/[^A-Z]/', '', strtoupper((string) $val['ondelete'])) : '';
 					// SET NULL on a NOT NULL column is invalid DDL; skip the clause defensively even if the UI

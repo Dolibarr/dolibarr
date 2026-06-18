@@ -2080,6 +2080,29 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				}
 			}
 
+			// When the user asks to create a DB foreign key on a link field, derive the target (table.rowid)
+			// from the field type if it was not explicitly typed (e.g. 'integer:Societe:...' -> 'societe.rowid').
+			if (GETPOSTINT('propcreatefk') && empty($addfieldentry['foreignkey'])) {
+				$derivedfk = getFieldForeignKeyTargetFromType($addfieldentry['type'], $db);
+				if (!empty($derivedfk)) {
+					$addfieldentry['foreignkey'] = $derivedfk;
+				} else {
+					$error++;
+					setEventMessages($langs->trans("ErrorForeignKeyCannotBeDerivedFromType"), null, 'errors');
+				}
+			}
+
+			// Warn (non-blocking) when the foreign key references a table not present in the current database.
+			if (!empty($addfieldentry['foreignkey'])) {
+				$tmpfk = explode('.', $addfieldentry['foreignkey']);
+				if (!empty($tmpfk[0])) {
+					$reftable = $db->prefix().preg_replace('/^llx_/', '', $tmpfk[0]);
+					if (count($db->DDLListTables($db->database_name, $reftable)) == 0) {
+						setEventMessages($langs->trans("WarningForeignKeyRefTableNotFound", $tmpfk[0]), null, 'warnings');
+					}
+				}
+			}
+
 			// Server-side validation of the ON DELETE policy (must not rely on the UI only).
 			$ondeletenorm = preg_replace('/[^A-Z]/', '', strtoupper((string) $addfieldentry['ondelete']));
 			if (!empty($ondeletenorm) && !in_array($ondeletenorm, array('RESTRICT', 'SETNULL', 'CASCADE', 'NOACTION'), true)) {
@@ -4390,6 +4413,7 @@ if ($module == 'initmodule') {
 					'propdefault' => $langs->trans("DefaultValue"),
 					'propindex' => $langs->trans("DatabaseIndex"),
 					'propforeignkey' => $form->textwithpicto($langs->trans("ForeignKey"), $langs->trans("ForeignKeyDesc"), 1, 'help', 'extracss', 0, 3, 'foreignkeyhelp'),
+					'propcreatefk' => $form->textwithpicto($langs->trans("CreateForeignKey"), $langs->trans("CreateForeignKeyDesc")),
 					'propunique' => $form->textwithpicto($langs->trans("UniqueField"), $langs->trans("UniqueFieldDesc")),
 					'propondelete' => $form->textwithpicto($langs->trans("OnDelete"), $langs->trans("OnDeleteDesc")),
 					'propposition' => $langs->trans("Position"),
@@ -4462,6 +4486,8 @@ if ($module == 'initmodule') {
 						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $default).'"></td>';
 					} elseif ($key == 'proparrayofkeyval') {
 						print '<td class="titlefieldcreate tdproparrayofkeyval">'.$attribute.'</td><td class="valuefieldcreate"><textarea class="maxwidth200" name="'.$key.'">'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : "").'</textarea></td>';
+					} elseif ($key == 'propcreatefk') {
+						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input type="checkbox" name="'.$key.'" value="1"'.(GETPOSTINT($key) ? ' checked' : '').'></td>';
 					} else {
 						print '<td class="titlefieldcreate">'.$attribute.'</td><td class="valuefieldcreate"><input class="maxwidth200" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alpha') : '').'"></td>';
 					}
@@ -5003,6 +5029,8 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td>';
 										print '<input class="center maxwidth100" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
+										// Leave the foreign key empty and tick this to derive table.rowid from a link-type field.
+										print '<br><label class="opacitymedium small"><input type="checkbox" name="propcreatefk" value="1"> '.dol_escape_htmltag($langs->trans("CreateForeignKey")).'</label>';
 										print '</td>';
 										print '<td class="center">';
 										print '<input type="number" step="1" min="0" max="1" class="center width50" name="propunique" value="'.dol_escape_htmltag($propunique).'">';

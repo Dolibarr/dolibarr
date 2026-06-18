@@ -157,6 +157,10 @@ OnDelete=On delete
 OnDeleteDesc=Referential action of the foreign key when the referenced record is deleted (only used if a foreign key is set). RESTRICT (default), CASCADE, SET NULL or NO ACTION. SET NULL requires the field to be nullable.
 ErrorOnDeleteInvalidPolicy=Invalid 'On delete' policy. Allowed values are RESTRICT, CASCADE, SET NULL and NO ACTION.
 ErrorOnDeleteSetNullRequiresNullableField='On delete' SET NULL requires the field to allow null values (set 'Not null' to 0 or -1).
+CreateForeignKey=Create foreign key
+CreateForeignKeyDesc=Tick this to generate a database foreign key. If the 'Foreign key' field is left empty, the target table is derived automatically from a link-type field (for example type 'integer:Societe:...').
+ErrorForeignKeyCannotBeDerivedFromType=Cannot derive a foreign key target from this field type. Set the 'Foreign key' value manually (for example 'societe.rowid').
+WarningForeignKeyRefTableNotFound=The foreign key references table '%s' which was not found in the current database. The generated SQL may fail at install time.
 TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) NumberOfStars must be between 1 and 10.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Ascii to HTML converter

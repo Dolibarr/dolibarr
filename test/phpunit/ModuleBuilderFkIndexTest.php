@@ -180,4 +180,46 @@ class ModuleBuilderFkIndexTest extends CommonClassTest
 
 		dol_delete_dir_recursive($base);
 	}
+
+	/**
+	 * getFieldForeignKeyTargetFromType() must resolve a link-type field to its real table (read from the
+	 * linked object's $table_element, so 'Project' yields 'projet') and return '' for non-link types.
+	 *
+	 * @return void
+	 */
+	public function testForeignKeyTargetDerivationFromType()
+	{
+		global $db;
+
+		$this->assertSame('societe.rowid', getFieldForeignKeyTargetFromType('integer:Societe:societe/class/societe.class.php:1:(...)', $db), 'Societe must resolve to societe.rowid');
+		$this->assertSame('projet.rowid', getFieldForeignKeyTargetFromType('integer:Project:projet/class/project.class.php:1', $db), 'Project must resolve to projet.rowid, not project.rowid');
+		$this->assertSame('', getFieldForeignKeyTargetFromType('integer', $db), 'A plain integer type has no FK target');
+		$this->assertSame('', getFieldForeignKeyTargetFromType('varchar(50)', $db), 'A varchar type has no FK target');
+	}
+
+	/**
+	 * dolModuleBuilderTruncSqlIdentifier() must keep short identifiers intact and bound long ones to 64 chars.
+	 *
+	 * @return void
+	 */
+	public function testTruncSqlIdentifier()
+	{
+		$this->assertSame('idx_short_field', dolModuleBuilderTruncSqlIdentifier('idx_short_field'), 'short identifier is unchanged');
+		$long = dolModuleBuilderTruncSqlIdentifier('uk_'.str_repeat('x', 80).'_field');
+		$this->assertLessThanOrEqual(64, strlen($long), 'a long identifier must be bounded to 64 characters');
+	}
+
+	/**
+	 * The shipped template object must declare the default foreign keys on fk_soc / fk_project so generated
+	 * modules get them out of the box (with a SET NULL policy, as those columns are nullable).
+	 *
+	 * @return void
+	 */
+	public function testTemplateShipsDefaultForeignKeys()
+	{
+		$tpl = file_get_contents(DOL_DOCUMENT_ROOT.'/modulebuilder/template/class/myobject.class.php');
+
+		$this->assertMatchesRegularExpression("/'fk_soc'\s*=>\s*array\(.*'foreignkey'\s*=>\s*'societe\.rowid'.*'ondelete'\s*=>\s*'SETNULL'/", $tpl, 'fk_soc must ship with a societe.rowid FK and SET NULL policy');
+		$this->assertMatchesRegularExpression("/'fk_project'\s*=>\s*array\(.*'foreignkey'\s*=>\s*'projet\.rowid'.*'ondelete'\s*=>\s*'SETNULL'/", $tpl, 'fk_project must ship with a projet.rowid FK and SET NULL policy');
+	}
 }
