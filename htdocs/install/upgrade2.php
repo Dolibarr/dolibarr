@@ -81,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -681,6 +682,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
 			}
 		}
 

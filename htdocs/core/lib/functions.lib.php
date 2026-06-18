@@ -13520,14 +13520,31 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
 					$listofcodes = '';
+					$listofcodesnot = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {	// TODO Test with if ($val !== '') {
-							$listofcodes .= ($listofcodes ? ',' : '');
-							$listofcodes .= "'" . $db->escape($val) . "'";
+						if ($val !== '') {
+							if (preg_match('/^!/', $val)) {
+								$listofcodesnot .= ($listofcodesnot ? ',' : '');
+								$listofcodesnot .= "'" . $db->escape(preg_replace('/^!=?/', '', $val)) . "'";
+							} else {
+								$listofcodes .= ($listofcodes ? ',' : '');
+								$listofcodes .= "'" . $db->escape($val) . "'";
+							}
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '') . $db->sanitize($field) . " " . ($mode == -3 ? 'NOT ' : '') . "IN (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
+					$newres .= ($i2 > 0 ? ' OR ' : '');
+					$newres .= '(';
+					if ($listofcodes) {
+						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'NOT IN' : 'IN') . " (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
+					}
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= ' AND ';
+					}
+					if ($listofcodesnot) {
+						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'IN ' : 'NOT IN') . " (" . $db->sanitize($listofcodesnot, 1, 0, 1) . ")";
+					}
+					$newres .= ')';
 					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {

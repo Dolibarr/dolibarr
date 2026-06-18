@@ -133,6 +133,8 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
 $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
+$error = 0;
+
 
 /*
  * Actions
@@ -312,6 +314,47 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
+// Clear memory cache of the obfuscation key
+if (GETPOST('clearcache')) {
+	unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+	unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+}
+
+// Get the remoteobfuscation key
+$remoteobfuscationkey = '';
+try {
+	$remoteobfuscationkey = $block_static->getObfuscationKey();
+} catch (Exception $e) {
+	$error++;
+
+	print '<div class="error mess1">';
+	print $e->getMessage();
+	print '<br>';
+	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
+	print '</div>';
+}
+
+// Get the encoded HMAC key.
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old dolcrypt:... or dolobfuscationv1...
+if (empty($hmac_encoded_secret_key)) {
+	print '<div class="error mess2">';
+	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration from a very old version.';
+	print '</div>';
+}
+
+// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+$hmac_secret_key = '';
+if (!$error) {
+	try {
+		$hmac_secret_key = $block_static->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
+	} catch (Exception $e) {
+		print '<div class="error mess3">';
+		print $e->getMessage();
+		print '</div>';
+	}
+}
+
+
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
 if ($optioncss != '') {
@@ -393,12 +436,13 @@ print '<td class="liste_titre"><input type="text" class="maxwidth50" name="searc
 
 // Status
 print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
-$array = array("1" => "OnlyNonValid");
+$array = array("1" => $langs->trans("OnlyNonValid").' (KO)');
 print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
 // Link to debug information object
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
 
@@ -432,6 +476,7 @@ print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
 if (!$conf->main_checkbox_left_column) {
@@ -442,36 +487,34 @@ print '</tr>';
 $checkresult = array();
 $checkdetail = array();
 $checkerror = array();
-$loweridinerror = 0;
+$loweridinerror = 0;		// The lower rowid we found an anomaly (for debug or analysis purposes only)
 
-if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
-	// This is version that is faster but require more memory and report errors that are outside the filter range
+// This is the algorithm that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
+if (is_array($blocks)) {
+	foreach ($blocks as &$block) {
+		// Enable this log to get information used to recalculate the signature
+		//var_dump($block->id.' '.$block->signature, $block->object_data);
 
-	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
-	// to find the $loweridinerror.
-} else {
-	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
-	if (is_array($blocks)) {
-		foreach ($blocks as &$block) {
-			// Enable this log to get information used to recalculate the signature
-			//var_dump($block->id.' '.$block->signature, $block->object_data);
+		$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order and filter is various
 
-			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+		$checksignature = $tmpcheckresult['checkresult'];
 
-			$checksignature = $tmpcheckresult['checkresult'];
+		$checkresult[$block->id] = $checksignature; // false if error
+		$checkdetail[$block->id] = $tmpcheckresult;
 
-			$checkresult[$block->id] = $checksignature; // false if error
-			$checkdetail[$block->id] = $tmpcheckresult;
-			if (!empty($tmpcheckresult['error'])) {
-				$checkerror[$block->id] = $tmpcheckresult['error'];
-			}
+		if (!empty($tmpcheckresult['error'])) {
+			$checkerror[$block->id] = $tmpcheckresult['error'];
+		}
+		if (!empty($block->note)) {
+			$checkresult[$block->id] = false;
+			//$checkerror[$block->id] = $block->note;
+		}
 
-			if (!$checksignature) {
-				if (empty($loweridinerror)) {
-					$loweridinerror = $block->id;
-				} else {
-					$loweridinerror = min($loweridinerror, $block->id);
-				}
+		if (!$checksignature) {
+			if (empty($loweridinerror)) {
+				$loweridinerror = $block->id;
+			} else {
+				$loweridinerror = min($loweridinerror, $block->id);
 			}
 		}
 	}
@@ -486,6 +529,75 @@ if (is_array($blocks)) {
 	$nbshown = 0;
 	$object_link = '';
 	$object_link_title = '';
+
+	$colspan = 12;
+	if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
+		$colspan++;
+		$colspan++;
+	}
+
+	// Check that there was no deletion on the end of chain.
+	$lockfile = $block_static->getEndOfChainFlagFile();
+
+	if (!file_exists($lockfile)) {
+		$error++;
+
+		print '<tr><td class="center" colspan="'.$colspan.'">';
+		if ($mysoc->country_code == 'FR') {
+			print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+		} else {
+			print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+		}
+		print '</td></tr>';
+	} else {
+		$line = trim(file_get_contents($lockfile));
+		if (preg_match('/^dolobfuscation/', $line)) {
+			if (empty($remoteobfuscationkey)) {
+				$error++;
+
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+				print '<span class="warning">'.$langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping).'</span>';
+				print ' ';
+				print '<span class="warning">'.$langs->trans("CantValidateEndOfChain").'</span>';
+				print '</td></tr>';
+			}
+		}
+	}
+
+	if (! $error) {
+		$headstring = dolDecrypt($line, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
+
+		$reg = array();
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
+			// Get last line
+			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$resql = $db->query($sql);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$lastrowid = $obj->rowid;
+				$lastdate = $db->jdate($obj->date_creation, 'gmt');
+				$lastsignature = $obj->signature;
+			}
+
+			if ($reg[1] > $lastrowid || $reg[3] != $lastsignature) {
+				$error++;
+
+				// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastdate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
+				print '</td></tr>';
+			}
+		} else {
+			$error++;
+
+			print '<tr><td class="center" colspan="'.$colspan.'">';
+			print '<span class="error">'.$langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable").'</span>';
+			print '</td></tr>';
+		}
+	}
 
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
@@ -531,7 +643,11 @@ if (is_array($blocks)) {
 
 			// Action
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($labelofaction).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall small">';
+			print dolPrintHTML($labelofaction);
+			print '</div>';
+			print '</td>';
 
 			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
 			$total_ht = $total_vat = $total_ttc = 0;
@@ -588,7 +704,7 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
 				} elseif ($block->action == 'MODULE_RESET') {
 					// Old action code on old version.
 					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
@@ -597,13 +713,20 @@ if (is_array($blocks)) {
 					if (!empty($checkerror[$block->id])) {
 						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
 					}
-					print dolPrintHTMLForAttribute($langs->trans('KoCheckFingerprintValidity')).'">KO</span>';
+					$alt = $langs->trans('KoCheckFingerprintValidity');
+					if ($block->note) {
+						$notetoshow = $block->note;
+						$notetoshow = str_replace('EndOfChainDeletionDetected', $langs->trans("EndOfChainDeletionDetected"), $notetoshow);
+						$alt .= "\n".' '.$langs->trans("AddtionalInformation").': '.$notetoshow;
+					}
+
+					print dolPrintHTMLForAttribute($alt).'">KO</span>';
 				}
 			} else {
-				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
+				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">'.$langs->trans("StatusValid").'</span>';
 			}
 
-			// Note
+			// Add debug information
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
 					if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
@@ -615,8 +738,13 @@ if (is_array($blocks)) {
 
 			// Link to debug information object
 			if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+				print '<td class="nowraponall">';
+				print '<!-- version -->';	// $object_link can be a '<a href' link or a text
+				print '<span class="small">'.$block->object_version. '<br>'.$block->object_format.'</span>';
+				print '</td>';
+
 				print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
-				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text with more information
 				print $object_link;
 				print '</td>';
 			}
@@ -631,17 +759,21 @@ if (is_array($blocks)) {
 		}
 	}
 
-	// Show total line
+	// Show total lines
 	if ($nbshown == 0) {
-		$colspan = 11;
-		if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
-			$colspan++;
-		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
+
+		$showturnover = 0;
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
+				$showturnover++;
+			}
+		}
+
+		foreach ($totalamount as $key => $totalamountperref) {
+			if ($showturnover) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -659,6 +791,7 @@ if (is_array($blocks)) {
 				} elseif ($key == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
+				print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
 				print '</td>';
 
 				// Action
@@ -710,6 +843,8 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td></td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -796,6 +931,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -807,7 +945,10 @@ if (is_array($blocks)) {
 
 				print '</tr>';
 			}
-			if (empty($search_code) || in_array('PAYMENT_CUSTOMER_CREATE', $search_code) || in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
+			if (empty($search_code)
+				|| in_array('PAYMENT_CUSTOMER', $search_code)				// Filter for both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+				|| in_array('PAYMENT_CUSTOMER_CREATE', $search_code)
+				|| in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -848,6 +989,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
