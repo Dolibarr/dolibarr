@@ -1524,7 +1524,7 @@ class BlockedLog
 					// Lock acquired, we can now write the new .end file
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
-					if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
 						$remoteobfuscationkey = $this->getObfuscationKey();
 						if (empty($remoteobfuscationkey)) {
 							throw new Exception("Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.");
