@@ -1524,14 +1524,14 @@ class BlockedLog
 					// Lock acquired, we can now write the new .end file
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
-					if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
 						$remoteobfuscationkey = $this->getObfuscationKey();
 						if (empty($remoteobfuscationkey)) {
 							throw new Exception("Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.");
 						}
 						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1.'-'.$this->id);
 					} else {
-						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$this->id);
 					}
 
 					// Update or create the .end file.
@@ -1596,9 +1596,11 @@ class BlockedLog
 	 */
 	public function getEndOfChainFlagFile()
 	{
-		global $conf, $mysoc;
+		global $conf;
 
-		return $conf->blockedlog->dir_output.'/blockedlog-'.((int) $conf->entity).'-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
+		// Note: We must not use $conf->blockedlog->dir_output because we need this
+		// function to work even when module not yet enabled.
+		return DOL_DATA_ROOT.'/blockedlog/blockedlog-'.((int) $conf->entity).'.end';
 	}
 
 	/**
@@ -1793,10 +1795,6 @@ class BlockedLog
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
 				}
-				/* We must not throw an error here, because the main goal of this function is to get the signature of the line and we got it.
-				else {
-					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
-				}*/
 			} elseif (!preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {	 	// For old versions, we must switch the data saving mode to use the new method.
 				$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolcrypt');	// gitleaks:allow
 			}
@@ -1888,6 +1886,7 @@ class BlockedLog
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
 	 * Use a memory cache to avoid repeated db access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
+	 * Note: Avoid to call this function if you are not in acontext that need remote obfuscation key.
 	 *
 	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
@@ -1917,10 +1916,10 @@ class BlockedLog
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (status column is not reliable). Re-try later.');
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (status column is not reliable). Re-try later. '.$obfuscationkey);
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
 		// Now store value in cache
@@ -2226,6 +2225,11 @@ class BlockedLog
 		}
 		if (is_array($search_code)) {
 			if (!empty($search_code)) {
+				if (in_array('PAYMENT_CUSTOMER', $search_code)) {	// If we ask codes PAYMENT_CUSTOMER, it means both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+					$search_code[] = 'PAYMENT_CUSTOMER_CREATE';
+					$search_code[] = 'PAYMENT_CUSTOMER_DELETE';
+				}
+
 				$sql .= natural_search("action", implode(',', $search_code), 3);
 			}
 		} else {

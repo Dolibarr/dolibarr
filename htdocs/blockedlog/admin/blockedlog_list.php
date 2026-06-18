@@ -419,8 +419,22 @@ print '<input type="text" class="maxwidth50" name="search_pos_source" value="'.d
 print '</td>';
 
 // Actions code
+
+$actioncodetoshowincombo = array();
+// Merge the action PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE into PAYMENT_CUSTOMER
+foreach ($block_static->trackedevents as $key => $value) {
+	if ($key === 'PAYMENT_CUSTOMER_DELETE') {
+		$actioncodetoshowincombo['PAYMENT_CUSTOMER'] = array('id' => 'PAYMENT_CUSTOMER', 'label' => 'logPAYMENT_CUSTOMER', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER'));
+		unset($actioncodetoshowincombo['PAYMENT_CUSTOMER_CREATE']);
+		unset($actioncodetoshowincombo['PAYMENT_CUSTOMER_DELETE']);
+	} else {
+		$actioncodetoshowincombo[$key] = $value;
+	}
+}
+$actioncodetoshowincombo['PAYMENT_CUSTOMER'] = array('id' => 'PAYMENT_CUSTOMER', 'label' => 'logPAYMENT_CUSTOMER', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER'));
+
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
+print $form->multiselectarray('search_code', $actioncodetoshowincombo, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -563,6 +577,7 @@ if (is_array($blocks)) {
 	}
 
 	if (! $error) {
+		$headstring = '';
 		if (preg_match('/^dolcrypt/', $lockline)) {
 			$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
 		} elseif (preg_match('/^dolobfuscation/', $lockline)) {
@@ -585,7 +600,7 @@ if (is_array($blocks)) {
 		}
 
 		$reg = array();
-		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', (string) $headstring, $reg)) {	// Failed to decypt the head
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
 			// Compare with last line
 			$lastrecordid = $lastrecord['id'];
 			$lastrecorddate = $lastrecord['date'];
