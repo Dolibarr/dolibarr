@@ -1596,9 +1596,11 @@ class BlockedLog
 	 */
 	public function getEndOfChainFlagFile()
 	{
-		global $conf, $mysoc;
+		global $conf;
 
-		return $conf->blockedlog->dir_output.'/blockedlog-'.((int) $conf->entity).'-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
+		// Note: We must not use $conf->blockedlog->dir_output because we need this
+		// function to work even when module not yet enabled.
+		return DOL_DOCUMENT_ROOT.'/blockedlog/blockedlog-'.((int) $conf->entity).'.end';
 	}
 
 	/**
