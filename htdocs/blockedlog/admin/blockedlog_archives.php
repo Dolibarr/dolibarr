@@ -501,6 +501,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					}
 
 					if (! $error) {
+						$headstring = '';
 						if (preg_match('/^dolcrypt/', $lockline)) {
 							$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
 						} elseif (preg_match('/^dolobfuscation/', $lockline)) {
