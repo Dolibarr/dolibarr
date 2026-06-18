@@ -1367,6 +1367,7 @@ class SupplierProposal extends CommonObject
 
 						$line->rowid = $objp->rowid; // deprecated
 						$line->id = $objp->rowid;
+						$line->fetch_optionals();
 						$line->fk_supplier_proposal = $objp->fk_supplier_proposal;
 						$line->fk_parent_line = $objp->fk_parent_line;
 						$line->product_type     = $objp->product_type;
@@ -2701,6 +2702,7 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i] = new SupplierProposalLine($this->db);
 				$this->lines[$i]->id = $obj->rowid; // for backward compatibility
 				$this->lines[$i]->rowid				= $obj->rowid;
+				$this->lines[$i]->fetch_optionals();
 				$this->lines[$i]->label 			= $obj->custom_label;
 				$this->lines[$i]->description = $obj->description;
 				$this->lines[$i]->fk_product = $obj->fk_product;
