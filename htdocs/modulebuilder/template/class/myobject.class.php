@@ -76,9 +76,11 @@ class MyObject extends CommonObject
 	public $ismultientitymanaged = 0;
 
 
+	/* BEGIN MODULEBUILDER STATUS */
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
+	/* END MODULEBUILDER STATUS */
 
 	/**
 	 *  'type' field format:
@@ -147,7 +149,7 @@ class MyObject extends CommonObject
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2, 'lang' => 'mymodule@mymodule'),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0, 'lang' => 'mymodule@mymodule'),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1, 'lang' => 'mymodule@mymodule'),
+		/* BEGIN MODULEBUILDER STATUS */ 'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', '1' => 'Validated', 9 => 'Canceled'), 'validate' => 1, 'lang' => 'mymodule@mymodule'), /* END MODULEBUILDER STATUS */
 	);
 
 	/**
@@ -179,10 +181,12 @@ class MyObject extends CommonObject
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
+	/* BEGIN MODULEBUILDER STATUS */
 	/**
 	 * @var ?int Status
 	 */
 	public $status;
+	/* END MODULEBUILDER STATUS */
 
 	/**
 	 * @var int ID
@@ -347,9 +351,11 @@ class MyObject extends CommonObject
 		if (property_exists($object, 'label')) {
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
+		/* BEGIN MODULEBUILDER STATUS */
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_DRAFT;
 		}
+		/* END MODULEBUILDER STATUS */
 		if (property_exists($object, 'date_creation')) {
 			$object->date_creation = dol_now();
 		}
@@ -557,16 +563,19 @@ class MyObject extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
+		/* BEGIN MODULEBUILDER STATUS */
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 
+		/* END MODULEBUILDER STATUS */
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 	//END MODULEBUILDER LINES
 
 
+	/* BEGIN MODULEBUILDER STATUS */
 	/**
 	 *	Validate object
 	 *
@@ -774,6 +783,7 @@ class MyObject extends CommonObject
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYMODULE_MYOBJECT_REOPEN');
 	}
+	/* END MODULEBUILDER STATUS */
 
 	/**
 	 * getTooltipContentArray
@@ -792,9 +802,11 @@ class MyObject extends CommonObject
 			return ['optimize' => $langs->trans("ShowMyObject")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("MyObject").'</u>';
+		/* BEGIN MODULEBUILDER STATUS */
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
+		/* END MODULEBUILDER STATUS */
 		if (property_exists($this, 'ref')) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
@@ -961,9 +973,11 @@ class MyObject extends CommonObject
 			$return .= '<br>';
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
+		/* BEGIN MODULEBUILDER STATUS */
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
+		/* END MODULEBUILDER STATUS */
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -971,6 +985,7 @@ class MyObject extends CommonObject
 		return $return;
 	}
 
+	/* BEGIN MODULEBUILDER STATUS */
 	/**
 	 *  Return the label of the status
 	 *
@@ -1033,6 +1048,7 @@ class MyObject extends CommonObject
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode, '', $paramsBadge);
 	}
+	/* END MODULEBUILDER STATUS */
 
 	/**
 	 *	Load the info information in the object
