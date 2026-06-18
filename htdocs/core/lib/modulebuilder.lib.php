@@ -157,7 +157,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					$texttoinsert .= ' "index" => "'.(int) $val['index'].'",';
 				}
 				if (!empty($val['foreignkey'])) {
-					$texttoinsert .= ' "foreignkey" => "'.(int) $val['foreignkey'].'",';
+					$texttoinsert .= ' "foreignkey" => "'.dol_escape_php($val['foreignkey']).'",';
 				}
 				if (!empty($val['searchall'])) {
 					$texttoinsert .= ' "searchall" => "'.(int) $val['searchall'].'",';
