@@ -159,6 +159,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if (!empty($val['foreignkey'])) {
 					$texttoinsert .= ' "foreignkey" => "'.dol_escape_php($val['foreignkey']).'",';
 				}
+				if (!empty($val['unique'])) {
+					$texttoinsert .= ' "unique" => "'.(int) $val['unique'].'",';
+				}
+				if (!empty($val['ondelete'])) {
+					$texttoinsert .= ' "ondelete" => "'.dol_escape_php($val['ondelete']).'",';
+				}
 				if (!empty($val['searchall'])) {
 					$texttoinsert .= ' "searchall" => "'.(int) $val['searchall'].'",';
 				}
@@ -414,14 +420,29 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	if (count($object->fields)) {
 		foreach ($object->fields as $key => $val) {
 			$i++;
-			if (!empty($val['index'])) {
-				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($key == 'ref' ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($key == 'ref' && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
+			// A field flagged 'unique' (or the 'ref' field) gets a UNIQUE INDEX; on a multi-entity object the
+			// uniqueness is scoped per entity by adding the entity column to the composite index.
+			$isuniqueindex = (!empty($val['unique']) || $key == 'ref');
+			if (!empty($val['index']) || !empty($val['unique'])) {
+				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($isuniqueindex ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($isuniqueindex && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
 				$texttoinsert .= "\n";
 			}
 			if (!empty($val['foreignkey'])) {
 				$tmp = explode('.', $val['foreignkey']);
 				if (!empty($tmp[0]) && !empty($tmp[1])) {
-					$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES llx_".preg_replace('/^llx_/', '', $tmp[0])."(".$tmp[1].");";
+					$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES llx_".preg_replace('/^llx_/', '', $tmp[0])."(".$tmp[1].")";
+					// ON DELETE policy (opt-in). Default RESTRICT emits no clause (InnoDB default behaviour).
+					$ondeletenorm = !empty($val['ondelete']) ? preg_replace('/[^A-Z]/', '', strtoupper((string) $val['ondelete'])) : '';
+					// SET NULL on a NOT NULL column is invalid DDL; skip the clause defensively even if the UI
+					// validation was bypassed (e.g. field array built programmatically).
+					if ($ondeletenorm === 'SETNULL' && !empty($val['notnull']) && $val['notnull'] > 0) {
+						$ondeletenorm = '';
+					}
+					$ondeletemap = array('SETNULL' => 'SET NULL', 'CASCADE' => 'CASCADE', 'NOACTION' => 'NO ACTION');
+					if (isset($ondeletemap[$ondeletenorm])) {
+						$texttoinsert .= " ON DELETE ".$ondeletemap[$ondeletenorm];
+					}
+					$texttoinsert .= ";";
 					$texttoinsert .= "\n";
 				}
 			}

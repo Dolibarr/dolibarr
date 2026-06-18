@@ -2065,7 +2065,9 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'default' => GETPOST('propdefault', 'restricthtml'),
 				'noteditable' => GETPOSTINT('propnoteditable'),
 				//'alwayseditable' => GETPOSTINT('propalwayseditable'),
-				'validate' => GETPOSTINT('propvalidate')
+				'validate' => GETPOSTINT('propvalidate'),
+				'unique' => GETPOSTINT('propunique'),
+				'ondelete' => GETPOST('propondelete', 'alpha')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -2076,6 +2078,17 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 					$tmparray = dolExplodeIntoArray($addfieldentry['arrayofkeyval'], "\n", ",");
 					$addfieldentry['arrayofkeyval'] = $tmparray;
 				}
+			}
+
+			// Server-side validation of the ON DELETE policy (must not rely on the UI only).
+			$ondeletenorm = preg_replace('/[^A-Z]/', '', strtoupper((string) $addfieldentry['ondelete']));
+			if (!empty($ondeletenorm) && !in_array($ondeletenorm, array('RESTRICT', 'SETNULL', 'CASCADE', 'NOACTION'), true)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOnDeleteInvalidPolicy"), null, 'errors');
+			}
+			if ($ondeletenorm === 'SETNULL' && (int) $addfieldentry['notnull'] > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorOnDeleteSetNullRequiresNullableField"), null, 'errors');
 			}
 		}
 	}
@@ -4377,6 +4390,8 @@ if ($module == 'initmodule') {
 					'propdefault' => $langs->trans("DefaultValue"),
 					'propindex' => $langs->trans("DatabaseIndex"),
 					'propforeignkey' => $form->textwithpicto($langs->trans("ForeignKey"), $langs->trans("ForeignKeyDesc"), 1, 'help', 'extracss', 0, 3, 'foreignkeyhelp'),
+					'propunique' => $form->textwithpicto($langs->trans("UniqueField"), $langs->trans("UniqueFieldDesc")),
+					'propondelete' => $form->textwithpicto($langs->trans("OnDelete"), $langs->trans("OnDeleteDesc")),
 					'propposition' => $langs->trans("Position"),
 					'propenabled' => $form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp'),
 					'propvisible' => $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp'),
@@ -4843,6 +4858,8 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
 							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("ForeignKey"), $langs->trans("ForeignKeyDesc"), 1, 'help', 'extracss', 0, 3, 'foreignkeyhelp').'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("UniqueField"), $langs->trans("UniqueFieldDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("OnDelete"), $langs->trans("OnDeleteDesc")).'</th>';
 							print '<th class="right">'.$langs->trans("Position").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp').'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp').'</th>';
@@ -4892,6 +4909,8 @@ if ($module == 'initmodule') {
 									$propdefault = !empty($propval['default']) ? $propval['default'] : '';
 									$propindex = !empty($propval['index']) ? $propval['index'] : '';
 									$propforeignkey = !empty($propval['foreignkey']) ? $propval['foreignkey'] : '';
+									$propunique = !empty($propval['unique']) ? $propval['unique'] : 0;
+									$propondelete = !empty($propval['ondelete']) ? $propval['ondelete'] : '';
 									$propposition = $propval['position'];
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
@@ -4985,6 +5004,12 @@ if ($module == 'initmodule') {
 										print '<td>';
 										print '<input class="center maxwidth100" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
 										print '</td>';
+										print '<td class="center">';
+										print '<input type="number" step="1" min="0" max="1" class="center width50" name="propunique" value="'.dol_escape_htmltag($propunique).'">';
+										print '</td>';
+										print '<td>';
+										print $form->selectarray('propondelete', array('' => '', 'RESTRICT' => 'RESTRICT', 'CASCADE' => 'CASCADE', 'SETNULL' => 'SET NULL', 'NOACTION' => 'NO ACTION'), $propondelete, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+										print '</td>';
 										print '<td>';
 										print '<input class="right width50" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
 										print '</td>';
@@ -5073,6 +5098,12 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="center">';
 										print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propunique ? '1' : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propondelete ? dol_escape_htmltag($propondelete) : '';
 										print '</td>';
 										print '<td class="right">';
 										print dol_escape_htmltag($propposition);

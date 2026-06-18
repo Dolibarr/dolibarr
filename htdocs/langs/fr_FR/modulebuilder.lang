@@ -151,6 +151,12 @@ CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
+UniqueField=Unique
+UniqueFieldDesc=Mettre à 1 pour ajouter un index UNIQUE sur ce champ. Sur un objet multi-entité, l'unicité est cadrée par entité.
+OnDelete=À la suppression
+OnDeleteDesc=Action référentielle de la clé étrangère quand l'enregistrement référencé est supprimé (utilisé uniquement si une clé étrangère est définie). RESTRICT (défaut), CASCADE, SET NULL ou NO ACTION. SET NULL impose un champ acceptant la valeur nulle.
+ErrorOnDeleteInvalidPolicy=Politique « À la suppression » invalide. Valeurs autorisées : RESTRICT, CASCADE, SET NULL et NO ACTION.
+ErrorOnDeleteSetNullRequiresNullableField=« À la suppression » SET NULL impose que le champ accepte les valeurs nulles (mettre « Non NULL » à 0 ou -1).
 TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(Nombre D'Étoiles) Nombre D'Étoiles doit être compris entre 1 et 10.<br>integer<br>integer:Nom de la classe:chemin relatif/vers/classfile.class.php[:1[:filtre]]<br><br> «1» signifie que nous ajoutons un bouton + après la liste déroulante pour créer l'enregistrement<br>'filtre' est une condition qui utilise la syntaxe de filtre Universel, exemple : '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
