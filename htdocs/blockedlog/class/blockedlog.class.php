@@ -1531,7 +1531,7 @@ class BlockedLog
 						}
 						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1.'-'.$this->id);
 					} else {
-						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$this->id);
 					}
 
 					// Update or create the .end file.
