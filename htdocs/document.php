@@ -359,31 +359,6 @@ if ($reshook < 0) {
 // Set this for test
 //$type = 'text/html'; $attachment = -1;
 
-// Permissions are ok and file found, so we return it
-top_httphead($type);
-
-header('Content-Description: File Transfer');
-if ($encoding) {
-	header('Content-Encoding: '.$encoding);
-}
-// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
-
-if ($attachment > 0) {
-	header('Content-Disposition: attachment; filename="'.$filename.'"');
-} elseif (empty($attachment)) {
-	header('Content-Disposition: inline; filename="'.$filename.'"');
-}
-// Ajout directives pour resoudre bug IE
-header('Cache-Control: Public, must-revalidate');
-header('Pragma: public');
-$readfile = true;
-
-// on view document, can output images with good orientation according to exif infos
-// TODO Why this on document.php and not in viewimage.php ?
-if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
-	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
-	$readfile = !$imgres;
-}
 
 // If we show an invoice, we test if we must regenerate the PDF
 if ($modulepart == 'facture') {
@@ -399,7 +374,7 @@ if ($modulepart == 'facture') {
 		// We are on the download or print of the main document
 		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
 			$action = 'DOC_DOWNLOAD';
-			if (GETPOSTISSET('attachement')) {
+			if (GETPOSTISSET('attachement') || GETPOST('preview')) {
 				$action = 'DOC_PREVIEW';
 			}
 
@@ -439,9 +414,44 @@ if ($modulepart == 'facture') {
 			}
 
 			// Call trigger
-			$invoice->call_trigger($action, $user);
+			$result = $invoice->call_trigger($action, $user);
+			if ($result < 0) {
+				top_httphead();
+
+				http_response_code(500);
+				print 'Error in trigger: '.$invoice->errorsToString();
+				exit;
+			}
 		}
 	}
+}
+
+
+
+// Permissions are ok and file found, so we return it
+top_httphead($type);
+
+header('Content-Description: File Transfer');
+if ($encoding) {
+	header('Content-Encoding: '.$encoding);
+}
+// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+
+if ($attachment > 0) {
+	header('Content-Disposition: attachment; filename="'.$filename.'"');
+} elseif (empty($attachment)) {
+	header('Content-Disposition: inline; filename="'.$filename.'"');
+}
+// Ajout directives pour resoudre bug IE
+header('Cache-Control: Public, must-revalidate');
+header('Pragma: public');
+$readfile = true;
+
+// on view document, can output images with good orientation according to exif infos
+// TODO Why this on document.php and not in viewimage.php ?
+if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
+	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
+	$readfile = !$imgres;
 }
 
 if (is_object($db)) {

@@ -3925,6 +3925,7 @@ if (!function_exists("llxFooter")) {
 		// JS wrapper to add an unalterable log when clicking on Download or Preview
 		// This is done on customer invoices only.
 		// This add a log and increase the pos_print_counter too (done by block-add.php).
+		/* NOTE: No more required, the trigger is now included into the call of the wrapper documents.php
 		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0) {
 			if (in_array($object->element, array('facture')) && $object->statut > 0) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
@@ -3932,7 +3933,7 @@ if (!function_exists("llxFooter")) {
 				<script>
 				jQuery(document).ready(function () {
 					$('a.documentpreview').click(function() {
-						console.log("Call /blockedlog/ajax/block-add on a.documentpreview");
+						console.log("Call /blockedlog/ajax/block-add on a.documentpreview (DOC_PREVIEW)");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id: <?php echo $object->id; ?>
@@ -3944,7 +3945,7 @@ if (!function_exists("llxFooter")) {
 						);
 					});
 					$('a.documentdownload').click(function() {
-						console.log("Call /blockedlog/ajax/block-add a.documentdownload");
+						console.log("Call /blockedlog/ajax/block-add on a.documentdownload (DOC_DOWNLOAD)");
 						$.post('<?php echo DOL_URL_ROOT."/blockedlog/ajax/block-add.php" ?>'
 								, {
 									id: <?php echo $object->id; ?>
@@ -3960,6 +3961,7 @@ if (!function_exists("llxFooter")) {
 				<?php
 			}
 		}
+		*/
 
 		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
@@ -4044,13 +4046,13 @@ if (!function_exists("llxFooter")) {
 
 							'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 							'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
-							'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
-							'company_idprof2' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2),
+							'company_idprof1' => getDolGlobalString('MAIN_INFO_SIREN', $mysoc->idprof1),
+							'company_idprof2' => getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2),
 							'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
 							'company_state' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_STATE', $mysoc->state),
 							'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),
 							'company_town' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_TOWN', $mysoc->town),
-							'country_code' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code),
+							'country_code' => $mysoc->country_code,
 
 							'provider_name' => getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME'),
 							'provider_email' => getDolGlobalString('MAIN_INFO_ITPROVIDER_MAIL'),

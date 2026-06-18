@@ -26,11 +26,11 @@ define('DOLCERT_VERSION', '3.0.0');
 
 
 // 1 was used for beta version candidate for certification, or for stable version that has been certified.
-// 2 to force LNE features for debug purposes(integrity of files will be broken). It just has one difference with 1: https is not required in this mode helping to work in development environment.
+// 2 to force LNE features for debug purposes (integrity of files will be broken). It just has one difference with 1: https is not required in this mode helping to work in development environment.
 // 0 was used for old version, for version not certified but compliant with the law by using an attestation of an IT provider that guarantee
 //     the the software is compliant. WARNING: In this case, you must find an IT company that give you the attestation of conformity.
 if (!defined('CERTIF_LNE')) {
-	define('CERTIF_LNE', '0');
+	define('CERTIF_LNE', '2');
 }
 
 
