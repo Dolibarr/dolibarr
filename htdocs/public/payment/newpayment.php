@@ -348,9 +348,6 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 		exit;
 	}
 }
-//if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-// No specific test for the moment
-//}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 	/**
@@ -503,42 +500,6 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 			// If we are here, it means the Paypal redirect was not done, so we show error message
 			$action = '';
-		}
-	}
-
-	if ($paymentmethod == 'paybox') {
-		$PRICE = price2num(GETPOST("newamount"), 'MT');
-		$email = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
-		$thirdparty_id = GETPOSTINT('thirdparty_id');
-
-		$origfulltag = GETPOST("fulltag", 'alpha');
-
-		// Securekey into back url useless for back url and we need an url lower than 150.
-		$urlok = preg_replace('/securekey=[^&]+&?/', '', $urlok);
-		$urlko = preg_replace('/securekey=[^&]+&?/', '', $urlko);
-
-		if (empty($PRICE) || !is_numeric($PRICE)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount"));
-		} elseif (empty($email)) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ONLINE_PAYMENT_SENDEMAIL"));
-		} elseif (!isValidEmail($email)) {
-			$mesg = $langs->trans("ErrorBadEMail", $email);
-		} elseif (!$origfulltag) {
-			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentCode"));
-		} elseif (dol_strlen($urlok) > 150) {
-			$mesg = 'Error urlok too long '.$urlok.' (Paybox requires 150, found '.strlen($urlok).')';
-		} elseif (dol_strlen($urlko) > 150) {
-			$mesg = 'Error urlko too long '.$urlko.' (Paybox requires 150, found '.strlen($urlok).')';
-		}
-
-		if (empty($mesg)) {
-			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG, 0, '_payment');
-
-			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
-			print_paybox_redirect((float) $PRICE, getDolCurrency(), $email, $urlok, $urlko, $FULLTAG);
-
-			session_destroy();
-			exit;
 		}
 	}
 
@@ -1062,9 +1023,6 @@ print '<!-- creditor = '.dol_escape_htmltag((string) $creditor).' -->'."\n";
 if (isModEnabled('paypal')) {
 	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
-}
-if (isModEnabled('paybox')) {
-	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
 if (isModEnabled('stripe')) {
 	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
@@ -2447,25 +2405,6 @@ if ($action != 'dopayment') {
 				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			} elseif ($reshook >= 0) {
 				print $hookmanager->resPrint;
-			}
-
-			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
-				print '<br>';
-				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
-				print '</div>';
-				print '<script>
-						$( document ).ready(function() {
-							$("#div_dopayment_paybox").click(function(){
-								$("#dopayment_paybox").click();
-							});
-							$("#dopayment_paybox").click(function(e){
-								$("#div_dopayment_paybox").css( \'cursor\', \'wait\' );
-								e.stopPropagation();
-							});
-						});
-					  </script>
-				';
 			}
 
 			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {

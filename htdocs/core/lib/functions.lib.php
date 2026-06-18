@@ -290,6 +290,26 @@ function getDolGlobalString($key, $default = '')
 }
 
 /**
+ * Return the list of unauthorized characters in user logins.
+ *
+ * @return string
+ */
+function getDolGlobalLoginBadCharUnauthorized()
+{
+	global $dolibarr_login_badcharunauthorized;
+
+	if (isset($dolibarr_login_badcharunauthorized)) {
+		if ($dolibarr_login_badcharunauthorized === 'MAIN_LOGIN_BADCHARUNAUTHORIZED') {
+			return getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		}
+
+		return (string) $dolibarr_login_badcharunauthorized;
+	}
+
+	return ',@<>"\'';
+}
+
+/**
  * Return a Dolibarr global constant int value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -1272,7 +1292,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Check type of variable and make sanitization according to this
 	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
 		$tmpcheck = 'alphanohtml';
-		if (empty($out)) {
+		if ($out === null || $out === '') {
 			$out = array();
 		} elseif (!is_array($out)) {
 			$out = explode(',', $out);
@@ -1488,6 +1508,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
 	global $dolibarr_main_force_https;
 
 	if ($expire == -1) {
@@ -3139,8 +3161,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (empty($limittoshow)) {
 		$limittoshow = getDolGlobalInt('MAIN_MAXTABS_IN_CARD', 99);
 	}
-	if (!empty($conf->dol_optimize_smallscreen)) {
-		$limittoshow = 2;
+	if (!empty($conf->dol_optimize_smallscreen)) {	// If on smartphone, we limit to 1 tab to show
+		$limittoshow = 1;
 	}
 
 	$displaytab = 0;
@@ -3238,7 +3260,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 		$out .= '<div id="moretabs' . $tabsname . '" class="inline-block tabsElem valignmiddle">';
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
-			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="hideonsmartphone">' . $langs->trans("More") . '</span>... (' . $nbintab . ')</a></div>'; // Do not use "reposition" class in the "More".
+			$out .= '<div class="tab valignmiddle"><a href="#" class="tab moretab inline-block tabunactive valignmiddle"><span class="fa fa-angle-down"></span> <span class="opacitymedium">+' . $nbintab . '</span></a></div>'; // Do not use "reposition" class in the "More".
 		}
 		$out .= '<div id="moretabsList' . $tabsname . '" style="width: ' . $widthofpopup . 'px; position: absolute; ' . $left . ': -999em; text-align: ' . $left . '; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
@@ -5207,25 +5229,6 @@ function getUserRemoteIP($trusted = 0)
 		$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_X_FORWARDED_FOR']); // value is clean here but may have been forged by proxy
 	}
 	return $ip;
-}
-
-/**
- * Return if we are using a HTTPS connection
- * Check HTTPS (no way to be modified by user but may be empty or wrong if user is using a proxy)
- * Take HTTP_X_FORWARDED_PROTO (defined when using proxy)
- * Then HTTP_X_FORWARDED_SSL
- *
- * @return	boolean		True if user is using HTTPS
- */
-function isHTTPS()
-{
-	$isSecure = false;
-	if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-		$isSecure = true;
-	} elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-		$isSecure = true;
-	}
-	return $isSecure;
 }
 
 /**
@@ -10156,6 +10159,27 @@ function dol_concat($text1, $text2)
 }
 
 /**
+ * Add a function to replace array_map with allowed callback
+ *
+ * @param	string|mixed		$callback	Function
+ * @param	array<mixed,mixed>	$array		Array
+ * @return	array<mixed,mixed>				The array after the array_map
+ */
+function safeArrayMap($callback, array $array)
+{
+	if (!is_string($callback)) {
+		throw new InvalidArgumentException("Les callbacks sont désactivés.");
+	}
+	// Check that $callback is a sure function
+	$allowed_callbacks = ['strtolower', 'strtoupper', 'intval'];
+	if (!in_array($callback, $allowed_callbacks, true)) {
+		throw new InvalidArgumentException("Callback function not allowed.");
+	}
+	return array_map($callback, $array);
+}
+
+
+/**
  * Return array of possible common substitutions. This includes several families like: 'system', 'mycompany', 'object', 'objectamount', 'date', 'user'
  *
  * @param	Translate       $outputlangs    Output language
@@ -10794,6 +10818,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					'@phan-var-force Expedition $object';
 					/** @var Expedition $object */
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
+					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
+						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+					}
 				}
 			}
 
@@ -11594,6 +11622,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
 /**
  * 	Advanced sort array by the value of a given key, which produces ascending (default) or descending
  *  output and uses optionally natural case insensitive sorting (which can be optionally case sensitive as well).
+ *  In dynamic code, this function is allowed when usort is not because it allows callable parameters.
  *
  *  @phpstan-template T of array<string|int,mixed>
  *  @phan-template T of array<string|int,mixed>
@@ -11854,6 +11883,12 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
  */
 function isStringVarMatching($var, $regextext, $matchrule = 1)
 {
+	// Tolerate callers (custom modules, older code) that already pass a full regex with delimiters
+	// like '/^(aaa|bbb)/' instead of the bare body. Without this, the function would build
+	// '/^/^(aaa|bbb)//' which trips preg_match() with 'Unknown modifier ^'.
+	$regextext = preg_replace('#^/\^?#', '', (string) $regextext);
+	$regextext = preg_replace('#\$?/[imsxuADSUXJ]*$#', '', $regextext);
+
 	if ($matchrule == 1) {
 		if ($var == 'mainmenu') {
 			global $mainmenu;
@@ -12210,7 +12245,7 @@ function dol_eval_new($s)
  *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
  *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
- * 											If we return a string on error, it must start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
+ * 											If we return a string on error, it must start with 'Bad call of'... or 'Bad string syntax'... or 'Exception'... !!!
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
@@ -12226,7 +12261,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 	global $object;
 
-	// Old variables (deprecated)
+	// Old variables (deprecated since v23)
 	if (getDolGlobalString('MAIN_ALLOW_OLD_VAR_OBJ_IN_DOL_EVAL')) {
 		global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $objectoffield
 	}
@@ -12510,7 +12545,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 		ob_start(); // An evaluation has no reason to output data
 		$isObBufferActive = true;
 		$tmps = $hideerrors ? @eval('return ' . $s . ';') : eval('return ' . $s . ';');
-		$tmpo = ob_get_clean();
+		$tmpo = ob_get_clean();			// This close the buffer
 		$isObBufferActive = false;
 		if ($tmpo) {
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
@@ -12519,7 +12554,7 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
-			$tmpo = ob_get_clean();
+			$tmpo = ob_get_clean();		// This close the buffer
 			$isObBufferActive = false;
 		}
 		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
@@ -13485,14 +13520,31 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 				$tmparray = explode(',', $crit);
 				if (count($tmparray)) {
 					$listofcodes = '';
+					$listofcodesnot = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
-						if ($val) {	// TODO Test with if ($val !== '') {
-							$listofcodes .= ($listofcodes ? ',' : '');
-							$listofcodes .= "'" . $db->escape($val) . "'";
+						if ($val !== '') {
+							if (preg_match('/^!/', $val)) {
+								$listofcodesnot .= ($listofcodesnot ? ',' : '');
+								$listofcodesnot .= "'" . $db->escape(preg_replace('/^!=?/', '', $val)) . "'";
+							} else {
+								$listofcodes .= ($listofcodes ? ',' : '');
+								$listofcodes .= "'" . $db->escape($val) . "'";
+							}
 						}
 					}
-					$newres .= ($i2 > 0 ? ' OR ' : '') . $db->sanitize($field) . " " . ($mode == -3 ? 'NOT ' : '') . "IN (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
+					$newres .= ($i2 > 0 ? ' OR ' : '');
+					$newres .= '(';
+					if ($listofcodes) {
+						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'NOT IN' : 'IN') . " (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
+					}
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= ' AND ';
+					}
+					if ($listofcodesnot) {
+						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'IN ' : 'NOT IN') . " (" . $db->sanitize($listofcodesnot, 1, 0, 1) . ")";
+					}
+					$newres .= ')';
 					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
@@ -15886,7 +15938,7 @@ function jsonOrUnserialize($stringtodecode, $assoc = true)
 {
 	$result = json_decode($stringtodecode, $assoc);
 	if ($result === null) {
-		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
+		$result = unserialize($stringtodecode, ['allowed_classes' => false]);	// For backward compatibility. Is no more used in recent versions.
 	}
 
 	return $result;

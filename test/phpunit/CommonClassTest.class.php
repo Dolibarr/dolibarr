@@ -481,7 +481,6 @@ abstract class CommonClassTest extends TestCase
 		'opensurvey' => 'OpenSurvey',
 		'order' => 'Commande',
 		'partnership' => 'Partnership',
-		'paybox' => 'Paybox',
 		'paymentbybanktransfer' => 'PaymentByBankTransfer',
 		'paypal' => 'Paypal',
 		'paypalplus' => null,

@@ -805,8 +805,8 @@ while ($i < $imaxinloop) {
 	$userstatic->login = $obj->login;
 	$userstatic->email = $obj->email;
 	$userstatic->socid = $obj->fk_soc;
-	$userstatic->statut = $obj->status;		// deprecated
-	$userstatic->status = $obj->status;
+	$userstatic->statut = (int) $obj->status;		// deprecated
+	$userstatic->status = (int) $obj->status;
 	$userstatic->photo = $obj->photo;
 
 	$salstatic->id = $obj->rowid;
@@ -827,6 +827,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = 0;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {

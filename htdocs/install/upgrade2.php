@@ -81,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -681,6 +682,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
 			}
 		}
 
@@ -3887,7 +3890,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					} else {
-						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+						print ' - '.$langs->trans('AlreadyDone').'<br>';
 					}
 				} else {
 					dol_print_error($db);
@@ -4423,7 +4426,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
@@ -5628,7 +5630,9 @@ function migrate_apiresttokens()
 
 
 /**
- * Add the HMAC key for blockedlog v2
+ * Add the HMAC key for blockedlog v2+
+ * Note that this is used on old version only. It stores the HMAC with old method but it will be automatically converted in new storing
+ * method once on version of blockedlog 3.0.0
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
@@ -5648,7 +5652,9 @@ function migrate_blockedlog_add_hmac_key()
 	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 	if (empty($hmac_encoded_secret_key)) {
 		// Add key
-		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+		$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
+
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
 
 		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
 
