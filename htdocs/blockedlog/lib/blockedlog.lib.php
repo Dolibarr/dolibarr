@@ -455,7 +455,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			} else {
 				$reg = array();
-				if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// $tmpresult['content'] May contains text comment before the line 'DOLOBFUSCKEY...'
+				if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
 					$obfuscationkey = $reg[1];
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
 					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
@@ -655,7 +655,7 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
  */
 function migrate_blockedlog_add_end_file()
 {
-	global $conf, $db, $langs,$mysoc;
+	global $conf, $db, $langs, $mysoc;
 
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 

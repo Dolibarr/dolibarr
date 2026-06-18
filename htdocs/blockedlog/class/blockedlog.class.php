@@ -1598,7 +1598,7 @@ class BlockedLog
 	{
 		global $conf, $mysoc;
 
-		return $conf->blockedlog->dir_output.'/blockedlog-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
+		return $conf->blockedlog->dir_output.'/blockedlog-'.((int) $conf->entity).'-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
 	}
 
 	/**
@@ -1882,7 +1882,7 @@ class BlockedLog
 	 * Use a memory cache to avoid repeated db access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
 	 *
-	 * @return 	string					Obfuscation key or '' if not found.
+	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
 	public function getObfuscationKey()
 	{

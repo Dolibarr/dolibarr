@@ -566,7 +566,7 @@ if (is_array($blocks)) {
 	}
 
 	if (! $error) {
-		$headstring = dolDecrypt($line, $remoteobfuscationkey);
+		$headstring = dolDecrypt($line, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
 
 		$reg = array();
 		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
