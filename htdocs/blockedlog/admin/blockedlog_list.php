@@ -321,9 +321,11 @@ if (GETPOST('clearcache')) {
 }
 
 // Get the remoteobfuscation key
+// Show an error to ask to retry later if we can't get it because it means we can't decode the HMAC KEY later so we can't validate record.
 $remoteobfuscationkey = '';
 try {
 	$remoteobfuscationkey = $block_static->getObfuscationKey();
+	// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
 } catch (Exception $e) {
 	$error++;
 
@@ -335,8 +337,9 @@ try {
 }
 
 // Get the encoded HMAC key.
-$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old dolcrypt:... or dolobfuscationv1...
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old 'dolcrypt:...' if migration not yet complete but should be 'dolobfuscationv1...'
 if (empty($hmac_encoded_secret_key)) {
+	// This is no more the case since Dolibarr v23 and Blockedlog v2+
 	print '<div class="error mess2">';
 	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration from a very old version.';
 	print '</div>';
@@ -350,10 +353,11 @@ if (!$error) {
 	} catch (Exception $e) {
 		print '<div class="error mess3">';
 		print $e->getMessage();
+		print '<br>';
+		print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
 		print '</div>';
 	}
 }
-
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
@@ -536,8 +540,13 @@ if (is_array($blocks)) {
 		$colspan++;
 	}
 
+	// Get the last record of the chain (may be used later).
+	$lastrecord = $block_static->getLastRecord();
+
 	// Check that there was no deletion on the end of chain.
+	// Note: We can find a similar code into the blockedlog_archive
 	$lockfile = $block_static->getEndOfChainFlagFile();
+	$lockline = '';
 
 	if (!file_exists($lockfile)) {
 		$error++;
@@ -550,9 +559,19 @@ if (is_array($blocks)) {
 		}
 		print '</td></tr>';
 	} else {
-		$line = trim(file_get_contents($lockfile));
-		if (preg_match('/^dolobfuscation/', $line)) {
-			if (empty($remoteobfuscationkey)) {
+		$lockline = trim(file_get_contents($lockfile));
+	}
+
+	if (! $error) {
+		if (preg_match('/^dolcrypt/', $lockline)) {
+			$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
+		} elseif (preg_match('/^dolobfuscation/', $lockline)) {
+			try {
+				$remoteobfuscationkey = $block_static->getObfuscationKey();
+				if (empty($remoteobfuscationkey)) {
+					throw new Exception('Remote obfuscation key is empty');
+				}
+			} catch (Exception $e) {
 				$error++;
 
 				print '<tr><td class="center" colspan="'.$colspan.'">';
@@ -562,32 +581,22 @@ if (is_array($blocks)) {
 				print '<span class="warning">'.$langs->trans("CantValidateEndOfChain").'</span>';
 				print '</td></tr>';
 			}
+			$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
 		}
-	}
-
-	if (! $error) {
-		$headstring = dolDecrypt($line, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
 
 		$reg = array();
 		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
-			// Get last line
-			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-			$sql .= " WHERE entity = ".((int) $conf->entity);
-			$sql .= " ORDER BY rowid DESC LIMIT 1";
-			$resql = $db->query($sql);
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$lastrowid = $obj->rowid;
-				$lastdate = $db->jdate($obj->date_creation, 'gmt');
-				$lastsignature = $obj->signature;
-			}
+			// Compare with last line
+			$lastrecordid = $lastrecord['id'];
+			$lastrecorddate = $lastrecord['date'];
+			$lastrecordsignature = $lastrecord['signature'];
 
-			if ($reg[1] > $lastrowid || $reg[3] != $lastsignature) {
+			if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
 				$error++;
 
 				// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
 				print '<tr><td class="center" colspan="'.$colspan.'">';
-				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastdate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
 				print '</td></tr>';
 			}
 		} else {
@@ -599,6 +608,7 @@ if (is_array($blocks)) {
 		}
 	}
 
+	// Now loop on each line to show them
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id]) {
