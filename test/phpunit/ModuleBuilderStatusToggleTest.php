@@ -16,15 +16,23 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/test/phpunit/ModuleBuilderStatusToggleTest.php
+ * \file    test/phpunit/ModuleBuilderStatusToggleTest.php
  * \ingroup modulebuilder
  * \brief   PHPUnit test for the "manage statuses" toggle (status-code prune) in ModuleBuilder.
  */
 
 global $conf, $user, $langs, $db;
 
-require_once dirname(__FILE__).'/../../../master.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 /**
  * Class ModuleBuilderStatusToggleTest
@@ -35,8 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ModuleBuilderStatusToggleTest extends PHPUnit\Framework\TestCase // @phan-suppress-current-line PhanUndeclaredExtendedClass
+class ModuleBuilderStatusToggleTest extends CommonClassTest
 {
 	/**
 	 * @var string Regex pruning every BEGIN/END MODULEBUILDER STATUS region (non-greedy).
@@ -46,12 +55,12 @@ class ModuleBuilderStatusToggleTest extends PHPUnit\Framework\TestCase // @phan-
 	/**
 	 * @var string Absolute path to the object class template.
 	 */
-	const CLASS_TPL = __DIR__.'/../../template/class/myobject.class.php';
+	const CLASS_TPL = __DIR__.'/../../htdocs/modulebuilder/template/class/myobject.class.php';
 
 	/**
 	 * @var string Absolute path to the object card template.
 	 */
-	const CARD_TPL = __DIR__.'/../../template/myobject_card.php';
+	const CARD_TPL = __DIR__.'/../../htdocs/modulebuilder/template/myobject_card.php';
 
 	/**
 	 * Copy a template to a tmp file, prune its STATUS regions, return the tmp path.
@@ -133,7 +142,7 @@ class ModuleBuilderStatusToggleTest extends PHPUnit\Framework\TestCase // @phan-
 		$content = file_get_contents($tmp);
 		unlink($tmp);
 		// Runtime status references only. The "// Actions ... confirm_setdraft, confirm_reopen" comment
-		// (line ~205) documents the core actions_addupdatedelete.inc.php include and is intentionally kept:
+		// documents the core actions_addupdatedelete.inc.php include and is intentionally kept:
 		// those core actions exist regardless of this feature and are simply never triggered without buttons.
 		$this->assertSame(0, preg_match('/->status\b|STATUS_DRAFT\b|STATUS_VALIDATED\b|STATUS_CANCELED\b|STATUS_ENABLED\b/', $content), 'Residual status reference found in pruned card');
 	}
