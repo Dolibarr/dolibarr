@@ -172,6 +172,8 @@ GeneratePermissions=I want to manage permissions on this object
 GeneratePermissionsHelp=If you check this, some code will be added to manage permissions to read, write and delete record of the objects
 NoGenerateLines=I don't want to manage lines on this object
 NoGenerateLinesHelp=If you check this, some code will be removed to manage lines of the objects
+MulticompanyManaged=This object is managed by entity (Multicompany)
+MulticompanyManagedHelp=If you check this, the generated object is declared as multi-entity managed (ismultientitymanaged = 1) so its records are filtered by entity. The entity column already exists in the table; sharing of references between entities is then controlled by the Multicompany module setup.
 EnabledTabsForObject=Tabs to generate for this object
 EnabledTabsForObjectHelp=Only the selected tabs will generate their page file and tab link. The card tab is always generated. History is the agenda tab.
 WarningTabSelectionOnRegeneration=This object already exists. Tab selection changes are applied on a best-effort basis on regeneration: already generated files are not overwritten or deleted, and a previously removed tab block cannot be re-injected automatically.

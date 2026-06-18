@@ -201,3 +201,5 @@ FieldsInsert=Insérer des champs
 FieldsView=Vue des champs
 AIPromptExtrafield=Invite IA
 AIPromptExtrafieldDesc=Saisissez ici une invite qui doit renvoyer la valeur et uniquement. Les variables de substitution sont insérées dans l'invite avant l'appel à l'API AI.
+MulticompanyManaged=Cet objet est géré par entité (Multicompany)
+MulticompanyManagedHelp=Si vous cochez cette case, l'objet généré est déclaré comme géré multi-entité (ismultientitymanaged = 1), ses enregistrements sont donc filtrés par entité. La colonne entity existe déjà dans la table ; le partage des références entre entités est ensuite contrôlé par la configuration du module Multicompany.

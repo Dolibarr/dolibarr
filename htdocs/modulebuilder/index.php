@@ -1600,6 +1600,17 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', '0', 0, 1);
 		}
 
+		// Enable multicompany management on the object (set ismultientitymanaged = 1) if requested.
+		// The entity column, the entity field and the getEntity() filter in fetchAll() already exist in the
+		// template, so only the main object class property needs to be switched on. The MyObjectLine class is
+		// left untouched on purpose: its table has no entity column.
+		if (GETPOST('multicompanymanaged', 'aZ09')) {
+			$arrayreplacement = array(
+				'/\/\* BEGIN MODULEBUILDER MULTICOMPANY \*\/\s*public \$ismultientitymanaged = 0;\s*\/\* END MODULEBUILDER MULTICOMPANY \*\//' => "/* BEGIN MODULEBUILDER MULTICOMPANY */\n\tpublic \$ismultientitymanaged = 1;\n\t/* END MODULEBUILDER MULTICOMPANY */"
+			);
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', '0', 0, 1);
+		}
+
 		// TODO Update entries '$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);'
 
 
@@ -4343,6 +4354,7 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				print '<input type="checkbox" name="multicompanymanaged" id="multicompanymanaged" value="multicompanymanaged"> <label for="multicompanymanaged">'.$form->textwithpicto($langs->trans("MulticompanyManaged"), $langs->trans("MulticompanyManagedHelp")).'</label><br>';
 				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
 				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
