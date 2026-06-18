@@ -64,11 +64,40 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 $langs->loadlangs(array('users', 'projects'));
 
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
+$permissiontoadd = ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer'));
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+$error = 0;
+
 /*
  * Actions
  */
 
-// None
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);
+	$attribute_name = GETPOST('attribute', 'aZ09');
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 
 /*

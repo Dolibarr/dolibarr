@@ -66,6 +66,11 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && empty($object->com
 	$object->fetchComments();
 }
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
 // Security check
 $socid = 0;
 
@@ -75,6 +80,10 @@ $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -89,6 +98,25 @@ if ($reshook < 0) {
 
 $formconfirmtoaddtasks = '';
 if (empty($reshook)) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
 	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
