@@ -93,13 +93,13 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
 
-
-		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
-		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
 
 		$isqualified = isALNERunningVersion(1);
+
+		// Refuse and cancel any trigger event that record or modify data, if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
 		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
 			$errmsg = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS is mandatory to be allowed to record any event (Your hosting does not match the install requirements).';
 			dol_syslog($errmsg, LOG_ERR);
