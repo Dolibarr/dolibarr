@@ -1782,6 +1782,22 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 		}
 	}
 
+	// Status management: if unchecked at creation, prune all status-anchored regions (class + card).
+	// Must run BEFORE rebuildObjectClass so the pruned $fields['status'] entry is not regenerated.
+	if (!$error && !GETPOST('statusmanaged', 'aZ09')) {
+		$statuspattern = '/\h*\/\*\s*BEGIN MODULEBUILDER STATUS\s*\*\/.*?\/\*\s*END MODULEBUILDER STATUS\s*\*\/\s*/s';
+		$statusfiles = array(
+			$destdir.'/class/'.strtolower($objectname).'.class.php',
+			$destdir.'/'.$ncObj->applyToFilename('myobject_card.php'),
+		);
+		foreach ($statusfiles as $statusfile) {
+			if (file_exists($statusfile) && !removePatternFromFile($statusfile, $statuspattern)) {
+				$error++;
+				dol_syslog("modulebuilder: failed to purge STATUS sections in ".$statusfile, LOG_ERR);
+			}
+		}
+	}
+
 	if (!$error) {
 		// Edit PHP files to make replacement
 		foreach ($filetogenerate as $destfile) {
@@ -4343,6 +4359,8 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
 				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				$checkedstatus = GETPOSTISSET('statusmanaged') ? (GETPOST('statusmanaged', 'aZ09') ? ' checked' : '') : ' checked';
+				print '<input type="checkbox" name="statusmanaged" id="statusmanaged" value="statusmanaged"'.$checkedstatus.'> <label for="statusmanaged">'.$form->textwithpicto($langs->trans("ManageStatuses"), $langs->trans("ManageStatusesHelp")).'</label><br>';
 				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
 				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
