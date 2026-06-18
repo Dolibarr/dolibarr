@@ -52,6 +52,16 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	const CLASS_TPL = __DIR__.'/../../htdocs/modulebuilder/template/class/myobject.class.php';
 
 	/**
+	 * @var string Absolute path to the object card template.
+	 */
+	const CARD_TPL = __DIR__.'/../../htdocs/modulebuilder/template/myobject_card.php';
+
+	/**
+	 * @var string Absolute path to the seed data SQL template.
+	 */
+	const DATA_SQL = __DIR__.'/../../htdocs/modulebuilder/template/sql/data.sql';
+
+	/**
 	 * getLibStatut() must use the label defined in the status field arrayofkeyval, not a hardcoded one.
 	 *
 	 * @return void
@@ -78,5 +88,33 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 	{
 		$content = file_get_contents(self::CLASS_TPL);
 		$this->assertSame(0, preg_match('/labelStatus(Short)?\[[^\]]+\]\s*=\s*\$langs->transnoentitiesnoconv\(\'(Enabled|Disabled)\'\)/', $content), 'Hardcoded Enabled/Disabled label assignment still present in LibStatut');
+	}
+
+	/**
+	 * The validate trigger code must carry the module prefix (policy MYMODULE_MYOBJECT_ACTION).
+	 *
+	 * @return void
+	 */
+	public function testValidateTriggerHasModulePrefix()
+	{
+		$content = file_get_contents(self::CLASS_TPL);
+		$this->assertStringContainsString("call_trigger('MYMODULE_MYOBJECT_VALIDATE'", $content, 'Validate trigger must use MYMODULE_MYOBJECT_VALIDATE');
+		$this->assertSame(0, preg_match("/call_trigger\('MYOBJECT_VALIDATE'/", $content), 'Legacy unprefixed MYOBJECT_VALIDATE trigger still present');
+	}
+
+	/**
+	 * No legacy unprefixed trigger code (MYOBJECT_<ACTION>) must remain in the templates.
+	 * Configuration constants (ADDON_PDF, DRAFT_WATERMARK, QUICKSEARCH_ON_FIELDS) are not triggers
+	 * and are excluded by the action whitelist below.
+	 *
+	 * @return void
+	 */
+	public function testNoLegacyTriggerCodeInTemplates()
+	{
+		$legacy = '/(?<![A-Z_])MYOBJECT_(VALIDATE|UNVALIDATE|CANCEL|REOPEN|DELETE|SENTBYMAIL|CLOSE|MODIFY|CREATE)\b/';
+		foreach (array(self::CLASS_TPL, self::CARD_TPL, self::DATA_SQL) as $tpl) {
+			$content = file_get_contents($tpl);
+			$this->assertSame(0, preg_match($legacy, $content), 'Legacy unprefixed trigger code found in '.basename($tpl));
+		}
 	}
 }

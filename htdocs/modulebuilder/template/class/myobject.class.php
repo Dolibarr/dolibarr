@@ -47,7 +47,7 @@ class MyObject extends CommonObject
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
 	 * @see CommonTrigger::call_trigger()
 	 */
-	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trgiger keys 'MYMODULE_MYOBJECT_MODIFY', ...
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECT';	// Will be used to build trigger keys 'MYMODULE_MYOBJECT_MODIFY', ...
 
 	/**
 	 * @var string 		Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
@@ -634,7 +634,7 @@ class MyObject extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('MYMODULE_MYOBJECT_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
