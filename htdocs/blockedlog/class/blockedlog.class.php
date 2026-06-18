@@ -1793,10 +1793,6 @@ class BlockedLog
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
 				}
-				/* We must not throw an error here, because the main goal of this function is to get the signature of the line and we got it.
-				else {
-					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
-				}*/
 			} elseif (!preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {	 	// For old versions, we must switch the data saving mode to use the new method.
 				$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolcrypt');	// gitleaks:allow
 			}
@@ -2226,6 +2222,11 @@ class BlockedLog
 		}
 		if (is_array($search_code)) {
 			if (!empty($search_code)) {
+				if (in_array('PAYMENT_CUSTOMER', $search_code)) {	// If we ask codes PAYMENT_CUSTOMER, it means both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+					$search_code[] = 'PAYMENT_CUSTOMER_CREATE';
+					$search_code[] = 'PAYMENT_CUSTOMER_DELETE';
+				}
+
 				$sql .= natural_search("action", implode(',', $search_code), 3);
 			}
 		} else {
