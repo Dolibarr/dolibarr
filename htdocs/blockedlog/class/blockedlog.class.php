@@ -1443,6 +1443,7 @@ class BlockedLog
 					$finalnote = '';
 
 					$lockfile = $this->getEndOfChainFlagFile();
+					dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
 					// If the .end file does not exists (has been removed), we track the record as error.
 					if (!file_exists($lockfile)) {
@@ -1524,14 +1525,14 @@ class BlockedLog
 					// Lock acquired, we can now write the new .end file
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
-					if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
 						$remoteobfuscationkey = $this->getObfuscationKey();
 						if (empty($remoteobfuscationkey)) {
 							throw new Exception("Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.");
 						}
-						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+						$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1.'-'.$this->id);
 					} else {
-						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$this->id);
 					}
 
 					// Update or create the .end file.
@@ -1596,9 +1597,11 @@ class BlockedLog
 	 */
 	public function getEndOfChainFlagFile()
 	{
-		global $conf, $mysoc;
+		global $conf;
 
-		return $conf->blockedlog->dir_output.'/blockedlog-'.((int) $conf->entity).'-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
+		// Note: We must not use $conf->blockedlog->dir_output because we need this
+		// function to work even when module not yet enabled.
+		return DOL_DATA_ROOT.'/blockedlog/blockedlog-'.((int) $conf->entity).'.end';
 	}
 
 	/**
@@ -1739,7 +1742,7 @@ class BlockedLog
 		} elseif ($format == 'V1') {
 			return dol_hash($clearstring, '5');
 		} elseif ($format == 'V2') {
-			// BLOCKEDLOG_HMAC_KEY is a HMAC key starting with 'BLOCKEDLOGHMAC....', but it is not stored as a clear data but
+			// BLOCKEDLOG_HMAC_KEY is a HMAC key starting with 'BLOCKEDLOGHMAC....'. It is not stored as a clear data but
 			// is a string dolcrypt:... or dolobfuscationv1... It will be decrypted later.
 			$hmac_encoded_secret_key = $this->getEncodedHMACSecretKey();
 
@@ -1754,7 +1757,7 @@ class BlockedLog
 			} catch (Exception $e) {
 				$firsterrormessage = $e->getMessage();
 
-				// Another chance to get HMAC to resave it with a different obfucation when it was saved using the old method (dolcrypt)
+				// Another chance to get HMAC when saved with old obfuscation method (dolcrypt)
 				$hmac_encoded_secret_key_alt = $this->getEncodedHMACSecretKey(1, 1);
 				if (!empty($hmac_encoded_secret_key_alt)) {
 					try {
@@ -1776,8 +1779,13 @@ class BlockedLog
 				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
 			}
 
+			// Here the $hmac_secret_key is in memory with the correct value.
+
 			// On old versions, we must switch the data saving mode to use the new method.
-			if (isALNERunningVersion(1) && !preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key) && preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key) && $mysoc->country_code == 'FR') {
+			// Live migration of the way the key is stored.
+			$needremoteobfuscation = (isALNERunningVersion(1) && $mysoc->country_code == 'FR');
+
+			if ($needremoteobfuscation && !preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key)) {
 				$obfuscationkey = '';
 				$errormsg = '';
 				try {
@@ -1788,10 +1796,8 @@ class BlockedLog
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
 				}
-				/* We must not throw an error here, because the main goal of this function is to get the signature of the line and we got it.
-				else {
-					throw new Exception('Error: Failed to convert the old saving mode of HMAC key (crypted by $dolibarr_main_instance_unique_id) into the new saving (crypted by obfuscation key from ping.dolibarr.org). '.$errormsg);
-				}*/
+			} elseif (!preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {	 	// For old versions, we must switch the data saving mode to use the new method.
+				$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolcrypt');	// gitleaks:allow
 			}
 
 			// Here HMAC secret key is a long string starting with BLOCKEDLOGHMAC..., we can use it to sign the data.
@@ -1805,12 +1811,12 @@ class BlockedLog
 	/**
 	 * Save the HMAC secret key into database.
 	 *
-	 * @param	string	$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
-	 * @param	string	$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
-	 * @param	string	$obfuscationkey			Obfuscation key
-	 * @return	int								<0 if KO, >0 if OK
+	 * @param	string		$hmac_secret_key		HMAC secret key ('BLOCKEDLOG_HMAC_KEY...')
+	 * @param	string		$obfuscationmode		Obfuscation mode ('dolcrypt', 'dolobfuscationv1-SIREN')
+	 * @param	string		$obfuscationkey			Obfuscation key
+	 * @return	int									Return <0 if KO, >0 if OK
 	 */
-	public function saveHMACSecretKey($hmac_secret_key, $obfuscationmode, $obfuscationkey)
+	public function saveHMACSecretKey($hmac_secret_key, $obfuscationmode, $obfuscationkey = '')
 	{
 		global $conf;
 
@@ -1881,12 +1887,18 @@ class BlockedLog
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
 	 * Use a memory cache to avoid repeated db access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
+	 * Note: Avoid to call this function if you are not in acontext that need remote obfuscation key.
 	 *
 	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
 	public function getObfuscationKey()
 	{
 		global $conf, $mysoc;
+
+
+		// Uncomment the next line to emulate a network error to get the remote obfuscation key
+		//throw new Exception('Failed to get the remote obfuscation key - error emulated (status column is not reliable)');
+
 
 		// If key found into the user session memory cache, we use it
 		if (!empty($_SESSION['obfuscationkey_'.((int) $this->entity)])) {
@@ -1905,10 +1917,10 @@ class BlockedLog
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done. Re-try later.');
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done. Re-try later. '.$obfuscationkey);
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
 		// Now store value in cache
@@ -1950,7 +1962,7 @@ class BlockedLog
 				if ($obj) {
 					$hmac_encoded_secret_key = $obj->value;
 
-					// Save value in memory page cache (if we recall the same function in same page transaction).
+					// Save value in memory page cache (if we recall the same function in same page transaction, we will avoid db access).
 					if (empty($nocache)) {
 						$conf->cache['hmac_encoded_secret_key_'.((int) $this->entity)] = $hmac_encoded_secret_key;
 					}
@@ -1973,8 +1985,6 @@ class BlockedLog
 	 */
 	public function getClearHMACSecretKey($hmac_encoded_secret_key)
 	{
-		global $conf;
-
 		// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
 		$hmac_secret_key = '';
 		$errormsg = '';
@@ -1995,16 +2005,13 @@ class BlockedLog
 
 		if (preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {
 			// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with old versions).
-			// We test this and we force a migration of data to use the new storage if this is the case.
+			// We test this. Note: we force a migration of data to use the new storage if this is the case in method buildFinalSignatureHash().
 			// Example with the old demo sample database:
 			//  dolcrypt:AES-256-CTR:46cb611f00c4cff8:XVfEh15vX/JOYmpiw2QPNamcTQwdbBZJTcXBh9rMpzYJOpVPZubIWcgA8wHMXA==
 			//  instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0
 			//  HMAC key=BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A
 
-			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
-			$oldobfuscationkey = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
-
-			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
+			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
 		}
 
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
@@ -2096,6 +2103,61 @@ class BlockedLog
 	}
 
 	/**
+	 * Return the last record in blocked log
+	 *
+	 * @param 	int							$rowidafter		Search record after this one
+	 * @return 	array<string, int|string>					Last record (id, date, signature)
+	 */
+	public function getNextRecord($rowidafter = 0)
+	{
+		global $conf;
+
+		$nextrecord = array('id' => 0, 'date' => 0, 'signature' => '');
+
+		// Get next record
+		$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " AND rowid > ".((int) $rowidafter);
+		$sql .= " ORDER BY rowid ASC LIMIT 1";
+
+		$resql = $this->db->query($sql);
+		$obj = $this->db->fetch_object($resql);
+		if ($obj) {
+			$nextrecord['id'] = $obj->rowid;
+			$nextrecord['date'] = $this->db->jdate($obj->date_creation, 'gmt');
+			$nextrecord['signature'] = $obj->signature;
+		}
+
+		return $nextrecord;
+	}
+
+	/**
+	 * Return the last record in blocked log
+	 *
+	 * @return array<string, int|string>	Last record (id, date, signature)
+	 */
+	public function getLastRecord()
+	{
+		global $conf;
+
+		$lastrecord = array('id' => 0, 'date' => 0, 'signature' => '');
+
+		// Get last line
+		$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+		$sql .= " WHERE entity = ".((int) $conf->entity);
+		$sql .= " ORDER BY rowid DESC LIMIT 1";
+		$resql = $this->db->query($sql);
+		$obj = $this->db->fetch_object($resql);
+		if ($obj) {
+			$lastrecord['id'] = $obj->rowid;
+			$lastrecord['date'] = $this->db->jdate($obj->date_creation, 'gmt');
+			$lastrecord['signature'] = $obj->signature;
+		}
+
+		return $lastrecord;
+	}
+
+	/**
 	 *	Return array of unalterable log objects (filtered with criteria)
 	 *
 	 *	@param	string 					$element      			Element to search
@@ -2164,6 +2226,11 @@ class BlockedLog
 		}
 		if (is_array($search_code)) {
 			if (!empty($search_code)) {
+				if (in_array('PAYMENT_CUSTOMER', $search_code)) {	// If we ask codes PAYMENT_CUSTOMER, it means both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+					$search_code[] = 'PAYMENT_CUSTOMER_CREATE';
+					$search_code[] = 'PAYMENT_CUSTOMER_DELETE';
+				}
+
 				$sql .= natural_search("action", implode(',', $search_code), 3);
 			}
 		} else {

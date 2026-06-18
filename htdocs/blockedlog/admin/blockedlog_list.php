@@ -321,9 +321,11 @@ if (GETPOST('clearcache')) {
 }
 
 // Get the remoteobfuscation key
+// Show an error to ask to retry later if we can't get it because it means we can't decode the HMAC KEY later so we can't validate record.
 $remoteobfuscationkey = '';
 try {
 	$remoteobfuscationkey = $block_static->getObfuscationKey();
+	// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
 } catch (Exception $e) {
 	$error++;
 
@@ -335,8 +337,9 @@ try {
 }
 
 // Get the encoded HMAC key.
-$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old dolcrypt:... or dolobfuscationv1...
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old 'dolcrypt:...' if migration not yet complete but should be 'dolobfuscationv1...'
 if (empty($hmac_encoded_secret_key)) {
+	// This is no more the case since Dolibarr v23 and Blockedlog v2+
 	print '<div class="error mess2">';
 	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration from a very old version.';
 	print '</div>';
@@ -350,10 +353,11 @@ if (!$error) {
 	} catch (Exception $e) {
 		print '<div class="error mess3">';
 		print $e->getMessage();
+		print '<br>';
+		print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
 		print '</div>';
 	}
 }
-
 
 print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
@@ -415,8 +419,22 @@ print '<input type="text" class="maxwidth50" name="search_pos_source" value="'.d
 print '</td>';
 
 // Actions code
+
+$actioncodetoshowincombo = array();
+// Merge the action PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE into PAYMENT_CUSTOMER
+foreach ($block_static->trackedevents as $key => $value) {
+	if ($key === 'PAYMENT_CUSTOMER_DELETE') {
+		$actioncodetoshowincombo['PAYMENT_CUSTOMER'] = array('id' => 'PAYMENT_CUSTOMER', 'label' => 'logPAYMENT_CUSTOMER', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER'));
+		unset($actioncodetoshowincombo['PAYMENT_CUSTOMER_CREATE']);
+		unset($actioncodetoshowincombo['PAYMENT_CUSTOMER_DELETE']);
+	} else {
+		$actioncodetoshowincombo[$key] = $value;
+	}
+}
+$actioncodetoshowincombo['PAYMENT_CUSTOMER'] = array('id' => 'PAYMENT_CUSTOMER', 'label' => 'logPAYMENT_CUSTOMER', 'labelhtml' => img_picto('', 'bill', 'class="pictofixedwidth").').$langs->trans('logPAYMENT_CUSTOMER'));
+
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth200', 1);
+print $form->multiselectarray('search_code', $actioncodetoshowincombo, $search_code, 0, 0, 'maxwidth200', 1);
 print '</td>';
 
 // Ref
@@ -536,8 +554,13 @@ if (is_array($blocks)) {
 		$colspan++;
 	}
 
+	// Get the last record of the chain (may be used later).
+	$lastrecord = $block_static->getLastRecord();
+
 	// Check that there was no deletion on the end of chain.
+	// Note: We can find a similar code into the blockedlog_archive
 	$lockfile = $block_static->getEndOfChainFlagFile();
+	$lockline = '';
 
 	if (!file_exists($lockfile)) {
 		$error++;
@@ -550,9 +573,20 @@ if (is_array($blocks)) {
 		}
 		print '</td></tr>';
 	} else {
-		$line = trim(file_get_contents($lockfile));
-		if (preg_match('/^dolobfuscation/', $line)) {
-			if (empty($remoteobfuscationkey)) {
+		$lockline = trim(file_get_contents($lockfile));
+	}
+
+	if (! $error) {
+		$headstring = '';
+		if (preg_match('/^dolcrypt/', $lockline)) {
+			$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
+		} elseif (preg_match('/^dolobfuscation/', $lockline)) {
+			try {
+				$remoteobfuscationkey = $block_static->getObfuscationKey();
+				if (empty($remoteobfuscationkey)) {
+					throw new Exception('Remote obfuscation key is empty');
+				}
+			} catch (Exception $e) {
 				$error++;
 
 				print '<tr><td class="center" colspan="'.$colspan.'">';
@@ -562,32 +596,22 @@ if (is_array($blocks)) {
 				print '<span class="warning">'.$langs->trans("CantValidateEndOfChain").'</span>';
 				print '</td></tr>';
 			}
+			$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
 		}
-	}
-
-	if (! $error) {
-		$headstring = dolDecrypt($line, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
 
 		$reg = array();
 		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
-			// Get last line
-			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-			$sql .= " WHERE entity = ".((int) $conf->entity);
-			$sql .= " ORDER BY rowid DESC LIMIT 1";
-			$resql = $db->query($sql);
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$lastrowid = $obj->rowid;
-				$lastdate = $db->jdate($obj->date_creation, 'gmt');
-				$lastsignature = $obj->signature;
-			}
+			// Compare with last line
+			$lastrecordid = $lastrecord['id'];
+			$lastrecorddate = $lastrecord['date'];
+			$lastrecordsignature = $lastrecord['signature'];
 
-			if ($reg[1] > $lastrowid || $reg[3] != $lastsignature) {
+			if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
 				$error++;
 
 				// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
 				print '<tr><td class="center" colspan="'.$colspan.'">';
-				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastdate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
 				print '</td></tr>';
 			}
 		} else {
@@ -599,6 +623,7 @@ if (is_array($blocks)) {
 		}
 	}
 
+	// Now loop on each line to show them
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id]) {
@@ -704,7 +729,8 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
+					//print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidity')).'">'.$langs->trans("StatusValid").'</span>';
 				} elseif ($block->action == 'MODULE_RESET') {
 					// Old action code on old version.
 					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
@@ -759,21 +785,52 @@ if (is_array($blocks)) {
 		}
 	}
 
+	// Define which source we want to show
+	$showtotalfor = array();
+	foreach ($totalamount as $key => $totalamountofcodepersource) {
+		if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
+			foreach ($totalamountofcodepersource as $source => $tmpval) {
+				$showtotalfor[$source] = 1;
+				// If we found one entry for the source, we make sure we have both BILL_VALIDATE and PAYMENT_CUSTOMER for this source
+				if (empty($totalamount['BILL_VALIDATE'][$source])) {
+					$totalamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+				if (empty($totalhtamount['BILL_VALIDATE'][$source])) {
+					$totalhtamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalhtamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalhtamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+				if (empty($totalvatamount['BILL_VALIDATE'][$source])) {
+					$totalvatamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalvatamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalvatamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+			}
+		}
+	}
+
 	// Show total lines
 	if ($nbshown == 0) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
+		krsort($showtotalfor);
 
-		$showturnover = 0;
-		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
-				$showturnover++;
-			}
-		}
+		foreach ($showtotalfor as $source => $tmpval) {
+			print '<tr class="liste_titre totalblockedlog">';
+			print '<td colspan="'.$colspan.'">';
+			print $langs->trans("TotalForThePeriod");
+			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' <span class="opacitylow">('.$langs->trans("ForPeriodAndFilters").')</span>';
+			print '</td>';
+			print '</tr>';
 
-		foreach ($totalamount as $key => $totalamountperref) {
-			if ($showturnover) {
+			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -785,13 +842,13 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
-				if ($key == 'BILL_VALIDATE') {
+				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
+				if ($actioncode == 'BILL_VALIDATE') {
 					print ' <span class="opacitylow">('.$langs->trans("Turnover").')</span>';
-				} elseif ($key == 'PAYMENT_CUSTOMER') {
+				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
-				print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
+				//print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
 				print '</td>';
 
 				// Action
@@ -800,19 +857,25 @@ if (is_array($blocks)) {
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
 				$totalhttoshow = 0;
-				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
-					$totalhttoshow += $value;
+				foreach ($totalhtamount[$actioncode] as $tmpsource => $value) {	// Loop on each module
+					if ($tmpsource == $source) {
+						$totalhttoshow += $value;
+					}
 				}
 				$totalvattoshow = 0;
-				foreach ($totalvatamount[$key] as $value) {
-					$totalvattoshow += $value;
+				foreach ($totalvatamount[$actioncode] as $tmpsource => $value) {
+					if ($tmpsource == $source) {
+						$totalvattoshow += $value;
+					}
 				}
 				$totaltoshow = 0;
-				foreach ($totalamountperref as $value) {
-					$totaltoshow += $value;
+				foreach ($totalamount[$actioncode] as $tmpsource => $value) {
+					if ($tmpsource == $source) {
+						$totaltoshow += $value;
+					}
 				}
 
-				if ($key == 'BILL_VALIDATE') {
+				if ($actioncode == 'BILL_VALIDATE') {
 					print price($totalhttoshow);
 					print ' '.$langs->trans("HT");
 
@@ -825,7 +888,7 @@ if (is_array($blocks)) {
 				}
 
 				print price($totaltoshow);
-				if ($key == 'BILL_VALIDATE') {
+				if ($actioncode == 'BILL_VALIDATE') {
 					print ' '.$langs->trans("TTC");
 				}
 				print '</td>';
@@ -861,9 +924,10 @@ if (is_array($blocks)) {
 
 
 		// TODO Show the lifetime payment only if we click on a link.
-		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+		//$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+		//if (! $afilterexists) {
 
-		if (! $afilterexists) {
+		foreach ($showtotalfor as $source => $tmpval) {
 			// Get lifetime amount of all invoices validated and payments created/deleted.
 			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 
@@ -877,6 +941,23 @@ if (is_array($blocks)) {
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
+
+			print '<tr class="liste_titre totalblockedlog">';
+			print '<td colspan="'.$colspan.'">';
+			print $langs->trans("TotalForLifetime");
+			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+
+			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
+			if ($search_end && $search_end != -1) {
+				print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
+			} else {
+				print ' - '.$langs->trans("Now");
+			}
+			print ')</span>';
+			print '</td>';
+			print '</tr>';
+
+			// Lifetime amount of invoices validated
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
@@ -945,6 +1026,8 @@ if (is_array($blocks)) {
 
 				print '</tr>';
 			}
+
+			// Lifetime amount for payments
 			if (empty($search_code)
 				|| in_array('PAYMENT_CUSTOMER', $search_code)				// Filter for both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
 				|| in_array('PAYMENT_CUSTOMER_CREATE', $search_code)

@@ -226,21 +226,23 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
  * Return if the application is executed with the LNE requirements on.
  * This function can be used to block some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done and we suppose it is true.
- * @return 	boolean								True or false
+ * @param	int		$blockedlogtestalreadydone		Test on blockedlog used already done and we suppose it is true.
+ * @param	int		$blockedlogmodulealreadydone	Test on blockedlog module already done and we suppose it is true.
+ * @return 	boolean									True or false
  */
-function isALNERunningVersion($blockedlogtestalreadydone = 0)
+function isALNERunningVersion($blockedlogtestalreadydone = 0, $blockedlogmodulealreadydone = 0)
 {
-	// For Debug help: Constant CERTIF_LNE can be set 2 by developer to force all LNE restrictions
-	// even if the country is not France, so we can test the restrictions on any dev instance.
+	// For Debug help: Constant CERTIF_LNE can be set 2 by developers get mode 1 compliant with dev env.
 	// Note that you can force, with this constant, the enabling of the restrictions,
 	// but there is no way to force the disabling of a restriction.
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
-		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2		// Value is 2 for debug purpose to enable restriction except https for dev env.
+		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
+		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1		// Value is 1 when version is certified
-		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
+		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -406,7 +408,7 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 
 	$obfuscationkey = 'ERROR';
 
-	if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
+	//if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 
 		$algo = 'sha256';
@@ -438,41 +440,41 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		try {
-			$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
-			usleep(10000);
+	try {
+		$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
+		usleep(10000);
 
-			// Add a warning in log in case of error
-			if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
-				$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
-				$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
-			} elseif ($tmpresult['http_code'] != 200) {
-				$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
-				$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
-				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+		// Add a warning in log in case of error
+		if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
+			$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
+			$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+		} elseif ($tmpresult['http_code'] != 200) {
+			$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+			$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+		} else {
+			$reg = array();
+			if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
+				$obfuscationkey = $reg[1];
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key ".$obfuscationkey, LOG_DEBUG);
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key ".$obfuscationkey, LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 			} else {
-				$reg = array();
-				if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
-					$obfuscationkey = $reg[1];
-					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
-					dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
-				} else {
-					$obfuscationkey .= ' '.$tmpresult['content'];
-					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
-					dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
-				}
+				$obfuscationkey .= ' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
 			}
-		} catch (Exception $e) {
-			$obfuscationkey .= ' '.$e->getMessage();
-			dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
-			dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
 		}
-	} else {
-		$obfuscationkey = '';
+	} catch (Exception $e) {
+		$obfuscationkey .= ' '.$e->getMessage();
+		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
+		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
 	}
+	/*} else {
+		$obfuscationkey = '';
+	}*/
 
 	return $obfuscationkey;
 }
@@ -646,6 +648,7 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 		}
 	}
 }
+
 
 
 /**

@@ -274,13 +274,27 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$totalvatamount = array();
 		$totalamount = array();
 
+		// Check we can validate the status of each line by getting the HMAC key in memory
+		$remoteobfuscationkey = '';
+		if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+			try {
+				$remoteobfuscationkey = $block_static->getObfuscationKey();
+				// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
+			} catch (Exception $e) {
+				$error++;
+
+				setEventMessages($e->getMessage(), null, 'errors');
+				setEventMessages('<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>', null, 'errors');
+			}
+		}
+
 		// Now restart request with all data, so without the limit(1) in sql request
 		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
-		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
+		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo, note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
-		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
+		// or payment on different periods for example to manage depreciation, but what we want here is not accountancy but payment data.
 		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
@@ -309,6 +323,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				);
 
 			$loweridinerror = 0;
+			$lastrowid = 0;
 			$i = 0;
 
 			while ($obj = $db->fetch_object($resql)) {
@@ -354,6 +369,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$block_static->user_fullname = $obj->user_fullname;
 
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
+
+				$block_static->note = $obj->note;
 
 				// Old hash + Previous fields concatenated = signature
 				$block_static->signature = $obj->signature;
@@ -406,6 +423,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				//$concatenateddata = $block_static->buildKeyForSignature();
 
+				$lastrowid = $block_static->id;
+
 				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event / $block->module_source
 				$total_ht = $total_vat = $total_ttc = 0;
 				sumAmountsForUnalterableEvent($block_static, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
@@ -428,6 +447,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					.csvClean($block_static->object_format).';'
 					.csvClean($block_static->signature).';'
 					.csvClean($statusofrecord).';'
+					.csvClean($block_static->note).';'
 					."\n");
 
 				// Set new previous hash for next fetch
@@ -439,10 +459,93 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			if ($i == 0) {
 				fwrite($fh, ";\n");
 			}
+
+			// Get the last record of the chain (may be used later).
+			$lastrecord = $block_static->getLastRecord();
+
+			// Check if $lastrowid is the last rowid of table blockedlog
+			$isLastRecord = false;
+			if ($lastrecord['id'] == $lastrowid) {
+				$isLastRecord = true;
+			}
+
+			if (!$periodnotcomplete) {	// If period is complete
+				if (!$isLastRecord) {	// There is another record in database that follow the last one in period. So we use it to see if no deletion were done at end of period.
+					// We check that next record after the last one is ok.
+					$block_static_after = new BlockedLog($db);
+					$nextrecord = $block_static_after->getNextRecord($lastrowid);
+					$nextrecordid = $nextrecord['id'];
+
+					$block_static_after->fetch($nextrecordid);
+
+					$checksignature = $block_static_after->checkSignature();
+
+					if (!$checksignature) {		// If the record just after is not valid, it means we removed one or more records inside the chain (at end of period)
+						fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($block_static->date_creation, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', dol_print_date($block_static_after->date_creation, 'dayhourrfc', 'gmt')))."\n");
+					}
+				} else {				// If last output record is the last one in chain, we must use the end of chain protection file to check that no deletion were done in database before export.
+					// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
+					$lockfile = $block_static->getEndOfChainFlagFile();
+					$lockline = '';
+
+					if (!file_exists($lockfile)) {
+						//$error++;
+
+						if ($mysoc->country_code == 'FR') {
+							fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+						} else {
+							fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+						}
+					} else {
+						$lockline = trim(file_get_contents($lockfile));
+					}
+
+					if (! $error) {
+						$headstring = '';
+						if (preg_match('/^dolcrypt/', $lockline)) {
+							$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
+						} elseif (preg_match('/^dolobfuscation/', $lockline)) {
+							try {
+								$remoteobfuscationkey = $block_static->getObfuscationKey();
+								if (empty($remoteobfuscationkey)) {
+									throw new Exception('Remote obfuscation key is empty');
+								}
+							} catch (Exception $e) {
+								$error++;
+
+								$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+								setEventMessages($langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping), null, 'errors');
+								setEventMessages($langs->trans("CantValidateEndOfChain"), null, 'errors');
+							}
+							$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
+						}
+
+						$reg = array();
+						if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', (string) $headstring, $reg)) {	// Failed to decypt the head
+							// Compare with last line
+							$lastrecordid = $lastrecord['id'];
+							$lastrecorddate = $lastrecord['date'];
+							$lastrecordsignature = $lastrecord['signature'];
+
+							if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
+								//$error++;
+
+								// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+								fwrite($fh, $langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2]))."\n");
+							}
+						} else {
+							//$error++;
+
+							fwrite($fh, $langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable")."\n");
+						}
+					}
+				}
+			}
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
+
 
 		// Now calculate cumulative total of all invoices validated
 		$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
@@ -489,6 +592,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->signature = '';
 
 		$statusofrecord = '';
+
+		fwrite($fh, '----- '."\n");
 
 		fwrite($fh, 'SUMMARY PERIOD BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
 			.csvClean('').';'
@@ -558,6 +663,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
+		fwrite($fh, '----- '."\n");
 
 		// Add a final line with perpetual total for invoice validations
 		fwrite($fh, 'SUMMARY LIFETIME BILLED - '.$langs->transnoentitiesnoconv("Invoices").' : '.$totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("TTC").";"
@@ -658,6 +764,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					$error++;
 				}
 			}
+		} else {
+			dol_delete_file($tmpfile);
 		}
 	}
 
