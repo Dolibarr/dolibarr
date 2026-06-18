@@ -1494,7 +1494,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
- *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
+ *  @param	int		$mode				0=Default mode use to move a file from the default system upload dir (/tmp/...) into $upload_dir. 1=Mode to move an uploaded file with a simple rename (when uploaded dir is in same filesystem than $upload_dir).
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
@@ -1814,6 +1814,7 @@ function dol_delete_dir_recursive($dir, $count = 0, $nophperrors = 0, $onlysub =
 					if (is_dir(dol_osencode("$dir/$item")) && !is_link(dol_osencode("$dir/$item"))) {
 						$count = dol_delete_dir_recursive("$dir/$item", $count, $nophperrors, 0, $countdeleted, $indexdatabase, $nolog, ($level + 1));
 					} else {
+						chmod(dol_osencode("$dir/$item"), 0755);
 						$result = dol_delete_file("$dir/$item", 1, $nophperrors, 0, null, false, $indexdatabase, $nolog);
 						$count++;
 						if ($result) {
@@ -2120,8 +2121,11 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
-				// Check extension is allowed for upload
-				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", implode(',', getExecutableContent()));
+				// Check extension is allowed for upload.
+				// Guard against partial upgrades where files.lib.php has been refreshed
+				// but functions.lib.php has not been reloaded with getExecutableContent() yet.
+				$defaultexecutableextensions = function_exists('getExecutableContent') ? implode(',', getExecutableContent()) : 'htm,html,shtml,js,phar,php,php3,php4,php5,phtml,pht,pl,py,cgi,ksh,sh,bash,bat,cmd,wpk,exe';
+				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", $defaultexecutableextensions);
 				if (!empty($fileextensionrestriction)) {
 					$arrayofregexextension = explode(",", $fileextensionrestriction);
 
@@ -3866,9 +3870,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 /**
  * Store object in file.
  *
- * @param string $directory Directory of cache
- * @param string $filename Name of filecache
- * @param mixed $object Object to store in cachefile
+ * @param string 	$directory 	Directory of cache
+ * @param string 	$filename 	Name of filecache
+ * @param string 	$object 	String to store in cachefile
  * @return void
  */
 function dol_filecache($directory, $filename, $object)
@@ -3881,7 +3885,7 @@ function dol_filecache($directory, $filename, $object)
 	}
 	$cachefile = $directory.$filename;
 
-	file_put_contents($cachefile, serialize($object), LOCK_EX);
+	file_put_contents($cachefile, json_encode($object), LOCK_EX);
 	dolChmod($cachefile);
 }
 
@@ -3904,14 +3908,14 @@ function dol_cache_refresh($directory, $filename, $cachetime)
 /**
  * Read object from cachefile.
  *
- * @param string 	$directory 		Directory of cache
- * @param string 	$filename 		Name of filecache
- * @return mixed 					Unserialise from file
+ * @param 	string 	$directory 		Directory of cache
+ * @param 	string 	$filename 		Name of filecache
+ * @return 	string 					Unserialise from file
  */
 function dol_readcachefile($directory, $filename)
 {
 	$cachefile = $directory.$filename;
-	$object = unserialize(file_get_contents($cachefile));
+	$object = json_decode(file_get_contents($cachefile));
 	return $object;
 }
 

@@ -40,6 +40,7 @@ require "../main.inc.php";
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -63,7 +64,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products", 'compta', 'propal'));
@@ -103,7 +103,7 @@ if ($user->socid) {
 $hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 $object = new Contrat($db);
-$extrafields = new ExtraFields($db);
+
 $ret = 0;
 $pu_ht = null;  // Init for static analysis
 $pu_ttc = null;  // Init for static analysis
@@ -320,6 +320,7 @@ if (empty($reshook)) {
 				}
 
 				// For compatibility
+				$classname = '';
 				if ($element == 'order') {
 					$element = $subelement = 'commande';
 				}
@@ -330,6 +331,17 @@ if (empty($reshook)) {
 				if ($element == 'invoice' || $element == 'facture') {
 					$element = 'compta/facture';
 					$subelement = 'facture';
+				}
+				if ($element == 'facturerec' || $element == 'facture_rec') {
+					// FactureRec lives in compta/facture/class/facture-rec.class.php (#34775)
+					$element = 'compta/facture';
+					$subelement = 'facture-rec';
+					$classname = 'FactureRec';
+				}
+				if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+					$element = 'fourn';
+					$subelement = 'fournisseur.facture-rec';
+					$classname = 'FactureFournisseurRec';
 				}
 
 				$object->origin    = $origin;
@@ -345,7 +357,9 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-					$classname = ucfirst($subelement);
+					if (empty($classname)) {
+						$classname = ucfirst($subelement);
+					}
 					$srcobject = new $classname($db);
 					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 
@@ -1190,10 +1204,23 @@ if ($action == 'create') {
 				$element = 'compta/facture';
 				$subelement = 'facture';
 			}
+			$classname = '';
+			if ($element == 'facturerec' || $element == 'facture_rec') {
+				$element = 'compta/facture';
+				$subelement = 'facture-rec';
+				$classname = 'FactureRec';
+			}
+			if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.facture-rec';
+				$classname = 'FactureFournisseurRec';
+			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-			$classname = ucfirst($subelement);
+			if (empty($classname)) {
+				$classname = ucfirst($subelement);
+			}
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Facture $objectsrc';
 			$objectsrc->fetch($originid);
@@ -1387,7 +1414,7 @@ if ($action == 'create') {
 		$hselected = '0';
 		$formconfirm = '';
 
-		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
+		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract', 0, '', '', 0, '', 1);
 
 
 		if ($action == 'delete') {
@@ -1566,6 +1593,7 @@ if ($action == 'create') {
 		print '<!-- amounts -->'."\n";
 		print '<div class="underbanner clearboth"></div>';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border tableforfield centpercent">';
 
 		// Qty by service status
@@ -1583,60 +1611,61 @@ if ($action == 'create') {
 		$expired= $object->getTotalizedLines(4, 1);
 		$close= $object->getTotalizedLines(5, 0);
 
-		print '<tr><td class="titlefield">'.$langs->trans("Qty").'</td>';
-		print '<td class="right nowrap">'.price2num($all['total_qty']).'</td>';
-		print '<td class="right">'.price2num($draft['total_qty']).'</td>';
-		print '<td class="right">'.price2num($enabled['total_qty']).'</td>';
-		print '<td class="right">'.price2num($expired['total_qty']).'</td>';
-		print '<td class="right">'.price2num($close['total_qty']).'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Lines").'</td>';
+		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($expired['total_qty'] ? price2num($expired['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="right">'.($close['total_qty'] ? price2num($close['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
-		print '<td class="nowraponall amountcard right">'.price($all['total_ht']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($draft['total_ht']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($enabled['total_ht']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($expired['total_ht']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($close['total_ht']).'</td>';
+		print '<td class="nowraponall amountcard right">'.($all['total_ht'] ? price($all['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_ht'] ? price($draft['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_ht'] ? price($enabled['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_ht'] ? price($expired['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_ht'] ? price($close['total_ht']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
-		print '<td class="nowraponall amountcard right nowrap">'.price($all['total_tva']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($draft['total_tva']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($enabled['total_tva']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($expired['total_tva']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($close['total_tva']).'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.($all['total_tva'] ? price($all['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_tva'] ? price($draft['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_tva'] ? price($enabled['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_tva'] ? price($expired['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_tva'] ? price($close['total_tva']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '</tr>';
 
 		if ($mysoc->localtax1_assuj == "1" || $all['total_localtax1'] != 0) {
 			print '<tr><td class="titlefield">' . $langs->trans("TotalLT1") . '</td>';
-			print '<td class="nowraponall amountcard right nowrap">' . price($all['total_localtax1']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($draft['total_localtax1']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($enabled['total_localtax1']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($expired['total_localtax1']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($close['total_localtax1']) . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax1'] ? price($all['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax1'] ? price($draft['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax1'] ? price($enabled['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax1'] ? price($expired['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($close['total_localtax1'] ? price($close['total_localtax1']) : '<span class="opacitymedium">0</span>') . '</td>';
 			print '</tr>';
 		}
 
 		if ($mysoc->localtax2_assuj == "1" || $all['total_localtax2'] != 0) {
 			print '<tr><td class="titlefield">' . $langs->trans("TotalLT2") . '</td>';
-			print '<td class="nowraponall amountcard right nowrap">' . price($all['total_localtax2']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($draft['total_localtax2']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($enabled['total_localtax2']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($expired['total_localtax2']) . '</td>';
-			print '<td class="nowraponall amountcard right">' . price($close['total_localtax2']) . '</td>';
+			print '<td class="nowraponall amountcard right nowrap">' . ($all['total_localtax2'] ? price($all['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($draft['total_localtax2'] ? price($draft['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($enabled['total_localtax2'] ? price($enabled['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($expired['total_localtax2'] ? price($expired['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
+			print '<td class="nowraponall amountcard right">' . ($close['total_localtax2'] ? price($close['total_localtax2']) : '<span class="opacitymedium">0</span>') . '</td>';
 			print '</tr>';
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
-		print '<td class="nowraponall amountcard right nowrap">'.price($all['total_ttc']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($draft['total_ttc']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($enabled['total_ttc']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($expired['total_ttc']).'</td>';
-		print '<td class="nowraponall amountcard right">'.price($close['total_ttc']).'</td>';
+		print '<td class="nowraponall amountcard right nowrap">'.($all['total_ttc'] ? price($all['total_ttc']): '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($draft['total_ttc'] ? price($draft['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($enabled['total_ttc'] ? price($enabled['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($expired['total_ttc'] ? price($expired['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
+		print '<td class="nowraponall amountcard right">'.($close['total_ttc'] ? price($close['total_ttc']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '</tr>';
 
 		print "</table>";
 
+		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -1739,12 +1768,12 @@ if ($action == 'create') {
 					if ($nbofservices > 1 && $conf->browser->layout != 'phone' && $user->hasRight('contrat', 'creer')) {
 						print '<td width="30" class="linecolmove tdlineupdown center">';
 						if ($cursorline > 1) {
-							print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
+							print '<a class="lineupdown reposition paddingrightonly paddingleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
 							echo img_up('default', 0, 'imgupforline');
 							print '</a>';
 						}
 						if ($cursorline < $nbofservices) {
-							print '<a class="lineupdown reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
+							print '<a class="lineupdown reposition paddingrightonly paddingleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
 							echo img_down('default', 0, 'imgdownforline');
 							print '</a>';
 						}

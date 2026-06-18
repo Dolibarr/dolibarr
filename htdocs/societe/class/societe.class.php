@@ -21,6 +21,7 @@
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +156,7 @@ class Societe extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -2728,7 +2729,7 @@ class Societe extends CommonObject
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $mysoc;
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
@@ -2745,7 +2746,9 @@ class Societe extends CommonObject
 		}
 
 		if ($this->id > 0) {
-			// Clean vat code
+			// Separate VAT code from VAT rate string
+			// Discount type determines who is buyer and seller
+			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2764,25 +2767,10 @@ class Societe extends CommonObject
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
-			if ($price_base_type == 'TTC') {
-				$discount->multicurrency_amount_ttc = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ht = price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $discount->amount_ttc - (float) $discount->amount_ht) * (float) $discount->multicurrency_tx, 'MT');
+			$vat_tx = (float) price2num($vatrate);
 
-				$discount->amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
-				$discount->amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
-			} else {
-				$discount->amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
-				$discount->amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
 
-				$discount->multicurrency_amount_ht = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ttc = price2num(((float) $discount->amount_ht + (float) $discount->amount_tva) * (float) $discount->multicurrency_tx, 'MT');
-			}
-
-			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -4170,6 +4158,36 @@ class Societe extends CommonObject
 		return array();
 	}
 
+	/**
+	 *	Get children for company
+	 *
+	 * @param   int         $company_id     ID of company to search children
+	 * @return	int[]
+	 */
+	public function getChildrenForCompany($company_id)
+	{
+		global $langs;
+
+		$children = array();
+		if ($company_id > 0) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE parent = ".((int) $company_id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$child = $obj->rowid;
+					if ($child > 0 && !in_array($child, $children)) {
+						$children[] = $child;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($this->db->lasterror(), 'errors');
+			}
+		}
+		// Return a default value when $company_id is not greater than 0
+		return $children;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns if a profid should be verified to be unique
@@ -4271,67 +4289,29 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Check the validity of a professional identifier according to the country of the company (siren, siret, ...)
+	 *  Check the validity of a professional identifier according to the properties (country) of the thirdparty (siren, siret, ...)
 	 *
 	 *  @param	int			$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *  @param  Societe		$soc            Object societe
 	 *  @return int             			Return integer <=0 if KO, >0 if OK
-	 *  TODO better to have this in a lib than into a business class
 	 */
-	public function id_prof_check($idprof, $soc)
+	public function id_prof_check($idprof)
 	{
 		// phpcs:enable
 
-		$ok = 1;
-
-		if (getDolGlobalString('MAIN_DISABLEPROFIDRULES')) {
-			return 1;
-		}
-
-		// load the library necessary to check the professional identifiers
+		// Load the library necessary to check the professional identifiers
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
 
-		// Check SIREN
-		if ($idprof == 1 && $soc->country_code == 'FR' && !isValidSiren($this->idprof1)) {
-			return -1;
-		}
-
-		// Check SIRET
-		if ($idprof == 2 && $soc->country_code == 'FR' && !isValidSiret($this->idprof2)) {
-			return -1;
-		}
-
-		//Verify CIF/NIF/NIE if pays ES
-		if ($idprof == 1 && $soc->country_code == 'ES') {
-			return isValidTinForES($this->idprof1);
-		}
-
-		//Verify NIF if country is PT
-		if ($idprof == 1 && $soc->country_code == 'PT' && !isValidTinForPT($this->idprof1)) {
-			return -1;
-		}
-
-		//Verify NIF if country is DZ
-		if ($idprof == 1 && $soc->country_code == 'DZ' && !isValidTinForDZ($this->idprof1)) {
-			return -1;
-		}
-
-		//Verify ID Prof 1 if country is BE
-		if ($idprof == 1 && $soc->country_code == 'BE' && !isValidTinForBE($this->idprof1)) {
-			return -1;
-		}
-
-		return $ok;
+		return isValidProfIds($idprof, $this);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Return an url to check online a professional id or empty string
+	 *	Return an url to check online a professional id or empty string
 	 *
-	 *   @param		int		$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
-	 *   @param 	Societe	$thirdparty     Object thirdparty
-	 *   @return	string          		Url or empty string if no URL known
-	 *   TODO better in a lib than into business class
+	 *  @param	int			$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *  @param 	Societe		$thirdparty     Object thirdparty
+	 *  @return	string      	    		Url or empty string if no URL known
+	 *  TODO better to have this in the lib profid.lib.php rather than into this business class
 	 */
 	public function id_prof_url($idprof, $thirdparty)
 	{
@@ -5749,9 +5729,10 @@ class Societe extends CommonObject
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *	  @param    string      $element    Filter on this element of default contact type ('facture', 'propal', 'commande' ...)
+	 *    @param    int         $status     Filter by contact status: 1=Active only, 0=Inactive only, -1=All (default)
 	 *    @return int[]|array<array{source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:string,rowid:int,code:string,element:string,libelle:string,status:string,fk_c_type_contact:int}>|-1		Array of contacts, -1 if error
 	 */
-	public function getContacts($list = 0, $code = '', $element = '')
+	public function getContacts($list = 0, $code = '', $element = '', $status = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -5767,6 +5748,11 @@ class Societe extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on sc.fk_socpeople = t.rowid";
 		$sql .= " WHERE sc.fk_soc = ".((int) $this->id);
 		$sql .= " AND sc.fk_c_type_contact = tc.rowid";
+
+		// Add status filter if requested
+		if ($status >= 0) {
+			$sql .= " AND t.statut = " . ((int) $status);
+		}
 		if (!empty($element)) {
 			$sql .= " AND tc.element = '".$this->db->escape($element)."'";
 		}
@@ -5916,6 +5902,19 @@ class Societe extends CommonObject
 				$soc_origin->code_fournisseur = '';
 				$soc_origin->barcode = '';
 				$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+			}
+
+			// Children companies
+			if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
+				// Children
+				$children_ori = $this->getChildrenForCompany($soc_origin->id);
+				if (count($children_ori)) {
+					foreach ($children_ori as $child_id) {
+						$child = new Societe($this->db);
+						$child->id = $child_id;
+						$child->setParent($this->id);
+					}
+				}
 			}
 
 			// Update

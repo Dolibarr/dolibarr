@@ -59,6 +59,7 @@ $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $search_processing = GETPOST("search_processing", 'int');
 $securitykey = GETPOST('securitykey', 'alpha');
+$filter = array();	// Search filter built later, initialized here so it is always defined (e.g. when a hook intercepts the Actions section)
 
 $id = GETPOSTINT('id');
 
@@ -360,7 +361,7 @@ if (GETPOSTISSET('search_processing')) {
 	$sql .= " AND t.processing = ".((int) $search_processing);
 }
 // Manage filter
-if (is_array($filter) && count($filter) > 0) {
+if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 	}

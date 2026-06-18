@@ -783,9 +783,10 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+				if (isALNERunningVersion() && !empty($this->module_source)) {
+					$this->error = 'Action to modify an invoice from an external module like the Point Of Sale is not allowed';
 					return -7;
+					// Note, edit status to draft is also blocked by the trigger of blockedlog module for action BILL_UNVALIDATE that do a test on isEditable().
 				}
 			}
 

@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'cashdesk', 'compta', 'other'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -189,6 +189,22 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$error++;
 	}
 	*/
+
+	if (!$error) {
+		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+
+		$isqualified = isALNERunningVersion(1);
+		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+			$errmsg = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS is mandatory to be allowed to record any event (Your hosting does not match the install requirements).';
+			dol_syslog($errmsg, LOG_ERR);
+
+			setEventMessages($errmsg, null, 'errors');
+			$error++;
+		}
+	}
 
 	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
 	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
@@ -367,7 +383,12 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				*/
 
 				if ($checksignature) {
-					$statusofrecord = 'Valid';
+					if (!empty($block_static->note)) {	// signature ok but end of chain deletion detected
+						$statusofrecord = 'KO';
+						$statusofrecordnote = $block_static->note;
+					} else {
+						$statusofrecord = $langs->transnoentitiesnoconv('StatusValid');
+					}
 					if ($loweridinerror > 0) {
 						$statusofrecordnote = 'ValidButFoundAPreviousKO';
 					} else {
@@ -469,7 +490,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 		$statusofrecord = '';
 
-		fwrite($fh, 'SUMMARY TURNOVER BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
+		fwrite($fh, 'SUMMARY PERIOD BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
 			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
@@ -505,9 +526,10 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$block_static->object_version = '';
 		$block_static->object_format = '';
 		$block_static->signature = '';
+
 		$statusofrecord = '';
 
-		fwrite($fh, 'SUMMARY TURNOVER PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
+		fwrite($fh, 'SUMMARY PERIOD PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
 			.csvClean('').';'
 			.csvClean($block_static->date_creation).';'
 			.csvClean($block_static->action).';'
@@ -616,6 +638,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
+				// There is no trigger for export of archive files, so we force the action code here
+
 				$action = 'BLOCKEDLOG_EXPORT';
 
 				$result = $b->setObjectData($object, $action, 0, $user, 0);
@@ -652,7 +676,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -672,7 +696,7 @@ if (!is_array($blocks)) {
 }
 
 $linkback = '';
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 }
 
@@ -766,7 +790,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 		if (GETPOST('inputregistrationnumber')) {
 			$inputregistrationnumber = GETPOST('inputregistrationnumber');
-			print 'We will use this value as full registration number ';
+			print $langs->trans("WeWillUseThisValueAsNumber");
 			print '<input type="text" name="inputregistrationnumber" class="width300" placeholder="'.$langs->trans("FullRegistrationNumber").'" value="'.$inputregistrationnumber.'" spellcheck="false">';
 
 			$secretkey = $inputregistrationnumber;	// We will use the entered value to check authenticity
@@ -980,10 +1004,10 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					// We are on a line for summary information
 					$lineanalyzed = 1;
 					/*
-					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
+					if (preg_match('/^SUMMARY PERIOD BILLED/', (string) $line[0])) {
 						// Do nothing, we recalculate amount from previous lines
 					}
-					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
+					if (preg_match('/^SUMMARY PERIOD PAID/', (string) $line[0])) {
 						// Do nothing, we recalculate amount from previous lines
 					}
 					*/
@@ -1187,9 +1211,20 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 	$htmltext = '';
 
 	if (!userIsTaxAuditor()) {
-		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentities("Archives"))."<br>";
+		$nbrecorddone = $block_static->countRecord();
+		$mindisksize = 50;	// Gb
+		$maxtranspermonth = 10000;
+		$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+		$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
+		$htmltext = '';
+		$htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
+		$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+
 		if ($mysoc->country_code == 'FR') {
-			$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+			$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'</span><br>';
+		} else {
+			$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 		}
 		//$htmltext .= $langs->trans("UnalterableLogTool1");
 		//$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";

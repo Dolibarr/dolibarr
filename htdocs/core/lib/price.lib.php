@@ -202,7 +202,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// amounts using this rule when building a XML file.
 	if ($remise_percent_ligne && getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) {	// MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY can be 'MU', 2, ...
 		$tot_sans_remise = $pu * $qty * ($progress / 100);
-		$pudiscount = price2num($pu * ((float) $remise_percent_ligne / 100), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY'));
+		$pudiscount = (float) price2num($pu * ((float) $remise_percent_ligne / 100), getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY'));
 		$tot_avec_remise_ligne = (float) price2num($pu - $pudiscount, getDolGlobalString('MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY')) * $qty * ($progress / 100);
 	} else {
 		$tot_sans_remise = $pu * $qty * ($progress / 100);

@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'other'));
+$langs->loadLangs(array('admin', 'banks', 'bills', 'blockedlog', 'cashdesk', 'other'));
 
 // Get Parameters
 $action      = GETPOST('action', 'aZ09');
@@ -75,9 +75,10 @@ if (GETPOST('search_endyear') != '') {
 	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
 $search_code = GETPOST('search_code', 'array:alpha');
-$search_module_source = GETPOST('search_module_source', 'array:alpha');
+$search_module_source = GETPOSTISSET('search_module_source') ? GETPOST('search_module_source', 'array:alpha') : (isModEnabled('takepos') ? array('takepos') : array());
 $search_pos_source = GETPOST('search_pos_source');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_type_code = GETPOST('search_type_code', 'aZ09');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
 $withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
@@ -89,6 +90,8 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 	$search_startmonth = $tmparray['mon'];
 	$search_startyear = $tmparray['year'];
 }
+
+$includebeforev2 = GETPOSTINT('includebeforev2');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -130,6 +133,8 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
 $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
+$error = 0;
+
 
 /*
  * Actions
@@ -139,12 +144,13 @@ $MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_id = '';
 	$search_fk_user = '';
-	$search_start = -1;
+	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
 	$search_end = -1;
 	$search_code = array();
-	$search_module_source = '';
+	$search_module_source = isModEnabled('takepos') ? array('takepos') : array();
 	$search_pos_source = '';
 	$search_ref = '';
+	$search_type_code = '';			// Type of payment
 	$search_amount = '';
 	$search_signature = '';
 	$search_showonlyerrors = 0;
@@ -183,6 +189,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedl
 // Get list of blocked logs.
 // Warning: This make a fetch on each line.
 $blocks = $block_static->getLog('all', (string) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature, $search_module_source, $search_pos_source);
+
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -226,11 +233,21 @@ print '<a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('',
 print '<br>';
 print "</div>\n";
 
+$nbrecorddone = $block_static->countRecord();
+$mindisksize = 50;	// Gb
+$maxtranspermonth = 10000;
+$nbrecordallowed = $mindisksize * 1024 * 1024 / 40 - $nbrecorddone;
+$nbmonthallowed = $nbrecordallowed / $maxtranspermonth;
+
 $htmltext = '';
 $htmltext .= $langs->trans("UnalterableLogTool2", $langs->transnoentitiesnoconv("Archives"))."<br>";
-$htmltext .= $langs->trans("UnalterableLogTool3")."<br>";
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2MaxUsage", $nbrecorddone, $mindisksize, $nbrecordallowed)."</span><br>";
+
+$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool3")."</span><br>";
 if ($mysoc->country_code == 'FR') {
-	$htmltext .= '<br>'.$langs->trans("UnalterableLogTool1FR").'<br>';
+	$htmltext .= '<br><span class="small">'.$langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'</span><br>';
+} else {
+	$htmltext .= '<span class="small">'.$langs->trans("UnalterableLogTool2b", $langs->transnoentitiesnoconv("Archives"))."</span><br>";
 }
 
 print info_admin($htmltext, 0, 0, 'warning');
@@ -263,6 +280,9 @@ if ($search_amount) {
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
 }
+if ($search_type_code) {
+	$param .= '&search_type_code='.urlencode($search_type_code);
+}
 if ($search_startyear > 0) {
 	$param .= '&search_startyear='.((int) $search_startyear);
 }
@@ -294,7 +314,48 @@ if ($withtab) {
 	$param .= '&withtab='.((int) $withtab);
 }
 
-print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+// Clear memory cache of the obfuscation key
+if (GETPOST('clearcache')) {
+	unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+	unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+}
+
+// Get the remoteobfuscation key
+$remoteobfuscationkey = '';
+try {
+	$remoteobfuscationkey = $block_static->getObfuscationKey();
+} catch (Exception $e) {
+	$error++;
+
+	print '<div class="error mess1">';
+	print $e->getMessage();
+	print '<br>';
+	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
+	print '</div>';
+}
+
+// Get the encoded HMAC key.
+$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();	// Can be old dolcrypt:... or dolobfuscationv1...
+if (empty($hmac_encoded_secret_key)) {
+	print '<div class="error mess2">';
+	print 'Error: BLOCKEDLOG_HMAC_KEY was not found. It should have been initialized to a value "BLOCKEDLOG_HMAC_...." during initialization of module BlockedLog or during migration from a very old version.';
+	print '</div>';
+}
+
+// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+$hmac_secret_key = '';
+if (!$error) {
+	try {
+		$hmac_secret_key = $block_static->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
+	} catch (Exception $e) {
+		print '<div class="error mess3">';
+		print $e->getMessage();
+		print '</div>';
+	}
+}
+
+
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -339,7 +400,13 @@ print '</td>';
 
 // Module source
 print '<td class="liste_titre">';
-print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+//print $form->multiselectarray('search_module_source', $block_static->trackedmodules, $search_module_source, 0, 0, 'minwidth75 maxwidth200', 1);
+print '<input type="text" class="maxwidth100" name="search_module_source" list="search_module_sources" value="'.dol_escape_htmltag($search_module_source[0]).'">';
+if (isModEnabled('takepos')) {
+	print '<datalist id="search_module_sources">
+	    <option value="takepos">
+	</datalist>';
+}
 print '</td>';
 
 // POS source
@@ -355,6 +422,9 @@ print '</td>';
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 
+// Payment mode
+//print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_type_code" value="'.dol_escape_htmltag($search_type_code).'"></td>';
+
 // Amount
 print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 
@@ -366,12 +436,13 @@ print '<td class="liste_titre"><input type="text" class="maxwidth50" name="searc
 
 // Status
 print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
-$array = array("1" => "OnlyNonValid");
+$array = array("1" => $langs->trans("OnlyNonValid").' (KO)');
 print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
 // Link to debug information object
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
 
@@ -398,11 +469,13 @@ print getTitleFieldOfList($langs->trans('POS'), 0, $_SERVER["PHP_SELF"], '', '',
 print getTitleFieldOfList($langs->trans('Terminal'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
+//print getTitleFieldOfList($langs->trans('PaymentMode'), 0, $_SERVER["PHP_SELF"], 'type_code', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ', 0, $langs->trans("TotalTTCIfInvoiceSeeCompleteDataForDetail").'<br>'.$langs->trans("AmountInCurrency", getDolCurrency()))."\n";
 print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 }
 // Action column
@@ -413,33 +486,35 @@ print '</tr>';
 
 $checkresult = array();
 $checkdetail = array();
-$loweridinerror = 0;
+$checkerror = array();
+$loweridinerror = 0;		// The lower rowid we found an anomaly (for debug or analysis purposes only)
 
-if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
-	// This is version that is faster but require more memory and report errors that are outside the filter range
+// This is the algorithm that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
+if (is_array($blocks)) {
+	foreach ($blocks as &$block) {
+		// Enable this log to get information used to recalculate the signature
+		//var_dump($block->id.' '.$block->signature, $block->object_data);
 
-	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
-	// to find the $loweridinerror.
-} else {
-	// This is version that optimize the memory (note: it will not report errors that are outside the filter range, but we don't need them)
-	if (is_array($blocks)) {
-		foreach ($blocks as &$block) {
-			// Enable this log to get information used to recalculate the signature
-			//var_dump($block->id.' '.$block->signature, $block->object_data);
+		$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order and filter is various
 
-			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+		$checksignature = $tmpcheckresult['checkresult'];
 
-			$checksignature = $tmpcheckresult['checkresult'];
+		$checkresult[$block->id] = $checksignature; // false if error
+		$checkdetail[$block->id] = $tmpcheckresult;
 
-			$checkresult[$block->id] = $checksignature; // false if error
-			$checkdetail[$block->id] = $tmpcheckresult;
+		if (!empty($tmpcheckresult['error'])) {
+			$checkerror[$block->id] = $tmpcheckresult['error'];
+		}
+		if (!empty($block->note)) {
+			$checkresult[$block->id] = false;
+			//$checkerror[$block->id] = $block->note;
+		}
 
-			if (!$checksignature) {
-				if (empty($loweridinerror)) {
-					$loweridinerror = $block->id;
-				} else {
-					$loweridinerror = min($loweridinerror, $block->id);
-				}
+		if (!$checksignature) {
+			if (empty($loweridinerror)) {
+				$loweridinerror = $block->id;
+			} else {
+				$loweridinerror = min($loweridinerror, $block->id);
 			}
 		}
 	}
@@ -454,6 +529,75 @@ if (is_array($blocks)) {
 	$nbshown = 0;
 	$object_link = '';
 	$object_link_title = '';
+
+	$colspan = 12;
+	if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
+		$colspan++;
+		$colspan++;
+	}
+
+	// Check that there was no deletion on the end of chain.
+	$lockfile = $block_static->getEndOfChainFlagFile();
+
+	if (!file_exists($lockfile)) {
+		$error++;
+
+		print '<tr><td class="center" colspan="'.$colspan.'">';
+		if ($mysoc->country_code == 'FR') {
+			print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+		} else {
+			print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+		}
+		print '</td></tr>';
+	} else {
+		$line = trim(file_get_contents($lockfile));
+		if (preg_match('/^dolobfuscation/', $line)) {
+			if (empty($remoteobfuscationkey)) {
+				$error++;
+
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+				print '<span class="warning">'.$langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping).'</span>';
+				print ' ';
+				print '<span class="warning">'.$langs->trans("CantValidateEndOfChain").'</span>';
+				print '</td></tr>';
+			}
+		}
+	}
+
+	if (! $error) {
+		$headstring = dolDecrypt($line, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
+
+		$reg = array();
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
+			// Get last line
+			$sql = "SELECT rowid, date_creation, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$resql = $db->query($sql);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$lastrowid = $obj->rowid;
+				$lastdate = $db->jdate($obj->date_creation, 'gmt');
+				$lastsignature = $obj->signature;
+			}
+
+			if ($reg[1] > $lastrowid || $reg[3] != $lastsignature) {
+				$error++;
+
+				// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastdate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2])).'</span>';
+				print '</td></tr>';
+			}
+		} else {
+			$error++;
+
+			print '<tr><td class="center" colspan="'.$colspan.'">';
+			print '<span class="error">'.$langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable").'</span>';
+			print '</td></tr>';
+		}
+	}
 
 	foreach ($blocks as &$block) {
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
@@ -490,21 +634,29 @@ if (is_array($blocks)) {
 			print dolPrintHTML($block->user_fullname);
 			print '</td>';
 
-			// Module
+			// Module Source
 			$labelofmodulesource = $block->module_source;
 			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofmodulesource).'">'.dolPrintHTML($labelofmodulesource).'</td>';
 
-			// Terminal
+			// Terminal POS
 			print '<td>'.dolPrintHTML($block->pos_source).'</td>';
 
 			// Action
 			$labelofaction = $langs->transnoentitiesnoconv('log'.$block->action);
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($labelofaction).'">'.dolPrintHTML($labelofaction).'</td>';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($labelofaction).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall small">';
+			print dolPrintHTML($labelofaction);
+			print '</div>';
+			print '</td>';
+
+			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
+			$total_ht = $total_vat = $total_ttc = 0;
+			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
 
 			// Ref
-			print '<td class="nowraponall"><div class="smallheight">';
+			print '<td class="nowraponall"><div class="smallheight" title="'.dolPrintHTMLForAttribute(price($total_ttc)).'">';
 			if (!empty($block->ref_object)) {
-				print dol_escape_htmltag($block->ref_object);
+				print dolPrintHTML($block->ref_object);
 				if ($block->linktype && $block->linktoref) {
 					if ($block->linktype == 'payment') {
 						print '<br><span class="opacitymedium small">'.$langs->trans("PaymentOf").' '.$block->linktoref.'</span>';
@@ -521,25 +673,18 @@ if (is_array($blocks)) {
 			}
 			print '</div></td>';
 
-			//$tmpobj = json_decode($block->object_data);
-
-			// Define $totalhtamount, $totalvatamount, $totalamount for $block action code and module
-			$total_ht = $total_vat = $total_ttc = 0;
-			sumAmountsForUnalterableEvent($block, $refinvoicefound, $totalhtamount, $totalvatamount, $totalamount, $total_ht, $total_vat, $total_ttc);
+			// Payment mode
+			//print '<td>'.dolPrintHTML($block->type_code).'</td>';
 
 			// Amount
-			print '<td class="right nowraponall">';
+			print '<td class="right nowraponall"><span class="amount">';
 			if (!in_array($block->action, array('BLOCKEDLOG_EXPORT', 'CASHCONTROL_CLOSE', 'MODULE_SET', 'MODULE_RESET'))) {
-				$ingrey = !in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
-				if ($ingrey) {
-					print '<span class="opacitymedium">';
-				}
-				print price($total_ttc);
-				if ($ingrey) {
-					print '</span>';
+				$showamount = in_array($block->action, array('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE'));
+				if ($showamount) {
+					print price($total_ttc);
 				}
 			}
-			print '</td>';
+			print '</span></td>';
 
 			// Details link
 			print '<td class="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_picto($langs->trans('ShowDetails'), 'note', 'class="size15x"').'</span></td>';
@@ -559,15 +704,29 @@ if (is_array($blocks)) {
 			print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
-					print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidityButChainIsKo').'">OK</span>';
+					print '<span class="badge badge-status4 badge-status" title="'.dolPrintHTMLForAttribute($langs->trans('OkCheckFingerprintValidityButChainIsKo')).'">'.$langs->trans("StatusValid").'</span>';
+				} elseif ($block->action == 'MODULE_RESET') {
+					// Old action code on old version.
+					print '<span class="badge badge-status8 badge-status" title="'.dolPrintHTMLForAttribute('Module has been disabled').'">OK</span>';
 				} else {
-					print '<span class="badge badge-status8 badge-status" title="'.$langs->trans('KoCheckFingerprintValidity').'">KO</span>';
+					print '<span class="badge badge-status8 badge-status" title="';
+					if (!empty($checkerror[$block->id])) {
+						print dolPrintHTMLForAttribute($checkerror[$block->id])."\n";
+					}
+					$alt = $langs->trans('KoCheckFingerprintValidity');
+					if ($block->note) {
+						$notetoshow = $block->note;
+						$notetoshow = str_replace('EndOfChainDeletionDetected', $langs->trans("EndOfChainDeletionDetected"), $notetoshow);
+						$alt .= "\n".' '.$langs->trans("AddtionalInformation").': '.$notetoshow;
+					}
+
+					print dolPrintHTMLForAttribute($alt).'">KO</span>';
 				}
 			} else {
-				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
+				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">'.$langs->trans("StatusValid").'</span>';
 			}
 
-			// Note
+			// Add debug information
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
 					if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {
@@ -575,18 +734,17 @@ if (is_array($blocks)) {
 					}
 				}
 			}
-
-			/*
-			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
-				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
-			}
-			*/
 			print '</td>';
 
 			// Link to debug information object
 			if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+				print '<td class="nowraponall">';
+				print '<!-- version -->';	// $object_link can be a '<a href' link or a text
+				print '<span class="small">'.$block->object_version. '<br>'.$block->object_format.'</span>';
+				print '</td>';
+
 				print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
-				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+				print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text with more information
 				print $object_link;
 				print '</td>';
 			}
@@ -601,17 +759,21 @@ if (is_array($blocks)) {
 		}
 	}
 
-	// Show total line
+	// Show total lines
 	if ($nbshown == 0) {
-		$colspan = 11;
-		if (getDolGlobalString('MAIN_FEATURES_LEVEL') > 0) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
-			$colspan++;
-		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
+
+		$showturnover = 0;
 		foreach ($totalamount as $key => $totalamountperref) {
 			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
+				$showturnover++;
+			}
+		}
+
+		foreach ($totalamount as $key => $totalamountperref) {
+			if ($showturnover) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -629,6 +791,7 @@ if (is_array($blocks)) {
 				} elseif ($key == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
+				print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
 				print '</td>';
 
 				// Action
@@ -680,6 +843,8 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td></td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -731,7 +896,20 @@ if (is_array($blocks)) {
 				} else {
 					print ' - '.$langs->trans("Now");
 				}
-				print '</span>';
+				print '</span> &nbsp; ';
+
+				// If there is at least one record with old format
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog WHERE object_format < 'V2' and action = 'BILL_VALIDATE' LIMIT 1";
+				$resql = $db->query($sql);
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$foundav1 = 1;
+					if ($includebeforev2) {
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=0&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("OnlyFromV2"), $langs->trans("OnlyFromV2Help")).'</a></span>';
+					} else {
+						print ' <span class="small"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?includebeforev2=1&'.($page ? 'page='.$page.'&' : '').$param.'">'.$form->textwithpicto($langs->trans("IncludesAll"), $langs->trans("IncludesAllHelp")).'</a></span>';
+					}
+				}
 				print '</td>';
 
 				// Action
@@ -739,7 +917,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("TTC");
+				print ($foundoldformat ? '' : price($totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->trans("HT")).($foundoldformat ? '' : " - ".price($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").price($totalamountlifetime['BILL_VALIDATE']).' '.$langs->trans("TTC");
 				print '</td>';
 
 				// Details link
@@ -753,6 +931,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
@@ -764,7 +945,10 @@ if (is_array($blocks)) {
 
 				print '</tr>';
 			}
-			if (empty($search_code) || in_array('PAYMENT_CUSTOMER_CREATE', $search_code) || in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
+			if (empty($search_code)
+				|| in_array('PAYMENT_CUSTOMER', $search_code)				// Filter for both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
+				|| in_array('PAYMENT_CUSTOMER_CREATE', $search_code)
+				|| in_array('PAYMENT_CUSTOMER_DELETE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -791,7 +975,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
+				print price($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
 				print '</td>';
 
 				// Details link
@@ -805,6 +989,9 @@ if (is_array($blocks)) {
 
 				// Link to debug information object
 				if (getDolGlobalString("BLOCKEDLOG_DEBUG")) {	// If in experimental or develop mode, we add some debug information. It may help developers to find origin of bugs.
+					print '<td>';
+					print '</td>';
+
 					print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
 					print '</td>';
 				}
