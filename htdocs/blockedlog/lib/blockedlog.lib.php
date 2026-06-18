@@ -718,26 +718,41 @@ function migrate_blockedlog_add_end_file()
 				return -1;
 			}
 
-			$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1);
+			$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1.'-'.$blocklog_static->id);
 		} else {
-			$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt');
+			$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$blocklog_static->id);
 		}
 
-		// Update or create the .end file.
-		$lockhandle = fopen($lockfile, 'w+');
-		if ($lockhandle) {
-			if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
-				print "Cannot write to the blockedlog .end file ".$lockfile;
+		// Update or create the .end flag file.
+		if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+			$lockhandle = fopen($lockfile, 'w+');
+			if ($lockhandle) {
+				if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
+					print "Cannot write to the blockedlog .end file ".$lockfile;
+					print '</td></tr>';
+					return -1;
+				}
+
+				fclose($lockhandle);	// Remove the lock
+				dolChmod($lockfile);
+			} else {
+				print "Cannot open for writing the blockedlog .end file ".$lockfile;
 				print '</td></tr>';
 				return -1;
 			}
-
-			fclose($lockhandle);	// Remove the lock
-			dolChmod($lockfile);
 		} else {
-			print "Cannot open for writing the blockedlog .end file ".$lockfile;
-			print '</td></tr>';
-			return -1;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+			$resql = $db->query($sql);
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+			$sql .= " VALUES('".$db->escape(basename($lockfile))."', '".$db->escape($stringtowriteencoded)."', 'chaine', 0, 'Blockedlog end of chain flag', ".((int) $conf->entity).")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				print "Cannot open for writing the blockedlog .end file ".basename($lockfile);
+				print '</td></tr>';
+				return -1;
+			}
 		}
 
 		print $langs->trans("Done");

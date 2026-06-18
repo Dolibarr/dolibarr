@@ -132,6 +132,7 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 }
 
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
+$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 $permission = $user->hasRight('blockedlog', 'read');
 $permissiontoadd = $user->hasRight('blockedlog', 'read');	// Permission is to upload new files to scan them
@@ -454,7 +455,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				$previoushash = $obj->signature;
 
 				$i++;
-			}
+			}	// end of loop on each record found
 
 			if ($i == 0) {
 				fwrite($fh, ";\n");
@@ -484,20 +485,40 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 						fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($block_static->date_creation, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', dol_print_date($block_static_after->date_creation, 'dayhourrfc', 'gmt')))."\n");
 					}
 				} else {				// If last output record is the last one in chain, we must use the end of chain protection file to check that no deletion were done in database before export.
-					// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
 					$lockfile = $block_static->getEndOfChainFlagFile();
 					$lockline = '';
 
-					if (!file_exists($lockfile)) {
-						//$error++;
+					// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
+					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+						if (!file_exists($lockfile)) {
+							//$error++;
 
-						if ($mysoc->country_code == 'FR') {
-							fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+							if ($mysoc->country_code == 'FR') {
+								fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+							} else {
+								fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+							}
 						} else {
-							fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+							$lockline = trim(file_get_contents($lockfile));
 						}
 					} else {
-						$lockline = trim(file_get_contents($lockfile));
+						$sql = "SELECT value from ".MAIN_DB_PREFIX."const";
+						$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+						$resql = $db->query($sql);
+						if ($resql) {
+							$obj = $db->fetch_object($resql);
+							if ($obj) {
+								$lockline = $obj->value;
+							} else {
+								//$error++;
+
+								if ($mysoc->country_code == 'FR') {
+									fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+								} else {
+									fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+								}
+							}
+						}
 					}
 
 					if (! $error) {
@@ -547,117 +568,129 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		}
 
 
+		// Define which source we want to show
+		$showtotalfor = array('' => 1);
+		$sql = "SELECT DISTINCT module_source FROM ".MAIN_DB_PREFIX."blockedlog WHERE entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$showtotalfor[$obj->module_source] = 1;
+			}
+		}
+		if (isModEnabled('takepos')) {
+			$showtotalfor['takepos'] = 1;
+		}
+
+		ksort($totalamount);
+		krsort($showtotalfor);
+
 		// Now calculate cumulative total of all invoices validated
-		$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
-			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
-				$totalhtamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
-				$totalvatamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalamount['BILL_VALIDATE'] as $val) {
-				$totalamountalllines['BILL_VALIDATE'] += $val;
+		foreach ($totalamount as $key => $totalamountofcodepersource) {
+			foreach ($totalamountofcodepersource as $source => $tmpval) {
+				$totalhtamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
+				$totalvatamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
+				$totalamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
 			}
 		}
-		if (array_key_exists('PAYMENT_CUSTOMER', $totalhtamount)) {
-			foreach ($totalhtamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalhtamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-			foreach ($totalvatamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalvatamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-			foreach ($totalamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalamountalllines['PAYMENT_CUSTOMER'] += $val;
+		//var_dump($totalamount, $totalhtamount, $totalvatamount); exit;
+
+		$countsource = 0;
+		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
+
+			// Line of title for total for period for $source
+			fwrite($fh, '----- ');
+			fwrite($fh,  $langs->trans("TotalForThePeriod"));
+			fwrite($fh,  ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice")));
+			fwrite($fh,  ' ('.$langs->trans("ForPeriodAndFilters").')');
+			fwrite($fh, "\n");
+
+			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				/*
+				if ($actioncode == 'BILL_VALIDATE' && (!empty($search_code) && !in_array('BILL_VALIDATE', $search_code))) {
+					continue;
+				}
+				if ($actioncode == 'PAYMENT_CUSTOMER' && (!empty($search_code) && !in_array('PAYMENT_CUSTOMER', $search_code))) {
+					continue;
+				}
+				*/
+				/*
+				foreach ($totalamountofcodepersource as $source => $tmpval) {
+					foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
+						$totalhtamountalllines['BILL_VALIDATE'] += $val;
+					}
+					foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
+						$totalvatamountalllines['BILL_VALIDATE'] += $val;
+					}
+					foreach ($totalamount['BILL_VALIDATE'] as $val) {
+						$totalamountalllines['BILL_VALIDATE'] += $val;
+					}
+					foreach ($totalhtamount['PAYMENT_CUSTOMER'] as $val) {
+						$totalhtamountalllines['PAYMENT_CUSTOMER'] += $val;
+					}
+					foreach ($totalvatamount['PAYMENT_CUSTOMER'] as $val) {
+						$totalvatamountalllines['PAYMENT_CUSTOMER'] += $val;
+					}
+					foreach ($totalamount['PAYMENT_CUSTOMER'] as $val) {
+						$totalamountalllines['PAYMENT_CUSTOMER'] += $val;
+					}
+				}
+				*/
+
+
+				// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
+				$block_static->id = 0;
+				$block_static->date_creation = '';
+				$block_static->action = '';
+				$block_static->module_source = '*';
+				$block_static->pos_source = '*';
+				$block_static->amounts_taxexcl = '';
+				$block_static->amounts = '';
+				$block_static->ref_object = '';
+				$block_static->date_object = 0;
+				$block_static->user_fullname = '';
+				$block_static->linktoref = '';
+				$block_static->linktype = '';
+				$block_static->object_version = '';
+				$block_static->object_format = '';
+				$block_static->signature = '';
+
+				$statusofrecord = '';
+
+				if ($actioncode == 'BILL_VALIDATE') {
+					$s = 'BILLED - '.$langs->trans("Turnover");
+				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
+					$s = 'PAID - '.$langs->trans("TurnoverCollected");
+				}
+
+				fwrite($fh, 'SUMMARY PERIOD '.$s.' : '.$totalhtamount['BILL_VALIDATE'][$source].' '.$langs->trans("HT").' - '.$totalvatamount['BILL_VALIDATE'][$source].' '.$langs->trans("VAT").' - '.$totalamount['BILL_VALIDATE'][$source].' '.$langs->trans("HT").';'
+					.csvClean('').';'
+					.csvClean($block_static->date_creation).';'
+					.csvClean($block_static->action).';'
+					.csvClean($block_static->module_source).';'
+					.csvClean($block_static->pos_source).';'
+					.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+					.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
+					.csvClean($block_static->ref_object).';'
+					.csvClean('').';'
+					.csvClean($block_static->user_fullname).';'
+					.csvClean($block_static->linktoref).';'
+					.csvClean($block_static->linktype).';'
+					.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
+					.csvClean($block_static->object_version).';'
+					.csvClean($block_static->object_format).';'
+					.csvClean($block_static->signature).';'
+					.csvClean($statusofrecord).';'."\n");
 			}
 		}
-
-		// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-
-		$statusofrecord = '';
-
-		fwrite($fh, '----- '."\n");
-
-		fwrite($fh, 'SUMMARY PERIOD BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
-			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
-			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
-			.csvClean($statusofrecord).';'."\n");
-
-
-		// Add a final line with cumulative total of invoices validated (PAYMENT_CUSTOMER_CREATE)
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-
-		$statusofrecord = '';
-
-		fwrite($fh, 'SUMMARY PERIOD PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
-			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
-			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
-			.csvClean($statusofrecord).';'."\n");
 
 
 		// Get lifetime amount of all invoices validated and payments created/deleted.
 		// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
-		$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
+
+		$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+		$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+
 		$foundoldformat = 0;
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;

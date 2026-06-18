@@ -557,23 +557,45 @@ if (is_array($blocks)) {
 	// Get the last record of the chain (may be used later).
 	$lastrecord = $block_static->getLastRecord();
 
-	// Check that there was no deletion on the end of chain.
-	// Note: We can find a similar code into the blockedlog_archive
 	$lockfile = $block_static->getEndOfChainFlagFile();
 	$lockline = '';
 
-	if (!file_exists($lockfile)) {
-		$error++;
+	// Check that there was no deletion on the end of chain.
+	// Note: We can find a similar code into the blockedlog_archive
+	if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+		if (!file_exists($lockfile)) {
+			$error++;
 
-		print '<tr><td class="center" colspan="'.$colspan.'">';
-		if ($mysoc->country_code == 'FR') {
-			print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+			print '<tr><td class="center" colspan="'.$colspan.'">';
+			if ($mysoc->country_code == 'FR') {
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+			} else {
+				print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+			}
+			print '</td></tr>';
 		} else {
-			print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+			$lockline = trim(file_get_contents($lockfile));
 		}
-		print '</td></tr>';
 	} else {
-		$lockline = trim(file_get_contents($lockfile));
+		$sql = "SELECT value from ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$lockline = $obj->value;
+			} else {
+				$error++;
+
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				if ($mysoc->country_code == 'FR') {
+					print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+				} else {
+					print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+				}
+				print '</td></tr>';
+			}
+		}
 	}
 
 	if (! $error) {
@@ -821,12 +843,27 @@ if (is_array($blocks)) {
 		ksort($totalamount);
 		krsort($showtotalfor);
 
+		// Show the lifetime payment only if filters are ok
+		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+
+		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
+
+			// Line of title for total for period for $source
 			print '<tr class="liste_titre totalblockedlog">';
-			print '<td colspan="'.$colspan.'">';
+			print '<td colspan="'.$colspan.'"';
+			if ($countsource == 1) {
+				print ' style="border-top: 1px solid #000;"';
+			}
+			print '>';
 			print $langs->trans("TotalForThePeriod");
 			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
-			print ' <span class="opacitylow">('.$langs->trans("ForPeriodAndFilters").')</span>';
+			print ' <span class="opacitylow">(';
+			if ($afilterexists) {
+				print img_picto($langs->trans("ForPeriodAndFilters"), 'warning', 'class="pictofixedwidth"');
+			}
+			print $langs->trans("ForPeriodAndFilters").')</span>';
 			print '</td>';
 			print '</tr>';
 
@@ -862,38 +899,19 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				$totalhttoshow = 0;
-				foreach ($totalhtamount[$actioncode] as $tmpsource => $value) {	// Loop on each module
-					if ($tmpsource == $source) {
-						$totalhttoshow += $value;
-					}
-				}
-				$totalvattoshow = 0;
-				foreach ($totalvatamount[$actioncode] as $tmpsource => $value) {
-					if ($tmpsource == $source) {
-						$totalvattoshow += $value;
-					}
-				}
-				$totaltoshow = 0;
-				foreach ($totalamount[$actioncode] as $tmpsource => $value) {
-					if ($tmpsource == $source) {
-						$totaltoshow += $value;
-					}
-				}
-
 				if ($actioncode == 'BILL_VALIDATE') {
-					print '<span class="amount">'.price($totalhttoshow).'</span>';
+					print '<span class="amount">'.price($totalhtamount[$actioncode][$source]).'</span>';
 					print ' '.$langs->trans("HT");
 
 					print ' - ';
 
-					print '<span class="amount">'.price($totalvattoshow).'</span>';
+					print '<span class="amount">'.price($totalvatamount[$actioncode][$source]).'</span>';
 					print ' '.$langs->trans("VAT");
 
 					print ' - ';
 				}
 
-				print '<span class="amount">'.price($totaltoshow).'</span>';
+				print '<span class="amount">'.price($totalamount[$actioncode][$source]).'</span>';
 				if ($actioncode == 'BILL_VALIDATE') {
 					print ' '.$langs->trans("TTC");
 				}
@@ -929,26 +947,31 @@ if (is_array($blocks)) {
 		}
 
 
-		// TODO Show the lifetime payment only if we click on a link.
-		//$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
-		//if (! $afilterexists) {
-
+		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
+
+			if (empty($search_end) || $search_end == -1) {
+				$search_end = dol_now();
+			}
+
 			// Get lifetime amount of all invoices validated and payments created/deleted.
 			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 
 			$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
 			$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+
 			$foundoldformat = 0;
 			$firstrecorddate = 0;
-			if (empty($search_end) || $search_end == -1) {
-				$search_end = dol_now();
-			}
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
-			print '<tr class="liste_titre totalblockedlog">';
-			print '<td colspan="'.$colspan.'">';
+			print '<tr class="liste_titre totalblockedlog" style="border-top: 1px solid #222">';
+			print '<td colspan="'.$colspan.'"';
+			if ($countsource == 1) {
+				print ' style="border-top: 1px solid #000;"';
+			}
+			print '>';
 
 			print $langs->trans("TotalForLifetime");
 			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));

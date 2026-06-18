@@ -1437,33 +1437,62 @@ class BlockedLog
 				// The new ID
 				$this->id = $id;
 
-				// Check and store the signature of this new line in the head file.
+				// Check and store the signature of this new line in the .end flag.
 				try {
 					$finalsignature = $this->signature;
 					$finalnote = '';
 
 					$lockfile = $this->getEndOfChainFlagFile();
-					dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
-					// If the .end file does not exists (has been removed), we track the record as error.
-					if (!file_exists($lockfile)) {
-						//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
+					// If the .end flag does not exists (has been removed), we track the record as error.
+					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+						dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
-						$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+						if (!file_exists($lockfile)) {
+							//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
 
-						// The string of line to sign
-						$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+							$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
 
-						// The new hash, including previous hash
-						$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
-						$finalnote = $this->note;
+							// The string of line to sign
+							$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
-						$line = '';
-					} elseif (is_writable($lockfile)) {
-						$line = file_get_contents($lockfile);
+							// The new hash, including previous hash
+							$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+							$finalnote = $this->note;
+
+							$line = '';
+						} elseif (is_writable($lockfile)) {
+							$line = file_get_contents($lockfile);
+						} else {
+							// Go to the catch()
+							throw new Exception("Cannot write into the blockedlog .end flag ".$lockfile.' to update it. Is the file writable by the running user and not open by another process? Transaction aborted.');
+						}
 					} else {
-						// Go to the catch()
-						throw new Exception("Cannot write into the blockedlog .end file ".$lockfile.' to update it. Is the file writable by the running user and not open by another process? Transaction aborted.');
+						$sql = "SELECT value from ".MAIN_DB_PREFIX."const";
+						$sql .= " WHERE name = '".$this->db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$obj = $this->db->fetch_object($resql);
+							if ($obj) {
+								$line = $obj->value;
+							} else {
+								//throw new Exception("The head file ".$lockfile." was not found or is not writable.");
+
+								$this->note = 'EndOfChainDeletionDetected [after '.dol_print_date($previousdatecreation, 'dayhourrfc', 'gmt').']';
+
+								// The string of line to sign
+								$concatenateddata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+
+								// The new hash, including previous hash
+								$finalsignature = $this->buildFinalSignatureHash($previoushash.$concatenateddata);	// Build the hmac signature
+								$finalnote = $this->note;
+
+								$line = '';
+							}
+						} else {
+							// Go to the catch()
+							throw new Exception("Cannot read into the blockedlog .end flag ".basename($lockfile).' to update it. Transaction aborted.');
+						}
 					}
 
 					// Check the .end flag file.
@@ -1500,7 +1529,7 @@ class BlockedLog
 						}
 					} elseif ($headstring != '') {
 						// Failed to decrypt the head
-						throw new Exception("Failed to decode the content of the head file ".$lockfile." with the obfuscation key, so we can't record the head file so we abort the transaction.");
+						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile)." with the obfuscation key, so we can't record the head file so we abort the transaction.");
 					}
 
 					// If a note has been added to track an anomaly (signature is also different in this case).
@@ -1522,7 +1551,8 @@ class BlockedLog
 						}
 					}
 
-					// Lock acquired, we can now write the new .end file
+
+					// We can now write the new .end file
 					$stringtowrite = 'BLOCKEDLOGHEAD '.$this->id." ".dol_print_date($this->date_creation, 'dayhourrfc', 'gmt')." ".(string) $finalsignature;
 
 					if (isALNERunningVersion(1, ($this->action == 'MODULE_SET' ? 1 : 0)) && $mysoc->country_code == 'FR') {
@@ -1535,17 +1565,31 @@ class BlockedLog
 						$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$this->id);
 					}
 
-					// Update or create the .end file.
-					$lockhandle = fopen($lockfile, 'w+');
-					if ($lockhandle) {
-						if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
-							throw new Exception("Cannot write to the blockedlog .end file ".$lockfile);
-						}
 
-						fclose($lockhandle);	// Remove the lock
-						dolChmod($lockfile);
+					// Update or create the .end file.
+					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+						$lockhandle = fopen($lockfile, 'w+');
+						if ($lockhandle) {
+							if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
+								throw new Exception("Cannot write to the blockedlog .end file ".$lockfile);
+							}
+
+							fclose($lockhandle);	// Remove the lock
+							dolChmod($lockfile);
+						} else {
+							throw new Exception("Cannot open for writing the blockedlog .end file ".$lockfile);
+						}
 					} else {
-						throw new Exception("Cannot open for writing the blockedlog .end file ".$lockfile);
+						$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+						$sql .= " WHERE name = '".$this->db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+						$resql = $this->db->query($sql);
+
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+						$sql .= " VALUES('".$this->db->escape(basename($lockfile))."', '".$this->db->escape($stringtowriteencoded)."', 'chaine', 0, 'Blockedlog end of chain flag', ".((int) $conf->entity).")";
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							throw new Exception("Cannot update the blockedlog .end flag ".basename($lockfile));
+						}
 					}
 				} catch (Exception $e) {
 					$this->error = $e->getMessage();
@@ -1785,7 +1829,7 @@ class BlockedLog
 			// Live migration of the way the key is stored.
 			$needremoteobfuscation = (isALNERunningVersion(1) && $mysoc->country_code == 'FR');
 
-			if ($needremoteobfuscation && !preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key)) {
+			if ($needremoteobfuscation && !preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key)) {	// For old versions, we must switch the data saving mode to use the new method.
 				$obfuscationkey = '';
 				$errormsg = '';
 				try {
@@ -1796,7 +1840,7 @@ class BlockedLog
 				if (!$errormsg && $obfuscationkey) {
 					$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		 // gitleaks:allow
 				}
-			} elseif (!preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {	 	// For old versions, we must switch the data saving mode to use the new method.
+			} elseif (!$needremoteobfuscation && !preg_match('/^dolcrypt/', $hmac_encoded_secret_key)) {
 				$this->saveHMACSecretKey((string) $hmac_secret_key, 'dolcrypt');	// gitleaks:allow
 			}
 
