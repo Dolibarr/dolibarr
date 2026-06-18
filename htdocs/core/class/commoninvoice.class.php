@@ -2275,11 +2275,19 @@ abstract class CommonInvoice extends CommonObject
 			$lines[] = ""; //IBAN (required)
 		}
 
+		$structuredCommunication = '';
+		$remittanceInformation = $this->ref;
+		if (getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_be.lib.php';
+			$structuredCommunication = dolBECalculateStructuredCommunication((string) $this->ref, $this->type);
+			$remittanceInformation = '';
+		}
+
 		// Add the amount and reference
 		$lines[] = 'EUR' . $amount_to_pay; // Amount (optional)
 		$lines[] = ''; // Purpose (optional)
-		$lines[] = ''; // Payment reference (optional)
-		$lines[] = $this->ref; // Remittance Information (optional)
+		$lines[] = $structuredCommunication; // Payment reference (optional)
+		$lines[] = $remittanceInformation; // Remittance Information (optional)
 
 		// Join the lines with newline characters and return the result
 		return implode("\n", $lines);
