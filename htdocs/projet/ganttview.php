@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $id = GETPOST('id', 'intcomma');
 $ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
