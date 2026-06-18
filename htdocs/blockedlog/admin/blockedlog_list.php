@@ -831,6 +831,13 @@ if (is_array($blocks)) {
 			print '</tr>';
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				if ($actioncode == 'BILL_VALIDATE' && (!empty($search_code) && !in_array('BILL_VALIDATE', $search_code))) {
+					continue;
+				}
+				if ($actioncode == 'PAYMENT_CUSTOMER' && (!empty($search_code) && !in_array('PAYMENT_CUSTOMER', $search_code))) {
+					continue;
+				}
+
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -875,18 +882,18 @@ if (is_array($blocks)) {
 				}
 
 				if ($actioncode == 'BILL_VALIDATE') {
-					print price($totalhttoshow);
+					print '<span class="amount">'.price($totalhttoshow).'</span>';
 					print ' '.$langs->trans("HT");
 
 					print ' - ';
 
-					print price($totalvattoshow);
+					print '<span class="amount">'.price($totalvattoshow).'</span>';
 					print ' '.$langs->trans("VAT");
 
 					print ' - ';
 				}
 
-				print price($totaltoshow);
+				print '<span class="amount">'.price($totaltoshow).'</span>';
 				if ($actioncode == 'BILL_VALIDATE') {
 					print ' '.$langs->trans("TTC");
 				}
@@ -930,8 +937,8 @@ if (is_array($blocks)) {
 			// Get lifetime amount of all invoices validated and payments created/deleted.
 			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 
-			$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-			$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
+			$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+			$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
 			$foundoldformat = 0;
 			$firstrecorddate = 0;
 			if (empty($search_end) || $search_end == -1) {
@@ -939,7 +946,6 @@ if (is_array($blocks)) {
 			}
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
-
 
 			print '<tr class="liste_titre totalblockedlog">';
 			print '<td colspan="'.$colspan.'">';
@@ -994,7 +1000,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print ($foundoldformat ? '' : price($totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->trans("HT")).($foundoldformat ? '' : " - ".price($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").price($totalamountlifetime['BILL_VALIDATE']).' '.$langs->trans("TTC");
+				print ($foundoldformat ? '' : '<span class="amount">'.price($totalhtamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->trans("HT")).($foundoldformat ? '' : ' - <span class="amount">'.price((float) $totalamountlifetime['BILL_VALIDATE'][$source] - (float) $totalhtamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").'<span class="amount">'.price($totalamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->trans("TTC");
 				print '</td>';
 
 				// Details link
@@ -1049,7 +1055,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print price($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
+				print '<span class="amount">'.price((float) $totalamountlifetime['PAYMENT_CUSTOMER_CREATE'][$source] + (float) $totalamountlifetime['PAYMENT_CUSTOMER_DELETE'][$source]).'</span>';
 				print '</td>';
 
 				// Details link

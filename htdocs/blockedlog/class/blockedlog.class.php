@@ -650,11 +650,11 @@ class BlockedLog
 
 		// For customer payment and supplier payment, the thirdparty can be added in payment detail
 		$addthirdpartyatpaymentlevel = 0;
-		if (!empty($object->thirdparty) && !in_array($this->element, array('payment', 'payment_supplier'))) {
+		if (!empty($object->thirdparty) && in_array($this->element, array('payment', 'payment_supplier'))) {
 			$addthirdpartyatpaymentlevel = 1;
 		}
 
-		if (!empty($object->thirdparty) && !$addthirdpartyatpaymentlevel) {
+		if (!empty($object->thirdparty) && !$addthirdpartyatpaymentlevel) {	// If $addthirdpartyatpaymentlevel is set, we will add thirdparty on payments later.
 			$this->object_data->thirdparty = new stdClass();
 
 			foreach ($object->thirdparty as $key => $value) {
