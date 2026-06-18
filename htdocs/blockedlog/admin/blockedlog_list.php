@@ -785,22 +785,52 @@ if (is_array($blocks)) {
 		}
 	}
 
+	// Define which source we want to show
+	$showtotalfor = array();
+	foreach ($totalamount as $key => $totalamountofcodepersource) {
+		if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
+			foreach ($totalamountofcodepersource as $source => $tmpval) {
+				$showtotalfor[$source] = 1;
+				// If we found one entry for the source, we make sure we have both BILL_VALIDATE and PAYMENT_CUSTOMER for this source
+				if (empty($totalamount['BILL_VALIDATE'][$source])) {
+					$totalamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+				if (empty($totalhtamount['BILL_VALIDATE'][$source])) {
+					$totalhtamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalhtamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalhtamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+				if (empty($totalvatamount['BILL_VALIDATE'][$source])) {
+					$totalvatamount['BILL_VALIDATE'][$source] = 0;
+				}
+				if (empty($totalvatamount['PAYMENT_CUSTOMER'][$source])) {
+					$totalvatamount['PAYMENT_CUSTOMER'][$source] = 0;
+				}
+			}
+		}
+	}
+
 	// Show total lines
 	if ($nbshown == 0) {
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	} else {
 		ksort($totalamount);
+		krsort($showtotalfor);
 
-		$showturnover = 0;
-		foreach ($totalamount as $key => $totalamountperref) {
-			if ($key == 'BILL_VALIDATE' || $key == 'PAYMENT_CUSTOMER') {
-				$showturnover++;
-			}
-		}
-		//var_dump($totalamount);
+		foreach ($showtotalfor as $source => $tmpval) {
+			print '<tr class="liste_titre totalblockedlog">';
+			print '<td colspan="'.$colspan.'">';
+			print $langs->trans("TotalForThePeriod");
+			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' <span class="opacitylow">('.$langs->trans("ForPeriodAndFilters").')</span>';
+			print '</td>';
+			print '</tr>';
 
-		foreach ($totalamount as $key => $totalamountperref) {
-			if ($showturnover) {
+			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -812,13 +842,13 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key));
-				if ($key == 'BILL_VALIDATE') {
+				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
+				if ($actioncode == 'BILL_VALIDATE') {
 					print ' <span class="opacitylow">('.$langs->trans("Turnover").')</span>';
-				} elseif ($key == 'PAYMENT_CUSTOMER') {
+				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
 					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
 				}
-				print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
+				//print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
 				print '</td>';
 
 				// Action
@@ -827,19 +857,25 @@ if (is_array($blocks)) {
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
 				$totalhttoshow = 0;
-				foreach ($totalhtamount[$key] as $value) {	// Loop on each module
-					$totalhttoshow += $value;
+				foreach ($totalhtamount[$actioncode] as $tmpsource => $value) {	// Loop on each module
+					if ($tmpsource == $source) {
+						$totalhttoshow += $value;
+					}
 				}
 				$totalvattoshow = 0;
-				foreach ($totalvatamount[$key] as $value) {
-					$totalvattoshow += $value;
+				foreach ($totalvatamount[$actioncode] as $tmpsource => $value) {
+					if ($tmpsource == $source) {
+						$totalvattoshow += $value;
+					}
 				}
 				$totaltoshow = 0;
-				foreach ($totalamountperref as $value) {
-					$totaltoshow += $value;
+				foreach ($totalamount[$actioncode] as $tmpsource => $value) {
+					if ($tmpsource == $source) {
+						$totaltoshow += $value;
+					}
 				}
 
-				if ($key == 'BILL_VALIDATE') {
+				if ($actioncode == 'BILL_VALIDATE') {
 					print price($totalhttoshow);
 					print ' '.$langs->trans("HT");
 
@@ -852,7 +888,7 @@ if (is_array($blocks)) {
 				}
 
 				print price($totaltoshow);
-				if ($key == 'BILL_VALIDATE') {
+				if ($actioncode == 'BILL_VALIDATE') {
 					print ' '.$langs->trans("TTC");
 				}
 				print '</td>';
@@ -888,9 +924,10 @@ if (is_array($blocks)) {
 
 
 		// TODO Show the lifetime payment only if we click on a link.
-		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+		//$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
+		//if (! $afilterexists) {
 
-		if (! $afilterexists) {
+		foreach ($showtotalfor as $source => $tmpval) {
 			// Get lifetime amount of all invoices validated and payments created/deleted.
 			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
 
@@ -904,6 +941,23 @@ if (is_array($blocks)) {
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
 
+
+			print '<tr class="liste_titre totalblockedlog">';
+			print '<td colspan="'.$colspan.'">';
+			print $langs->trans("TotalForLifetime");
+			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+
+			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
+			if ($search_end && $search_end != -1) {
+				print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
+			} else {
+				print ' - '.$langs->trans("Now");
+			}
+			print ')</span>';
+			print '</td>';
+			print '</tr>';
+
+			// Lifetime amount of invoices validated
 			if (empty($search_code) || in_array('BILL_VALIDATE', $search_code)) {
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
@@ -972,6 +1026,8 @@ if (is_array($blocks)) {
 
 				print '</tr>';
 			}
+
+			// Lifetime amount for payments
 			if (empty($search_code)
 				|| in_array('PAYMENT_CUSTOMER', $search_code)				// Filter for both PAYMENT_CUSTOMER_CREATE and PAYMENT_CUSTOMER_DELETE
 				|| in_array('PAYMENT_CUSTOMER_CREATE', $search_code)

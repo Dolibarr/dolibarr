@@ -184,3 +184,5 @@ FailedToGetRemoteObfuscationKeyReTryLater=Failed to get the remote obfuscation k
 FailedToDecodeTheHeadFlagEndOfChainIsNotReliable=Failed to decode the flag that protect the end of chain. Some record at end of chain may have been removed after the last one.
 CantValidateEndOfChain=Validation of integrity of end of chain is not possible.
 EndOfChainDeletionDetected=Deletion of record at the end of chain (before this record) has been detected
+TotalForThePeriod=Total for the period
+TotalForLifetime=Total for lifetime
