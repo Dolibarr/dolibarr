@@ -575,6 +575,14 @@ class Categorie extends CommonObject
 		}
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
+		// Check for circular reference: a descendant cannot become our parent
+		if ($this->fk_parent > 0 && $this->isDescendant($this->fk_parent)) {
+			$this->error = $langs->trans("ImpossibleAddCat", $this->label);
+			$this->error .= " : ".$langs->trans("ErrorCategoryParentIsDescendant");
+			dol_syslog($this->error, LOG_WARNING);
+			return -5;
+		}
+
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleAddCat", $this->label);
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
@@ -681,6 +689,13 @@ class Categorie extends CommonObject
 		$this->ref_ext = trim($this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
+
+		// Check for circular reference: a descendant cannot become our parent
+		if ($this->fk_parent > 0 && $this->isDescendant($this->fk_parent)) {
+			$this->error = $langs->trans("ImpossibleUpdateCat");
+			$this->error .= " : ".$langs->trans("ErrorCategoryParentIsDescendant");
+			return -5;
+		}
 
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
@@ -1564,6 +1579,53 @@ class Categorie extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 * Check if a category is a descendant of the current category.
+	 * A descendant cannot become the parent of its ancestor (circular reference).
+	 *
+	 * @param  int  $category_id  ID of the category to check
+	 * @return bool               True if category_id is a descendant of this category
+	 */
+	public function isDescendant($category_id)
+	{
+		if ($category_id <= 0 || empty($this->id)) {
+			return false;
+		}
+
+		// Direct self-reference
+		if ($category_id == $this->id) {
+			return true;
+		}
+
+		// Walk up the ancestors of category_id to check if we find $this->id
+		$current = $category_id;
+		$visited = array(); // Protection against already corrupted DB
+
+		while ($current > 0) {
+			$sql = "SELECT fk_parent FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".((int) $current);
+			$resql = $this->db->query($sql);
+
+			if ($resql && $this->db->num_rows($resql) > 0) {
+				$obj = $this->db->fetch_object($resql);
+				$parent = (int) $obj->fk_parent;
+
+				if ($parent == $this->id) {
+					return true; // Found ourselves in ancestors = it's our descendant
+				}
+
+				if (isset($visited[$parent])) {
+					break; // Already visited = corrupted DB, stop to avoid infinite loop
+				}
+				$visited[$current] = true;
+				$current = $parent;
+			} else {
+				break;
+			}
+		}
+
+		return false;
 	}
 
 
