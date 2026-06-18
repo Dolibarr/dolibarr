@@ -13534,7 +13534,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '');
-					$newres .= '(';
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= '(';
+					}
 					if ($listofcodes) {
 						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'NOT IN' : 'IN') . " (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
 					}
@@ -13544,7 +13546,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					if ($listofcodesnot) {
 						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'IN ' : 'NOT IN') . " (" . $db->sanitize($listofcodesnot, 1, 0, 1) . ")";
 					}
-					$newres .= ')';
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= ')';
+					}
 					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {

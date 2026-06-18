@@ -1596,9 +1596,11 @@ class BlockedLog
 	 */
 	public function getEndOfChainFlagFile()
 	{
-		global $conf, $mysoc;
+		global $conf;
 
-		return $conf->blockedlog->dir_output.'/blockedlog-'.((int) $conf->entity).'-'.dol_sanitizeFileName($mysoc->idprof1).'.end';
+		// Note: We must not use $conf->blockedlog->dir_output because we need this
+		// function to work even when module not yet enabled.
+		return DOL_DATA_ROOT.'/blockedlog/blockedlog-'.((int) $conf->entity).'.end';
 	}
 
 	/**
@@ -1884,6 +1886,7 @@ class BlockedLog
 	 * Return the remote obfuscation key from ping.dolibarr.org (used later to decode HMAC secret key).
 	 * Use a memory cache to avoid repeated db access.
 	 * This function can also be called just to store the remote obfuscation key into the cache so all next call will not depends on the obfuscation key server availability.
+	 * Note: Avoid to call this function if you are not in acontext that need remote obfuscation key.
 	 *
 	 * @return 	string					Obfuscation key or a coma-separated list of obfuscation keys, or "" if not found.
 	 */
@@ -1913,10 +1916,10 @@ class BlockedLog
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (status column is not reliable). Re-try later.');
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
-			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (status column is not reliable). Re-try later. '.$obfuscationkey);
+			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
 		// Now store value in cache

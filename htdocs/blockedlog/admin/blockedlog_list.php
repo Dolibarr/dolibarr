@@ -577,6 +577,7 @@ if (is_array($blocks)) {
 	}
 
 	if (! $error) {
+		$headstring = '';
 		if (preg_match('/^dolcrypt/', $lockline)) {
 			$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
 		} elseif (preg_match('/^dolobfuscation/', $lockline)) {
@@ -599,7 +600,7 @@ if (is_array($blocks)) {
 		}
 
 		$reg = array();
-		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
+		if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', (string) $headstring, $reg)) {	// Failed to decypt the head
 			// Compare with last line
 			$lastrecordid = $lastrecord['id'];
 			$lastrecorddate = $lastrecord['date'];

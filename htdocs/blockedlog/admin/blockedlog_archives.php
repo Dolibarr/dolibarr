@@ -459,91 +459,92 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			if ($i == 0) {
 				fwrite($fh, ";\n");
 			}
+
+			// Get the last record of the chain (may be used later).
+			$lastrecord = $block_static->getLastRecord();
+
+			// Check if $lastrowid is the last rowid of table blockedlog
+			$isLastRecord = false;
+			if ($lastrecord['id'] == $lastrowid) {
+				$isLastRecord = true;
+			}
+
+			if (!$periodnotcomplete) {	// If period is complete
+				if (!$isLastRecord) {	// There is another record in database that follow the last one in period. So we use it to see if no deletion were done at end of period.
+					// We check that next record after the last one is ok.
+					$block_static_after = new BlockedLog($db);
+					$nextrecord = $block_static_after->getNextRecord($lastrowid);
+					$nextrecordid = $nextrecord['id'];
+
+					$block_static_after->fetch($nextrecordid);
+
+					$checksignature = $block_static_after->checkSignature();
+
+					if (!$checksignature) {		// If the record just after is not valid, it means we removed one or more records inside the chain (at end of period)
+						fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($block_static->date_creation, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', dol_print_date($block_static_after->date_creation, 'dayhourrfc', 'gmt')))."\n");
+					}
+				} else {				// If last output record is the last one in chain, we must use the end of chain protection file to check that no deletion were done in database before export.
+					// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
+					$lockfile = $block_static->getEndOfChainFlagFile();
+					$lockline = '';
+
+					if (!file_exists($lockfile)) {
+						//$error++;
+
+						if ($mysoc->country_code == 'FR') {
+							fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+						} else {
+							fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+						}
+					} else {
+						$lockline = trim(file_get_contents($lockfile));
+					}
+
+					if (! $error) {
+						$headstring = '';
+						if (preg_match('/^dolcrypt/', $lockline)) {
+							$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
+						} elseif (preg_match('/^dolobfuscation/', $lockline)) {
+							try {
+								$remoteobfuscationkey = $block_static->getObfuscationKey();
+								if (empty($remoteobfuscationkey)) {
+									throw new Exception('Remote obfuscation key is empty');
+								}
+							} catch (Exception $e) {
+								$error++;
+
+								$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+								setEventMessages($langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping), null, 'errors');
+								setEventMessages($langs->trans("CantValidateEndOfChain"), null, 'errors');
+							}
+							$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
+						}
+
+						$reg = array();
+						if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', (string) $headstring, $reg)) {	// Failed to decypt the head
+							// Compare with last line
+							$lastrecordid = $lastrecord['id'];
+							$lastrecorddate = $lastrecord['date'];
+							$lastrecordsignature = $lastrecord['signature'];
+
+							if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
+								//$error++;
+
+								// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+								fwrite($fh, $langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2]))."\n");
+							}
+						} else {
+							//$error++;
+
+							fwrite($fh, $langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable")."\n");
+						}
+					}
+				}
+			}
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
-
-		// Get the last record of the chain (may be used later).
-		$lastrecord = $block_static->getLastRecord();
-
-		// Check if $lastrowid is the last rowid of table blockedlog
-		$isLastRecord = false;
-		if ($lastrecord['id'] == $lastrowid) {
-			$isLastRecord = true;
-		}
-
-		if (!$periodnotcomplete) {	// If period is complete
-			if (!$isLastRecord) {	// There is another record in database that follow the last one in period. So we use it to see if no deletion were done at end of period.
-				// We check that next record after the last one is ok.
-				$block_static_after = new BlockedLog($db);
-				$nextrecord = $block_static_after->getNextRecord($lastrowid);
-				$nextrecordid = $nextrecord['id'];
-
-				$block_static_after->fetch($nextrecordid);
-
-				$checksignature = $block_static_after->checkSignature();
-
-				if (!$checksignature) {		// If the record just after is not valid, it means we removed one or more records inside the chain (at end of period)
-					fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($block_static->date_creation, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', dol_print_date($block_static_after->date_creation, 'dayhourrfc', 'gmt')))."\n");
-				}
-			} else {				// If last output record is the last one in chain, we must use the end of chain protection file to check that no deletion were done in database before export.
-				// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
-				$lockfile = $block_static->getEndOfChainFlagFile();
-
-				if (!file_exists($lockfile)) {
-					//$error++;
-
-					if ($mysoc->country_code == 'FR') {
-						fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
-					} else {
-						fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
-					}
-				} else {
-					$lockline = trim(file_get_contents($lockfile));
-				}
-
-				if (! $error) {
-					if (preg_match('/^dolcrypt/', $lockline)) {
-						$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
-					} elseif (preg_match('/^dolobfuscation/', $lockline)) {
-						try {
-							$remoteobfuscationkey = $block_static->getObfuscationKey();
-							if (empty($remoteobfuscationkey)) {
-								throw new Exception('Remote obfuscation key is empty');
-							}
-						} catch (Exception $e) {
-							$error++;
-
-							$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
-							setEventMessages($langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping), null, 'errors');
-							setEventMessages($langs->trans("CantValidateEndOfChain"), null, 'errors');
-						}
-						$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
-					}
-
-					$reg = array();
-					if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', $headstring, $reg)) {	// Failed to decypt the head
-						// Compare with last line
-						$lastrecordid = $lastrecord['id'];
-						$lastrecorddate = $lastrecord['date'];
-						$lastrecordsignature = $lastrecord['signature'];
-
-						if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
-							//$error++;
-
-							// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
-							fwrite($fh, $langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2]))."\n");
-						}
-					} else {
-						//$error++;
-
-						fwrite($fh, $langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable")."\n");
-					}
-				}
-			}
-		}
-
 
 
 		// Now calculate cumulative total of all invoices validated
