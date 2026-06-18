@@ -825,7 +825,7 @@ if (is_array($blocks)) {
 			print '<tr class="liste_titre totalblockedlog">';
 			print '<td colspan="'.$colspan.'">';
 			print $langs->trans("TotalForThePeriod");
-			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
 			print ' <span class="opacitylow">('.$langs->trans("ForPeriodAndFilters").')</span>';
 			print '</td>';
 			print '</tr>';
@@ -842,13 +842,12 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
 				if ($actioncode == 'BILL_VALIDATE') {
-					print ' <span class="opacitylow">('.$langs->trans("Turnover").')</span>';
+					$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
 				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
-					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
+					$s = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("TurnoverCollected");
 				}
-				//print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
 				print '</td>';
 
 				// Action
@@ -944,8 +943,9 @@ if (is_array($blocks)) {
 
 			print '<tr class="liste_titre totalblockedlog">';
 			print '<td colspan="'.$colspan.'">';
+
 			print $langs->trans("TotalForLifetime");
-			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
 			if ($search_end && $search_end != -1) {
@@ -969,15 +969,11 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logBILL_VALIDATE'));
-				print ' <span class="opacitylow">('.$langs->trans("Turnover").')';
-				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-				if ($search_end && $search_end != -1) {
-					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
-				} else {
-					print ' - '.$langs->trans("Now");
-				}
-				print '</span> &nbsp; ';
+
+				$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('logBILL_VALIDATE'));
+
+				print ' &nbsp; ';
 
 				// If there is at least one record with old format
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog WHERE object_format < 'V2' and action = 'BILL_VALIDATE' LIMIT 1";
@@ -1042,15 +1038,10 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logPAYMENT_CUSTOMER'));
-				print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')';
-				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-				if ($search_end && $search_end != -1) {
-					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
-				} else {
-					print ' - '.$langs->trans("Now");
-				}
-				print '</span>';
+
+				$s = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("TurnoverCollected");
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('logPAYMENT_CUSTOMER'));
+
 				print '</td>';
 
 				// Action
