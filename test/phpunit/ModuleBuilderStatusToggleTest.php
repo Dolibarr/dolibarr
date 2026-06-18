@@ -44,6 +44,9 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredMethod
  */
 class ModuleBuilderStatusToggleTest extends CommonClassTest
 {
