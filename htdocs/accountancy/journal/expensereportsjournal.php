@@ -367,7 +367,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 					$account_label = $accountingaccount->label;
 
 					// get compte id and label
-					if ($accountingaccount->fetch(0, $k, true)) {
+					if ($accountingaccount->id > 0) {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
