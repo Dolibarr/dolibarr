@@ -605,7 +605,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			fwrite($fh, '----- ');
 			fwrite($fh,  $langs->transnoentitiesnoconv("TotalForThePeriod"));
 			fwrite($fh,  ' - '.($source ? $langs->transnoentitiesnoconv("PointOfSale").' '.ucfirst($source) : $langs->transnoentitiesnoconv("BackOffice")));
-			//fwrite($fh,  ' ('.$langs->trans("ForPeriodAndFilters").')');
+			fwrite($fh,  ' ('.$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '').')');
 			fwrite($fh, ' -----');
 			fwrite($fh, "\n");
 
