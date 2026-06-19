@@ -887,6 +887,7 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
+				$s = $actioncode;
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
 				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
