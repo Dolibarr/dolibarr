@@ -2293,7 +2293,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$sql .= natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = str_replace('%backoffice%', '', $tmp);
+					$sql .= $tmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";

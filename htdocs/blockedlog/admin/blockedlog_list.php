@@ -409,6 +409,7 @@ print '<input type="text" class="maxwidth100" name="search_module_source" list="
 if (isModEnabled('takepos')) {
 	print '<datalist id="search_module_sources">
 	    <option value="takepos">
+		<option value="backoffice">
 	</datalist>';
 }
 print '</td>';
