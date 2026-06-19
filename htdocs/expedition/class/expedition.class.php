@@ -1285,7 +1285,7 @@ class Expedition extends CommonObject
 
 			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
 				$productChildrenNb = 0;
-				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
 					$productChildrenNb = $product->hasFatherOrChild(1);
 				}
 				if ($productChildrenNb > 0) {
