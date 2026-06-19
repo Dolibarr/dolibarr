@@ -1413,7 +1413,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 		0,
 		-1,
 		'',
-		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check'.$param)))
+		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check&token=notrequired'.$param)))
 	);
 }
 
