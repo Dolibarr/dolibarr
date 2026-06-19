@@ -207,6 +207,7 @@ The following changes may create regressions for some external modules, but were
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
 
+FIX: #35076 ModuleBuilder - 'Show on combobox' option was ignored for fields other than ref/code (property not captured on add/edit)
 FIX: #36589 (#38037) There is no save button in the "Variant attributes extrafields" and "Variant attributes values extrafields" tabs of the product variant module
 FIX: #37552 (#38073) Webportal Proposals, Sales orders and Invoices links not working
 FIX: #37649 (#38101) Gross price not calculated in supplier orders
