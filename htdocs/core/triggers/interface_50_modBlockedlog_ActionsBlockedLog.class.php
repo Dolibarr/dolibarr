@@ -77,7 +77,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 		var_dump($object->element);exit;
 		*/
-
+		if ($action === 'CASHCONTROL_DELETE') {
+			// Test is status of cashcontrol is closed
+			include_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+			if ($object->status == CashControl::STATUS_CLOSED) {
+				$this->errors[] = 'ErrorDeletingAClosedCashControlIsNotPossible';
+				return -1;
+			}
+		}
 
 		// List of mandatory logged actions
 		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'cashcontrol');
