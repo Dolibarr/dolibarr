@@ -71,7 +71,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		$token_content = json_decode($token_response['content']);
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
 
-		if (property_exists($token_content, 'access_token')) {
+		if (is_object($token_content) && property_exists($token_content, 'access_token')) {
 			// Step 3: retrieve user info using token
 			$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
 			$userinfo_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_USERINFO_URL, 'GET', '', 1, $userinfo_headers);
@@ -85,7 +85,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
 			}
 
-			if (property_exists($userinfo_content, $login_claim)) {
+			if (is_object($userinfo_content) && property_exists($userinfo_content, $login_claim)) {
 				// Success: retrieve claim to return to Dolibarr as login
 				$sql = 'SELECT login, entity, datestartvalidity, dateendvalidity';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
@@ -115,9 +115,9 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 						$login = $obj->login;
 					}
 				}
-			} elseif ($userinfo_content->error) {
+			} elseif (is_object($userinfo_content) && !empty($userinfo_content->error)) {
 				// Got user info response but content is an error
-				$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$userinfo_content->error_description.")";
+				$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".(!empty($userinfo_content->error_description) ? $userinfo_content->error_description : $userinfo_content->error).")";
 			} elseif ($userinfo_response['http_code'] == 200) {
 				// Claim does not exist
 				$_SESSION["dol_loginmesg"] = "OpenID Connect claim not found: ".$login_claim;
@@ -128,9 +128,9 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				// Other user info request error
 				$_SESSION["dol_loginmesg"] = "Userinfo request error (".$userinfo_response['http_code'].")";
 			}
-		} elseif ($token_content->error) {
+		} elseif (is_object($token_content) && !empty($token_content->error)) {
 			// Got token response but content is an error
-			$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
+			$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".(!empty($token_content->error_description) ? $token_content->error_description : $token_content->error).")";
 		} elseif ($token_response['curl_error_no']) {
 			// Token request error
 			$_SESSION["dol_loginmesg"] = "Network error: ".$token_response['curl_error_msg']." (".$token_response['curl_error_no'].")";
