@@ -2045,7 +2045,7 @@ if ($id > 0) {
 					}
 					print '</td>';
 				}
-
+				
 				if ($action == 'edit' && ($rowid == (isset($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
