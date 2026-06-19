@@ -177,6 +177,7 @@ For developers:
 NEW: Use another hash algorithm v2 based on sha256/hmac for immutable logs (#37725)
 NEW: Replace MyObject MyModule occurrences (#38370)
 NEW: ModuleBuilder - Allow selecting which optional tabs (contact, note, document, agenda) are generated for an object (#38570)
+NEW: ModuleBuilder - Allow selecting which standalone action buttons (send, modify, clone, delete) are generated on the object card (#32460)
 NEW: add hooks in reception card (#37214)
 NEW: add new hook in BonPrelevement::EnregDestinataireSEPA() function (#37419)
 NEW: Add hook selectForFormsListUrl in Form::selectForForms (#37447)

@@ -1153,6 +1153,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 
 	// Optional tabs selected by user, and detection of an already generated object (for idempotence warning)
 	$enabledtabs = filterEnabledTabs(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	// Optional standalone action buttons selected by user for the object card page
+	$enabledcardactions = filterEnabledTabs(GETPOST('enabledcardaction', 'array'), getModuleBuilderCardActions());
 	$objectalreadyexists = dol_is_file($destdir.'/class/'.strtolower($objectname).'.class.php');
 
 	// The dir was not created by init
@@ -1775,6 +1777,18 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s')) {
 				$error++;
 				dol_syslog("modulebuilder: failed to purge agenda widget in ".$carddestfile, LOG_ERR);
+			}
+		}
+		// Prune the standalone card action buttons (send/modify/clone/delete) the user chose not to generate
+		if (!$error && count($enabledcardactions) < count(getModuleBuilderCardActions())) {
+			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
+			foreach (getModuleBuilderCardActions() as $actkey => $actinfo) {
+				if (!in_array($actkey, $enabledcardactions, true)) {
+					if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER ACTIONBUTTON '.$actinfo['marker'].'.*?\/\/ END MODULEBUILDER ACTIONBUTTON '.$actinfo['marker'].'\s*/s')) {
+						$error++;
+						dol_syslog("modulebuilder: failed to purge card action '".$actkey."' in ".$carddestfile, LOG_ERR);
+					}
+				}
 			}
 		}
 		if ($objectalreadyexists) {
@@ -4303,6 +4317,8 @@ if ($module == 'initmodule') {
 
 				// Tabs selected by default = all optional tabs; reflect posted state on redisplay
 				$enabledtabsdefault = GETPOSTISSET('enabledtab') ? GETPOST('enabledtab', 'array') : array_keys(getModuleBuilderObjectTabs());
+				// Card action buttons selected by default = all standalone actions; reflect posted state on redisplay
+				$enabledcardactionsdefault = GETPOSTISSET('enabledcardaction') ? GETPOST('enabledcardaction', 'array') : array_keys(getModuleBuilderCardActions());
 
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
@@ -4348,6 +4364,12 @@ if ($module == 'initmodule') {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
 					print '<input type="checkbox" name="enabledtab[]" id="enabledtab_'.$tabkey.'" value="'.dol_escape_htmltag($tabkey).'"'.$checked.'> ';
 					print '<label for="enabledtab_'.$tabkey.'">'.dol_escape_htmltag($langs->trans($tabinfo['label'])).'</label> &nbsp; ';
+				}
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledCardActionsForObject"), $langs->trans("EnabledCardActionsForObjectHelp")).'</span><br>';
+				foreach (getModuleBuilderCardActions() as $actkey => $actinfo) {
+					$checked = in_array($actkey, $enabledcardactionsdefault, true) ? ' checked' : '';
+					print '<input type="checkbox" name="enabledcardaction[]" id="enabledcardaction_'.$actkey.'" value="'.dol_escape_htmltag($actkey).'"'.$checked.'> ';
+					print '<label for="enabledcardaction_'.$actkey.'">'.dol_escape_htmltag($langs->trans($actinfo['label'])).'</label> &nbsp; ';
 				}
 				print '<br>';
 				print '<br>';

@@ -1484,12 +1484,13 @@ function getModuleBuilderObjectTabs()
 }
 
 /**
- * Filter a list of requested tab keys against the known optional tabs map.
- * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ * Filter a list of requested keys against a known map, keeping only valid keys in map order.
+ * Generic helper shared by the optional-tabs and card-actions selection: it protects against
+ * injection of unknown keys, removes duplicates and normalizes order (only the map keys are used).
  *
- * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
- * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
- * @return	string[]	Sanitized list of valid tab keys, in map order
+ * @param	string[]	$requested	Raw keys requested by the user (e.g. from a GETPOST array)
+ * @param	array<string,array<string,string>>	$map	Map of key => info (getModuleBuilderObjectTabs() or getModuleBuilderCardActions())
+ * @return	string[]	Sanitized list of valid keys, in map order
  */
 function filterEnabledTabs($requested, $map)
 {
@@ -1503,6 +1504,27 @@ function filterEnabledTabs($requested, $map)
 		}
 	}
 	return $valid;
+}
+
+/**
+ * Return the optional standalone action buttons that can be toggled on a generated object card page.
+ *
+ * Only the non status-transition buttons are listed (send / modify / clone / delete). Status buttons
+ * (validate, back to draft, enable/disable, cancel/reopen) are driven by $object->status and handled by
+ * the status-management option, so they are intentionally not part of this map. Each entry carries the
+ * MODULEBUILDER ACTIONBUTTON marker wrapping the button in myobject_card.php and the existing translation
+ * key used for its label in the generation form.
+ *
+ * @return	array<string,array{marker:string,label:string}>	Map of card action key => marker/label
+ */
+function getModuleBuilderCardActions()
+{
+	return array(
+		'send'   => array('marker' => 'SEND',   'label' => 'SendMail'),
+		'modify' => array('marker' => 'MODIFY', 'label' => 'Modify'),
+		'clone'  => array('marker' => 'CLONE',  'label' => 'ToClone'),
+		'delete' => array('marker' => 'DELETE', 'label' => 'Delete'),
+	);
 }
 
 /**
