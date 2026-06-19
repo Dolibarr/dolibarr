@@ -610,6 +610,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			fwrite($fh, "\n");
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				$amountstoshow = '';
+				$s = '';
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
 					$amountstoshow = (float) $totalhtamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT").' - '.(float) $totalvatamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("VAT").' - '.(float) $totalamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
@@ -649,6 +651,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			fwrite($fh, "\n");
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				$amountstoshow = '';
+				$s = '';
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
 					$amountstoshow = $totalhtamountlifetime['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT")." - ".($foundoldformat ? '' : ((float) $totalamountlifetime['BILL_VALIDATE'][$source] - (float) $totalhtamountlifetime['BILL_VALIDATE'][$source]).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
@@ -931,14 +935,14 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
 		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
+		$footer = '';
+		$errorlines = '';
+
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
 			$numline = 0;
 
 			$block_static = new BlockedLog($db);
-
-			$footer = '';
-			$errorlines = '';
 
 			while ($line = fgetcsv($handle, 100000, ';', '"', '')) {
 				$numline++;
