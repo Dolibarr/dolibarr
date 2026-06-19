@@ -195,7 +195,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
 		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNERunningVersion(1);
 		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {

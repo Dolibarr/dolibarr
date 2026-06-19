@@ -1508,7 +1508,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 	global $dolibarr_main_force_https;
 

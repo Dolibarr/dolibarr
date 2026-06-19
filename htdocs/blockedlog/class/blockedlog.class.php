@@ -22,7 +22,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 
 /**
@@ -2397,7 +2397,7 @@ class BlockedLog
 	public function canBeEnabled()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 
