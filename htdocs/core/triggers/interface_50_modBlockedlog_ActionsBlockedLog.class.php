@@ -125,6 +125,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return -1;
 		}
 
+		// Detect minimal version of PHP
+		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+			$errmsg = 'Error: You are using a too low version of PHP';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->errors[] = $errmsg;
+			return -1;
+		}
+
 		if ($action === 'BILL_UNVALIDATE') {
 			/** @var Facture $object */
 			'@phan-var-force Facture $object';
