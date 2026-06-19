@@ -682,6 +682,13 @@ class Categorie extends CommonObject
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
+		if ($this->fk_parent > 0 && $this->fk_parent == $this->id) {
+			$langs->load('categories');
+			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
+			dol_syslog($this->error, LOG_WARNING);
+			return -1;
+		}
+
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");

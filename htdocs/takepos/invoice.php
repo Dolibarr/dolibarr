@@ -1003,7 +1003,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
 		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -1032,14 +1032,22 @@ if (empty($reshook)) {
 		$db->commit();
 
 		if (count($invoice->lines) == 0) {
-			$invoice->delete($user);
+			// Keep an empty draft invoice alive when a non-default customer was
+			// already attached so deleting the last line does not silently lose
+			// the customer that was just selected (#38219). Only drop the invoice
+			// when it is still on the default cashdesk thirdparty (or none).
+			$defaultsocid = (int) getDolGlobalString('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]);
+			$invoicesocid = (int) $invoice->socid;
+			if ($invoicesocid === 0 || $invoicesocid === $defaultsocid) {
+				$invoice->delete($user);
 
-			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
-			} else {
-				header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
+				} else {
+					header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				}
+				exit;
 			}
-			exit;
 		}
 	}
 
