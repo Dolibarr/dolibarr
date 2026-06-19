@@ -174,6 +174,14 @@ class modBlockedLog extends DolibarrModules
 
 		$sql = array();
 
+		// Detect minimal version of PHP
+		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+			$errmsg = 'Error: You are using a too low version of PHP';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->error = $errmsg;
+			return 0;
+		}
+
 		// Clear cache
 		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
 		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
