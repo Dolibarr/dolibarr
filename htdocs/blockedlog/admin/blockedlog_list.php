@@ -409,6 +409,7 @@ print '<input type="text" class="maxwidth100" name="search_module_source" list="
 if (isModEnabled('takepos')) {
 	print '<datalist id="search_module_sources">
 	    <option value="takepos">
+		<option value="backoffice">
 	</datalist>';
 }
 print '</td>';
@@ -843,7 +844,7 @@ if (is_array($blocks)) {
 		ksort($totalamount);
 		krsort($showtotalfor);
 
-		// Show the lifetime payment only if filters are ok
+		// Show the total for period if filters are ok
 		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature);
 
 		$countsource = 0;
@@ -946,7 +947,7 @@ if (is_array($blocks)) {
 			}
 		}
 
-
+		// Show total for lifetime
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
 			$countsource++;
@@ -977,7 +978,7 @@ if (is_array($blocks)) {
 			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-			if ($search_end && $search_end != -1) {
+			if (GETPOST('search_endyear') && $search_end && $search_end != -1) {
 				print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
 			} else {
 				print ' - '.$langs->trans("Now");

@@ -77,7 +77,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 		var_dump($object->element);exit;
 		*/
-
+		if ($action === 'CASHCONTROL_DELETE') {
+			// Test is status of cashcontrol is closed
+			include_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+			if ($object->status == CashControl::STATUS_CLOSED) {
+				$this->errors[] = 'ErrorDeletingAClosedCashControlIsNotPossible';
+				return -1;
+			}
+		}
 
 		// List of mandatory logged actions
 		$listofqualifiedelement = array('invoice', 'facture', 'don', 'payment', 'payment_donation', 'subscription', 'cashcontrol');
@@ -113,6 +120,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$errmsg .= ' (MAIN_FIRST_REGISTRATION_OK_DATE='.getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE').', BLOCKEDLOG_REGISTRATION_NAME='.getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME').', BLOCKEDLOG_REGISTRATION_EMAIL='.getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL');
 			$errmsg .= ', MAIN_INFO_SIREN='.getDolGlobalString('MAIN_INFO_SIREN').', MAIN_INFO_SIRET='.getDolGlobalString('MAIN_INFO_SIRET').').';
 			$errmsg .= ' Try to reenable the module BlockedLog.';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->errors[] = $errmsg;
+			return -1;
+		}
+
+		// Detect minimal version of PHP
+		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+			$errmsg = 'Error: You are using a too low version of PHP';
 			dol_syslog($errmsg, LOG_ERR);
 			$this->errors[] = $errmsg;
 			return -1;

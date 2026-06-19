@@ -10,7 +10,6 @@ DisabledBecauseNotLastInvoice=Das ist inaktiv, weil nach dieser Rechnung weitere
 InvoiceStandardAsk=Eine Standardrechnung erstellen
 InvoiceStandardDesc=Eine normale Kundenrechnung erstellen
 InvoiceDeposit=Akontorechnung
-InvoiceDepositAsk=Akontorechnung erstellen
 InvoiceDepositDesc=Eine Akontorechnung erstellen
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Eine Proformarechnung erstellen

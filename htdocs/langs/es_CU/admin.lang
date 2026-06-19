@@ -1218,7 +1218,6 @@ PastDelayVCalExport=No exportar eventos anteriores a
 ClickToDialDesc=Este módulo cambia los números de teléfono, cuando se usa una computadora de escritorio, en enlaces en los que se puede hacer clic. Un clic llamará al número. Esto se puede usar para iniciar la llamada telefónica cuando usa un teléfono virtual en su escritorio o cuando usa un sistema CTI basado en el protocolo SIP, por ejemplo. Nota: cuando se utiliza un teléfono inteligente, siempre se puede hacer clic en los números de teléfono.
 ClickToDialUseTelLink=Use solo un enlace "tel:" en los números de teléfono
 ClickToDialUseTelLinkDesc=Utilice este método si sus usuarios tienen un softphone o una interfaz de software, instalados en la misma computadora que el navegador, y se les llama cuando hacen clic en un enlace que comienza con "tel:" en su navegador. Si necesita un enlace que comience con "sip:" o una solución de servidor completa (sin necesidad de instalación de software local), debe establecer esto en "No" y completar el siguiente campo.
-CashDesk=Punto de venta
 CashDeskSetup=Configuración del módulo de punto de venta
 CashDeskThirdPartyForSell=Tercero genérico predeterminado para usar en ventas
 CashDeskBankAccountForSell=Cuenta predeterminada para usar para recibir pagos en efectivo

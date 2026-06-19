@@ -22,7 +22,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 
 /**
@@ -2293,7 +2293,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$sql .= natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = str_replace('%backoffice%', '', $tmp);
+					$sql .= $tmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";
@@ -2395,7 +2397,7 @@ class BlockedLog
 	public function canBeEnabled()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 
