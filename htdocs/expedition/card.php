@@ -1348,7 +1348,7 @@ if ($action == 'create') {
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 							$productChildrenNb = $product->hasFatherOrChild(1);
 						}
 						if ($productChildrenNb > 0) {
