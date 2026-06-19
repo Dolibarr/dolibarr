@@ -1578,7 +1578,7 @@ if (!empty($object->thirdparty)) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		}
 
-		jQuery("#units, #title_units").hide();
+		jQuery("#units, #title_units, .linecoluseunit .selection").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}
