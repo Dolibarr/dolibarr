@@ -612,7 +612,7 @@ class FormProduct
 				if ($mode == 1) {
 					$return .= $lines->short_label;
 				} elseif ($mode == 2) {
-					$return .= $lines->scale;
+					$return .= (int) $lines->scale;
 				} else {
 					$return .= $lines->id;
 				}
