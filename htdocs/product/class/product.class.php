@@ -6505,9 +6505,9 @@ class Product extends CommonObject
 
 		// Stock Increase mode
 		if (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
-			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
+			$this->stock_theorique += max(0, $stock_commande_fournisseur - $stock_reception_fournisseur);
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')) {	// This option is similar to STOCK_CALCULATE_ON_RECEPTION_CLOSE but when module Reception is not enabled
-			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
+			$this->stock_theorique += max(0, $stock_commande_fournisseur - $stock_reception_fournisseur);
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {	// Warning: stock change "on approval", not on validation !
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER_INCLUDE_DRAFT')) {	// By default, draft means "does not exist", so we do not include them by default, except if option is on
 				$tmpnewprod = dol_clone($this, 1);
@@ -6518,7 +6518,7 @@ class Product extends CommonObject
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $weBillOrderOrShipmentReception == 'order') {
 			$this->stock_theorique += $stock_commande_fournisseur;
 		} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') && $weBillOrderOrShipmentReception == 'shipmentreception') {
-			$this->stock_theorique += ($stock_commande_fournisseur - $stock_reception_fournisseur);
+			$this->stock_theorique += max(0, $stock_commande_fournisseur - $stock_reception_fournisseur);
 		}
 
 		$parameters = array('id' => $this->id, 'includedraftpoforvirtual' => $includedraftpoforvirtual);
