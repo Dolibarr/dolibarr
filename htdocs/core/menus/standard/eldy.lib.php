@@ -1949,7 +1949,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 						$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_accountancy_report", $langs->trans("ByProject"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 
-					if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
 						global $mysoc;
 
 						// Multi personalized reports

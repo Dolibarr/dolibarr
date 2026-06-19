@@ -87,6 +87,11 @@ class Fichinter extends CommonObject
 	public $element = 'fichinter';
 
 	/**
+	 * @var string Name of field in database that is used as reference when object is linked to another one.
+	 */
+	public $fk_element = 'fk_fichinter';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
