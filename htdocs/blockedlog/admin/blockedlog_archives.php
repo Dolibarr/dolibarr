@@ -935,13 +935,13 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
 		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
+		$footer = '';
+
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
 			$numline = 0;
 
 			$block_static = new BlockedLog($db);
-
-			$footer = '';
 
 			while ($line = fgetcsv($handle, 100000, ';', '"', '')) {
 				$numline++;
