@@ -388,6 +388,7 @@ ErrorModuleBuilderFailedToInit=Failed to init the object with the new %s (%s)
 ErrorThirdPartyNotFound=Error ThirdParty Not Found
 ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed only if RCE PHP functions (exec, shell_exec, ...) are all disabled.
 ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

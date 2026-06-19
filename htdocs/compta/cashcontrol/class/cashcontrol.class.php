@@ -511,6 +511,12 @@ class CashControl extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		// Test is status of cashcontrol is close
+		if ($this->status == $this::STATUS_CLOSED) {
+			$this->error = 'ErrorDeletingAClosedCashControlIsNotPossible';
+			return -1;
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
