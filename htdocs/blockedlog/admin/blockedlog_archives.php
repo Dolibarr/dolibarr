@@ -611,7 +611,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
 				$amountstoshow = '';
-				$s = '';
+				$s = $actioncode;
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
 					$amountstoshow = (float) $totalhtamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT").' - '.(float) $totalvatamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("VAT").' - '.(float) $totalamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
