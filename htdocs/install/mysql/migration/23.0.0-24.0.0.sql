@@ -570,4 +570,47 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 --noqa:enable=PRS
 
 
+-- Adds Role management for Action Comm Resources
+
+-- 1. Create the Role Dictionary Table
+CREATE TABLE IF NOT EXISTS llx_c_actioncomm_role (
+  rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(32) NOT NULL UNIQUE,
+  label VARCHAR(128) NOT NULL,
+  active TINYINT DEFAULT 1 NOT NULL,
+  position INT DEFAULT 0,
+  picto VARCHAR(48) DEFAULT NULL
+) ENGINE=INNODB;
+
+-- 2. Insert Default Roles
+INSERT INTO llx_c_actioncomm_role (code, label, active, position, picto) VALUES
+('ADMIN', 'Admin', 1, 1, 'admin'),
+('MANAGER', 'Manager', 1, 2, 'user'),
+('LEADER', 'Leader', 1, 3, 'star'),
+('ORGANIZER', 'Organizer', 1, 4, 'calendar'),
+('STAFF', 'Staff', 1, 5, 'user'),
+('SECURITY', 'Security', 1, 6, 'shield'),
+('SPEAKER', 'Speaker', 1, 7, 'user'),
+('VOLUNTEER', 'Volunteer', 1, 8, 'group'),
+('TEACHER', 'Teacher', 1, 9, 'chalkboard'),
+('DJ', 'DJ', 1, 10, 'music'),
+('BAND', 'Band', 1, 11, 'music'),
+('MC', 'MC/Host', 1, 12, 'microphone'),
+('PHOTOGRAPHER', 'Photographer', 1, 13, 'camera'),
+('MEDIC', 'Medic', 1, 14, 'medical');
+
+
+-- 3. Add the FK Role column to Resources
+ALTER TABLE llx_actioncomm_resources ADD COLUMN fk_role INTEGER DEFAULT NULL AFTER mandatory;
+
+ALTER TABLE llx_actioncomm_resources
+ADD CONSTRAINT fk_actioncomm_resources_role
+  FOREIGN KEY (fk_role) REFERENCES llx_c_actioncomm_role(rowid)
+  ON DELETE SET NULL;
+
+-- 4. Add Indexes
+ALTER TABLE llx_actioncomm_resources ADD INDEX idx_actioncomm_resources_fk_role (fk_role);
+ALTER TABLE llx_c_actioncomm_role ADD INDEX idx_c_actioncomm_role_active (active);
+ALTER TABLE llx_c_actioncomm_role ADD INDEX idx_c_actioncomm_role_active_position (active, position);
+
 -- end of migration

@@ -28,5 +28,11 @@ create table llx_actioncomm_resources
   fk_element		integer NOT NULL,			-- Id into table llx_user or llx_resource
   answer_status		varchar(50) NULL,
   mandatory			smallint,
-  transparency		smallint default 1	    -- Used to say if event is 1=OPAQUE=busy or 0=TRANSPARENT
+  fk_role			integer DEFAULT NULL,		-- Id into llx_c_actioncomm_role
+  transparency		smallint default 1,	    -- Used to say if event is 1=OPAQUE=busy or 0=TRANSPARENT
+
+  -- THE FOREIGN KEY CONSTRAINT
+  CONSTRAINT fk_actioncomm_resources_role
+    FOREIGN KEY (fk_role) REFERENCES llx_c_actioncomm_role(rowid)
+    ON DELETE SET NULL
 ) ENGINE=innodb;
