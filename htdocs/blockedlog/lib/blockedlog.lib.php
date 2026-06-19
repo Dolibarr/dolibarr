@@ -659,7 +659,7 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 
 
 /**
- * Migrate an old database to add the .end file.
+ * Migrate an old database to add the .end flag.
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
