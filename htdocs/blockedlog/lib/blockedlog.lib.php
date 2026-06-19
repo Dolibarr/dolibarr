@@ -33,7 +33,14 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	return constant('DOLCERT_VERSION');
+	$versionbadge = constant('DOLCERT_VERSION');
+
+	// Protection if we used a past old version not yet certified, we change version shown.
+	if (!constant('CERTIF_LNE')) {	// Hard coded in version
+		$versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);
+	};
+
+	return $versionbadge;
 }
 
 
