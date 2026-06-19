@@ -27,16 +27,16 @@
  * @var Conf $conf
  * @var CommonObject $object
  *
- * @var array<string,float> $totalamountlifetime
- * @var array<string,float> $totalhtamountlifetime
+ * @var array<string,<string,float>> $totalamountlifetime
+ * @var array<string,<string,float>> $totalhtamountlifetime
  * @var int $foundoldformat
  * @var int $firstrecorddate
  * @var int $error
  * @var ?int $search_end
  * @var int $includebeforev2
  */
-'@phan-var-force array<string,float> $totalamountlifetime';
-'@phan-var-force array<string,float> $totalhtamountlifetime';
+'@phan-var-force array<string,<string,float>> $totalamountlifetime';
+'@phan-var-force array<string,<string,float>> $totalhtamountlifetime';
 '@phan-var-force int $error';
 global $foundoldformat, $firstrecorddate, $error;
 
