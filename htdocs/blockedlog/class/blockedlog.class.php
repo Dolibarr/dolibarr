@@ -22,7 +22,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 
 /**
@@ -1327,16 +1327,8 @@ class BlockedLog
 		// buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
 		// This may vary when the Immutable Log module version is modified, but only if algorithm has changed.
 		$this->object_format = 'V2';
-		/*
-		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
-			$this->object_format = 'V2';
-		}
-		*/
 
 		$tz = 'gmt';
-		// if (empty($this->object_format) || $this->object_format == 'V1') {
-		// 	$tz = 'tzserver';
-		// }
 
 		$previoushash = '';
 		$previousid = 0;
@@ -1444,7 +1436,8 @@ class BlockedLog
 
 					$lockfile = $this->getEndOfChainFlagFile();
 
-					// If the .end flag does not exists (has been removed), we track the record as error.
+					// Load the .end flag.
+					// If not found (has been removed), we track the record as error.
 					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
 						dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
@@ -1529,7 +1522,7 @@ class BlockedLog
 						}
 					} elseif ($headstring != '') {
 						// Failed to decrypt the head
-						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile)." with the obfuscation key, so we can't record the head file so we abort the transaction.");
+						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile).", content = ".$line." (remote obfuscation key = ".$remoteobfuscationkey."), so we can't record the head file so we abort the transaction.");
 					}
 
 					// If a note has been added to track an anomaly (signature is also different in this case).
@@ -1820,7 +1813,7 @@ class BlockedLog
 			// Last check on validity of key
 			if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
 				//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
-				throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
+				throw new Exception('buildFinalSignatureHash Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).');
 			}
 
 			// Here the $hmac_secret_key is in memory with the correct value.
@@ -1941,15 +1934,16 @@ class BlockedLog
 
 
 		// Uncomment the next line to emulate a network error to get the remote obfuscation key
-		//throw new Exception('Failed to get the remote obfuscation key - error emulated (status column is not reliable)');
-
+		//throw new Exception('Failed to get the remote obfuscation key - error emulated');
 
 		// If key found into the user session memory cache, we use it
 		if (!empty($_SESSION['obfuscationkey_'.((int) $this->entity)])) {
+			dol_syslog("getObfuscationKey remote obfuscation key found into session cache", LOG_DEBUG);
 			return (string) $_SESSION['obfuscationkey_'.((int) $this->entity)];
 		}
 		// If key found into the page memory cache, we use it
 		if (!empty($conf->cache['obfuscationkey_'.((int) $this->entity)])) {
+			dol_syslog("getObfuscationKey remote obfuscation key found into conf->cache", LOG_DEBUG);
 			return (string) $conf->cache['obfuscationkey_'.((int) $this->entity)];
 		}
 
@@ -1961,9 +1955,11 @@ class BlockedLog
 		// Value is not into cache, we must get it from ping.dolibarr.org
 		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
+			dol_syslog("getObfuscationKey Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.", LOG_DEBUG);
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
 		}
 		if (strpos($obfuscationkey, 'ERROR') === 0) {
+			dol_syslog('getObfuscationKey Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey, LOG_DEBUG);
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
@@ -2059,7 +2055,7 @@ class BlockedLog
 		}
 
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
-			throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).'.($errormsg ? ' Additional message: '.$errormsg : ''));
+			throw new Exception('getClearHMACSecretKey Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the obfuscation key. A value was found in database but decoding failed. May be you modified the SIREN used to get the obfuscation key from ping.dolibarr.org (or old config key $dolibarr_main_instance_unique_id).'.($errormsg ? ' Additional message: '.$errormsg : ''));
 		}
 
 		return $hmac_secret_key;
@@ -2293,7 +2289,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$sql .= natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$tmp = str_replace('%backoffice%', '', $tmp);
+					$sql .= $tmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";
@@ -2395,7 +2393,7 @@ class BlockedLog
 	public function canBeEnabled()
 	{
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNEQualifiedVersion(0, 1);
 

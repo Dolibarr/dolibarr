@@ -627,8 +627,8 @@ body.ai-fullpage {
     transition: border-color 0.2s, box-shadow 0.2s;
 
     /* Allow expansion, but set limits */
-    height: 44px;
-    min-height: 44px;
+    height: 40px;
+    min-height: 40px;
     max-height: 150px;
 
     box-sizing: border-box;

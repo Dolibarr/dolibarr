@@ -65,9 +65,9 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 			print get_called_class()."::".__FUNCTION__.PHP_EOL;
 		}
 
-		$infotable = $db->DDLListTablesFull($db->database_name);
-		print "List of existing tables before running test ModulesTest\n";
-		print var_export($infotable, true)."\n";
+		//$infotable = $db->DDLListTablesFull($db->database_name);
+		//print "List of existing tables before running test ModulesTest\n";
+		//print var_export($infotable, true)."\n";
 	}
 
 
@@ -98,12 +98,15 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	 */
 	public function testModulesInit(string $modlabel)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf,$user,$langs,$db,$mysoc;
 
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		$mysoc = new Societe($db);
+		$mysoc->setMysoc($conf);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
 		$class = 'mod'.$modlabel;
@@ -120,14 +123,13 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 		if ($modlabel == 'User') {
 			print __METHOD__." test table llx_user exists after Webhook init\n";
 			$infotable = $db->DDLListTablesFull($db->database_name);
-			print var_export($infotable, true)."\n";
+			//print var_export($infotable, true)."\n";
 			$this->assertGreaterThan(0, count($infotable));
 		}
 		if ($modlabel == 'Webhook') {
 			print __METHOD__." test table llx_webhook_target exists after Webhook init\n";
-			//$infotable = $db->DDLInfoTable("llx_webhook_target");
 			$infotable = $db->DDLListTablesFull($db->database_name);
-			print var_export($infotable, true)."\n";
+			//print var_export($infotable, true)."\n";
 			$this->assertGreaterThan(0, count($infotable));
 		}
 

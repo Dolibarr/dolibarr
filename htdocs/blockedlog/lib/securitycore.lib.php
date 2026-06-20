@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file		htdocs/core/lib/securitycore.lib.php
+ *  \file		htdocs/blockedlog/lib/securitycore.lib.php
  *  \ingroup    core
  *  \brief		Set of function used for dolibarr security (not common functions).
  *  			Warning, this file must not depends on other library files, except function.lib.php
