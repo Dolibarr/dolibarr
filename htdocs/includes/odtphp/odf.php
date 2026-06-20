@@ -500,7 +500,7 @@ class Odf
 		$ishtml=dol_textishtml($value);
 		if ($ishtml) {
 			// If string is "MYPODUCT - Desc <strong>bold</strong> with &eacute; accent<br />\n<br />\nUn texto en espa&ntilde;ol ?"
-			// Result after clean must be "MYPODUCT - Desc bold with Ã© accent\n\nUn texto en espa&ntilde;ol ?"
+			// Result after clean must be "MYPODUCT - Desc bold with é accent\n\nUn texto en espa&ntilde;ol ?"
 
 			// We want to ignore \n and we want all <br> to be \n
 			$value=preg_replace('/(\r\n|\r|\n)/i', '', $value);
