@@ -6775,7 +6775,6 @@ abstract class CommonObject
 		if (!$this->table_element) {
 			return 0;
 		}
-
 		$this->array_options = array();
 
 		if (!is_array($optionsArray)) {
@@ -6822,7 +6821,6 @@ abstract class CommonObject
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows) {
 					$tab = $this->db->fetch_array($resql);
-
 					foreach ($tab as $key => $value) {
 						// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && !is_int($key)) {
@@ -6861,9 +6859,16 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								global $objectoffield;        // We set a global variable to $objectoffield so
-								$objectoffield = $this;        // we can use it inside computed formula
-								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								// We set a global variable to $objectoffield so we can use it inside computed formula
+								$objectoffield = dol_clone($this, 2);
+								global $objectoffield;
+								try {
+									$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
+								} catch (Exception $e) {
+									// If exception by dol_eval, we set value to null
+									dol_syslog('Error in dol_eval of a computed extrafield: '.$e->getMessage(), LOG_WARNING);
+									$this->array_options['options_' . $key] = null;
+								}
 							}
 						}
 					}
@@ -6877,7 +6882,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				$this->errors[] = $this->db->lasterror;
+				$this->errors[] = $this->db->lasterror();
 				return -1;
 			}
 		}
