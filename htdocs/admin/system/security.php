@@ -28,6 +28,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @®ar Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -874,9 +875,22 @@ if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
 	$decryptedstring = $exampletodecrypt;
 	if (preg_match('/^dolobfuscationv1/', $exampletodecrypt)) {
+		// Clear cache
+		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+		// Reload obfuscationkey
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($db);
 		$obfuscationkey = $b->getObfuscationKey();
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		$registrationnumber = getHashUniqueIdOfRegistration();
+		print '<!-- registrationnumber '.$registrationnumber.' -->'."\n";
+		print '<!-- mysoc->idprof1 = '.$mysoc->idprof1.' -->'."\n";
+		print '<!-- session '.$_SESSION['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- conf->cache = '. (string) $conf->cache['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- obfuscationkey => '.$obfuscationkey.' -->'."\n";;	// For debug only
+
 		$decryptedstring = dolDecrypt($exampletodecrypt, $obfuscationkey);
 	} elseif (preg_match('/^dolcrypt/', $exampletodecrypt)) {
 		$decryptedstring = dolDecrypt($exampletodecrypt);
