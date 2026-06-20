@@ -45,7 +45,7 @@ $arrayofunalterablefiles = array(
 	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/compta/cashcontrol/class', 'file' => 'cashcontrol.class.php'),
 	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
 	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/core/modules', 'file' => 'modBlockedLog.class.php'),
-	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
+	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/core/triggers', 'file' => 'interface_99_modBlockedlog_ActionsBlockedLog.class.php'),
 	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
 	array('dir' => dirname(dirname(dirname(__FILE__))).'/htdocs/takepos', 'file' => 'all', 'regextoinclude' => '(receipt|send.php).php')
 );

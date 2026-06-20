@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php
+ *	\file       htdocs/core/triggers/interface_99_modBlockedlog_ActionsBlockedLog.class.php
  *  \ingroup    system
  *  \brief      Trigger file for blockedlog module
  */
