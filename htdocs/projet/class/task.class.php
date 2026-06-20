@@ -1315,7 +1315,7 @@ class Task extends CommonObjectLine
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-			if ($this->timespent_date < $restrictBefore) {
+			if ((is_numeric($this->timespent_date) ? (int) $this->timespent_date : (int) strtotime((string) $this->timespent_date)) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
 				$this->errors[] = $this->error;
 				return -1;
@@ -1763,7 +1763,7 @@ class Task extends CommonObjectLine
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-			if ($this->timespent_date < $restrictBefore) {
+			if ((is_numeric($this->timespent_date) ? (int) $this->timespent_date : (int) strtotime((string) $this->timespent_date)) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
 				$this->errors[] = $this->error;
 				return -1;
@@ -1864,7 +1864,7 @@ class Task extends CommonObjectLine
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
-			if ($this->timespent_date < $restrictBefore) {
+			if ((is_numeric($this->timespent_date) ? (int) $this->timespent_date : (int) strtotime((string) $this->timespent_date)) < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS);
 				$this->errors[] = $this->error;
 				return -1;
