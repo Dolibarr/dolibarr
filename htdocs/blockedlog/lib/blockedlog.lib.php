@@ -443,8 +443,8 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		$timeoutconnect = 3;
 		$timeoutresponse = 3;
 
-		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG);
-		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG);
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	try {

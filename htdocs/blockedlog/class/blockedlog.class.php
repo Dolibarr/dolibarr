@@ -1530,7 +1530,7 @@ class BlockedLog
 						}
 					} elseif ($headstring != '') {
 						// Failed to decrypt the head
-						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile)." with the remote obfuscation key, so we can't record the head file so we abort the transaction.");
+						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile).", content = '.$line.' (remote obfuscation key = '.$remoteobfuscationkey.'), so we can't record the head file so we abort the transaction.");
 					}
 
 					// If a note has been added to track an anomaly (signature is also different in this case).
