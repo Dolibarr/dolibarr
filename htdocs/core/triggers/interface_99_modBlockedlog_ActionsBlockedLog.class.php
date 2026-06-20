@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php
+ *	\file       htdocs/core/triggers/interface_99_modBlockedlog_ActionsBlockedLog.class.php
  *  \ingroup    system
  *  \brief      Trigger file for blockedlog module
  */
@@ -101,7 +101,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNERunningVersion(1);
 

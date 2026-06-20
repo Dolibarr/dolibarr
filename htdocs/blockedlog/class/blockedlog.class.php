@@ -1436,7 +1436,8 @@ class BlockedLog
 
 					$lockfile = $this->getEndOfChainFlagFile();
 
-					// If the .end flag does not exists (has been removed), we track the record as error.
+					// Load the .end flag.
+					// If not found (has been removed), we track the record as error.
 					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
 						dol_mkdir(dirname($lockfile));					// Create at least directory for the lock file. Nothing if already exists.
 
@@ -1521,7 +1522,7 @@ class BlockedLog
 						}
 					} elseif ($headstring != '') {
 						// Failed to decrypt the head
-						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile)." with the obfuscation key, so we can't record the head file so we abort the transaction.");
+						throw new Exception("Failed to decode the content of the .end flag ".basename($lockfile).", content = '.$line.' (remote obfuscation key = '.$remoteobfuscationkey.'), so we can't record the head file so we abort the transaction.");
 					}
 
 					// If a note has been added to track an anomaly (signature is also different in this case).

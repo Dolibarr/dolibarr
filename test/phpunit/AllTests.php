@@ -74,8 +74,11 @@ dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
 
 dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_NAME', 'MyBigCompanyByPHPUnit');
-dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_EMAIL', 'mybigcompany@example.com');
-
+dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_EMAIL', 'mybigcompany@example.com');
+dolibarr_set_const($db, 'MAIN_INFO_SIREN', 'phpunit123');
+dolibarr_set_const($db, 'MAIN_INFO_SIRET', 'phpunit12312345');
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'blockedlog-1.end'";
+$db->query($sql);
 
 /**
  * Class for the All test suite
