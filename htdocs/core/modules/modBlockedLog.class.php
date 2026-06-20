@@ -270,7 +270,7 @@ class modBlockedLog extends DolibarrModules
 				// New method
 				$obfuscationkey = '';
 				try {
-					dol_syslog("mysoc->profid1 = ".$mysoc->profid1);
+					dol_syslog("mysoc->profid1 = ".$mysoc->idprof1);
 					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
 					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
 				} catch (Exception $e) {

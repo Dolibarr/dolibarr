@@ -530,8 +530,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_VALIDATE' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -549,8 +547,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_MODIFY' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -568,8 +564,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_SENTBYMAIL' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -639,8 +633,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_DELETE' && $object instanceof Fichinter) {
 			'@phan-var-force Fichinter $object';
 			// Load translation files required by the page
@@ -658,8 +650,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
-			$object->fk_element = 0;
-			$object->elementtype = '';
 		} elseif ($action == 'SHIPPING_VALIDATE' && $object instanceof Expedition) {
 			'@phan-var-force Expedition $object';
 			// Load translation files required by the page
