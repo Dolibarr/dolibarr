@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		FrÃ©dÃ©ric France			<frederic.france@free.fr>
+/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
