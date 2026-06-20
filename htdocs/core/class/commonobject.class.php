@@ -6862,13 +6862,7 @@ abstract class CommonObject
 								// We set a global variable to $objectoffield so we can use it inside computed formula
 								$objectoffield = dol_clone($this, 2);
 								global $objectoffield;
-								try {
-									$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
-								} catch (Exception $e) {
-									// If exception by dol_eval, we set value to null
-									dol_syslog('Error in dol_eval of a computed extrafield: '.$e->getMessage(), LOG_WARNING);
-									$this->array_options['options_' . $key] = null;
-								}
+								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
