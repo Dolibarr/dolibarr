@@ -500,7 +500,7 @@ class Odf
 		$ishtml=dol_textishtml($value);
 		if ($ishtml) {
 			// If string is "MYPODUCT - Desc <strong>bold</strong> with &eacute; accent<br />\n<br />\nUn texto en espa&ntilde;ol ?"
-			// Result after clean must be "MYPODUCT - Desc bold with é accent\n\nUn texto en espa&ntilde;ol ?"
+			// Result after clean must be "MYPODUCT - Desc bold with Ã© accent\n\nUn texto en espa&ntilde;ol ?"
 
 			// We want to ignore \n and we want all <br> to be \n
 			$value=preg_replace('/(\r\n|\r|\n)/i', '', $value);
@@ -998,6 +998,11 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
+			// Delete ODT source before any headers/download logic that may throw an exception
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
+				unlink($name);
+			}
+
 			if ($dooutputfordownload) {
 				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
 					if (headers_sent($filename, $linenum)) {
@@ -1014,9 +1019,6 @@ IMG;
 				}
 			}
 
-			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
-				unlink($name);
-			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
