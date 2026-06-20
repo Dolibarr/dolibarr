@@ -8,17 +8,17 @@
  * Copyright (C) 2010-2020	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2013		CÃ©dric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Jean-FranÃ§ois Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2017		Josep LluÃ­s Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2019-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  FrÃ©dÃ©ric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -1471,6 +1471,7 @@ $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+		'edit_extrafields' => img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields"),
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
@@ -1496,7 +1497,7 @@ if ($user->hasRight("facture", "creer")) {
 		$arrayofmassactions['precreatecreditnote'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("cancelByCreditNote");
 	}
 }
-if (in_array($massaction, array('presend', 'predelete', 'makepayment'))) {
+if (in_array($massaction, array('presend', 'predelete', 'makepayment', 'edit_extrafields'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
