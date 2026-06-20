@@ -402,7 +402,7 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 /**
  * Call remote API service to get the obfuscation key.
- * This function is called by blockedlog->getObfuscationKey();
+ * This function is only called by blockedlog->getObfuscationKey();
  *
  * @param 	string	$idprof1				Counter ID/value of ne record
  * @param 	string	$registrationnumber		Registration number
@@ -414,6 +414,11 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 	global $mysoc, $conf;
 
 	$obfuscationkey = 'ERROR';
+
+	if (empty($idprof1)) {
+		dol_syslog("callApiToGetObfuscationKey was called with empty idprof1", LOG_DEBUG);
+		return 'ERROR callApiToGetObfuscationKey was called with empty idprof1';
+	}
 
 	//if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");

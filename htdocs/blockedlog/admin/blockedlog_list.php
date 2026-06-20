@@ -323,17 +323,19 @@ if (GETPOST('clearcache')) {
 // Get the remoteobfuscation key
 // Show an error to ask to retry later if we can't get it because it means we can't decode the HMAC KEY later so we can't validate record.
 $remoteobfuscationkey = '';
-try {
-	$remoteobfuscationkey = $block_static->getObfuscationKey();
-	// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
-} catch (Exception $e) {
-	$error++;
+if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+	try {
+		$remoteobfuscationkey = $block_static->getObfuscationKey();
+		// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
+	} catch (Exception $e) {
+		$error++;
 
-	print '<div class="error mess1">';
-	print $e->getMessage();
-	print '<br>';
-	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
-	print '</div>';
+		print '<div class="error mess1">';
+		print $e->getMessage();
+		print '<br>';
+		print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
+		print '</div>';
+	}
 }
 
 // Get the encoded HMAC key.

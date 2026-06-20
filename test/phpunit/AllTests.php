@@ -41,6 +41,7 @@ if (! defined('NOREQUIREUSER')) {
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
+
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
@@ -79,6 +80,11 @@ dolibarr_set_const($db, 'MAIN_INFO_SIREN', 'phpunit123');
 dolibarr_set_const($db, 'MAIN_INFO_SIRET', 'phpunit12312345');
 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'blockedlog-1.end'";
 $db->query($sql);
+
+// Test there is no webhook enabled
+// TODO
+
+
 
 /**
  * Class for the All test suite
@@ -147,6 +153,7 @@ class AllTests
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
+
 		require_once dirname(__FILE__).'/SecurityLoginTest.php';
 		$suite->addTestSuite('SecurityLoginTest');
 
