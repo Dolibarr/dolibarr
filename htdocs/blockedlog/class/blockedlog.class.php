@@ -1327,16 +1327,8 @@ class BlockedLog
 		// buildKeyForSignature and buildFirstPartOfKeyForSignature and buildFinalSignatureHash
 		// This may vary when the Immutable Log module version is modified, but only if algorithm has changed.
 		$this->object_format = 'V2';
-		/*
-		if (defined('CERTIF_LNE') && in_array((int) constant('CERTIF_LNE'), array(1, 2))) {
-			$this->object_format = 'V2';
-		}
-		*/
 
 		$tz = 'gmt';
-		// if (empty($this->object_format) || $this->object_format == 'V1') {
-		// 	$tz = 'tzserver';
-		// }
 
 		$previoushash = '';
 		$previousid = 0;

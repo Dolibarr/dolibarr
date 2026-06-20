@@ -12551,6 +12551,16 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 		}
 		return $tmps;
+	} catch (Exception $e) {
+		if ($isObBufferActive) {
+			// Clean up buffer which was left behind due to exception.
+			$tmpo = ob_get_clean();		// This close the buffer
+			$isObBufferActive = false;
+		}
+		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
+		$error .= $e->getMessage();
+		dol_syslog($error, LOG_WARNING);
+		return 'Exception during evaluation: ' . $s;
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
