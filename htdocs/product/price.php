@@ -622,7 +622,6 @@ if (empty($reshook)) {
 
 	// Add or update price by quantity
 	if ($action == 'update_price_by_qty' && $permissiontoadd) {
-		// RÃ©cupÃ©ration des variables
 		$rowid = GETPOSTINT('rowid');
 		$priceid = GETPOSTINT('priceid');
 		$newprice = price2num(GETPOST("price"), 'MU', 2);
@@ -648,7 +647,7 @@ if (empty($reshook)) {
 			$price = price2num($newprice, 'MU');
 			$unitPrice = price2num((float) $price / (float) $quantity, 'MU');
 
-			// Ajout / mise Ã  jour
+			// Add / update
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
 				$sql .= " price=".((float) $price).",";
