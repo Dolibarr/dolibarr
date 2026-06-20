@@ -7470,7 +7470,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					if (dol_textishtml($out)) {
 						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
-						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						// Pre-escape lone < and > that are not the start of a real tag, otherwise DOMDocument
+						// eats everything between them (e.g. "from EUR2.00 > EUR2.50" gets stripped on save).
+						$plainout = preg_replace('/<(?![a-zA-Z\/!?])/', '&lt;', $out);
+						$plainout = preg_replace('/(^|[^a-zA-Z0-9"\'\/])>/', '$1&gt;', $plainout);
+						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($plainout).'</div></body></html>';
 					}
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
