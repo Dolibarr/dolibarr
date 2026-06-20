@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2025		FrÃ©dÃ©ric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ',') === false) {
 				$critSelect = "'".implode("','", array_map(array($db, 'escape'), explode(',', $crit)))."'";
-				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IN (".$db->sanitize($critSelect, 1).") )";
+				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IN (".$critSelect.") )";
 				continue;
 			}
 			$morewhere .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
