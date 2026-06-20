@@ -26,10 +26,13 @@
  * @var CommonObject $object
  * @var DoliDB $db
  * @var ExtraFields $extrafields
- * @var string $sql
  *
+ * @var string $sql
  * @var string $extrafieldsobjectkey
  */
+'
+@phan-var-force string $sql
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

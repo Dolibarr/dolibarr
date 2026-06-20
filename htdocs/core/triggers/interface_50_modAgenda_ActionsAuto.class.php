@@ -1132,9 +1132,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY' && $object instanceof Subscription) {
 			'@phan-var-force Subscription $object';
 			// Load translation files required by the page
@@ -1163,9 +1164,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE' && $object instanceof Subscription) {
 			'@phan-var-force Subscription $object';
 			// Load translation files required by the page
@@ -1195,9 +1197,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+			/*
 			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
-			}
+			}*/
 		} elseif ($action == 'MEMBER_RESILIATE' && $object instanceof Adherent) {
 			'@phan-var-force Adherent $object';
 			// Load translation files required by the page
@@ -1621,9 +1624,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if (!property_exists($object, 'email_fields_no_propagate_in_actioncomm') || empty($object->email_fields_no_propagate_in_actioncomm)) {
 			'@phan-var-force ActionComm $object';  // TODO: None of the dolibarr classes has all the fields, check class type or properties (email_date)
 			// If event is to record a message after an email received, we use the date of email as date of event.
-			if (!empty($object->email_date) && $actioncomm->type_code === 'AC_TICKET_CREATE') {
-				$actioncomm->datep         = $object->email_date;
-				$actioncomm->datef         = $object->email_date;
+			if ($actioncomm->type_code === 'AC_TICKET_CREATE') {
+				'@phan-var-force Ticket $object';
+				if (!empty($object->email_date)) {
+					$actioncomm->datep         = $object->email_date;
+					$actioncomm->datef         = $object->email_date;
+				}
 			}
 			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
 			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
