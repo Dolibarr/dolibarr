@@ -7,12 +7,12 @@
  * Copyright (C) 2009-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry           <forian.henry@open-concept.pro>
  * Copyright (C) 2015-2026  Charlene BENKE          <charlene@patas-monkey.com>
- * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       RaphaÃ«l Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  FrÃ©dÃ©ric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
+ * Copyright (C) 2024		BenoÃ®t PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -3168,7 +3168,7 @@ class ExtraFields
 				} elseif ($key_type == 'select') {
 					// to detect if we are in search context
 					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
-						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:alphanohtml');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
 						$value_key = implode(',', $value_arr);
