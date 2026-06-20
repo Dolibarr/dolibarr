@@ -3,12 +3,12 @@
  * Copyright (C) 2004-2010	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Marcos GarcÃ­a           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2025  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2018-2026  FrÃ©dÃ©ric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Josep LluÃ­s Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW	                    <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
+ * Copyright (C) 2024       MÃ©lina Joum			    <melina.joum@altairis.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -219,7 +219,7 @@ abstract class CommonDocGenerator
 
 	/**
 	 * @var array{0:int,1:int} Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 7.1 = array(7, 1)
+	 * e.g.: PHP â¥ 7.1 = array(7, 1)
 	 */
 	public $phpmin = array(7, 1);
 
@@ -758,7 +758,7 @@ abstract class CommonDocGenerator
 			$array_key.'_remain_to_pay' => price2num($object->total_ttc - $already_payed_all, 'MT')
 		);
 
-		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur'))) {
+		if (in_array($object->element, array('facture', 'invoice', 'supplier_invoice', 'facture_fournisseur', 'commande'))) {
 			$bank_account = null;
 
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
