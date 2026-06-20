@@ -7740,7 +7740,7 @@ li.select2-selection__choice {
 	border-radius: 5px;
 	<?php } ?>
 
-	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(<?php echo (getDolGlobalString('THEME_ELDY_BACKTITLE1') != '255,255,255') ? '--colorbacktitle1' : '--inputbordercolor' ?>);
+	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 
 	box-shadow: none !important;
 }

@@ -77,7 +77,7 @@ abstract class CommonClassTest extends TestCase
 	 *
 	 * @var integer
 	 */
-	public $nbLinesToShow = 100;
+	public $nbLinesToShow = 50;
 
 	/**
 	 * Log file from which to extract lines in case of failing test
