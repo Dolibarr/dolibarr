@@ -28,7 +28,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
- * @®ar Societe $mysoc
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -889,7 +889,7 @@ if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 		print '<!-- mysoc->idprof1 = '.$mysoc->idprof1.' -->'."\n";
 		print '<!-- session '.$_SESSION['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
 		print '<!-- conf->cache = '. (string) $conf->cache['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
-		print '<!-- obfuscationkey => '.$obfuscationkey.' -->'."\n";;	// For debug only
+		print '<!-- obfuscationkey => '.$obfuscationkey.' -->'."\n";	// For debug only
 
 		$decryptedstring = dolDecrypt($exampletodecrypt, $obfuscationkey);
 	} elseif (preg_match('/^dolcrypt/', $exampletodecrypt)) {
