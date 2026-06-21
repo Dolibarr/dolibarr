@@ -2102,6 +2102,8 @@ class BlockedLog
 		}
 
 		if (empty($previoussignature)) {
+			dol_syslog("getPreviousHash: We did not found previous record with fast mode so we search with a select max", LOG_DEBUG);
+
 			// Note: a select max rowid and then a select to get signature seems not faster due to filter on entity
 			$sql = "SELECT rowid, signature, date_creation, object_format FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
