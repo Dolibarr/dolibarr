@@ -295,13 +295,13 @@ class modBlockedLog extends DolibarrModules
 
 				if ($firsterrormessage) {	// If error
 					$error++;
-					$this->error = 'modBlockLog init Error: '.$firsterrormessage;
+					$this->error = 'modBlockLog init Error: '.$firsterrormessage.'. ';
 				}
 			}
 			if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
 				$error++;
-				$this->error = 'modBlockedLog init Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the remote obfuscation key. The value was found in llx_const table but decoding with '.$obfuscationkey.' failed. May be the remote server to get the obfuscation key to decode it was offline.';
-				$this->error .= 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+				$this->error .= 'modBlockedLog init Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the remote obfuscation key. The value was found in llx_const table but decoding with obfuscation key failed. May be the remote server to get the obfuscation key to decode it was offline.';
+				$this->error .= ' If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
 			}
 			/*
 			if (preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key)) {
