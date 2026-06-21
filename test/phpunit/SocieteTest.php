@@ -174,7 +174,7 @@ class SocieteTest extends CommonClassTest
 
 		$result = $localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, __METHOD__." id=".$localobject->id." result=".$result);
 
 		$result = $localobject->update_note($localobject->note_private, '_private');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";

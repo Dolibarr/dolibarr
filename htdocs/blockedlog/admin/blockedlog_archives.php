@@ -635,6 +635,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+		'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
