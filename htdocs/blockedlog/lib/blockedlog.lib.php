@@ -484,9 +484,6 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
 		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
 	}
-	/*} else {
-		$obfuscationkey = '';
-	}*/
 
 	return $obfuscationkey;
 }

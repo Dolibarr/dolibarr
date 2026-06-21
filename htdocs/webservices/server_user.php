@@ -723,7 +723,8 @@ function setUserPassword($authentication, $shortuser)
 	if (!$error) {
 		$fuser->loadRights();
 
-		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
+		if ($fuser->hasRight('user', 'user', 'password')
+			|| ($fuser->hasRight('user', 'self', 'password') && $shortuser['login'] == $shortuser['login'])) {
 			$userstat = new User($db);
 			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {
