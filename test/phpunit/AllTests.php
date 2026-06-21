@@ -45,9 +45,12 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
-
 if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
+	exit(1);
+}
+if (isModEnabled('debugbar')) {
+	print "Error: Debugbar module should not be enabled. It generates troubles in db management.\n";
 	exit(1);
 }
 if (!isModEnabled('member')) {
@@ -72,6 +75,7 @@ $now = dol_now();
 
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
+
 
 dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
 dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_NAME', 'MyBigCompanyByPHPUnit');
@@ -320,10 +324,6 @@ class AllTests
 
 		// --- At end because it's the longer
 
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		require_once dirname(__FILE__).'/ModulesTest.php';
-		$suite->addTestSuite('ModulesTest');
-
 		// Rules into source files content
 		require_once dirname(__FILE__).'/RepositoryTest.php';
 		$suite->addTestSuite('RepositoryTest');
@@ -335,6 +335,13 @@ class AllTests
 		$suite->addTestSuite('CodingPhpTest');
 		require_once dirname(__FILE__).'/DoliDBTest.php';
 		$suite->addTestSuite('DoliDBTest');
+
+		// --- At very end, the LAST ONE.
+
+		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
+		// For example, this call init that run DDL functionsand break commit/rollback features.
+		require_once dirname(__FILE__).'/ModulesTest.php';
+		$suite->addTestSuite('ModulesTest');
 
 		return $suite;
 	}
