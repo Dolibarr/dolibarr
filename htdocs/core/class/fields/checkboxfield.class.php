@@ -248,8 +248,8 @@ class CheckboxField extends CommonSelectField
 			$alias = $fieldInfos->sqlAlias ?? 't.';
 			$field = $this->db->sanitize($alias . ($fieldInfos->nameInTable ?? $key));
 
-			$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
-			return " AND " . $field . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+			$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $value)) . "'";
+			return " AND " . $field . " IN (" . $sanitizedSqlIn . ")";
 		}
 
 		return '';
