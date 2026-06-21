@@ -324,11 +324,6 @@ class AllTests
 
 		// --- At end because it's the longer
 
-
-		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
-		require_once dirname(__FILE__).'/ModulesTest.php';
-		$suite->addTestSuite('ModulesTest');
-
 		// Rules into source files content
 		require_once dirname(__FILE__).'/RepositoryTest.php';
 		$suite->addTestSuite('RepositoryTest');
@@ -340,6 +335,13 @@ class AllTests
 		$suite->addTestSuite('CodingPhpTest');
 		require_once dirname(__FILE__).'/DoliDBTest.php';
 		$suite->addTestSuite('DoliDBTest');
+
+		// --- At very end, the LAST ONE.
+
+		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
+		// For example, this call init that run DDL functionsand break commit/rollback features.
+		require_once dirname(__FILE__).'/ModulesTest.php';
+		$suite->addTestSuite('ModulesTest');
 
 		return $suite;
 	}
