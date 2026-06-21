@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - cashdesk
+CashDesk=Point de vente
 PrintReport=Imprimer le rapport
 PrintReportNoDetail=Imprimer le rapport (sans détail)
 SendTicket=Envoyer un ticket

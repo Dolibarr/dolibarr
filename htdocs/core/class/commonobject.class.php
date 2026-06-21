@@ -6775,7 +6775,6 @@ abstract class CommonObject
 		if (!$this->table_element) {
 			return 0;
 		}
-
 		$this->array_options = array();
 
 		if (!is_array($optionsArray)) {
@@ -6822,7 +6821,6 @@ abstract class CommonObject
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows) {
 					$tab = $this->db->fetch_array($resql);
-
 					foreach ($tab as $key => $value) {
 						// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && !is_int($key)) {
@@ -6861,8 +6859,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								global $objectoffield;        // We set a global variable to $objectoffield so
-								$objectoffield = $this;        // we can use it inside computed formula
+								// We set a global variable to $objectoffield so we can use it inside computed formula
+								$objectoffield = dol_clone($this, 2);
+								global $objectoffield;
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -6877,7 +6876,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				$this->errors[] = $this->db->lasterror;
+				$this->errors[] = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -6969,6 +6968,13 @@ abstract class CommonObject
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 			$attributeEmptyOnClone = $extrafields->attributes[$this->table_element]['emptyonclone'][$attributeKey];
+			/*
+			$attributeEnabled  = $extrafields->attributes[$this->table_element]['enabled'][$attributeKey];
+			$enabled = 0;
+			if (!empty($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+				$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+			}
+			*/
 
 			// If we clone, we have to clean unique extrafields to prevent duplicates.
 			// If we clone, we have to clean extrafields having "empty on clone" option on.
@@ -6986,7 +6992,7 @@ abstract class CommonObject
 			}
 
 			// Similar code than into insertExtraFields
-			if ($attributeRequired) {
+			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$v = $this->array_options[$key];
 				if (ExtraFields::isEmptyValue($v, $attributeType)) {
 					$langs->load("errors");
@@ -7442,15 +7448,16 @@ abstract class CommonObject
 			$value = $this->array_options["options_".$key];
 
 			$attributeKey      = $key;
-			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
-			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
-			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
-			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
+			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
-			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
+			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+			//$attributeEnabled  = $extrafields->attributes[$this->table_element]['enabled'][$attributeKey];
 
 			// Similar code than into insertExtraFields
-			if ($attributeRequired) {
+			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$mandatorypb = false;
 				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') {
 					$mandatorypb = true;
