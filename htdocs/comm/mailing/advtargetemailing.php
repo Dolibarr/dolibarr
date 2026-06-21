@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024 MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1082,9 +1082,9 @@ if ($object->fetch($id) >= 0) {
 		// Standard Extrafield feature
 		if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			$contactstatic = new Contact($db);
-			$elementype = $contactstatic->table_element;
+			$elementtype = $contactstatic->table_element;
 			// fetch optionals attributes and labels
-			$extrafields->fetch_name_optionals_label($elementype);
+			$extrafields->fetch_name_optionals_label($elementtype);
 			if (!empty($extrafields->attributes[$elementtype]['type'])) {
 				foreach ($extrafields->attributes[$elementtype]['type'] as $key => &$value) {
 					if ($value == 'radio') {
