@@ -1058,6 +1058,7 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
+		//print $sql;exit;
 		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
 			return -1;

@@ -137,18 +137,6 @@ class AllTests
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
 
-		// Rules into source files content
-		require_once dirname(__FILE__).'/RepositoryTest.php';
-		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
-		require_once dirname(__FILE__).'/DoliDBTest.php';
-		$suite->addTestSuite('DoliDBTest');
-
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
@@ -330,10 +318,23 @@ class AllTests
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
-		// At end because it's the longer
+		// --- At end because it's the longer
+
 		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
+
+		// Rules into source files content
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
+		require_once dirname(__FILE__).'/LangTest.php';
+		$suite->addTestSuite('LangTest');
+		require_once dirname(__FILE__).'/CodingSqlTest.php';
+		$suite->addTestSuite('CodingSqlTest');
+		require_once dirname(__FILE__).'/CodingPhpTest.php';
+		$suite->addTestSuite('CodingPhpTest');
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
 
 		return $suite;
 	}

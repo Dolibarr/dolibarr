@@ -428,7 +428,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',					// TODO Remove module
+		'deplacement' => null,
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',
