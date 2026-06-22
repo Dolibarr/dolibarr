@@ -65,8 +65,6 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 $langs->loadlangs(array('users', 'projects'));
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 $object->fetch_optionals();
 

@@ -66,8 +66,6 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && empty($object->com
 	$object->fetchComments();
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 $object->fetch_optionals();
 
