@@ -139,7 +139,7 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid rgba(128, 128, 128, .15);
-	border-radius: 4px !important;
+	border-radius: 10px !important;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2024-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -657,7 +657,6 @@ if ($resql) {
 					fieldListAccountingReport($fieldlist, $obj, $tabname[$id], 'edit');
 				}
 
-				print '<td></td>';
 				print '<td class="center">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="hidden" name="page" value="'.$page.'">';
