@@ -87,7 +87,7 @@ require_once 'filefunc.inc.php';
  * @var ?string $dolibarr_main_demo
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
@@ -1286,7 +1286,7 @@ if (!defined('NOLOGIN')) {
 	}
 
 	// Check if user is active
-	if ($user->statut < 1) {
+	if ($user->status < 1) {
 		// If not active, we refuse the user
 		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);

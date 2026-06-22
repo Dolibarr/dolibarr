@@ -103,7 +103,7 @@ return [
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/resource_view.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/triggers/interface_99_modAgenda_ActionsAuto.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/delivery/class/delivery.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/emailcollector/class/emailcollector.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/eventorganization/class/conferenceorboothattendee.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
