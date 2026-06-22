@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,6 +178,8 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			$keys = explode(',', $key);
+
+			$newchain = '';
 
 			// Loop on each possible keys (usually one, but can be more in future if we have a list of keys)
 			foreach ($keys as $tmpkey) {
