@@ -113,7 +113,39 @@ if ($mode == 'supplier') {
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', $picto);
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$newcardbutton = '';
+if ($mode == 'supplier') {
+	$urlnew = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/fourn/facture/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/fourn/facture/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $urlnew, '', (int) ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')));
+} else {
+	$urlnew = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/compta/facture/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/compta/facture/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/facture/stats/index.php', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('facture', 'creer'));
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
