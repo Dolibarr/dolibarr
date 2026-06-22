@@ -13694,7 +13694,7 @@ function showSimpleHTMLTable($outputlangs, $object)
 		!property_exists($object->lines[0], "multicurrency_total_ttc") ||
 		!property_exists($object->lines[0], "description") ||
 		!property_exists($object->lines[0], "qty")) {
-			return"";
+		return"";
 	}
 
 	foreach ($object->lines as $order_position) {
@@ -13733,9 +13733,9 @@ function showSimpleHTMLTable($outputlangs, $object)
 	foreach ($object->lines as $index => $order_position) {
 		$position = $index + 1;
 		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$unit = measuringUnitString($order_position->fk_unit, '', '', 1);
+		$unit = measuringUnitString($order_position->fk_unit, '', null, 1);
 		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$discount = $discountIsAvailable ? `<td style="text-align:center">{$order_position->remise_percent}%</td>` : "";
+		$discount = $discountIsAvailable ? '<td style="text-align:center">'.$order_position->remise_percent.'%</td>' : "";
 
 		$table .= '
 			<tr>
