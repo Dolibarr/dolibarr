@@ -1088,6 +1088,7 @@ million=million
 billion=milliard
 trillion=mille milliards
 quadrillion=million de milliards
+centime=centime
 centimes=centimes
 SelectMailModel=Sélectionner un modèle d'e-mail
 SetRef=Définir réf.
