@@ -99,7 +99,7 @@ abstract class CommonObject
 	public $warning;
 
 	/**
-	* @var string[]	Array of warning strings
+	 * @var string[]	Array of warning strings
 	 */
 	public $warnings = array();
 
@@ -7677,7 +7677,7 @@ abstract class CommonObject
 				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
-					$sql.= " SET ".$this->db->sanitize($key)." = null";
+					$sql .= " SET ".$this->db->sanitize($key)." = null";
 				} elseif (!empty($sanitizedGeoDataType['ST_Function'])) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
 					$sql .= " SET ".$this->db->sanitize($key)." = ".$this->db->sanitize($sanitizedGeoDataType['ST_Function'])."('".$this->db->escape($this->array_options["options_".$key])."')";
@@ -9482,7 +9482,6 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 			$value_arr = explode(',', $fieldValue);
-			$value_arr = array_map(array($this->db, 'escape'), $value_arr);
 
 			$selectkey = "rowid";
 			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -9603,7 +9602,7 @@ abstract class CommonObject
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
 						$ef_name = 'options_' . $key;
-						$ef_value = $this->array_options[$ef_name]??'';
+						$ef_value = $this->array_options[$ef_name] ?? '';
 						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {

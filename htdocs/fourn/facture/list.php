@@ -1748,7 +1748,7 @@ while ($i < $imaxinloop) {
 	$userstatic->lastname = $obj->lastname;
 	$userstatic->firstname = $obj->firstname;
 	$userstatic->email = $obj->user_email;
-	$userstatic->statut = $obj->user_statut;
+	$userstatic->statut = $obj->user_statut; // deprecated
 	$userstatic->status = $obj->user_statut;
 	$userstatic->entity = $obj->entity;
 	$userstatic->photo = $obj->photo;
