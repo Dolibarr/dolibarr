@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2021		Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2021		Christophe Battarel 	<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,15 +534,38 @@ if (!empty($def)) {
 	print '</div>';
 }
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setoptions">';
 
-if (empty($def) && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	// The feature to define the numbering module of lot or serial is no enabled because it is not used anywhere in Dolibarr code: You can set it
-	// but the numbering module is not used.
-	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
-	// to the selected product.
-	print $langs->trans("NothingToSetup");
-}
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td class="center" width="60"></td>';
+print "</tr>\n";
 
+print '<tr class="oddeven"><td>';
+print $langs->trans('DisableDisplaySellBy');
+print '</td><td class="right">';
+print ajax_constantonoff('PRODUCT_DISABLE_SELLBY');
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('DisableDisplayEatBy');
+print '</td><td class="right">';
+print ajax_constantonoff('PRODUCT_DISABLE_EATBY');
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowProductLotExtrafields');
+print '</td><td class="right">';
+print ajax_constantonoff('PRODUCT_LOT_SHOW_EXTRAFIELDS');
+print '</td></tr>';
+
+print '</table>';
+
+print '</form>';
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();
