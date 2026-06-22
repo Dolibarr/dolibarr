@@ -68,9 +68,6 @@ if (isModEnabled('order')) {
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
@@ -663,20 +660,6 @@ $listofreferent = array(
 		'project_field' => 'fk_project',
 		'nototal' => 1,
 		'test' => isModEnabled('mrp') && $user->hasRight('mrp', 'read')
-	),
-	'trip' => array(
-		'name' => "TripsAndExpenses",
-		'title' => "ListExpenseReportsAssociatedProject",
-		'class' => 'Deplacement',
-		'table' => 'deplacement',
-		'datefieldname' => 'dated',
-		'margin' => 'minus',
-		'disableamount' => 1,
-		'urlnew' => DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-		'lang' => 'trips',
-		'buttonnew' => 'AddTrip',
-		'testnew' => $user->hasRight('deplacement', 'creer'),
-		'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
 	),
 	'expensereport' => array(
 		'name' => "ExpenseReports",

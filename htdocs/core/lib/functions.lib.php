@@ -1508,7 +1508,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 	global $dolibarr_main_force_https;
 
@@ -12551,6 +12551,16 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 		}
 		return $tmps;
+	} catch (Exception $e) {
+		if ($isObBufferActive) {
+			// Clean up buffer which was left behind due to exception.
+			$tmpo = ob_get_clean();		// This close the buffer
+			$isObBufferActive = false;
+		}
+		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
+		$error .= $e->getMessage();
+		dol_syslog($error, LOG_WARNING);
+		return 'Exception during evaluation: ' . $s;
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
@@ -13534,7 +13544,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 						}
 					}
 					$newres .= ($i2 > 0 ? ' OR ' : '');
-					$newres .= '(';
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= '(';
+					}
 					if ($listofcodes) {
 						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'NOT IN' : 'IN') . " (" . $db->sanitize($listofcodes, 1, 0, 1) . ")";
 					}
@@ -13544,7 +13556,9 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 					if ($listofcodesnot) {
 						$newres .= $db->sanitize($field) . " " . ($mode == -3 ? 'IN ' : 'NOT IN') . " (" . $db->sanitize($listofcodesnot, 1, 0, 1) . ")";
 					}
-					$newres .= ')';
+					if ($listofcodes && $listofcodesnot) {
+						$newres .= ')';
+					}
 					$i2++; // a criteria for 1 more field was added to string
 				}
 				if ($mode == -3) {
