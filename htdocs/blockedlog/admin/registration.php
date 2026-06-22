@@ -139,13 +139,13 @@ if ($action == 'update') {
 		$error++;
 	}
 
-	// Check validity of prof id
-	if ($tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty, 1) <= 0) {
+	// Check validity of prof id if we try to save a new one
+	if ($tmpthirdparty->idprof1 && GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF1') != $tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty, 1) <= 0) {
 		$langs->loadLangs(array("errors", "companies"));
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
 	}
-	if ($tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty, 1) <= 0) {
+	if ($tmpthirdparty->idprof2 && GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF2') != $tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty, 1) <= 0) {
 		$langs->loadLangs(array("errors", "companies"));
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof2, $langs->transcountry("ProfId2Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;

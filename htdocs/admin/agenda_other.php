@@ -306,7 +306,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$name") {
 							print img_picto($langs->trans("Default"), 'on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 						}
 						print '</td>';
 

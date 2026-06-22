@@ -1680,6 +1680,7 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$langs->load("holiday");
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');

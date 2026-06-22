@@ -1780,7 +1780,7 @@ class Commande extends CommonOrder
 			// Rang to use
 			$ranktouse = $rang;
 
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
