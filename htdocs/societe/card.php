@@ -524,6 +524,9 @@ if (empty($reshook)) {
 					$object->country_code = $tmparray['code'];
 					$object->country = $tmparray['label'];
 				}
+				if (empty($object->tva_intra)) {
+					$object->tva_intra = $object->calculateVATNumberFromProperties($object);
+				}
 			}
 		}
 
