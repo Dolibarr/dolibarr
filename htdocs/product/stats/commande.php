@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent MAURY TimGroup	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,11 +84,14 @@ if (GETPOSTISARRAY('search_status')) {
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
+$search_company = GETPOSTINT('search_company');
+if (empty($search_type)) $search_type = -1;
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 	$search_status = '';
+	$search_company = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -183,6 +187,8 @@ if ($id > 0 || !empty($ref)) {
 			}
 			if ($socid) {
 				$sql .= " AND c.fk_soc = ".((int) $socid);
+			} elseif ($search_company > 0) {
+				$sql .= " AND c.fk_soc = ".((int) $search_company);
 			}
 
 			if ($search_status != '') {
@@ -253,6 +259,8 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectOrderStatus($search_status, 1, 'search_status');
+				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
+
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
