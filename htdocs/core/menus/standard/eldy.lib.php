@@ -1949,7 +1949,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 						$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_accountancy_report", $langs->trans("ByProject"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 
-					if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
 						global $mysoc;
 
 						// Multi personalized reports
@@ -2523,15 +2523,6 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add(dolBuildUrl('/holiday/define_holiday.php', ['mainmenu' => 'hrm']), $langs->trans("MenuConfCP"), 1, $user->hasRight('holiday', 'read'), '', $mainmenu, 'holiday_sm');
 			$newmenu->add(dolBuildUrl('/holiday/month_report.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuReportMonth"), 1, $user->hasRight('holiday', 'readall'), '', $mainmenu, 'holiday_sm');
 			$newmenu->add(dolBuildUrl('/holiday/view_log.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuLogCP"), 1, $user->hasRight('holiday', 'define_holiday'), '', $mainmenu, 'holiday_sm');
-		}
-
-		// Trips and expenses (old module)
-		if (isModEnabled('deplacement')) {
-			$langs->load("trips");
-			$newmenu->add(dolBuildUrl('/compta/deplacement/index.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("TripsAndExpenses"), 0, $user->hasRight('deplacement', 'lire'), '', $mainmenu, 'tripsandexpenses', 0, '', '', '', img_picto('', 'trip', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/card.php', ['action' => 'create', 'leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("New"), 1, $user->hasRight('deplacement', 'creer'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/list.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("List"), 1, $user->hasRight('deplacement', 'lire'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/stats/index.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('deplacement', 'lire'));
 		}
 
 		// Expense report

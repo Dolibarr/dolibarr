@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1404,7 +1405,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromProposal($object, User $user)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
@@ -1543,7 +1544,20 @@ class Commande extends CommonOrder
 				// Validate immediately the order
 				if (getDolGlobalString('ORDER_VALID_AFTER_CLOSE_PROPAL')) {
 					$this->fetch($ret);
-					$this->valid($user);
+					$result = $this->valid($user);
+					if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$this->fetch($this->id);
+						$this->fetch_thirdparty();
+
+						$outputlangs = $langs;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->thirdparty->default_lang)) {
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang($this->thirdparty->default_lang);
+							$outputlangs->loadLangs(array('main', 'orders'));
+						}
+
+						$this->generateDocument($this->model_pdf, $outputlangs);
+					}
 				}
 				return $ret;
 			} else {
@@ -1766,7 +1780,7 @@ class Commande extends CommonOrder
 			// Rang to use
 			$ranktouse = $rang;
 
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -2170,6 +2184,10 @@ class Commande extends CommonOrder
 			$line->desc = $remise->description; // Description for the order line
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
+			$line->localtax1_tx = $remise->localtax1_tx;
+			$line->localtax1_type = $remise->localtax1_type;
+			$line->localtax2_tx = $remise->localtax1_tx;
+			$line->localtax2_type = $remise->localtax1_type;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->price = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Predefined Product ID
@@ -2181,6 +2199,8 @@ class Commande extends CommonOrder
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
+			$line->total_localtax1 = -(float) $remise->total_localtax1;
+			$line->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -3291,7 +3311,7 @@ class Commande extends CommonOrder
 			}
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
@@ -3299,8 +3319,10 @@ class Commande extends CommonOrder
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
 						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
+						// Use abs() to keep the rounding consistent for negative qty,
+						// matching what addline() at line 1725 already does (#38782 bug 5).
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
+						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}

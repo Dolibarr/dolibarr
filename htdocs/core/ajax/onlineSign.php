@@ -66,7 +66,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
-$ref = GETPOST('ref', 'aZ09');
+// Match the filter the producer uses in newonlinesign.php:97 ('alpha').
+// Refs such as PR2601-0003 contain a dash, which aZ09 strips. After stripping
+// the dash, dol_verifyHash fails because the security key was built from the
+// full reference, so onlineSign answered 403 even on valid submissions (#31464).
+$ref = GETPOST('ref', 'alpha');
 $mode = GETPOST('mode', 'aZ09');    // 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 $online_sign_name = GETPOST("onlinesignname");
@@ -664,6 +668,13 @@ if ($action == "importSignature") {
 						if ($last_modelpdf == 'sepamandate') {
 							$newpdffilename = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . "_signed-" . $date . ".pdf";
 							$sourcefile = $upload_dir . $langs->transnoentitiesnoconv("SepaMandateShort") . ' ' . dol_sanitizeFileName($object->ref) . "-" . dol_sanitizeFileName($object->rum) . ".pdf";
+						} else {
+							// Fallback for setups using a non-default bank PDF model (eg. "ban"): take the last
+							// generated main document as source and append "_signed-<date>" before the extension.
+							// Without this the signed PDF is never built and the download link keeps pointing at
+							// the unsigned original.
+							$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
+							$newpdffilename = preg_replace('/\.pdf$/i', '_signed-' . $date . '.pdf', $sourcefile);
 						}
 						if (dol_is_file($sourcefile)) {
 							$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);

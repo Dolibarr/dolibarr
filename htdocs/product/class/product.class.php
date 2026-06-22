@@ -1535,8 +1535,11 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
+			// Note that this->oldcopy must be a Product instance (not stdClass), otherwise the method
+			// hasbatch() called below will fatal. Callers may set oldcopy via dol_clone($obj, 2) (which
+			// returns a stdClass with scalar properties only) and then we cannot call methods on it,
+			// so re-clone with native=1 in that case (see issues #38663, #38638).
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id)) || !($this->oldcopy instanceof Product)) {
 				$this->oldcopy = dol_clone($this, 1);	// 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
@@ -1923,7 +1926,7 @@ class Product extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && isModEnabled('variants')) {
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -2723,6 +2726,11 @@ class Product extends CommonObject
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->packaging = (float) $obj->packaging;
 				}
+				// Expose the supplier minimum purchase quantity so callers can enforce qty_min
+				// on top of packaging-multiple rounding (#38783). pfp.quantity is the lowest
+				// qty for which this price line is valid; for "below-min" callers this is the
+				// floor they must round up to.
+				$this->fourn_qty = $obj->quantity;
 				$result = $obj->fk_product;
 				return $result;
 			} else { // If not found
@@ -2788,6 +2796,9 @@ class Product extends CommonObject
 						if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 							$this->packaging = (float) $obj->packaging;
 						}
+						// Expose pfp.quantity so callers can enforce qty_min on top of packaging
+						// rounding (#38783).
+						$this->fourn_qty = $obj->quantity;
 						$result = $obj->fk_product;
 						return $result;
 					} else {
@@ -5688,6 +5699,9 @@ class Product extends CommonObject
 	public function hasVariants()
 	{
 		$nb = 0;
+		if (!isModEnabled('variants')) {
+			return $nb;
+		}
 		$sql = "SELECT count(rowid) as nb FROM ".$this->db->prefix()."product_attribute_combination WHERE fk_product_parent = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('product').")";
 
@@ -6700,6 +6714,9 @@ class Product extends CommonObject
 						break;
 					}
 				}
+			} elseif (getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE') && empty($productCachedList)) {
+				// if all sub product are not stock managed when use parent stock
+				$this->load_stock('warehouseopen');
 			}
 		}
 

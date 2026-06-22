@@ -204,6 +204,9 @@ $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $objec
 	'anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
 ));*/
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -600,7 +603,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendMyObjectRef";
 $modelmail = "myobject";
 $objecttmp = new MyObject($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'myobject'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -637,7 +640,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 

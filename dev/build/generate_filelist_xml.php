@@ -46,18 +46,7 @@ $algo = 'sha256';
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/blockedlog/versionmod.inc.php";
-
-// Array of dir/files to include in the signature of unalterable files
-// This array will be used by the generate_filelist_xml.php script to generate the filelist.xml file
-$arrayofunalterablefiles = array(
-	//array('dir' => dirname(__FILE__).'/../../htdocs/', 'file' => 'version.inc.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/blockedlog', 'file' => 'all', 'regextoinclude' => '(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'file' => 'all', 'regextoinclude' => 'llx_blockedlog.*(\.php|\.sql)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/triggers', 'file' => 'interface_50_modBlockedlog_ActionsBlockedLog.class.php'),
-	array('dir' => dirname(__FILE__).'/../../htdocs/core/class', 'file' => 'all', 'regextoinclude' => '(interfaces.class.php|commontrigger.class.php)$', 'regextoexclude' => ''),
-	array('dir' => dirname(__FILE__).'/../../htdocs/takepos', 'file' => 'receipt.php')
-);
-
+/** @var array $arrayofunalterablefiles */
 
 
 /*
@@ -292,6 +281,7 @@ if ($release) {
 	$regextoinclude = '\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|yaml|toml|bak|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest|py)$';
 	$regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|escpos-php\/doc|escpos-php\/example|escpos-php\/test|conf|install\/doctemplates|install\/mysql\/migration|install\/filelist.*|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 
+	//$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'type_fullname');
 	$files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 
 	$dir = '';
@@ -338,10 +328,11 @@ if ($release) {
 	$regextoexclude = '(custom|documents|conf|install)$';  // Exclude dirs
 	$files = dol_dir_list(dirname(__FILE__).'/../../scripts/', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 	$dir = '';
+
 	foreach ($files as $filetmp) {
 		$file = $filetmp['fullname'];
 		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-		$newdir = str_replace(dirname(__FILE__).'/../../scripts', '', dirname($file));
+		$newdir = str_replace(dirname(__FILE__).'/../../scripts', '', $newdir);
 		if ($newdir != $dir) {
 			if ($needtoclose) {
 				fwrite($fp, '  </dir>'."\n");
@@ -388,10 +379,13 @@ foreach ($arrayofunalterablefiles as $entry) {
 		$regextoexclude = $entry['regextoexclude'];
 		$files = dol_dir_list($entry['dir'], 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 		$dir = '';
+
 		foreach ($files as $filetmp) {
 			$file = $filetmp['fullname'];
 			$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-			$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+			$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', $newdir);
+			$newdir = str_replace(dirname(dirname(dirname(__FILE__))).'/htdocs', '', $newdir);
+
 			if ($newdir != $dir) {
 				if ($needtoclose) {
 					if ($release && isset($fp)) {
@@ -423,7 +417,9 @@ foreach ($arrayofunalterablefiles as $entry) {
 		$file = $entry['dir'].'/'.$entry['file'];
 		$dir = '';
 		$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
-		$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+		$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', $newdir);
+		$newdir = str_replace(dirname(dirname(dirname(__FILE__))).'/htdocs', '', $newdir);
+
 		if (!file_exists($file)) {
 			print "Error file ".$file." does not exists.";
 			exit(1);

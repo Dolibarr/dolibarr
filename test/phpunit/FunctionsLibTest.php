@@ -1433,12 +1433,12 @@ class FunctionsLibTest extends CommonClassTest
 		// Test RULE 2 (FR-FR)
 		print __METHOD__." rule=RULE 2 FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-FR - Check that the dictionary is set to have default VAT to 20');
 
 		// Test RULE 2 (FR-MC)
 		print __METHOD__." rule=RULE 2 FR-MC\n";
 		$vat = get_default_tva($companyfr, $companymc, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-MC');
 
 		// Test RULE 3 (FR-DE company)
 		print __METHOD__." rule=RULE 3 FR-DE\n";

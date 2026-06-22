@@ -24,6 +24,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2914,7 +2915,10 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description of the invoice line
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-
+			$facligne->localtax1_tx = $remise->localtax1_tx;
+			$facligne->localtax1_type = (int) $remise->localtax1_type;
+			$facligne->localtax2_tx = $remise->localtax1_tx;
+			$facligne->localtax2_type = (int) $remise->localtax1_type;
 			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
@@ -2943,6 +2947,8 @@ class Facture extends CommonInvoice
 			$facligne->total_ht  = -(float) $remise->total_ht;
 			$facligne->total_tva = -(float) $remise->total_tva;
 			$facligne->total_ttc = -(float) $remise->total_ttc;
+			$facligne->total_localtax1 = -(float) $remise->total_localtax1;
+			$facligne->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
@@ -4404,7 +4410,7 @@ class Facture extends CommonInvoice
 
 			// Rank to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -4726,7 +4732,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 			$apply_abs_price_on_credit_note = false;
-			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
 
@@ -5814,7 +5820,7 @@ class Facture extends CommonInvoice
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
 		$sql .= ' AND situation_counter < '.((int) $this->situation_counter);
-		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
+		$sql .= ' AND entity = '.($this->entity > 0 ? ((int) $this->entity) : ((int) $conf->entity));
 		$resql = $this->db->query($sql);
 		$res = array();
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -5892,7 +5898,7 @@ class Facture extends CommonInvoice
 			// No point in testing anything if we're not inside a cycle
 			$sql = 'SELECT max(situation_counter) FROM '.MAIN_DB_PREFIX.'facture';
 			$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
-			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
+			$sql .= ' AND entity = '.($this->entity > 0 ? ((int) $this->entity) : ((int) $conf->entity));
 			$resql = $this->db->query($sql);
 
 			if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {

@@ -41,12 +41,16 @@ if (! defined('NOREQUIREUSER')) {
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql'); // This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
+
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 print 'DOL_MAIN_URL_ROOT='.DOL_MAIN_URL_ROOT."\n";  // constant will be used by other tests
 
-
 if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
+	exit(1);
+}
+if (isModEnabled('debugbar')) {
+	print "Error: Debugbar module should not be enabled. It generates troubles in db management.\n";
 	exit(1);
 }
 if (!isModEnabled('member')) {
@@ -67,9 +71,23 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 $conf->global->MAIN_UMASK = '666';
+$now = dol_now();
 
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 dolibarr_set_const($db, 'API_ENABLE_LOGIN_API', 1);
+
+
+dolibarr_set_const($db, 'MAIN_FIRST_REGISTRATION_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
+dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_NAME', 'MyBigCompanyByPHPUnit');
+dolibarr_set_const($db, 'BLOCKEDLOG_REGISTRATION_EMAIL', 'mybigcompany@example.com');
+dolibarr_set_const($db, 'MAIN_INFO_SIREN', 'phpunit123');
+dolibarr_set_const($db, 'MAIN_INFO_SIRET', 'phpunit12312345');
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'blockedlog-1.end'";
+$db->query($sql);
+
+// Test there is no webhook enabled
+// TODO
+
 
 
 /**
@@ -123,22 +141,11 @@ class AllTests
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
 
-		// Rules into source files content
-		require_once dirname(__FILE__).'/RepositoryTest.php';
-		$suite->addTestSuite('RepositoryTest');
-		require_once dirname(__FILE__).'/LangTest.php';
-		$suite->addTestSuite('LangTest');
-		require_once dirname(__FILE__).'/CodingSqlTest.php';
-		$suite->addTestSuite('CodingSqlTest');
-		require_once dirname(__FILE__).'/CodingPhpTest.php';
-		$suite->addTestSuite('CodingPhpTest');
-		require_once dirname(__FILE__).'/DoliDBTest.php';
-		$suite->addTestSuite('DoliDBTest');
-
 		require_once dirname(__FILE__).'/SecurityTest.php';
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
+
 		require_once dirname(__FILE__).'/SecurityLoginTest.php';
 		$suite->addTestSuite('SecurityLoginTest');
 
@@ -315,8 +322,24 @@ class AllTests
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
 
-		// At end because it's the longer
+		// --- At end because it's the longer
+
+		// Rules into source files content
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
+		require_once dirname(__FILE__).'/LangTest.php';
+		$suite->addTestSuite('LangTest');
+		require_once dirname(__FILE__).'/CodingSqlTest.php';
+		$suite->addTestSuite('CodingSqlTest');
+		require_once dirname(__FILE__).'/CodingPhpTest.php';
+		$suite->addTestSuite('CodingPhpTest');
+		require_once dirname(__FILE__).'/DoliDBTest.php';
+		$suite->addTestSuite('DoliDBTest');
+
+		// --- At very end, the LAST ONE.
+
 		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
+		// For example, this call init that run DDL functionsand break commit/rollback features.
 		require_once dirname(__FILE__).'/ModulesTest.php';
 		$suite->addTestSuite('ModulesTest');
 

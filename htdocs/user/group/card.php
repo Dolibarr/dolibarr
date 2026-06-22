@@ -33,6 +33,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -40,7 +41,6 @@ require '../../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
@@ -74,7 +74,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $userid = GETPOSTINT('user');
 
 $object = new UserGroup($db);
-$extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 

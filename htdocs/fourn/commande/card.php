@@ -43,6 +43,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -115,22 +116,17 @@ $datelivraison = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), GETPO
 
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
 
 $object = new CommandeFournisseur($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-if ($user->socid) {
-	$socid = $user->socid;
-}
 
 // Load object
 if ($id > 0 || !empty($ref)) {

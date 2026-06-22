@@ -490,7 +490,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
