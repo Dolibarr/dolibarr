@@ -344,7 +344,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
 			}
 			if ($search_type != '' && $search_type != '-1') {
-				$sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
+				$sql .= " AND f.type = ".((int) $search_type);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);

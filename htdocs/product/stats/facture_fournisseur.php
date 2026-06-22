@@ -178,7 +178,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ' AND YEAR(f.datef) = '.((int) $search_year);
 			}
 			if ($search_type != '' && $search_type != '-1') {
-				$sql .= " AND f.type IN (".$db->sanitize($db->escape($search_type)).")";
+				$sql .= " AND f.type = ".((int) $search_type);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -242,7 +242,7 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
-								print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.fournisseur:=:1)', 1);
+				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.fournisseur:=:1)', 1);
 				print $langs->trans('Type').' : ';
 				$listtype = array(
 					FactureFournisseur::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
