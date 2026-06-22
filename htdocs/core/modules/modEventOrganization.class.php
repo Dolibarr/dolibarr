@@ -284,7 +284,7 @@ class modEventOrganization extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=project',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
-			'titre' => 'ConferenceOrBooth',
+			'titre' => 'EventOrganizationConfOrBoothes',
 			'prefix' => img_picto('', 'conferenceorbooth', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforbooth',
@@ -323,7 +323,7 @@ class modEventOrganization extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=project',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
-			'titre' => 'ConferenceOrBoothAttendee',
+			'titre' => 'ConferenceOrBoothAttendeesShort',
 			'prefix' => img_picto('', 'contact', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforattendee',
