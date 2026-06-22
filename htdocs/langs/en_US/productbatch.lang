@@ -53,3 +53,6 @@ IlligalQtyForSerialNumbers= Stock correction required because unique serial numb
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
 BatchInformationNotfound=Batch information not found
+DisableDisplaySellBy=Disable display SellBy on lists
+DisableDisplayEatBy=Disable display EatBy on lists
+ShowProductLotExtrafields=Show Batch/lot Extrafields on lists
