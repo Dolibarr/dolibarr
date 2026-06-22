@@ -969,6 +969,8 @@ if (is_array($blocks)) {
 			$firstrecorddate = 0;
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+			'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
 			print '<tr class="liste_titre totalblockedlog" style="border-top: 1px solid #222">';
 			print '<td colspan="'.$colspan.'"';

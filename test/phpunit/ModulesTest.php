@@ -27,8 +27,7 @@
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
+
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
@@ -59,6 +58,8 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
+
+		print 'setUpBeforeClass '.$db->transaction_opened."\n";
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
@@ -70,6 +71,22 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 		//print var_export($infotable, true)."\n";
 	}
 
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass(): void
+	{
+		global $db;
+
+		$db->rollback();
+		print 'tearDownAfterClass '.$db->transaction_opened."\n";
+		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
+			print get_called_class()."::".__FUNCTION__.PHP_EOL;
+		}
+	}
+
 
 	/**
 	 * Return list of modules for which to test initialisation
@@ -79,6 +96,13 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	public function moduleInitListProvider()
 	{
 		$full_list = self::VALID_MODULE_MAPPING;
+		/*
+		$full_list = array(
+		'category' => 'Categorie',
+		'debugbar' => 'DebugBar',
+		);
+		*/
+
 		$filtered_list = array_map(function ($value) {
 			return array($value);
 		}, array_filter($full_list, function ($value) {
@@ -91,7 +115,6 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	 * testModulesInit
 	 *
 	 * @param string	$modlabel	Module label (class is mod<modlabel>)
-	 *
 	 * @return int
 	 *
 	 * @dataProvider moduleInitListProvider
@@ -99,6 +122,10 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 	public function testModulesInit(string $modlabel)
 	{
 		global $conf,$user,$langs,$db,$mysoc;
+
+		// WARNING: This test is doing init that include DDL and break transactions.So rollback may have no effect.
+
+		//$modlabel = 'DebugBar';
 
 		$conf = $this->savconf;
 		$user = $this->savuser;
@@ -120,6 +147,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 
 		$this->assertLessThan($result, 0, $modlabel." ".$mod->error);
 
+
 		if ($modlabel == 'User') {
 			print __METHOD__." test table llx_user exists after Webhook init\n";
 			$infotable = $db->DDLListTablesFull($db->database_name);
@@ -133,7 +161,11 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 			$this->assertGreaterThan(0, count($infotable));
 		}
 
-		if (in_array($modlabel, array('Ldap', 'MailmanSpip'))) {
+		// WARNING: This test is doing init that include DDL and break transactions.So rollback may have no effect.
+		// This is why we force disabling modules.
+
+		// Disable modules
+		if (in_array($modlabel, array('Ldap', 'MailmanSpip', 'DebugBar'))) {
 			$result = $mod->remove();
 		}
 

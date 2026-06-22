@@ -369,7 +369,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 		$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
 
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
-			//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+			//throw new Exception('blockedlog.php Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
 			print '<!-- HMAC key can t be decoded -->';
 		} else {	// $hmac_secret_key start with 'BLOCKEDLOGHMAC...' so it is a valid value
 			print '<!-- Success to decode HMAC key. It is encrypted with an old obfuscation method, we migrate it. -->';
