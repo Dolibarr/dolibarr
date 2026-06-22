@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +393,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => $user->statut,
+						'statut' => (int) $user->statut,
+						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
 						//'rights' => $user->rights,
@@ -723,7 +724,8 @@ function setUserPassword($authentication, $shortuser)
 	if (!$error) {
 		$fuser->loadRights();
 
-		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
+		if ($fuser->hasRight('user', 'user', 'password')
+			|| ($fuser->hasRight('user', 'self', 'password') && $fuser->login == $shortuser['login'])) {
 			$userstat = new User($db);
 			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {

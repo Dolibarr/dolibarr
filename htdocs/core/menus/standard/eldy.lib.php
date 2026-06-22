@@ -2525,15 +2525,6 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add(dolBuildUrl('/holiday/view_log.php', ['mainmenu' => 'hrm', 'leftmenu' => 'holiday']), $langs->trans("MenuLogCP"), 1, $user->hasRight('holiday', 'define_holiday'), '', $mainmenu, 'holiday_sm');
 		}
 
-		// Trips and expenses (old module)
-		if (isModEnabled('deplacement')) {
-			$langs->load("trips");
-			$newmenu->add(dolBuildUrl('/compta/deplacement/index.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("TripsAndExpenses"), 0, $user->hasRight('deplacement', 'lire'), '', $mainmenu, 'tripsandexpenses', 0, '', '', '', img_picto('', 'trip', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/card.php', ['action' => 'create', 'leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("New"), 1, $user->hasRight('deplacement', 'creer'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/list.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("List"), 1, $user->hasRight('deplacement', 'lire'));
-			$newmenu->add(dolBuildUrl('/compta/deplacement/stats/index.php', ['leftmenu' => 'tripsandexpenses', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('deplacement', 'lire'));
-		}
-
 		// Expense report
 		if (isModEnabled('expensereport')) {
 			$langs->loadLangs(array("trips", "bills"));

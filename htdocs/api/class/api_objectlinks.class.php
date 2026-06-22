@@ -219,10 +219,10 @@ class ObjectLinks extends DolibarrApi
 			if ($this->objectlink->targettype == 'conferenceorboothattendee') {
 				$tgttype = 'projet';
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'creer') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'write')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'creer') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'write')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
