@@ -249,7 +249,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'eventorganization', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganization',
-			'url' => '',
+			'url' => '/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -288,7 +288,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'conferenceorbooth', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforbooth',
-			'url' => '',
+			'url' => '/eventorganization/conferenceorbooth_list.php?mainmenu=project',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -327,7 +327,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'contact', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforattendee',
-			'url' => '',
+			'url' => '/eventorganization/conferenceorboothattendee_list.php?withproject=0&mainmenu=project',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

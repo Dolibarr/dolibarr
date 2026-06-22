@@ -1413,7 +1413,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=4", $langs->trans("PropalStatusBilled"), 2, $user->hasRight('propal', 'read'));
 				//$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->hasRight('propal',  'read'));
 			}
-			$newmenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->hasRight('propal', 'read'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->hasRight('propal', 'read'));
+			}
 		}
 
 		// Customers orders
@@ -1435,10 +1437,12 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			if (empty($user->socid)) {
 				$newmenu->add("/commande/list_det.php?leftmenu=orders", $langs->trans("ListOrderLigne"), 1, $user->hasRight('commande', 'lire'));
 			}
-			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'commande', 'export'));
-			} else {
-				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+					$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'commande', 'export'));
+				} else {
+					$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'lire'));
+				}
 			}
 
 			// Categories
@@ -1454,7 +1458,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/supplier_proposal/index.php?leftmenu=propals_supplier", $langs->trans("SupplierProposalsShort"), 0, $user->hasRight('supplier_proposal', 'lire'), '', $mainmenu, 'propals_supplier', 300, '', '', '', img_picto('', 'supplier_proposal', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/supplier_proposal/card.php?action=create&amp;leftmenu=supplier_proposals", $langs->trans("SupplierProposalNew"), 1, $user->hasRight('supplier_proposal', 'creer'));
 			$newmenu->add("/supplier_proposal/list.php?leftmenu=supplier_proposals", $langs->trans("List"), 1, $user->hasRight('supplier_proposal', 'lire'));
-			$newmenu->add("/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('supplier_proposal', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/comm/propal/stats/index.php?leftmenu=supplier_proposals&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('supplier_proposal', 'lire'));
+			}
 		}
 
 		// Suppliers orders
@@ -1483,10 +1489,12 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 			// Billed is another field. We should add instead a dedicated filter on list. if ($usemenuhider || empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("Billed"), 2, $user->hasRight('fournisseur',  'commande', 'lire'));
 
-			if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $permOrderRightExport);
-			} else {
-				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $permOrderRightRead);
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
+					$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $permOrderRightExport);
+				} else {
+					$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $permOrderRightRead);
+				}
 			}
 
 			// Categories
@@ -1509,7 +1517,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=4%26filter=expired", $langs->trans("MenuExpiredServices"), 2, $user->hasRight('contrat', 'lire'));
 				$newmenu->add("/contrat/services_list.php?leftmenu=contracts&amp;search_status=5", $langs->trans("MenuClosedServices"), 2, $user->hasRight('contrat', 'lire'));
 			}
-			$newmenu->add("/contrat/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('contrat', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/contrat/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('contrat', 'lire'));
+			}
 		}
 
 		// Interventions
@@ -1519,7 +1529,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->hasRight('ficheinter', 'creer'), '', '', '', 201);
 			$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 202);
 			$newmenu->add("/fichinter/card-rec.php?leftmenu=ficheinter", $langs->trans("ListOfTemplates"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 203);
-			$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 204);
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->hasRight('ficheinter', 'lire'), '', '', '', 204);
+			}
 		}
 	}
 }
@@ -1565,7 +1577,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/compta/paiement/rapport.php?leftmenu=customers_bills_payment_report", $langs->trans("Reportings"), 2, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_payment_report');
 			}
 
-			$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_stats');
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_stats');
+			}
 
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
@@ -1599,7 +1613,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_payment_report", $langs->trans("Reportings"), 2, $permInvoiceRightRead, '', $mainmenu, 'suppliers_bills_payment_report');
 			}
 
-			$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $permInvoiceRightRead, '', $mainmenu, 'suppliers_bills_stats');
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $permInvoiceRightRead, '', $mainmenu, 'suppliers_bills_stats');
+			}
 
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
@@ -1635,9 +1651,10 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/don/card.php?leftmenu=donations&action=create", $langs->trans("NewDonation"), 1, $user->hasRight('don', 'creer'));
 				$newmenu->add("/don/list.php?leftmenu=donations", $langs->trans("List"), 1, $user->hasRight('don', 'lire'));
 				$newmenu->add("/don/paiement/list.php?leftmenu=donations", $langs->trans("Payments"), 1, $user->hasRight('don', 'lire'));
-				$newmenu->add("/don/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('don', 'lire'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/don/stats/index.php", $langs->trans("Statistics"), 1, $user->hasRight('don', 'lire'));
+				}
 			}
-			// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->hasRight('don',  'lire'));
 		}
 
 		// Taxes and social contributions
@@ -2237,7 +2254,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('product', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->hasRight('product', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->hasRight('product', 'read'));
+				}
 			}
 
 			// Categories
@@ -2260,7 +2279,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->hasRight('service', 'read'));
 			}
 			if (isModEnabled('propal') || isModEnabled('order') || isModEnabled('invoice') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/product/stats/index.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service', 'read'));
+				}
 			}
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
@@ -2324,7 +2345,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=1", $langs->trans("StatusSendingValidatedShort"), 2, $user->hasRight('expedition', 'lire'));
 				$newmenu->add("/expedition/list.php?leftmenu=sendings&search_status=2", $langs->trans("StatusSendingProcessedShort"), 2, $user->hasRight('expedition', 'lire'));
 			}
-			$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->hasRight('expedition', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1, $user->hasRight('expedition', 'lire'));
+			}
 		}
 
 		// Receptions
@@ -2342,7 +2365,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "receptions") {
 				$newmenu->add("/reception/list.php?leftmenu=receptions&search_status=2", $langs->trans("StatusReceptionProcessedShort"), 2, $user->hasRight('reception', 'lire'));
 			}
-			$newmenu->add("/reception/stats/index.php?leftmenu=receptions", $langs->trans("Statistics"), 1, $user->hasRight('reception', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add("/reception/stats/index.php?leftmenu=receptions", $langs->trans("Statistics"), 1, $user->hasRight('reception', 'lire'));
+			}
 		}
 	}
 }
@@ -2434,7 +2459,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add(dolBuildUrl('/projet/list.php', ['mainmenu' => 'project', 'leftmenu' => 'list', 'search_usage_opportunity' => 1, 'search_status' => 99]), $langs->trans("List"), 2, $showmode);
 			}
 
-			$newmenu->add(dolBuildUrl('/projet/stats/index.php', ['leftmenu' => 'projects']), $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/projet/stats/index.php', ['leftmenu' => 'projects']), $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
+			}
 
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
@@ -2447,7 +2474,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/projet/activity/index.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("Activities"), 0, $user->hasRight('projet', 'lire'), '', 'project', 'tasks', 0, '', '', '', img_picto('', 'projecttask', 'class="paddingright pictofixedwidth"'));
 				$newmenu->add("/projet/tasks.php?leftmenu=tasks&action=create", $langs->trans("NewTask"), 1, $user->hasRight('projet', 'creer'));
 				$newmenu->add("/projet/tasks/list.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->hasRight('projet', 'lire'));
-				$newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
+				}
 
 				$optionTimesheet = getDolGlobalString('PROJECT_OPEN_ALWAYS_ON_TIMESHEET', "perweek");
 				$newmenu->add("/projet/activity/".$optionTimesheet.".php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("TimeEntry"), 0, $user->hasRight('projet', 'lire'), '', 'project', 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="paddingright pictofixedwidth"'));
@@ -2542,7 +2571,9 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			if (isModEnabled('bank')) {
 				$newmenu->add(dolBuildUrl('/expensereport/payment/list.php', ['leftmenu' => 'expensereport_payments', 'mainmenu' => 'hrm']), $langs->trans("Payments"), 1, (int) ($user->hasRight('expensereport', 'read')));
 			}
-			$newmenu->add(dolBuildUrl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/expensereport/stats/index.php', ['leftmenu' => 'expensereport', 'mainmenu' => 'hrm']), $langs->trans("Statistics"), 1, $user->hasRight('expensereport', 'lire'));
+			}
 		}
 
 		if (isModEnabled('project')) {
