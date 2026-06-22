@@ -972,6 +972,12 @@ class ActionComm extends CommonObject
 				$this->transparency			= $obj->transparency;
 
 				$this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
+				if (!empty($obj->socname)) {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+					$this->thirdparty = new Societe($this->db);
+					$this->thirdparty->id = $obj->fk_soc;
+					$this->thirdparty->name = $obj->socname;
+				}
 				$this->contact_id = $obj->fk_contact; // To have fetch_contact method working
 				$this->fk_project = $obj->fk_project; // To have fetch_projet method working
 
@@ -1721,8 +1727,9 @@ class ActionComm extends CommonObject
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
-		if (!empty($this->label)) {
-			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($this->label);
+		$translatedlabel = $this->getTranslatedLabel();
+		if (!empty($translatedlabel)) {
+			$datas['title'] = '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($translatedlabel);
 		}
 		if (!empty($labeltype)) {
 			$datas['labeltype'] = '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
@@ -1832,7 +1839,7 @@ class ActionComm extends CommonObject
 			$option = 'nolink';
 		}
 
-		$label = $this->label;
+		$label = $this->getTranslatedLabel();
 
 		$result = '';
 
@@ -1908,13 +1915,13 @@ class ActionComm extends CommonObject
 				if (empty($this->label)) {
 					$label = $labeltype;
 				} else {
-					$label = $this->label;
+					$label = $this->getTranslatedLabel();
 				}
 			}
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
+				$labelshort = dol_trunc(empty($label) ? $labeltype : $label, $maxlength);
 			}
 		}
 
@@ -1944,6 +1951,35 @@ class ActionComm extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Return the label translated with current user language when the event was created from a known automatic trigger.
+	 *
+	 * @return string
+	 */
+	public function getTranslatedLabel()
+	{
+		global $conf, $langs;
+
+		if ($this->code == 'AC_COMPANY_CREATE' && !empty($this->thirdparty->name)) {
+			$langs->loadLangs(array('agenda', 'companies'));
+			$translatedlabel = $langs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
+			$defaultlabels = array($translatedlabel, 'Third party '.$this->thirdparty->name.' created');
+
+			foreach (array('en_US', 'fr_FR') as $langcode) {
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang($langcode);
+				$outputlangs->loadLangs(array('agenda', 'companies'));
+				$defaultlabels[] = $outputlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
+			}
+
+			if (in_array($this->label, array_unique($defaultlabels), true)) {
+				return $translatedlabel;
+			}
+		}
+
+		return $this->label;
 	}
 
 	/**
