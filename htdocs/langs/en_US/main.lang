@@ -1096,6 +1096,7 @@ million=million
 billion=billion
 trillion=trillion
 quadrillion=quadrillion
+centime=cent
 centimes=cents
 SelectMailModel=Select an email template
 SetRef=Set ref
