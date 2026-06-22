@@ -335,4 +335,6 @@ UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 
 -- Performance: speed up variants/list.php on multi-entity installs with many attributes (see #29985)
 ALTER TABLE llx_product_attribute ADD INDEX idx_product_attribute_entity (entity);
 
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
 -- end of migration
