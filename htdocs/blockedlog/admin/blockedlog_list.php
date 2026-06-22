@@ -275,7 +275,10 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_amount) {
-	$param .= '&search_module_source='.urlencode($search_module_source);
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if (!empty($search_module_source)) {
+	$param .= '&search_module_source='.urlencode(implode(',', $search_module_source));
 }
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
