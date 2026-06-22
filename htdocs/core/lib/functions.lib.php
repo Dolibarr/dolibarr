@@ -13690,33 +13690,32 @@ function showSimpleOrderTable($outputlangs, $object)
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
 
-	if(!property_exists($object->lines[0], "remise_percent") ||
-		!property_exists($object->lines[0], "fk_unit") || 
+	if (!property_exists($object->lines[0], "remise_percent") ||
+		!property_exists($object->lines[0], "fk_unit") ||
 		!property_exists($object->lines[0], "multicurrency_total_ttc") ||
 		!property_exists($object->lines[0], "description") ||
 		!property_exists($object->lines[0], "qty")) {
-			return"";
+		return"";
 	}
-	
-	foreach($object->lines as $order_position) { 
 
-		if(!property_exists($order_position, "price")){
+	foreach ($object->lines as $order_position) {
+		if (!property_exists($order_position, "price")) {
 			$orderPositionHasNoPrice = true;
 			break;
 		}
 
-		if(!empty($order_position->remise_percent)){
+		if (!empty($order_position->remise_percent)) {
 			$discountIsAvailable = true;
 			break;
 		}
-	}; 
+	};
 
-	if($orderPositionHasNoPrice){
+	if ($orderPositionHasNoPrice) {
 		return "";
 	}
 
 	$discountHeader = $discountIsAvailable ? `<th style="width:120px">{$outputlangs->trans("Discount")}</th>` : "";
-	
+
 	$table = '<table border="0" cellpadding="1" cellspacing="1">';
 
 	$table .= <<<TABLEHEADER
@@ -13734,11 +13733,10 @@ function showSimpleOrderTable($outputlangs, $object)
 	<tbody>
 	TABLEHEADER;
 
-	foreach($object->lines as $index => $order_position) { 
-
+	foreach ($object->lines as $index => $order_position) {
 		$position = $index + 1;
 		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$unit = measuringUnitString($order_position->fk_unit,'','',1);
+		$unit = measuringUnitString($order_position->fk_unit, '', null, 1);
 		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
 		$discount = $discountIsAvailable ? `<td style="text-align:center">{$order_position->remise_percent}%</td>` : "";
 
@@ -13752,10 +13750,9 @@ function showSimpleOrderTable($outputlangs, $object)
 				<td style="text-align:right">$unit</td>
 				{$discount}
 				<td style="text-align:right">$total</td>
-				
+
 			</tr>
 		ORDERPOSITION;
-
 	}
 	$table .= '</tbody></table>';
 	return $table;
