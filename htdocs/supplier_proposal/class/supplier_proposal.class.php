@@ -1336,11 +1336,11 @@ class SupplierProposal extends CommonObject
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
+				$this->db->free($resql);
+
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-
-				$this->db->free($resql);
 
 				$this->lines = array();
 
@@ -1367,7 +1367,6 @@ class SupplierProposal extends CommonObject
 
 						$line->rowid = $objp->rowid; // deprecated
 						$line->id = $objp->rowid;
-						$line->fetch_optionals();
 						$line->fk_supplier_proposal = $objp->fk_supplier_proposal;
 						$line->fk_parent_line = $objp->fk_parent_line;
 						$line->product_type     = $objp->product_type;
@@ -1417,6 +1416,8 @@ class SupplierProposal extends CommonObject
 						$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 						$line->fk_unit = $objp->fk_unit;
 
+						$line->fetch_optionals();
+
 						$this->lines[$i] = $line;
 
 						$i++;
@@ -1426,10 +1427,6 @@ class SupplierProposal extends CommonObject
 					$this->error = $this->db->error();
 					return -1;
 				}
-
-				// Retrieve all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
 
 				return 1;
 			}
