@@ -9,6 +9,8 @@
  * Copyright (C) 2021       Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +279,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_pro
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'; // Link on unique key
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as ef on pl.rowid = ef.fk_object'; 
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot_extrafields as ef on pl.rowid = ef.fk_object';
 
 // Add table from hooks
 $parameters = array();
@@ -866,7 +868,7 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
-	
+
 	if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 		// Extra fields
 		$obj = $objp; // trick for not change more thing
