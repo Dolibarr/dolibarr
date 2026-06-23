@@ -56,6 +56,13 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refWithThirdparty = $objectlink->ref_client ? dolPrintHTML($objectlink->ref_client).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -68,7 +75,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
-	echo '<td class="linkedcol-ref tdoverflowmax150">'.$objectlink->ref_client.'</td>';
+	echo '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.$refWithThirdparty.'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('commande', 'lire')) {

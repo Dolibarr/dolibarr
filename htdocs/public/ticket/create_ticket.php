@@ -262,14 +262,18 @@ if (empty($reshook)) {
 		}
 
 
+		// Check value of input fields
 		$fieldsToCheck = [
 			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
 			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
 			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
 			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
-			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
 		];
-
+		if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+			$fieldsToCheck['message'] = ['check' => 'restricthtml', 'langs' => 'Message'];
+		} else {
+			$fieldsToCheck['message'] = ['check' => 'alphanohtml', 'langs' => 'Message'];
+		}
 		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
@@ -328,7 +332,11 @@ if (empty($reshook)) {
 			$object->db->begin();
 
 			$object->subject = GETPOST("subject", "alphanohtml");
-			$object->message = GETPOST("message", "restricthtml");
+			if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+				$object->message = GETPOST("message", "restricthtml");
+			} else {
+				$object->message = GETPOST("message", "alphanohtml");
+			}
 			$object->origin_email = $origin_email;
 			$object->email_from = $origin_email;
 
@@ -501,7 +509,7 @@ if (empty($reshook)) {
 							}
 							$message_admin .= '</ul>';
 
-							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.dolPrintText($object->message).'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';

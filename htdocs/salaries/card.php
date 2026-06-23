@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+/* Copyright (C) 2011-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
@@ -562,6 +562,34 @@ if ($action == 'create' && $permissiontoadd) {
 				});
 				onAutoCreatePaiementChange();
 			});
+
+			// Month shortcut keys for datesp / dateep
+			window.setSalaryDatePeriod = function(offset) {
+			    var now = new Date();
+			    var year  = now.getFullYear();
+			    var month = now.getMonth() + 1 + parseInt(offset);
+
+			    if (month < 1)  { month = 12; year--; }
+			    if (month > 12) { month = 1;  year++; }
+
+			    var lastDay = new Date(year, month, 0).getDate();
+
+			    var mm = String(month).padStart(2, "0");
+			    var ld = String(lastDay).padStart(2, "0");
+			    var yy = String(year);
+
+			    // Start date
+			    $("#datespday").val("01");
+			    $("#datespmonth").val(mm);
+			    $("#datespyear").val(yy);
+			    $("#datesp").val("01/" + mm + "/" + yy);
+
+			    // End date
+			    $("#dateepday").val(ld);
+			    $("#dateepmonth").val(mm);
+			    $("#dateepyear").val(yy);
+			    $("#dateep").val(ld + "/" + mm + "/" + yy);
+			};
 			';
 		print '</script>'."\n";
 	}
@@ -587,6 +615,13 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td>';
 	print $form->editfieldkey('DateStartPeriod', 'datesp', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate($datesp, "datesp", 0, 0, 0, 'add');
+
+	// Shortcut buttons: previous month / current month / next month
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<button type="button" class="dpInvisibleButtons" style="color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;" onclick="setSalaryDatePeriod(-1)">'.$langs->trans('PreviousMonthShort').'</button> ';
+		print '<button type="button" class="dpInvisibleButtons" style="color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;" onclick="setSalaryDatePeriod(0)">'.$langs->trans('CurrentMonthShort').'</button> ';
+		print '<button type="button" class="dpInvisibleButtons" style="color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;" onclick="setSalaryDatePeriod(1)">'.$langs->trans('NextMonthShort').'</button>';
+	}
 	print '</td></tr>';
 
 	// Date end period
@@ -759,7 +794,7 @@ if ($id > 0) {
 
 		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
-		//Add buttons to fill start and end dates
+		// Add buttons to fill start and end dates
 		$formconfirm .= "<script>
 			// Buttons for start date: previous month, current month, previous week, current week
 			$('#clone_date_start').after(

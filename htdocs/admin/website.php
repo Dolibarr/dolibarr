@@ -177,7 +177,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -194,10 +194,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->create($user); */
 
 		// Add new entry
-		$sql = "INSERT INTO ".$tabname[$id]." (";
+		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $tabrowid[$id].",";
+			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
 		$sql .= $tabfieldinsert[$id];
 		$sql .= ", status, date_creation)";
@@ -256,10 +256,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->fetch($rowid);
 
 		// Modify entry
-		$sql = "UPDATE ".$tabname[$id]." SET ";
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $tabrowid[$id]."=";
+			$sql .= $db->sanitize($tabrowid[$id])." = ";
 			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
@@ -278,7 +278,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -363,7 +363,7 @@ if ($action == $acts[0]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 1 WHERE rowid = ".((int) $rowid);
 	} else {
 		$sql = null;
 	}
@@ -387,7 +387,7 @@ if ($action == $acts[1]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 0 WHERE rowid = ".((int) $rowid);
 	} else {
 		$sql = null;
 	}

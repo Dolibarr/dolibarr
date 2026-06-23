@@ -486,9 +486,10 @@ $db->close();
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	top_httphead();
 

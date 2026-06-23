@@ -246,8 +246,8 @@ if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'edit') {
 	print '<td class="valeur">';
 	print '<input type="text" class="flat width200" name="amount" value="'.price($object->amount).'"></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td>';
 	print '<td class="valeur">';
 	print '<input type="text" class="flat" name="note" value="'.$object->note_public.'"></td></tr>';
 
@@ -344,8 +344,8 @@ if ($rowid && $action != 'edit') {
 	// Amount
 	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
+	// Note
+	print '<tr><td>'.$langs->trans("Note").'</td><td class="valeur sensiblehtmlcontent">'.dolPrintHTML((string) $object->note_public).'</td></tr>';
 
 	// Bank line
 	if (isModEnabled("bank") && (getDolGlobalString('ADHERENT_BANK_USE') || $object->fk_bank)) {
@@ -403,9 +403,19 @@ if ($rowid && $action != 'edit') {
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
-	//$tmparray = $form->showLinkToObjectBlock($object, null, array('subscription'), 1);
-	$somethingshown = $form->showLinkedObjectBlock($object, '');
+	$object->fetchObjectLinked();
 
+	print '<!-- Show links to link members thirdpartys elements -->';
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('societe'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
+	$compatibleImportElementsList = array();
+	$id = $object->fk_adherent;
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+	// without that include PHP Warning:  Undefined variable $id in /var/www/html/core/actions_dellink.inc.php on line 47
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 	print '</div><div class="fichehalfright">';
 

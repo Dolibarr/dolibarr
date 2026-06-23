@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Valentin Grimal         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,18 +21,12 @@
 
 /**
  * \file       htdocs/fourn/commande/messaging.php
- * \ingroup    order
- *		\brief      Page with events on order
+ * \ingroup    supplier order
+ * \brief      Page with events on order
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 /**
  * @var Conf $conf
@@ -41,6 +35,13 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
@@ -90,12 +91,12 @@ $hookmanager->initHooks(array('orderagenda', 'globalcard'));
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->order->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity] . "/" . $object->id;
+	$upload_dir = getMultidirOutput($object) . "/" . $object->id;
 }
 
 // Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();    // For external user, no check is done on company because readability is managed by public status of order and assignment.
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);

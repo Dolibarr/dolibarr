@@ -15,16 +15,15 @@
 // ======================
 // This parameter defines the root URL of your Dolibarr index.php page without ending "/".
 // It must link to the directory htdocs
-// In most cases, this is autodetected but it's still required
-// * to show full url bookmarks for some services (ie: agenda rss export url, ...)
-// * or when using Apache dir aliases (autodetect fails)
-// * or when using nginx (autodetect fails)
+// In most cases, root URL is autodetected by application but this parameter remains required to:
+// * show full url bookmarks for some services (ie: agenda rss export url, ...)
+// * when using Apache dir aliases (autodetect fails)
+// * when using nginx (autodetect may fails)
 //
 // Examples:
-// $dolibarr_main_url_root='http://localhost';
-// $dolibarr_main_url_root='http://mydolibarrvirtualhost';
-// $dolibarr_main_url_root='http://myserver/dolibarr/htdocs';
-// $dolibarr_main_url_root='http://myserver/dolibarralias';
+// $dolibarr_main_url_root='https://mydolibarrvirtualhost';
+// $dolibarr_main_url_root='https://myserver/dolibarr/htdocs';
+// $dolibarr_main_url_root='https://myserver/dolibarralias';
 //
 $dolibarr_main_url_root='';
 
@@ -130,12 +129,13 @@ $dolibarr_main_db_user='';
 // dolibarr_main_db_pass
 // =====================
 // This parameter contains password used to read and write into Dolibarr database.
-// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode.
-// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt.
+// If content is 'crypted:...', the password is encrypted/decrypted with dol_encode/dol_decode function.
+// If content is 'dolcrypt:...', the password is encrypted/decrypted with dolEncrypt/dolDecrypt function.
 //
 // Examples:
 // $dolibarr_main_db_pass='myadminpass';
 // $dolibarr_main_db_pass='myuserpassword';
+// $dolibarr_main_db_pass='dolcrypt:abcdef123456789';
 //
 $dolibarr_main_db_pass='';
 
@@ -194,7 +194,7 @@ $dolibarr_main_db_readonly=0;
 
 // dolibarr_main_dolcrypt_key
 // ==========================
-// An secret key to encrypt/decrypt data with the dolcrypt() method, for reversible encryption.
+// An secret key to encrypt/decrypt data with the dolEncrypt()/dolDecrypt() method, for reversible encryption.
 // This value is also never visible and never propagated outside of Dolibarr, it is used as key for the dolcrypt encryption.
 // If you restore a complete system backup (from a SQL dump), you must also restore this value because some data are encrypted into database by using this key.
 // WARNING: Changing this value will make some sensitive encrypted values in database wrong (no way to read it without the correct key, so you
@@ -209,8 +209,8 @@ $dolibarr_main_dolcrypt_key='';
 // dolibarr_main_instance_unique_id
 // ================================
 // An ID that is unique for each installation.
-// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to get
-// a unique hashed key for URLs, application will hash the value to hash concatenated with this string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
+// This value is also never visible and never propagated outside of Dolibarr. It can be used as a salt/key for some encryption (For example to generate
+// a unique hashed key for URLs, application may hash params including this key as salt. Example: dol_hash('dolibarr'+dolibarr_main_instance_unique_id+value)
 // Default value: randomly defined during installation
 // Examples:
 // $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
@@ -311,6 +311,18 @@ $dolibarr_main_force_https='0';
 //
 $dolibarr_main_prod='1';
 
+// dolibarr_login_badcharunauthorized
+// ==================================
+// List of characters forbidden in Dolibarr user logins.
+// This is a security-sensitive setting. Prefer LDAP/SSO mapping to the email field when possible.
+// If this parameter is not defined, the secure default value is used: ,@<>"'
+// Set it to an empty string only if you explicitly want to allow all characters.
+// Set it to 'MAIN_LOGIN_BADCHARUNAUTHORIZED' only if you explicitly trust the Dolibarr hidden setup value.
+// Examples:
+// $dolibarr_login_badcharunauthorized=',@<>"\'';
+// $dolibarr_login_badcharunauthorized='';
+// $dolibarr_login_badcharunauthorized='MAIN_LOGIN_BADCHARUNAUTHORIZED';
+
 // dolibarr_main_restrict_os_commands
 // ==================================
 // To restrict commands you can execute by the backup feature, enter allowed command here.
@@ -323,7 +335,7 @@ $dolibarr_main_prod='1';
 $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
 
 // dolibarr_main_restrict_eval_methods
-// ==================================
+// ===================================
 // A whitelist of functions and methods to restrict the commands you can execute in a custom calculated fields, like "computed fields" of
 // extrafields or string conditions of extrafields.
 // Default value: 'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, round, dol_now, preg_match'
@@ -413,12 +425,29 @@ $dolibarr_cron_allow_cli='0';
 // By default for security purpose, it is not possible to add or edit PHP dynamic content into a website (even if user has permission for this). To be able
 // to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
 // 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
-// 1 will allow custom PHP inside website features, but only if dangerous PHP system functions are disabled (using the PHP disable_functions parameter)
-// 2 will allow custom PHP inside website features even if your PHP setup does not protect you against dangerous system calls (this may be dangerous if you don't have a RCE protection like SELnux or Apparmor).
+// 1 will allow custom PHP inside website features, but only if all RCE PHP functions in the "exec" family are disabled (using the PHP disable_functions parameter)
+// 2 will allow custom PHP inside website features, even if RCE PHP functions in the "exec" family are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
 // Default value: '0'
 // Examples: '0', '1' or '2'
-
+//
 // $dolibarr_website_allow_custom_php='0';
+
+// dolibarr_allow_localurl_for_webhooks
+// ====================================
+// Allow webhooks to use a local url
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_allow_localurl_for_webhooks = '0';
+
+// dolibarr_allow_unsecured_select_in_extrafields_filter
+// =====================================================
+// Allow the use of subrequests inside USF IN filters
+// Default value: '0'
+// Examples: '1'
+//
+// $dolibarr_allow_unsecured_select_in_extrafields_filter = '0';
+
 
 
 // php_session_save_handler

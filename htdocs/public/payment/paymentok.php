@@ -369,12 +369,6 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
-// For Paybox
-if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
-	// TODO Add a check to validate that payment is ok.
-	$ispaymentok = true; // We will do the rest of code
-}
-
 // For Stripe
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
@@ -396,7 +390,9 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	}
 
 	// Check we are coming from the newpaymentpage
-	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
+	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
+	if (empty(GETPOST('payment_intent', 'alphanohtml')) && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
@@ -422,7 +418,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
@@ -614,10 +616,6 @@ if ($ispaymentok) {
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
-						// - If not found, take the default amount
-						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
-							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
-						}
 						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 						//if (empty($amount)) {
 						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
@@ -1208,7 +1206,7 @@ if ($ispaymentok) {
 							// TODO Send a warning email.
 						}
 
-						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+						$object->classifyBilled($user);		// The invoice has been created from the order so total is the same, so we can classify order to billed (even if payment may be partial).
 
 						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
 
@@ -1323,7 +1321,7 @@ if ($ispaymentok) {
 				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'paypal') {
-				$paymentTypeId = getDolGlobalInt('global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
+				$paymentTypeId = getDolGlobalInt('PAYPAL_PAYMENT_MODE_FOR_PAYMENTS');
 			}
 			if ($paymentmethod == 'stripe') {
 				$paymentTypeId = getDolGlobalInt('STRIPE_PAYMENT_MODE_FOR_PAYMENTS');
@@ -2335,7 +2333,7 @@ if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentok of the website.
 
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
@@ -2350,7 +2348,7 @@ if (!empty($doactionsthenredirect)) {
 	} else {
 		// Redirect to an error page
 		$randomseckey = getRandomPassword(true, null, 20);
-		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key propagated between paymentok.php to another page like a paymentko of the website.
 
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {

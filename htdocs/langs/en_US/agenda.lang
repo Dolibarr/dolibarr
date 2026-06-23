@@ -216,3 +216,8 @@ EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
 BookCalSystem=Online booking
 BookCalInitHelp=To start, go into menu to create a new Calendar with availabilities...
 PublicLinkForBooking=Public link for booking
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

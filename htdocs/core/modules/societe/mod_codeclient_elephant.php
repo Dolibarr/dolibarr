@@ -112,7 +112,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Setting of prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantcutomer').'</td>';
+		$texte .= '<td class="nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantcutomer').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
@@ -120,7 +120,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Setting of prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantsupplier').'</td>';
+		$texte .= '<td class="nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantsupplier').'</td>';
 		$texte .= '</tr>';
 
 		// Date of switch to that numbering model
@@ -154,7 +154,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
 		$texte .= '</label>';
 		$texte .= '</td>';
-		$texte .= '<td class="nowraponall right">';
+		$texte .= '<td class="nowraponall">';
 		$texte .= '<div class="'.($isEnabled ? '' : 'hideobject ').' inline-block" id="elephantchoosedate">';
 		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 0, $disabled ? 1 : 0);
 		$texte .= '</div>';

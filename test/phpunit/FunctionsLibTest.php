@@ -271,15 +271,17 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
-		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is unset
-		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 0;
+		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is set
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 1;
 
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
-		// If MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER is set (default)
-		$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
@@ -1431,12 +1433,12 @@ class FunctionsLibTest extends CommonClassTest
 		// Test RULE 2 (FR-FR)
 		print __METHOD__." rule=RULE 2 FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-FR - Check that the dictionary is set to have default VAT to 20');
 
 		// Test RULE 2 (FR-MC)
 		print __METHOD__." rule=RULE 2 FR-MC\n";
 		$vat = get_default_tva($companyfr, $companymc, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-MC');
 
 		// Test RULE 3 (FR-DE company)
 		print __METHOD__." rule=RULE 3 FR-DE\n";

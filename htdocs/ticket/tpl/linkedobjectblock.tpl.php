@@ -54,6 +54,13 @@ $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
+	$refWithThirdparty = $objectlink->track_id ? dolPrintHTML($objectlink->track_id).'<br>' : '';
+
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+	$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
+	$refWithThirdparty .= '</span>';
 
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -63,13 +70,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="linkedcol-element tdoverflowmax125"><?php echo $langs->trans("Ticket"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref tdoverflowmax125 center" title="<?php echo dolPrintHTMLForAttribute($objectlink->track_id); ?>"><?php echo dolPrintHTML($objectlink->track_id); ?></td>
+		<td class="linkedcol-ref tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttribute($objectlink->track_id); ?>"><?php echo $refWithThirdparty; ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
-		<?php
-		//$objectlink->socid = $objectlink->fk_soc;
-		//$objectlink->fetch_thirdparty();
-		?>
-		<td class="linkedcol-amount right"><?php //echo $objectlink->thirdparty->getNomUrl(1);?></td>
+		<td class="linkedcol-amount right"></td>
 		<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
 		<td class="linkedcol-action right">
 			<?php
