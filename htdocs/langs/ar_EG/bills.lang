@@ -8,7 +8,6 @@ BillsSuppliersUnpaidForCompany=فواتير الموردين غير المدفو
 BillsStatistics=احصائيات فواتير العملاء
 BillsStatisticsSuppliers=احصائيات فواتير الموردين
 InvoiceDeposit=فاتورة دفعة أولى
-InvoiceDepositAsk=فاتورة دفعة أولى
 InvoiceReplacement=فاتورة استبدال
 ReplacementInvoice=فاتورة استبدال
 CustomersInvoices=فواتير العميل

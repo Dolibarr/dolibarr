@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
  */
 
 /**
- * 	\defgroup   produit     Module product variants
+ * 	\defgroup   product     Module product variants
  *  \brief      Module to manage product combinations based on product attributes
  *  \file       htdocs/core/modules/modVariants.class.php
- *  \ingroup    produit
+ *  \ingroup    product
  *  \brief      Description and activation file for the module product variants
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

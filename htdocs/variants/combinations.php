@@ -3,7 +3,7 @@
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.cla
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
 $langs->loadLangs(array("products", "other"));
 
@@ -169,7 +168,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -723,7 +722,7 @@ if (!empty($id) || !empty($ref)) {
 				   <td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>" spellcheck="false"></td>
 			</tr>
 			<?php
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
@@ -905,7 +904,7 @@ if (!empty($id) || !empty($ref)) {
 			<tr class="liste_titre">
 				<?php
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="liste_titre center">';
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
@@ -922,7 +921,7 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre"></td>
 				<?php
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre center">';
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
@@ -937,7 +936,7 @@ if (!empty($id) || !empty($ref)) {
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
@@ -951,8 +950,11 @@ if (!empty($id) || !empty($ref)) {
 
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
 				print '<td>';
-				foreach ($comb2val->fetchByFkCombination($currcomb->id) as $pc2v) {
-					print dol_htmlentities($pc2v).'<br>';
+				$arraycomb = $comb2val->fetchByFkCombination($currcomb->id);
+				if (is_array($arraycomb)) {
+					foreach ($arraycomb as $pc2v) {
+						print dolPrintHTML((string) $pc2v).'<br>';		// $pc2v is object ProductCombination2ValuePair, the (string) use the __toString to output it.
+					}
 				}
 				print '</td>';
 				print '<td class="right">'.($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '').'</td>';
@@ -968,7 +970,7 @@ if (!empty($id) || !empty($ref)) {
 				print '</td>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;

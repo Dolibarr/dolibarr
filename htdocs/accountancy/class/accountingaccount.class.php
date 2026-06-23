@@ -73,6 +73,11 @@ class AccountingAccount extends CommonObject
 	public $rowid;
 
 	/**
+	 * @var string Ref
+	 */
+	public $ref;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer

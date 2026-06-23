@@ -43,9 +43,10 @@ create table llx_commande
   source					smallint,						-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut					smallint  DEFAULT 0,
   amount_ht					double(24,8) DEFAULT 0,
-  remise_percent			real      DEFAULT 0,
-  remise_absolue			real      DEFAULT 0,
-  remise					real      DEFAULT 0,
+
+  remise_percent			real      DEFAULT 0,            -- deprecated (not used)
+  remise_absolue			real      DEFAULT 0,            -- deprecated (not used)
+  remise					real      DEFAULT 0,            -- deprecated (not used)
 
   total_tva                 double(24,8)     DEFAULT 0,		-- total tax
   localtax1					double(24,8)     DEFAULT 0,		-- total local tax 2

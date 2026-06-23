@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -525,10 +525,9 @@ class FichinterRec extends Fichinter
 				$pu = $pu_ttc;
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
 
 			$total_ht  = $tabprice[0];

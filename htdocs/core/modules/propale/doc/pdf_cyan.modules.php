@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -133,6 +133,10 @@ class pdf_cyan extends ModelePDFPropales
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
+
+		$this->showAmountBeforeDiscount = getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') || getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT_PROPALE') ? 0 : 1;
+		$this->showDiscountAmount =  getDolGlobalInt('MAIN_HIDE_AMOUNT_DISCOUNT') || getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT_PROPALE') ? 0 : 1;
+
 
 		if ($mysoc === null) {
 			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
@@ -319,7 +323,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfCommercialProposalTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfCommercialProposalTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -1311,26 +1315,30 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		if ($total_discount_on_lines > 0) {
-			// Show total NET before discount
-			$pdf->SetFillColor(255, 255, 255);
-			$pdf->SetXY($col1x, $tab2_top);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
-			$pdf->SetXY($col2x, $tab2_top);
+			if ($this->showAmountBeforeDiscount) {
+				// Show total NET before discount
+				$pdf->SetFillColor(255, 255, 255);
+				$pdf->SetXY($col1x, $tab2_top);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount") . (is_object($outputlangsbis) ? ' / ' . $outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
+				$pdf->SetXY($col2x, $tab2_top);
 
-			$total_before_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? ($object->multicurrency_total_ht + $multicurrency_total_discount_on_lines) : ($object->total_ht + $total_discount_on_lines));
-			$pdf->MultiCell($largcol2, $tab2_hl, price($total_before_discount_to_show, 0, $outputlangs), 0, 'R', true);
+				$total_before_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? ($object->multicurrency_total_ht + $multicurrency_total_discount_on_lines) : ($object->total_ht + $total_discount_on_lines));
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_before_discount_to_show, 0, $outputlangs), 0, 'R', true);
 
-			$index++;
+				$index++;
+			}
 
-			$pdf->SetFillColor(255, 255, 255);
-			$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);
-			$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
+			if ($this->showDiscountAmount) {
+				$pdf->SetFillColor(255, 255, 255);
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount") . (is_object($outputlangsbis) ? ' / ' . $outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl);
 
-			$total_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $multicurrency_total_discount_on_lines : $total_discount_on_lines);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($total_discount_to_show, 0, $outputlangs), 0, 'R', true);
+				$total_discount_to_show = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $multicurrency_total_discount_on_lines : $total_discount_on_lines);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_discount_to_show, 0, $outputlangs), 0, 'R', true);
 
-			$index++;
+				$index++;
+			}
 		}
 
 		// Total HT
@@ -1775,11 +1783,11 @@ class pdf_cyan extends ModelePDFPropales
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
-			if (!empty($object->project->ref)) {
+			if (!empty($object->project->title)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ". $object->project->title, '', 'R');
 			}
 		}
 
@@ -1790,7 +1798,7 @@ class pdf_cyan extends ModelePDFPropales
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ". $object->project->ref, '', 'R');
 			}
 		}
 
@@ -1820,14 +1828,14 @@ class pdf_cyan extends ModelePDFPropales
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_compta_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
 		}
 
 		// Get contact
@@ -1861,7 +1869,7 @@ class pdf_cyan extends ModelePDFPropales
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user($arrayidcontact[0]);
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= $labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
 				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
 				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
 				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
@@ -1981,7 +1989,7 @@ class pdf_cyan extends ModelePDFPropales
 				if (!empty($carac_client_shipping)) {
 					$posy += $hautcadre;
 
-					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+					$hautcadre -= 5; // Height for the shipping address does not need to be as high as main box
 
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
@@ -2057,7 +2065,7 @@ class pdf_cyan extends ModelePDFPropales
 		if (getDolGlobalString('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING')) {
 			// Can be retrieve with getSignatureAppearanceArray()
 			// Can be also detected by putting the mouse over the area when using evince pdf reader
-			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl * 3);
+			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl + 3, $largcol, $tab_hl * 3);
 		}
 
 		return ($tab_hl * 7);

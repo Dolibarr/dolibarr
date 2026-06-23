@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010       François Legastelois    <flegastelois@teclib.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,20 +266,24 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $time) {
-			if (intval($time) > 0) {
+			$time = (int) $time;
+			if ($time > 0) {
 				$matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches)) {
 					$id = $matches[1];
 					if ($id > 0) {
+						if (!array_key_exists($id, $timespent_duration)) {
+							$timespent_duration[$id] = 0;
+						}
 						// We store HOURS in seconds
 						if ($matches[2] == 'hour') {
-							$timespent_duration[$id] += (int) $time * 60 * 60;
+							$timespent_duration[$id] += $time * 60 * 60;
 						}
 
 						// We store MINUTES in seconds
 						if ($matches[2] == 'min') {
-							$timespent_duration[$id] += (int) $time * 60;
+							$timespent_duration[$id] += $time * 60;
 						}
 					}
 				}
@@ -298,7 +302,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 				unset($object->progress);
 			}
 
-			$object->timespent_duration = $val;
+			$object->timespent_duration = (int) $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
 			if (GETPOSTINT($key."hour") != '' && GETPOSTINT($key."hour") >= 0) {	// If hour was entered
@@ -473,11 +477,11 @@ if ($mine || ($usertoprocess->id == $user->id)) {
 	}
 }
 if ($mine || ($usertoprocess->id == $user->id)) {
-	$s .= $langs->trans("OnlyYourTaskAreVisible").'<br>';
+	$s .= $langs->trans("OnlyYourTaskAreVisible");
 } else {
-	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
+	$s .= $langs->trans("AllTaskVisibleButEditIfYouAreAssigned");
 }
-print info_admin($s, 0, 0, 'info', 'nomargintop hideonsmartphone');
+print info_admin($s, 0, 0, 'info', 'nomargintop nomarginbottom hideonsmartphone');
 
 print dol_get_fiche_end();
 
@@ -532,12 +536,12 @@ if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright pictofixedwidth"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'" spellcheck="false">';
 	$moreforfilter .= '</div>';
 }
 
@@ -572,12 +576,12 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 print '<tr class="liste_titre_filter">';
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75"  name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 }
 if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
-	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="maxwidth75"  name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
-print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 // TASK fields
 $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
@@ -587,7 +591,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<td class="liste_titre"></td>';

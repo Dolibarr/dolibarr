@@ -50,8 +50,6 @@ require_once __DIR__.'/../webportal.main.inc.php'; // __DIR__ allow this script 
 /**
  * @var Conf $conf
  * @var Translate $langs
- *
- * @var	string	$dolibarr_nocache
  */
 
 /**
@@ -85,11 +83,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 ?>
 @charset "UTF-8";
 
@@ -106,6 +100,11 @@ if (empty($dolibarr_nocache)) {
 /**
 This file can overwrite default pico css
  */
+
+
+.maxwidthdate {
+	max-width: 110px;
+}
 
 
 /**
@@ -162,8 +161,6 @@ ul.menu-entries-alt {
 		display: block;
 	}
 }
-
-
 
 
 /**

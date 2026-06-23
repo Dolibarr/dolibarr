@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1179,7 +1179,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$sql .= $where;
 	}
 	if ($sqlwhere) {
-		$sql .= " AND ".$sqlwhere;
+		$sanitizedsqlwhere = $sqlwhere;
+		$sql .= " AND ".$sanitizedsqlwhere;
 	}
 
 	//print $sql.'<br>';
@@ -1291,7 +1292,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 			// Get counter in database
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
-			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
+			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
 			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
@@ -2007,7 +2008,11 @@ function dol_buildlogin($lastname, $firstname)
 		$charforseparator = '';
 	}
 
-	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
+	if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {			// flastname
+		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
+		$login .= strtolower(dol_string_unaccent($lastname));
+		$login = dol_string_nospecial($login, ''); // For special names
+	} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {	// f.lastname
 		$login = strtolower(dol_string_unaccent(dol_trunc($firstname, 1, 'right', 'UTF-8', 1)));
 		$login .= ($login ? $charforseparator : '');
 		$login .= strtolower(dol_string_unaccent($lastname));
@@ -2031,14 +2036,12 @@ function dol_buildlogin($lastname, $firstname)
  */
 function getSoapParams()
 {
-	global $conf;
-
 	$params = array();
 	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
-	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$proxyhost = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_HOST'));
+	$proxyport = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PORT'));
+	$proxyuser = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_USER'));
+	$proxypass = (!$proxyuse ? false : getDolGlobalString('MAIN_PROXY_PASS'));
 	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
 	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');
@@ -2246,7 +2249,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = "SELECT rowid, ".$db->sanitize($fieldfkparent)." as parent_id FROM ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2267,7 +2270,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
 
 		// Check loops on each other
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid"; // So we update only records linked to themself
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree)." SET ".$db->sanitize($fieldfkparent)." = 0 WHERE ".$db->sanitize($fieldfkparent)." = rowid"; // So we update only records linked to themself
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($resql);
@@ -3119,7 +3122,7 @@ function csvClean($newvalue, $charset = '', $separator = '')
  * Function to output HTML to make an ajax call to make registration
  *
  * @param	string					$constanttosavelastko		Name of constant to save the last call that failed
- * @param	string					$constanttosavefirstok		Name of cosntant to save the first try that succeed
+ * @param	string					$constanttosavefirstok		Name of constant to save the first try that succeed
  * @param	array<string,string>	$arrayofdata				Array of key-value to add as parameter in the ajax call
  * @param	int						$forceping					Value 1 to force the ping, even if it was already done
  * @return 	void
@@ -3129,13 +3132,18 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 	global $dolibarr_distrib;
 	global $db, $conf;
 
-	$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics and inventory purpose only.
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+
+	$algo = 'sha256';
+	$hash_unique_id = getHashUniqueIdOfRegistration($algo);
 
 	// Disable ping if $constanttosavelastpingko is set and is recent (this month)
 	if (getDolGlobalString($constanttosavelastko) && substr(getDolGlobalString($constanttosavelastko), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
-		print "\n<!-- NO JS CODE TO ENABLE the call for ".$constanttosavefirstok.". An error already occurred this month (".$constanttosavelastko." is set), we will re-try next month. -->\n";
+		print "\n";
+		print '<!-- printCodeForPing: NO JS CODE TO ENABLE the call for '.$constanttosavefirstok.'. An error already occurred this month ('.$constanttosavelastko.' is set), we will re-try next month. -->'."\n";
 	} else {
-		print "\n".'<!-- Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
+		print "\n";
+		print '<!-- printCodeForPing: Includes JS to make ajax call for '.$constanttosavefirstok.'. forceping='.$forceping.' '.$constanttosavefirstok.'='.getDolGlobalString($constanttosavefirstok).' '.$constanttosavelastko.'='.getDolGlobalString($constanttosavelastko).' -->'."\n";
 		print "<!-- JS CODE TO ENABLE the call -->\n";
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 		// Try to guess the distrib used
@@ -3161,10 +3169,12 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							print $datakey.": '".dol_escape_js($dataval)."',\n";
 						}
 						?>
-						hash_algo: 'dol_hash-sha256',
+						hash_algo: 'dol_hash-<?php echo $algo; ?>',
 						hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>',
 						version: '<?php echo (float) DOL_VERSION; ?>',
 						version_full: '<?php echo DOL_VERSION; ?>',
+						versionblockedlog: '<?php echo (float) getBlockedLogVersionToShow(); ?>',
+						versionblockedlog_full: '<?php echo getBlockedLogVersionToShow(); ?>',
 						entity: '<?php echo (int) $conf->entity; ?>',
 						dbtype: '<?php echo dol_escape_js($db->type); ?>',
 						php_version: '<?php echo dol_escape_js(phpversion()); ?>',
@@ -3174,7 +3184,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 						token: 'notrequired'
 					},
 					success: function (data, status, xhr) {   // success callback function (data contains body of response)
-							console.log("Ping ok");
+							console.log("Ping ok - we call pingresult to save this");
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
@@ -3184,7 +3194,7 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 							});
 					},
 					error: function (data,status,xhr) {   // error callback function
-							console.log("Ping ko: " + data);
+							console.log("Ping ko - we call pingresult to save this: " + data);
 							$.ajax({
 								method: 'GET',
 								url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
@@ -3197,5 +3207,324 @@ function printCodeForPing($constanttosavelastko, $constanttosavefirstok, $arrayo
 			});
 			</script>
 		<?php
+	}
+}
+
+
+/**
+ * Check that a zip file is Dolibarr rule compliant
+ *
+ * @param   ZipArchive  $zip                The object ZipArchive
+ * @param   string      $originalfilename   The name of file submitted
+ * @param   string      $zipfile            The name of file in disk (into temp directory)
+ * @param   Translate   $langs              Output language
+ * @return  array{error:int,errormsg:?string,upload:int} Array with result
+ */
+function validateZipFile($zip, $originalfilename, $zipfile, $langs)
+{
+	global $count, $results;
+
+	$error = 0;
+	$return = array(
+		'error' => 0,
+		'errormsg' => '',  // Concatenating to this, so must be string
+		'upload' => 0
+	);
+
+	dol_syslog("Validate zip file " . $originalfilename);
+	$subdir = basename($zipfile);
+	//$dir='/home/dolibarr/dolistore.com/tmp/'.$subdir;
+	$dir = sys_get_temp_dir().'/unzip-dir-'.$subdir;
+	mkdir($dir, 0777, true);
+	$zip->extractTo($dir.'/');
+	$zip->close();
+
+	// Zip content of a module should be ./mymodule or ./htdocs/mymodule
+
+	// But we first we check if we need to change dir (for zip that are ./module/htdocs/module instead of ./htdocs/module)
+	if ($dh = opendir($dir)) {
+		$nbofsubdirs = 0;
+		while (($file = readdir($dh)) !== false) {
+			if (in_array($file, array('.', '..'))) {
+				continue;
+			}
+			dol_syslog("We check if dir ".$dir.'/'.$file.'/htdocs exists');
+			if (is_dir($dir.'/'.$file.'/htdocs')) {
+				dol_syslog('Dir '.$dir.'/'.$file.'/htdocs exists. So we use dir='.$dir.'/'.$file.' as root for package to analyse.');
+				$dir = $dir.'/'.$file;
+				break;
+			}
+		}
+		closedir($dh);
+	}
+
+	// Now $dir contains root of zip, so mymodule or htdocs/mymodule
+	// Analyze files
+	$ismodule = $istheme = 0;
+
+	$reg = array();
+	if (preg_match('/^module([a-zA-Z0-9]*)_([-a-zA-Z0-9]+)\-([0-9][0-9\.]*)\.zip$/i', $originalfilename, $reg)) {
+		$ismodule = $reg[2];
+		$extmoduleornot = $reg[1];
+		if ($extmoduleornot) {
+			$ismodule = 0;
+		}
+	}
+	if (preg_match('/^theme_([-a-zA-Z0-9]+)\-([0-9][0-9\.]*)\.zip$/i', $originalfilename, $reg)) {
+		$istheme = $reg[1];
+	}
+
+	dol_syslog("Now dir is the directory with root of the zip = ".$dir, LOG_DEBUG);
+
+	$dirmoduletheme = $dir.'/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
+	if (is_dir($dir.'/htdocs')) {
+		$dirmoduletheme = $dir.'/htdocs/'.($ismodule ? $ismodule : ($istheme ? $istheme : ''));
+	}
+	$dirmodulethemeroot = dirname($dirmoduletheme);
+	dol_syslog("Now dirmodulethemeroot = dir where is the module dir = ".$dirmodulethemeroot." and dirmoduletheme = dir with name of the module = ".$dirmoduletheme, LOG_DEBUG);
+
+	if (! empty($ismodule) || ! empty($istheme)) {
+		dol_syslog("file ismodule=".$ismodule." istheme=".$istheme);
+		// It's a module or theme file
+		if ((! empty($ismodule) || ! empty($istheme)) && $dh = opendir($dir)) {
+			$nbofsubdirs = 0;
+			$direrror = '';
+			while (($file = readdir($dh)) !== false) {
+				if (in_array($file, array('.', '..', 'README', 'README.txt', 'README.md'))) {
+					continue;
+				}
+				dol_syslog("subdirs found for package:".$file);
+				$nbofsubdirs++;
+				$alloweddirs = array('htdocs', 'docs', 'scripts', 'test', 'build', ($ismodule ? $ismodule : ($istheme ? $istheme : '')));
+				if (! in_array($file, $alloweddirs)) {
+					$error++;
+					$direrror = $file;
+					break;
+				}
+			}
+			if ($error) {
+				$return['errormsg'] .= $langs->trans("UnvalidZipFile") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleContents") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleDirectoryRule1") . '<br>';
+				$return['errormsg'] .= $langs->trans("moduleDirectoryRule2") . '<br>';
+				$return['errormsg'] .= $langs->trans("directoryFound").' '.$direrror.'<br><br>'."\n";
+			}
+			closedir($dh);
+		}
+
+		// It's a module or theme file (check htdocs directory)
+		if (! $error && ! empty($ismodule) && is_dir($dirmodulethemeroot) && $dh = opendir($dirmodulethemeroot)) {
+			dol_syslog("Scanning module dir ".$dirmodulethemeroot." to ensure there is only one directory (with name of the module) in the root path");
+			$nbofsubdir = 0;
+			$lastdirfound = '';
+
+			while (($file = readdir($dh)) !== false) {
+				if (in_array($file, array('.', '..', 'README', 'README.txt', 'README.md'))) {
+					continue;
+				}
+				$lastdirfound = $file;
+				dol_syslog("Found file or dir ".$file);
+				$nbofsubdir++;
+			}
+			closedir($dh);
+			if ($nbofsubdir >= 2 && ! is_file($dirmoduletheme.'/metapackage.conf')) {
+				$return['errormsg'] .= $langs->trans("rootDirWarning", $nbofsubdir, basename($dirmoduletheme)) . '<br><br>';
+				$error++;
+			}
+
+			if ($ismodule != $lastdirfound) {
+				if (is_file($dirmoduletheme.'/metapackage.conf')) {
+					// Check each dir found is inside list of modules
+				} else {
+					$return['errormsg'] .= $langs->trans("moduleNameMismatch", $lastdirfound, $ismodule) .'<br><br>';
+					$error++;
+				}
+			}
+		}
+		// Check "custom" compatibility
+		if (! $error && ! empty($ismodule)) {
+			dol_syslog("check the good practice of code");
+			$count = 0;
+			$results = array();
+
+			$search = array(
+				0 => array(
+					'name'       => 'main',
+					'types'      => array('php'),
+					'pattern'    => '(require|include).*(main|master)\.inc\.php',
+					'multiple'   => true     // Means we must find 0 or several times the pattern. Error if found 1 occurrence.
+				),
+				1 => array(
+					'name'       => 'dol_document_root',
+					'types'      => array('php', 'class.php', 'lib.php', 'modules.php'),
+					'pattern'    => '(require|include)(_once)?\(?(.*)[\"\']+\)?;',
+					'id'         => 3,           // eg. Use $regs[3] for test instead $regs[1]
+					'contain'    => array('DOL_DOCUMENT_ROOT'),
+					'notcontain' => array($ismodule),
+					'strict'     => true         // if true ('contain' && 'notcontain'), if false or not use ('contain' || 'notcontain')
+				)
+			);
+
+			analyzeDirContents($dir, $search, $results, $count);     // This include a global $count
+
+			dol_syslog("count of errors = ".$count);
+
+			if (!empty($count)) { // count of errors is not null
+				foreach ($results as $result) {
+					if ($result['testname'] == 'main') {
+						$return['errormsg'] .= $langs->trans("mainIncludeError", $result['filename'], $ismodule) .'<br><br>';
+					} elseif ($result['testname'] == 'dol_include_once') {
+						$return['errormsg'] .= $langs->trans("dolIncludeError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $result['line'].'<br><br>';
+					} elseif ($result['testname'] == 'dol_document_root') {
+						$return['errormsg'] .= $langs->trans("docRootError", $result['filename'], $ismodule) .'<br>';
+						$return['errormsg'] .= $result['line'].'<br><br>';
+					}
+				}
+
+				dol_syslog("file ".$originalfilename." is not compatible with custom directory!", LOG_ERR);
+
+				$error++;
+			}
+		}
+	} else {
+		dol_syslog("file ".$originalfilename." is not a module and not a theme!", LOG_WARNING);    // It can be a doc, android app, ...
+	}
+
+	if (!empty($error)) {
+		dol_syslog("validateZipFile Error");
+
+		$link = '<a target="_blank" class="linktowiki" href="https://wiki.dolibarr.org/index.php/Modules - Packaging rules and Dolistore validation rules">Dolibarr wiki developer documentation</a>';
+		$return['errormsg'] .= $langs->trans("UnvalidZipFile") .'<br>';
+		$return['errormsg'] .= $langs->trans("SeeDocumentation", $link).'<br>';
+		$return['errormsg'] .= "<br>\n";
+		$return['errormsg'] .= $langs->trans("Contact");
+		$return['upload'] = -1;
+		$error++;
+	} else {
+		dol_syslog("validateZipFile OK");
+	}
+
+	if ($return['errormsg'] === '') {
+		$return['errormsg'] = null;
+	}
+
+	$return['error'] = $error;
+
+	return $return;
+}
+
+
+/**
+ * Analyze files of a directory and subdirectories.
+ * Called by validateZipFile()
+ *
+ * @param string 				$dir		Root dir to scan
+ * @param array<array{name:string,types:string[],pattern:string,multiple?:bool,id?:int,contain?:string[],notcontain?:string[],strict?:bool}>	$search		Array with strings to search
+ * @param array<array{testname:string,filename:string,line:string}>	$results	Array with results
+ * @param int<0,max>			$count		Count of errors
+ * @return void
+ */
+function analyzeDirContents($dir, $search = array(), &$results = array(), &$count = 0)
+{
+	$files = scandir($dir);
+
+	foreach ($files as $key => $value) {
+		$path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+		if (!is_dir($path)) {
+			$content = file_get_contents($path);
+
+			// Clean the content of file to make analysis easier and avoid some false positive
+			$content = preg_replace('/^\s*\/\/.*$/m', '', $content);
+
+			$fileName = basename($path);
+			$fileNameWithoutTmp = preg_replace('/\/tmp\/unzip[^\/]+\//', '', $path);
+
+			$file_array = explode(".", $fileName);
+
+			foreach ($search as $pattern) {
+				if (count($file_array) > 1) {
+					$ext = $file_array[1];
+					if (!empty($file_array[2])) {
+						$ext = $file_array[1] . '.' . $file_array[2];
+					}
+
+					if (in_array($ext, $pattern['types'])) {
+						if (strpos($content, '<?php') !== 0) {
+							continue;
+						}  // We discard files that are not php pages (we discard scripts)
+						if (strpos($path, 'htdocs_') > 0) {
+							continue;
+						}  // We discard files that are files into htdocs_... because it is files for core, so no need to be compatible with custom
+						if (strpos($path, 'phpunit') > 0) {
+							continue;
+						}  // We discard files that are files into phpunit because it is files for core, so no need to be compatible with custom
+
+						$regs = array();
+						if (!empty($pattern['multiple'])) {
+							preg_match_all('/' . $pattern['pattern'] . '/', $content, $regs);
+							// Error if only one result (0 is ok, >1 is ok)
+							if (!empty($regs) && count($regs[0]) == 1) {
+								$results[] = array(
+									'testname'      => $pattern['name'],
+									'filename'      => $fileNameWithoutTmp
+								);
+								$count++;
+							}
+						} else {
+							$id = (!empty($pattern['id']) ? $pattern['id'] : 1);
+							preg_match_all('/' . $pattern['pattern'] . '/', $content, $regs);
+
+							if (!empty($regs) && !empty($regs[$id])) {
+								foreach ($regs[$id] as $i => $string) {
+									if (!empty($pattern['contain']) && is_array($pattern['contain'])) {
+										foreach ($pattern['contain'] as $contain) {
+											// Mode strict true : doit contenir && ne pas contenir
+											if (!empty($pattern['notcontain']) && !empty($pattern['strict']) && is_array($pattern['notcontain'])) {
+												foreach ($pattern['notcontain'] as $notcontain) {
+													if (strstr($string, $contain) && strstr($string, $notcontain)) {
+														$results[] = array(
+															'testname'      => $pattern['name'],
+															'filename'      => $fileName,
+															'line'          => $regs[0][$i]
+														);
+														$count++;
+													}
+												}
+											} elseif (!strstr($string, $contain)) {        // If found
+												// Mode strict false : must contains. Note strstr return false if not found
+
+												// We found $contain into $string
+												$results[] = array(
+													'testname'      => $pattern['name'],
+													'filename'      => $fileName,
+													'line'          => $regs[0][$i]
+												);
+												$count++;
+											}
+										}
+									}
+									// Ou ne doit pas contenir
+									if (empty($count) && !empty($pattern['notcontain']) && empty($pattern['strict']) && is_array($pattern['notcontain'])) {
+										foreach ($pattern['notcontain'] as $notcontain) {
+											if (strstr($string, $notcontain)) {
+												$results[] = array(
+													'testname'      => $pattern['name'],
+													'filename'      => $fileName,
+													'line'          => $regs[0][$i]
+												);
+												$count++;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} elseif ($value != "." && $value != "..") {
+			analyzeDirContents($path, $search, $results, $count);
+		}
 	}
 }

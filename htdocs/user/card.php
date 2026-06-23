@@ -11,9 +11,9 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2017	Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2015		Ari Elbaz (elarifr)			<github@accedinfo.com>
- * Copyright (C) 2015-2018	Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2015-2026	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2016		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		David Beniamine				<David.Beniamine@Tetras-Libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -41,6 +41,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -55,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -86,6 +86,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
+$forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -100,7 +101,6 @@ $dateofbirth = dol_mktime(0, 0, 0, GETPOSTINT('dateofbirthmonth'), GETPOSTINT('d
 $childids = $user->getAllChildIds(1);	// For test on hrm fields (like salary visibility)
 
 $object = new User($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -318,6 +318,16 @@ if (empty($reshook)) {
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
+			// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
+			// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
+			// Refuse the save so the literal does not end up persisted and later sent as an
+			// email body to customers.
+			if ($object->signature === 'ErrorTooManyLinksIntoHTMLString') {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorTooManyLinksIntoHTMLString'), null, 'errors');
+				$action = 'create';
+			}
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note_public = GETPOST("note_public", 'restricthtml');
 			$object->note_private = GETPOST("note_private", 'restricthtml');
@@ -345,6 +355,7 @@ if (empty($reshook)) {
 			$object->datestartvalidity = $datestartvalidity;
 			$object->dateendvalidity = $dateendvalidity;
 			$object->birth = $dateofbirth;
+			$object->force_pass_change = $forcepasswordchange;
 
 			$object->fk_warehouse = GETPOSTINT('fk_warehouse');
 
@@ -472,7 +483,7 @@ if (empty($reshook)) {
 					$object->pass = GETPOST("password", 'password');
 				}
 				if ($permissiontoeditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
-					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+					$object->api_key = (GETPOSTISSET("api_key") ? GETPOST("api_key", 'alphanohtml') : $object->api_key);
 				}
 				if (!empty($user->admin) && $user->id != $id) {
 					// admin flag can only be set/unset by an admin user and not four ourself
@@ -503,6 +514,16 @@ if (empty($reshook)) {
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
 				$object->job = GETPOST("job", 'alphanohtml');
 				$object->signature = GETPOST("signature", 'restricthtml');
+				// restricthtml may swap the value with the literal 'ErrorTooManyLinksIntoHTMLString'
+				// when the html exceeds MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT (see issue #27987).
+				// Refuse the save so the literal does not end up persisted and later sent as an
+				// email body to customers.
+				if ($object->signature === 'ErrorTooManyLinksIntoHTMLString') {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans('ErrorTooManyLinksIntoHTMLString'), null, 'errors');
+					$action = 'edit';
+				}
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOSTINT("fk_user") > 0 ? GETPOSTINT("fk_user") : 0;
@@ -527,6 +548,7 @@ if (empty($reshook)) {
 				$object->datestartvalidity = $datestartvalidity;
 				$object->dateendvalidity = $dateendvalidity;
 				$object->birth = $dateofbirth;
+				$object->force_pass_change = $forcepasswordchange;
 
 				if (isModEnabled('stock')) {
 					$object->fk_warehouse = GETPOSTINT('fk_warehouse');
@@ -561,6 +583,9 @@ if (empty($reshook)) {
 					$isimage = image_format_supported($_FILES['photo']['name']);
 					if ($isimage > 0) {
 						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+						if ($object->id == $user->id) {
+							$user->photo = $object->photo;
+						}
 					} else {
 						$error++;
 						$langs->load("errors");
@@ -930,7 +955,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
 if ($action == 'create' || $action == 'adduserldap') {
 	print load_fiche_titre($title, '', 'user');
 
-	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc", $langs->trans("CreateExternalUser"))."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc", $langs->transnoentities("CreateExternalUser"))."</span><br>\n";
 	print "<br>";
 
 
@@ -1072,7 +1097,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (!empty($conf->use_javascript_ajax)) {
 		// Add code to generate the login when creating a new user.
 		// Best rule to generate would be to use the same rule than dol_buildlogin() but currently it is a PHP function not available in js.
-		// TODO Implement a dol_buildlogin in javascript.
+		// TODO Implement a function dol_buildlogin in javascript like the version in PHP.
 		$charforseparator = getDolGlobalString("MAIN_USER_SEPARATOR_CHAR_FOR_GENERATED_LOGIN", '.');
 		if ($charforseparator == 'none') {
 			$charforseparator = '';
@@ -1084,7 +1109,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 					lastname = $("#lastname").val().toLowerCase();
 			';
-		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
+		if (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'flastname') {
+			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
+			$charforseparator = '';
+		} elseif (getDolGlobalString('MAIN_BUILD_LOGIN_RULE') == 'f.lastname') {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim()[0];';
 		} else {
 			print '			firstname = $("#firstname").val().toLowerCase().replace(/\s+/g, \'\').trim();';
@@ -1216,6 +1244,23 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $form->selectDate($dateendvalidity, 'dateendvalidity', 0, 0, 1, 'formdateendvalidity', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</td>';
 	print "</tr>\n";
+
+	// Force update on next login -- only on dolibarr auth context
+	if ($_SESSION["dol_authmode"] == 'dolibarr') {
+		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")).'</td>';
+		print '<td>';
+		//$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+		$permissiontoselfeditpassword = 1;	// In creation, we suppose it to true
+		if ($permissiontoselfeditpassword) { // @phpstan-ignore-line because value is forced
+			print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.(GETPOST('forcepasswordchange') == '1' ? ' checked="checked"' : '').'>';
+			print '<label class="opacitymedium" for="forcepasswordchange">'.$langs->trans("AtNextLogin").'</label>';
+		} else {
+			print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey valignmiddle" disabled>';
+			print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("NotPossible").'</span>', $langs->trans("UserDoesNotHaveRightsToChangeHisPassword"));
+		}
+		print '</td>';
+		print "</tr>\n";
+	}
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -1414,7 +1459,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Multicompany
-	if (isModEnabled('multicompany') && is_object($mc)) {
+	if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 		if (!method_exists($mc, 'formObjectOptions')) {
 			if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {	// condition must be same for create and edit mode
@@ -1902,7 +1947,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Multicompany
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -2010,6 +2055,29 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print "</tr>\n";
+
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")).'</td>';
+				print '<td>';
+				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+				if ($permissiontoselfeditpassword) {
+					if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2) {
+						print '<input type="checkbox" class="colorgrey" disabled name="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						//print $langs->trans("AtNextLogin");
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
+					} else {
+						print yn($object->force_pass_change);
+						print '<span class="opacitymedium">'.yn($object->force_pass_change).'</span>';
+					}
+				} else {
+					print '<input type="checkbox" name="forcepasswordchange" value="1" disabled class="valignmiddle">';
+					print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("No").'</span>', $langs->trans("UserDoesNotHaveRightsToChangeHisPassword"));
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+
 
 			// Password for LDAP or HTTP Basic
 			$valuetoshow = '';
@@ -2327,8 +2395,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
-						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-						print '<th class="liste_titre right">';
+						print '<tr class="liste_titre">';
+						//print '<th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre right" colspan="2">';
 						if ($permissiontoeditgroup) {
 							print $form->select_dolgroups(0, 'group', 1, $exclude, 0, '', array(), (string) $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';
@@ -2685,6 +2754,28 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
+
+			// Force update on next login only on dolibarr auth mode
+			if ($_SESSION["dol_authmode"] == 'dolibarr') {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey($form->textwithpicto($langs->trans("PasswordToChange"), $langs->trans("ForcePasswordChange")), 'forcepasswordchange', '', $object, 0).'</td><td>';
+				$permissiontoselfeditpassword = $object->hasRight('user', 'self', 'password');
+				if ($permissiontoselfeditpassword) {
+					if ($permissiontoedit) {
+						print '<input type="checkbox" name="forcepasswordchange" id="forcepasswordchange" value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print '<label class="opacitylow" for="forcepasswordchange">'.$langs->trans("AtNextLogin").'</label>';
+					} else {
+						print '<input type="checkbox" name="forcepasswordchange" class="colorgrey" disabled value="1"'.($object->force_pass_change ? ' checked="checked"' : '').'>';
+						print $langs->trans("AtNextLogin");
+					}
+				} else {
+					print '<input type="checkbox" name="forcepasswordchange" value="1" class="colorgrey" disabled>';
+					print '<span class="opacitymedium">'.$langs->trans("UserDoesNotHaveRightsToChangeHisPassword").'</span>';
+				}
+
+				print '</td></tr>';
+			}
+
 			// Pass
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';
 			print '<td>';
@@ -2987,7 +3078,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Multicompany
 			// TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
 				if (!method_exists($mc, 'formObjectOptions')) {
 					if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -3169,14 +3260,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', !is_object($societe) || empty($societe->default_lang) ? '' : $societe->default_lang);
 			$somethingshown = $formfile->numoffiles;
-
-			// Show links to link elements
-			$tmparray = $form->showLinkToObjectBlock($object, array(), array(), 1);
-			$linktoelem = $tmparray['linktoelem'];
-			$htmltoenteralink = $tmparray['htmltoenteralink'];
-			print $htmltoenteralink;
-
-			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			$MAXEVENT = 10;
 

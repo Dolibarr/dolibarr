@@ -225,7 +225,7 @@ class modKnowledgeManagement extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->knowledgemanagement->enabled',
+			//      'test' => 'isModEnabled('knowledgemanagement')',
 			//      'priority' => 50,
 			//  ),
 		);

@@ -2,7 +2,7 @@
 /* Copyright (C) 2019-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Christian Humpel			<christian.humpel@gmail.com>
  * Copyright (C) 2023		Vincent de Grandpré			<vincent@de-grandpre.quebec>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Noé Cendrier		 <noe.cendrier@altairis.fr>
@@ -29,6 +29,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -42,15 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
@@ -71,7 +70,6 @@ $collapse = GETPOST('collapse', 'aZ09comma');
 
 // Initialize a technical objects
 $object = new Mo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $objectline = new MoLine($db);
 
@@ -161,6 +159,46 @@ if (empty($reshook)) {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+
+	// Allow editing qty while MO is still in draft status.
+	// IMPORTANT: this handler MUST run BEFORE actions_addupdatedelete.inc.php,
+	// which has a generic 'set<key>' matcher that would intercept 'setqty' and
+	// call $object->fetch() + update() without setting $object->oldQty, so
+	// Mo::updateProduction() would skip the line scaling (its condition is
+	// !empty($this->oldQty)).
+	if ($action == 'setqty' && $permissiontoadd && $object->status == Mo::STATUS_DRAFT) {
+		$newqty = GETPOSTFLOAT('qty');
+		if ($newqty > 0) {
+			$object->oldQty = (float) $object->qty;
+			$object->qty = $newqty;
+			$res = $object->update($user);
+			if ($res > 0) {
+				// Enforce invariant: the 'toproduce' line for the MO's main product
+				// must equal the MO qty. Mo::updateProduction() scales by ratio
+				// (newQty/oldQty) which can drift if the line state was already
+				// inconsistent (e.g. legacy data from before this patch). Realign
+				// the main product line, leaving sub-products and frozen lines
+				// untouched.
+				$object->fetchLines();
+				foreach ($object->lines as $line) {
+					if ($line->role === 'toproduce'
+						&& (int) $line->fk_product === (int) $object->fk_product
+						&& empty($line->qty_frozen)
+						&& (float) $line->qty != (float) $object->qty) {
+						$line->qty = (float) $object->qty;
+						$line->update($user);
+					}
+				}
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Qty")), null, 'errors');
+		}
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+		exit;
 	}
 
 	// Actions cancel, add, update, delete or clone
@@ -280,12 +318,12 @@ if (empty($reshook)) {
 						if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
 							if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref), null, 'errors');
 								$error++;
 							}
 							if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
 								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref), null, 'errors');
 								$error++;
 							}
 						}
@@ -714,6 +752,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'fk_warehouse';
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
+	// Allow inline edit of qty while MO is in draft status.
+	// Note: editfieldval() does not handle type 'real' (no <input> rendered, only
+	// Save/Cancel buttons appear). So we override the type to 'numeric' only when
+	// the user has actually clicked the edit pencil (action=editqty). This keeps
+	// the read-mode rendering (price() format) untouched.
+	if ($object->status == Mo::STATUS_DRAFT && $permissiontoadd && isset($object->fields['qty'])) {
+		$object->fields['qty']['alwayseditable'] = 1;
+		if ($action == 'editqty') {
+			$object->fields['qty']['type'] = 'numeric';
+		}
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes

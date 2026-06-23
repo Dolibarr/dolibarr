@@ -328,7 +328,6 @@ SearchIntoCustomerProposals=Propuestas comerciales
 SearchIntoSupplierProposals=Presupuestos de Proveedor
 SearchIntoExpenseReports=Reporte de gastos
 SearchIntoVendorPayments=Pagos al proveedor
-SearchIntoMiscPayments=Manual Journal Entries
 AssignedTo=Asignado a
 ToProcess=Procesar
 ContactDefault_agenda=Evento

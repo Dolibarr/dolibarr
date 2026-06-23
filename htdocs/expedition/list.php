@@ -6,11 +6,11 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -42,14 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", 'companies', 'bills', 'products', 'orders'));
@@ -116,7 +116,6 @@ $object = new Expedition($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
-$extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -157,8 +156,8 @@ $arrayfields = array(
 	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
 	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
 	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
-	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
 );
 
 // Extra fields
@@ -533,7 +532,7 @@ if (empty($reshook)) {
 				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode(strval($limit));
+				$param .= '&limit='.((int) $limit);
 			}
 			if ($search_all) {
 				$param .= "&search_all=".urlencode($search_all);
@@ -616,8 +615,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -742,13 +741,13 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= ' AND e.signed_status = '.urlencode($search_signed_status);
+	$sql .= " AND e.signed_status = ".((int) $search_signed_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.((int) $search_billed);
+	$sql .= " AND e.billed = ".((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1067,6 +1066,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expedition/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->hasRight('expedition', 'creer'));
 
@@ -1199,7 +1199,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // @phan-suppress-current-line PhanTypeMismatchArgument
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // @phan-suppress-current-line PhanTypeMismatchArgument
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -1211,7 +1211,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1366,7 +1366,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1381,7 +1381,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1480,7 +1480,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1533,7 +1533,7 @@ while ($i < $imaxinloop) {
 		print '<tr class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1763,7 +1763,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

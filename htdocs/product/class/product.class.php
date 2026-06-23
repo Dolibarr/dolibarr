@@ -14,9 +14,9 @@
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
  *
@@ -36,7 +36,7 @@
 
 /**
  *    \file       htdocs/product/class/product.class.php
- *    \ingroup    produit
+ *    \ingroup    product
  *    \brief      File of class to manage the predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -111,7 +111,14 @@ class Product extends CommonObject
 	 * @var string
 	 * @see images.lib.php
 	 */
-	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm';
+	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.avif';
+
+	/**
+	 * Product ref
+	 *
+	 * @var string
+	 */
+	public $ref;
 
 	/**
 	 * @var string
@@ -836,7 +843,7 @@ class Product extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -860,7 +867,7 @@ class Product extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -1052,6 +1059,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
 		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
+
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
 
 		// Barcode value
 		$this->barcode = trim($this->barcode);
@@ -1358,6 +1378,7 @@ class Product extends CommonObject
 
 			$mod = new $module();
 			'@phan-var-force ModeleNumRefBarCode $mod';
+			/** @var ModeleNumRefBarCode $mod */
 
 			dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
 			$result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
@@ -1488,6 +1509,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 		$this->db->begin();
 
 		$result = 0;
@@ -1501,8 +1535,11 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
+			// Note that this->oldcopy must be a Product instance (not stdClass), otherwise the method
+			// hasbatch() called below will fatal. Callers may set oldcopy via dol_clone($obj, 2) (which
+			// returns a stdClass with scalar properties only) and then we cannot call methods on it,
+			// so re-clone with native=1 in that case (see issues #38663, #38638).
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id)) || !($this->oldcopy instanceof Product)) {
 				$this->oldcopy = dol_clone($this, 1);	// 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
@@ -1649,7 +1686,7 @@ class Product extends CommonObject
 
 				// Multilangs
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					if ($this->setMultiLangs($user) < 0) {
+					if ($this->setMultiLangs($user, $notrigger) < 0) {
 						$this->db->rollback();
 						return -2;
 					}
@@ -1857,6 +1894,21 @@ class Product extends CommonObject
 				}
 			}
 
+			// Delete pricelogs so we don't have any orphan rows, see #38383
+			if (!$error) {
+				$sql = "DELETE FROM " . $this->db->prefix() . "product_fournisseur_price_log";
+				$sql .= " WHERE fk_product_fournisseur IN (";
+				$sql .= "   SELECT rowid FROM " . $this->db->prefix() . "product_fournisseur_price";
+				$sql .= "   WHERE fk_product = " . ((int) $this->id);
+				$sql .= " )";
+
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+
 			// Delete all child tables
 			if (!$error) {
 				$elements = array('product_fournisseur_price', 'product_price', 'product_lang', 'categorie_product', 'product_stock', 'product_customer_price', 'product_lot'); // product_batch is done before
@@ -1874,11 +1926,11 @@ class Product extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && isModEnabled('variants')) {
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
-				//If it is a parent product, then we remove the association with child products
+				// If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
 				if ($prodcomb->deleteByFkProductParent($user, $this->id) < 0) {
@@ -1886,7 +1938,7 @@ class Product extends CommonObject
 					$this->errors[] = 'Error deleting combinations';
 				}
 
-				//We also check if it is a child product
+				// We also check if it is a child product
 				if (!$error && ($prodcomb->fetchByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
 					$error++;
 					$this->errors[] = 'Error deleting child combination';
@@ -2007,9 +2059,10 @@ class Product extends CommonObject
 	 *    Update or add a translation for a product
 	 *
 	 * @param  User $user 	Object user making update
+	 * @param  int  $notrigger Do not execute trigger
 	 * @return int        	Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -2102,13 +2155,15 @@ class Product extends CommonObject
 			}
 		}
 
-		// Call trigger
-		$result = $this->call_trigger('PRODUCT_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			// End call triggers
 		}
-		// End call triggers
 
 		return 1;
 	}
@@ -2118,10 +2173,11 @@ class Product extends CommonObject
 	 *
 	 * @param string $langtodelete Language code to delete
 	 * @param User   $user         Object user making delete
+	 * @param int    $notrigger    Do not execute trigger
 	 *
 	 * @return int                            Return integer <0 if KO, >0 if OK
 	 */
-	public function delMultiLangs($langtodelete, $user)
+	public function delMultiLangs($langtodelete, $user, $notrigger = 0)
 	{
 		$sql = "DELETE FROM ".$this->db->prefix()."product_lang";
 		$sql .= " WHERE fk_product = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
@@ -2129,14 +2185,16 @@ class Product extends CommonObject
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			// Call trigger
-			$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
-				return -1;
+			if (empty($notrigger)) {
+				// Call trigger
+				$result = $this->call_trigger('PRODUCT_DEL_MULTILANGS', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
 			}
-			// End call triggers
 			unset($this->multilangs[$langtodelete]);
 			return 1;
 		} else {
@@ -2333,8 +2391,12 @@ class Product extends CommonObject
 		$sql .= " WHERE fk_product_price = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 
+		$sql = "DELETE FROM ".$this->db->prefix()."product_price_extrafields";
+		$sql .= " WHERE fk_object = ".((int) $rowid);
+		$resql = $this->db->query($sql);
+
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price";
-		$sql .= " WHERE rowid=".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -2344,6 +2406,55 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 *  Get all price change logs for a product, enriched with supplier info
+	 *
+	 *  @param  int     $id         Id of the product
+	 *  @return array<int, stdClass> Array of log objects with supplier info
+	 *  @phan-return array<int, stdClass>
+	 *  @phpstan-return array<int, stdClass>
+	 */
+	public function fetchAllPriceLogs($id)
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$logs = array();
+
+		$sql = "SELECT";
+		$sql .= " pl.rowid as log_rowid,";
+		$sql .= " pl.datec,";
+		$sql .= " pl.price,";
+		$sql .= " pl.quantity,";
+		$sql .= " pl.fk_user,";
+		$sql .= " pl.multicurrency_code,";
+		$sql .= " pl.multicurrency_price,";
+		// Supplier info
+		$sql .= " pp.fk_soc as supplier_id,";
+		$sql .= " pp.ref_fourn as supplier_ref,";
+		$sql .= " pp.entity as entity";
+
+		$sql .= " FROM " . $this->db->prefix() . "product_fournisseur_price_log as pl";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "product_fournisseur_price as pp ON pl.fk_product_fournisseur = pp.rowid";
+
+		$sql .= " WHERE pp.fk_product = " . ((int) $id);
+		$sql .= " AND pp.entity IN (" . getEntity('product') . ")";
+		$sql .= " ORDER BY pl.datec DESC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (is_string($obj->datec)) {
+					$obj->datec = strtotime($obj->datec);
+				}
+				$logs[] = $obj;
+			}
+			$this->db->free($resql);
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		return $logs;
+	}
 
 	/**
 	 * Return price of sell of a product for a seller/buyer/product.
@@ -2379,7 +2490,7 @@ class Product extends CommonObject
 		$pu_ttc = $this->price_ttc;
 		$price_min = $this->price_min;
 		$price_min_ttc = $this->price_min_ttc;
-		$price_base_type = $this->price_base_type;
+		$price_base_type = (empty($this->price_base_type) ? 'HT' : $this->price_base_type);
 
 		// if price by customer / level
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
@@ -2418,11 +2529,11 @@ class Product extends CommonObject
 			}
 
 			if (!$pricebycustomerexist && !empty($thirdparty_buyer->price_level)) {
-				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-				$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
-				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+				$pu_ht = isset($this->multiprices[$thirdparty_buyer->price_level]) ? $this->multiprices[$thirdparty_buyer->price_level] : 0;
+				$pu_ttc = isset($this->multiprices_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_min = isset($this->multiprices_min[$thirdparty_buyer->price_level]) ? $this->multiprices_min[$thirdparty_buyer->price_level] : 0;
+				$price_min_ttc = isset($this->multiprices_min_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_min_ttc[$thirdparty_buyer->price_level] : 0;
+				$price_base_type = isset($this->multiprices_base_type[$thirdparty_buyer->price_level]) ? $this->multiprices_base_type[$thirdparty_buyer->price_level] : 'HT';
 				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 					// using this option is a bug. kept for backward compatibility
 					if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2437,11 +2548,11 @@ class Product extends CommonObject
 				}
 			}
 		} elseif (getDolGlobalString('PRODUIT_MULTIPRICES') && !empty($thirdparty_buyer->price_level)) { // // If price per segment
-			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-			$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
-			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+			$pu_ht = isset($this->multiprices[$thirdparty_buyer->price_level]) ? $this->multiprices[$thirdparty_buyer->price_level] : 0;
+			$pu_ttc = isset($this->multiprices_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_ttc[$thirdparty_buyer->price_level] : 0;
+			$price_min = isset($this->multiprices_min[$thirdparty_buyer->price_level]) ? $this->multiprices_min[$thirdparty_buyer->price_level] : 0;
+			$price_min_ttc = isset($this->multiprices_min_ttc[$thirdparty_buyer->price_level]) ? $this->multiprices_min_ttc[$thirdparty_buyer->price_level] : 0;
+			$price_base_type = isset($this->multiprices_base_type[$thirdparty_buyer->price_level]) ? $this->multiprices_base_type[$thirdparty_buyer->price_level] : 'HT';
 			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 				// using this option is a bug. kept for backward compatibility
 				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2488,7 +2599,7 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY')) {
 			// If price per quantity
-			if ($this->prices_by_qty[0]) {
+			if (!empty($this->prices_by_qty[0])) {
 				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[0] as $priceforthequantityarray) {
@@ -2506,7 +2617,7 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 			// If price per quantity and customer
-			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) {
+			if (!empty($this->prices_by_qty[$thirdparty_buyer->price_level])) {
 				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray) {
@@ -2615,6 +2726,11 @@ class Product extends CommonObject
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->packaging = (float) $obj->packaging;
 				}
+				// Expose the supplier minimum purchase quantity so callers can enforce qty_min
+				// on top of packaging-multiple rounding (#38783). pfp.quantity is the lowest
+				// qty for which this price line is valid; for "below-min" callers this is the
+				// floor they must round up to.
+				$this->fourn_qty = $obj->quantity;
 				$result = $obj->fk_product;
 				return $result;
 			} else { // If not found
@@ -2680,10 +2796,13 @@ class Product extends CommonObject
 						if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 							$this->packaging = (float) $obj->packaging;
 						}
+						// Expose pfp.quantity so callers can enforce qty_min on top of packaging
+						// rounding (#38783).
+						$this->fourn_qty = $obj->quantity;
 						$result = $obj->fk_product;
 						return $result;
 					} else {
-						return -1; // Ce produit n'existe pas avec cet id tarif fournisseur ou existe mais qte insuffisante, ni pour le couple produit/ref fournisseur dans la quantité.
+						return -1; // This product does not exist with this supplier price ID, or it exists but with insufficient quantity; nor does it exist for the product/supplier ref pair in the required quantity.
 					}
 				} else {
 					$this->error = $this->db->lasterror();
@@ -2826,8 +2945,8 @@ class Product extends CommonObject
 
 			$this->db->begin();
 
-			// Ne pas mettre de quote sur les numeriques decimaux.
-			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
+			// Don't put quotes here on decimal numbers.
+			// This causes storage with base rounding instead of exact values.
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
 			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
 			$sql .= " price = ".(float) $price.",";
@@ -2877,7 +2996,7 @@ class Product extends CommonObject
 
 				// check if price have really change before log
 				$newPriceData = $this->getArrayForPriceCompare($level);
-				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
 				}
 
@@ -3070,7 +3189,7 @@ class Product extends CommonObject
 				$this->price_ttc = $obj->price_ttc;
 				$this->price_min = $obj->price_min;
 				$this->price_min_ttc = $obj->price_min_ttc;
-				$this->price_base_type = $obj->price_base_type;
+				$this->price_base_type = (empty($obj->price_base_type) ? 'HT' : $obj->price_base_type);
 				$this->cost_price = isset($obj->cost_price) ? (float) $obj->cost_price : null;
 				$this->default_vat_code = $obj->default_vat_code;
 				$this->tva_tx = $obj->tva_tx;
@@ -3522,10 +3641,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_propale['customers'] = $obj->nb_customers;
-			$this->stats_propale['nb'] = $obj->nb;
-			$this->stats_propale['rows'] = $obj->nb_rows;
-			$this->stats_propale['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_propale['customers'] = (int) $obj->nb_customers;
+			$this->stats_propale['nb'] = (int) $obj->nb;
+			$this->stats_propale['rows'] = (int) $obj->nb_rows;
+			$this->stats_propale['qty'] = $obj->qty ? (float) $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in proposal by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -3533,16 +3652,18 @@ class Product extends CommonObject
 				if (is_array($TFather) && !empty($TFather)) {
 					foreach ($TFather as &$fatherData) {
 						$pFather = new Product($this->db);
-						$pFather->id = $fatherData['id'];
+						$pFather->id = (int) $fatherData['id'];
 						$qtyCoef = $fatherData['qty'];
 
 						if ($fatherData['incdec']) {
 							$pFather->load_stats_propale($socid);
 
-							$this->stats_propale['customers'] += $pFather->stats_propale['customers'];
-							$this->stats_propale['nb'] += $pFather->stats_propale['nb'];
-							$this->stats_propale['rows'] += $pFather->stats_propale['rows'];
-							$this->stats_propale['qty'] += $pFather->stats_propale['qty'] * $qtyCoef;
+							if (!empty($pFather->stats_propale)) {
+								$this->stats_propale['customers'] += $pFather->stats_propale['customers'];
+								$this->stats_propale['nb'] += $pFather->stats_propale['nb'];
+								$this->stats_propale['rows'] += $pFather->stats_propale['rows'];
+								$this->stats_propale['qty'] += $pFather->stats_propale['qty'] * $qtyCoef;
+							}
 						}
 					}
 				}
@@ -3653,10 +3774,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_commande['customers'] = $obj->nb_customers;
-			$this->stats_commande['nb'] = $obj->nb;
-			$this->stats_commande['rows'] = $obj->nb_rows;
-			$this->stats_commande['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_commande['customers'] = (int) $obj->nb_customers;
+			$this->stats_commande['nb'] = (int) $obj->nb;
+			$this->stats_commande['rows'] = (int) $obj->nb_rows;
+			$this->stats_commande['qty'] = $obj->qty ? (float) $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in order by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -3709,7 +3830,7 @@ class Product extends CommonObject
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {
-							$adeduire += $obj->count;
+							$adeduire += (float) $obj->count;
 						}
 					}
 
@@ -3745,7 +3866,7 @@ class Product extends CommonObject
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						while ($obj = $this->db->fetch_object($resql)) {
-							$adeduire += $obj->count;
+							$adeduire += (float) $obj->count;
 						}
 					} else {
 						$this->error = $this->db->error();
@@ -3870,10 +3991,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_expedition['customers'] = $obj->nb_customers;
-			$this->stats_expedition['nb'] = $obj->nb;
-			$this->stats_expedition['rows'] = $obj->nb_rows;
-			$this->stats_expedition['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_expedition['customers'] = (int) $obj->nb_customers;
+			$this->stats_expedition['nb'] = (int) $obj->nb;
+			$this->stats_expedition['rows'] = (int) $obj->nb_rows;
+			$this->stats_expedition['qty'] = $obj->qty ? (float) $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in sending by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -3887,10 +4008,12 @@ class Product extends CommonObject
 						if ($fatherData['incdec']) {
 							$pFather->load_stats_sending($socid, $filtrestatut, $forVirtualStock);
 
-							$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
-							$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
-							$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
-							$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+							if (!empty($pFather->stats_expedition)) {
+								$this->stats_expedition['customers'] += $pFather->stats_expedition['customers'];
+								$this->stats_expedition['nb'] += $pFather->stats_expedition['nb'];
+								$this->stats_expedition['rows'] += $pFather->stats_expedition['rows'];
+								$this->stats_expedition['qty'] += $pFather->stats_expedition['qty'] * $qtyCoef;
+							}
 						}
 					}
 				}
@@ -4123,10 +4246,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_contrat['customers'] = $obj->nb_customers;
-			$this->stats_contrat['nb'] = $obj->nb;
-			$this->stats_contrat['rows'] = $obj->nb_rows;
-			$this->stats_contrat['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_contrat['customers'] = (int) $obj->nb_customers;
+			$this->stats_contrat['nb'] = (int) $obj->nb;
+			$this->stats_contrat['rows'] = (int) $obj->nb_rows;
+			$this->stats_contrat['qty'] = $obj->qty ? (float) $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in contract by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -4140,10 +4263,12 @@ class Product extends CommonObject
 						if ($fatherData['incdec']) {
 							$pFather->load_stats_contrat($socid);
 
-							$this->stats_contrat['customers'] += $pFather->stats_contrat['customers'];
-							$this->stats_contrat['nb'] += $pFather->stats_contrat['nb'];
-							$this->stats_contrat['rows'] += $pFather->stats_contrat['rows'];
-							$this->stats_contrat['qty'] += $pFather->stats_contrat['qty'] * $qtyCoef;
+							if (!empty($pFather->stats_contrat)) {
+								$this->stats_contrat['customers'] += $pFather->stats_contrat['customers'];
+								$this->stats_contrat['nb'] += $pFather->stats_contrat['nb'];
+								$this->stats_contrat['rows'] += $pFather->stats_contrat['rows'];
+								$this->stats_contrat['qty'] += $pFather->stats_contrat['qty'] * $qtyCoef;
+							}
 						}
 					}
 				}
@@ -4194,10 +4319,10 @@ class Product extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$this->stats_facture['customers'] = $obj->nb_customers;
-			$this->stats_facture['nb'] = $obj->nb;
-			$this->stats_facture['rows'] = $obj->nb_rows;
-			$this->stats_facture['qty'] = $obj->qty ? $obj->qty : 0;
+			$this->stats_facture['customers'] = (int) $obj->nb_customers;
+			$this->stats_facture['nb'] = (int) $obj->nb;
+			$this->stats_facture['rows'] = (int) $obj->nb_rows;
+			$this->stats_facture['qty'] = $obj->qty ? (float) $obj->qty : 0;
 
 			// if it's a virtual product, maybe it is in invoice by extension
 			if (getDolGlobalString('PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC')) {
@@ -4211,10 +4336,12 @@ class Product extends CommonObject
 						if ($fatherData['incdec']) {
 							$pFather->load_stats_facture($socid);
 
-							$this->stats_facture['customers'] += $pFather->stats_facture['customers'];
-							$this->stats_facture['nb'] += $pFather->stats_facture['nb'];
-							$this->stats_facture['rows'] += $pFather->stats_facture['rows'];
-							$this->stats_facture['qty'] += $pFather->stats_facture['qty'] * $qtyCoef;
+							if (!empty($pFather->stats_facture)) {
+								$this->stats_facture['customers'] += $pFather->stats_facture['customers'];
+								$this->stats_facture['nb'] += $pFather->stats_facture['nb'];
+								$this->stats_facture['rows'] += $pFather->stats_facture['rows'];
+								$this->stats_facture['qty'] += $pFather->stats_facture['qty'] * $qtyCoef;
+							}
 						}
 					}
 				}
@@ -5390,10 +5517,10 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Recopie les fournisseurs et prix fournisseurs d'un produit/service sur un autre
+	 *  Copies the suppliers and supplier pricing of a product/service onto another one.
 	 *
-	 * @param  int $fromId Id produit source
-	 * @param  int $toId   Id produit cible
+	 * @param  int $fromId Id source product
+	 * @param  int $toId   Id target product
 	 * @return int                 Return integer < 0 si erreur, > 0 si ok
 	 */
 	public function clone_fournisseurs($fromId, $toId)
@@ -5572,6 +5699,9 @@ class Product extends CommonObject
 	public function hasVariants()
 	{
 		$nb = 0;
+		if (!isModEnabled('variants')) {
+			return $nb;
+		}
 		$sql = "SELECT count(rowid) as nb FROM ".$this->db->prefix()."product_attribute_combination WHERE fk_product_parent = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('product').")";
 
@@ -6584,6 +6714,9 @@ class Product extends CommonObject
 						break;
 					}
 				}
+			} elseif (getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE') && empty($productCachedList)) {
+				// if all sub product are not stock managed when use parent stock
+				$this->load_stock('warehouseopen');
 			}
 		}
 

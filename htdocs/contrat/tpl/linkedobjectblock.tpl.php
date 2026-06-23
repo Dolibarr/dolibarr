@@ -49,6 +49,12 @@ $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
+	$objectlink->fetch_thirdparty();
+
+	$refWithThirdparty = '<span class="small">';
+	$refWithThirdparty .= $objectlink->thirdparty->getNomUrl(1);
+	$refWithThirdparty .= '</span>';
+
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
@@ -56,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 <tr class="<?php echo $trclass; ?>">
 	<td><?php echo $langs->trans("Contract"); ?></td>
 	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td></td>
+	<td class="nopaddingtopimp nopaddingbottomimp"><?php echo $refWithThirdparty; ?></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
 	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with

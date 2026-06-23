@@ -3,8 +3,8 @@
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,8 @@
  * @var ?array<string,mixed> $moreparams
  */
 '
+@phan-var-force int $error
+@phan-var-force ?string $permissiontoadd
 @phan-var-force ?string $permissiontoread
 @phan-var-force ?string $permissiontodelete
 @phan-var-force ?string $permissiontoclose
@@ -83,7 +85,14 @@
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
 @phan-var-force int $deliveryreceipt
+@phan-var-force string $month
+@phan-var-force string $year
 @phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force ?string $search_status
+@phan-var-force ?int $hidedetails
+@phan-var-force ?int $hidedesc
+@phan-var-force ?int $hideref
+@phan-var-force string $confirm
 ';
 
 
@@ -103,6 +112,8 @@ if (empty($massaction)) {
 @phan-var-force string $uploaddir
 ';
 
+/** @var string[] $TMsg */
+$TMsg = array();
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -324,19 +335,23 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			foreach ($listofobjectref[$thirdpartyid] as $objectid => $objectobj) {
 				//var_dump($thirdpartyid.' - '.$objectid.' - '.$objectobj->statut);
-				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT) {
+				// Honour the same per-object hidden constants used by the "Send by email"
+				// button on the card pages (comm/propal/card.php, commande/card.php,
+				// compta/facture/card.php) so the behaviour is consistent between the
+				// single-object action and the mass action.
+				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT && !getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT) {
+				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT && !getDolGlobalString('COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT) {
+				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT && !getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';
@@ -429,6 +444,14 @@ if (!$error && $massaction == 'confirm_presend') {
 						$filepath = $fileparams['fullname'];
 					}
 
+					if (getDolGlobalInt('MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND') && isset($filepath) && !dol_is_file($filepath)) {
+						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+' . (getDolGlobalInt('MAIN_ODT_AS_PDF') ? '\.pdf$' : ''));
+						if (isset($fileparams)) {
+							$filepath = $fileparams['fullname'];
+							$filename = $fileparams['name'];
+						}
+					}
+
 					// try to find other files generated for this object (last_main_doc)
 					$filename_found = '';
 					$filepath_found = '';
@@ -488,9 +511,6 @@ if (!$error && $massaction == 'confirm_presend') {
 					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
 					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
-					$tmp = explode(',', $user->email_aliases);
-					$from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 					$from = trim($tmp[((int) $reg[1] - 1)]);
@@ -956,7 +976,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
-			// Charge un document PDF depuis un fichier.
+			// Load a PDF document from a file.
 			$pagecount = $pdf->setSourceFile($file);
 			for ($i = 1; $i <= $pagecount; $i++) {
 				$tplidx = $pdf->importPage($i);
@@ -1054,10 +1074,22 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		}
 	}
 	if (!$error) {
-		$db->begin();
+		// MAIN_MASSVALIDATE_<OBJECTCLASS>_NO_GLOBAL_TRANSACTION = 1 wraps each
+		// record in its own transaction instead of all-or-nothing. Modules
+		// dealing with external systems (e.g. VeriFactu / AEAT for invoices)
+		// can enable it on the list pages they need so a mid-loop failure does
+		// not roll back the records already committed-and-pushed outside the
+		// database. The default remains the secured all-or-nothing mode (#37365).
+		$perrecordtransaction = (int) getDolGlobalInt('MAIN_MASSVALIDATE_'.strtoupper($objectclass).'_NO_GLOBAL_TRANSACTION');
+		if (!$perrecordtransaction) {
+			$db->begin();
+		}
 
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
+			if ($perrecordtransaction) {
+				$db->begin();
+			}
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if (method_exists($objecttmp, 'validate')) {
@@ -1072,10 +1104,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} else {
 					// validate() rename pdf but do not regenerate
@@ -1114,10 +1152,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 					}
 					$nbok++;
+					if ($perrecordtransaction) {
+						$db->commit();
+					}
 				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
+				if ($perrecordtransaction) {
+					$db->rollback();
+				}
 				break;
 			}
 		}
@@ -1128,8 +1172,10 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			} else {
 				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
-			$db->commit();
-		} else {
+			if (!$perrecordtransaction) {
+				$db->commit();
+			}
+		} elseif (!$perrecordtransaction) {
 			$db->rollback();
 		}
 	}
@@ -1142,6 +1188,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$nbignored = 0;
+	/** @var string[] $TMsg */
 	$TMsg = array();
 
 	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
@@ -1187,6 +1234,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} else {
+				$objecttmp->oldcopy = dol_clone($objecttmp);
 				$result = $objecttmp->delete($user);
 			}
 
@@ -1226,8 +1274,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	} else {
 		$db->rollback();
 	}
-
-	//var_dump($listofobjectthirdparties);exit;
 }
 
 // Generate document foreach object according to model linked to object
@@ -1314,7 +1360,7 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 		setEventMessage('CategTypeNotFound', 'errors');
 	}
 	if (!empty($affecttag_type_array)) {
-		//check if tag type submitted exists into Tag Map categorie class
+		// check if tag type submitted exists into Tag Map categorie class
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categ = new Categorie($db);
 		$to_affecttag_type_array = array();
@@ -1325,14 +1371,12 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 			}
 		}
 
-		//For each valid categ type set common categ
+		// For each valid categ type set common categ
 		if (!empty($to_affecttag_type_array)) {
 			foreach ($to_affecttag_type_array as $categ_type) {
 				$contcats = GETPOST('contcats_' . $categ_type, 'array');
-				//var_dump($toselect);exit;
 				foreach ($toselect as $toselectid) {
 					$result = $object->fetch($toselectid);
-					//var_dump($contcats);exit;
 					if ($result > 0) {
 						$result = $object->setCategoriesCommon($contcats, $categ_type, false);
 						if ($result > 0) {
@@ -1371,7 +1415,6 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 		} else {
 			foreach ($toselect as $toselectid) {
 				$result = $object->fetch($toselectid);
-				//var_dump($contcats);exit;
 				if ($result > 0) {
 					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
 							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
@@ -1432,7 +1475,6 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 	if (!empty($supervisortoset)) {
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
-			//var_dump($contcats);exit;
 			if ($result > 0) {
 				$object->fk_user = $supervisortoset;
 				$res = $object->update($user);
@@ -1471,7 +1513,6 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 	if (!empty($usertoaffect)) {
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
-			//var_dump($contcats);exit;
 			if ($result > 0) {
 				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
 				if ($res >= 0) {
@@ -1971,6 +2012,483 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 		}
 	} else {
 		setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+	}
+}
+
+if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
+	// Security check to avoid creating credit note if stock calculation on bill is enabled
+	if (getDolGlobalInt('STOCK_CALCULATE_ON_BILL')) {
+		setEventMessages($langs->trans('CreditNoteNotCreatedStockCalculateOnBillEnabled'), null, 'errors');
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
+	}
+
+	$objecttmp = new $objectclass($db);
+	if ($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') {
+		$nbok = 0;
+		/** @var string[] $TMsg */
+		$TMsg = array();
+
+		$unique_arr = array_unique($toselect);
+		foreach ($unique_arr as $toselectid) {
+			$sourceinvoice = $toselectid;
+			$result = $objecttmp->fetch($sourceinvoice);
+
+			// We check if invoice is available.
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedSourceInvoiceNotFound', $sourceinvoice);
+				continue;
+			}
+
+			// We check if invoice type is supported. If not, we refuse to create credit note.
+			$isSupportedType = false;
+			if ($objecttmp->type == Facture::TYPE_STANDARD) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_PROFORMA) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$isSupportedType = true;
+			}
+
+			if (!$isSupportedType) {
+				$listtype = array(
+					Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
+					Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
+					Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
+					Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
+					Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation")
+				);
+
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedInvoiceTypeNotSupported', $objecttmp->ref, $listtype[$objecttmp->type]);
+				continue;
+			}
+
+			// We check if invoice is validated. If not, we refuse to create credit note.
+			if ($objecttmp->status <= Facture::STATUS_DRAFT) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedInvoiceNotValidated', $objecttmp->ref);
+				continue;
+			}
+
+			// Test if there is at least one payment or credit note or deposit. If yes, we refuse.
+			$totalpaid				= $objecttmp->getSommePaiement();
+			$totalcreditnotes		= $objecttmp->getSumCreditNotesUsed();
+			$totaldeposits			= $objecttmp->getSumDepositsUsed();
+			if ($totalpaid > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedPaymentAlreadyDone', $objecttmp->ref);
+				continue;
+			}
+			if ($totalcreditnotes > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedCreditNoteAlreadyUsed', $objecttmp->ref);
+				continue;
+			}
+			if ($totaldeposits > 0) {
+				$TMsg[] = $langs->trans('CreditNoteNotCreatedDepositAlreadyUsed', $objecttmp->ref);
+				continue;
+			}
+
+			$db->begin();
+
+			// Create credit note
+			$object = new Facture($db);
+			$object->entity 			= $objecttmp->entity;
+			$object->socid              = $objecttmp->socid;
+			$object->subtype            = $objecttmp->subtype;
+			$object->date               = dol_now();
+			// $object->note_public		= '';
+			// $object->note_private		= '';
+			$object->ref_client			= $objecttmp->ref_client;
+			$object->ref_customer		= $objecttmp->ref_customer;
+			$object->fk_project			= $objecttmp->fk_project;
+			$object->cond_reglement_id	= 0; // No payment term for a credit note
+			$object->fk_account         = $objecttmp->fk_account;
+			$object->fk_incoterms       = $objecttmp->fk_incoterms;
+			$object->location_incoterms = $objecttmp->location_incoterms;
+			$object->multicurrency_code = $objecttmp->multicurrency_code;
+			$object->multicurrency_tx   = $objecttmp->multicurrency_tx;
+
+			$object->fk_facture_source = $sourceinvoice;
+			$object->type = Facture::TYPE_CREDIT_NOTE;
+
+
+			if ($objecttmp->isSituationInvoice()) {
+				$object->situation_counter = $objecttmp->situation_counter;
+				$object->situation_cycle_ref = $objecttmp->situation_cycle_ref;
+				$objecttmp->fetchPreviousNextSituationInvoice();
+			}
+
+
+			$id = $object->create($user);
+			if ($id < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$TMsg[] = $langs->trans('CreditNoteNotCreated', $objecttmp->ref);
+				$db->rollback();
+				continue;
+			} else {
+				$facture_source = $objecttmp;
+
+				// Copy linked contacts
+				$object->copy_linked_contact($objecttmp, 'internal');
+				$object->copy_linked_contact($objecttmp, 'external');
+
+				// Copy lines
+				if (!empty($facture_source->lines)) {
+					$fk_parent_line = 0;
+
+					foreach ($facture_source->lines as $line) {
+						// Extrafields
+						if (method_exists($line, 'fetch_optionals')) {
+							// load extrafields
+							$line->fetch_optionals();
+						}
+
+						// Reset fk_parent_line for no child products and special product
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+							$fk_parent_line = 0;
+						}
+
+						if ($facture_source->isSituationInvoice()) {
+							$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
+							$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
+
+							if (!empty($facture_source->tab_previous_situation_invoice)) {
+								// search the last standard invoice in cycle and the possible credit note between this last and facture_source
+								// TODO Move this out of loop of $facture_source->lines
+								$tab_jumped_credit_notes = array();
+								$lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+								$searchPreviousInvoice = true;
+								while ($searchPreviousInvoice) {
+									if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_SITUATION || $lineIndex < 1) {
+										$searchPreviousInvoice = false; // find, exit;
+										break;
+									} else {
+										if ($facture_source->tab_previous_situation_invoice[$lineIndex]->type == Facture::TYPE_CREDIT_NOTE) {
+											$tab_jumped_credit_notes[$lineIndex] = $facture_source->tab_previous_situation_invoice[$lineIndex]->id;
+										}
+										$lineIndex--; // go to previous invoice in cycle
+									}
+								}
+
+								$maxPrevSituationPercent = 0;
+								foreach ($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine) {
+									if ($prevLine->id == $source_fk_prev_id) {
+										$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
+
+										//$line->subprice  = $line->subprice - $prevLine->subprice;
+										$line->total_ht  -= $prevLine->total_ht;
+										$line->total_tva -= $prevLine->total_tva;
+										$line->total_ttc -= $prevLine->total_ttc;
+										$line->total_localtax1 -= $prevLine->total_localtax1;
+										$line->total_localtax2 -= $prevLine->total_localtax2;
+
+										$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+										$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+										$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+										$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+									}
+								}
+
+								// prorata
+								$line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+
+								// If there is some credit note between last situation invoice and invoice used for credit note generation (note: credit notes are stored as delta)
+								$maxPrevSituationPercent = 0;
+								foreach ($tab_jumped_credit_notes as $index => $creditnoteid) {
+									foreach ($facture_source->tab_previous_situation_invoice[$index]->lines as $prevLine) {
+										if ($prevLine->fk_prev_id == $source_fk_prev_id) {
+											$maxPrevSituationPercent = $prevLine->situation_percent;
+
+											$line->total_ht  -= $prevLine->total_ht;
+											$line->total_tva -= $prevLine->total_tva;
+											$line->total_ttc -= $prevLine->total_ttc;
+											$line->total_localtax1 -= $prevLine->total_localtax1;
+											$line->total_localtax2 -= $prevLine->total_localtax2;
+
+											$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+											$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+											$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+											$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
+										}
+									}
+								}
+
+								// prorata
+								$line->situation_percent += $maxPrevSituationPercent;
+
+								//print 'New line based on invoice id '.$facture_source->tab_previous_situation_invoice[$lineIndex]->id.' fk_prev_id='.$source_fk_prev_id.' will be fk_prev_id='.$line->fk_prev_id.' '.$line->total_ht.' '.$line->situation_percent.'<br>';
+							}
+						}
+
+						$line->fk_facture = $object->id;
+						$line->fk_parent_line = $fk_parent_line;
+
+						$line->subprice = -$line->subprice; // invert price for object
+						// $line->pa_ht = $line->pa_ht; // we chose to have buy/cost price always positive, so no revert of sign here
+						$line->total_ht = -$line->total_ht;
+						$line->total_tva = -$line->total_tva;
+						$line->total_ttc = -$line->total_ttc;
+						$line->total_localtax1 = -$line->total_localtax1;
+						$line->total_localtax2 = -$line->total_localtax2;
+
+						$line->multicurrency_subprice = -$line->multicurrency_subprice;
+						$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+						$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+						$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
+
+						$line->context['createcreditnotefrominvoice'] = 1;
+						$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount already linked
+
+						$object->lines[] = $line; // insert new line in current object
+
+						// Defined the new fk_parent_line
+						if ($result > 0 && $line->product_type == 9) {
+							$fk_parent_line = $result;
+						}
+					}
+
+					$object->update_price(1);
+				}
+
+				// Add link between credit note and origin
+				if (!empty($object->fk_facture_source) && $id > 0) {
+					$facture_source->fetch($object->fk_facture_source);
+					$facture_source->fetchObjectLinked();
+
+					if (!empty($facture_source->linkedObjectsIds)) {
+						foreach ($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+							$object->add_object_linked($sourcetype, current($TIds));
+						}
+					}
+				}
+
+				// We validate credit note
+				$result = $object->validate($user);
+				if ($result <= 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnValidation', $objecttmp->ref);
+					$db->rollback();
+					continue;
+				} else {
+					// We update PDF if not disabled
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						$model = $object->model_pdf;
+
+						$ret = $object->fetch($id); // Reload to get new records
+
+						$result = $object->generateDocument($model, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+
+					// Convert to reduction then apply reduction on source invoice
+					$object->fetch($id);
+					$object->fetch_thirdparty();
+
+					// Check if there is already a discount (protection)
+					$discountcheck = new DiscountAbsolute($db);
+					$result = $discountcheck->fetch(0, $object->id);
+
+					$canconvert = 0;
+					if (empty($discountcheck->id)) {
+						$canconvert = 1; // we can convert credit note into discount if there is no discount already linked to credit note
+					}
+
+					if ($canconvert) {
+						$amount_ht = $amount_tva = $amount_ttc = array();
+						$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+
+						// Loop on each vat rate
+						$i = 0;
+						foreach ($object->lines as $line) {
+							if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+								$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+
+								if (!isset($amount_ht[$keyforvatrate])) {
+									$amount_ht[$keyforvatrate] = 0;
+								}
+								$amount_ht[$keyforvatrate] += $line->total_ht;
+								if (!isset($amount_tva[$keyforvatrate])) {
+									$amount_tva[$keyforvatrate] = 0;
+								}
+								$amount_tva[$keyforvatrate] += $line->total_tva;
+								if (!isset($amount_ttc[$keyforvatrate])) {
+									$amount_ttc[$keyforvatrate] = 0;
+								}
+								$amount_ttc[$keyforvatrate] += $line->total_ttc;
+								if (!isset($multicurrency_amount_ht[$keyforvatrate])) {
+									$multicurrency_amount_ht[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+								if (!isset($multicurrency_amount_tva[$keyforvatrate])) {
+									$multicurrency_amount_tva[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+								if (!isset($multicurrency_amount_ttc[$keyforvatrate])) {
+									$multicurrency_amount_ttc[$keyforvatrate] = 0;
+								}
+								$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
+								$i++;
+							}
+						}
+
+						// Insert one discount by VAT rate category
+						$discount = new DiscountAbsolute($db);
+						$discount->description = '(CREDIT_NOTE)';
+						$discount->fk_soc = $object->socid;
+						$discount->socid = $object->socid;
+						$discount->socid = $object->socid;
+						$discount->fk_facture_source = $object->id;
+
+						$error = 0;
+						$id_discount = 0;
+
+						foreach ($amount_ht as $tva_tx => $xxx) {
+							$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+							$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+							$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+							$discount->total_ht = -((float) $amount_ht[$tva_tx]);
+							$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+							$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
+							$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+							$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+							$discount->multicurrency_amount_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+							$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+							$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+							$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+
+							// Clean vat code
+							$reg = array();
+							$vat_src_code = '';
+							if (preg_match('/\((.*)\)/', $tva_tx, $reg)) {
+								$vat_src_code = $reg[1];
+								$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx); // Remove code into vatrate.
+							}
+
+							$discount->tva_tx = abs((float) $tva_tx);
+							$discount->vat_src_code = $vat_src_code;
+
+							$id_discount = $discount->create($user);
+							if ($id_discount < 0) {
+								$error++;
+								break;
+							}
+						}
+
+						if (empty($error) && $id_discount > 0) {
+							// Set invoice as paid
+							$result = $object->setPaid($user);	// We can close the invoice.
+							if ($result >= 0) {
+								$object->fetch($object->id);	// Reload properties
+
+								// Apply discount on source invoice
+								$discount = new DiscountAbsolute($db);
+								$discount->fetch($id_discount);
+								$result = $discount->link_to_invoice(0, $object->fk_facture_source);
+								if ($result < 0) {
+									setEventMessages($discount->error, $discount->errors, 'errors');
+									$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnDiscountLink', $objecttmp->ref);
+									$db->rollback();
+									continue;
+								}
+
+								// Set source invoice as paid if amount to pay is 0 after discount application
+								$objecttmp->fetch($objecttmp->id);	// Reload properties
+								if ($objecttmp->getRemainToPay(0) == 0) {
+									$result = $objecttmp->setPaid($user);
+									if ($result < 0) {
+										setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+										$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSetPaidSourceInvoice', $objecttmp->ref);
+										$db->rollback();
+										continue;
+									} else {
+										if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+											$outputlangs = $langs;
+											$newlang = '';
+											if (getDolGlobalInt('MAIN_MULTILANGS') && GETPOST('lang_id', 'aZ09')) {
+												$newlang = GETPOST('lang_id', 'aZ09');
+											}
+											if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+												$objecttmp->fetch_thirdparty();
+												$newlang = $objecttmp->thirdparty->default_lang;
+											}
+											if (!empty($newlang)) {
+												$outputlangs = new Translate("", $conf);
+												$outputlangs->setDefaultLang($newlang);
+											}
+											$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
+
+											$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, (int) $hidedetails, (int) $hidedesc, (int) $hideref);
+											if ($result < 0) {
+												setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+											}
+										}
+									}
+								} else {
+									// We rollback because we want all or nothing.
+									$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSourceInvoiceNotFullyPaidAfterDiscount', $objecttmp->ref);
+									$db->rollback();
+									continue;
+								}
+							} else {
+								setEventMessages($object->error, $object->errors, 'errors');
+								$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnSetPaid', $objecttmp->ref);
+								$db->rollback();
+								continue;
+							}
+						} else {
+							setEventMessages($discount->error, $discount->errors, 'errors');
+							$TMsg[] = $langs->trans('CreditNoteNotCreatedErrorOnDiscount', $objecttmp->ref);
+							$db->rollback();
+							continue;
+						}
+					} else {
+						$TMsg[] = $langs->trans('CreditNoteNotCreatedAlreadyConverted', $objecttmp->ref);
+						$db->rollback();
+						continue;
+					}
+				}
+
+				$nbok++;
+				$db->commit();
+				$TMsg[] = $langs->trans('CreditNoteCreated', $object->ref, $objecttmp->ref);
+			}
+		}
+
+		// Show messages
+		foreach ($TMsg as $msg) {
+			setEventMessages($msg, null, 'warnings');
+		}
+
+		// Show success message
+		if ($nbok > 0) {
+			setEventMessages($langs->trans('CreditNotesCreated', $nbok), null, 'mesgs');
+		}
+
+		$toselect = array();
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
+	} else {
+		setEventMessages($langs->trans('ThisMassActionIsOnlyForInvoices'), null, 'errors');
+		header("Location: ".DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=compta&leftmenu=facture');
+		exit();
 	}
 }
 

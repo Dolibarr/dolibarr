@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=Site
 PAYBOX_PBX_RANG=Rang
 PAYBOX_PBX_IDENTIFIANT=Identifiant
 PAYBOX_HMAC_KEY=Clé HMAC
+FeatureNotUsedAccordingtoSetup=Fonctionnalité non utilisée selon votre configuration %s

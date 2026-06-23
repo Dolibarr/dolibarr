@@ -8,7 +8,7 @@
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 /**
  * 	\file       htdocs/fourn/class/fournisseur.product.class.php
- * 	\ingroup    produit
+ * 	\ingroup    product
  * 	\brief      File of class to manage predefined suppliers products
  */
 
@@ -57,7 +57,7 @@ class ProductFournisseur extends Product
 	public $error = '';
 
 	/**
-	 * @var int			ID of ligne product-supplier
+	 * @var int			ID of line product-supplier
 	 */
 	public $product_fourn_price_id;
 
@@ -832,7 +832,7 @@ class ProductFournisseur extends Product
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
 		// phpcs:enable
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
+		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch, p.fk_unit as product_fk_unit,";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
@@ -863,6 +863,7 @@ class ProductFournisseur extends Product
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
 				$prodfourn->status = $record["status"];
 				$prodfourn->status_buy = $record["status_buy"];
+				$prodfourn->status_batch = $record["status_batch"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
 				$prodfourn->ref_supplier = $record["ref_fourn"];
@@ -885,6 +886,11 @@ class ProductFournisseur extends Product
 				$prodfourn->supplier_reputation = $record["supplier_reputation"];
 				$prodfourn->fourn_date_creation = $this->db->jdate($record['datec']);
 				$prodfourn->fourn_date_modification = $this->db->jdate($record['tms']);
+				// Carry the product's default measuring unit so the AJAX caller
+				// (getSupplierPrices.php) can return it to the line form, which
+				// then preselects #units like the customer side already does for
+				// idprod (see issues #34610 client-side and #38636 supplier-side).
+				$prodfourn->fk_unit = $record["product_fk_unit"];
 
 				$prodfourn->fourn_multicurrency_price = $record["multicurrency_price"];
 				$prodfourn->fourn_multicurrency_unitprice = $record["multicurrency_unitprice"];
@@ -1168,6 +1174,39 @@ class ProductFournisseur extends Product
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		// llx_product_fournisseur_price has a UNIQUE INDEX uk_product_fournisseur_price_ref
+		// on (ref_fourn, fk_soc, quantity, entity). A blind UPDATE fk_soc = dest on every
+		// origin row fails on rows where dest already has the same (ref_fourn, quantity, entity),
+		// blocking the whole merge with a 1062 Duplicate entry error (see #38456).
+		// Drop the colliding origin rows first - they would become exact duplicates of dest
+		// rows so the merge has nothing to lose by keeping the dest version.
+		$sqlselect = "SELECT pfp_origin.rowid";
+		$sqlselect .= " FROM ".$dbs->prefix()."product_fournisseur_price AS pfp_origin";
+		$sqlselect .= " INNER JOIN ".$dbs->prefix()."product_fournisseur_price AS pfp_dest";
+		$sqlselect .= " ON pfp_dest.fk_soc = ".((int) $dest_id);
+		$sqlselect .= " AND pfp_dest.ref_fourn = pfp_origin.ref_fourn";
+		$sqlselect .= " AND pfp_dest.quantity = pfp_origin.quantity";
+		$sqlselect .= " AND pfp_dest.entity = pfp_origin.entity";
+		$sqlselect .= " WHERE pfp_origin.fk_soc = ".((int) $origin_id);
+
+		$resql = $dbs->query($sqlselect);
+		if (!$resql) {
+			return false;
+		}
+		$colliding = array();
+		while ($obj = $dbs->fetch_object($resql)) {
+			$colliding[] = (int) $obj->rowid;
+		}
+		$dbs->free($resql);
+
+		foreach ($colliding as $rowid) {
+			$sqldel = "DELETE FROM ".$dbs->prefix()."product_fournisseur_price";
+			$sqldel .= " WHERE rowid = ".((int) $rowid);
+			if (!$dbs->query($sqldel)) {
+				return false;
+			}
+		}
+
 		$tables = array(
 			'product_fournisseur_price'
 		);
@@ -1466,11 +1505,11 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return	string 			       	Label of status
 	 */
-	public function getLibStatut($mode = 0, $type = 0)		// must be compatible with getLibStatut of inherited Product
+	/*  public function getLibStatut($mode = 0, $type = 0)      // must be compatible with getLibStatut of inherited Product
 	{
 		return $this->LibStatut($this->status, $mode);
 	}
-
+	*/
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
@@ -1480,6 +1519,7 @@ class ProductFournisseur extends Product
 	 *  @param	int		$type			Type of product
 	 *  @return string 			       	Label of status
 	 */
+	/*
 	public function LibStatut($status, $mode = 0, $type = 0)
 	{
 		// phpcs:enable
@@ -1500,6 +1540,7 @@ class ProductFournisseur extends Product
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
+	*/
 
 	/**
 	 * Private function to log price history

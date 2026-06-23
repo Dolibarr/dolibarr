@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class box_comptes extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $user;
 

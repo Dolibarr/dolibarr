@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,15 +43,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'blockedlog', 'other'));
 
+// Get Parameters
+$action     = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+$withtab    = GETPOSTINT('withtab');
+$origin     = GETPOST('origin');
+$withtab = GETPOSTISSET('withtab') ? GETPOSTINT('withtab') : 1;
+
 // Access Control
 if (!$user->admin || !isModEnabled('blockedlog')) {
 	accessforbidden();
 }
-
-// Get Parameters
-$action     = GETPOST('action', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
-$withtab    = GETPOSTINT('withtab');
 
 
 /*
@@ -92,7 +97,7 @@ $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
 $title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
@@ -105,42 +110,97 @@ $morehtmlcenter = '';
 
 $registrationnumber = getHashUniqueIdOfRegistration();
 $texttop = '<small class="opacitymedium">'.$langs->trans("RegistrationNumber").':</small> <small>'.dol_trunc($registrationnumber, 10).'</small>';
+if (!isRegistrationDataSavedAndPushed()) {
+	$texttop = '';
+}
 
 print load_fiche_titre($title.'<br>'.$texttop, $linkback, 'blockedlog', 0, '', '', $morehtmlcenter);
 
 if ($withtab) {
-	$head = blockedlogadmin_prepare_head(GETPOST('withtab', 'alpha'));
-	print dol_get_fiche_head($head, 'blockedlog', '', -1);
+	$head = blockedlogadmin_prepare_head($withtab);
+	print dol_get_fiche_head($head, 'technicalinfo', '', -1);
 }
-
-//print $texttop;
-//print '<br><br>';
 
 print '<span class="opacitymedium">'.$langs->trans("BlockedLogDesc")."</span><br>\n";
 
-if (in_array($mysoc->country_code, array('FR'))) {
-	$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
-	print info_admin($htmltext, 0, 0, 'warning');
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+
+
+// Special additional message for FR only
+$infotoshow = '';
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if ($islne) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
+			// This is an alpha or beta version
+			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", $versionbadge);
+		} else {
+			$infotoshow = $langs->trans("LNECertifiedVersionFR", $versionbadge);
+		}
+	} else {
+		$infotoshow = $langs->trans("NotCertifiedVersionFR", $versionbadge);
+	}
+
+	$infotoshow .= ' - <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
 }
+
+// Show generic message (for countries that need registration) to explain we need registration to collect data and why
+if (in_array($mysoc->country_code, array('FR'))) {
+	$organization_for_ping = getDolGlobalString('MAIN_ORGANIZATION_FOR_PING', "Association Dolibarr");
+	$dataprivacy_url = getDolGlobalString('MAIN_ORGANIZATION_URL_PRIVACY', "https://www.dolibarr.org/legal-privacy-gdpr.php");
+
+	if (!isRegistrationDataSavedAndPushed() || $origin == 'initmodule') {
+		if ($infotoshow) {
+			print info_admin($infotoshow, 0, 0, 'info');
+		}
+		/*
+		$htmltext = $langs->trans("UnalterableLogToolRegistrationFR").'<br>';
+		$htmltext .= $langs->trans("InformationWillBePublishedTo");
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo2", $organization_for_ping, $dataprivacy_url);
+		$htmltext .= '<br>'.$langs->trans("InformationWillBePublishedTo3");
+
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	} else {
+		$htmltext = ($infotoshow ? $infotoshow.'<br>' : '');
+		$htmltext .= $langs->trans("ApplicationHasBeenRegistered");
+		$htmltext .= ' '.$langs->trans("RegistrationNumber").': <span class="badge-text badge-secondary" title="Flag stored into MAIN_FIRST_REGISTRATION_OK_DATE. Registered data saved into BLOCKEDLOG_REGISTRATION_...">'.dol_trunc($registrationnumber, 10).'</span>';
+		$htmltext .= '<br>';
+		$htmltext .= $langs->trans("LastRegistrationDate").' : ';
+		//$htmltext .= dol_print_date(getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE'), 'dayhour', 'tzuserrel');
+		$htmltext .= getDolGlobalString('MAIN_FIRST_REGISTRATION_OK_DATE');
+
+		print info_admin($htmltext, 0, 0, 'info');
+
+		// Show remind on good practices related to archives
+		/*
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
+		print info_admin($htmltext, 0, 0, 'warning');
+		*/
+	}
+}
+
 
 print '<br>';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Key").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
+// Initial signature
+// Generated randomly when doing the first insert by blockedlog.class.php, and saved into BLOCKEDLOG_ENTITY_FINGERPRINT
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
-print $langs->trans("CompanyInitialKey").'</td><td>';
+print '<td class="titlefieldmiddle" title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
+print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_ENTITY_FINGERPRINT">';
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
-/*
+/* Deprecated
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
-	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
 	print '<td class="right" width="300">';
@@ -155,47 +215,73 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
+
+print '<tr class="oddeven">';
+print '<td class="titlefieldmiddle" title="Debug obfuscation key">';
+print "Debug obfuscation key".'</td><td title="Debug obfuscation key" class="small">';
+try {
+	$a = $block_static->getObfuscationKey();
+	print 'block_static->getObfuscationKey(): '.$a;
+	print '<br>';
+	print '$_SESSION[obfuscationkey_'.((int) $conf->entity).']: '.$_SESSION['obfuscationkey_'.((int) $conf->entity)];
+	print '<br>';
+	$b = $block_static->getEncodedHMACSecretKey();
+	print $b;
+	print '<br>';
+	if (preg_match('/dolcrypt/', $b)) {
+		print dolDecrypt($b, '');
+	} elseif (preg_match('/dolobfuscationv1/', $b)) {
+		print dolDecrypt($b, $a);
+	}
+	print '<br>';
+	print '$conf->cache[obfuscationkey_'.((int) $conf->entity).']: '.$conf->cache['obfuscationkey_'.((int) $conf->entity)];
+} catch (Exception $e) {
+	print $e->getMessage();
+}
+print '</td></tr>';
 */
 
 
 // Show the input of countries not allowed for disabling
-print '<tr class="oddeven">';
-print '<td>';
-print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
-print '</td>';
-print '<td>';
+if ($mysoc->country_code != 'FR' || !isALNERunningVersion() || constant('CERTIF_LNE') != '1') {
+	print '<tr class="oddeven">';
+	print '<td>';
+	print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
+	print '</td>';
+	print '<td>';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
-print '<input type="hidden" name="withtab" value="'.$withtab.'">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="set_BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY">';
+	print '<input type="hidden" name="withtab" value="'.$withtab.'">';
 
-$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
-$sql .= " WHERE active > 0";
+	$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
+	$sql .= " WHERE active > 0";
 
-$countryArray = array();
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+	$countryArray = array();
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$countryArray[$obj->code_iso] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+		}
 	}
+
+	$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
+
+	// Can module be disabled
+	$canbedisabled = $block_static->canBeDisabled();
+
+	print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
+	print '</form>';
+
+	print '</td>';
+	print '</tr>';
 }
 
-$selected = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
-
-// Can module be disabled
-$canbedisabled = $block_static->canBeDisabled();
-
-print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $selected, 0, 0, '', 0, 0, $canbedisabled ? '' : 'disabled');
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"'.($canbedisabled ? '' : ' disabled').'>';
-print '</form>';
-
-print '</td>';
-
-
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td class="">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents = $block_static->trackedevents;
 foreach ($arrayoftrackedevents as $key => $val) {
@@ -216,6 +302,90 @@ print '</tr>';
 
 print '</table>';
 print '</div>';
+
+
+print '<br><br>';
+
+
+print '<!-- Link to pay -->';
+print '<span class="fas fa-external-link-alt" style=""></span> <span class="opacitymedium">'.$langs->trans("DebugTools").'</span><br>';
+print '<br>';
+
+$urlforceregistration = DOL_MAIN_URL_ROOT.'/index.php?forceregistration=1';
+print $langs->trans("URLToForceRegistration").'<br>';
+print '<div class="urllink"><input type="text" id="forceregistration" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforceregistration.'"><a class="" href="'.$urlforceregistration.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forceregistration');
+
+print '<br>';
+
+/*
+$urlforcepushcounter = DOL_MAIN_URL_ROOT.'/index.php?forcepushcounter=1';
+print $langs->trans("URLToForcePushOfBlockedLogCounter").'<br>';
+print '<div class="urllink"><input type="text" id="forcepushcounter" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urlforcepushcounter.'"><a class="" href="'.$urlforcepushcounter.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcepushcounter');
+*/
+
+$urltogetkeyobfuscation = DOL_MAIN_URL_ROOT.'/blockedlog/admin/blockedlog.php?forcegetkeyobfuscation=1&token='.newToken();
+print $langs->trans("URLToGetObfuscationkey").'<br>';
+print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="reposition" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print ajax_autoselect('forcegetkeyobfuscation');
+
+if (GETPOST('forcegetkeyobfuscation')) {
+	unset($_SESSION['hmac_secret_key']);
+	unset($conf->cache['hmac_secret_key']);
+
+	$block_static->entity = $conf->entity;
+
+	$hmac_encoded_secret_key = '';
+	try {
+		$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
+		print "\n<!-- READ TO GET HMAC KEY RETURNED result: ".$hmac_encoded_secret_key." -->\n";
+	} catch (Exception $e) {
+		print '<div class="error">'.$e->getMessage().'</div>';
+	}
+
+	$obfuscationkey = '';
+	try {
+		$obfuscationkey = $block_static->getObfuscationKey();					// Note: use the $mysoc->idprof1 and $registrationnumber. On network trouble, an Exception is thrown to the caller
+		print "\n<!-- API TO GET REMOTE OBFUSCATION KEY RETURNED result: ".$obfuscationkey." -->\n";
+	} catch (Exception $e) {
+		print '<div class="error">'.$e->getMessage().'</div>';
+	}
+
+	// Now test the keyfor debug purpose..
+
+	// Decode the encrypted parameter using the obfuscation key to get the HMAC key in memory.
+	$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $obfuscationkey);
+
+	if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+		print '<!-- Failed to decode the encoded HMAC key using the remote obfuscation key -->';
+		// Failed to get the clear HMAC value. May be we are using an old obfuscated HMAC key, so we retry with the old method (used by webhosting providers using the attestation with previous versions).
+		// Example with the old demo sample database:
+		//  dolcrypt:AES-256-CTR:46cb611f00c4cff8:XVfEh15vX/JOYmpiw2QPNamcTQwdbBZJTcXBh9rMpzYJOpVPZubIWcgA8wHMXA==
+		//  instance_unique_id=11f3c81e86fc9e3b3fd11d81c9a31bd0
+		//  HMAC key=BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A
+
+		// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
+		$oldobfuscationkey = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
+
+		$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
+
+		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
+			//throw new Exception('blockedlog.php Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+			print '<!-- HMAC key can t be decoded -->';
+		} else {	// $hmac_secret_key start with 'BLOCKEDLOGHMAC...' so it is a valid value
+			print '<!-- Success to decode HMAC key. It is encrypted with an old obfuscation method, we migrate it. -->';
+			print '<!-- '.$hmac_secret_key.' -->';
+			if ($obfuscationkey) {
+				$result = $block_static->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey);		// gitleaks:allow  Save the HMAC key
+				print '<!-- Result to save the new HMAC key: '.$result.' -->';
+			}
+		}
+	} else {
+		print '<!-- Success to decode HMAC key from the remote obfuscation key, nothing to do more -->';
+	}
+}
+
 
 if ($withtab) {
 	print dol_get_fiche_end();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practive
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practice
 
 	$newstr = '';
 

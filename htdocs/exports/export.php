@@ -592,7 +592,29 @@ if ($step == 2 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
 	$htmlother->select_export_model((string) $exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
-	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" name="applyprofile" id="applyprofile" class="button smallpaddingimp hidden" value="'.$langs->trans("Apply").'">';
+	// Add js to show button
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<script>
+			$(document).ready(function() {
+			    // hide button
+			    $("#applyprofile").hide();
+
+			    // follow change on list
+			    $("#exportmodelid").change(function() {
+					console.log("We select a new profile");
+			        if ($(this).val() && $(this).val() != "-1") {
+			            $("#applyprofile").show();
+			        } else {
+			            $("#applyprofile").hide();
+			        }
+
+			    });
+
+			});
+			</script>
+		';
+	}
 	print '</div>';
 	print '</form>';
 
@@ -609,11 +631,15 @@ if ($step == 2 && $datatoexport) {
 		$morecss = ' disabled';
 		$moretitle = $langs->trans("NotAllowed");
 	}
-	print '<a class="liste_titre commonlink'.$morecss;
-	print '" title="'.$langs->trans("All").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
-	print ' / ';
-	print '<a class="liste_titre commonlink'.$morecss;
-	print '" title="'.$langs->trans("None").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
+	print '<a class="liste_titre button small nopaddingimp '.$morecss;
+	print '" title="'.$langs->trans("All").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All");
+	print ' '.img_right($moretitle, 0, 'style="max-width: 20px"');
+	print "</a>";
+	//print ' / ';
+	print '<a class="liste_titre button small nopaddingimp'.$morecss;
+	print '" title="'.$langs->trans("None").($moretitle ? ' - '.$moretitle : '').'" href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.urlencode($datatoexport).'&action=unselectfield&field=all&token='.newToken().'">';
+	print img_left($moretitle, 0, 'style="max-width: 20px"').' ';
+	print $langs->trans("None")."</a>";
 	print '</td>';
 	print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
 	print '</tr>';
@@ -767,7 +793,7 @@ if ($step == 3 && $datatoexport) {
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
-	// Lot de donnees a exporter
+	// Dataset to export
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
@@ -791,7 +817,8 @@ if ($step == 3 && $datatoexport) {
 			}
 		}
 	}
-	print '<td>'.$list.'</td></tr>';
+	print '<td><span class="small">'.$list.'</span></td>';
+	print '</tr>';
 
 	print '</table>';
 	print '</div>';
@@ -799,7 +826,7 @@ if ($step == 3 && $datatoexport) {
 	print '<br><br>';
 
 	// Combo list of export models
-	print '<span class="opacitymedium">'.$langs->trans("SelectFilterFields").'</span><br><br>';
+	print '<span class="opacitymedium">'.$langs->trans("SelectFilterFields").'...</span><br><br>';
 
 
 	// un formulaire en plus pour recuperer les filtres
@@ -811,23 +838,21 @@ if ($step == 3 && $datatoexport) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
-	//print '<td>'.$langs->trans("ExportableFields").'</td>';
-	//print '<td class="center"></td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="25%">'.$langs->trans("FilteredFieldsValues").'</td>';
 	print '</tr>';
 
-	// Champs exportables
+	// Field we can export
 	$fieldsarray = $objexport->array_export_fields[0];
-	// Champs filtrable
+	// Field that can be filtered
 	$Typefieldsarray = $objexport->array_export_TypeFields[0];
-	// valeur des filtres
+	// Value of filters
 	$ValueFiltersarray = (!empty($objexport->array_export_FilterValue[0]) ? $objexport->array_export_FilterValue[0] : '');
 	// Select request if all fields are selected
 	$sqlmaxforexport = $objexport->build_sql(0, array(), array());
 
 	$i = 0;
-	// on boucle sur les champs
+	// We loop on fields
 	foreach ($fieldsarray as $code => $label) {
 		print '<tr class="oddeven">';
 
@@ -950,6 +975,8 @@ if ($step == 4 && $datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
+	$titleofmodule = $objexport->array_export_module[0]->getName();
+
 	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	print '<div class="fichecenter">';
@@ -959,8 +986,7 @@ if ($step == 4 && $datatoexport) {
 	// Module
 	print '<tr><td class="titlefield tableforfield">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
-	print $objexport->array_export_module[0]->getName();
+	print dolPrintHTML($titleofmodule);
 	print '</td></tr>';
 
 	// Lot de donnees a exporter
@@ -987,7 +1013,7 @@ if ($step == 4 && $datatoexport) {
 			}
 		}
 	}
-	print '<td>'.$list.'</td>';
+	print '<td><span class="small">'.$list.'</span></td>';
 	print '</tr>';
 
 	// List of filtered fields
@@ -1095,10 +1121,10 @@ if ($step == 4 && $datatoexport) {
 		print $value.' ';
 		print '</td><td class="center nowraponall" width="40">';
 		if ($value < count($array_selected)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
 		}
 		if ($value > 1) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
 		}
 		print '</td>';
 
@@ -1139,6 +1165,7 @@ if ($step == 4 && $datatoexport) {
 		print '<input type="hidden" name="step" value="'.$step.'">';
 		print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
@@ -1148,14 +1175,20 @@ if ($step == 4 && $datatoexport) {
 		print '<td></td>';
 		print '</tr>';
 
+		$nameofexportprofile = str_replace(' ', '-', $langs->trans("ExportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
+		if (GETPOST('export_name')) {	// If we have submitted a form, we take value used for the update try
+			$nameofexportprofile = $export_name;
+		}
+
+
 		print '<tr class="oddeven">';
-		print '<td><input name="export_name" value=""></td>';
+		print '<td><input name="export_name" class="minwidth300" value="'.$nameofexportprofile.'"></td>';
 		print '<td>';
 		$arrayvisibility = array('private' => $langs->trans("Private"), 'all' => $langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button reposition button-save small" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save smallpaddingimp" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		$tmpuser = new User($db);
@@ -1183,7 +1216,7 @@ if ($step == 4 && $datatoexport) {
 					print $langs->trans("Everybody");
 				} else {
 					$tmpuser->fetch($obj->fk_user);
-					print $tmpuser->getNomUrl(1);
+					print $tmpuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print '<td class="right">';
@@ -1251,7 +1284,7 @@ if ($step == 5 && $datatoexport) {
 	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	/*
-	 * Confirmation suppression fichier
+	 * Confirmation of deletion of file
 	 */
 	if ($action == 'remove_file') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
@@ -1281,7 +1314,7 @@ if ($step == 5 && $datatoexport) {
 	// List of exported fields
 	print '<tr><td>'.$langs->trans("ExportedFields").'</td>';
 	$list = '';
-	foreach ($array_selected as $code => $label) {
+	foreach ($array_selected as $code => $value) {
 		if (isset($objexport->array_export_fields[0][$code])) {
 			$list .= (!empty($list) ? ', ' : '');
 
@@ -1293,7 +1326,8 @@ if ($step == 5 && $datatoexport) {
 			}
 		}
 	}
-	print '<td>'.$list.'</td></tr>';
+	print '<td><span class="small">'.$list.'</span></td>';
+	print '</tr>';
 
 	// List of filtered fields
 	if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
@@ -1373,7 +1407,7 @@ if ($step == 5 && $datatoexport) {
 	}
 
 	// Show existing generated documents
-	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
+	// NB: The function show_documents rescan all modules when  genallowed=1, else we take $liste
 	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 

@@ -4,8 +4,9 @@
  * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,7 +421,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] != $conf->entity)));
+		$disabled = (isModEnabled('multicompany') && isset($mc) && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] != $conf->entity)));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -656,11 +657,11 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center">'.$langs->trans("MustBeUnique").'</td>';
-print '<td class="center">'.$langs->trans("MustBeMandatory").'</td>';
+print '<td class="center">'.$langs->trans("MustBeMandatory").'<br><span class="opacitymedium">'.$langs->trans("MustBeMandatory2").'</span></td>';
 print '<td class="center">'.$langs->trans("MustBeInvoiceMandatory").'</td>';
 print "</tr>\n";
 
-$profid = array('IDPROF1' => array(), 'IDPROF2' => array(), 'IDPROF3' => array(), 'IDPROF4' => array(), 'IDPROF5' => array(),'IDPROF6' => array(), 'EMAIL' => array());
+$profid = array('IDPROF1' => array(), 'IDPROF2' => array(), 'IDPROF3' => array(), 'IDPROF4' => array(), 'IDPROF5' => array(),'IDPROF6' => array(), 'EMAIL' => array(), 'EUID' => array());
 $profid['IDPROF1'][0] = $langs->trans("ProfId1");
 $profid['IDPROF1'][1] = $langs->transcountry('ProfId1', $mysoc->country_code);
 $profid['IDPROF2'][0] = $langs->trans("ProfId2");
@@ -675,6 +676,8 @@ $profid['IDPROF6'][0] = $langs->trans("ProfId6");
 $profid['IDPROF6'][1] = $langs->transcountry('ProfId6', $mysoc->country_code);
 $profid['EMAIL'][0] = $langs->trans("EMail");
 $profid['EMAIL'][1] = $langs->trans('Email');
+$profid['EUID'][0] = $langs->trans("EUIDShort");
+$profid['EUID'][1] = $langs->trans('EUID');
 if (isModEnabled('accounting')) {
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'] = array();
 	$profid['ACCOUNTANCY_CODE_CUSTOMER'][0] = $langs->trans("CustomerAccountancyCodeShort");
@@ -854,9 +857,8 @@ if (!$conf->use_javascript_ajax) {
 print '</tr>';
 
 
-
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddRefInList"), $langs->trans("AddRefInListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('SOCIETE_ADD_REF_IN_LIST')) {
@@ -884,7 +886,7 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddAdressInList"), $langs->trans("AddAdressInListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('COMPANY_SHOW_ADDRESS_SELECTLIST')) {
@@ -898,7 +900,7 @@ print '</a></td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("AddEmailPhoneTownInContactList"), $langs->trans("AddEmailPhoneTownInContactListHelp")).'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {

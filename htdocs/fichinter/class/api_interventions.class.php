@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2025	William Mead			<william@m34d.com>
- * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025-2026	William Mead			<william@m34d.com>
+ * Copyright (C) 2025-2026	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -132,7 +132,7 @@ class Interventions extends DolibarrApi
 	 * @param	int		$limit					Limit for list
 	 * @param	int		$page					Page number
 	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
@@ -331,7 +331,7 @@ class Interventions extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->fichinter->array_options[$index] = $this->_checkValForAPI($field, $val, $this->fichinter);
+					$this->fichinter->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->fichinter);
 				}
 				continue;
 			}
@@ -570,17 +570,21 @@ class Interventions extends DolibarrApi
 
 
 	/**
-	 * Delete the line of the interventional.
+	 * Delete the line of the intervention
 	 *
-	 * @param int $id ID of the interventional
-	 * @param int $lineid ID of the line to delete
-	 * @return  Object						Object with cleaned properties
+	 * @since	23.0.0	Initial implementation
 	 *
-	 * @throws RestException
+	 * @param	int		$id			ID of the intervention
+	 * @param	int		$lineid		ID of the line to delete
+	 * @return	Object				Object with cleaned properties
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
 	 *
 	 * @url DELETE /{id}/lines/{lineid}
 	 */
-	public function deleteInterventionalLine($id, $lineid)
+	public function deleteLine($id, $lineid)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
 			throw new RestException(403);
@@ -588,11 +592,11 @@ class Interventions extends DolibarrApi
 
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Interventional not in Draft Status : '.$this->fichinter->getLibStatut(1));
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
@@ -601,7 +605,7 @@ class Interventions extends DolibarrApi
 
 		$objectline = new FichinterLigne($this->db);
 		if ($objectline->fetch($lineid) <= 0) {
-			throw new RestException(404, 'Interventional Line not found');
+			throw new RestException(404, 'Intervention line not found');
 		}
 
 		$updateRes = $objectline->deleteLine(DolibarrApiAccess::$user);
@@ -707,13 +711,14 @@ class Interventions extends DolibarrApi
 	 *
 	 * @param	int					$id			ID of interventional
 	 * @param	string				$type		Type of the interventional
+	 * @param	string				$source		Source of the contact (internal, external)
 	 * @return	array<int,mixed>				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
 	 *
 	 * @throws	RestException
 	 */
-	public function getContacts($id, $type = '')
+	public function getContacts($id, $type = '', $source = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -728,8 +733,16 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->fichinter->liste_contact(-1, 'external', 0, $type);
-		$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
+		if (empty($source) || $source == 'external') {
+			$contacts = $this->fichinter->liste_contact(-1, 'external', 0, $type);
+		} else {
+			$contacts = array();
+		}
+		if (empty($source) || $source == 'internal') {
+			$socpeoples = $this->fichinter->liste_contact(-1, 'internal', 0, $type);
+		} else {
+			$socpeoples = array();
+		}
 
 		$contacts = array_merge($contacts, $socpeoples);
 
@@ -782,28 +795,30 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * update the line of the interventional.
+	 * Update a line of an intervention
 	 *
-	 * @param	int   $id             Id of order to update
-	 * @param	int   $lineid         Id of line to update
-	 * @param	array $request_data   InternventionalLine data
+	 * @param	int		$id					ID of order to update
+	 * @param	int		$lineid				ID of line to update
+	 * @param	array	$request_data		Intervention line data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return	Object		  Object with cleaned properties
+	 * @return	Object						Object with cleaned properties
 	 *
-	 * @throws RestException
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 *
 	 * @url PUT /{id}/lines/{lineid}
 	 */
-	public function updateInterventionalLine($id, $lineid, $request_data)
+	public function putLine($id, $lineid, $request_data)
 	{
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Interventional not found');
+			throw new RestException(404, 'Intervention not found');
 		}
 
 		if ($this->fichinter->status != 0) {
-			throw new RestException(403, 'Interventional not in Draft Status : '.$this->fichinter->getLibStatut(1));
+			throw new RestException(403, 'Intervention not in draft status : '.$this->fichinter->getLibStatut(1));
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->fichinter->id)) {
@@ -812,14 +827,22 @@ class Interventions extends DolibarrApi
 
 		$objectline = new FichinterLigne($this->db);
 		if ($objectline->fetch($lineid) <= 0) {
-			throw new RestException(404, 'Interventional Line not found');
+			throw new RestException(404, 'Intervention line not found');
 		}
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->date = sanitizeVal($request_data->date);
-		$request_data->duration = sanitizeVal($request_data->duration);
-		$request_data->rang = sanitizeVal($request_data->rang);
+		if (isset($request_data->desc) || isset($request_data->description)) {
+			$objectline->desc = sanitizeVal($request_data->desc ?? $request_data->description, 'restricthtml');
+		}
+		if (isset($request_data->date)) {
+			$objectline->date = (int) sanitizeVal($request_data->date);
+		}
+		if (isset($request_data->duration)) {
+			$objectline->duration = (int) sanitizeVal($request_data->duration);
+		}
+		if (isset($request_data->rang)) {
+			$objectline->rang = (int) sanitizeVal($request_data->rang);
+		}
 
 		$updateRes = $objectline->update(DolibarrApiAccess::$user);
 

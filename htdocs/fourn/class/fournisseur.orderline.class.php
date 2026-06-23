@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
@@ -171,12 +171,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx, cd.special_code,';
 		$sql .= ' cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.ref as ref_supplier,';
-		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
+		$sql .= ' cd.remise, cd.remise_percent, cd.subprice, cd.subprice_ttc,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit, cd.extraparams,';
-		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
+		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_subprice_ttc, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' c.fk_soc as socid';
 		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as c, '.$this->db->prefix().'commande_fournisseurdet as cd';
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON cd.fk_product = p.rowid';
@@ -346,7 +346,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element;
 		$sql .= " (fk_commande, label, description, date_start, date_end,";
 		$sql .= " fk_product, product_type, special_code, rang,";

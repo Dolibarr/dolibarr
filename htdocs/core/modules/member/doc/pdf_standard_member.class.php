@@ -444,7 +444,7 @@ class pdf_standard_member extends CommonStickerGenerator
 		$pdf->SetTitle($title);
 		$pdf->SetSubject($title);
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);

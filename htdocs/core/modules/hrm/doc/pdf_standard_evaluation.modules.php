@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -195,14 +195,14 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 		if ($conf->hrm->dir_output) {
 			// Definition of $dir and $file
+			$entity = isset($object->entity) ? $object->entity : 1;
+			$basedir = empty($conf->hrm->multidir_output[$entity]) ? $conf->hrm->dir_output : $conf->hrm->multidir_output[$entity];
 			if ($object->specimen) {
-				//$dir = $conf->hrm->dir_output;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation';
+				$dir = $basedir.'/evaluation';
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				//$dir = $conf->hrm->dir_output."/".$objectref;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation'."/".$objectref;
+				$dir = $basedir.'/evaluation'."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -256,7 +256,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Evaluation"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Evaluation"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -289,7 +289,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
 					$tab_top += 4;
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 

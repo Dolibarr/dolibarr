@@ -111,6 +111,8 @@ if (!$sortorder) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array($contextpage));
 
+$object = new AccountingAccount($db);
+
 $formaccounting = new FormAccounting($db);
 $accountingAccount = new AccountingAccount($db);
 
@@ -254,7 +256,6 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
  */
 
 $form = new Form($db);
-$formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
@@ -503,7 +504,8 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLines").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilTodoCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("InvoiceLines").'<br><span class="opacityhigh small">'.$langs->trans("DescVentilTodoCustomer").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print '<br>';
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
@@ -826,7 +828,7 @@ if ($result) {
 		}
 		// Ref Invoice
 		if (!empty($arrayfields['f.ref']['checked'])) {
-			print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
+			print '<td class="nowraponall cell2linesheight">'.$facture_static->getNomUrl(1).'</td>';
 			$totalarray['nbfield']++;
 		}
 		// Invoice date
@@ -836,7 +838,7 @@ if ($result) {
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdoverflowmax125 cell2linesheight">';
 			if ($product_static->id > 0) {
 				print $product_static->getNomUrl(1);
 			}
@@ -889,8 +891,8 @@ if ($result) {
 			if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 				$code_vat_differ = 'warning bold';
 			}
-			print '<td class="right'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
-			print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
+			print '<td class="right cell2linesheight'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
+			print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''), false, 0, 0, 1);
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
@@ -914,7 +916,7 @@ if ($result) {
 		}
 		// Found accounts
 		if (!empty($arrayfields['aa.data_suggest']['checked'])) {
-			print '<td class="small">';
+			print '<td class="small cell2linesheight">';
 			// First show default account for any products
 			$s = '1. '.(($facture_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 			$shelp = '';

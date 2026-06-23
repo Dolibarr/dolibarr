@@ -69,10 +69,19 @@ foreach ($dirsyslogs as $reldir) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $newdir.$file.'.php';
+					try {
+						require_once $newdir.$file.'.php';
 
-					$module = new $file();
-					'@phan-var-force LogHandler $module';
+						if (!class_exists($file)) {
+							dol_syslog('admin/syslog.php skipping stale handler '.$file.' (class not declared)', LOG_WARNING);
+							continue;
+						}
+						$module = new $file();
+						'@phan-var-force LogHandler $module';
+					} catch (Throwable $e) {
+						dol_syslog('admin/syslog.php skipping stale handler '.$file.': '.$e->getMessage(), LOG_WARNING);
+						continue;
+					}
 
 					// Show modules according to features level
 					if ($module->getVersion() == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -261,7 +270,7 @@ foreach ($syslogModules as $moduleName) {
 				$value = (isset($option['default']) ? $option['default'] : '');
 			}
 
-			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
+			print '<span class="hideonsmartphone opacitymedium">'.$option['name'].': </span><input type="text" placeholder="'.$option['default'].'" class="flat'.(empty($option['css']) ? '' : ' '.$option['css']).'" name="'.dol_escape_htmltag($option['constant']).'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) {
 				print '<br>'.$langs->trans("Example").': '.dol_escape_htmltag($option['example']);
 			}
