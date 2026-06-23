@@ -39,6 +39,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -132,7 +133,7 @@ $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
-$search_billed = GETPOST('search_billed', 'intcomma') ? GETPOST('search_billed', 'intcomma') : GETPOST('billed', 'intcomma');
+$search_billed = GETPOST('search_billed', 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
@@ -167,7 +168,6 @@ $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlistdetail'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -230,8 +230,8 @@ $arrayfields = array(
 	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 120),
 	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 125),
 	'c.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 130),
-	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position' => 135),
-	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position' => 140),
+	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135),
+	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
 	'shippable' => array('label' => "Shippable", 'checked' => '1','enabled' => (string) (int) (isModEnabled('shipping')), 'position' => 990),
 	'c.facture' => array('label' => "Billed", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
 	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
@@ -999,7 +999,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	if (GETPOSTINT('autoselectall')) {
@@ -1018,7 +1018,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -1304,7 +1304,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1315,7 +1315,7 @@ if ($resql) {
 	// Fields title
 	print '<tr class="liste_titre">';
 
-	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
@@ -1479,7 +1479,7 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print '</tr>'."\n";
@@ -1584,7 +1584,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2245,7 +2245,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

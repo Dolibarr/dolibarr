@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2013       Cédric Salvador             <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,8 +89,8 @@ $object->fetch_thirdparty();
 
 // Security check
 $socid = 0;
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 

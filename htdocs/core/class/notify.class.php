@@ -139,7 +139,9 @@ class Notify
 	 */
 	public $fk_project;
 
-	// This codes actions are defined into table llx_notify_def
+	/**
+	 * @var string[] These codes actions are defined in table llx_notify_def
+	 */
 	public static $arrayofnotifsupported = array(
 		'BILL_CANCEL',
 		'BILL_VALIDATE',
@@ -167,7 +169,12 @@ class Notify
 		'HOLIDAY_VALIDATE',
 		'HOLIDAY_APPROVE',
 		'ACTION_CREATE',
-		'CONTRACT_MODIFY'
+		'CONTRACT_MODIFY',
+		'STOCKTRANSFER_CREATE',
+		'STOCKTRANSFER_MODIFY',
+		'STOCKTRANSFER_VALIDATE',
+		'STOCKTRANSFER_UNVALIDATE',
+		'STOCKTRANSFER_CLOSE'
 	);
 
 	/**
@@ -185,10 +192,10 @@ class Notify
 	 *  Return message that say how many notification (and to which email) will occurs on requested event.
 	 *	This is to show confirmation messages before event is recorded.
 	 *
-	 * 	@param	string	$action		Id of action in llx_c_action_trigger
-	 * 	@param	int		$socid		Id of third party
-	 *  @param	Object	$object		Object the notification is about
-	 *	@return	string				Message
+	 * 	@param	string			$action		Id of action in llx_c_action_trigger
+	 * 	@param	int				$socid		Id of third party
+	 *  @param	?CommonObject	$object		Object the notification is about
+	 *	@return	string						Message
 	 */
 	public function confirmMessage($action, $socid, $object)
 	{
@@ -451,10 +458,10 @@ class Notify
 	 *
 	 * @param	string			$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
 	 * @param	int				$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
-	 * @param	CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
+	 * @param	?CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
 	 * @param	int				$userid         Id of user or 0 for all users or -1 for no users
-	 * @param   array   		$scope          Scope where to search
-	 * @return	array|int						Return integer <0 if KO, array of notifications to send if OK
+	 * @param   string[]   		$scope          Scope where to search
+	 * @return	array<string,array{type:'touser'|'tofixedemail',code:string,emaildesc:string,email:string,userid:int,isemailvalid:bool}>|-1		Return integer <0 if KO, array of notifications to send if OK
 	 */
 	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
@@ -547,7 +554,7 @@ class Notify
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
-								$resarray[$newval2] = array('type' => 'touser', 'code' => trim($obj->code), 'emaildesc' => 'User id '.$obj->rowid, 'email' => $newval2, 'userid' => $obj->rowid, 'isemailvalid' => $isvalid);
+								$resarray[$newval2] = array('type' => 'touser', 'code' => trim($obj->code), 'emaildesc' => 'User id '.$obj->rowid, 'email' => $newval2, 'userid' => (int) $obj->rowid, 'isemailvalid' => $isvalid);
 							}
 						}
 						$i++;
@@ -820,26 +827,26 @@ class Notify
 							case 'FICHINTER_ADD_CONTACT':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 								break;
 							case 'FICHINTER_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->ficheinter->dir_output;
-								$object_type = 'ficheinter';
+								$object_type = 'fichinter';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 								break;
 							case 'ORDER_SUPPLIER_VALIDATE':
@@ -1134,26 +1141,26 @@ class Notify
 					case 'FICHINTER_ADD_CONTACT':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact", $link);
 						break;
 					case 'FICHINTER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated", $link);
 						break;
 					case 'FICHINTER_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->ficheinter->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->facture->dir_output;
-						$object_type = 'ficheinter';
+						$object_type = 'fichinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
 					case 'ORDER_SUPPLIER_CANCEL':
@@ -1253,7 +1260,7 @@ class Notify
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
-				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
+				$pdf_path = $dir_output."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
 					// We can't add PDF as it is not generated yet.
 					$filepdf = '';
@@ -1274,7 +1281,7 @@ class Notify
 				if (!empty($mailTemplateLabel)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($this->db);
-					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $mailTemplateLabel);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {

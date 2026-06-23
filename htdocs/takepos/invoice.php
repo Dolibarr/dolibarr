@@ -351,7 +351,8 @@ if (empty($reshook)) {
 		// Add the payment
 		if (!$error && $res >= 0) {
 			$remaintopay = $invoice->getRemainToPay();
-			if ($remaintopay > 0) {
+			// Credit notes have negative remaintopay; regular invoices have positive
+			if (($remaintopay > 0 && $invoice->type != Facture::TYPE_CREDIT_NOTE) || ($remaintopay < 0 && $invoice->type == Facture::TYPE_CREDIT_NOTE)) {
 				$payment = new Paiement($db);
 
 				$payment->datepaye = $now;
@@ -470,6 +471,7 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 	}
+
 	$creditnote = null;
 	if ($action == 'creditnote' && $user->hasRight('facture', 'creer')) {
 		$db->begin();
@@ -728,14 +730,16 @@ if (empty($reshook)) {
 			$placeid = $invoice->create($user);
 
 			if ($placeid < 0) {
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
-			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
-			$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-			$sql .= " WHERE rowid = ".((int) $placeid);
-			$resql = $db->query($sql);
-			if (!$resql) {
 				$error++;
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			} else {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql .= " SET ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+				$sql .= " WHERE rowid = ".((int) $placeid);
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+				}
 			}
 
 			if (!$error) {
@@ -747,7 +751,7 @@ if (empty($reshook)) {
 	}
 
 	$tva_npr = 0;
-	// If we add a line by click on product (invoice exists here because it was created juste before if it didn't exists)
+	// If we add a line by clicking on a product (invoice exists here because it was created juste before if it didn't exists)
 	if ($action == "addline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$prod = new Product($db);
 		$prod->fetch($idproduct);
@@ -757,7 +761,7 @@ if (empty($reshook)) {
 
 		$datapriceofproduct = $prod->getSellPrice($mysoc, $customer, 0);
 
-		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty') : 1;
+		$qty = GETPOSTISSET('qty') ? GETPOSTFLOAT('qty', '', GETPOSTINT('qty_std') ? 1 : 2) : 1;
 		$price = $datapriceofproduct['pu_ht'];
 		$price_ttc = $datapriceofproduct['pu_ttc'];
 		//$price_min = $datapriceofproduct['price_min'];
@@ -947,7 +951,7 @@ if (empty($reshook)) {
 				}
 
 				if (empty($err)) {
-					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, null, 0);
+					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, 0);
 				}
 			}
 
@@ -999,7 +1003,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
 		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -1009,28 +1013,41 @@ if (empty($reshook)) {
 				// TODO Check also that invoice->ref is (PROV-POS1-2) with 1 = terminal and 2, the table ID
 			}
 		}*/
+		$db->begin();
 
-		if ($idline > 0 && $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
+		if ($idline > 0 && $placeid > 0) { 	// If invoice exists and a line is selected.
 			$invoice->deleteLine($idline);
 			$invoice->fetch($placeid);
-		} elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
+		} elseif ($placeid > 0) {           // If invoice exists but no line selected (delete from another device or with no line selected), proceed to delete the last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
 			$resql = $db->query($sql);
-			$row = $db->fetch_array($resql);
-			$deletelineid = $row[0];
-			$invoice->deleteLine($deletelineid);
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$deletelineid = $obj->rowid;
+				$invoice->deleteLine($deletelineid);
+			}
 			$invoice->fetch($placeid);
 		}
 
-		if (count($invoice->lines) == 0) {
-			$invoice->delete($user);
+		$db->commit();
 
-			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-				header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
-			} else {
-				header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+		if (count($invoice->lines) == 0) {
+			// Keep an empty draft invoice alive when a non-default customer was
+			// already attached so deleting the last line does not silently lose
+			// the customer that was just selected (#38219). Only drop the invoice
+			// when it is still on the default cashdesk thirdparty (or none).
+			$defaultsocid = (int) getDolGlobalString('CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]);
+			$invoicesocid = (int) $invoice->socid;
+			if ($invoicesocid === 0 || $invoicesocid === $defaultsocid) {
+				$invoice->delete($user);
+
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					header("Location: ".DOL_URL_ROOT."/takepos/public/auto_order.php");
+				} else {
+					header("Location: ".DOL_URL_ROOT."/takepos/invoice.php");
+				}
+				exit;
 			}
-			exit;
 		}
 	}
 
@@ -1349,7 +1366,12 @@ if (empty($reshook)) {
 	if (($action == "valid" || $action == "history" || $action == 'creditnote' || ($action == 'addline' && $invoice->status == $invoice::STATUS_CLOSED)) && $user->hasRight('takepos', 'run')) {
 		$sectionwithinvoicelink .= '<!-- Section with invoice link -->'."\n";
 		$sectionwithinvoicelink .= '<span style="font-size:120%;" class="center inline-block marginbottomonly">';
-		$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
+		if ($invoice->status == $invoice::STATUS_DRAFT) {
+			$sectionwithinvoicelink .= $invoice->ref;
+		} else {
+			$sectionwithinvoicelink .= $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice');
+		}
+		$sectionwithinvoicelink .= " - ";
 		$remaintopay = $invoice->getRemainToPay();
 		if ($remaintopay > 0) {
 			$sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
@@ -1861,7 +1883,8 @@ if ($usediv) {
 }
 
 $buttontocreatecreditnote = '';
-if (($action == "valid" || $action == "history" ||  ($action == "addline" && $invoice->status == $invoice::STATUS_CLOSED)) && $invoice->type != Facture::TYPE_CREDIT_NOTE && !getDolGlobalString('TAKEPOS_NO_CREDITNOTE')) {
+if (($action == "valid" || $action == "history" || $action == "addline")
+	&& $invoice->type != Facture::TYPE_CREDIT_NOTE && !getDolGlobalString('TAKEPOS_NO_CREDITNOTE') && $invoice->status == $invoice::STATUS_CLOSED) {
 	$buttontocreatecreditnote .= ' &nbsp; <!-- Show button to create a credit note -->'."\n";
 	$buttontocreatecreditnote .= '<button id="buttonprint" type="button" onclick="ModalBox(\'ModalCreditNote\')">'.$langs->trans('CreateCreditNote').'</button>';
 	if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {

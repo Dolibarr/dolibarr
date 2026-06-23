@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2015-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
@@ -352,6 +352,16 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
+		// Allow duplicates in incomes or loss statements
+		$accountProfit = getDolGlobalString('ACCOUNTING_RESULT_PROFIT');
+		$accountLoss   = getDolGlobalString('ACCOUNTING_RESULT_LOSS');
+
+		if (($accountProfit && $this->numero_compte === trim($accountProfit)) ||
+			($accountLoss   && $this->numero_compte === trim($accountLoss))) {
+			// If the account being processed corresponds to the “Profit” or “Loss” constant, the detection is bypassed
+			$sql .= " AND 1 = 2";
+		}
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -477,7 +487,9 @@ class BookKeeping extends CommonObject
 				$result = -3;
 				$error++;
 				$this->error = 'BookkeepingRecordAlreadyExists';
-				dol_syslog(__METHOD__.' '.$this->error, LOG_WARNING);
+				$this->errors[] = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+
+				dol_syslog(get_class($this).":: create duplicate record detected: doc_type={$this->doc_type}, doc_ref={$this->doc_ref}, fk_doc={((int) $this->fk_doc)}, fk_docdet={((int) $this->fk_docdet)}", LOG_WARNING);
 			}
 		} else {
 			$result = -5;
@@ -976,6 +988,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.sens,";
 			$sql .= " t.multicurrency_amount,";
 			$sql .= " t.multicurrency_code,";
+			$sql .= " t.matching_general,";
 			$sql .= " t.lettering_code,";
 			$sql .= " t.date_lettering,";
 			$sql .= " t.fk_user_author,";
@@ -1104,6 +1117,7 @@ class BookKeeping extends CommonObject
 					$line->sens = $obj->sens;
 					$line->multicurrency_amount = $obj->multicurrency_amount;
 					$line->multicurrency_code = $obj->multicurrency_code;
+					$line->matching_general = (bool) $obj->matching_general;
 					$line->lettering_code = $obj->lettering_code;
 					$line->date_lettering = $this->db->jdate($obj->date_lettering);
 					$line->fk_user_author = $obj->fk_user_author;
@@ -2617,9 +2631,9 @@ class BookKeeping extends CommonObject
 	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
 	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
-	 * @param 	string  $thirdpartyname         Thirdparty name
-	 * @param 	string  $reference              Reference of the element
-	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param 	string   $thirdpartyname		Thirdparty name
+	 * @param 	?string  $reference				Reference of the element
+	 * @param 	?string  $labelaccount			Label of the accounting account
 	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
@@ -2947,7 +2961,7 @@ class BookKeeping extends CommonObject
 		$income_statement_amount = 0;
 
 		if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
-			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+			$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 			$pcg_type_filter = array();
 			foreach ($accounting_groups_used_for_income_statement as $item) {
@@ -3073,8 +3087,8 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error && is_object($journal)) {
-				$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
-				$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+				$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');  // @phpstan-ignore argument.type
+				$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 				$pcg_type_filter = array();
 				$tmp = array_merge($accounting_groups_used_for_balance_sheet_account, $accounting_groups_used_for_income_statement);
@@ -3217,8 +3231,8 @@ class BookKeeping extends CommonObject
 							$bookkeeping->subledger_label = null;
 						} else {
 						*/
-							$bookkeeping->subledger_account = null;
-							$bookkeeping->subledger_label = null;
+						$bookkeeping->subledger_account = null;
+						$bookkeeping->subledger_label = null;
 						//}
 
 						$bookkeeping->numero_compte = $accountingaccount->account_number;
@@ -3422,16 +3436,20 @@ class BookKeeping extends CommonObject
 			$echecT = [];
 			foreach ($toselect as $id) {
 				if ($bookkeeping->fetch($id)) {
-					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+					if (!getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
 						$accountcustcode = '411';
-					} else $accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+					} else {
+						$accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
+					}
 
-					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
+					if (!getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
 						$accountsuppcode = '401';
-					} else $accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+					} else {
+						$accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
+					}
 
 					if (strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0) {
-						$echecT[]=$bookkeeping->numero_compte;
+						$echecT[] = $bookkeeping->numero_compte;
 						continue;
 					}
 
@@ -3468,7 +3486,10 @@ class BookKeeping extends CommonObject
 
 		if (!empty($echecImplode)) {
 			$nbEchec = count(explode(',', $echecImplode));
-			setEventMessages($nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode, null, 'errors'
+			setEventMessages(
+				$nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode,
+				null,
+				'errors'
 			);
 		}
 
@@ -3731,7 +3752,6 @@ class BookKeeping extends CommonObject
 	 * @param	string		$code_journal	Accounting journal code
 	 * @param	int			$docdate		Date of the document
 	 * @return	int							int Return integer -1 if KO, 1 if OK
-	 *
 	 */
 	public function newReturnAccount(array $toselect, $code_journal, $docdate)
 	{
@@ -3753,7 +3773,7 @@ class BookKeeping extends CommonObject
 		$alreadyExtourneT = array();
 		if ($resqlAlreadyExtourne) {
 			while ($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
-				$alreadyExtourneT []= $obj4->piece_num;
+				$alreadyExtourneT [] = $obj4->piece_num;
 			}
 		}
 
@@ -3939,6 +3959,11 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var string Sens
 	 */
 	public $sens;
+
+	/**
+	 * @var bool
+	 */
+	public $matching_general;
 
 	/**
 	 * @var ?string

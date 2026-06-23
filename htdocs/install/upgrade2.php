@@ -81,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -145,6 +146,8 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 
 pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
+
+$db = null;
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
@@ -679,6 +682,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
 			}
 		}
 
@@ -906,7 +911,7 @@ dolibarr_install_syslog("Exit ".$ret);
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error ? 2 : 0, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 
@@ -3885,7 +3890,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					} else {
-						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+						print ' - '.$langs->trans('AlreadyDone').'<br>';
 					}
 				} else {
 					dol_print_error($db);
@@ -4245,13 +4250,15 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/barre_top/default.php',
 		'/core/modules/modComptabiliteExpert.class.php',
 		'/core/modules/modCommercial.class.php',
+		'/core/modules/modPaybox.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
+		'/core/modules/modactivite.class.php',		// A file from an external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php', // now has position 99
 		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
 		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
@@ -4381,7 +4388,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array<string,'noboxes'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
+ * @param	array<string,'noboxes'|'menuonly'|'newboxdefonly'|'forceactivate'>	$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>$reloadmode, ...)
  * @param   int<0,1>	$force          1=Reload module even if not already loaded
  * @return	int							Return integer <0 if KO, >0 if OK
  */
@@ -4421,7 +4428,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
 		'MAIN_MODULE_LOAN' => array('class' => 'modLoan', 'remove' => 1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
@@ -4579,7 +4585,7 @@ function migrate_productlot_path()
 	$resql = $db->query($sql);
 
 	if ($resql) {
-		$modulepart="product_batch";
+		$modulepart = "product_batch";
 
 		$lot = new Productlot($db);
 
@@ -5585,7 +5591,8 @@ function migrate_apiresttokens()
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->tokenstring), $allexistingtokens)) {
 					// Load the object of the user of token so we can get the API_COUNT_CALL
-					unset($tmpuser->conf); $tmpuser->conf = new stdClass();
+					unset($tmpuser->conf);
+					$tmpuser->conf = new stdClass();
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
@@ -5625,7 +5632,9 @@ function migrate_apiresttokens()
 
 
 /**
- * Add the HMAC key for blockedlog v2
+ * Add the HMAC key for blockedlog v2+
+ * Note that this is used on old version only. It stores the HMAC with old method but it will be automatically converted in new storing
+ * method once on version of blockedlog 3.0.0
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
@@ -5645,7 +5654,9 @@ function migrate_blockedlog_add_hmac_key()
 	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 	if (empty($hmac_encoded_secret_key)) {
 		// Add key
-		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+		$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
+
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
 
 		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
 

@@ -813,12 +813,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 
 
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+	print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
 	if (empty($object->status)) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
 	} else {
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	}
 
 

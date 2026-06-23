@@ -50,8 +50,6 @@ require_once '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
- *
- * @var string $dolibarr_nocache
  */
 
 if (GETPOST('lang', 'aZ09')) {
@@ -101,7 +99,7 @@ if ($action == 'redirect') {	// Test on permission not required here. Test will 
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');

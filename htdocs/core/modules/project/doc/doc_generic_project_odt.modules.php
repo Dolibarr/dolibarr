@@ -5,7 +5,7 @@
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +62,6 @@ if (isModEnabled('contract')) {
 }
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -683,8 +680,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 					// Security check
 					$socid = 0;
-					if (!empty($object->fk_soc)) {
-						$socid = $object->fk_soc;
+					if (!empty($object->socid)) {
+						$socid = $object->socid;
 					}
 
 					$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $socid, 0);
@@ -807,7 +804,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$row['thm'] = 0;
 								}
 
-								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
+								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs); // @phpstan-ignore argument.type
 
 								foreach ($tmparray as $key => $val) {
 									try {
@@ -877,9 +874,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 					}
 					$odfHandler->mergeSegment($listlines);
 				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					$ExceptionTrace = $e->getTrace();
+					// no segment defined on ODT is not an error
+					if ($ExceptionTrace[0]['function'] != 'setSegment') {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace tags of lines for contacts
@@ -896,6 +897,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listlines = $odfHandler->setSegment('projectcontacts');
 
 						foreach ($contact_arrray as $contact) {
+							$objectdetail = null;
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -907,6 +909,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog('Unexpected contact source:'.$contact['source'].'.'. getCallerInfoString(), LOG_ERR);
+								continue;
 							}
 							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 
@@ -922,9 +927,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$odfHandler->mergeSegment($listlines);
 					} catch (OdfException $e) {
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
-						return -1;
+						$ExceptionTrace = $e->getTrace();
+						// no segment defined on ODT is not an error
+						if ($ExceptionTrace[0]['function'] != 'setSegment') {
+							$this->error = $e->getMessage();
+							dol_syslog($this->error, LOG_WARNING);
+							return -1;
+						}
 					}
 				}
 
@@ -992,13 +1001,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'table' => 'expedition',
 						'disableamount' => 1,
 						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
-					),
-					'trip' => array(
-						'title' => "ListTripAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
 					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",

@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2018-2022	Charlene Benke				<charlene@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
@@ -39,6 +39,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -49,15 +59,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'projects', 'banks'));
@@ -177,7 +178,6 @@ $now = dol_now();
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
-$extrafields = new ExtraFields($db);
 
 $diroutputmassaction = getMultidirTemp($object).'/massgeneration/'.$user->id;
 
@@ -244,6 +244,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
 if (empty($subtypearray)) {
@@ -383,7 +386,6 @@ if (empty($reshook)) {
 					$parameters = array('remaintopay' => $objecttmp->resteapayer);
 					$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $objecttmp, $action); // Note that $action and $object may have been modified by some hooks
 					if ($reshook > 0) {
-						// print $hookmanager->resPrint;
 						if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
 							$objecttmp->resteapayer = $remaintopay;
 						}
@@ -468,7 +470,7 @@ if (empty($reshook)) {
 				$nbwithdrawrequestok = 0;
 				foreach ($listofbills as $aBill) {
 					// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
-					// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+					// The table prelevement and prelevement_lignes must be removed in future and merged into prelevement_demande
 					// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
 					// Step 2: Move field fk_... + status into prelevement_demande.
 					$pending = 0;
@@ -1172,6 +1174,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")));
 
@@ -1247,7 +1250,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1258,7 +1261,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1414,7 +1417,7 @@ if (!empty($arrayfields['f.total_localtax2']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
-	// Amount inc tac
+	// Amount inc tax
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
@@ -1514,8 +1517,8 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
+if (!$conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -1530,7 +1533,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1705,7 +1708,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1746,7 +1749,7 @@ while ($i < $imaxinloop) {
 	$userstatic->lastname = $obj->lastname;
 	$userstatic->firstname = $obj->firstname;
 	$userstatic->email = $obj->user_email;
-	$userstatic->statut = $obj->user_statut;
+	$userstatic->statut = $obj->user_statut; // deprecated
 	$userstatic->status = $obj->user_statut;
 	$userstatic->entity = $obj->entity;
 	$userstatic->photo = $obj->photo;
@@ -1853,10 +1856,10 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select'.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2291,7 +2294,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

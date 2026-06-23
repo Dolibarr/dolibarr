@@ -54,7 +54,7 @@ class modPropale extends DolibarrModules
 		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des propositions commerciales";
+		$this->description = "Management of quotes or commercial proposals";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';

@@ -16,11 +16,11 @@
  * Copyright (C) 2016-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,8 +46,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -57,14 +65,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -157,7 +157,6 @@ if ($result > 0) {
 
 $object = new Product($db);
 $object->type = $type; // so test later to fill $usercancxxx is correct
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -1365,6 +1364,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -1887,7 +1887,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border centpercent">';
 
 			if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
-				if (isModEnabled('accounting')) {
+				if (isModEnabled('accounting') && is_object($formaccounting)) {
 					/** @var FormAccounting $formaccounting */
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -2586,7 +2586,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		} else {
 			// Product card in view mode
 
-			$showbarcode = (isModEnabled('barcode')&& getDolGlobalString('BARCODE_USE_ON_PRODUCT'));
+			$showbarcode = (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_PRODUCT'));
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
 				$showbarcode = 0;
 			}
@@ -2709,7 +2709,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 						print '<tr><td class="titlefieldmiddle">'.$langs->trans("ManageLotSerial").'</td><td>';
-						print $object->getLibStatut(0, 2);
+						if ($object->status_batch == 0) {
+							print '<span class="opacitymedium">'.yn(0).'</span>';
+						} else {
+							print $object->getLibStatut(0, 2);
+						}
 						print '</td></tr>';
 						if ((($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
 							|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')))) {
@@ -2720,7 +2724,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 
 					print '<tr><td class="titlefieldmiddle">'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->transnoentities('SellByDate'), $langs->transnoentities('EatByDate')).'</td><td>';
-					print $object->getSellOrEatByMandatoryLabel();
+					if ($object->sell_or_eat_by_mandatory == $object::SELL_OR_EAT_BY_MANDATORY_ID_NONE) {
+						print '<span class="opacitymedium">'.yn(0).'</span>';
+					} else {
+						print $object->getSellOrEatByMandatoryLabel();
+					}
 					print '</td></tr>';
 				}
 
@@ -2907,6 +2915,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<table class="border tableforfield centpercent">';
 
+				// Categories
+				if (isModEnabled('category')) {
+					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
+					print "</td></tr>";
+				}
+
 				if ($object->isService()) {
 					// Duration
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
@@ -2991,7 +3006,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') || !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 						// Brut Surface / Volume
 						print '<tr><td>';
-						print (getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
+						print(getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
 						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) ? ' / ' : '';
 						print (getDolGlobalString('PRODUCT_DISABLE_VOLUME') ? '' : $langs->trans("Volume")).'</td><td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $object->surface != '') {
@@ -3046,13 +3061,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Other attributes
 				$parameters = array();
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-				// Categories
-				if (isModEnabled('category')) {
-					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
-					print "</td></tr>";
-				}
 
 				// Note private
 				if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
@@ -3166,7 +3174,7 @@ if ($action != 'create' && $action != 'edit') {
 					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $usercancreate);
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate);
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
@@ -3184,7 +3192,7 @@ if ($action != 'create' && $action != 'edit') {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
+				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'&token='.newToken().'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);

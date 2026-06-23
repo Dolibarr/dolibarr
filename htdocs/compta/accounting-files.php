@@ -5,7 +5,7 @@
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2025	Alexandre Spangaro          <alexandre@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -406,6 +406,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 							$subdir = '';
 							$upload_dir = '';
 							$link = '';
+							$modulepart = '';
 							break;
 					}
 

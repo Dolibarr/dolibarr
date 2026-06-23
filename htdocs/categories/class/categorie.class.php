@@ -13,7 +13,7 @@
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -347,7 +347,7 @@ class Categorie extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -663,11 +663,11 @@ class Categorie extends CommonObject
 	/**
 	 * 	Update category
 	 *
-	 *	@param	User	$user		Object user
-	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * 	@return	int		 			1 : OK
-	 *          					-1 : SQL error
-	 *          					-2 : invalid category
+	 *	@param	User	$user	Object user
+	 *  @param	int<0,1>		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * 	@return	int<-2,1>		1 : OK
+	 *          				-1 : SQL error
+	 *          				-2 : invalid category
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -681,6 +681,13 @@ class Categorie extends CommonObject
 		$this->ref_ext = trim($this->ref_ext);
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
+
+		if ($this->fk_parent > 0 && $this->fk_parent == $this->id) {
+			$langs->load('categories');
+			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
+			dol_syslog($this->error, LOG_WARNING);
+			return -1;
+		}
 
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
@@ -706,6 +713,14 @@ class Categorie extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			// Multilangs
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				if ($this->setMultiLangs($user, $notrigger) < 0) {
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
 			$action = 'update';
 
 			// Actions on extra fields
@@ -787,24 +802,26 @@ class Categorie extends CommonObject
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
 			'categorie_project' => 'fk_categorie',
-			'categorie_project_task' => 'fk_categorie',
+			'categorie_project_task' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('project')),
 			'categorie_societe' => 'fk_categorie',
 			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
-			'categorie_warehouse' => 'fk_categorie',
+			'categorie_warehouse' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('stock')),
 			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
 			'category_bankline' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
 		foreach ($arraydelete as $key => $value) {
+			$sanitizedvalue = $value;
 			if (is_array($value)) {
 				if (empty($value['enabled'])) {
 					continue;
 				}
 				$sanitizedvalue = $value['field'];
 			}
+
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);
-			$sql .= " WHERE ".$sanitizedvalue." = ".((int) $this->id);
+			$sql .= " WHERE ".$this->db->sanitize($sanitizedvalue)." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
@@ -1055,11 +1072,11 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$tmpobj->id = 0;
-						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						$tmpobj = new $classnameforobj($this->db);
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will set $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-							$objs[] = clone $tmpobj;
+							$objs[] = $tmpobj;
 						}
 					}
 				}
@@ -1564,9 +1581,9 @@ class Categorie extends CommonObject
 	 *
 	 * @param	string		$sep	     Separator
 	 * @param	string		$url	     Url ('', 'none' or 'urltouse')
-	 * @param   int     	$nocolor     0
-	 * @param	int			$addpicto	 Add picto into link
-	 * @param	int			$notrunc	 Do not truncate names of parent categories
+	 * @param   int     	$nocolor     0=Default, 1=Disable colors
+	 * @param	int			$addpicto	 1=Add picto into link
+	 * @param	int			$notrunc	 1=Do not truncate names of parent categories
 	 * @return	string[]
 	 */
 	public function print_all_ways($sep = 'auto', $url = '', $nocolor = 0, $addpicto = 0, $notrunc = 0)
@@ -1578,7 +1595,7 @@ class Categorie extends CommonObject
 			$sep = '&gt;';
 		}
 
-		$all_ways = $this->get_all_ways(); // Load array of categories to reach this->id
+		$all_ways = $this->get_all_ways(); // Load array of categories from database to reach this->id
 
 		foreach ($all_ways as $way) {	// It seems we always have 1 entry in this array.
 			$w = array();
@@ -1592,10 +1609,8 @@ class Categorie extends CommonObject
 					if ($i == count($way)) {	// Last category in hierarchy
 						// Check contrast with background and correct text color
 						$forced_color = 'categtextwhite'; // We want color white because the getNomUrl of a tag is always called inside a dark background like '<span color="bbb"></span>' to show it as a tag. TODO Add this in param to force when called outside of span.
-						if ($cat->color) {
-							if (colorIsLight($cat->color)) {
-								$forced_color = 'categtextblack';
-							}
+						if ($cat->color && colorIsLight($cat->color)) {
+							$forced_color = 'categtextblack';
 						}
 					}
 				}
@@ -2167,35 +2182,37 @@ class Categorie extends CommonObject
 
 			if ($key == $current_lang) {
 				$sql2 = '';
-				if ($this->db->num_rows($result)) { // if no line in database
+				if ($this->db->num_rows($result)) { // if there is already a description line for this language
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
 					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
-				} elseif (isset($this->multilangs[$key])) {
+				} else { // if no line in database
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
-					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
+					$sql2 .= ", '".$this->db->escape($this->description)."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
-				if ($sql2 && !$this->db->query($sql2)) {
+				if (!$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
-			} elseif (isset($this->multilangs[$key])) {
-				if ($this->db->num_rows($result)) { // if no line in database
+				$this->multilangs[$key]["label"] = $this->label;
+				$this->multilangs[$key]["description"] = $this->description;
+			} elseif (isset($this->multilangs[$key])) { // if there is already a description line for this language
+				if ($this->db->num_rows($result)) {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label='".$this->db->escape($this->multilangs[$key]["label"])."',";
 					$sql2 .= " description='".$this->db->escape($this->multilangs[$key]["description"])."'";
 					$sql2 .= " WHERE fk_category=".((int) $this->id)." AND lang='".$this->db->escape($key)."'";
-				} else {
+				} else { // if no line in database
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->multilangs[$key]["label"])."'";
 					$sql2 .= ",'".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 
-				// on ne sauvegarde pas des champs vides
-				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"] || $this->multilangs[$key]["note"]) {
+				// We do not save if main fields are empty
+				if ($this->multilangs[$key]["label"] || $this->multilangs[$key]["description"]) {
 					dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 				}
 				if (!$this->db->query($sql2)) {

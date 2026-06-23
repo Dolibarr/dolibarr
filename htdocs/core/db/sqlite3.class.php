@@ -67,7 +67,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *  @param	    string	$name		Nom de la database
 	 *  @param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf;
 
@@ -628,7 +628,7 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  SQLite3Result	$resultset   Curseur de la requete voulue
+	 *	@param  SQLite3Result|null	$resultset		Result set of request
 	 *	@return	void
 	 */
 	public function free($resultset = null)

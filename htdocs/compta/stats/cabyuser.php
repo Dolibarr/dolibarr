@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -262,6 +262,7 @@ foreach ($headerparams as $key => $value) {
 
 $catotal = 0;
 $catotal_ht = 0;
+$sql = '';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";

@@ -3,7 +3,7 @@
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -168,7 +168,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -439,9 +439,9 @@ if (!empty($id) || !empty($ref)) {
 	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
-		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 		print '</td><td>';
-		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 		print '</td></tr>';
 	}
 
@@ -722,7 +722,7 @@ if (!empty($id) || !empty($ref)) {
 				   <td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>" spellcheck="false"></td>
 			</tr>
 			<?php
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
@@ -904,7 +904,7 @@ if (!empty($id) || !empty($ref)) {
 			<tr class="liste_titre">
 				<?php
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="liste_titre center">';
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
@@ -921,7 +921,7 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre"></td>
 				<?php
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="liste_titre center">';
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
@@ -936,7 +936,7 @@ if (!empty($id) || !empty($ref)) {
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
@@ -970,7 +970,7 @@ if (!empty($id) || !empty($ref)) {
 				print '</td>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;

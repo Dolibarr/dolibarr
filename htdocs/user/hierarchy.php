@@ -311,7 +311,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -324,7 +324,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('Disabled'), '1' => $langs->trans('Enabled')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp onrightofpage width100');
 	print '</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -334,14 +334,14 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	}
 	print_liste_field_titre("HierarchicView");
 	print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
 	print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", '', '', '', 'right onrightofpage');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	}
 	print '</tr>';
@@ -352,14 +352,14 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	if ($nbofentries > 0) {
 		print '<tr>';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '<td colspan="3">';
 		tree_recur($data, $data[0], 0);
 		print '</td>';
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '</tr>';

@@ -1019,6 +1019,7 @@ if (!empty($object->thirdparty)) {
 						if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has different prices"); }
 					}
 
+					let idProdFournPrice = $(this).val();
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
@@ -1056,6 +1057,20 @@ if (!empty($object->thirdparty)) {
 							} else {
 								console.log("objectline_create.tpl set content of price_ht");
 								jQuery("#price_ht").val(data.price_ht);
+							}
+
+							// useful to retrieve percent from customer specific price
+							if (typeof data.discount !== 'undefined' && data.discount !== null && data.discount !== '') {
+								var remisePercentInput = jQuery('#remise_percent');
+								if (remisePercentInput.length > 0) {
+									console.log("Remise spécifique client trouvée : " + data.discount + "%");
+									remisePercentInput
+									.val(data.discount)
+									.trigger('input')
+									.trigger('change');
+								} else {
+									console.warn("Champ #remise_percent introuvable, remise non appliquée");
+								}
 							}
 
 							// Set values for any fields in the form options_SOMETHING
@@ -1102,27 +1117,42 @@ if (!empty($object->thirdparty)) {
 									}
 								}
 							}
-							// Set vat rate if field is an input box
-							$('#tva_tx').val(tva_tx);
-							// Set vat rate by selecting the combo
-							//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
-							$('#tva_tx option').removeAttr('selected');
-							console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
-							$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+							// Set vat rate: handle both input box and combo cases
+							if ($('#tva_tx option').length) {
+								// It is a combo: try exact match first (rate + code), fallback to numeric match
+								if ($('#tva_tx option[value="' + stringforvatrateselection + '"]').length) {
+									$('#tva_tx').val(stringforvatrateselection);
+								} else {
+									$('#tva_tx option').filter(function () {
+										return parseFloat($(this).val()) === parseFloat(tva_tx);
+									}).first().prop('selected', true);
+								}
+							} else {
+								// It is an input box
+								$('#tva_tx').val(tva_tx);
+							}
 
-							if(jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
+							// Sync the measuring unit dropdown with the product's default fk_unit
+							// (issue #34610). Without this, the dropdown keeps the static initial
+							// value (the first c_units row, typically "Kg") regardless of what
+							// the selected product is configured with.
+							if (typeof data.fk_unit != 'undefined' && data.fk_unit != null && $("#units").length) {
+								$("#units").val(data.fk_unit).trigger('change');
+							} else if (typeof data.default_unit != 'undefined' && data.default_unit != null && $("#units").length) {
+								$("#units").val(data.default_unit).trigger('change');
+							}
+
+							if (jsConf.conf.PRODUIT_AUTOFILL_DESC == 1) {
 								if(jsConf.conf.MAIN_MULTILANGS && jsConf.conf.PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) {
 									var proddesc = data.desc_trans;
-								}
-								else {
+								} else {
 									var proddesc = data.desc;
 								}
 
 								console.log("objectline_create.tpl Load description into text area : "+proddesc);
 
-								if(jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
-									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-									{
+								if (jsConf.conf.FCKEDITOR_ENABLE_DETAILS) {
+									if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 										var editor = CKEDITOR.instances['dp_desc'];
 										if (editor) {
 											editor.setData(proddesc);
@@ -1138,6 +1168,11 @@ if (!empty($object->thirdparty)) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
 							}
+
+							// Execute js context Dolibarr Hooks
+							if (typeof Dolibarr != 'undefined') {
+								Dolibarr.executeHook('objectLineCreate:LoadUnitPrice', {idProdFournPrice, 'socid': jsConf.docObject.socid,ajaxResultData : data, jsConf});
+							}
 						},
 						'json'
 					);
@@ -1150,10 +1185,11 @@ if (!empty($object->thirdparty)) {
 				$("#fournprice_predef").find("option").remove();
 				$("#fournprice_predef").hide();
 				$("#buying_price").val("").show();
+				let idProd = $(this).val();
 
 				/* Call post to load content of combo list fournprice_predef */
 				var token = jsConf.conf.token;		// For AJAX Call we use old 'token' and not 'newtoken'
-				$.post(jsConf.url.getSupplierPrices, { 'idprod': $(this).val(), 'token': token }, function(data) {
+				$.post(jsConf.url.getSupplierPrices, { 'idprod': idProd, 'token': token }, function(data) {
 					if (data && data.length > 0)
 					{
 						var options = ''; var defaultkey = ''; var defaultprice = ''; var bestpricefound = 0;
@@ -1241,6 +1277,28 @@ if (!empty($object->thirdparty)) {
 								$('#buying_price').hide();
 							}
 						});
+
+						// Execute js context Dolibarr Hooks
+						if (typeof Dolibarr != 'undefined') {
+							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
+						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
@@ -1276,10 +1334,16 @@ if (!empty($object->thirdparty)) {
 						jQuery("#remise_percent").val(pbqpercent);
 					}
 				} else { jQuery("#pbq").val(''); }
+
+				// Execute js context Dolibarr Hooks
+				if (typeof Dolibarr != 'undefined') {
+					Dolibarr.executeHook('objectLineCreate:CustomerPriceByQty', { pbq, pbqup, pbqbase, pbqqty, pbqpercent });
+				}
 			}
 
 			// Deal with supplier ref price (idprodfournprice = int)
-			if (jQuery('#idprodfournprice').val() > 0)
+			var supplierVal = jQuery('#idprodfournprice').val();
+			if (supplierVal && supplierVal !== '-1' && (supplierVal > 0 || supplierVal.indexOf('idprod_') === 0))
 			{
 				console.log("objectline_create.tpl #idprodfournprice is an ID > 0, so we set some properties into page");
 
@@ -1390,7 +1454,6 @@ if (!empty($object->thirdparty)) {
 						jQuery('#dp_desc').text(description);
 					}
 				}
-
 			} else if (jQuery('#idprodfournprice').length > 0) {
 				console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
 
@@ -1458,6 +1521,10 @@ if (!empty($object->thirdparty)) {
 			setforpredef();
 		}
 
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('objectLineCreate:ProductSelectionChange');
+		}
 	});
 
 	/* Function to set fields visibility after selecting a free product */
@@ -1511,7 +1578,7 @@ if (!empty($object->thirdparty)) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		}
 
-		jQuery("#units, #title_units").hide();
+		jQuery("#units, #title_units, .linecoluseunit .selection").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}

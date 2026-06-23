@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2026	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -777,7 +777,7 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -901,7 +901,7 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1023,14 +1023,13 @@ class Holiday extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
-		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT && $this->statut != self::STATUS_CANCELED) {
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1681,6 +1680,7 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$langs->load("holiday");
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
@@ -1766,7 +1766,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id']);
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -2584,7 +2584,7 @@ class Holiday extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:int}	$arraydata		Label of holiday type (if known)
+	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:float}	$arraydata		Label of holiday type (if known)
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -2634,7 +2634,7 @@ class Holiday extends CommonObject
 	 * @param	string		$newlang			Force a	lang or empty for auto
 	 *
 	 * @return	int								0 if OK, <> 0 if KO (this function is used also by cron so only 0 is OK)
-	*/
+	 */
 	public function sendPreviousMonthHRInformations($mailto = "", $template = "", $newlang = "")
 	{
 		global $conf, $langs, $user;
@@ -2642,8 +2642,8 @@ class Holiday extends CommonObject
 		$outputlangs = $langs;
 
 		$error = 0;
-		$this->output='';
-		$this->error='';
+		$this->output = '';
+		$this->error = '';
 		$arrayfields = array(
 			'user' => 'Employee',
 			'type' => 'Type',
@@ -2741,7 +2741,7 @@ class Holiday extends CommonObject
 					"type" => $arraytypeleaves[$obj->fk_type],
 					"date_start" => dol_print_date($date_start_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
 					"date_end" => dol_print_date($date_end_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$endhalfdayinmonth]).')</span>',
-					"used_days" => num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id)
+					"used_days" => num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user)
 				);
 			}
 		}

@@ -36,9 +36,7 @@ class Contracts extends DolibarrApi
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'date_contrat',
-		'commercial_signature_id',
-		'commercial_suivi_id'
+		'date_contrat'
 	);
 
 	/**
@@ -106,7 +104,7 @@ class Contracts extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter contracts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param bool 			   $withLines 			true or false to display or hide lines
@@ -236,6 +234,10 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, "Missing permission: Create/modify contracts/subscriptions");
 		}
 
+		// Check mandatory fields
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
 		$socid = (int) $request_data['socid'];
 		$thirdpartytmp = new Societe($this->db);
 		$thirdparty_result = $thirdpartytmp->fetch($socid);
@@ -245,9 +247,6 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
 			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
 		}
-
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -294,7 +293,7 @@ class Contracts extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool 		$pagination_data 	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array						Array of contrat det objects
@@ -778,7 +777,7 @@ class Contracts extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);
+					$this->contract->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contract);
 				}
 				continue;
 			}

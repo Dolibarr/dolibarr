@@ -472,7 +472,7 @@ class CodingPhpTest extends CommonClassTest
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 1) in '.$file['relativename'].' - Bad.');
 
-		// Check string sql|set|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+		// Check string sql|SET|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
 		$found = "";
@@ -489,7 +489,7 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 2) in '.$file['relativename'].': '.$found.' - Bad.');
 		//exit;
 
-		// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+		// Check string sql|SET...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
 		$found = "";
@@ -562,7 +562,7 @@ class CodingPhpTest extends CommonClassTest
 		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
-			if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
+			if (!in_array($val[1], array('$sanitize', '$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
 				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
 				$ok = false;
 				// break;  // Not breaking, report all lines
@@ -795,9 +795,10 @@ class CodingPhpTest extends CommonClassTest
 					&& !preg_match('/not required/i', $val[0])) {
 					$ok = false;
 
-					var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
+					// Uncomment this for a scan on one given file
+					//var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
 
-					print "File ".$file['relativename']." - Line: ".$val[0]."\n";
+					print "\nError on file ".$file['relativename']." - Line: ".$val[0]."\n";
 					break;
 				}
 			}

@@ -925,6 +925,7 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
+			'intervention' => 'ficheinter',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'facture@fournisseur',
@@ -1869,7 +1870,7 @@ class User extends CommonObject
 		}
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		$badCharUnauthorizedIntoLoginName = getDolGlobalLoginBadCharUnauthorized();
 
 		// Check parameters
 		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
@@ -1881,7 +1882,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
-		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
+		} elseif ($badCharUnauthorizedIntoLoginName !== '' && preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;
@@ -2281,7 +2282,7 @@ class User extends CommonObject
 		$this->setUpperOrLowerCase();
 
 		// Check parameters
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		$badCharUnauthorizedIntoLoginName = getDolGlobalLoginBadCharUnauthorized();
 
 		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
 			$langs->load("errors");
@@ -2292,7 +2293,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
-		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
+		} elseif ($badCharUnauthorizedIntoLoginName !== '' && preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;

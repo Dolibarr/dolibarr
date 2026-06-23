@@ -4,7 +4,7 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -314,8 +314,20 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403, "Insufficiant rights");
 		}
+
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch($socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -919,7 +931,7 @@ class Proposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+					$this->propal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->propal);
 				}
 				continue;
 			}
@@ -929,7 +941,7 @@ class Proposals extends DolibarrApi
 
 		// update end of validity date
 		if (empty($this->propal->fin_validite) && !empty($this->propal->duree_validite) && !empty($this->propal->date_creation)) {
-			$this->propal->fin_validite = $this->propal->date_creation + ($this->propal->duree_validite * 24 * 3600);
+			$this->propal->fin_validite = $this->propal->date_creation + (int) ($this->propal->duree_validite * 24 * 3600);
 		}
 		if (!empty($this->propal->fin_validite)) {
 			if ($this->propal->set_echeance(DolibarrApiAccess::$user, $this->propal->fin_validite) < 0) {

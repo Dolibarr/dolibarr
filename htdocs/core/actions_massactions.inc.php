@@ -4,7 +4,7 @@
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,8 @@ if (empty($massaction)) {
 @phan-var-force string $uploaddir
 ';
 
+/** @var string[] $TMsg */
+$TMsg = array();
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -333,19 +335,23 @@ if (!$error && $massaction == 'confirm_presend') {
 
 			foreach ($listofobjectref[$thirdpartyid] as $objectid => $objectobj) {
 				//var_dump($thirdpartyid.' - '.$objectid.' - '.$objectobj->statut);
-				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT) {
+				// Honour the same per-object hidden constants used by the "Send by email"
+				// button on the card pages (comm/propal/card.php, commande/card.php,
+				// compta/facture/card.php) so the behaviour is consistent between the
+				// single-object action and the mass action.
+				if ($objectclass == 'Propal' && $objectobj->status == Propal::STATUS_DRAFT && !getDolGlobalString('PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyProposalNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue; // Payment done or started or canceled
 				}
-				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT) {
+				if ($objectclass == 'Commande' && $objectobj->status == Commande::STATUS_DRAFT && !getDolGlobalString('COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyOrderNotDraftCanBeSentInMassAction', $objectobj->ref).'</div><br>';
 					continue;
 				}
-				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT) {
+				if ($objectclass == 'Facture' && $objectobj->status == Facture::STATUS_DRAFT && !getDolGlobalString('FACTURE_SENDBYEMAIL_FOR_ALL_STATUS')) {
 					$langs->load("errors");
 					$nbignored++;
 					$resaction .= '<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction', $objectobj->ref).'</div><br>';
@@ -1068,10 +1074,22 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		}
 	}
 	if (!$error) {
-		$db->begin();
+		// MAIN_MASSVALIDATE_<OBJECTCLASS>_NO_GLOBAL_TRANSACTION = 1 wraps each
+		// record in its own transaction instead of all-or-nothing. Modules
+		// dealing with external systems (e.g. VeriFactu / AEAT for invoices)
+		// can enable it on the list pages they need so a mid-loop failure does
+		// not roll back the records already committed-and-pushed outside the
+		// database. The default remains the secured all-or-nothing mode (#37365).
+		$perrecordtransaction = (int) getDolGlobalInt('MAIN_MASSVALIDATE_'.strtoupper($objectclass).'_NO_GLOBAL_TRANSACTION');
+		if (!$perrecordtransaction) {
+			$db->begin();
+		}
 
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
+			if ($perrecordtransaction) {
+				$db->begin();
+			}
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if (method_exists($objecttmp, 'validate')) {
@@ -1086,10 +1104,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
+					if ($perrecordtransaction) {
+						$db->rollback();
+					}
 					break;
 				} else {
 					// validate() rename pdf but do not regenerate
@@ -1128,10 +1152,16 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 					}
 					$nbok++;
+					if ($perrecordtransaction) {
+						$db->commit();
+					}
 				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
+				if ($perrecordtransaction) {
+					$db->rollback();
+				}
 				break;
 			}
 		}
@@ -1142,8 +1172,10 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			} else {
 				setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			}
-			$db->commit();
-		} else {
+			if (!$perrecordtransaction) {
+				$db->commit();
+			}
+		} elseif (!$perrecordtransaction) {
 			$db->rollback();
 		}
 	}
@@ -1156,6 +1188,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	$nbignored = 0;
+	/** @var string[] $TMsg */
 	$TMsg = array();
 
 	//$toselect could contain duplicate entries, cf https://github.com/Dolibarr/dolibarr/issues/26244
@@ -1201,6 +1234,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} else {
+				$objecttmp->oldcopy = dol_clone($objecttmp);
 				$result = $objecttmp->delete($user);
 			}
 
@@ -1992,6 +2026,7 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 	$objecttmp = new $objectclass($db);
 	if ($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') {
 		$nbok = 0;
+		/** @var string[] $TMsg */
 		$TMsg = array();
 
 		$unique_arr = array_unique($toselect);
@@ -2008,9 +2043,15 @@ if (!$error && $action == 'createcreditnote' && $permissiontoadd) {
 
 			// We check if invoice type is supported. If not, we refuse to create credit note.
 			$isSupportedType = false;
-			if ($objecttmp->type == Facture::TYPE_STANDARD) $isSupportedType = true;
-			if ($objecttmp->type == Facture::TYPE_PROFORMA) $isSupportedType = true;
-			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) $isSupportedType = true;
+			if ($objecttmp->type == Facture::TYPE_STANDARD) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_PROFORMA) {
+				$isSupportedType = true;
+			}
+			if ($objecttmp->type == Facture::TYPE_DEPOSIT && !getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$isSupportedType = true;
+			}
 
 			if (!$isSupportedType) {
 				$listtype = array(

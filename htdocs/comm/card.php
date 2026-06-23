@@ -7,7 +7,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
@@ -38,6 +38,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -128,7 +129,6 @@ if (!$sortfield) {
 $cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
-$extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
@@ -564,7 +564,8 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd);
 		print '</td><td>';
-		$limit_field_type = (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) ? 'numeric' : 'amount';
+		//$limit_field_type = (getDolGlobalString('MAIN_USE_EDIT_IN_PLACE')) ? 'numeric' : 'amount'; // TODO deprecated ?
+		$limit_field_type = 'amount';
 		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
@@ -1774,12 +1775,6 @@ if ($object->id > 0) {
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("interventions");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
-		}
-
-		// Add invoice
-		if (isModEnabled('deplacement') && $object->status == 1) {
-			$langs->load("trips");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddTrip").'</a></div>';
 		}
 
 		if (isModEnabled('invoice') && $object->status == 1) {

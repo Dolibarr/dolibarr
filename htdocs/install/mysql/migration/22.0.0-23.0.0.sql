@@ -54,10 +54,15 @@ create table llx_categorie_project_task (
 ALTER TABLE llx_categorie_project_task ADD PRIMARY KEY pk_categorie_propal (fk_categorie, fk_project_task);
 --noqa:enable=PRS
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
+ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_task_rowid;
+-- VMYSQL4.1 DROP INDEX idx_categorie_project_fk_task ON llx_categorie_project_task;
+-- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
+ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+
 
 UPDATE llx_actioncomm SET elementtype = 'project_task' WHERE elementtype = 'task';
 
@@ -218,7 +223,6 @@ UPDATE llx_rights_def SET module_position = 62 WHERE module = 'accounting' AND m
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
-
 
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
 ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
@@ -422,8 +426,8 @@ ALTER TABLE llx_pos_cash_fence ADD COLUMN cheque_lifetime double(24,8) DEFAULT n
 
 ALTER TABLE llx_pos_cash_fence ADD COLUMN lifetime_start datetime DEFAULT NULL;
 
-UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
-UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolDBType() == ''mysqli''' WHERE label = 'MakeLocalDatabaseDumpShort';
+-- VMYSQL4.3 UPDATE llx_cronjob set test = 'getDolGlobalString(''MAIN_ALLOW_BACKUP_BY_EMAIL'') && getDolDBType() == ''mysqli''' WHERE label = 'MakeSendLocalDatabaseDumpShort';
 
 UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 
@@ -432,5 +436,21 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'PGK'
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG25-DEV', 'The developed accountancy french plan 2025', 1);
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
+
+-- Rename OIDC enable constant: openidconnect was converted from a module to a config-level feature (#36051)
+UPDATE llx_const SET name = 'MAIN_AUTHENTICATION_OIDC_ON' WHERE name = 'MAIN_MODULE_OPENIDCONNECT';
+
+-- this table was created only during fresh install
+CREATE TABLE llx_workstation_workstation_extrafields
+(
+    rowid           integer     AUTO_INCREMENT PRIMARY KEY,
+    tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object       integer     NOT NULL,
+    import_key      varchar(14)                          -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
 -- end of migration

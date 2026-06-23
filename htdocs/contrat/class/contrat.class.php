@@ -1,18 +1,20 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Destailleur Laurent		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Destailleur Laurent     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry             <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2018  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +235,7 @@ class Contrat extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
@@ -257,7 +259,7 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -2949,6 +2951,45 @@ class Contrat extends CommonObject
 		$return .= '</div>';
 
 		return $return;
+	}
+
+	/**
+	 *  Return totalized lines
+	 *
+	 *  @param	int		$statut			Status of lines
+	 *  @param	int		$expired		1=expired, 0=not expired
+	 *  @return array<string,mixed>|int		Array of totalized lines or int if error
+	 */
+	public function getTotalizedLines($statut, int $expired)
+	{
+		$sql = "SELECT SUM(cd.qty) as total_qty, SUM(cd.total_ht) as total_ht, SUM(cd.total_tva) as total_tva, SUM(cd.total_ttc) as total_ttc,";
+		$sql .= " SUM(cd.total_localtax1) as total_localtax1, SUM(cd.total_localtax2) as total_localtax2";
+		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+		$sql .= " WHERE cd.fk_contrat =".((int) $this->id);
+		if ($statut >= 0) {
+			$sql .= " AND cd.statut = ".((int) $statut);
+			if ($expired > 0) {
+				$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+			} else {
+				$sql .= " AND cd.date_fin_validite >= '".$this->db->idate(dol_now())."'";
+			}
+		}
+		$ret = $this->db->query($sql);
+		$response = array();
+		if ($ret) {
+			$obj = $this->db->fetch_object($ret);
+			$response['total_qty'] = $obj->total_qty;
+			$response['total_ht'] = $obj->total_ht;
+			$response['total_tva'] = $obj->total_tva;
+			$response['total_localtax1'] = $obj->total_localtax1;
+			$response['total_localtax2'] = $obj->total_localtax2;
+			$response['total_ttc'] = $obj->total_ttc;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		return $response;
 	}
 
 	// @Todo getLibSignedStatus, LibSignedStatus

@@ -27,6 +27,7 @@
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $action
  * @var string $trackid
@@ -37,6 +38,11 @@
  * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  * @var string $file
  * @var ?string $inreplyto
+ * @var int $hidedetails
+ * @var int $hidedesc
+ * @var int $hideref
+ * @var string $recruitername
+ * @var string $recruitermail
  */
 '
 @phan-var-force int<0,1> $diroutput
@@ -302,7 +308,7 @@ if ($action == 'presend') {
 	// Make substitution in email content
 	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
-		$formmail->setSubstitFromObject($object, $langs);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 

@@ -877,6 +877,9 @@ class ExpeditionLigne extends CommonObjectLine
 		if ($orderline->fetch($fk_elementdet) <= 0) {
 			return true; // Order line not found, skip check
 		}
+		if ($orderline->product_type == 9) {
+			return true; // Skip check for title/separator lines, they have no deliverable quantity
+		}
 		$qty_ordered = (float) $orderline->qty;
 
 		// Quantity already shipped on other shipment lines

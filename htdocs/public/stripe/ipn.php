@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ try {
 	dol_syslog("***** Stripe IPN was called with SignatureVerificationException service=".$service);
 	dol_syslog("***** Stripe IPN was called with SignatureVerificationException service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Invalid signature. May be a hook for an event created by another Stripe env or a hack attempt ? Check setup of your keys whsec_...', 400);
-} catch (Exception $e) {
+} catch (Exception $e) {  // @phpstan-ignore catch.neverThrown
 	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service);
 	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);
@@ -706,10 +706,10 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$outputlangs->loadLangs(array("main", "members", "bills"));
 
 				// Get email content from template
-				$arraydefaultmessage=null;
+				$arraydefaultmessage = null;
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail=new FormMail($db);
+				$formmail = new FormMail($db);
 
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
 
@@ -751,9 +751,9 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 				// Attach a file ?
-				$listofpaths=array();
-				$listofnames=array();
-				$listofmimes=array();
+				$listofpaths = array();
+				$listofnames = array();
+				$listofmimes = array();
 
 				/*
 				$invoicediroutput = $conf->invoice->dir_output;

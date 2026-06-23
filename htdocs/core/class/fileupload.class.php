@@ -3,7 +3,7 @@
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ class FileUpload
 		}
 
 		$object_ref = 'UndefinedReference';
+		$object = null;
 		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
 		if ($pathname !== null && $filename !== null) {
 			// Get object from its id and type

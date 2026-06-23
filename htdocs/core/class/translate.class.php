@@ -2,7 +2,7 @@
 /* Copyright (C) 2001       Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015  Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -558,7 +558,7 @@ class Translate
 						//print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 						if (empty($this->tab_translate[$key])) {    // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
 							// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
-							$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
+							$this->tab_translate[$key] = (string) str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 
 							if ($usecachekey) {
 								$tabtranslatedomain[$key] = $value; // To save lang content in cache

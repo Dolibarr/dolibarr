@@ -70,6 +70,10 @@ class modMyModule extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "MyModuleDescription";
 
+		// Enables the module for all entities (Multicompany)
+		// Can be enabled / disabled only from the main company with superadmin account
+		// $this->core_enabled = 1;
+
 		// Author
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';		// Must be an external online web site
@@ -90,6 +94,18 @@ class modMyModule extends DolibarrModules
 		$this->picto = 'generic';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
+		// If your module use the parameter "core_enabled" and you would like to activate the parts in all entities (Multicompany):
+		// 'xxxxxx' => array(
+		//		'data' => 1 or '/mymodule/xxx/mymodule.xxx.php',
+		//		'entity' => '0'
+		//	),
+		// 'hooks' => array(
+		//		'data' => array(
+		//			'hookcontext1',
+		//			'hookcontext2',
+		//		)
+		//		'entity' => '0'
+		//	)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
 			'triggers' => 0,
@@ -120,11 +136,8 @@ class modMyModule extends DolibarrModules
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			/* BEGIN MODULEBUILDER HOOKSCONTEXTS */
 			'hooks' => array(
-				//   'data' => array(
-				//       'hookcontext1',
-				//       'hookcontext2',
-				//   ),
-				//   'entity' => '0',
+				// 'hookcontext1',
+				// 'hookcontext2',
 			),
 			/* END MODULEBUILDER HOOKSCONTEXTS */
 			// Set this to 1 if features of module are opened to external users

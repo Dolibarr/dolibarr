@@ -94,6 +94,7 @@ if (!empty($objectfield)) {
 }
 
 $objecttmp = null;
+$filter = '';
 if ($objectdesc) {
 	// Example of value for $objectdesc:
 	// Bom:bom/class/bom.class.php:0:t.status=1
@@ -108,7 +109,10 @@ if ($objectdesc) {
 	$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
 
 	$classname = $InfoFieldList[0];
-	$classpath = dol_sanitizePathName($InfoFieldList[1]);
+	$classpath = '';
+	if (!empty($InfoFieldList[1])) {
+		$classpath = dol_sanitizePathName($InfoFieldList[1]);
+	}
 
 	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
 	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
@@ -132,7 +136,7 @@ $sharedentities = getEntity(strtolower($objecttmp->element));
 
 $filter = str_replace(
 	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
-	array($conf->entity, $sharedentities, $user->id, $id),
+	array((string) $conf->entity, $sharedentities, (string) $user->id, (string) $id),
 	$filter
 );
 

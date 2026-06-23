@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
@@ -51,6 +51,8 @@
  *
  * @var string $action
  * @var int	$dateSelector
+ * @var string $var
+ * @var int	$i
  */
 
 // Protection to avoid direct call of template
@@ -64,6 +66,7 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force Societe $seller
 @phan-var-force Societe $buyer
 @phan-var-force string $var
+@phan-var-force int $i
 ';
 
 // Handle subtotals line edit
@@ -116,7 +119,7 @@ $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
 <?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php /* @phan-suppress-current-line  PhanUndeclaredGlobalVariable */ echo($i + 1); ?></td>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;

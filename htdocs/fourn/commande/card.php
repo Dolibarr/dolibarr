@@ -12,7 +12,7 @@
  * Copyright (C) 2022       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2026  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2023       Joachim Kueter              <git-jk@bloxera.com>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Nick Fragoulis
  * Copyright (C) 2025-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
  * Copyright (C) 2026       William Mead                <william@m34d.com>
@@ -43,6 +43,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -115,22 +116,17 @@ $datelivraison = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), GETPO
 
 
 // Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
 
 $object = new CommandeFournisseur($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-if ($user->socid) {
-	$socid = $user->socid;
-}
 
 // Load object
 if ($id > 0 || !empty($ref)) {
@@ -190,6 +186,7 @@ if (isModEnabled('project')) {
 }
 
 $error = 0;
+$classname = null;
 
 
 /*
@@ -1710,12 +1707,12 @@ if (empty($reshook)) {
 									$array_option,
 									$lines[$i]->fk_unit,
 									0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
-										-1,
-										$lines[$i]->special_code,
-										$label
-									);
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid,
+									-1,
+									$lines[$i]->special_code,
+									$label
+								);
 
 								if ($result < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
@@ -2019,6 +2016,13 @@ if ($action == 'create') {
 		}
 		print '</td>';
 
+		// Ref purchase order on vendor side
+		if (getDolGlobalString('MAIN_ASK_SUPPLIER_REF_OF_PURCHASE_ORDER_AT_CREATION')) {
+			print '<tr><td>'.$form->textwithpicto($langs->trans('RefSupplier'), $langs->trans('RefOfOnVendorSide', $langs->transnoentitiesnoconv("SupplierOrder")));
+			print '</td><td><input name="refsupplier" type="text"></td>';
+			print '</tr>';
+		}
+
 		if (!empty($societe->id) && $societe->id > 0) {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
@@ -2032,10 +2036,6 @@ if ($action == 'create') {
 
 			print '</td></tr>';
 		}
-
-		// Ref supplier
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
-		print '</tr>';
 
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -2135,7 +2135,7 @@ if ($action == 'create') {
 		//print '<td><textarea name="note_private" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 		print '</tr>';
 
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc) && $classname !== null) {
 			print "\n<!-- ".$classname." info -->";
 			print "\n";
 			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -2221,7 +2221,7 @@ if ($action == 'create') {
 	$head = ordersupplier_prepare_head($object);
 
 	$title = $langs->trans("SupplierOrder");
-	print dol_get_fiche_head($head, 'card', $title, -1, 'order');
+	print dol_get_fiche_head($head, 'card', $title, -1, 'order', 0, '', '', 0, '', 1);
 
 
 	$formconfirm = '';
@@ -3055,7 +3055,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
+					print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object=order">'.$langs->trans("ToClone").'</a>';
 				}
 
 				// Cancel

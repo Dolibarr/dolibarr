@@ -511,3 +511,5 @@ WrittenBy=Written by %s
 WebPortalContractListMenu=Contracts
 WebPortalContractListTitle=Customer contracts
 WebPortalContractListDesc=List of my customer contracts
+ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
+ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
