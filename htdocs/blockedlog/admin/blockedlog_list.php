@@ -864,7 +864,7 @@ if (is_array($blocks)) {
 			}
 			print '>';
 			print $langs->trans("TotalForThePeriod");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 			print ' <span class="opacitylow">(';
 			if ($afilterexists) {
 				print img_picto($langs->trans("ForPeriodAndFilters"), 'warning', 'class="pictofixedwidth"');
@@ -983,7 +983,7 @@ if (is_array($blocks)) {
 			print '>';
 
 			print $langs->trans("TotalForLifetime");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
 			if (GETPOST('search_endyear') && $search_end && $search_end != -1) {
