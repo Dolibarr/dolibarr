@@ -488,7 +488,10 @@ class Form
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
 
-			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+			// ExtraLanguages::fetch_name_extralanguages() leaves $this->attributes empty
+			// when MAIN_USE_ALTERNATE_TRANSLATION_FOR is not configured, so PHP 8 raises
+			// 'Undefined array key' on the read below if we do not guard it (issue #34596).
+			if (empty($extralanguages->attributes[$object->element]) || !is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
 				return ''; // No extralang field to show
 			}
 
@@ -4333,9 +4336,12 @@ class Form
 				}
 
 				$optstart = '<option value="' . $outkey . '"';
-				if ($selected && $selected == $objp->idprodfournprice) {
+				if ($selected && preg_match('/^idprod_/', (string) $selected) && (string) $selected == 'idprod_'.$objp->rowid) {
+					$optstart .= ' selected';
+				} elseif ($selected && (string) $selected == (string) $objp->idprodfournprice) {
 					$optstart .= ' selected';
 				}
+
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) {
 					$optstart .= ' disabled';
 				}
@@ -6684,7 +6690,11 @@ class Form
 		} else {
 			if ($selected) {
 				$this->load_cache_availability();
-				print $this->cache_availability[$selected]['label'];
+				if (isset($this->cache_availability[$selected])) {
+					print $this->cache_availability[$selected]['label'];
+				} else {
+					print "&nbsp;";
+				}
 			} else {
 				print "&nbsp;";
 			}
@@ -9978,10 +9988,10 @@ class Form
 						$out .= ' disabled="disabled"';
 					}
 					if (!empty($tmplabelhtml)) {
-						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml) . '"';
 					} else {
 						$tmplabelhtml = ($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #' . $tmpcolor . '"') : '') . $newval;
-						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml, 0, 0, '', 0, 1) . '"';
+						$out .= ' data-html="' . dolPrintHTMLForAttribute($tmplabelhtml) . '"';
 					}
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
@@ -10995,7 +11005,9 @@ class Form
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (!empty($extralanguages->attributes['societe']['name'])) {
+				// Guard against PHP 8 'Undefined array key' when MAIN_USE_ALTERNATE_TRANSLATION_FOR
+				// is not configured and fetch_name_extralanguages() leaves attributes empty (issue #34596).
+				if (!empty($extralanguages->attributes['societe']) && !empty($extralanguages->attributes['societe']['name'])) {
 					$object->fetchValuesForExtraLanguages();
 
 					$htmltext = '';

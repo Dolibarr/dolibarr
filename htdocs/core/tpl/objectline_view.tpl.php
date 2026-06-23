@@ -414,6 +414,7 @@ print $tooltiponpriceend;
 	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
 <?php }
 
+// Multicurrency HT
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
@@ -522,7 +523,7 @@ if ($line->special_code == 3) {
 	print $tooltiponpriceend;
 	print '</td>';
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
-		print '<td class="linecolutotalht_currency nowrap right">';
+		print '<td class="linecoltotalht_currency nowrap right">';
 		print $tooltiponpricemultiprice;
 		print price($sign * $line->multicurrency_total_ht);
 		print $tooltiponpriceendmultiprice;

@@ -120,7 +120,17 @@ if ($idprod > 0) {
 				$label .= ' ('.$productSupplier->fourn_ref.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array(
+				"id" => $productSupplier->product_fourn_price_id,
+				"price" => price2num($price, '', 0),
+				"label" => $label,
+				"title" => $title,
+				// Carry the product's default unit so the line form can preselect
+				// #units like the customer side already does for idprod (see
+				// issues #34610 for the customer side and #38636 for the
+				// supplier side).
+				"fk_unit" => $productSupplier->fk_unit,
+			); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 

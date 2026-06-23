@@ -1011,7 +1011,7 @@ if ($action == 'create') {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
+			$numprojet = $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->thirdparty->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
 			print '</td></tr>';
 		}
@@ -1039,7 +1039,7 @@ if ($action == 'create') {
 		print "<tr><td>" . $langs->trans('Model') . "</td><td>";
 		include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
 		$list = ModelePDFSuppliersInvoices::liste_modeles($db);
-		print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
+		print $form->selectarray('modelpdf', $list, getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF'));
 		print "</td></tr>";
 
 		// Public note
@@ -1202,7 +1202,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="' . newToken() . '">';
-					$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 					$morehtmlref .= '</form>';
 				} else {

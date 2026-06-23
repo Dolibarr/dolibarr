@@ -5608,11 +5608,14 @@ abstract class CommonObject
 			}
 
 			// Recalculate unit price with tax if not defined
-			if (empty($line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
+			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
 				// So we calculate an estimated value just to show something on screen
-				$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty, 'MU');
-				//other method is less accurate
-				// $line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+				if ($line->remise_percent != 100) {
+					$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty / (1 - $line->remise_percent / 100), 'MU');
+				} else {
+					// Other method is less accurate
+					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+				}
 			}
 			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
@@ -6894,10 +6897,17 @@ abstract class CommonObject
 
 			switch ($attributeType) {
 				case 'int':
+				case 'duration':
+				case 'stars':
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
+						$new_array_options[$key] = null;
+					}
+					break;
+				case 'boolean':
+					if ($value === '' || $value === false || $value === null) {
 						$new_array_options[$key] = null;
 					}
 					break;
@@ -9461,7 +9471,7 @@ abstract class CommonObject
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
 						$ef_name = 'options_' . $key;
-						$ef_value = $this->array_options[$ef_name];
+						$ef_value = $this->array_options[$ef_name]??'';
 						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
@@ -11550,15 +11560,15 @@ abstract class CommonObject
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
+		// containing() returns an integer < 0 on error (e.g. when the categorie_xxx table does not exist).
+		// Normalize to an empty array to avoid array_diff()/foreach() warnings below.
+		if (!is_array($existing)) {
+			$existing = array();
+		}
 		if ($remove_existing) {
 			// Diff
-			if (is_array($existing)) {
-				$to_del = array_diff($existing, $categories);
-				$to_add = array_diff($categories, $existing);
-			} else {
-				$to_del = array(); // Nothing to delete
-				$to_add = $categories;
-			}
+			$to_del = array_diff($existing, $categories);
+			$to_add = array_diff($categories, $existing);
 		} else {
 			$to_del = array(); // Nothing to delete
 			$to_add = array_diff($categories, $existing);

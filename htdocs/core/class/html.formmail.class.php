@@ -722,9 +722,9 @@ class FormMail extends Form
 							'global_aliases' => getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'),
 						);
 
-						if (!empty($arraydefaultmessage->email_from)) {
+						if (!empty($arraydefaultmessage->email_from) && !empty($arraydefaultmessage->id)) {
 							$templatemailfrom = ' &lt;'.$arraydefaultmessage->email_from.'&gt;';
-							$liste['from_template_'.$arraydefaultmessage->id] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
+							$liste['from_template_'.((int) $arraydefaultmessage->id)] = array('label' => $templatemailfrom, 'data-html' => $templatemailfrom);
 						}
 
 						// Also add robot email
@@ -783,7 +783,7 @@ class FormMail extends Form
 								$liste[$key]['data-html'] = str_replace(array('__LTCHAR__', '__GTCHAR__'), array('<span class="opacitymedium">(', ')</span>'), $liste[$key]['data-html']);
 							}
 						}
-						$out .= ' '.$form->selectarray('fromtype', $liste, empty($arraydefaultmessage->email_from) ? $this->fromtype : 'from_template_'.$arraydefaultmessage->id, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
+						$out .= ' '.$form->selectarray('fromtype', $liste, (empty($arraydefaultmessage->email_from) || empty($arraydefaultmessage->id)) ? $this->fromtype : 'from_template_'.((int) $arraydefaultmessage->id), 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -1042,7 +1042,7 @@ class FormMail extends Form
 				$defaultlines = $arraydefaultmessage->content_lines;
 				if (isset($defaultlines)) {
 					foreach ($this->substit_lines as $lineid => $substit_line) {
-						$lines .= make_substitutions($defaultlines, $substit_line)."\n";
+						$lines .= make_substitutions($defaultlines, $substit_line, $outputlangs)."\n";
 					}
 				}
 				$this->substit['__LINES__'] = $lines;
@@ -1087,7 +1087,10 @@ class FormMail extends Form
 				if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
 					$defaultmessage = GETPOST("message", "restricthtml");
 				} else {
-					$defaultmessage = make_substitutions($defaultmessage, $this->substit);
+					// Pass $outputlangs so __(TranslationKey)__ in the template body is resolved
+					// in the language of the selected email template, not the operator's language
+					// (see issue #34540).
+					$defaultmessage = make_substitutions($defaultmessage, $this->substit, $outputlangs);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
 					$defaultmessage = preg_replace("/^(<br>)+/", "", $defaultmessage);
 					$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
@@ -1468,7 +1471,7 @@ class FormMail extends Form
 	 */
 	public function getHtmlForTopic($arraydefaultmessage, $helpforsubstitution)
 	{
-		global $langs, $form;
+		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
 
@@ -1480,7 +1483,17 @@ class FormMail extends Form
 			}
 		}
 
-		$defaulttopic = make_substitutions($defaulttopic, $this->substit);
+		// Resolve __(TranslationKey)__ in the language of the selected template
+		// (see issue #34540). Falls back to the caller's language when the template
+		// has no explicit language pinned.
+		$outputlangs = $langs;
+		if (is_object($arraydefaultmessage) && !empty($arraydefaultmessage->lang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($arraydefaultmessage->lang);
+			$outputlangs->load('other');
+		}
+
+		$defaulttopic = make_substitutions($defaulttopic, $this->substit, $outputlangs);
 
 		$out = '<tr>';
 		$out .= '<td class="fieldrequired">';

@@ -1257,7 +1257,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (in_array($this->emetteur->country_code, array('FR')) && empty($object->total_tva)) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			if (!empty($mysoc->tva_assuj)) {
+			if (empty($mysoc->tva_assuj)) {
 				if ($mysoc->forme_juridique_code == 92) {
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', false);
 				} else {

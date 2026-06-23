@@ -406,14 +406,19 @@ if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 
 // Now show local taxes if company uses them
 
-if (price2num($object->total_localtax1, 'MU') || $mysoc->useLocalTax(1)) { ?>
+// $mysoc->useLocalTax(N) is a country-wide flag (true as soon as the country has a
+// matching c_tva row with a localtaxN_type), so on its own it always prints the line
+// for Spanish companies even when the company is "No sujeto a RE / IRPF". Mirror the
+// pattern used by compta/facture/card.php, card-rec.php and prelevement.php and gate
+// the country check on $mysoc->localtaxN_assuj == "1".
+if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || price2num($object->total_localtax1, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT1").'</th><td class="right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></th>
 </tr>
 <?php } ?>
-<?php if (price2num($object->total_localtax2, 'MU') || $mysoc->useLocalTax(2)) { ?>
+<?php if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || price2num($object->total_localtax2, 'MU')) { ?>
 <tr>
 	<th class="right"><?php if ($gift != 1) {
 		echo ''.$langs->trans("TotalLT2").'</th><td class="right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency)."\n";

@@ -373,6 +373,10 @@ if (empty($reshook)) {
 			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
 		}
 		if ($result >= 0) {
+			$ret = $object->fetch($id);	// Reload to get new records
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -387,10 +391,6 @@ if (empty($reshook)) {
 					$outputlangs->setDefaultLang($newlang);
 				}
 				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-				if ($ret > 0) {
-					$object->fetch_thirdparty();
-				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}

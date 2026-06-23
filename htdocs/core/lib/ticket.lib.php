@@ -257,7 +257,7 @@ function generate_random_id($car = 16)
 	for ($i = 0; $i < $car; $i++) {
 		try {
 			$key = random_int(0, $max);
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			// Fallback. We let PHP makes the seed automatically (no manual mt_srand)
 			$key = mt_rand(0, $max);
 		}

@@ -538,7 +538,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(501, 'Multiprices features activation needed for this request');
 		}
 

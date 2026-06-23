@@ -821,30 +821,36 @@ if ($object->id > 0) {
 				//print $langs->trans('CustomerIBAN').' ';
 
 				// if societe rib in model invoice, we preselect it
-				$selectedRib = '';
+				$selectedRibId = 0;
 				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
 					$facturerec = new FactureRec($db);
 					$facturerec->fetch($object->fk_fac_rec_source);
 					if ($facturerec->fk_societe_rib) {
 						$companyBankAccount = new CompanyBankAccount($db);
 						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
-						$selectedRib = $companyBankAccount->id;
+						$selectedRibId = $companyBankAccount->id;
 					}
 				}
 
-				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
-
-				$defaultRibId = $object->thirdparty->getDefaultRib();
-				if ($defaultRibId) {
-					$companyBankAccount = new CompanyBankAccount($db);
-					$res = $companyBankAccount->fetch($defaultRibId);
-					if ($res > 0 && !$companyBankAccount->verif()) {
-						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
-					}
-				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-					print img_warning($langs->trans("NoDefaultIBANFound"));
+				$defaultRibId = 0;
+				if (empty($selectedRibId)) {
+					$defaultRibId = $object->thirdparty->getDefaultRib();
+					$selectedRibId = (int) $defaultRibId;
 				}
 
+				$selectedRib = $form->selectRib($selectedRibId, 'accountcustomerid', 'fk_soc='.$object->socid, $langs->trans("CustomerIBAN"), '', 1, 'maxwidth500 maxwidth250onsmartphone');
+
+				if (empty($selectedRibId)) {
+					if ($defaultRibId) {
+						$companyBankAccount = new CompanyBankAccount($db);
+						$res = $companyBankAccount->fetch($defaultRibId);
+						if ($res > 0 && !$companyBankAccount->verif()) {
+							print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
+						}
+					} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+						print img_warning($langs->trans("NoDefaultIBANFound"));
+					}
+				}
 
 				// Bank Transfer Amount
 				if (getDolOptimizeSmallScreen()) {

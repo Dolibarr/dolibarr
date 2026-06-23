@@ -377,6 +377,7 @@ ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal=Value for 'Max. decimals for pr
 ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 ErrorLDAPFunctionsAreDisabledOnThisPHP=LDAP functions are disabled on this PHP.
 ErrorFailedToGetTokenFromClientIdAndSecret=Failed to get a %s token from client ID and client secret
+ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

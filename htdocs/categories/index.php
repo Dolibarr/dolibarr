@@ -95,11 +95,22 @@ if ($resql) {
 // Get list of category type
 $arrayofcateg = array();
 foreach ($categstatic->MAP_ID as $key => $idtype) {
-	$arrayofcateg[$key] = array();
-	$arrayofcateg[$key]['key'] = $key;
-	$arrayofcateg[$key]['nb'] = $countobjects[$idtype] ?? 0;
-	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
-	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+	if ($key == 'product' && !isModEnabled("product")) {
+		continue;
+	}
+	if ($key == 'service' && !isModEnabled("service")) {
+		continue;
+	}
+
+	$arrayofcateg[$idtype] = array();
+	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['nb'] = $countobjects[$idtype] ?? 0;
+	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+	if ($key == 'product' || $key == 'service') {
+		$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv("ProductsAndServices");
+		$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv("ProductsAndServices"));
+	}
 }
 $arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 

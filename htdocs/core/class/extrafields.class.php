@@ -1797,9 +1797,9 @@ class ExtraFields
 						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
 					}
 
-					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+					// Fix better compatibility with some old extrafield syntax filter "(field_name=123)"
 					$reg = array();
-					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+					if (preg_match('/^\(?([a-z0-9_]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
 						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
 					}
 
@@ -1829,7 +1829,7 @@ class ExtraFields
 					}
 				}
 
-				$InfoFieldList[5] = (string) $InfoFieldList[5];
+				$InfoFieldList[5] = (string) ($InfoFieldList[5]??'');
 
 				$filter_categorie = false;
 				if (count($InfoFieldList) > 5 && ($InfoFieldList[5] != '')) {
@@ -2477,7 +2477,7 @@ class ExtraFields
 						while ($obj = $this->db->fetch_object($resql)) {
 							$c = new Categorie($this->db);
 							$c->fetch($obj->rowid);
-							if ($mode != 'list') {
+							if ((string) $mode != 'list') {
 								$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
 								foreach ($ways as $way) {
 									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
@@ -2491,7 +2491,7 @@ class ExtraFields
 									}
 								}
 
-								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.($mode ? ' '.$mode : '').'"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
+								$s = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.' list"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>';
 								if ($numElem >= 2) {
 									$s .= img_object($c->label, 'category', 'class="small"');
 								} else {
@@ -2914,7 +2914,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('price', 'double'))) {
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
-				} elseif (in_array($key_type, array('pricecy', 'double'))) {
+				} elseif (in_array($key_type, array('pricecy'))) {
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
@@ -3069,6 +3069,16 @@ class ExtraFields
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
+				} elseif (in_array($key_type, array('pricecy'))) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
+						continue; // Value was not provided, we should not set it.
+					}
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($keyprefix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
+						$value_key = price2num($value_arr).':'.GETPOST($keyprefix."options_".$key.$keysuffix."currency_id", 'alpha');
+					} else {
+						$value_key = $value_arr;
+					}
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
 					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.

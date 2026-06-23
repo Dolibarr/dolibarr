@@ -20,6 +20,7 @@
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Lenin Rivas					<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +251,7 @@ if (empty($reshook)) {
 
 			$objectutil->date = dol_mktime(12, 0, 0, GETPOSTINT('newdatemonth'), GETPOSTINT('newdateday'), GETPOSTINT('newdateyear'));
 			$objectutil->socid = $socid;
-			$result = $objectutil->createFromClone($user, $id);
+			$result = $objectutil->createFromClone($user, $id, (GETPOSTISSET('entity') ? GETPOSTINT('entity') : null));
 			if ($result > 0) {
 				$warningMsgLineList = array();
 				// check all product lines are to sell otherwise add a warning message for each product line is not to sell
@@ -671,9 +672,11 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$newremaintopay = $object->getRemainToPay(0);
-				if ($newremaintopay == 0) {
-					$object->setPaid($user);
+				if ($object->status == Facture::STATUS_VALIDATED) {
+					$newremaintopay = $object->getRemainToPay(0);
+					if ($newremaintopay == 0) {
+						$object->setPaid($user);
+					}
 				}
 			}
 		}
@@ -701,9 +704,15 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$newremaintopay = $object->getRemainToPay(0);
-				if ($newremaintopay == 0) {
-					$object->setPaid($user);
+				// Only mark as paid when the invoice is already validated. On a still-draft
+				// invoice the discount link reduces the remain_to_pay but the invoice is not
+				// yet a legally issued document (ref is still PROV-...), so closing it would
+				// leave it stuck as paid+PROV (see #37744).
+				if ($object->status == Facture::STATUS_VALIDATED) {
+					$newremaintopay = $object->getRemainToPay(0);
+					if ($newremaintopay == 0) {
+						$object->setPaid($user);
+					}
 				}
 			}
 		}
@@ -5490,15 +5499,23 @@ if ($action == 'create') {
 		print '</tr>';
 
 		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
-			// Date invoice point of tax
+			// Date invoice point of tax (Leistungsdatum / service date for tax).
+			// Only editable while the invoice is a draft — once validated, the
+			// invoice is a legally issued document and date_pointoftax is the
+			// basis for the VAT-return period assignment under accrual taxation
+			// (Soll-Versteuerung). To correct, set the invoice back to draft or
+			// issue a credit note.
+			$editable = ($usercancreate && $object->status < Facture::STATUS_VALIDATED);
 			print '<tr><td>';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('DatePointOfTax');
 			print '</td>';
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_pointoftax&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+			if ($editable) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_pointoftax&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+			}
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editdate_pointoftax') {
+			if ($action == 'editdate_pointoftax' && $editable) {
 				$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date_pointoftax, 'date_pointoftax');
 			} else {
 				print '<span class="valuedate">'.dol_print_date($object->date_pointoftax, 'day').'</span>';

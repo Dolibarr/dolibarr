@@ -1449,6 +1449,8 @@ class SupplierProposal extends CommonObject
 						$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 						$line->fk_unit = $objp->fk_unit;
 
+						$line->fetch_optionals();
+
 						$this->lines[$i] = $line;
 
 						$i++;
@@ -2792,6 +2794,8 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				$this->lines[$i]->fk_unit = $obj->fk_unit;
 				$this->lines[$i]->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
+
+				$this->lines[$i]->fetch_optionals();
 
 				$i++;
 			}

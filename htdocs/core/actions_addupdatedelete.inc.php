@@ -173,6 +173,9 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
+		if (preg_match('/^sellist:/i', $object->fields[$key]['type']) && $value == '0') {
+			$value = ''; // sellist blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		}
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
 
@@ -335,6 +338,9 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
 			$value = ''; // This is an explicit foreign key field
 		}
+		if (preg_match('/^sellist:/i', $object->fields[$key]['type']) && $value == '0') {
+			$value = ''; // sellist blank option posts "0"; normalize to '' so notnull check works on PHP 8.0+ (see github.com/Dolibarr/dolibarr/issues/38199)
+		}
 
 		$object->$key = $value;
 
@@ -459,7 +465,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoed
 }
 
 // Action to delete
-if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($permissiontodelete)) {
 	if (!($object->id > 0)) {
 		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;

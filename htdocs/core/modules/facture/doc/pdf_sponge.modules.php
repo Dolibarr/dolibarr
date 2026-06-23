@@ -1911,8 +1911,8 @@ class pdf_sponge extends ModelePDFFactures
 
 		// Show total discount only if there is some discount on lines
 		if ($total_discount_on_lines > 0 && !$object->isSituationInvoice()) {
-			// Show discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
+			// Show total NET before discount except on credit note type invoices
+			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
@@ -1924,8 +1924,8 @@ class pdf_sponge extends ModelePDFFactures
 				$index++;
 			}
 
-			// Show total NET before discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') && $object->type != 2) {
+			// Show discount except on credit note type invoices
+			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);
