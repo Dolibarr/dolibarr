@@ -1055,7 +1055,7 @@ if ($showstockdetails) {
 			$colspan--;
 		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 			$extrafieldsobjectkey = "product_lot";
-			$extrafieldsProductLot = new Extrafields($db);
+			$extrafieldsProductLot = new ExtraFields($db);
 			$extrafieldsProductLot->fetch_name_optionals_label($extrafieldsobjectkey);
 			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
 				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
