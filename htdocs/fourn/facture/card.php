@@ -643,6 +643,15 @@ if (empty($reshook)) {
 				$discount->tva_tx = 0;
 				$discount->vat_src_code = '';
 
+				// multi-currency
+				$discount->multicurrency_code = $object->multicurrency_code;
+				$discount->multicurrency_tx = $object->multicurrency_tx;
+				$discount->multicurrency_total_ht = $discount->multicurrency_total_ttc = (float) price2num((float) $discount->amount_ttc * (float) $object->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = 0;
+				// keep compatibility
+				$discount->multicurrency_amount_ht = $discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+				$discount->multicurrency_amount_tva = 0;
+
 				$result = $discount->create($user);
 				if ($result < 0) {
 					$error++;
@@ -653,9 +662,16 @@ if (empty($reshook)) {
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+					// multi-currency
+					$discount->multicurrency_code = $object->multicurrency_code;
+					$discount->multicurrency_tx = $object->multicurrency_tx;
+					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					// keep compatibility
+					$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+					$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+					$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 
 					// Clean vat code
 					$reg = array();
