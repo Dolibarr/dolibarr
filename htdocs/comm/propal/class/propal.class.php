@@ -3151,6 +3151,19 @@ class Propal extends CommonObject
 			// End call triggers
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_propal";
+			$sql .= " WHERE fk_propal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
+		}
+
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;

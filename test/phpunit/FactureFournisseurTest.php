@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -194,10 +195,34 @@ class FactureFournisseurTest extends CommonClassTest
 
 		$localobject = new FactureFournisseur($db);
 		$result = $localobject->fetch($id);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$category = new Categorie($db);
+		$category->label = 'PHPUNIT_SUPPLIER_INVOICE_DELETE_'.$id;
+		$category->type = Categorie::TYPE_SUPPLIER_INVOICE;
+		$category->visible = 1;
+		$categoryid = $category->create($user);
+		$this->assertGreaterThan(0, $categoryid, $category->errorsToString());
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_supplier_invoice (fk_categorie, fk_supplier_invoice)";
+		$sql .= " VALUES (".((int) $categoryid).", ".((int) $id).")";
+		$result = $db->query($sql);
+		$this->assertTrue($result !== false, $db->lasterror());
+
 		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
+
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice";
+		$sql .= " WHERE fk_supplier_invoice = ".((int) $id);
+		$resql = $db->query($sql);
+		$this->assertTrue($resql !== false, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(0, (int) $obj->nb);
+		$db->free($resql);
+
+		$category->delete($user);
 		return $result;
 	}
 }

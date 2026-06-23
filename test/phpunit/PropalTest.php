@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -219,10 +220,34 @@ class PropalTest extends CommonClassTest
 
 		$localobject = new Propal($db);
 		$result = $localobject->fetch($id);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+
+		$category = new Categorie($db);
+		$category->label = 'PHPUNIT_PROPAL_DELETE_'.$id;
+		$category->type = Categorie::TYPE_PROPOSAL;
+		$category->visible = 1;
+		$categoryid = $category->create($user);
+		$this->assertGreaterThan(0, $categoryid, $category->errorsToString());
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_propal (fk_categorie, fk_propal)";
+		$sql .= " VALUES (".((int) $categoryid).", ".((int) $id).")";
+		$result = $db->query($sql);
+		$this->assertTrue($result !== false, $db->lasterror());
+
 		$result = $localobject->delete($user);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_propal";
+		$sql .= " WHERE fk_propal = ".((int) $id);
+		$resql = $db->query($sql);
+		$this->assertTrue($resql !== false, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(0, (int) $obj->nb);
+		$db->free($resql);
+
+		$category->delete($user);
 		return $result;
 	}
 }
