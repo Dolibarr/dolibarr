@@ -1484,16 +1484,14 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		// Remove linked categories.
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice";
-			$sql .= " WHERE fk_supplier_invoice = ".((int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice";
+		$sql .= " WHERE fk_supplier_invoice = ".((int) $this->id);
 
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
-			}
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$error++;
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
 		}
 
 		if (!$error) {
