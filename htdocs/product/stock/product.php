@@ -1308,8 +1308,8 @@ if ($showstockdetails) {
 						}
 						if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 							// fetch optionals attributes and labels
-							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
-								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
+								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
 								&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
 								$product_lot_static->fetch($pdluo->lotid);
 								foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
@@ -1346,7 +1346,7 @@ if ($showstockdetails) {
 									print $valuetoshow;
 									print $cssclassview ? '</span>' : '';
 									print '</td>';
-									}
+								}
 							}
 						}
 
