@@ -977,7 +977,7 @@ class FormFile
 					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
 					// Show file name with link to download
-					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param.'&preview=1');
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
 						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';

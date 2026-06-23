@@ -428,3 +428,6 @@ ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, cod
 
 -- Add ref_ext to asset_model to use various CommonOjbect methods
 ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+

@@ -625,6 +625,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 				6 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 6'),
 				8 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 8'),
 				10 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 10'),
+				12 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 12'),
 				20 => array('label' => $langs->transnoentitiesnoconv("CornerRadius").' 20'),
 			);
 

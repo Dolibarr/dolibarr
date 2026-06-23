@@ -3,6 +3,7 @@
  * Copyright (C) 2017-2018  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026-2026  Laurent Magnin      <laurent.magnin@evarisk.com>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
 $title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
@@ -184,6 +185,7 @@ print '<br>';
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td></td>';
@@ -197,7 +199,7 @@ print $langs->trans("CompanyInitialKey").'</td><td title="Parameter BLOCKEDLOG_E
 print $block_static->getOrInitFirstSignature();
 print '</td></tr>';
 
-/*
+/* Deprecated
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BlockedLogAuthorityUrl").img_info($langs->trans('BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote')).'</td>';
@@ -213,11 +215,35 @@ if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
 
 	print '</td></tr>';
 }
+
+print '<tr class="oddeven">';
+print '<td class="titlefieldmiddle" title="Debug obfuscation key">';
+print "Debug obfuscation key".'</td><td title="Debug obfuscation key" class="small">';
+try {
+	$a = $block_static->getObfuscationKey();
+	print 'block_static->getObfuscationKey(): '.$a;
+	print '<br>';
+	print '$_SESSION[obfuscationkey_'.((int) $conf->entity).']: '.$_SESSION['obfuscationkey_'.((int) $conf->entity)];
+	print '<br>';
+	$b = $block_static->getEncodedHMACSecretKey();
+	print $b;
+	print '<br>';
+	if (preg_match('/dolcrypt/', $b)) {
+		print dolDecrypt($b, '');
+	} elseif (preg_match('/dolobfuscationv1/', $b)) {
+		print dolDecrypt($b, $a);
+	}
+	print '<br>';
+	print '$conf->cache[obfuscationkey_'.((int) $conf->entity).']: '.$conf->cache['obfuscationkey_'.((int) $conf->entity)];
+} catch (Exception $e) {
+	print $e->getMessage();
+}
+print '</td></tr>';
 */
 
 
 // Show the input of countries not allowed for disabling
-if ($mysoc->country_code != 'FR' || !isALNERunningVersion()) {
+if ($mysoc->country_code != 'FR' || !isALNERunningVersion() || constant('CERTIF_LNE') != '1') {
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto($langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry"), $langs->transnoentitiesnoconv("BlockedLogDisableNotAllowedForCountry2"));
@@ -301,7 +327,7 @@ print ajax_autoselect('forcepushcounter');
 
 $urltogetkeyobfuscation = DOL_MAIN_URL_ROOT.'/blockedlog/admin/blockedlog.php?forcegetkeyobfuscation=1&token='.newToken();
 print $langs->trans("URLToGetObfuscationkey").'<br>';
-print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
+print '<div class="urllink"><input type="text" id="forcegetkeyobfuscation" spellcheck="false" class="quatrevingtpercentminusx" value="'.$urltogetkeyobfuscation.'"><a class="reposition" href="'.$urltogetkeyobfuscation.'" target="_blank" rel="noopener noreferrer"><span class="fas fa-external-link-alt paddingleft" style=""></span></a></div>';
 print ajax_autoselect('forcegetkeyobfuscation');
 
 if (GETPOST('forcegetkeyobfuscation')) {
@@ -310,6 +336,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 
 	$block_static->entity = $conf->entity;
 
+	$hmac_encoded_secret_key = '';
 	try {
 		$hmac_encoded_secret_key = $block_static->getEncodedHMACSecretKey();
 		print "\n<!-- READ TO GET HMAC KEY RETURNED result: ".$hmac_encoded_secret_key." -->\n";
@@ -317,6 +344,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 		print '<div class="error">'.$e->getMessage().'</div>';
 	}
 
+	$obfuscationkey = '';
 	try {
 		$obfuscationkey = $block_static->getObfuscationKey();					// Note: use the $mysoc->idprof1 and $registrationnumber. On network trouble, an Exception is thrown to the caller
 		print "\n<!-- API TO GET REMOTE OBFUSCATION KEY RETURNED result: ".$obfuscationkey." -->\n";
@@ -327,7 +355,7 @@ if (GETPOST('forcegetkeyobfuscation')) {
 	// Now test the keyfor debug purpose..
 
 	// Decode the encrypted parameter using the obfuscation key to get the HMAC key in memory.
-	$hmac_secret_key = $block_static->dolDecodeHMACKey($hmac_encoded_secret_key, $obfuscationkey);
+	$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $obfuscationkey);
 
 	if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
 		print '<!-- Failed to decode the encoded HMAC key using the remote obfuscation key -->';
@@ -340,10 +368,10 @@ if (GETPOST('forcegetkeyobfuscation')) {
 		// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id, for backward compatibility).
 		$oldobfuscationkey = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 
-		$hmac_secret_key = $block_static->dolDecodeHMACKey($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
+		$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $oldobfuscationkey);	// Decode the encrypted parameter using the obfuscation key from ping.dolibarr.org to decode HMAC key
 
 		if (!preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key)) {
-			//throw new Exception('Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
+			//throw new Exception('blockedlog.php Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the obfuscation key. A value was found but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key or $dolibarr_main_instance_unique_id was not restored with the same value in conf.php file.');
 			print '<!-- HMAC key can t be decoded -->';
 		} else {	// $hmac_secret_key start with 'BLOCKEDLOGHMAC...' so it is a valid value
 			print '<!-- Success to decode HMAC key. It is encrypted with an old obfuscation method, we migrate it. -->';

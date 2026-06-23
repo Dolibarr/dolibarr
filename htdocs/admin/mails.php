@@ -685,6 +685,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
+	print '<div class="neutral nomargintop">';
 	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
@@ -695,8 +696,7 @@ if ($action == 'edit') {
 		}
 	}
 
-	print "<br>\n";
-	print "<br>\n";
+	print '</div>';
 	print "<br>\n";
 
 

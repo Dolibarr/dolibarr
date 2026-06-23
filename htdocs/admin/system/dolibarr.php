@@ -61,7 +61,14 @@ $sfurl = '';
 $version = '0.0';
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if (!$islne) {
+		$versionbadge .= ' - '.$langs->trans("NotCertified");
+	}
+}
+$versionbadge .= '</span>';
 
 
 /*
