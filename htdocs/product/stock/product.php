@@ -1046,8 +1046,31 @@ if ($showstockdetails) {
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 
+	// Batch fields display management
+	$colspan = 4;
+	if ((isModEnabled('productbatch')) && $object->hasbatch()) {
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) 
+			$colspan--;
+		if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) 
+			$colspan--;
+		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+			$extrafieldsobjectkey = "product_lot";
+			$extrafieldsProductLot = new Extrafields($db);
+			$extrafieldsProductLot->fetch_name_optionals_label($extrafieldsobjectkey);
+			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+				&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
+				foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+					if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+						continue;
+					}
+					$colspan++;
+				}
+			}
+		}
+	}
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
+	print '<td colspan="'.$colspan.'">'.$langs->trans("Warehouse").'</td>';
 	print '<td class="right">'.$langs->trans("NumberOfUnit").'</td>';
 	print '<td class="right">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 	print '<td class="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
@@ -1058,7 +1081,6 @@ if ($showstockdetails) {
 	print '</tr>';
 
 	if ((isModEnabled('productbatch')) && $object->hasbatch()) {
-		$colspan = 3;
 		print '<tr class="liste_titre"><td class="minwidth200">';
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<a id="show_all" href="#" class="hideobject">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
@@ -1069,14 +1091,26 @@ if ($showstockdetails) {
 		print '</td>';
 		print '<td class="right">'.$langs->trans("batch_number").'</td>';
 		if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-			$colspan--;
 			print '<td class="center width100">'.$langs->trans("SellByDate").'</td>';
 		}
 		if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-			$colspan--;
 			print '<td class="center width100">'.$langs->trans("EatByDate").'</td>';
 		}
-		print '<td colspan="'.$colspan.'"></td>';
+		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+			// fetch optionals attributes and labels
+			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+				&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
+				foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+					if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+						continue;
+					}
+					print "<td>".$extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'][$key]."</td>";
+				}
+			}
+		}
+		
+		print '<td colspan="'.($colspan+5).'"></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -1233,6 +1267,20 @@ if ($showstockdetails) {
 							print $form->selectDate($pdluo->eatby, 'eatby', 0, 0, 1, '', 1, 0);
 							print '</td>';
 						}
+						if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+							// fetch optionals attributes and labels
+							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+								&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
+								foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+									if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+										continue;
+									}
+									print "<td></td>";
+								}
+							}
+						}
+
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"><input type="submit" class="button button-save" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 						print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -1252,15 +1300,56 @@ if ($showstockdetails) {
 							print $product_lot_static->getNomUrl(1, 'nolink');
 						}
 						print '</td>';
-						$colspan = 3;
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
 						}
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
+												if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+							// fetch optionals attributes and labels
+							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+								&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
+								$product_lot_static->fetch($pdluo->lotid);
+								foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+									if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+										continue;
+									}
+
+									$cssclasstd = $extrafieldsProductLot->getCSSClass($key, $extrafieldsobjectkey, 'csslist');
+									$cssclassview = $extrafieldsProductLot->getCSSClass($key, $extrafieldsobjectkey, 'cssview');
+
+									$tmpkey = 'options_'.$key;
+
+									if (in_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
+										$value = (isset($product_lot_static->array_options[$tmpkey]) ? $product_lot_static->array_options[$tmpkey] : null) ;
+									} else {
+										// The key may be in $obj->array_options if not in $obj
+										$value =(isset($product_lot_static->array_options[$tmpkey]) ? $product_lot_static->array_options[$tmpkey] : '');
+									}
+									// If field is a computed field, we make computation to get value
+									if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['computed'][$key]) {
+										$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+										$value = dol_eval((string) $extrafieldsProductLot->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
+									}
+
+									$valuetoshow = $extrafieldsProductLot->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null, 'list');
+
+									$title = dol_string_nohtmltag($valuetoshow);
+
+									print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
+									print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
+									print ($title && !in_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
+									print '>';
+									print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
+									print $valuetoshow;
+									print $cssclassview ? '</span>' : '';
+									print '</td>';
+									}
+							}
+						}
+
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : (($pdluo->qty > 1 && $object->status_batch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')) : '')).'</td>';
 						print '<td colspan="4"></td>';
 						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
@@ -1298,7 +1387,7 @@ if ($showstockdetails) {
 	}
 
 	// Total line
-	print '<tr class="liste_total"><td class="right liste_total" colspan="4">'.$langs->trans("Total").':</td>';
+	print '<tr class="liste_total"><td class="right liste_total" colspan="'.$colspan.'">'.$langs->trans("Total").':</td>';
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
 	if ($usercancreadsupplierprice) {
