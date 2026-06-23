@@ -225,14 +225,6 @@ INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_UNVALIDATE','Stock transfer back to draft','Executed when a stock transfer is set back to draft','stocktransfer',673);
 INSERT IGNORE INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('STOCKTRANSFER_CLOSE','Stock transfer closed','Executed when a stock transfer is closed after destination stock increment','stocktransfer',676);
 
-
--- Contract notification events for status changes
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_REOPEN','Contract reopened','Executed when a contract is reopened','contrat',18);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_ACTIVATE','Contract activated','Executed when all contract services are activated','contrat',18);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_CLOSE','Contract closed','Executed when all contract services are closed','contrat',18);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_SIGN','Contract signed status changed','Executed when a contract signature status is changed','contrat',18);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTRACT_UNSIGN','Contract unsigned','Executed when a contract signature status is reset to no signature','contrat',18);
-
 ALTER TABLE llx_c_ticket_category ADD COLUMN fk_ticket_type integer NULL;
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN fk_user_modif integer;

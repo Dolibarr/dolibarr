@@ -171,11 +171,6 @@ class Notify
 		'ACTION_CREATE',
 		'CONTRACT_MODIFY',
 		'CONTRACT_VALIDATE',
-		'CONTRACT_REOPEN',
-		'CONTRACT_ACTIVATE',
-		'CONTRACT_CLOSE',
-		'CONTRACT_SIGN',
-		'CONTRACT_UNSIGN'
 		'STOCKTRANSFER_CREATE',
 		'STOCKTRANSFER_MODIFY',
 		'STOCKTRANSFER_VALIDATE',
@@ -944,11 +939,6 @@ class Notify
 								break;
 							case 'CONTRACT_MODIFY':
 							case 'CONTRACT_VALIDATE':
-							case 'CONTRACT_REOPEN':
-							case 'CONTRACT_ACTIVATE':
-							case 'CONTRACT_CLOSE':
-							case 'CONTRACT_SIGN':
-							case 'CONTRACT_UNSIGN':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->contract->multidir_output;
@@ -1261,11 +1251,6 @@ class Notify
 						break;
 					case 'CONTRACT_MODIFY':
 					case 'CONTRACT_VALIDATE':
-					case 'CONTRACT_REOPEN':
-					case 'CONTRACT_ACTIVATE':
-					case 'CONTRACT_CLOSE':
-					case 'CONTRACT_SIGN':
-					case 'CONTRACT_UNSIGN':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = (is_array($object->context) && array_key_exists('signature', $object->context) && getDolGlobalString('CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS')) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->contract->multidir_output;

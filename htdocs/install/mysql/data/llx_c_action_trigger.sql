@@ -11,7 +11,6 @@
 -- Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
 -- Copyright (C) 2021-2022  Anthony Berton          <anthony.berton@bb2a.fr>
 -- Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
--- Copyright (C) 2026		Pierre Ardoin         <developpeur@lesmetiersdubatiment.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
