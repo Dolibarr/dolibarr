@@ -1049,16 +1049,16 @@ if ($showstockdetails) {
 	// Batch fields display management
 	$colspan = 4;
 	if ((isModEnabled('productbatch')) && $object->hasbatch()) {
-		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) 
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY'))
 			$colspan--;
-		if (getDolGlobalString('PRODUCT_DISABLE_EATBY')) 
+		if (getDolGlobalString('PRODUCT_DISABLE_EATBY'))
 			$colspan--;
 		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 			$extrafieldsobjectkey = "product_lot";
 			$extrafieldsProductLot = new Extrafields($db);
 			$extrafieldsProductLot->fetch_name_optionals_label($extrafieldsobjectkey);
-			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
-				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
+				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
 				&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
 				foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 					if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
@@ -1098,8 +1098,8 @@ if ($showstockdetails) {
 		}
 		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 			// fetch optionals attributes and labels
-			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
-				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
+				&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
 				&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
 				foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 					if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
@@ -1109,7 +1109,7 @@ if ($showstockdetails) {
 				}
 			}
 		}
-		
+
 		print '<td colspan="'.($colspan+5).'"></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -1269,8 +1269,8 @@ if ($showstockdetails) {
 						}
 						if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 							// fetch optionals attributes and labels
-							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
-								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
+							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
+								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
 								&& count($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])) {
 								foreach ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 									if ($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
@@ -1306,7 +1306,7 @@ if ($showstockdetails) {
 						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
-												if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
+						if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
 							// fetch optionals attributes and labels
 							if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
 								&& is_array($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label']) 
