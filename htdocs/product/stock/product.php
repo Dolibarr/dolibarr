@@ -1055,7 +1055,6 @@ if ($showstockdetails) {
 		if (getDolGlobalString('PRODUCT_DISABLE_EATBY'))
 			$colspan--;
 		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
-
 			$extrafieldsProductLot = new ExtraFields($db);
 			$extrafieldsProductLot->fetch_name_optionals_label($extrafieldsobjectkey);
 			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
