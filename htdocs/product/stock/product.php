@@ -111,6 +111,7 @@ if ($user->socid) {
 
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
+$extrafieldsobjectkey = "product_lot";
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -1054,7 +1055,7 @@ if ($showstockdetails) {
 		if (getDolGlobalString('PRODUCT_DISABLE_EATBY'))
 			$colspan--;
 		if (getDolGlobalString('PRODUCT_LOT_SHOW_EXTRAFIELDS')) {
-			$extrafieldsobjectkey = "product_lot";
+
 			$extrafieldsProductLot = new ExtraFields($db);
 			$extrafieldsProductLot->fetch_name_optionals_label($extrafieldsobjectkey);
 			if (!empty($extrafieldsProductLot->attributes[$extrafieldsobjectkey]['label'])
