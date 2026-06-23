@@ -2042,7 +2042,7 @@ if ($action == 'create') {
 							$("#select_offsetunittype_duration").select2("destroy");
 							$("#select_offsetunittype_duration").select2();
 							selectremindertype();
-	            		 });
+	            		 }
 
 						toggle_reminder_part();
 						$("#addreminder").click(toggle_reminder_part);
