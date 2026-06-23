@@ -10854,7 +10854,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$already_payed_all = $object->totalpaid + $object->totaldeposits + $object->totalcreditnotes;
 		}
 
-		$substitutionarray['__SIMPLE_ORDER_TABLE__'] = is_object($object) && !empty($object->lines) ? showSimpleOrderTable($outputlangs, $object) : "";
+		$substitutionarray['__SIMPLE_HTML_TABLE__'] = is_object($object) && !empty($object->lines) ? showSimpleHTMLTable($outputlangs, $object) : "";
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_TEXT__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, $conf->currency, true) : '';
@@ -13682,82 +13682,74 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
  * @param   Object		$object			Object
  * @return	string						template
  */
-function showSimpleOrderTable($outputlangs, $object)
+function showSimpleHTMLTable($outputlangs, $object)
 {
-
 	global $conf;
 
 	$discountIsAvailable = false;
 	$orderPositionHasNoPrice = false;
 
-	if(!property_exists($object->lines[0], "remise_percent") ||
-		!property_exists($object->lines[0], "fk_unit") || 
+	if (!property_exists($object->lines[0], "remise_percent") ||
+		!property_exists($object->lines[0], "fk_unit") ||
 		!property_exists($object->lines[0], "multicurrency_total_ttc") ||
 		!property_exists($object->lines[0], "description") ||
 		!property_exists($object->lines[0], "qty")) {
-			return"";
+		return"";
 	}
-	
-	foreach($object->lines as $order_position) { 
 
-		if(!property_exists($order_position, "price")){
+	foreach ($object->lines as $order_position) {
+		if (!property_exists($order_position, "price")) {
 			$orderPositionHasNoPrice = true;
 			break;
 		}
 
-		if(!empty($order_position->remise_percent)){
+		if (!empty($order_position->remise_percent)) {
 			$discountIsAvailable = true;
 			break;
 		}
-	}; 
+	};
 
-	if($orderPositionHasNoPrice){
+	if ($orderPositionHasNoPrice) {
 		return "";
 	}
 
-	$discountHeader = $discountIsAvailable ? `<th style="width:120px">{$outputlangs->trans("Discount")}</th>` : "";
-	
-	$table = '<table border="0" cellpadding="1" cellspacing="1">';
+	$discountHeader = $discountIsAvailable ? '<th style="width:120px">'.$outputlangs->trans("Discount").'</th>' : '';
 
-	$table .= <<<TABLEHEADER
+	$table = '<table border="0" cellpadding="1" cellspacing="1">';
+	$table .= '
 	<thead>
 		<tr>
 			<th style="width:50px; text-align:left">#</th>
-			<th style="text-align:left">{$outputlangs->trans("Description")}</th>
-			<th style="width:120px; text-align:right;">{$outputlangs->trans("Price")}</th>
-			<th style="width:100px; text-align:right;">{$outputlangs->trans("Quantity")}</th>
-			<th style="width:120px; text-align:right;">{$outputlangs->trans("Unit")}</th>
-			{$discountHeader}
-			<th style="width:120px; text-align:right;">{$outputlangs->trans("Sum")}</th>
+			<th style="text-align:left">'.$outputlangs->trans("Description").'</th>
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Price").'</th>
+			<th style="width:100px; text-align:right;">'.$outputlangs->trans("Quantity").'</th>
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Unit").'</th>'.
+			$discountHeader.'
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Sum").'</th>
 		</tr>
 	</thead>
-	<tbody>
-	TABLEHEADER;
+	<tbody>';
 
-	foreach($object->lines as $index => $order_position) { 
-
+	foreach ($object->lines as $index => $order_position) {
 		$position = $index + 1;
 		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$unit = measuringUnitString($order_position->fk_unit,'','',1);
+		$unit = measuringUnitString($order_position->fk_unit, '', null, 1);
 		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
-		$discount = $discountIsAvailable ? `<td style="text-align:center">{$order_position->remise_percent}%</td>` : "";
+		$discount = $discountIsAvailable ? '<td style="text-align:center">'.$order_position->remise_percent.'%</td>' : "";
 
-
-		$table .= <<<ORDERPOSITION
+		$table .= '
 			<tr>
-				<td>$position</td>
-				<td>$order_position->description</td>
-				<td style="text-align:right">$price</td>
-				<td style="text-align:right">$order_position->qty</td>
-				<td style="text-align:right">$unit</td>
-				{$discount}
-				<td style="text-align:right">$total</td>
-				
-			</tr>
-		ORDERPOSITION;
-
+				<td>'.$position.'</td>
+				<td>'.$order_position->description.'</td>
+				<td style="text-align:right">'.$price.'</td>
+				<td style="text-align:right">'.$order_position->qty.'</td>
+				<td style="text-align:right">'.$unit.'</td>'.
+				$discount.'
+				<td style="text-align:right">'.$total.'</td>
+			</tr>';
 	}
 	$table .= '</tbody></table>';
+
 	return $table;
 }
 
