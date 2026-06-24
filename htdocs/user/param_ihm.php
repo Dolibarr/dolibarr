@@ -65,12 +65,14 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
-
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+if ($user->id == $id) {
+	$result = 1; // A user can always edit its own GUI setup
+} else {
+	$feature2 = 'user';
+	$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
+}
 if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
