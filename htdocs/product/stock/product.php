@@ -1334,7 +1334,7 @@ if ($showstockdetails) {
 										$value = dol_eval((string) $extrafieldsProductLot->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 									}
 
-									$valuetoshow = $extrafieldsProductLot->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null, 'list');
+									$valuetoshow = $extrafieldsProductLot->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object, 'list');
 
 									$title = dol_string_nohtmltag($valuetoshow);
 
