@@ -546,7 +546,7 @@ function expedition_get_additional_catalog_lines_for_card($db, $object, $outputl
 			$line->product_type = $product->type;
 			$line->fk_product_type = $product->type;
 			$line->product_label = $productLabel;
-			$line->product = $productLabel;
+			$line->product = $product;
 			$line->label = $productLabel;
 			$line->ref = $product->ref;
 			$line->product_tosell = $product->status;
@@ -554,7 +554,7 @@ function expedition_get_additional_catalog_lines_for_card($db, $object, $outputl
 			$line->product_tobatch = $product->status_batch;
 			$line->stockable_product = $product->stockable_product;
 			$line->weight = $product->weight;
-			$line->weight_units = $product->weight_units;
+			$line->weight_units = (int) ($product->weight_units ?? 0);
 			$line->length = $product->length;
 			$line->length_units = $product->length_units;
 			$line->width = $product->width;
@@ -564,7 +564,7 @@ function expedition_get_additional_catalog_lines_for_card($db, $object, $outputl
 			$line->surface = $product->surface;
 			$line->surface_units = $product->surface_units;
 			$line->volume = $product->volume;
-			$line->volume_units = $product->volume_units;
+			$line->volume_units = (int) ($product->volume_units ?? 0);
 			if (empty($line->fk_unit)) {
 				$line->fk_unit = $product->fk_unit;
 			}
@@ -572,7 +572,6 @@ function expedition_get_additional_catalog_lines_for_card($db, $object, $outputl
 			$line->product_type = Product::TYPE_PRODUCT;
 			$line->fk_product_type = Product::TYPE_PRODUCT;
 			$line->product_label = '';
-			$line->product = '';
 			$line->label = '';
 			$line->ref = '';
 			$line->product_tosell = 0;
@@ -1993,6 +1992,7 @@ if (empty($action)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
+$forcetoshowtitlelines = 0;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 } else {
@@ -3976,7 +3976,7 @@ if ($action == 'create' && $usercancreate) {
 				';
 				print '<div class="div-table-responsive-no-min">';
 				print '<table id="tablelines_add" class="noborder noshadow centpercent">';
-				$oldforcetoshowtitlelines = isset($forcetoshowtitlelines) ? $forcetoshowtitlelines : 0;
+				$oldforcetoshowtitlelines = $forcetoshowtitlelines;
 				$forcetoshowtitlelines = 1;
 				require DOL_DOCUMENT_ROOT.'/expedition/tpl/objectline_create.tpl.php';
 				$forcetoshowtitlelines = $oldforcetoshowtitlelines;
@@ -4576,7 +4576,7 @@ if ($action == 'create' && $usercancreate) {
 			';
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines_add" class="noborder noshadow centpercent">';
-			$oldforcetoshowtitlelines = isset($forcetoshowtitlelines) ? $forcetoshowtitlelines : 0;
+			$oldforcetoshowtitlelines = $forcetoshowtitlelines;
 			$forcetoshowtitlelines = 1;
 			require DOL_DOCUMENT_ROOT . '/expedition/tpl/objectline_create.tpl.php';
 			$forcetoshowtitlelines = $oldforcetoshowtitlelines;

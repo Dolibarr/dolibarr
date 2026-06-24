@@ -194,9 +194,9 @@ class pdf_merou extends ModelePdfExpedition
 					$line->fk_product_type = $product->type;
 					$line->product_type = $product->type;
 					$line->weight = $product->weight;
-					$line->weight_units = $product->weight_units;
+					$line->weight_units = (int) ($product->weight_units ?? 0);
 					$line->volume = $product->volume;
-					$line->volume_units = $product->volume_units;
+					$line->volume_units = (int) ($product->volume_units ?? 0);
 					if (empty($line->fk_unit)) {
 						$line->fk_unit = $product->fk_unit;
 					}

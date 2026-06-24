@@ -606,6 +606,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each source line
 		$products_dispatched = array();
+		$standalone_dispatched_qty_sql = '';
 		if ($isStandaloneShipment) {
 			$standalone_dispatched_qty_sql = "l.qty + COALESCE((SELECT SUM(child.qty)";
 			$standalone_dispatched_qty_sql .= " FROM ".$db->prefix()."expeditiondet as child";
