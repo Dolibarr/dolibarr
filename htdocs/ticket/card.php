@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 		}
 
-		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0)) > 0) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
@@ -480,13 +480,15 @@ if (empty($reshook)) {
 		if ($_SESSION['email_customer'] == $object->origin_email || $_SESSION['email_customer'] == $object->thirdparty->email) {
 			$object->context['contact_id'] = GETPOSTINT('contactid');
 
-			$object->close($user);
+			if ($object->close($user) > 0) {
+				setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
 
-			setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>', null, 'mesgs');
-
-			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
-			header("Location: " . $url);
-			exit;
+				$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
+				header("Location: " . $url);
+				exit;
+			}
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
@@ -708,6 +710,9 @@ if (empty($reshook)) {
 
 	$permissiondellink = $permissiontoadd;
 	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
+
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';

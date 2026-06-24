@@ -132,6 +132,7 @@ if ($max_time && $max_time < $max_execution_time_for_importexport) {
 }
 
 $MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
+$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 $permission = $user->hasRight('blockedlog', 'read');
 $permissiontoadd = $user->hasRight('blockedlog', 'read');	// Permission is to upload new files to scan them
@@ -189,6 +190,22 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$error++;
 	}
 	*/
+
+	if (!$error) {
+		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
+		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
+
+		$isqualified = isALNERunningVersion(1);
+		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
+			$errmsg = 'Error: You are using Dolibarr with the module to be compliant with the French Law Finance certification. In this version, the HTTPS is mandatory to be allowed to record any event (Your hosting does not match the install requirements).';
+			dol_syslog($errmsg, LOG_ERR);
+
+			setEventMessages($errmsg, null, 'errors');
+			$error++;
+		}
+	}
 
 	$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 1);
 	$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') > 0 ? GETPOSTINT('monthtoexport') : 12);
@@ -258,13 +275,27 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$totalvatamount = array();
 		$totalamount = array();
 
+		// Check we can validate the status of each line by getting the HMAC key in memory
+		$remoteobfuscationkey = '';
+		if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+			try {
+				$remoteobfuscationkey = $block_static->getObfuscationKey();
+				// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
+			} catch (Exception $e) {
+				$error++;
+
+				setEventMessages($e->getMessage(), null, 'errors');
+				setEventMessages('<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>', null, 'errors');
+			}
+		}
+
 		// Now restart request with all data, so without the limit(1) in sql request
 		$sql = "SELECT rowid, entity, date_creation, tms, user_fullname, action, module_source, pos_source, amounts_taxexcl, amounts, element, fk_object, date_object, ref_object,";
-		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo";
+		$sql .= " linktoref, linktype, signature, fk_user, object_data, object_version, object_format, debuginfo, note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		// For unalterable log, we are using the date of creation of the log. Note that a bookkeeper may decide to dispatch an invoice
-		// or payment on different periods for example to manage depreciation, but we want here is not accountancy but payment data.
+		// or payment on different periods for example to manage depreciation, but what we want here is not accountancy but payment data.
 		$sql .= " AND date_creation BETWEEN '".$db->idate($dates, 'gmt')."' AND '".$db->idate($datee, 'gmt')."'";
 		$sql .= " ORDER BY date_creation ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
@@ -293,6 +324,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				);
 
 			$loweridinerror = 0;
+			$lastrowid = 0;
 			$i = 0;
 
 			while ($obj = $db->fetch_object($resql)) {
@@ -339,6 +371,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
 
+				$block_static->note = $obj->note;
+
 				// Old hash + Previous fields concatenated = signature
 				$block_static->signature = $obj->signature;
 
@@ -367,7 +401,12 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				*/
 
 				if ($checksignature) {
-					$statusofrecord = 'Valid';
+					if (!empty($block_static->note)) {	// signature ok but end of chain deletion detected
+						$statusofrecord = 'KO';
+						$statusofrecordnote = $block_static->note;
+					} else {
+						$statusofrecord = $langs->transnoentitiesnoconv('StatusValid');
+					}
 					if ($loweridinerror > 0) {
 						$statusofrecordnote = 'ValidButFoundAPreviousKO';
 					} else {
@@ -384,6 +423,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				}
 
 				//$concatenateddata = $block_static->buildKeyForSignature();
+
+				$lastrowid = $block_static->id;
 
 				// Define $totalhtamount, $totalvatamount, $totalamount for $block->action event / $block->module_source
 				$total_ht = $total_vat = $total_ttc = 0;
@@ -407,176 +448,227 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					.csvClean($block_static->object_format).';'
 					.csvClean($block_static->signature).';'
 					.csvClean($statusofrecord).';'
+					.csvClean($block_static->note).';'
 					."\n");
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
 
 				$i++;
-			}
+			}	// end of loop on each record found
 
 			if ($i == 0) {
 				fwrite($fh, ";\n");
+			}
+
+			// Get the last record of the chain (may be used later).
+			$lastrecord = $block_static->getLastRecord();
+
+			// Check if $lastrowid is the last rowid of table blockedlog
+			$isLastRecord = false;
+			if ($lastrecord['id'] == $lastrowid) {
+				$isLastRecord = true;
+			}
+
+			if (!$periodnotcomplete) {	// If period is complete
+				if (!$isLastRecord) {	// There is another record in database that follow the last one in period. So we use it to see if no deletion were done at end of period.
+					// We check that next record after the last one is ok.
+					$block_static_after = new BlockedLog($db);
+					$nextrecord = $block_static_after->getNextRecord($lastrowid);
+					$nextrecordid = $nextrecord['id'];
+
+					$block_static_after->fetch($nextrecordid);
+
+					$checksignature = $block_static_after->checkSignature();
+
+					if (!$checksignature) {		// If the record just after is not valid, it means we removed one or more records inside the chain (at end of period)
+						fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($block_static->date_creation, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', dol_print_date($block_static_after->date_creation, 'dayhourrfc', 'gmt')))."\n");
+					}
+				} else {				// If last output record is the last one in chain, we must use the end of chain protection file to check that no deletion were done in database before export.
+					$lockfile = $block_static->getEndOfChainFlagFile();
+					$lockline = '';
+
+					// Note: We can find a similar code into the blockedlog_list.php page to make the report on screen.
+					if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+						if (!file_exists($lockfile)) {
+							//$error++;
+
+							if ($mysoc->country_code == 'FR') {
+								fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+							} else {
+								fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+							}
+						} else {
+							$lockline = trim(file_get_contents($lockfile));
+						}
+					} else {
+						$sql = "SELECT value from ".MAIN_DB_PREFIX."const";
+						$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+						$resql = $db->query($sql);
+						if ($resql) {
+							$obj = $db->fetch_object($resql);
+							if ($obj) {
+								$lockline = $obj->value;
+							} else {
+								//$error++;
+
+								if ($mysoc->country_code == 'FR') {
+									fwrite($fh, 'ERROR '.$langs->trans("ErrorEndOfChainFlagWasRemoved")."\n");
+								} else {
+									fwrite($fh, 'WARNING '.$langs->trans("WarningNoProtectionOnEndOfChain")."\n");
+								}
+							}
+						}
+					}
+
+					if (! $error) {
+						$headstring = '';
+						if (preg_match('/^dolcrypt/', $lockline)) {
+							$headstring = dolDecrypt($lockline, '', 'BLOCKEDLOGHEAD');
+						} elseif (preg_match('/^dolobfuscation/', $lockline)) {
+							try {
+								$remoteobfuscationkey = $block_static->getObfuscationKey();
+								if (empty($remoteobfuscationkey)) {
+									throw new Exception('Remote obfuscation key is empty');
+								}
+							} catch (Exception $e) {
+								$error++;
+
+								$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+								setEventMessages($langs->trans("FailedToGetRemoteObfuscationKeyReTryLater", $url_for_ping), null, 'errors');
+								setEventMessages($langs->trans("CantValidateEndOfChain"), null, 'errors');
+							}
+							$headstring = dolDecrypt($lockline, $remoteobfuscationkey, 'BLOCKEDLOGHEAD');
+						}
+
+						$reg = array();
+						if (preg_match('/^BLOCKEDLOGHEAD (\d+) ([^\s]+) ([a-zA-Z0-9\-]+)/', (string) $headstring, $reg)) {	// Failed to decypt the head
+							// Compare with last line
+							$lastrecordid = $lastrecord['id'];
+							$lastrecorddate = $lastrecord['date'];
+							$lastrecordsignature = $lastrecord['signature'];
+
+							if ($reg[1] > $lastrecordid || $reg[3] != $lastrecordsignature) {
+								//$error++;
+
+								// Check that last line is the one declared into the head flag. If not, it means some record were deleted at end of chain.
+								fwrite($fh, $langs->trans("ErrorEndOfChainRecordWasRemoved", str_replace(array('T', 'Z'), ' ', dol_print_date($lastrecorddate, 'dayhourrfc', 'gmt')), str_replace(array('T', 'Z'), ' ', $reg[2]))."\n");
+							}
+						} else {
+							//$error++;
+
+							fwrite($fh, $langs->trans("FailedToDecodeTheHeadFlagEndOfChainIsNotReliable")."\n");
+						}
+					}
+				}
 			}
 		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 
+
+		// Define which source we want to show
+		$showtotalfor = array('' => 1);
+		$sql = "SELECT DISTINCT module_source FROM ".MAIN_DB_PREFIX."blockedlog WHERE entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$showtotalfor[$obj->module_source] = 1;
+			}
+		}
+		if (isModEnabled('takepos')) {
+			$showtotalfor['takepos'] = 1;
+		}
+
+		ksort($totalamount);
+		krsort($showtotalfor);
+
 		// Now calculate cumulative total of all invoices validated
-		$totalhtamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		$totalvatamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		$totalamountalllines = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER' => 0);
-		if (array_key_exists('BILL_VALIDATE', $totalhtamount)) {
-			foreach ($totalhtamount['BILL_VALIDATE'] as $val) {	// Loop on each module
-				$totalhtamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalvatamount['BILL_VALIDATE'] as $val) {
-				$totalvatamountalllines['BILL_VALIDATE'] += $val;
-			}
-			foreach ($totalamount['BILL_VALIDATE'] as $val) {
-				$totalamountalllines['BILL_VALIDATE'] += $val;
+		foreach ($totalamount as $key => $totalamountofcodepersource) {
+			foreach ($totalamountofcodepersource as $source => $tmpval) {
+				$totalhtamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
+				$totalvatamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
+				$totalamountalllines = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER' => array());
 			}
 		}
-		if (array_key_exists('PAYMENT_CUSTOMER', $totalhtamount)) {
-			foreach ($totalhtamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalhtamountalllines['PAYMENT_CUSTOMER'] += $val;
+		//var_dump($totalamount, $totalhtamount, $totalvatamount); exit;
+
+		$countsource = 0;
+		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
+
+			// Line of title for total for period for $source
+			if ($countsource == 1) {
+				fwrite($fh, "\n");
 			}
-			foreach ($totalvatamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalvatamountalllines['PAYMENT_CUSTOMER'] += $val;
-			}
-			foreach ($totalamount['PAYMENT_CUSTOMER'] as $val) {
-				$totalamountalllines['PAYMENT_CUSTOMER'] += $val;
+			fwrite($fh, '----- ');
+			fwrite($fh,  $langs->transnoentitiesnoconv("TotalForThePeriod"));
+			fwrite($fh,  ' - '.($source ? $langs->transnoentitiesnoconv("PointOfSale").' '.ucfirst($source) : $langs->transnoentitiesnoconv("BackOffice")));
+			fwrite($fh,  ' ('.$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '').')');
+			fwrite($fh, ' -----');
+			fwrite($fh, "\n");
+
+			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				$amountstoshow = '';
+				$s = $actioncode;
+				if ($actioncode == 'BILL_VALIDATE') {
+					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
+					$amountstoshow = (float) $totalhtamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT").' - '.(float) $totalvatamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("VAT").' - '.(float) $totalamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
+				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
+					$s = 'PAID   = '.$langs->transnoentitiesnoconv("TurnoverCollected");
+					$amountstoshow = (float) $totalamount['PAYMENT_CUSTOMER'][$source];
+				}
+
+				fwrite($fh, 'SUMMARY PERIOD '.$s.'  =  '.$amountstoshow."\n");
 			}
 		}
-
-		// Add a final line with cumulative total of invoices validated (BILL_VALIDATE)
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-
-		$statusofrecord = '';
-
-		fwrite($fh, 'SUMMARY TURNOVER BILLED - '.$langs->transnoentitiesnoconv("Bills").' : '.$totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").';'
-			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
-			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
-			.csvClean($statusofrecord).';'."\n");
-
-
-		// Add a final line with cumulative total of invoices validated (PAYMENT_CUSTOMER_CREATE)
-		$block_static->id = 0;
-		$block_static->date_creation = '';
-		$block_static->action = '';
-		$block_static->module_source = '*';
-		$block_static->pos_source = '*';
-		$block_static->amounts_taxexcl = '';
-		$block_static->amounts = '';
-		$block_static->ref_object = '';
-		$block_static->date_object = 0;
-		$block_static->user_fullname = '';
-		$block_static->linktoref = '';
-		$block_static->linktype = '';
-		$block_static->object_version = '';
-		$block_static->object_format = '';
-		$block_static->signature = '';
-		$statusofrecord = '';
-
-		fwrite($fh, 'SUMMARY TURNOVER PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.$totalamountalllines['PAYMENT_CUSTOMER'].';'
-			.csvClean('').';'
-			.csvClean($block_static->date_creation).';'
-			.csvClean($block_static->action).';'
-			.csvClean($block_static->module_source).';'
-			.csvClean($block_static->pos_source).';'
-			.csvClean($block_static->amounts_taxexcl).';'	// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->amounts).';'			// Can be 1.20000000 with 8 digits. TODO Clean to have 8 digits in V1
-			.csvClean($block_static->ref_object).';'
-			.csvClean('').';'
-			.csvClean($block_static->user_fullname).';'
-			.csvClean($block_static->linktoref).';'
-			.csvClean($block_static->linktype).';'
-			.csvClean('').';'				// We must use the string (so $obj->object_data) and not the array decoded with dolDecodeBlockedData
-			.csvClean($block_static->object_version).';'
-			.csvClean($block_static->object_format).';'
-			.csvClean($block_static->signature).';'
-			.csvClean($statusofrecord).';'."\n");
 
 
 		// Get lifetime amount of all invoices validated and payments created/deleted.
 		// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
-		$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-		$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
+
+		$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+		$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+
 		$foundoldformat = 0;
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+		'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
+		$countsource = 0;
+		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
 
-		// Add a final line with perpetual total for invoice validations
-		fwrite($fh, 'SUMMARY LIFETIME BILLED - '.$langs->transnoentitiesnoconv("Invoices").' : '.$totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("TTC").";"
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('>= '.dol_print_date($firstrecorddate, 'standard')).";\n");
+			// Line of title for lifetime total for $source
+			if ($countsource == 1) {
+				fwrite($fh, "\n");
+			}
+			fwrite($fh, '----- ');
+			fwrite($fh,  $langs->transnoentitiesnoconv("TotalForLifetime"));
+			fwrite($fh,  ' - '.($source ? $langs->transnoentitiesnoconv("PointOfSale").' '.ucfirst($source) : $langs->transnoentitiesnoconv("BackOffice")));
+			fwrite($fh,  '  (>='.dol_print_date($firstrecorddate, 'standard').')');
+			fwrite($fh, "\n");
 
-		// Add a final line with perpetual total for customer payments
-		fwrite($fh, 'SUMMARY LIFETIME PAID - '.$langs->transnoentitiesnoconv("Payments").' : '.($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']).";"
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('').';'
-			.csvClean('>= '.dol_print_date($firstrecorddate, 'standard')).";\n");
+			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				$amountstoshow = '';
+				$s = '';
+				if ($actioncode == 'BILL_VALIDATE') {
+					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
+					$amountstoshow = $totalhtamountlifetime['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT")." - ".($foundoldformat ? '' : ((float) $totalamountlifetime['BILL_VALIDATE'][$source] - (float) $totalhtamountlifetime['BILL_VALIDATE'][$source]).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
+				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
+					$s = 'PAID   = '.$langs->transnoentitiesnoconv("TurnoverCollected");
+					$amountstoshow = ((float) $totalamountlifetime['PAYMENT_CUSTOMER_CREATE'][$source] + (float) $totalamountlifetime['PAYMENT_CUSTOMER_DELETE'][$source]);
+				}
+
+				// Add a final line with perpetual total for invoice validations
+				fwrite($fh, 'SUMMARY LIFETIME '.$s.'  =  '.$amountstoshow."\n");
+			}
+		}
+
+		fwrite($fh, "\n");
 
 		// End of file, we will calculate global signature on it now, before adding last line.
 		fclose($fh);
@@ -609,12 +701,18 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 
 				$object->label = 'Export unalterable logs';
 
+				/*
 				$object->total_billed = $totalhtamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT").' - '.$totalvatamountalllines['BILL_VALIDATE'].' '.$langs->trans("VAT").' - '.$totalamountalllines['BILL_VALIDATE'].' '.$langs->trans("HT");
 				$object->total_collected = $totalamountalllines['PAYMENT_CUSTOMER'];
 				$object->totallifetime_billed = $totalhtamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT")." - ".($foundoldformat ? '' : ($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).' - '.$totalamountlifetime['BILL_VALIDATE'].' '.$langs->trans("HT");
 				$object->totallifetime_collected = ($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
+				*/
+				// TODO: Add total_billed, total_collected, totallifetime_billed, totallifetime_collected
+
 
 				$object->period = 'year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
+
+				// There is no trigger for export of archive files, so we force the action code here
 
 				$action = 'BLOCKEDLOG_EXPORT';
 
@@ -634,6 +732,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 					$error++;
 				}
 			}
+		} else {
+			dol_delete_file($tmpfile);
 		}
 	}
 
@@ -837,6 +937,9 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$amountvatlifetime['BILL_VALIDATE'] = $amountvatlifetime['PAYMENT_CUSTOMER'] = null;
 		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
+		$footer = '';
+		$errorlines = '';
+
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
 			$numline = 0;
@@ -859,7 +962,22 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 				$block_static->id = 0;	// reset tmp record
 
-				if ($formatexport == 'VE1' && !empty($line[1])) {	// Format V23
+				// Test if line is an empty line
+				if (trim((string) $line[0]) == '' && trim((string) $line[1]) == '') {
+					$lineanalyzed = 2;
+				}
+
+				// Test if line is an comment line
+				if (preg_match('/^-----/', (string) $line[0])) {
+					$lineanalyzed = 2;
+				}
+
+				// Test if line is an error alert line
+				if (preg_match('/^ERROR/', (string) $line[0])) {
+					$lineanalyzed = 3;
+				}
+
+				if (empty($lineanalyzed) && $formatexport == 'VE1' && !empty($line[1])) {	// Format Blockedlog V1-
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
@@ -885,7 +1003,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$statusline = (string) $line[16];
 				}
 
-				if ($formatexport == 'VE2' && !empty($line[1])) {	// Format V24+
+				if (empty($lineanalyzed) && $formatexport == 'VE2' && !empty($line[1])) {	// Format Blockedlog V2+
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
@@ -910,7 +1028,6 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					// Status from file: 'Valid' or 'KO'
 					$statusline = (string) $line[17];
 				}
-
 
 				if ($block_static->id > 0) {
 					// Status revalidated from calculation using the HMAC secret key (possible only when we are on the same instance than
@@ -958,7 +1075,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					*/
 				}
 
-				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
+				if ($lineanalyzed == 1 && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
 					// certified version (locked) and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
@@ -978,32 +1095,17 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 				// Test if line is a summary line
 				if (preg_match('/^SUMMARY /', (string) $line[0])) {
 					// We are on a line for summary information
-					$lineanalyzed = 1;
-					/*
-					if (preg_match('/^SUMMARY TURNOVER BILLED/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					if (preg_match('/^SUMMARY TURNOVER PAID/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					*/
-					if (preg_match('/^SUMMARY LIFETIME BILLED/', (string) $line[0])) {
-						// We load data from line
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME BILLED[^\d]*\s:\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+/', $amountstring, $reg)) {
-							$amounthtlifetime['BILL_VALIDATE'] = (float) $reg[1];
-							$amountvatlifetime['BILL_VALIDATE'] = (float) $reg[2];
-							$amountttclifetime['BILL_VALIDATE'] = (float) $reg[3];
-						}
-					}
-					if (preg_match('/^SUMMARY LIFETIME PAID/', (string) $line[0])) {
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME PAID[^\d]*\s:\s([\d\.]+)/', $amountstring, $reg)) {
-							$amounthtlifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-							$amountvatlifetime['PAYMENT_CUSTOMER'] = 0.0;
-							$amountttclifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-						}
-					}
+					$lineanalyzed = 2;
+				}
+
+				if ($lineanalyzed == 2) {
+					// We are in the footer section with comments
+					$footer .= (string) str_replace(array(';', '*'), '', implode(' ', $line))."\n";
+				}
+
+				if ($lineanalyzed == 3) {
+					// We are in the footer section with comments
+					$errorlines .= (string) $line[0]."\n";
 				}
 
 				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
@@ -1071,103 +1173,25 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		/*
-		if (!userIsTaxAuditor()) {
-			if ($nbLinesModifiedInExportButKo) {
-				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
-				print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
-				print '<br><br>';
-			}
-		}
-		*/
-
 		if ($nbLinesModifiedBeforeExport) {
 			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
 			print '<br><br>';
 		}
 
-		/*
-		print img_picto('', 'minus', 'class="valignmiddle pictofixedwidth"');
-		print '<b>'.$langs->trans("DetectionOfSystemRestoration").'</b>: ';
-		print '<span class="opacitymedium">';
-		print $langs->trans("FeatureOnlyWhenArchiveAnalyzedFrom", "https://www.dolibarr.org/onlinecheckarchive.php");
-		print '</span><br>';
-		print '<br>';
-		*/
+		// Now print the error line section
+		if ($errorlines) {
+			print img_picto('', 'warning', 'class="error valignmiddle center pictofixedwidth"').'<b>'.$errorlines.'</b><br>';
 
-		print '<hr>';
-
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
-		foreach ($arraykeys as $key) {
-			$totalhttoshow = $totalhtamountforaction[$key];
-			$totalvattoshow = $totalvatamountforaction[$key];
-			$totaltoshow = $totalamountforaction[$key];
-
-			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
-			if ($key == 'BILL_VALIDATE') {
-				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER') {
-				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
-			}
-			print ': ';
-
-			if ($key == 'PAYMENT_CUSTOMER') {
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			} else {
-				print $langs->trans("HT").': ';
-				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("VAT").': ';
-				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("TTC").': ';
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			}
 			print '<br>';
 		}
 
-		// Now print the value for lifetime amounts.
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
-		foreach ($arraykeys as $key) {
-			if (is_null($amounthtlifetime[$key])) {		// If not entry found, we discard
-				continue;
-			}
-			$totalhttoshow = $amounthtlifetime[$key];
-			$totalvattoshow = $amountvatlifetime[$key];
-			$totaltoshow = $amountttclifetime[$key];
-
-			print '<b>'.dolPrintHTML($langs->trans("LifetimeAmountShort").' '.$langs->trans('log'.$key)).'</b>';
-			if ($key == 'BILL_VALIDATE') {
-				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER') {
-				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
-			}
-			print ': ';
-
-			if ($key == 'PAYMENT_CUSTOMER') {
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			} else {
-				print $langs->trans("HT").': ';
-				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("VAT").': ';
-				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("TTC").': ';
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			}
-			print '<br>';
-		}
-
+		// Now print the foot section
+		print img_picto('', 'tick', 'class="valignmiddle center pictofixedwidth"');
+		print '<b>'.$langs->trans("Summary").'</b>';
+		print '<textarea class="centpercent" rows="14" spellcheck="false">';
+		print dol_htmlcleanlastbr($footer);
+		print '</textarea>';
 
 		print '<br>';
 
@@ -1391,7 +1415,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 		0,
 		-1,
 		'',
-		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check'.$param)))
+		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check&token=notrequired'.$param)))
 	);
 }
 
