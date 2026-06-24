@@ -6,6 +6,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2026  		Jon Bendtsen            	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@
  * @var User $user
  *
  * @var string $action
+ * @var int $projectid
  * @var string $massaction
  * @var string $modelmail
  * @var string $sendto
@@ -73,6 +75,7 @@
 @phan-var-force string $modelmail
 @phan-var-force ?string $search_all
 @phan-var-force ?Task $taskstatic
+@phan-var-force int $projectid
 ';
 
 if (!empty($sall) || !empty($search_all)) {
@@ -373,6 +376,43 @@ if ($massaction == 'presend') {
 	}
 
 	print dol_get_fiche_end();
+}
+
+if ($massaction == 'premassmail') {
+	dol_syslog('massactions_pre.tpl.php::if massaction == premassmail', LOG_DEBUG);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
+	$formmailing = new FormMailing($db);
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	$mailingstatic = new Mailing($db);
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	$projectstatic = new Project($db);
+
+	if (!isset($projectid)) {
+		$projectid = 0;
+	}
+	$fpresult = $projectstatic->fetch($projectid);
+	if ($fpresult > 0) {
+		$toptext = $projectstatic->title;
+		$toplist = $mailingstatic->fetchMassMailingIds($user, $projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds($user, 0, $projectid);
+	} elseif ($projectid > 0) {
+		$toptext = $langs->trans("ProjectId").' '.$projectid.' '.$langs->trans("EMailings");
+		$toplist = $mailingstatic->fetchMassMailingIds($user, $projectid);
+		$endlist = $mailingstatic->fetchMassMailingIds($user, 0, $projectid);
+	} else {
+		$toptext = $langs->trans("ListOfEMailings");
+		$toplist = $mailingstatic->fetchMassMailingIds($user, 0);
+		$endlist = array();
+	}
+
+	$htmlname = isset($objecttmp->element) ? $objecttmp->element : 'unknownelement';
+	$page = '';
+	$endtext = $langs->trans("Other").' '.$langs->trans("EMailings");
+	$size = (int) round(10 + ((log(count($toplist)) > 0 ? log(count($toplist)) : 0) + (log(count($endlist)) > 0 ? log(count($endlist)) : 0)));
+	$title = '<h4><label for="massmail_selection_choices_'.$htmlname.'">'.$toptext.':</label></h4>';
+	$formmailing->formMultiSelectMassMailing($page, $htmlname, $title, $toplist, $toptext, $endlist, $endtext, $size, 'width: 100%;');
+
+	print '<br>';
 }
 
 if ($massaction == 'edit_extrafields') {

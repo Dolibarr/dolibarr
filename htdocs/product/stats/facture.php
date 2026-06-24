@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal'));
+$langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', 'mails'));
 
 $action = GETPOST('action', 'aZ');
 
@@ -143,7 +143,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'premassmail') {
 	$massaction = '';
 }
 $arrayfields = array(
@@ -162,10 +162,9 @@ $societestatic = new Societe($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 
-
-
 $arrayofmassactions = array(
 	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'premassmail' => img_picto('', 'mail-bulk', 'class="pictofixedwidth"').$langs->trans("EditMailing"),
 );
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -180,10 +179,10 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+$permissiontoread = $user->hasRight("facture", "lire");
 if (empty($reshook)) {
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
-	$permissiontoread = $user->hasRight("facture", "lire");
 	$permissiontoadd = $user->hasRight("facture", "creer");
 	$permissiontodelete = $user->hasRight("facture", "supprimer");
 	$uploaddir = $conf->invoice->dir_output;
@@ -225,6 +224,234 @@ if (empty($reshook)) {
 	}
 }
 
+// Massaction add/delete recipients to/from mass mailing
+$button_add_mailing = GETPOST('button_add_mailing', 'aZ09');
+$button_delete_mailing = GETPOST('button_delete_mailing', 'aZ09');
+if ($button_add_mailing && $button_delete_mailing) {
+	dol_syslog('Error: Both add and delete mailing buttons were pressed simultaneously.', LOG_ERR);
+	setEventMessages($langs->trans("Choose").' '.$langs->trans("Max").' 1 '.$langs->trans("Input"), null, 'errors');
+	header("Location: " . $_SERVER['HTTP_REFERER']);
+	exit;
+}
+$permissiontomailing = $user->hasRight('mailing', 'write');
+if ($massaction == 'confirm_premassmail' && !$permissiontomailing) {
+	dol_syslog('User='.$user->id.' misses permissions to write mailings', LOG_WARNING);
+	setEventMessages($langs->trans("NotEnoughPermissions").' &mdash; '.$langs->trans("EditMailing"), null, 'errors');
+	$massaction = '';
+} elseif ($massaction == 'confirm_premassmail' && $permissiontomailing && $permissiontoread) {
+	dol_syslog("product/stats/facture.php::if confirmmassaction presend && permissiontomailing && permissiontoread", LOG_DEBUG);
+	$langs->loadLangs(array("errors", "main", "mails", "companies", "margins"));
+	$ignorenocontact = GETPOSTINT('ignorenocontact') ? GETPOSTINT('ignorenocontact') : 0;
+	$showerrors = GETPOST('showerrors', 'array') ?? array('');
+	$select_contactsrc = GETPOST('select_contactsrc', 'array') ?? array(0);
+	$verbosereporting = GETPOSTINT('verbosereporting') ? GETPOSTINT('verbosereporting') : 0;
+	$thirdpartyemail = GETPOSTINT('ThirdPartyEmail') ? GETPOSTINT('ThirdPartyEmail') : 0;
+	$select_mailing = GETPOST('select_mailing', 'array:int') ?? array();
+	if (empty($select_mailing)) {
+		setEventMessages($langs->trans("ListOfEMailings").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($toselect)) {
+		setEventMessages($langs->trans("Invoices").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+	if (empty($select_contactsrc) && !$thirdpartyemail) {
+		setEventMessages($langs->trans("ThirdPartiesArea").' &mdash; '.$langs->trans("NoRecordSelected"), null, 'warnings');
+	}
+
+	require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+	$contactstatic = new Contact($db);
+	$mailingstatic = new Mailing($db);
+	$verified_toselect = array();
+	$verified_mailings = array();
+	$whatchanged = array();
+	$info_mesgs = array();
+	$info_warnings = array();
+	$info_errors = array();
+	$changetomailing = null;
+	$source_type = $invoicestatic->element;
+	foreach ($toselect as $itemid) {
+		$fetchinvoiceresult = $invoicestatic->fetch($itemid);
+		if ($fetchinvoiceresult) {
+			$verified_toselect[] = $itemid;
+			$fetchsociete = null;
+			if ($thirdpartyemail > 0) {
+				$fetchsociete = $invoicestatic->fetch_thirdparty();
+				if (!$fetchsociete && in_array("ThirdPartyEmail", $showerrors)) {
+					dol_syslog('product/stats/facture.php::failed fetching societe of invoice='.$itemid, LOG_ERR);
+					$error_message = $langs->trans("CustomerInvoice").'='.$invoicestatic->ref.' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("ThirdParty"));
+					setEventMessages($error_message, null, 'errors');
+				}
+			}
+			$invoice_contact_list = array();
+			foreach ($select_contactsrc as $contact_code) {
+				$list_of_contacts = $invoicestatic->liste_contact(-1, 'external', 0, $contact_code);
+				if (empty($list_of_contacts) && in_array("ContactForInvoices", $showerrors)) {
+					$invoice_type_contact = $invoicestatic->liste_type_contact('external', '', 1, 0, $contact_code);
+					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $invoice_type_contact[$contact_code]);
+					setEventMessages($warn_message, null, 'warnings');
+				} elseif (!empty($list_of_contacts)) {
+					$invoice_contact_list = array_merge($invoice_contact_list, $list_of_contacts);
+				}
+			}
+			// fail once pr. invoice, not once pr. mailing pr. invoice
+			$verified_invoice_contact_list = array();
+			foreach ($invoice_contact_list as $contact_array) {
+				$fetchcontact = $contactstatic->fetch($contact_array['id']);
+				if ($fetchcontact) {
+					$verified_invoice_contact_list[] = $contact_array;
+					// we will still fail later if this contact does not have an email address
+				} else {
+					$warn_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("Contact").'='.$contact_array['id']);
+					setEventMessages($warn_message, null, 'warnings');
+				}
+			}
+			if (empty($verified_invoice_contact_list) && !empty($select_contactsrc) && in_array("ContactForInvoices", $showerrors)) {
+				$error_message = $invoicestatic->getNomUrl().' &mdash; '.$langs->trans("ErrorRefNotFound", $langs->trans("SearchIntoContacts"));
+				setEventMessages($error_message, null, 'errors');
+			}
+			foreach ($select_mailing as $mailingid) {
+				if ($thirdpartyemail > 0 && $fetchsociete) {
+					$thirdpartychangetomailing = 0; // to make sure isset is always true
+					if ($button_add_mailing) {
+						$other = $langs->trans("ThirdParty").'@'.$langs->trans("CustomerInvoice").'='.$itemid;
+						$thirdpartychangetomailing = $invoicestatic->thirdparty->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
+					}
+					if ($button_delete_mailing) {
+						$thirdpartychangetomailing = $invoicestatic->thirdparty->deleteFromMassMailing($mailingid);
+					}
+					if ($button_add_mailing || $button_delete_mailing) {
+						if ($thirdpartychangetomailing > 0) {
+							if (isset($whatchanged[$mailingid])) {
+								$verified_mailings[] = $mailingid;
+							}
+							$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+							$info_mesgs[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->email;
+						} elseif ($thirdpartychangetomailing == 0) {
+							$verified_mailings[] = $mailingid;
+							$fmresult = $mailingstatic->fetch($mailingid);
+							if ($fmresult) {
+								$vmailing_title = $mailingstatic->title;
+							} else {
+								$vmailing_title = 'Mailing ID '.$mailingid;
+							}
+							if ($button_add_mailing && in_array("ThirdPartyEmail", $showerrors)) {
+								$info_warnings[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+							}
+						} elseif ($thirdpartychangetomailing == -6 && $ignorenocontact && in_array("ThirdPartyEmail", $showerrors)) {
+							$info_warnings[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+						} elseif (in_array("ThirdPartyEmail", $showerrors)) {
+							$info_errors[$mailingid][] = '&emsp;'.$invoicestatic->thirdparty->error;
+						}
+					} else {
+						dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+						setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+					}
+				}
+				foreach ($verified_invoice_contact_list as $invoice_contact) {
+					$fetchcontact = $contactstatic->fetch($invoice_contact['id']);
+					if ($fetchcontact) {
+						$contactchangetomailing = 0; // to make sure isset is always true
+						if ($button_add_mailing) {
+							$other = (string) $invoice_contact['label'].'@'.$langs->trans("CustomerInvoice").'='.$itemid;
+							$contactchangetomailing = $contactstatic->addToMassMailing($mailingid, $itemid, $source_type, $other, $ignorenocontact);
+						}
+						if ($button_delete_mailing) {
+							$contactchangetomailing = $contactstatic->deleteFromMassMailing($mailingid);
+						}
+
+						if ($button_add_mailing || $button_delete_mailing) {
+							if ($contactchangetomailing > 0) {
+								if (isset($whatchanged[$mailingid])) {
+									$verified_mailings[] = $mailingid;
+								}
+								$whatchanged[$mailingid] = isset($whatchanged[$mailingid]) ? $whatchanged[$mailingid] + 1 : 1;
+								$info_mesgs[$mailingid][] = '&emsp;'.$contactstatic->email;
+							} elseif ($contactchangetomailing == 0) {
+								$verified_mailings[] = $mailingid;
+								$fmresult = $mailingstatic->fetch($mailingid);
+								if ($fmresult) {
+									$vmailing_title = $mailingstatic->title;
+								} else {
+									$vmailing_title = 'Mailing ID '.$mailingid;
+								}
+								if ($button_add_mailing && in_array("ContactForInvoices", $showerrors)) {
+									$info_warnings[$mailingid][] = '&emsp;'.$contactstatic->error;
+								}
+							} elseif ($contactchangetomailing == -6 && $ignorenocontact && in_array("ContactForInvoices", $showerrors)) {
+								$info_warnings[$mailingid][] = '&emsp;'.$contactstatic->error;
+							} elseif (in_array("ContactForInvoices", $showerrors)) {
+								$info_errors[$mailingid][] = '&emsp;'.$contactstatic->error;
+							}
+						} else {
+							dol_syslog('confirm_premassmail, but neither button_add_mailing nor button_delete_mailing', LOG_ERR);
+							setEventMessages($langs->trans("ErrorGlobalVariableUpdater2", "button_add_mailing or button_delete_mailing"), null, 'errors');
+						}
+					}
+				}
+			}
+		} else {
+			$error_message = 'source_type='.$source_type.' id='.$itemid;
+			dol_syslog('fetch failed for '.$error_message.' in array toselect on page product/stats/facture.php massaction confirm_premassmail', LOG_ERR);
+			setEventMessages($langs->trans("ErrorRefNotFound", $error_message), null, 'errors');
+			continue;
+		}
+	}
+
+	// 1. report errors first
+	foreach ($info_errors as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'errors');
+	}
+	// 2. report warnings
+	foreach ($info_warnings as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		setEventMessages($langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'warnings');
+	}
+	// 3. report success
+	foreach ($info_mesgs as $key => $value) {
+		$fmresult = $mailingstatic->fetch($key);
+		if ($fmresult) {
+			$vmailing_title = $mailingstatic->title;
+		} else {
+			$vmailing_title = 'Mailing ID '.$key;
+		}
+		$actionmessage = $langs->trans("Unknown").' '.$langs->trans("BulkActions").' '.$langs->trans("RecordsModified", count($value));
+		if ($button_add_mailing) {
+			$actionmessage = $langs->trans("XTargetsAdded", count($value));
+		}
+		if ($button_delete_mailing) {
+			$actionmessage = $langs->trans("RecordsDeleted", count($value));
+		}
+		if ($verbosereporting) {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, $value, 'mesgs');
+		} else {
+			setEventMessages($actionmessage.' &mdash; '.$langs->trans("MailingArea").' &mdash; '.$vmailing_title, null, 'mesgs');
+		}
+	}
+
+	$total_changes = 0;
+	foreach ($select_mailing as $mailingid) {
+		$total_changes += $whatchanged[$mailingid];
+	}
+	setEventMessages($langs->trans("GrandTotal").' '.$langs->trans("RecordsModified", $total_changes), null, 'mesgs');
+
+	foreach ($verified_mailings as $mailingid) {
+		if ($mailingstatic->fetch($mailingid)) {
+			$mailingstatic->countNbOfTargets($mailingid);
+		}
+	}
+	dol_syslog("product/stats/facture.php::END confirmmassaction presend && permissiontomailing && permissiontoread", LOG_DEBUG);
+}
 
 /*
  * View
@@ -423,6 +650,11 @@ if ($id > 0 || !empty($ref)) {
 					$objecttmp = new Facture($db);
 					$trackid = 'inv'.$id;
 
+					include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+				}
+				if ($massaction == 'premassmail' && !empty($arrayofselected)) {
+					dol_syslog('product/stats/facture.php::massaction == premassmail', LOG_DEBUG);
+					$objecttmp = new Facture($db);
 					include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 				}
 
