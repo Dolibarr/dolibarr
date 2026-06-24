@@ -720,7 +720,7 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<button type="button" id="mic-btn" class="round-btn mic-btn" title="'.dol_escape_htmltag($langs->trans("ToggleMicrophone")).'">'.img_picto('', 'fa-microphone').'</button>';
 	$out .= '</div>';
 	// Text Input
-	$out .= '<textarea id="user-input" rows="1" placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'" autocomplete="off"></textarea>';
+	$out .= '<textarea id="user-input" class="ia-input" rows="1" placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'" autocomplete="off" spellcheck="false"></textarea>';
 	// Send Button
 	$out .= '<button type="button" id="send-btn" class="chat-send-btn" title="'.dol_escape_htmltag($langs->trans("SendPrompt")).'">'.img_picto('', 'fa-paper-plane').'</button>';
 	$out .= '</div>';

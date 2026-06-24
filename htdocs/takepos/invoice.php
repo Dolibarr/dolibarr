@@ -1003,7 +1003,7 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
-	if ($action == "deleteline" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
+	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
 		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {

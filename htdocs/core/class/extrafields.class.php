@@ -819,6 +819,7 @@ class ExtraFields
 					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone, $showintooltip, $personal_data);
 				}
 				if ($result > 0) {
+					// Add or remove the unique index
 					$sql = '';
 					if ($unique) {
 						dol_syslog(get_class($this).'::update_unique', LOG_DEBUG);
