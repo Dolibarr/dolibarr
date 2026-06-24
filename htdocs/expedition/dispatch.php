@@ -432,13 +432,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 	$num_prod = count($lines);
 
-	if (!empty($object->origin) && $object->origin_id > 0) {
-		$object->origin = 'commande';
-		$typeobject = $object->origin;
-		$origin = $object->origin;
+if (!empty($object->origin) && $object->origin_id > 0) {
+	$object->origin = 'commande';
+	$typeobject = $object->origin;
+	$origin = $object->origin;
 
-		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
-	}
+	$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
+}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
@@ -453,32 +453,32 @@ if ($object->id > 0 || !empty($object->ref)) {
 	$formconfirm = '';
 
 	// Confirmation to delete line
-	if ($action == 'ask_deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
-	}
+if ($action == 'ask_deleteline') {
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+}
 
 	// Call Hook formConfirm
 	$parameters = array('lineid' => $lineid);
 	// Note that $action and $object may be modified by hook
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
-	if (empty($reshook)) {
-		$formconfirm .= $hookmanager->resPrint;
-	} elseif ($reshook > 0) {
-		$formconfirm = $hookmanager->resPrint;
-	}
+if (empty($reshook)) {
+	$formconfirm .= $hookmanager->resPrint;
+} elseif ($reshook > 0) {
+	$formconfirm = $hookmanager->resPrint;
+}
 
 	// Print form confirm
 	print $formconfirm;
 
 	$objectsrc = null;
-	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
-		$objectsrc = new Commande($db);
-		$objectsrc->fetch($object->origin_object->id);
-	}
-	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
-		$objectsrc = new Propal($db);
-		$objectsrc->fetch($object->origin_object->id);
-	}
+if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
+	$objectsrc = new Commande($db);
+	$objectsrc->fetch($object->origin_object->id);
+}
+if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
+	$objectsrc = new Propal($db);
+	$objectsrc->fetch($object->origin_object->id);
+}
 
 	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
