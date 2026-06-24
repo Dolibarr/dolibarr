@@ -918,55 +918,6 @@ if ($isStandaloneShipment) {
 														$child_product = $conf->cache['product'][$child_product_id];
 								}
 
-													print '<td class="right">';
-								print '</td>'; // Qty to dispatch
-								print '<td>';
-								print '</td>'; // Dispatch column
-								print '<td></td>'; // Warehouse column
-
-								$sql  = "SELECT ed.rowid, ed.fk_parent";
-								$sql .= ", cd.fk_product";
-								$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
-								$sql .= ", ".$db->ifsql('eb.rowid IS NULL OR eb.fk_warehouse IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
-								$sql .= ", eb.batch, eb.eatby, eb.sellby";
-								$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
-								$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-								$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
-								$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
-								$sql .= " AND ed.fk_expedition = ".(int) $object->id;
-								$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
-
-								$resultsql = $db->query($sql);
-								$j = 0;
-								if ($resultsql) {
-									$numd = $db->num_rows($resultsql);
-									while ($obj_exp = $db->fetch_object($resultsql)) {
-										$suffix = "_" . $j . "_" . $i;
-
-										$productChildrenNb = 0;
-										$expedition_line_child_list = array();
-										if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-											// virtual product : find all children
-											$productChildrenNb = $tmpproduct->hasFatherOrChild(1);
-											if ($productChildrenNb > 0) {
-												$line_id_list = array();
-
-												// load all child as object line
-												$expeditionLine = new ExpeditionLigne($db);
-												$result = $expeditionLine->findAllChild($obj_exp->rowid, $line_id_list, 1);
-												if ($result > 0) {
-													$child_level = 1;
-													foreach ($line_id_list as $line_id_arr) {
-														foreach ($line_id_arr as $line_obj) {
-															$child_product_id = (int) $line_obj->fk_product;
-															if (empty($conf->cache['product'][$child_product_id])) {
-																$child_product = new Product($db);
-																$child_product->fetch($child_product_id);
-																$conf->cache['product'][$child_product_id] = $child_product;
-															} else {
-																$child_product = $conf->cache['product'][$child_product_id];
-															}
-
 															// sub-product is a batch and get selected batch from database or all batches for selected warehouse
 															$batch_list = array();
 															if ($is_mod_batch_enabled && $child_product->hasbatch()) {
@@ -1087,12 +1038,18 @@ if ($isStandaloneShipment) {
 												$objd->sellby = $dispatch_line_batch_current->sellby;
 											}
 
-											if ($is_mod_batch_enabled && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0) || !empty($objd->batch_list))) {
+											if ($is_mod_batch_enabled
+												&& (
+													!empty($objd->batch)
+													|| (is_null($objd->batch) && $tmpproduct->status_batch > 0)
+													|| !empty($objd->batch_list)
+												)
+											) {
 												$type = 'batch';
 
 												// Enable hooks to append additional columns
 												$parameters = array(
-												// allows hook to distinguish between the rows with information and the rows with dispatch form input
+													// allows hook to distinguish between the rows with information and the rows with dispatch form input
 													'is_information_row' => true,
 													'j' => $j,
 													'suffix' => $suffix,
@@ -1116,21 +1073,6 @@ if ($isStandaloneShipment) {
 												print '<td>';
 												print '<input id="fk_commandedet' . $suffix . '" name="fk_commandedet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
 												print '<input id="idline' . $suffix . '" name="idline' . $suffix . '" type="hidden" value="' . $objd->rowid . '">';
-												print '<input id="fk_parent' . $suffix . '" name="fk_parent' . $suffix . '" type="hidden" value="' . $objd->fk_parent . '">';
-												print '<input name="productbatch' . $suffix . '" type="hidden" value="' . $objd->fk_product . '">';
-
-												print '<!-- This is a U.P. (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
-												print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
-												if (!empty($objd->html_label)) {
-													print $objd->html_label;
-												}
-												print '</td>';
-
-												print '<!-- line for batch ' . $numline . ' -->';
-												print '<tr class="oddeven autoresettr" name="' . $type . '-' . $suffix . '" data-remove="clear">';
-												print '<td>';
-												print '<input id="fk_commandedet' . $suffix . '" name="fk_commandedet' . $suffix . '" type="hidden" value="' . $objp->rowid . '">';
-												print '<input id="idline' . $suffix . '" name="idline' . $suffix . '" type="hidden" value="' . $objd->rowid . '">';
 												$fk_parent_for_post = ($isStandaloneShipment && !($objd->fk_parent > 0)) ? $objd->rowid : $objd->fk_parent;
 												print '<input id="fk_parent' . $suffix . '" name="fk_parent' . $suffix . '" type="hidden" value="' . $fk_parent_for_post . '">';
 												print '<input name="productbatch' . $suffix . '" type="hidden" value="' . $objd->fk_product . '">';
@@ -1141,36 +1083,37 @@ if ($isStandaloneShipment) {
 													print $objd->html_label;
 												}
 												print '</td>';
+
 												print '<td>';
-												if ($can_update_stock) {
-													print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'-'.$child_line_id.'\')"');
-												}
+												print '<input type="text" class="inputlotnumber quatrevingtquinzepercent csslotnumber" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'" list="lot_number'.$suffix.'">';
+												print $formproduct->selectLotDataList('lot_number'.$suffix, 0, $objd->fk_product, GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, array());
 												print '</td>';
 
-													// Warehouse
-												print '<td class="right">';
-												if ($can_update_stock) {
-													if (count($listwarehouses) > 1) {
-														print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
-													} elseif (count($listwarehouses) == 1) {
-														print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
-													} else {
-														$langs->load("errors");
-														print $langs->trans("ErrorNoWarehouseDefined");
-													}
-												} else {
-														// we force the warehouse so we will pass the test to add a line into expedition.class.php
-													print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_warehouse.'">';
-													print img_warning().' '.$langs->trans('StockDisabled');
+												if ($is_sell_by_enabled) {
+													print '<td class="nowraponall">';
+													$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
+													print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
+													print '</td>';
 												}
-												print "</td>\n";
+												if ($is_eat_by_enabled) {
+													print '<td class="nowraponall">';
+													$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
+													print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
+													print '</td>';
+												}
+												print '<td colspan="2">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
+											} else {
+												$type = 'dispatch';
+												$colspan = 6;
+												$colspan = $is_sell_by_enabled ? $colspan : --$colspan;
+												$colspan = $is_eat_by_enabled ? $colspan : --$colspan;
 
-													// Enable hooks to append additional columns
+												// Enable hooks to append additional columns
 												$parameters = array(
-													'is_information_row' => false, // this is a dispatch form row
-													'i' => $i,
+													// allows hook to distinguish between the rows with information and the rows with dispatch form input
+													'is_information_row' => true,
+													'j' => $j,
 													'suffix' => $suffix,
-													'objp' => $objp,
 													'objd' => $objd,
 												);
 												$reshook = $hookmanager->executeHooks(
@@ -1185,6 +1128,7 @@ if ($isStandaloneShipment) {
 												print $hookmanager->resPrint;
 
 												print '</tr>';
+
 												print '<!-- line no batch '.$numline.' -->';
 												print '<tr class="oddeven autoresettr" name="'.$type.'-'.$suffix.'" data-remove="clear">';
 												print '<td colspan="'.$colspan.'">';
@@ -1200,13 +1144,69 @@ if ($isStandaloneShipment) {
 												}
 												print '</td>';
 											}
+											// Qty to dispatch
+											print '<td class="right nowraponall">';
+											$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTFLOAT('qty'.$suffix) : $objd->qty);
+											//var_dump($suggestedvalue);exit;
+											if ($can_update_stock) {
+												print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
+												print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
+											} else {
+												print '<input type="hidden" id="qty'.$suffix.'" name="qty'.$suffix.'" value="">';
+											}
+											print '</td>';
+											print '<td>';
+											if ($can_update_stock) {
+												print img_picto($langs->trans('AddStockLocationLine'), 'split', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'-'.$child_line_id.'\')"');
+											}
+											print '</td>';
 
-											$j++;
-											$numline++;
+											// Warehouse
+											print '<td class="right">';
+											if ($can_update_stock) {
+												if (count($listwarehouses) > 1) {
+													print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+												} elseif (count($listwarehouses) == 1) {
+													print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+												} else {
+													$langs->load("errors");
+													print $langs->trans("ErrorNoWarehouseDefined");
+												}
+											} else {
+												// we force the warehouse so we will pass the test to add a line into expedition.class.php
+												print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_warehouse.'">';
+												print img_warning().' '.$langs->trans('StockDisabled');
+											}
+											print "</td>\n";
+
+											// Enable hooks to append additional columns
+											$parameters = array(
+												'is_information_row' => false, // this is a dispatch form row
+												'i' => $i,
+												'suffix' => $suffix,
+												'objp' => $objp,
+												'objd' => $objd,
+											);
+											$reshook = $hookmanager->executeHooks(
+												'printFieldListValue',
+												$parameters,
+												$object,
+												$action
+											);
+											if ($reshook < 0) {
+												setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+											}
+											print $hookmanager->resPrint;
+
+											print "</tr>\n";
 										}
 
-										//$suffix = "_".$j."_".$i;
-									} else {
+										$j++;
+										$numline++;
+									}
+
+									//$suffix = "_".$j."_".$i;
+								} else {
 										$errorMsg = 'Shipment dispatch SQL error : '.$db->lasterror();
 										setEventMessage($errorMsg, 'errors');
 										dol_syslog($errorMsg, LOG_ERR);
