@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos | Dinero en efectivo
-MenuVariousPayment=Manual Journal Entries
-MenuNewVariousPayment=New manual journal entry
 BankAccount=Cuenta de banco
 BankAccounts=Cuentas de banco
 AccountRef=Ref de la cuenta financiera
@@ -79,7 +77,3 @@ RejectCheck=Cheque rechazado
 RejectCheckDate=Fecha en la que el cheque fue rechazado
 CheckRejected=Cheque rechazado
 VariousPayments=Varios pagos
-ShowVariousPayment=Show manual journal entries
-AddVariousPayment=Add manual journal entries
-VariousPaymentId=Manual journal entry ID
-VariousPaymentLabel=Manual journal entry label

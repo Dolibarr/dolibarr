@@ -295,9 +295,10 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
+
 			'array_options' => $object->array_options,
 
-			'default_unit'=>$default_unit
+			'default_unit' => $default_unit
 		);
 	}
 

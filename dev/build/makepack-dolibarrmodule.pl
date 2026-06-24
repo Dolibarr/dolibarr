@@ -157,7 +157,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		  . ucfirst($PROJECT)
 		  . ".class.php"
 	);
-	$custom = 0;
+	$custom = 1;
 	if ( !$result ) {
 		$result = open(
 			$IN,
@@ -180,7 +180,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		}
 	}
 	else {
-		$custom = 1;
+		$custom = 0;
 	}
 	while (<$IN>) {
 		if ( $_ =~ /this->version\s*=\s*'([\d\.]+)'/ ) {

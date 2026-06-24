@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
@@ -25,8 +25,6 @@
  */
 
 /**
- * @var Societe $mysoc
- * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -34,7 +32,10 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var CommonObject $object
+ *
  * @var int		$id
+ * @var int 	$error
  * @var string 	$dolibarr_main_url_root
  * @var string 	$action
  * @var ?string $subject
@@ -47,9 +48,9 @@
 '
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
+@phan-var-force int 		 $error
 ';
 
-$error = 0;
 
 /*
  * Add file in email form
@@ -154,11 +155,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'member' || $object->element == 'user') {
+			'@phan-var-force Adherent|User $object';
 			$thirdparty = $object;
 			if ($object->socid > 0) {
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'expensereport') {
+			'@phan-var-force ExpenseReport $object';
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
@@ -166,11 +169,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'societe') {
+			'@phan-var-force Societe $object';
 			$thirdparty = $object;
 			if (is_object($thirdparty) && $thirdparty->id > 0) {
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'contact') {
+			'@phan-var-force Contact $object';
 			$contact = $object;
 			if ($contact->id > 0) {
 				$contact->fetch_thirdparty();
@@ -226,7 +231,24 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Recipient was provided from combo list
 			foreach ($receiver as $key => $val) {
 				if ($val == 'thirdparty') { // Key selected means current third party ('thirdparty' may be used for current member or current user too)
-					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
+					$thirdpartyEmail = (is_object($thirdparty) && !empty($thirdparty->email)) ? (string) $thirdparty->email : '';
+					if ($thirdpartyEmail !== '') {
+						$thirdpartyLabel = '';
+						if (is_object($thirdparty)) {
+							if (method_exists($thirdparty, 'getFullName')) {
+								$thirdpartyLabel = (string) $thirdparty->getFullName($langs);
+							} elseif (!empty($thirdparty->name)) {
+								$thirdpartyLabel = (string) $thirdparty->name;
+							} elseif (!empty($thirdparty->nom)) {
+								$thirdpartyLabel = (string) $thirdparty->nom;
+							}
+						}
+						if ($thirdpartyLabel !== '') {
+							$tmparray[] = dol_string_nospecial($thirdpartyLabel, ' ', array(",")).' <'.$thirdpartyEmail.'>';
+						} else {
+							$tmparray[] = $thirdpartyEmail;
+						}
+					}
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
@@ -426,7 +448,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$db->begin();	// Transaction for post action must start after sending email to avoid lock when sending email that may be long
 
 						if (empty($actiontypecode)) {
-							$actiontypecode = 'AC_OTH_AUTO'; // Event inserted into agenda automatically
+							$actiontypecode = 'AC_EMAIL'; // Event inserted into agenda automatically
 						}
 
 						$object->socid = $sendtosocid; // To link to a company

@@ -2,7 +2,8 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -33,9 +34,9 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 // is a security hole if anybody can access without
 // being an authenticated user.
 require_once '../../../../main.inc.php';
-
 /**
  * @var Conf $conf
+ * @var User $user
  *
  * @var string $dolibarr_main_data_root
  * @var string $dolibarr_main_url_root
@@ -48,6 +49,17 @@ if ($pos == '/') {
 }
 //define('DOL_URL_ROOT', $pos);
 $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_SESSION['dol_entity'] : null);
+
+// By default, upload of files with this tool is no more possible.
+if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
+	accessforbidden('Upload of files in medias directory using this legacy tool is no more allowed');
+}
+
+// If upload has been allowed with WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES set, we check permissions.
+if (empty($user->admin) && !$user->hasRight('website', 'write')) {
+	accessforbidden('Need to have website write permission to upload files in medias directory.');
+}
+
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only
@@ -102,7 +114,7 @@ $Config['ChmodOnUpload'] = $newmask;
 $newmask = '0755';
 $dirmaskdec = octdec($newmask);
 if (getDolGlobalString('MAIN_UMASK')) {
-	$dirmaskdec = octdec($conf->global->MAIN_UMASK);
+	$dirmaskdec = octdec(getDolGlobalString('MAIN_UMASK'));
 }
 $dirmaskdec |= octdec('0200'); // Set w bit required to be able to create content for recursive subdirs files
 $newmask = decoct($dirmaskdec);

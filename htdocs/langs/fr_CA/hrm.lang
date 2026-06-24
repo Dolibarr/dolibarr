@@ -51,6 +51,5 @@ VacantPosition=poste vacant
 VacantCheckboxHelper=Cocher cette option affichera les postes non pourvus (poste vacant)
 SaveLevelSkill =Niveau(x) de compétence(s) sauvegardé(s)
 EvaluationsExtraFields=Attributs complémentaires (Évaluations de compétences)
-NoDescription=Aucune description
 TheJobProfileHasNoSkillsDefinedFixBefore=Le profil de poste évalué de cet employé ne comporte aucune compétence définie. Veuillez ajouter une ou plusieurs compétences, puis supprimer et relancer l'évaluation.
 SkillNotRequired=Compétence non requise

@@ -72,6 +72,14 @@
 -- -- AND NOT EXISTS (SELECT 1 FROM llx_product_lot as b WHERE b.fk_product=ps.fk_product and pb.batch=b.batch) LIMIT x
 
 
+--noqa:disable=AM04
+--noqa:disable=LT09
+--noqa:disable=RF01
+--noqa:disable=RF02
+--noqa:disable=RF03
+--noqa:disable=ST05
+
+
 UPDATE llx_user set api_key = null where api_key = '';
 
 UPDATE llx_c_email_templates SET position = 0 WHERE position IS NULL;
@@ -147,7 +155,7 @@ update llx_stock_mouvement set batch = null where batch = 'Non défini';
 
 DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product);
 DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product);
-DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch);
 
 
 
@@ -161,12 +169,12 @@ CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.
 DELETE FROM llx_product_batch WHERE rowid IN (select rowid FROM tmp_llx_product_batch2);
 INSERT INTO llx_product_batch(fk_product_stock, eatby, sellby, batch, qty) SELECT fk_product_stock, eatby, sellby, batch, qty FROM tmp_llx_product_batch;
 
-DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch);
 DELETE FROM llx_product_batch WHERE qty = 0;
 
 
 -- Stock calculation on product
-UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
+UPDATE llx_product as p SET p.stock = (SELECT SUM(ps.reel) FROM llx_product_stock as ps WHERE ps.fk_product = p.rowid);
 
 
 -- Fix: delete orphelins in llx_societe_commerciaux
@@ -273,7 +281,7 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-update llx_opensurvey_sondage set tms = now();
+update llx_opensurvey_sondage set tms = NOW();
 
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
@@ -286,7 +294,7 @@ update llx_societe set barcode = null where barcode in ('', '-1', '0');
 -- Sequence to removed duplicated values of llx_links. Run several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
-create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
+create table tmp_links_double as (select objectid, label, MAX(rowid) as max_rowid, COUNT(rowid) as count_rowid from llx_links where label is not null group by objectid, label having COUNT(rowid) >= 2);
 --select * from tmp_links_double;
 delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_links_double);	--update to avoid duplicate, delete to delete
 drop table tmp_links_double;
@@ -295,7 +303,7 @@ drop table tmp_links_double;
 -- Sequence to removed duplicated values of barcode in llx_product. Run several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
-create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
+create table tmp_product_double as (select barcode, MAX(rowid) as max_rowid, COUNT(rowid) as count_rowid from llx_product where barcode is not null group by barcode having COUNT(rowid) >= 2);
 --select * from tmp_product_double;
 update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);	--update to avoid duplicate, delete to delete
 drop table tmp_product_double;
@@ -304,7 +312,7 @@ drop table tmp_product_double;
 -- Sequence to removed duplicated values of barcode in llx_societe. Run several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
-create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
+create table tmp_societe_double as (select barcode, MAX(rowid) as max_rowid, COUNT(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having COUNT(rowid) >= 2);
 --select * from tmp_societe_double;
 update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
 drop table tmp_societe_double;
@@ -312,7 +320,7 @@ drop table tmp_societe_double;
 
 -- Sequence to removed duplicated values of llx_accounting_account
 DROP TABLE IF EXISTS tmp_llx_accouting_account;
-CREATE TABLE tmp_llx_accouting_account AS SELECT aa.rowid, aad.min FROM llx_accounting_account AS aa INNER JOIN (SELECT account_number, entity, fk_pcg_version, MIN(rowid) AS min FROM llx_accounting_account GROUP BY account_number, entity, fk_pcg_version HAVING COUNT(*) >= 2) AS aad ON aa.account_number = aad.account_number AND aa.entity = aad.entity AND aa.fk_pcg_version = aad.fk_pcg_version AND aa.rowid != aad.min;
+CREATE TABLE tmp_llx_accouting_account AS (SELECT aa.rowid, aad.min FROM llx_accounting_account AS aa INNER JOIN (SELECT account_number, entity, fk_pcg_version, MIN(rowid) AS min FROM llx_accounting_account GROUP BY account_number, entity, fk_pcg_version HAVING COUNT(*) >= 2) AS aad ON aa.account_number = aad.account_number AND aa.entity = aad.entity AND aa.fk_pcg_version = aad.fk_pcg_version AND aa.rowid <> aad.min);
 -- Fix fk_code_ventilation in lines
 UPDATE llx_facturedet SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facturedet.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
 UPDATE llx_facture_fourn_det SET fk_code_ventilation = (SELECT min FROM tmp_llx_accouting_account WHERE tmp_llx_accouting_account.rowid = llx_facture_fourn_det.fk_code_ventilation) WHERE fk_code_ventilation IN (SELECT rowid FROM tmp_llx_accouting_account);
@@ -324,7 +332,7 @@ DROP TABLE IF EXISTS tmp_llx_accouting_account;
 -- Sequence to removed duplicated values of llx_commande_extrafields. Run several times if you still have duplicate.
 drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
-create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
+create table tmp_commande_extrafields_double as (select fk_object, MAX(rowid) as max_rowid, COUNT(rowid) as count_rowid from llx_commande_extrafields group by fk_object having COUNT(rowid) >= 2);
 --select * from tmp_commande_extrafields_double;
 delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
 drop table tmp_commande_extrafields_double;
@@ -333,7 +341,7 @@ drop table tmp_commande_extrafields_double;
 -- Sequence to removed duplicated values of llx_c_transport_mode. Run several times if you still have duplicate.
 drop table tmp_c_transport_mode;
 --select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2
-create table tmp_c_transport_mode as (select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2);
+create table tmp_c_transport_mode as (select code, MAX(rowid) as max_rowid, COUNT(rowid) as count_rowid from llx_c_transport_mode group by code having COUNT(rowid) >= 2);
 --select * from tmp_c_transport_mode;
 delete from llx_c_transport_mode where (rowid) in (select max_rowid from tmp_c_transport_mode);
 drop table tmp_c_transport_mode;
@@ -427,7 +435,7 @@ update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.element
 -- Remove duplicate of shipment mode (keep the one with tracking defined)
 drop table tmp_c_shipment_mode;
 create table tmp_c_shipment_mode as (select code, tracking from llx_c_shipment_mode);
-DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking != '') AND (tracking IS NULL OR tracking = '');
+DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking <> '') AND (tracking IS NULL OR tracking = '');
 drop table tmp_c_shipment_mode;
 
 
@@ -512,7 +520,7 @@ UPDATE llx_chargesociales SET date_creation = tms WHERE date_creation IS NULL;
 -- update llx_element_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 
 
--- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type != p.fk_product_type;
+-- select * from llx_facturedet as fd, llx_product as p where fd.fk_product = p.rowid AND fd.product_type <> p.fk_product_type;
 update llx_facturedet set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
 
@@ -619,7 +627,7 @@ DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
 -- VPGSQL8.2 DELETE FROM llx_c_transport_mode as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_c_transport_mode GROUP BY code, entity);
 
 -- Delete department of regions linked to no coutry, then delete region with no country
-DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country));
+DELETE FROM llx_c_departements WHERE fk_region <> 0 AND fk_region IN (select code_region FROM llx_c_regions WHERE fk_pays NOT IN (select rowid FROM llx_c_country));
 DELETE from llx_c_regions WHERE fk_pays NOT IN (select rowid from llx_c_country);
 
 
@@ -627,8 +635,8 @@ UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_chang
 
 
 -- Fix status of thirdparty when there is at least one win opportunity
-UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
-UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 1 WHERE s.client = 0 AND EXISTS (SELECT p.rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT ls.rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
+UPDATE llx_societe as s SET s.client = 3 WHERE s.client = 2 AND EXISTS (SELECT p.rowid FROM llx_projet as p WHERE p.fk_soc = s.rowid AND p.fk_opp_status IN (SELECT ls.rowid FROM llx_c_lead_status as ls WHERE ls.code = 'WON'));
 
 -- Drop duplicate indexes not named correctly and create the only one we should have
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combination;

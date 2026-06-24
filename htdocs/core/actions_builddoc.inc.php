@@ -42,6 +42,7 @@
  * @var ?int $usercangeneratedoc
  * @var int $permissiontoadd
  * @var string $upload_dir
+ * @var int $donotredirect
  *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
@@ -51,6 +52,7 @@
 '
 @phan-var-force ?array<string,mixed> $moreparams
 @phan-var-force CommonObject|Societe $object
+@phan-var-force int $id
 ';
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
@@ -103,8 +105,10 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) 
 		$moreparams = isset($moreparams) ? $moreparams : null;
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($object->warning, $object->warnings, 'warnings');
 			$action = '';
 		} else {
 			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"

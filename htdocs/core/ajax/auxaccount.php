@@ -65,6 +65,9 @@ $limit     = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_SEARCH_LIMIT', 100);
 $minLength = getDolGlobalInt('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT', 2) - 1;
 
 $results = array();
+/**
+ * @var array<string,mixed> $results
+ */
 
 if (strlen($searchkey) >= $minLength) {
 	// Search anywhere by default (use LIKE '%term%')
@@ -87,17 +90,19 @@ if (strlen($searchkey) >= $minLength) {
 			if (!empty($obj->code_client)) {
 				$key = $obj->code_client;
 				$results[$key] = array(
-					'key'      => $key,
-					'value'    => $key,                          // value shown in input once selected
-					'label'    => $key.' ('.$obj->name.')',      // label shown in dropdown list
+					'key'           => $key,
+					'value'         => $key.' ('.$obj->name.')',      // value shown in input once selected
+					'label'         => $key.' ('.$obj->name.')',      // label shown in dropdown list
+					'label_name'    => $obj->name,
 				);
 			}
 			if (!empty($obj->code_fourn) && !isset($results[$obj->code_fourn])) {
 				$key = $obj->code_fourn;
 				$results[$key] = array(
-					'key'      => $key,
-					'value'    => $key,
-					'label'    => $key.' ('.$obj->name.')',
+					'key'           => $key,
+					'value'         => $key.' ('.$obj->name.')',
+					'label'         => $key.' ('.$obj->name.')',
+					'label_name'    => $obj->name,
 				);
 			}
 		}
@@ -124,9 +129,10 @@ if (strlen($searchkey) >= $minLength) {
 				$key = $obj->accountancy_code;
 				$fullname = dolGetFirstLastname($obj->firstname, $obj->lastname);
 				$results[$key] = array(
-					'key'      => $key,
-					'value'    => $key,
-					'label'    => $key.' ('.$fullname.')',
+					'key'           => $key,
+					'value'         => $key.' ('.$fullname.')',
+					'label'         => $key.' ('.$fullname.')',
+					'label_name'    => $fullname,
 				);
 			}
 		}

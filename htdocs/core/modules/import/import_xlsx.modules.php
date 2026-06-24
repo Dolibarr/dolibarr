@@ -354,7 +354,7 @@ class ImportXlsx extends ModeleImports
 				$val = $dateValue->format('Y-m-d H:i:s');
 			}
 
-			$array[$col]['val'] = $val;
+			$array[$col]['val'] = trim($val);
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;

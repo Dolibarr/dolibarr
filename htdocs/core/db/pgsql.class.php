@@ -62,7 +62,9 @@ class DoliDBPgsql extends DoliDB
 	public $standard_conforming_strings = false;
 
 
-	/** @var resource|boolean Resultset of last query */
+	/**
+	 * @var false|resource|PgSql\Result Resultset of last query
+	 */
 	private $_results;
 
 
@@ -78,7 +80,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string	$name		Nom de la database
 	 *	@param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -624,7 +626,8 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 *	Return datas as an array
 	 *
-	 *	@param	resource	$resultset  Resultset of request
+	 *	@param	bool|resource	$resultset  Resultset of request
+	 *	@phpstan-param	bool|resource|PgSql\Result	$resultset
 	 *	@return	array<int,mixed>|null|int<0,0>	Array or null if KO or end of cursor or 0 if resultset is bool
 	 */
 	public function fetch_row($resultset)
@@ -633,6 +636,9 @@ class DoliDBPgsql extends DoliDB
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connection
 		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
+		}
+		if (is_bool($resultset)) {
+			return 0;
 		}
 		return pg_fetch_row($resultset);  // @phan-suppress-current-line PhanTypeMismatchArgumentProbablyReal
 	}
@@ -682,10 +688,10 @@ class DoliDBPgsql extends DoliDB
 
 
 	/**
-	 * Libere le dernier resultset utilise sur cette connection
+	 *	Free the last pointer resultset used by this connection
 	 *
-	 * @param	resource	$resultset  Result set of request
-	 * @return	void
+	 * 	@param	resource|null	$resultset  	Result set of request
+	 * 	@return	void
 	 */
 	public function free($resultset = null)
 	{
@@ -1099,7 +1105,7 @@ class DoliDBPgsql extends DoliDB
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
 			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);	// Allow space to accept attributes like "ON UPDATE CURRENT_TIMESTAMP"
 			}
 			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -1137,7 +1143,7 @@ class DoliDBPgsql extends DoliDB
 			}
 		}
 		$sql .= implode(', ', $sqlfields);
-		if ($unique_keys != "") {
+		if (!is_array($unique_keys) && $unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}
 		if (is_array($keys)) {
@@ -1246,11 +1252,11 @@ class DoliDBPgsql extends DoliDB
 		}
 		$sql .= " ".$this->sanitize($field_position, 0, 0, 1);
 
-		dol_syslog($sql, LOG_DEBUG);
-		if (!$this -> query($sql)) {
-			return -1;
+		dol_syslog(get_class($this)."::DDLAddField ".$sql, LOG_DEBUG);
+		if ($this->query($sql)) {
+			return 1;
 		}
-		return 1;
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1259,7 +1265,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -1544,7 +1550,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	public function prepare($sql)
 	{
-		$stmtname = uniqid('dolipgstmt_'); // Generate a unique identifier for the statement
+		$stmtname = 'dolipgstmt_' . bin2hex(random_bytes(8));	// Generate a unique identifier for the statement
 
 		$result = pg_prepare($this->db, $stmtname, $sql);
 		if (!$result) {

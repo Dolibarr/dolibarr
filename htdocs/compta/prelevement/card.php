@@ -486,8 +486,8 @@ if ($id > 0 || $ref) {
 
 	// Lines into withdraw request
 	if ($salaryBonPl) {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount, pl.fk_user,";
-		$sql .= " u.rowid as socid, u.login as name";
+		$sql = "SELECT pl.rowid, pl.statut as status, pl.amount,";
+		$sql .= " u.rowid as parentid, u.login as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."user as u";
@@ -500,8 +500,8 @@ if ($id > 0 || $ref) {
 		}
 		$sql .= $db->order($sortfield, $sortorder);
 	} else {
-		$sql = "SELECT pl.rowid, pl.statut, pl.amount,";
-		$sql .= " s.rowid as socid, s.nom as name";
+		$sql = "SELECT pl.rowid, pl.statut as status, pl.amount,";
+		$sql .= " s.rowid as parentid, s.nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -577,16 +577,16 @@ if ($id > 0 || $ref) {
 			// Status of line
 			print "<td>";
 			print '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
-			print $ligne->LibStatut($obj->statut, 2);
+			print $ligne->LibStatut($obj->status, 2);
 			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
 			if (!$salaryBonPl) {
 				$thirdparty = new Societe($db);
-				$thirdparty->fetch($obj->socid);
+				$thirdparty->fetch($obj->parentid);
 				$name = $thirdparty->getNomUrl(1);
 			} else {
 				$userSalary = new User($db);
-				$userSalary->fetch($obj->fk_user);
+				$userSalary->fetch($obj->parentid);
 				$name = $userSalary->getNomUrl(-1);
 			}
 			print '<td class="tdoverflowmax150">';
@@ -597,11 +597,11 @@ if ($id > 0 || $ref) {
 
 			print '<td class="right">';
 
-			if ($obj->statut == 3) {
+			if ($obj->status == 3) {
 				print '<span class="error">'.$langs->trans("StatusRefused").'</span>';
 			} else {
-				if ($object->statut == BonPrelevement::STATUS_CREDITED) {
-					if ($obj->statut == LignePrelevement::STATUS_CREDITED) {
+				if ($object->status == BonPrelevement::STATUS_CREDITED) {
+					if ($obj->status == LignePrelevement::STATUS_CREDITED) {
 						if ($user->hasRight('prelevement', 'bons', 'credit')) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
 							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
