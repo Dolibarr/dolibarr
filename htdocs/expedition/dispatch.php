@@ -1481,7 +1481,7 @@ if ($isStandaloneShipment) {
 						$db->free($resql);
 					} else {
 						dol_print_error($db);
-										}
+					}
 				}
 
 				print "</table>\n";
