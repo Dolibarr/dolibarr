@@ -50,6 +50,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class ExpeditionTest extends CommonClassTest
 {
@@ -85,10 +89,10 @@ class ExpeditionTest extends CommonClassTest
 		$conf->stock->enabled = 1;
 		$conf->productbatch->enabled = $productBatchEnabled ? 1 : 0;
 		$conf->service->enabled = 1;
-		$conf->modules['product'] = 1;
-		$conf->modules['stock'] = 1;
-		$conf->modules['productbatch'] = $productBatchEnabled ? 1 : 0;
-		$conf->modules['service'] = 1;
+		$conf->modules['product'] = '1';
+		$conf->modules['stock'] = '1';
+		$conf->modules['productbatch'] = $productBatchEnabled ? '1' : '0';
+		$conf->modules['service'] = '1';
 
 		$conf->global->MAIN_USE_ADVANCED_PERMS = '';
 		$conf->global->SHIPMENT_STANDALONE = 1;
@@ -347,7 +351,7 @@ class ExpeditionTest extends CommonClassTest
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->statut);
 		$this->assertEquals(Expedition::STATUS_VALIDATED, $localobject->status);
 
-		$result = $localobject->setClosed($user);
+		$result = $localobject->setClosed();
 		$this->assertLessThanOrEqual($result, 0, "Cannot close Expedition object:\n".
 									 $localobject->errorsToString());
 		$this->assertEquals(
