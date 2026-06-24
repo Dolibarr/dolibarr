@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022	SuperAdmin		<test@dolibarr.com>
  * Copyright (C) 2023	William Mead	<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,15 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errormsg = "The WebHook for triggercode ".$action." failed to do the GET URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					// getURLContent returns http_code 400 with an explanation in $response['content']
+					// when the host is rejected by the SSRF protection (private/reserved range, local
+					// network, metadata server, ...). Surface that explanation so the operator can
+					// either fix the target URL or enable $dolibarr_allow_localurl_for_webhooks in
+					// conf.php when the target is on a trusted local network.
+					if (empty($response['curl_error_no']) && !empty($response['http_code']) && $response['http_code'] == 400 && !empty($response['content'])) {
+						$errormsg .= " - ".$response['content'];
+					}
 					$errorforhistory ++;
 
 					if ($tmpobject->type == Target::TYPE_BLOCKING) {
@@ -149,7 +158,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				}
 
 				if (empty($dbhistory)) {
-					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, $conf->db->name, (int) $conf->db->port);
+					$dbhistory = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $dolibarr_main_db_pass, (string) $conf->db->name, (int) $conf->db->port);
 				}
 
 				$dbhistory->begin();

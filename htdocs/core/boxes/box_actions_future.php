@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ class box_actions_future extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -107,7 +107,7 @@ class box_actions_future extends ModeleBoxes
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->hasRight('agenda', 'allactions', 'read')) {
-				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id).")";
 			}
 			$sql .= " AND a.datep > '".$this->db->idate($now)."'";
 			$sql .= " ORDER BY a.datep ASC";

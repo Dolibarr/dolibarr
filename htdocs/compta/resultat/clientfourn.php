@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,6 +189,7 @@ $total_ttc = 0;
 $builddate = '';
 $name = '';
 $period = '';
+$description = '';
 
 // Affiche en-tete de rapport
 if ($modecompta == "CREANCES-DETTES") {
@@ -296,11 +297,11 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 
 if ($modecompta == 'BOOKKEEPING') {
-	$predefinedgroupwhere = "(";
-	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
-	$predefinedgroupwhere .= " OR ";
-	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
-	$predefinedgroupwhere .= ")";
+	$sanitizedpredefinedgroupwhere = "(";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " OR ";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
 	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
@@ -314,7 +315,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	$sql .= "   ON aa.account_number = f.numero_compte";
 	$sql .= " 	AND aa.entity = f.entity"; // Security prevents duplicate.
 	$sql .= " WHERE 1=1";
-	$sql .= " AND ".$predefinedgroupwhere;
+	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end)) {
@@ -449,6 +450,8 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
+	} else {
+		$sql = '';
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
@@ -1183,15 +1186,16 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_outcome += $obj->amount;
 				$total_ttc_outcome += $obj->amount;
 			}
+			$debit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven">';
 			print '<td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingDebit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price(-$obj->amount).'</span>';
+				print '<span class="amount">'.price(-$debit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price(-$debit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Credit (payment received from customer for example)
@@ -1203,14 +1207,15 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_income += $obj->amount;
 				$total_ttc_income += $obj->amount;
 			}
+			$credit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingCredit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price($obj->amount).'</span>';
+				print '<span class="amount">'.price($credit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price($credit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Total
@@ -1541,6 +1546,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 $action = "balanceclient";
 $object = array(&$total_ht, &$total_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 $parameters["date_start"] = $date_start;
 $parameters["date_end"] = $date_end;

@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * To test there is no error, you can do:  if (empty($resultget['curl_error_no']) && $resultget['http_code'] == 200) ...
+ *
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.log file.
  *
  * @param	string	  					$url 			    URL to call.
@@ -205,6 +207,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_HEADER, true);
 	} elseif ($postorget == 'DELETE') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
 	} else {
@@ -244,7 +247,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Parse $newUrl
 		$newUrlArray = parse_url($newUrl);
-		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
 		// Deny some reserved host names
@@ -371,7 +374,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
-			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+			if ($postorget == 'HEAD' || getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
 				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
 				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
 			}
@@ -491,6 +494,7 @@ function isIPAllowed($iptocheck, $localurl)
  * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
+ * @see getRootURLFromURL()
  */
 function getDomainFromURL($url, $mode = 0)
 {
@@ -546,6 +550,7 @@ function getDomainFromURL($url, $mode = 0)
  *
  * @param	string	  $url 				    Full URL.
  * @return	string						    Returns root url
+ * @see getDomainFromURL()
  */
 function getRootURLFromURL($url)
 {

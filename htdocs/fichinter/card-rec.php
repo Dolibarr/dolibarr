@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2026  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
@@ -49,13 +57,6 @@ if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
@@ -68,8 +69,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") {
@@ -101,7 +102,6 @@ if ($sortfield == "") {
 }
 
 $object = new FichinterRec($db);
-$extrafields = new ExtraFields($db);
 
 $arrayfields = array(
 	'f.title' => array('label' => "Ref", 'checked' => 1),
@@ -370,11 +370,15 @@ if ($action == 'create') {
 
 		// Contrat
 		if (isModEnabled('contract')) {
-			$formcontract = new FormContract($db);
-			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
-			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
-			print "</td></tr>";
+			// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+			// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+			if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+				$formcontract = new FormContract($db);
+				print "<tr><td>".$langs->trans("Contract")."</td><td>";
+				$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contrat) ? $object->fk_contrat : 0) ;
+				$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
+				print "</td></tr>";
+			}
 		}
 		print "</table>";
 
@@ -537,7 +541,7 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
@@ -580,34 +584,38 @@ if ($action == 'create') {
 
 			// Contract
 			if (isModEnabled('contract') && $contratstatic !== null) {
-				$langs->load('contracts');
-				print '<tr>';
-				print '<td>';
+				// This feature hang the application on large list of contracts, because the select component is not complete: it does not work like select of thirdparty or product to support large lists
+				// So we add a hidden option to avoid to have it used and the application locked, until the select_contract is fixed.
+				if (getDolGlobalString("CONTRACT_CAN_USE_THE_BUGGED_SELECT_COMPONENT")) {
+					$langs->load('contracts');
+					print '<tr>';
+					print '<td>';
 
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Contract');
-				print '</td>';
-				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
-					print img_edit($langs->trans('SetContract'), 1);
-					print '</a></td>';
-				}
-				print '</tr></table>';
-				print '</td><td>';
-				if ($action == 'contrat') {
-					$formcontract = new FormContract($db);
-					$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
-				} else {
-					if ($object->fk_contrat) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contrat);
-						print $contratstatic->getNomUrl(0, 0, 1);
-					} else {
-						print "&nbsp;";
+					print '<table class="nobordernopadding" width="100%"><tr><td>';
+					print $langs->trans('Contract');
+					print '</td>';
+					if ($action != 'contrat') {
+						print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
+						print img_edit($langs->trans('SetContract'), 1);
+						print '</a></td>';
 					}
+					print '</tr></table>';
+					print '</td><td>';
+					if ($action == 'contrat') {
+						$formcontract = new FormContract($db);
+						$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
+					} else {
+						if ($object->fk_contrat) {
+							$contratstatic = new Contrat($db);
+							$contratstatic->fetch($object->fk_contrat);
+							print $contratstatic->getNomUrl(0, 0, 1);
+						} else {
+							print "&nbsp;";
+						}
+					}
+					print '</td>';
+					print '</tr>';
 				}
-				print '</td>';
-				print '</tr>';
 			}
 			print "</table>";
 			print '</div>';

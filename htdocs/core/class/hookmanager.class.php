@@ -3,7 +3,7 @@
 /* Copyright (C) 2010-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -200,7 +200,7 @@ class HookManager
 	 *  @param		string				$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
 	 *  @phpstan-param T $object
-	 *  @param		null|Object|array<string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
+	 *  @param		null|Object|array<int|string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
 	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
 	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
@@ -361,7 +361,7 @@ class HookManager
 							}
 						}
 					} else {
-						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+						// Generic old hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 
 						// TODO. this test should be done in the hook method by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset,PhanUndeclaredProperty
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && (property_exists($actionclassinstance, 'module_number') && ($parameters['special_code'] != $actionclassinstance->module_number))) {

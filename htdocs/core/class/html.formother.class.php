@@ -1521,13 +1521,13 @@ class FormOther
 	public function select_dictionary($htmlname, $dictionarytable, $keyfield = 'code', $labelfield = 'label', $selected = '', $useempty = 0, $moreattrib = '')
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs;
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, ".$keyfield.", ".$labelfield;
+		$sql = "SELECT rowid, ".$this->db->sanitize($keyfield).", ".$this->db->sanitize($labelfield);
 		$sql .= " FROM ".$this->db->prefix().$dictionarytable;
-		$sql .= " ORDER BY ".$labelfield;
+		$sql .= $this->db->order($labelfield);
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
 		$result = $this->db->query($sql);

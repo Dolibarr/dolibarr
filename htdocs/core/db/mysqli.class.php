@@ -59,7 +59,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$name		Name of database
 	 *	@param	    int		$port		Port of database server
 	 */
-	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)
+	public function __construct($type, $host, $user, $pass, $name = '', $port = 0)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $langs;
 
@@ -146,7 +146,7 @@ class DoliDBMysqli extends DoliDB
 						exit;
 					}
 
-					$collation = (empty($conf) ? 'utf8_unicode_ci' : $conf->db->dolibarr_main_db_collation);
+					$collation = (empty($conf) ? 'utf8_unicode_ci' : (string) $conf->db->dolibarr_main_db_collation);
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -179,7 +179,7 @@ class DoliDBMysqli extends DoliDB
 				if (empty($disableforcecharset) && $this->db->character_set_name() != $clientmustbe) {
 					$this->db->set_charset($clientmustbe); // This set utf8_unicode_ci
 
-					$collation = $conf->db->dolibarr_main_db_collation;
+					$collation = (string) $conf->db->dolibarr_main_db_collation;
 					if (preg_match('/latin1/', $collation)) {
 						$collation = 'utf8_unicode_ci';
 					}
@@ -334,6 +334,12 @@ class DoliDBMysqli extends DoliDB
 
 		$query = trim($query);
 
+
+		/*if ($usesavepoint && $this->transaction_opened) {
+			dol_syslog(get_class($this)."::query SAVEPOINT mysavepoint", LOG_DEBUG); // Log of request was not yet done previously
+			$this->db->query('SAVEPOINT mysavepoint');
+		}*/
+
 		if (!in_array($query, array('BEGIN', 'COMMIT', 'ROLLBACK'))) {
 			$SYSLOG_SQL_LIMIT = 10000; // limit log to 10kb per line to limit DOS attacks
 			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
@@ -371,6 +377,12 @@ class DoliDBMysqli extends DoliDB
 				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror.self::getCallerInfoString(), LOG_ERR);
 				//var_dump(debug_print_backtrace());
 			}
+
+			/*if ($usesavepoint && $this->transaction_opened) {	// Warning, after that errno will be erased
+				dol_syslog(get_class($this)."::query ROLLBACK TO SAVEPOINT mysavepoint", LOG_DEBUG); // Log of request was not yet done previously
+				$this->db->query('ROLLBACK TO SAVEPOINT mysavepoint');
+			}*/
+
 			$this->lastquery = $query;
 			$this->_results = $ret;
 		}
@@ -492,9 +504,9 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
-	 *	Libere le dernier resultset utilise sur cette connection
+	 *	Free the last pointer resultset used by this connection
 	 *
-	 *	@param  mysqli_result	$resultset	Curseur de la requete voulue
+	 *	@param  mysqli_result|null	$resultset		Result set of request
 	 *	@return	void
 	 */
 	public function free($resultset = null)
@@ -806,9 +818,9 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+		$sanitizedtmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
 
-		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
+		$sql = "SHOW FULL COLUMNS FROM ".$sanitizedtmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
@@ -1019,7 +1031,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -1058,6 +1070,7 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
+		//print $sql;exit;
 		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
 			return -1;
@@ -1368,7 +1381,7 @@ if (class_exists('mysqli')) {
 		 *	@param	    int		$port		Port of database server
 		 *	@param	    string	$socket		Socket
 		 */
-		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")
+		public function __construct($host, $user, $pass, $name, $port = 0, $socket = "")  // @phpstan-ignore constructor.unusedParameter
 		{
 			$flags = 0;
 			if (PHP_VERSION_ID >= 80100) {
@@ -1379,7 +1392,7 @@ if (class_exists('mysqli')) {
 			}
 			if (strpos($host, 'ssl://') === 0) {
 				$host = substr($host, 6);
-				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+				parent::options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, 0);
 				// Suppress false positive @phan-suppress-next-line PhanTypeMismatchArgumentInternalProbablyReal
 				parent::ssl_set(null, null, "", null, null);
 				$flags = MYSQLI_CLIENT_SSL;

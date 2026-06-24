@@ -49,10 +49,12 @@ if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
 
-if (GETPOST('actioncode', 'array')) {
+if (GETPOSTISARRAY('actioncode')) {
 	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
@@ -81,6 +83,9 @@ if (!$sortorder) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
+	if ($result <= 0) {
+		accessforbidden('User not found');
+	}
 	$object->loadRights();
 }
 
@@ -97,6 +102,11 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
+
+
+/*
+ *	Actions
+ */
 
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks

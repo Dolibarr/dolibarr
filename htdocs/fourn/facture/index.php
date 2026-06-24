@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2020	Tobias Sekan	<tobias.sekan@startmail.com>
+/* Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,10 +24,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 /**
  * @var Conf $conf
@@ -36,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(['bills', 'boxes']);

@@ -354,7 +354,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'url' => '/categories/categorie_list.php?type=13',
 			'langs' => 'knowledgemanagement',
 			'position' => 112,
-			'enabled' => 'isModEnabled("knowledgemanagement") && isModEnabled("category")',
+			'enabled' => 'isModEnabled("knowledgemanagement") && isModEnabled("category") && getDolGlobalString("CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP")',
 			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "read")',
 			'target' => '',
 			'user' => 0

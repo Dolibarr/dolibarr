@@ -3,7 +3,7 @@
  * Copyright (C) 2020   	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,7 +148,7 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
 		}
-		if (empty($id) && empty($ref)&& empty($ref_ext)) {
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
 			throw new RestException(400, 'No invoice can be found with no criteria');
 		}
 		$result = $this->invoice->fetch($id, $ref, $ref_ext);
@@ -203,7 +203,7 @@ class Invoices extends DolibarrApi
 	 * @param int		$page			  	Page number
 	 * @param string	$thirdparty_ids	  	Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status			  	Filter by invoice status : draft | unpaid | paid | cancelled
-	 * @param string    $sqlfilters       	Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters       	Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	      	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
@@ -371,6 +371,17 @@ class Invoices extends DolibarrApi
 
 		// Check mandatory fields (not using output, only possible exception is important)
 		$this->_validate($request_data);
+
+		// Check thirdparty validity
+		$socid = (int) $request_data['socid'];
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch($socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Thirdparty with id='.$socid.' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(404, 'Thirdparty with id='.$thirdpartytmp->id.' not found or not allowed');
+		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -901,7 +912,7 @@ class Invoices extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+					$this->invoice->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->invoice);
 				}
 				continue;
 			}
@@ -1732,7 +1743,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1859,7 +1870,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		foreach ($arrayofamounts as $id => $amount) {
@@ -1887,7 +1898,8 @@ class Invoices extends DolibarrApi
 
 		// Loop on each invoice to pay
 		foreach ($arrayofamounts as $id => $amountarray) {
-			$result = $this->invoice->fetch((int) $id);
+			$id = (int) $id;  // Ensure $id is seen as int, required by function calls and array indexes.
+			$result = $this->invoice->fetch($id);
 			if (!$result) {
 				$this->db->rollback();
 				throw new RestException(404, 'Invoice ID '.$id.' not found');
@@ -2001,7 +2013,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -2114,7 +2126,7 @@ class Invoices extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status				Filter by template status: draft | active | suspended
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object

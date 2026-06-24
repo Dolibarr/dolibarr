@@ -258,7 +258,7 @@ OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks found (assign project/tasks to the current user from the top select box to enter time on it)
 ThirdPartyRequiredToGenerateIntervention=A third party must be defined on project to be able to create intervention.
 ThirdPartyRequiredToGenerateInvoice=A third party must be defined on project to be able to invoice it.
-ChooseANotYetAssignedTask=Choose a task not yet assigned to you
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects

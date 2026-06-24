@@ -10,6 +10,9 @@ postgresql
 # ZAR currency
 zar
 
+# CNA
+cna
+
 # Need as part of some PHP keys for some array variables
 referer
 
@@ -98,7 +101,9 @@ activ
 addin
 amountin
 alltime
+Referers
 
 # other
 blacklists
 confirmactionxxx
+udate

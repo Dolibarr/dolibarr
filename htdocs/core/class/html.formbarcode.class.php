@@ -86,6 +86,7 @@ class FormBarCode
 			$disable = 'disabled';
 		}
 
+		$select_encoder = '';
 		if (!empty($conf->use_javascript_ajax)) {
 			$select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
 			$select_encoder .= '<input type="hidden" name="token" value="'.newToken().'">';

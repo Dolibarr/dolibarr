@@ -404,7 +404,8 @@ class UserGroup extends CommonObject
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
-				$sql .= " AND ".$whereforadd;
+				$sanitizedwhereforadd = $whereforadd;
+				$sql .= " AND ".$sanitizedwhereforadd;
 			}
 
 			$result = $this->db->query($sql);
@@ -531,7 +532,8 @@ class UserGroup extends CommonObject
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
-				$sql .= " AND ".$wherefordel;
+				$sanitizedwherefordel = $wherefordel;
+				$sql .= " AND ".$sanitizedwherefordel;
 			}
 
 			$result = $this->db->query($sql);

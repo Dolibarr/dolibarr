@@ -195,14 +195,14 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 		if ($conf->hrm->dir_output) {
 			// Definition of $dir and $file
+			$entity = isset($object->entity) ? $object->entity : 1;
+			$basedir = empty($conf->hrm->multidir_output[$entity]) ? $conf->hrm->dir_output : $conf->hrm->multidir_output[$entity];
 			if ($object->specimen) {
-				//$dir = $conf->hrm->dir_output;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation';
+				$dir = $basedir.'/evaluation';
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				//$dir = $conf->hrm->dir_output."/".$objectref;
-				$dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1].'/evaluation'."/".$objectref;
+				$dir = $basedir.'/evaluation'."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -256,7 +256,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Evaluation"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Evaluation"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);

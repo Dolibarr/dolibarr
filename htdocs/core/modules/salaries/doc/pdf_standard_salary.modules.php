@@ -1,6 +1,7 @@
 <?php
 
-/* Copyright (C) 2024-2025 Your Name <your.email@example.com>
+/* Copyright (C) 2026		Alain CIS
+ * Copyright (C) 2026		MDW			<mdeweerd@users.noreply.github.com>
  * Inspired by the standard stock and invoice PDF models
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,7 +121,9 @@ class pdf_standard_salary extends ModelePDFSalary
 		global $conf, $langs;
 
 		$outputlangs = is_object($outputlangs) ? $outputlangs : $langs;
-		if (getDolGlobalString('MAIN_USE_FPDF')) $outputlangs->charset_output = 'ISO-8859-1';
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "salaries"));
 
@@ -279,7 +282,7 @@ class pdf_standard_salary extends ModelePDFSalary
 		$payment_date = $object->datesp;
 		$info_array[$outputlangs->transnoentitiesnoconv("DatePayment")] = dol_print_date($payment_date, 'day');
 
-		if ($object->fk_typepayment && !empty($object->type_payment_code)) {
+		if ($object->type_payment && !empty($object->type_payment_code)) {
 			$info_array[$outputlangs->transnoentitiesnoconv("PaymentMode")] = $outputlangs->trans("PaymentType".$object->type_payment_code);
 		}
 
