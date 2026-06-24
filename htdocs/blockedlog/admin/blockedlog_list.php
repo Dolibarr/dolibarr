@@ -275,7 +275,10 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_amount) {
-	$param .= '&search_module_source='.urlencode($search_module_source);
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if (!empty($search_module_source)) {
+	$param .= '&search_module_source='.urlencode(implode(',', $search_module_source));
 }
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
@@ -861,7 +864,7 @@ if (is_array($blocks)) {
 			}
 			print '>';
 			print $langs->trans("TotalForThePeriod");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 			print ' <span class="opacitylow">(';
 			if ($afilterexists) {
 				print img_picto($langs->trans("ForPeriodAndFilters"), 'warning', 'class="pictofixedwidth"');
@@ -980,7 +983,7 @@ if (is_array($blocks)) {
 			print '>';
 
 			print $langs->trans("TotalForLifetime");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
 			if (GETPOST('search_endyear') && $search_end && $search_end != -1) {
