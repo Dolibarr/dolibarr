@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,19 +74,20 @@ class McpHandler
 	 *
 	 * @param DoliDB    $db      Database handler object
 	 * @param User      $user    User object
-	 * @param Conf|null $conf    Configuration object. Falls back to global $conf when null.
+	 * @param Conf|null $conf_obj	Configuration object. Falls back to global $conf when null.
 	 * @param string    $toolcontext Pass McpHandler::CTX_ASSISTANT or McpHandler::CTX_MCP_SERVER.
 	 *                               Defaults to CTX_ASSISTANT when empty.
 	 */
-	public function __construct($db, $user, $conf = null, $toolcontext = '')
+	public function __construct($db, $user, $conf_obj = null, $toolcontext = '')
 	{
 		$this->db = $db;
 		$this->user = $user;
 
-		if ($conf === null) {
+		if ($conf_obj === null) {
 			global $conf;
+			$conf_obj = $conf;
 		}
-		$this->conf = $conf;
+		$this->conf = $conf_obj;
 
 		$this->toolcontext = (!empty($toolcontext)) ? $toolcontext : self::CTX_ASSISTANT;
 
