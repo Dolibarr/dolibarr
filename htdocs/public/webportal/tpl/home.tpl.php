@@ -42,8 +42,8 @@ if (empty($context) || !is_object($context)) {
 				<div class="home-links-card__icon" ></div>
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('contractlist') . '" title="' . $langs->trans('WebPortalContractListDesc') . '">' . $langs->trans('WebPortalContractListTitle') . '</a>'; ?>
 			</article>
-      <?php endif; ?>
-      <?php if (isModEnabled('member') && in_array(getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS'), ['visible', 'edit']) && $context->logged_member && $context->logged_member->id > 0) : ?>
+			<?php endif; ?>
+			<?php if (isModEnabled('member') && in_array(getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS'), ['visible', 'edit']) && $context->logged_member && $context->logged_member->id > 0) : ?>
 			<article class="home-links-card --membercard">
 				<div class="home-links-card__icon" ></div>
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('membercard') . '" title="' . $langs->trans('WebPortalMemberCardMenu') . '">' . $langs->trans('WebPortalMemberCardMenu') . '</a>'; ?>
