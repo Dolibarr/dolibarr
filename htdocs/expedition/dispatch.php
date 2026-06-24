@@ -1549,110 +1549,110 @@ print '<br>';
 					print '<script>';
 
 					print '
-					var duplicatedbatchcode = [];
-					var errortab1 = [];
-					var errortab2 = [];
-					var errortab3 = [];
-					var errortab4 = [];
+						var duplicatedbatchcode = [];
+						var errortab1 = [];
+						var errortab2 = [];
+						var errortab3 = [];
+						var errortab4 = [];
 
-					function barcodescannerjs() {
-						console.log("We catch inputs in scanner box");
-						jQuery("#scantoolmessage").text();
+						function barcodescannerjs() {
+							console.log("We catch inputs in scanner box");
+							jQuery("#scantoolmessage").text();
 
-						var selectaddorreplace = $("select[name=selectaddorreplace]").val();
-						var barcodemode = $("input[name=barcodemode]:checked").val();
-						var barcodeproductqty = $("input[name=barcodeproductqty]").val();
-						var warehousetouse = $("select[name=warehousenew]").val();
-						var textarea = $("textarea[name=barcodelist]").val();
-						var textarray = textarea.split(/[\s,;]+/);
-						var tabproduct = [];
-						duplicatedbatchcode = [];
-						errortab1 = [];
-						errortab2 = [];
-						errortab3 = [];
-						errortab4 = [];
+							var selectaddorreplace = $("select[name=selectaddorreplace]").val();
+							var barcodemode = $("input[name=barcodemode]:checked").val();
+							var barcodeproductqty = $("input[name=barcodeproductqty]").val();
+							var warehousetouse = $("select[name=warehousenew]").val();
+							var textarea = $("textarea[name=barcodelist]").val();
+							var textarray = textarea.split(/[\s,;]+/);
+							var tabproduct = [];
+							duplicatedbatchcode = [];
+							errortab1 = [];
+							errortab2 = [];
+							errortab3 = [];
+							errortab4 = [];
 
-						textarray = textarray.filter(function(value) {
-							return value != "";
+							textarray = textarray.filter(function(value) {
+								return value != "";
 							});
 							if (textarray.some((element) => element != "")) {
-								$(".qtydispatchinput").each(function() {
-									id = $(this).attr(\'id\');
-									idarray = id.split(\'_\');
-									idproduct = idarray[2];
-									id = idarray[1] + \'_\' + idarray[2];
-									console.log("Analyze the line "+id+" in inventory, barcodemode="+barcodemode);
-									warehouse = $("#entrepot_"+id).val();
-									console.log(warehouse);
-									productbarcode = $("#product_"+idproduct).attr(\'data-barcode\');
-									console.log(productbarcode);
-									productbatchcode = $("#lot_number_"+id).val();
-									if (productbatchcode == undefined) {
-										productbatchcode = "";
-									}
-									console.log(productbatchcode);
-
-									if (barcodemode != "barcodeforproduct") {
-										tabproduct.forEach(product=>{
-											console.log("product.Batch="+product.Batch+" productbatchcode="+productbatchcode);
-											if (product.Batch != "" && product.Batch == productbatchcode) {
-												console.log("duplicate batch code found for batch code "+productbatchcode);
-												duplicatedbatchcode.push(productbatchcode);
-											}
-											})
+									$(".qtydispatchinput").each(function() {
+										id = $(this).attr(\'id\');
+										idarray = id.split(\'_\');
+										idproduct = idarray[2];
+										id = idarray[1] + \'_\' + idarray[2];
+										console.log("Analyze the line "+id+" in inventory, barcodemode="+barcodemode);
+										warehouse = $("#entrepot_"+id).val();
+										console.log(warehouse);
+										productbarcode = $("#product_"+idproduct).attr(\'data-barcode\');
+										console.log(productbarcode);
+										productbatchcode = $("#lot_number_"+id).val();
+										if (productbatchcode == undefined) {
+											productbatchcode = "";
 										}
-										productinput = $("#qty_"+id).val();
-										if (productinput == "") {
-											productinput = 0
-										}
-										tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
-										});
-										console.log("Loop on each record entered in the textarea");
+										console.log(productbatchcode);
 
-										textarray.forEach(function(element,index) {
-											console.log("Process record element="+element+" id="+id);
-											var verify_batch = false;
-											var verify_barcode = false;
-											switch(barcodemode) {
-												case "barcodeforautodetect":
-												verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"barcode",true);
-												verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"lotserial",true);
-												break;
-												case "barcodeforproduct":
-												verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"barcode");
-												break;
-												case "barcodeforlotserial":
-												verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"lotserial");
-												break;
-												default:
-												alert(\''.dol_escape_js($langs->trans("ErrorWrongBarcodemode")).' "\'+barcodemode+\'"\');
-												throw \''.dol_escape_js($langs->trans('ErrorWrongBarcodemode')).' "\'+barcodemode+\'"\';
+										if (barcodemode != "barcodeforproduct") {
+											tabproduct.forEach(product=>{
+												console.log("product.Batch="+product.Batch+" productbatchcode="+productbatchcode);
+												if (product.Batch != "" && product.Batch == productbatchcode) {
+													console.log("duplicate batch code found for batch code "+productbatchcode);
+													duplicatedbatchcode.push(productbatchcode);
+												}
+												})
 											}
+											productinput = $("#qty_"+id).val();
+											if (productinput == "") {
+												productinput = 0
+											}
+											tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
+											});
+											console.log("Loop on each record entered in the textarea");
 
-											if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, not found error */
-												errortab2.push(element);
-												} else if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
-													errortab3.push(element);
-													} else if (verify_batch == true) {
-														console.log("element="+element);
-														console.log(duplicatedbatchcode);
-														if (duplicatedbatchcode.includes(element)) {
-															errortab1.push(element);
+											textarray.forEach(function(element,index) {
+												console.log("Process record element="+element+" id="+id);
+												var verify_batch = false;
+												var verify_barcode = false;
+												switch(barcodemode) {
+													case "barcodeforautodetect":
+													verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"barcode",true);
+													verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"lotserial",true);
+													break;
+													case "barcodeforproduct":
+													verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"barcode");
+													break;
+													case "barcodeforlotserial":
+													verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"lotserial");
+													break;
+													default:
+													alert(\''.dol_escape_js($langs->trans("ErrorWrongBarcodemode")).' "\'+barcodemode+\'"\');
+													throw \''.dol_escape_js($langs->trans('ErrorWrongBarcodemode')).' "\'+barcodemode+\'"\';
+												}
+
+												if (verify_batch == false && verify_barcode == false) {		/* If the 2 flags are false, not found error */
+													errortab2.push(element);
+													} else if (verify_batch == true && verify_barcode == true) {		/* If the 2 flags are true, error: we don t know which one to take */
+														errortab3.push(element);
+														} else if (verify_batch == true) {
+															console.log("element="+element);
+															console.log(duplicatedbatchcode);
+															if (duplicatedbatchcode.includes(element)) {
+																errortab1.push(element);
+															}
 														}
-													}
-													});
+														});
 
-													if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
-														tabproduct.forEach(product => {
-															if (product.Qty!=0) {
-																if (product.hasOwnProperty("reelqty")) {
-																	idprod = $("td[data-idproduct=\'"+product.fk_product+"\']").attr("id");
-																	idproduct = idprod.split("_")[1];
-																	console.log("We create a new line for product_"+idproduct);
-																	if (product.Barcode != null) {
-																		modedispatch = "dispatch";
+														if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
+															tabproduct.forEach(product => {
+																if (product.Qty!=0) {
+																	if (product.hasOwnProperty("reelqty")) {
+																		idprod = $("td[data-idproduct=\'"+product.fk_product+"\']").attr("id");
+																		idproduct = idprod.split("_")[1];
+																		console.log("We create a new line for product_"+idproduct);
+																		if (product.Barcode != null) {
+																			modedispatch = "dispatch";
 																		} else {
-																			modedispatch = "batch";
+																		modedispatch = "batch";
 																		}
 																		addDispatchLine(idproduct,modedispatch);
 																		console.log($("tr[name^=\'"+modedispatch+"_\'][name$=\'_"+idproduct+"\']"));
@@ -1670,172 +1670,172 @@ print '<br>';
 																			$("#qty_"+product.Id).val(product.Qty);
 																		}
 																	}
-																	});
-																	jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
-																	/* document.forms["formrecord"].submit(); */
-																	} else {
-																		let stringerror = "";
-																		if (Object.keys(errortab1).length > 0) {
-																			stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
-																			errortab1.forEach(element => {
+																});
+																jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+																/* document.forms["formrecord"].submit(); */
+																} else {
+																	let stringerror = "";
+																	if (Object.keys(errortab1).length > 0) {
+																		stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+																		errortab1.forEach(element => {
+																			stringerror += (element + ", ")
+																			});
+																			stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
+																		}
+																		if (Object.keys(errortab2).length > 0) {
+																			stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+																			errortab2.forEach(element => {
 																				stringerror += (element + ", ")
 																				});
 																				stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 																			}
-																			if (Object.keys(errortab2).length > 0) {
-																				stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
-																				errortab2.forEach(element => {
+																			if (Object.keys(errortab3).length > 0) {
+																				stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+																				errortab3.forEach(element => {
 																					stringerror += (element + ", ")
 																					});
 																					stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 																				}
-																				if (Object.keys(errortab3).length > 0) {
-																					stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
-																					errortab3.forEach(element => {
+																				if (Object.keys(errortab4).length > 0) {
+																					stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+																					errortab4.forEach(element => {
 																						stringerror += (element + ", ")
 																						});
 																						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 																					}
-																					if (Object.keys(errortab4).length > 0) {
-																						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
-																						errortab4.forEach(element => {
-																							stringerror += (element + ", ")
-																							});
-																							stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
-																						}
 
-																						jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-						//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
-																					}
+																					jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
+									//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
 																				}
-
 																			}
 
-																			/* This methode is called by parent barcodescannerjs() */
-																			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,mode,autodetect=false) {
-																				BarcodeIsInProduct=0;
-																				newproductrow=0
-																				result=false;
-																				tabproduct.forEach(product => {
-																					$.ajax({ url: \''.DOL_URL_ROOT.'/expedition/ajax/searchfrombarcode.php\',
-																					data: { "token":"'.newToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
-																					type: \'POST\',
-																					async: false,
-																					success: function(response) {
-																						if (response.status == "success") {
-																							console.log(response.message);
-																							if (!newproductrow) {
-																								newproductrow = response.object;
-																							}
-																							}else{
-																								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)) {
-																									errortab4.push(element);
-																									console.error(response.message);
+																		}
+
+																				/* This methode is called by parent barcodescannerjs() */
+																				function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,mode,autodetect=false) {
+																					BarcodeIsInProduct=0;
+																					newproductrow=0
+																					result=false;
+																					tabproduct.forEach(product => {
+																						$.ajax({ url: \''.DOL_URL_ROOT.'/expedition/ajax/searchfrombarcode.php\',
+																						data: { "token":"'.newToken().'", "action":"existbarcode","fk_entrepot": warehousetouse, "barcode":element, "mode":mode},
+																						type: \'POST\',
+																						async: false,
+																						success: function(response) {
+																							if (response.status == "success") {
+																								console.log(response.message);
+																								if (!newproductrow) {
+																									newproductrow = response.object;
 																								}
-																							}
-																							},
-																							error : function(output) {
-																								console.error("Error on barcodeserialforproduct function");
+																								}else{
+																									if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)) {
+																										errortab4.push(element);
+																										console.error(response.message);
+																									}
+																								}
 																								},
-																								});
-																								console.log("Product "+(index+=1)+": "+element);
-																								if (mode == "barcode") {
-																									testonproduct = product.Barcode
-																									}else if (mode == "lotserial") {
-																										testonproduct = product.Batch
-																									}
-																									testonwarehouse = product.Warehouse;
-																									if (testonproduct == element && testonwarehouse == warehousetouse) {
-																										if (selectaddorreplace == "add") {
-																											productqty = parseInt(product.Qty,10);
-																											product.Qty = productqty + parseInt(barcodeproductqty,10);
-																											}else if (selectaddorreplace == "replace") {
-																												if (product.fetched == false) {
-																													product.Qty = barcodeproductqty
-																													product.fetched=true
-																													}else{
-																														productqty = parseInt(product.Qty,10);
-																														product.Qty = productqty + parseInt(barcodeproductqty,10);
-																													}
-																												}
-																												BarcodeIsInProduct+=1;
-																											}
-																											})
-																											if (BarcodeIsInProduct==0 && newproductrow!=0) {
-																												tabproduct.push({\'Id\':tabproduct.length-1,\'Warehouse\':newproductrow.fk_warehouse,\'Barcode\':mode=="barcode"?element:null,\'Batch\':mode=="lotserial"?element:null,\'Qty\':barcodeproductqty,\'fetched\':true,\'reelqty\':newproductrow.reelqty,\'fk_product\':newproductrow.fk_product,\'mode\':mode});
-																												result = true;
-																											}
-																											if (BarcodeIsInProduct > 0) {
-																												result = true;
-																											}
-																											return result;
+																								error : function(output) {
+																									console.error("Error on barcodeserialforproduct function");
+																									},
+																									});
+																									console.log("Product "+(index+=1)+": "+element);
+																									if (mode == "barcode") {
+																										testonproduct = product.Barcode
+																										}else if (mode == "lotserial") {
+																											testonproduct = product.Batch
 																										}
-																										';
-																										print '</script>';
-																									}
-																									include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-																									$formother = new FormOther($db);
-																									print $formother->getHTMLScannerForm("barcodescannerjs", 'all', 1);
-																								}
+																										testonwarehouse = product.Warehouse;
+																										if (testonproduct == element && testonwarehouse == warehousetouse) {
+																											if (selectaddorreplace == "add") {
+																												productqty = parseInt(product.Qty,10);
+																												product.Qty = productqty + parseInt(barcodeproductqty,10);
+																												}else if (selectaddorreplace == "replace") {
+																													if (product.fetched == false) {
+																														product.Qty = barcodeproductqty
+																														product.fetched=true
+																														}else{
+																															productqty = parseInt(product.Qty,10);
+																															product.Qty = productqty + parseInt(barcodeproductqty,10);
+																														}
+																													}
+																													BarcodeIsInProduct+=1;
+																												}
+																												})
+																												if (BarcodeIsInProduct==0 && newproductrow!=0) {
+																													tabproduct.push({\'Id\':tabproduct.length-1,\'Warehouse\':newproductrow.fk_warehouse,\'Barcode\':mode=="barcode"?element:null,\'Batch\':mode=="lotserial"?element:null,\'Qty\':barcodeproductqty,\'fetched\':true,\'reelqty\':newproductrow.reelqty,\'fk_product\':newproductrow.fk_product,\'mode\':mode});
+																													result = true;
+																												}
+																												if (BarcodeIsInProduct > 0) {
+																													result = true;
+																												}
+																												return result;
+																											}
+																											';
+					print '</script>';
+				}
+				include DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+				$formother = new FormOther($db);
+				print $formother->getHTMLScannerForm("barcodescannerjs", 'all', 1);
+			}
 
 			// traitement entrepot par défaut
-																								print '<script type="text/javascript">
-																								$(document).ready(function () {
-																									$("select[name=fk_default_warehouse]").change(function() {
-																										console.log("warehouse is modified");
-																										var fk_default_warehouse = $("option:selected", this).val();
-																										$("select[name^=entrepot]").val(fk_default_warehouse).change();
-																										});
+			print '<script type="text/javascript">
+				$(document).ready(function () {
+					$("select[name=fk_default_warehouse]").change(function() {
+						console.log("warehouse is modified");
+						var fk_default_warehouse = $("option:selected", this).val();
+						$("select[name^=entrepot]").val(fk_default_warehouse).change();
+					});
 
-																										$("#autoreset").click(function() {
-																											console.log("we click on autoreset");
-																											$(".autoresettr").each(function() {
-																												id = $(this).attr("name");
-																												idtab = id.split("_");
-																												console.log("we process line "+id+" "+idtab);
-																												if ($(this).data("remove") == "clear") {	/* data-remove=clear means that line qty must be cleared but line must not be removed */
-																													console.log("We clear the object to expected value")
-																													var idlinetab = idtab[0].split("-");
-																													var idline = "";
-																													if (idlinetab.length > 0) {
-																														idline = idlinetab[1];
-																													}
-																													$("#qty"+idline+"_"+idtab[1]+"_"+idtab[2]).val("");
-																													/*
-																													qtyexpected = $("#qty_"+idtab[1]+"_"+idtab[2]).data("expected")
-																													console.log(qtyexpected);
-																													$("#qty_"+idtab[1]+"_"+idtab[2]).val(qtyexpected);
-																													qtydispatched = $("#qty_dispatched_0_"+idtab[2]).data("dispatched")
-																													$("#qty_dispatched_0_"+idtab[2]).val(qtydispatched);
-						*/
-																													} else {									/* data-remove=remove means that line must be removed */
-																														console.log("We remove the object")
-																														$(this).remove();
-																														$("tr[name^=\'"+idtab[0]+"_\'][name$=\'_"+idtab[2]+"\']:last .splitbutton").show();
-																													}
-																													});
-																													return false;
-																													});
+					$("#autoreset").click(function() {
+						console.log("we click on autoreset");
+						$(".autoresettr").each(function() {
+							id = $(this).attr("name");
+							idtab = id.split("_");
+							console.log("we process line "+id+" "+idtab);
+							if ($(this).data("remove") == "clear") {	/* data-remove=clear means that line qty must be cleared but line must not be removed */
+								console.log("We clear the object to expected value")
+								var idlinetab = idtab[0].split("-");
+								var idline = "";
+								if (idlinetab.length > 0) {
+									idline = idlinetab[1];
+								}
+								$("#qty"+idline+"_"+idtab[1]+"_"+idtab[2]).val("");
+								/*
+								qtyexpected = $("#qty_"+idtab[1]+"_"+idtab[2]).data("expected")
+								console.log(qtyexpected);
+								$("#qty_"+idtab[1]+"_"+idtab[2]).val(qtyexpected);
+								qtydispatched = $("#qty_dispatched_0_"+idtab[2]).data("dispatched")
+								$("#qty_dispatched_0_"+idtab[2]).val(qtydispatched);
+								*/
+							} else {									/* data-remove=remove means that line must be removed */
+								console.log("We remove the object")
+								$(this).remove();
+								$("tr[name^=\'"+idtab[0]+"_\'][name$=\'_"+idtab[2]+"\']:last .splitbutton").show();
+							}
+						});
+						return false;
+					});
 
-																													$("#resetalltoexpected").click(function() {
-																														$(".qtydispatchinput").each(function() {
-																															console.log("We reset to expected "+$(this).attr("id")+" qty to dispatch");
-																															$(this).val($(this).data("expected"));
-																															});
-																															return false;
-																															});
+					$("#resetalltoexpected").click(function() {
+						$(".qtydispatchinput").each(function() {
+							console.log("We reset to expected "+$(this).attr("id")+" qty to dispatch");
+							$(this).val($(this).data("expected"));
+						});
+						return false;
+					});
 
-																															$(".resetline").on("click", function(event) {
-																																event.preventDefault();
-																																id = $(this).attr("id");
-																																id = id.split("reset");
-																																console.log("Reset trigger for id = qty"+id[1]);
-																																$("#qty"+id[1]).val("");
-																																});
-																																});
-																																</script>';
-																															}
+					$(".resetline").on("click", function(event) {
+						event.preventDefault();
+						id = $(this).attr("id");
+						id = id.split("reset");
+						console.log("Reset trigger for id = qty"+id[1]);
+						$("#qty"+id[1]).val("");
+					});
+				});
+			</script>';
+		}
 
 		// End of page
-																															llxFooter();
-																															$db->close();
+		llxFooter();
+		$db->close();
