@@ -340,9 +340,9 @@ if (empty($reshook)) {
 										setEventMessages($expeditionlinebatch->error, $expeditionlinebatch->errors, 'errors');
 										$error++;
 									}
-									}
 								}
 							}
+						}
 
 						// If module stock is enabled and the stock decrease is done on edition of this page
 						/*
@@ -510,7 +510,7 @@ if (isModEnabled('project')) {
 			}
 		}
 	}
-	}
+}
 $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -1358,9 +1358,9 @@ if ($isStandaloneShipment) {
 									}
 									*/
 								}
-												}
+							}
 							$i++;
-											}
+						}
 
 						// reload batch select and warehouse select on change (Ajax)
 						$out_js_line_list = array();
@@ -1479,10 +1479,10 @@ if ($isStandaloneShipment) {
 						print $out_js;
 
 						$db->free($resql);
-										} else {
+					} else {
 						dol_print_error($db);
-					}
-									}
+										}
+				}
 
 				print "</table>\n";
 				print '</div>';
@@ -1538,7 +1538,7 @@ if ($isStandaloneShipment) {
 				}
 
 				print '</form>';
-								}
+			}
 
 			print dol_get_fiche_end();
 
@@ -1834,7 +1834,7 @@ if ($isStandaloneShipment) {
 					});
 				});
 			</script>';
-							}
+		}
 
 		// End of page
 		llxFooter();
