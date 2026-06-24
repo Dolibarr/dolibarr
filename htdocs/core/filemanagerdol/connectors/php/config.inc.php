@@ -60,12 +60,6 @@ if (!$user->admin && !$user->hasRight('website', 'write')) {
 	accessforbidden('Need to have website write permission to upload files in medias directory.');
 }
 
-// Even admins must have website write permission to use this tool.
-if ($user->admin && !$user->hasRight('website', 'write') && !getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES_FOR_ADMIN')) {
-	accessforbidden('Need to have website write permission to upload files in medias directory.');
-}
-
-
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only
 //		authenticated users can access this file or use some kind of session checking.
