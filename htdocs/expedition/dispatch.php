@@ -780,86 +780,86 @@ print '<br>';
 					$nbfreeproduct++;
 				} else {
 					$alreadydispatched = isset($products_dispatched[$objp->rowid]) ? $products_dispatched[$objp->rowid] : 0;
-						$remaintodispatch = price2num($objp->qty, 5); // Calculation of dispatched
-						if ($remaintodispatch < 0 && !getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN')) {
-							$remaintodispatch = 0;
+					$remaintodispatch = price2num($objp->qty, 5); // Calculation of dispatched
+					if ($remaintodispatch < 0 && !getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN')) {
+						$remaintodispatch = 0;
+					}
+
+					if ($remaintodispatch || !getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
+						$nbproduct++;
+
+						// To show detail cref and description value, we must make calculation by cref
+						// print ($objp->cref?' ('.$objp->cref.')':'');
+						// if ($objp->description) print '<br>'.nl2br($objp->description);
+						$suffix = '_0_'.$i;
+
+						print "\n";
+						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
+						// hidden fields for js function
+						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.((float) $alreadydispatched).'" value="'.(float) $alreadydispatched.'">';
+						print '<tr class="oddeven">';
+
+						if (empty($conf->cache['product'][$objp->fk_product])) {
+							$tmpproduct = new Product($db);
+							$tmpproduct->fetch($objp->fk_product);
+							$conf->cache['product'][$objp->fk_product] = $tmpproduct;
+						} else {
+							$tmpproduct = $conf->cache['product'][$objp->fk_product];
 						}
 
-						if ($remaintodispatch || !getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
-							$nbproduct++;
+						$linktoprod = '<div class="twolinesmax lineheightsmall">';
+						$linktoprod .= $tmpproduct->getNomUrl(1);
+						$linktoprod .= '<br><span class="opacitymedium small">'.dolPrintHTML($objp->label)."</span>\n";
+						$linktoprod .= '</div>';
 
-							// To show detail cref and description value, we must make calculation by cref
-							// print ($objp->cref?' ('.$objp->cref.')':'');
-							// if ($objp->description) print '<br>'.nl2br($objp->description);
-							$suffix = '_0_'.$i;
-
-							print "\n";
-							print '<!-- Line to dispatch '.$suffix.' -->'."\n";
-							// hidden fields for js function
-							print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-							print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.((float) $alreadydispatched).'" value="'.(float) $alreadydispatched.'">';
-							print '<tr class="oddeven">';
-
-							if (empty($conf->cache['product'][$objp->fk_product])) {
-								$tmpproduct = new Product($db);
-								$tmpproduct->fetch($objp->fk_product);
-								$conf->cache['product'][$objp->fk_product] = $tmpproduct;
-							} else {
-								$tmpproduct = $conf->cache['product'][$objp->fk_product];
-							}
-
-							$linktoprod = '<div class="twolinesmax lineheightsmall">';
-							$linktoprod .= $tmpproduct->getNomUrl(1);
-							$linktoprod .= '<br><span class="opacitymedium small">'.dolPrintHTML($objp->label)."</span>\n";
-							$linktoprod .= '</div>';
-
-							if ($is_mod_batch_enabled) {
-								if ($objp->tobatch) {
-									// Product
-									print '<td class="tdoverflowbydiv nopaddingtopimp nopaddingbottomimp" id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
-									print $linktoprod;
-									print "</td>";
-									print '<td class="dispatch_batch_number"></td>';
-									if ($is_sell_by_enabled) {
-										print '<td class="dispatch_dlc"></td>';
-									}
-									if ($is_eat_by_enabled) {
-										print '<td class="dispatch_dluo"></td>';
-									}
-								} else {
-									// Product
-									print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
-									print $linktoprod;
-									print "</td>";
-									print '<td class="dispatch_batch_number">';
-									print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
-									print '</td>';
-									if ($is_sell_by_enabled) {
-										print '<td class="dispatch_dlc"></td>';
-									}
-									if ($is_eat_by_enabled) {
-										print '<td class="dispatch_dluo"></td>';
-									}
-								}
-							} else {
-								print '<td colspan="4">';
+						if ($is_mod_batch_enabled) {
+							if ($objp->tobatch) {
+								// Product
+								print '<td class="tdoverflowbydiv nopaddingtopimp nopaddingbottomimp" id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 								print $linktoprod;
 								print "</td>";
+								print '<td class="dispatch_batch_number"></td>';
+								if ($is_sell_by_enabled) {
+									print '<td class="dispatch_dlc"></td>';
+								}
+								if ($is_eat_by_enabled) {
+									print '<td class="dispatch_dluo"></td>';
+								}
+							} else {
+								// Product
+								print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
+								print $linktoprod;
+								print "</td>";
+								print '<td class="dispatch_batch_number">';
+								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
+								print '</td>';
+								if ($is_sell_by_enabled) {
+									print '<td class="dispatch_dlc"></td>';
+								}
+								if ($is_eat_by_enabled) {
+									print '<td class="dispatch_dluo"></td>';
+								}
 							}
+						} else {
+							print '<td colspan="4">';
+							print $linktoprod;
+							print "</td>";
+						}
 
-							// Define unit price for PMP calculation
-							$up_ht_disc = $objp->subprice;
-							if (!empty($objp->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
-								$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
-							}
+						// Define unit price for PMP calculation
+						$up_ht_disc = $objp->subprice;
+						if (!empty($objp->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
+							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
+						}
 
 						// Qty ordered
-							print '<td class="right">'.$objp->qty.'</td>';
+						print '<td class="right">'.$objp->qty.'</td>';
 
 						// Already dispatched
-							print '<td class="right">'.$alreadydispatched.'</td>';
+						print '<td class="right">'.$alreadydispatched.'</td>';
 
-							print '<td class="right">';
+						print '<td class="right">';
 						print '</td>'; // Qty to dispatch
 						print '<td>';
 						print '</td>'; // Dispatch column
@@ -1087,13 +1087,7 @@ print '<br>';
 												$objd->sellby = $dispatch_line_batch_current->sellby;
 											}
 
-											if ($is_mod_batch_enabled
-												&& (
-													!empty($objd->batch)
-													|| (is_null($objd->batch) && $tmpproduct->status_batch > 0)
-													|| !empty($objd->batch_list)
-												)
-											) {
+											if ($is_mod_batch_enabled && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0) || !empty($objd->batch_list))) {
 												$type = 'batch';
 
 												// Enable hooks to append additional columns
