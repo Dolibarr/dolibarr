@@ -273,61 +273,61 @@ if (empty($reshook)) {
 												$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
 												$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
 												$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
-											}
-										} else {
+										}
+									} else {
 											$sql = "DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
 											$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
 											$sql .= " AND batch = '".$db->escape($lot)."'";
-										}
+									}
 
 										$resql = $db->query($sql);
-										if (!$resql) {
+									if (!$resql) {
 											dol_print_error($db);
 											$error++;
-										}
 									}
 								}
-							} else {
+							}
+						} else {
 								$expeditiondispatch->fk_expedition = $object->id;
 								$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
 								$expeditiondispatch->fk_parent = GETPOSTINT('fk_parent'.$dispatch_line_suffix);
 								$expeditiondispatch->fk_product = $prod_id;
-								if ($isStandaloneShipment) {
+							if ($isStandaloneShipment) {
 									$expeditiondispatch->element_type = 'shipping';
 
 									$source_line_id = GETPOSTINT($fk_commandedet);
 									$source_line = new ExpeditionLigne($db);
 									$source_line_loaded = 0;
-									if ($expeditiondispatch->fk_parent > 0) {
+								if ($expeditiondispatch->fk_parent > 0) {
 										$source_line_loaded = $source_line->fetch($expeditiondispatch->fk_parent);
-									}
-									if ($source_line_loaded <= 0 && $source_line_id > 0) {
+								}
+								if ($source_line_loaded <= 0 && $source_line_id > 0) {
 										$source_line_loaded = $source_line->fetch($source_line_id);
-									}
-									if ($source_line_loaded > 0) {
+								}
+								if ($source_line_loaded > 0) {
 										$expeditiondispatch->fk_unit = $source_line->fk_unit;
 										$expeditiondispatch->description = $source_line->description;
 										$expeditiondispatch->rang = $source_line->rang;
-									} elseif ($prod_id > 0) {
+								} elseif ($prod_id > 0) {
 										$tmp_product = new Product($db);
-										if ($tmp_product->fetch($prod_id) > 0) {
+									if ($tmp_product->fetch($prod_id) > 0) {
 											$expeditiondispatch->fk_unit = $tmp_product->fk_unit;
 											$expeditiondispatch->description = $tmp_product->description;
-										}
 									}
-								} elseif (!($expeditiondispatch->fk_parent > 0)) {
-									$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
 								}
+							} elseif (!($expeditiondispatch->fk_parent > 0)) {
+									$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
+							}
 								$expeditiondispatch->qty = $newqty;
 
-								if ($newqty > 0) {
+							if ($newqty > 0) {
 									$idline = $expeditiondispatch->insert($user);
-									if ($idline < 0) {
+								if ($idline < 0) {
 										setEventMessages($expeditiondispatch->error, $expeditiondispatch->errors, 'errors');
 										$error++;
-									}
+								}
 
-									if ($modebatch == "batch" && !$error) {
+								if ($modebatch == "batch" && !$error) {
 									$expeditionlinebatch->sellby = $dDLC; // DLC is sellByDate
 									$expeditionlinebatch->eatby = $dDLUO; // DLUO is eatByDate
 									$expeditionlinebatch->batch = $lot;
@@ -340,9 +340,9 @@ if (empty($reshook)) {
 										setEventMessages($expeditionlinebatch->error, $expeditionlinebatch->errors, 'errors');
 										$error++;
 									}
+									}
 								}
 							}
-						}
 
 						// If module stock is enabled and the stock decrease is done on edition of this page
 						/*
@@ -432,13 +432,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 	$num_prod = count($lines);
 
-	if (!empty($object->origin) && $object->origin_id > 0) {
+if (!empty($object->origin) && $object->origin_id > 0) {
 		$object->origin = 'commande';
 		$typeobject = $object->origin;
 		$origin = $object->origin;
 
 		$object->fetch_origin(); // Load property $object->origin_object, $object->commande, $object->propal, ...
-	}
+}
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
@@ -453,32 +453,32 @@ if ($object->id > 0 || !empty($object->ref)) {
 	$formconfirm = '';
 
 	// Confirmation to delete line
-	if ($action == 'ask_deleteline') {
+if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
-	}
+}
 
 	// Call Hook formConfirm
 	$parameters = array('lineid' => $lineid);
 	// Note that $action and $object may be modified by hook
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action);
-	if (empty($reshook)) {
+if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
-	} elseif ($reshook > 0) {
+} elseif ($reshook > 0) {
 		$formconfirm = $hookmanager->resPrint;
-	}
+}
 
 	// Print form confirm
 	print $formconfirm;
 
 	$objectsrc = null;
-	if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
+if ($typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->origin_object->id);
-	}
-	if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
+}
+if ($typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->origin_object->id);
-	}
+}
 
 	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -491,7 +491,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (isModEnabled('project')) {
+if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
 	if (0) {	// @phpstan-ignore-line  Do not change on reception
@@ -510,7 +510,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			}
 		}
 	}
-}
+	}
 $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -606,7 +606,7 @@ print '<br>';
 
 		// Get list of lines of the shipment $products_dispatched, with qty dispatched for each source line
 		$products_dispatched = array();
-		if ($isStandaloneShipment) {
+if ($isStandaloneShipment) {
 			$standalone_dispatched_qty_sql = "l.qty + COALESCE((SELECT SUM(child.qty)";
 			$standalone_dispatched_qty_sql .= " FROM ".$db->prefix()."expeditiondet as child";
 			$standalone_dispatched_qty_sql .= " WHERE child.fk_parent = l.rowid";
@@ -618,36 +618,36 @@ print '<br>';
 			$sql .= " FROM ".$db->prefix()."expeditiondet as l";
 			$sql .= " WHERE l.fk_expedition = ".((int) $object->id);
 			$sql .= " AND (l.fk_parent IS NULL OR l.fk_parent = 0)";
-		} else {
+} else {
 			$sql = "SELECT ed.fk_elementdet as rowid, sum(ed.qty) as qty";
 			$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $object->id);
 			$sql .= " GROUP BY ed.fk_elementdet";
-		}
+}
 
 		$resql = $db->query($sql);
-		if ($resql) {
+if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			if ($num) {
-				while ($i < $num) {
+	if ($num) {
+		while ($i < $num) {
 					$objd = $db->fetch_object($resql);
 					$products_dispatched[$objd->rowid] = price2num($objd->qty, 'MS');
 					$i++;
-				}
-			}
-			$db->free($resql);
 		}
+	}
+			$db->free($resql);
+}
 
-		if ($isStandaloneShipment) {
+if ($isStandaloneShipment) {
 			$sql = "SELECT l.rowid, l.fk_product, 0 as subprice, 0 as remise_percent, '' AS sref, (".$standalone_dispatched_qty_sql.") as qty,";
 			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
-		} else {
+} else {
 			//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 			$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
 			$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
-		}
+}
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -719,37 +719,37 @@ print '<br>';
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				if ($object->status == Expedition::STATUS_DRAFT) {
 						print '<td class="right">'.$langs->trans("QtyToShip");	// Qty to dispatch (sum for all lines of batch detail if there is)
-					} else {
+				} else {
 						print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-					}
-				} else {
-					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
 				}
+			} else {
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+			}
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
-				if ($object->status == Expedition::STATUS_DRAFT) {
+			if ($object->status == Expedition::STATUS_DRAFT) {
 					print '<td class="right">'.$langs->trans("QtyToShip");	// Qty to dispatch (sum for all lines of batch detail if there is)
-				} else {
+			} else {
 					print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				}
+			}
 				print '<td class="right">'.$langs->trans("Details");
 				print '<td width="32"></td>';
 
-				if (getDolGlobalString('SHIPMENT_CAN_UPDATE_CUSTOMER_PRICE') && !isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
+			if (getDolGlobalString('SHIPMENT_CAN_UPDATE_CUSTOMER_PRICE') && !isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					print '<td class="right">'.$langs->trans("Price").'</td>';
 					print '<td class="right">'.$langs->trans("ReductionShort").' (%)</td>';
 					print '<td class="right">'.$langs->trans("UpdatePrice").'</td>';
-				}
+			}
 
 				print '<td class="right">'.$langs->trans("Warehouse");
 
 					// Select warehouse to force it everywhere
-				if (count($listwarehouses) > 1) {
+			if (count($listwarehouses) > 1) {
 					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
-				} elseif (count($listwarehouses) == 1) {
+			} elseif (count($listwarehouses) == 1) {
 					print '<br><span class="opacitymedium">'.$langs->trans("ForceTo").'</span> '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth100 maxwidth300', 1);
-				}
+			}
 
 				print '</td>';
 
@@ -761,13 +761,13 @@ print '<br>';
 					$object,
 					$action
 				);
-				if ($reshook < 0) {
+			if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				}
+			}
 				print $hookmanager->resPrint;
 
 				print "</tr>\n";
-			}
+		}
 
 			$conf->cache['product'] = array();
 
@@ -776,14 +776,14 @@ print '<br>';
 				$objp = $db->fetch_object($resql);
 
 					/// Do hot show the free products
-				if (!$objp->fk_product > 0) {
+		if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
-				} else {
+		} else {
 					$alreadydispatched = isset($products_dispatched[$objp->rowid]) ? $products_dispatched[$objp->rowid] : 0;
 					$remaintodispatch = price2num($objp->qty, 5); // Calculation of dispatched
-					if ($remaintodispatch < 0 && !getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN')) {
+		if ($remaintodispatch < 0 && !getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN')) {
 						$remaintodispatch = 0;
-					}
+		}
 
 					if ($remaintodispatch || !getDolGlobalString('SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED')) {
 						$nbproduct++;
@@ -800,33 +800,33 @@ print '<br>';
 						print '<input id="qty_dispatched'.$suffix.'" type="hidden" data-dispatched="'.((float) $alreadydispatched).'" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
-						if (empty($conf->cache['product'][$objp->fk_product])) {
+		if (empty($conf->cache['product'][$objp->fk_product])) {
 							$tmpproduct = new Product($db);
 							$tmpproduct->fetch($objp->fk_product);
 							$conf->cache['product'][$objp->fk_product] = $tmpproduct;
-						} else {
+		} else {
 							$tmpproduct = $conf->cache['product'][$objp->fk_product];
-						}
+		}
 
 						$linktoprod = '<div class="twolinesmax lineheightsmall">';
 						$linktoprod .= $tmpproduct->getNomUrl(1);
 						$linktoprod .= '<br><span class="opacitymedium small">'.dolPrintHTML($objp->label)."</span>\n";
 						$linktoprod .= '</div>';
 
-						if ($is_mod_batch_enabled) {
-							if ($objp->tobatch) {
+		if ($is_mod_batch_enabled) {
+			if ($objp->tobatch) {
 								// Product
 								print '<td class="tdoverflowbydiv nopaddingtopimp nopaddingbottomimp" id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
-								if ($is_sell_by_enabled) {
+				if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
-								}
-								if ($is_eat_by_enabled) {
+				}
+				if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
-								}
-							} else {
+				}
+			} else {
 								// Product
 								print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 								print $linktoprod;
@@ -834,24 +834,24 @@ print '<br>';
 								print '<td class="dispatch_batch_number">';
 								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
 								print '</td>';
-								if ($is_sell_by_enabled) {
+				if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
-								}
-								if ($is_eat_by_enabled) {
+				}
+				if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
-								}
-							}
-						} else {
+				}
+			}
+		} else {
 							print '<td colspan="4">';
 							print $linktoprod;
 							print "</td>";
-						}
+		}
 
 						// Define unit price for PMP calculation
 						$up_ht_disc = $objp->subprice;
-						if (!empty($objp->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
+		if (!empty($objp->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
-						}
+		}
 
 						// Qty ordered
 						print '<td class="right">'.$objp->qty.'</td>';
@@ -866,57 +866,57 @@ print '<br>';
 						print '<td></td>'; // Warehouse column
 
 						$sql  = "SELECT ed.rowid, ed.fk_parent";
-						if ($isStandaloneShipment) {
+		if ($isStandaloneShipment) {
 							$sql .= ", ed.fk_product";
-						} else {
+		} else {
 							$sql .= ", cd.fk_product";
-						}
+		}
 						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
 						$sql .= ", ".$db->ifsql('eb.rowid IS NULL OR eb.fk_warehouse IS NULL', 'ed.fk_entrepot', 'eb.fk_warehouse')." as fk_warehouse";
 						$sql .= ", eb.batch, eb.eatby, eb.sellby";
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						if ($isStandaloneShipment) {
+		if ($isStandaloneShipment) {
 							$sql .= " WHERE ed.fk_expedition = ".(int) $object->id;
 							$sql .= " AND (ed.rowid = ".(int) $objp->rowid." OR (ed.fk_parent = ".(int) $objp->rowid." AND ed.fk_product = ".(int) $objp->fk_product."))";
 							$sql .= " ORDER BY CASE WHEN ed.fk_parent IS NULL OR ed.fk_parent = 0 THEN 0 ELSE 1 END, ed.rowid";
-						} else {
+		} else {
 							$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
 							$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
 							$sql .= " AND ed.fk_expedition = ".(int) $object->id;
 							$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
-						}
+		}
 
 						$resultsql = $db->query($sql);
 						$j = 0;
 						if ($resultsql) {
 							$numd = $db->num_rows($resultsql);
-							while ($obj_exp = $db->fetch_object($resultsql)) {
+		while ($obj_exp = $db->fetch_object($resultsql)) {
 								$suffix = "_" . $j . "_" . $i;
 
 								$productChildrenNb = 0;
 								$expedition_line_child_list = array();
-								if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 									// virtual product : find all children
 									$productChildrenNb = $tmpproduct->hasFatherOrChild(1);
-									if ($productChildrenNb > 0) {
+				if ($productChildrenNb > 0) {
 										$line_id_list = array();
 
 										// load all child as object line
 										$expeditionLine = new ExpeditionLigne($db);
 										$result = $expeditionLine->findAllChild($obj_exp->rowid, $line_id_list, 1);
-										if ($result > 0) {
+					if ($result > 0) {
 											$child_level = 1;
-											foreach ($line_id_list as $line_id_arr) {
-												foreach ($line_id_arr as $line_obj) {
+						foreach ($line_id_list as $line_id_arr) {
+							foreach ($line_id_arr as $line_obj) {
 													$child_product_id = (int) $line_obj->fk_product;
-													if (empty($conf->cache['product'][$child_product_id])) {
+								if (empty($conf->cache['product'][$child_product_id])) {
 														$child_product = new Product($db);
 														$child_product->fetch($child_product_id);
 														$conf->cache['product'][$child_product_id] = $child_product;
-													} else {
+								} else {
 														$child_product = $conf->cache['product'][$child_product_id];
-													}
+								}
 
 													print '<td class="right">';
 								print '</td>'; // Qty to dispatch
@@ -1358,9 +1358,9 @@ print '<br>';
 									}
 									*/
 								}
-							}
+												}
 							$i++;
-						}
+											}
 
 						// reload batch select and warehouse select on change (Ajax)
 						$out_js_line_list = array();
@@ -1479,10 +1479,10 @@ print '<br>';
 						print $out_js;
 
 						$db->free($resql);
-					} else {
+										} else {
 						dol_print_error($db);
 					}
-				}
+									}
 
 				print "</table>\n";
 				print '</div>';
@@ -1538,7 +1538,7 @@ print '<br>';
 				}
 
 				print '</form>';
-			}
+								}
 
 			print dol_get_fiche_end();
 
@@ -1834,7 +1834,7 @@ print '<br>';
 					});
 				});
 			</script>';
-		}
+							}
 
 		// End of page
 		llxFooter();
