@@ -2391,7 +2391,7 @@ class Project extends CommonObject
 		// dol_getIdFromCode() keeps its own static cache, so resolving on each call stays cheap.
 		$idwon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 		$idlost = (int) dol_getIdFromCode($db, 'LOST', 'c_lead_status', 'code', 'rowid');
-		$wonlost = array_values(array_filter(array($idwon, $idlost), static function ($v) {
+		$wonlost = array_values(array_filter(array($idwon, $idlost), static function (int $v) {
 			return $v > 0;
 		}));
 

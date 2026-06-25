@@ -32,6 +32,11 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
  * Class ProjectLeadSeparationTest
  *
  * @backupGlobals disabled
+ *
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class ProjectLeadSeparationTest extends CommonClassTest
 {
@@ -114,7 +119,7 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		$idLost = $this->makeProject(1, $ids['lost']);	// lost opportunity -> must fall into PROJECT view
 		$idPure = $this->makeProject(0, null);			// plain project
 
-		$inView = function ($id, $view) use ($db) {
+		$inView = function (int $id, string $view) use ($db) {
 			$sql = "SELECT rowid FROM ".$db->prefix()."projet as p WHERE p.rowid = ".((int) $id);
 			$sql .= " AND ".Project::getViewFilterSQL($view, 'p');
 			$resql = $db->query($sql);

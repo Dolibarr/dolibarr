@@ -1770,6 +1770,7 @@ if (!empty($arrayfields['opp_weighted_amount']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.budget_amount']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset - disabling budget_amount for the lead view above narrows phan's inferred array shape, the 'label' key still exists at runtime
 	print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
