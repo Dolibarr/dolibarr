@@ -25,6 +25,7 @@ global $conf, $user, $langs, $db;
 
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/project/mod_lead_simple.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 /**
@@ -188,5 +189,28 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		$res = $p->setClose($GLOBALS['user'], $ids['won']);	// WON provided -> accepted
 
 		$this->assertSame(1, $res);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testLeadNumberingPrefixAndIsolation()
+	{
+		global $db, $user;
+
+		// A PJ reference must not shift the OPP counter.
+		$pj = new Project($db);
+		$pj->ref = 'PJ9912-9000';
+		$pj->title = 'pj numbering';
+		$pj->usage_opportunity = 0;
+		$this->assertGreaterThan(0, $pj->create($user));
+
+		$model = new mod_lead_simple();
+		$project = new Project($db);
+		$project->date_c = dol_mktime(0, 0, 0, 1, 1, 2026);
+		$ref = $model->getNextValue(null, $project);
+
+		$this->assertStringStartsWith('OPP', $ref);
+		$this->assertMatchesRegularExpression('/^OPP[0-9]{4}-[0-9]{4}$/', $ref);
 	}
 }
