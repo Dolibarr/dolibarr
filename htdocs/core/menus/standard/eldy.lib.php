@@ -1714,7 +1714,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 				$newmenu->add("/salaries/card.php?leftmenu=tax_salary&action=create", $langs->trans("New"), 1, $user->hasRight('salaries', 'write'));
 				$newmenu->add("/salaries/list.php?leftmenu=tax_salary", $langs->trans("List"), 1, $user->hasRight('salaries', 'read'));
 				$newmenu->add("/salaries/payments.php?leftmenu=tax_salary", $langs->trans("Payments"), 1, $user->hasRight('salaries', 'read'));
-				$newmenu->add("/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"), 1, $user->hasRight('salaries', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"), 1, $user->hasRight('salaries', 'read'));
+				}
 			}
 		}
 
@@ -2185,7 +2187,9 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("/compta/prelevement/orders_list.php?mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
 				$newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
-				$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('prelevement', 'bons', 'lire'));
+				}
 			}
 		}
 
@@ -2199,7 +2203,9 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("/compta/prelevement/orders_list.php?type=bank-transfer&mainmenu=bank", $langs->trans("List"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
 				$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
-				$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->hasRight('paymentbybanktransfer', 'read'));
+				}
 			}
 		}
 
