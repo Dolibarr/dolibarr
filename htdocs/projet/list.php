@@ -313,6 +313,18 @@ if ($contextpage == 'lead') {
 		$arrayfields['p.fk_opp_status']['enabled'] = '1';
 		$arrayfields['p.fk_opp_status']['visible'] = '1';
 	}
+	// Budget is a project concept, irrelevant for opportunities
+	if (array_key_exists('p.budget_amount', $arrayfields)) {
+		$arrayfields['p.budget_amount']['enabled'] = '0';
+	}
+}
+// On the project view, opportunity columns are not relevant
+if ($contextpage == 'project') {
+	foreach (array('p.fk_opp_status', 'p.opp_amount', 'p.opp_percent', 'opp_weighted_amount') as $oppfield) {
+		if (array_key_exists($oppfield, $arrayfields)) {
+			$arrayfields[$oppfield]['enabled'] = '0';
+		}
+	}
 }
 
 
@@ -797,6 +809,12 @@ if ($search_budget_amount != '') {
 }
 if ($search_usage_opportunity != '' && $search_usage_opportunity >= 0) {
 	$sql .= natural_search('p.usage_opportunity', $search_usage_opportunity, 2);
+}
+// Opportunity (lead) vs project view partition (issue #23821)
+if ($contextpage == 'lead') {
+	$sql .= " AND ".Project::getViewFilterSQL('lead', 'p');
+} elseif ($contextpage == 'project') {
+	$sql .= " AND ".Project::getViewFilterSQL('project', 'p');
 }
 if ($search_usage_task != '' && $search_usage_task >= 0) {
 	$sql .= natural_search('p.usage_task', $search_usage_task, 2);
