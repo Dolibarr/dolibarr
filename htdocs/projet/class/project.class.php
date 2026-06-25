@@ -1288,6 +1288,7 @@ class Project extends CommonObject
 
 		if ($this->status != self::STATUS_CLOSED) {
 			$setoppstatussql = '';
+			$targetoppstatus = 0;
 
 			// When opportunities are enabled, an opportunity must be won or lost before being closed.
 			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($this->usage_opportunity)) {
@@ -1325,7 +1326,7 @@ class Project extends CommonObject
 
 				if (!$error) {
 					$this->status = self::STATUS_CLOSED;
-					if ($opp_status > 0) {
+					if ($setoppstatussql !== '') {
 						$this->fk_opp_status = (int) $targetoppstatus;
 						$this->opp_status = (int) $targetoppstatus;
 					}
