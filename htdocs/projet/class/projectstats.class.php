@@ -46,6 +46,11 @@ class ProjectStats extends Stats
 	 */
 	public $opp_status;
 
+	/**
+	 * @var string	'lead' or 'project' to restrict stats to one side of the opportunity/project partition, '' for both (issue #23821)
+	 */
+	public $mode = '';
+
 	//SQL stat
 	/**
 	 * @var string
@@ -243,6 +248,11 @@ class ProjectStats extends Stats
 			if ($this->opp_status == 'none') {
 				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1)";
 			}
+		}
+
+		// Restrict to one side of the opportunity/project partition (issue #23821)
+		if ($this->mode == 'lead' || $this->mode == 'project') {
+			$sqlwhere[] = Project::getViewFilterSQL($this->mode, 't');
 		}
 
 		if (!$user->hasRight('projet', 'all', 'lire')) {
