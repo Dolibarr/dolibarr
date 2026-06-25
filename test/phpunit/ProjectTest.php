@@ -138,7 +138,10 @@ class ProjectTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$result = $localobject->setClose($user);
+		// The specimen is an opportunity (usage_opportunity=1): since issue #23821 an opportunity
+		// can only be closed once its status is WON or LOST, so close it as WON.
+		$idoppstatuswon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+		$result = $localobject->setClose($user, $idoppstatuswon);
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
