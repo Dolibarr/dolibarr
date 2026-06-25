@@ -196,7 +196,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 		if (!GETPOST('title')) {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$error++;
 		}
 
@@ -311,7 +311,7 @@ if (empty($reshook)) {
 		}
 		if (!GETPOST("title")) {
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 		}
 
 		$db->begin();
@@ -685,8 +685,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	$defaultref = '';
 	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
-	// Suggest an opportunity reference (OPP) when creating a lead. In leads-only mode (==2) the form is always an opportunity.
-	$usageopportunityforref = GETPOSTISSET('usage_opportunity') ? GETPOSTINT('usage_opportunity') : (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2 ? 1 : 0);
+	// Suggest an opportunity reference (OPP) when the opportunity flag is on. Mirror the usage_opportunity
+	// checkbox default below (checked unless the request explicitly passes a falsy value).
+	$usageopportunityforref = GETPOSTISSET('usage_opportunity') ? GETPOSTINT('usage_opportunity') : 1;
 	if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') >= 1 && $usageopportunityforref) {
 		$modele = getDolGlobalString('PROJECT_LEAD_ADDON', 'mod_lead_simple');
 	}

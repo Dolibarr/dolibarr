@@ -178,7 +178,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 			$nbProject = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(n.rowid) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "projet as n";
+			$sql .= " FROM " . $db->prefix() . "projet as n";
 			$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
 			$sql .= " AND n.entity IN (" . getEntity('project') . ")";
 			$sql .= $projectviewfilter;
@@ -202,7 +202,7 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 				$nbOpp = $dataretrievedopp;
 			} else {
 				$sql = "SELECT COUNT(n.rowid) as nb";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "projet as n";
+				$sql .= " FROM " . $db->prefix() . "projet as n";
 				$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
 				$sql .= " AND n.entity IN (" . getEntity('project') . ")";
 				$sql .= " AND " . Project::getViewFilterSQL('lead', 'n');

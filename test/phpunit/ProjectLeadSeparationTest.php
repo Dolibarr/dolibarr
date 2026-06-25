@@ -48,10 +48,10 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		foreach (array('WON' => 100, 'LOST' => 0) as $code => $percent) {
 			$id = (int) dol_getIdFromCode($db, $code, 'c_lead_status', 'code', 'rowid');
 			if ($id <= 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_lead_status(code, label, percent, active)";
+				$sql = "INSERT INTO ".$db->prefix()."c_lead_status(code, label, percent, active)";
 				$sql .= " VALUES ('".$db->escape($code)."', '".$db->escape($code)."', ".((int) $percent).", 1)";
 				$db->query($sql);
-				$id = (int) $db->last_insert_id(MAIN_DB_PREFIX."c_lead_status");
+				$id = (int) $db->last_insert_id($db->prefix()."c_lead_status");
 			}
 			$ids[strtolower($code)] = $id;
 		}
@@ -115,7 +115,7 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		$idPure = $this->makeProject(0, null);			// plain project
 
 		$inView = function ($id, $view) use ($db) {
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet as p WHERE p.rowid = ".((int) $id);
+			$sql = "SELECT rowid FROM ".$db->prefix()."projet as p WHERE p.rowid = ".((int) $id);
 			$sql .= " AND ".Project::getViewFilterSQL($view, 'p');
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
