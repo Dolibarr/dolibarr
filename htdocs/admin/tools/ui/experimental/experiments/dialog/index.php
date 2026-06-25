@@ -92,10 +92,20 @@ $documentation->showSidebar(); ?>
 		<!-- Basic usage -->
 		<div id="dialogsection-basicusage" class="documentation-section" style="margin-top:24px;">
 			<h2 class="documentation-title"><?php echo $langs->trans('DocBasicUsage'); ?></h2>
-			<p class="documentation-text">Display a dialog depending on the position, either centered or anchored to the right</p>
+			<p class="documentation-text">Display a dialog depending on the position, either centered or anchored to the right. The first argument is any CSS selector: an <b>ID</b> arms a single element, while a <b>class</b> (or any selector matching several elements) arms every matching trigger in one call.</p>
+
+			<h3 class="nomarginbottom">Single trigger (ID selector)</h3>
 			<div class="documentation-example">
 				<button class="butAction" style="margin:4px;" id="btn-dialog-center" data-product-id="42" data-product-ref="PROD-ABC" data-product-price="29.90" ><span class="opacitylow">Dialog |</span> Center</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-right" data-product-id="101" data-product-ref="PROD-XYZ" data-product-price="3.20"><span class="opacitylow">Dialog |</span> Right</button>
+			</div>
+
+			<h3 class="nomarginbottom">Multiple triggers (class selector)</h3>
+			<p class="documentation-text">A single call arms the three buttons below. Each one sends its own <code>data-*</code> attributes, and the <code>dialogId</code> is automatically suffixed with the element index so every dialog stays independent — ideal for action buttons in a list or a table.</p>
+			<div class="documentation-example">
+				<button class="butAction dialog-multi-trigger" style="margin:4px;" data-product-id="1" data-product-ref="REF-001" data-product-type="product" data-product-price="9.99"><span class="opacitylow">Row 1 |</span> Open</button>
+				<button class="butAction dialog-multi-trigger" style="margin:4px;" data-product-id="2" data-product-ref="REF-002" data-product-type="service" data-product-price="49.00"><span class="opacitylow">Row 2 |</span> Open</button>
+				<button class="butAction dialog-multi-trigger" style="margin:4px;" data-product-id="3" data-product-ref="REF-003" data-product-type="product" data-product-price="120.50"><span class="opacitylow">Row 3 |</span> Open</button>
 			</div>
 
 		</div>
@@ -281,6 +291,17 @@ $documentation->showSidebar(); ?>
 			url: modalUrl
 		});
 
+		// Single call arming several triggers (shared class selector)
+		const uiDialogTitleMultiTrigger = 'Multiple triggers, one call';
+		const multiTriggerUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-basic-multi.php', 1); ?>';
+		Dolibarr.tools.uiDialog('.dialog-multi-trigger', {
+			dialogId: 'dlg-basic-multi',
+			align: 'center',
+			header: { title: uiDialogTitleMultiTrigger, icon: 'fas fa-layer-group' },
+			url: multiTriggerUrl,
+			persist: false
+		});
+
 		Dolibarr.tools.uiDialog('#btn-dialog-xs',  {
 			dialogId: 'test-dialog-xs',
 			align: 'right',
@@ -452,7 +473,7 @@ $documentation->showSidebar(); ?>
 			url: modalUrl,
 			footer: { submitFormId: 'dol-dialog-ajaxform-example' },
 			onSuccess: function(data) {
-				Dolibarr.tools.setEventMessage(data.message);
+				Dolibarr.tools.setEventMessage(data.msg);
 			}
 		});
 

@@ -8,6 +8,14 @@ if (!defined('NOCSRFCHECK'))    {define('NOCSRFCHECK', 1);}
 $res=0;
 if (! $res && file_exists("../../../../../../../main.inc.php")): $res=@include '../../../../../../../main.inc.php'; endif;
 
+/**
+ * @var DoliDB      $db
+ * @var Translate   $langs
+ * @var User        $user
+ */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/jsonResponse.class.php';
+
 //
 top_httphead('application/json');
 
@@ -22,6 +30,8 @@ if ($action == 'addticketexample') {
     $ref = GETPOST('ref', 'aZ09');
     $desc = GETPOST('description', 'alphanohtml');
 
+    $response = new JsonResponse();
+
     $error = 0;
     $errors = array();
 
@@ -35,8 +45,10 @@ if ($action == 'addticketexample') {
     }
 
     if ($error > 0) {
-         print json_encode(['success' => false, 'message' => implode("\r\n", $errors)]);
-         exit;
+        $response->result = 0;
+        $response->msg = implode("\r\n", $errors);
+        print $response->getResponse();
+        exit;
     }
 
     //
@@ -45,6 +57,8 @@ if ($action == 'addticketexample') {
 	$successMsg .= '<b>Request type:</b> '.ucfirst(GETPOST('type_code')).'<br>';
 	$successMsg .= '<b>Socid:</b> '.GETPOSTINT('socid').'<br>';
 	$successMsg .= '<b>Description:</b> '.GETPOST('description');
-    print json_encode(['success' => true, 'message' => $successMsg]);
+    $response->result = 1;
+    $response->msg = $successMsg;
+    print $response->getResponse();
     exit;
 }
