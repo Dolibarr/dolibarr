@@ -1,10 +1,12 @@
 # Action to prepare the GitHub Action
 # Prerequisites (create in the organization / repo):
-# - Create a github app with name "The DoliBear bot for ..." and no special options
+# - Create a Github app with name "The DoliBear bot for ..." and no special options
+# - Generate a client secret for this Github app
 # - Set Read access to actions, administration, code, custom organization roles, custom repository roles, members, and metadata
 # - Set Read and write access to discussions, issues, merge queues, pull requests, and repository projects
-# - Secret: PR18_SECRET_KEY (private key generated for the GitHub App)
-# - Variable: PR18_APP_ID (GitHub App ID)
+# - Set permission of the Github app for the repository of sources
+# - Create the secret: PR18_SECRET_KEY (private key generated for the GitHub App) with permission for the repository of sources and value of Github app secret
+# - Variable: PR18_APP_ID (GitHub App ID) with value of the GitHub App ID
 #
 # Behavior:
 # - On pull_request_target (opened, synchronize, reopened) against branch 18.0:
