@@ -1052,13 +1052,14 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if ($action == 'close') {
 		$text = $langs->trans("ConfirmCloseAProject");
 		$formquestion = array();
-		// An opportunity must be marked WON or LOST on close: let the user choose the final status.
+		// An opportunity must be marked WON or LOST on close: only offer those two statuses, with no
+		// preselection so the user makes an explicit choice (the server also enforces this in setClose()).
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			$formquestion[] = array(
 				'type' => 'other',
 				'name' => 'opp_status',
 				'label' => $langs->trans("OpportunityStatus"),
-				'value' => $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 0)
+				'value' => $formproject->selectOpportunityStatus('opp_status', -1, 1, 0, 0, 0, '', 0, 0, 1)
 			);
 		}
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $text, "confirm_close", $formquestion, '', 1);
