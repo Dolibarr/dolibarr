@@ -164,35 +164,78 @@ function societe_prepare_head(Societe $object, $subtabs = '')
 
 	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		dol_syslog('Company::societe_prepare_head::isModEnabled::project', LOG_DEBUG);
-		$nbProject = 0;
-		// Enable caching of thirdrparty count projects
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+
+		// When opportunities are split out, the Projects tab only counts plain projects (issue #23821)
+		$useopportunities = (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') >= 1);
+		$projectviewfilter = $useopportunities ? (" AND " . Project::getViewFilterSQL('project', 'n')) : '';
+
+		$nbProject = 0;
 		$cachekey = 'count_projects_thirdparty_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
-
 		if (!is_null($dataretrieved)) {
 			$nbProject = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(n.rowid) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "projet as n";
-			$sql .= " WHERE fk_soc = " . ((int) $object->id);
-			$sql .= " AND entity IN (" . getEntity('project') . ")";
+			$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
+			$sql .= " AND n.entity IN (" . getEntity('project') . ")";
+			$sql .= $projectviewfilter;
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				$nbProject = $obj->nb;
+				$db->free($resql);
 			} else {
 				dol_print_error($db);
 			}
 			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/project.php', ['socid' => $object->id]);
+
+		// Count of open opportunities for this thirdparty
+		$nbOpp = 0;
+		if ($useopportunities) {
+			$cachekeyopp = 'count_opportunities_thirdparty_' . $object->id;
+			$dataretrievedopp = dol_getcache($cachekeyopp);
+			if (!is_null($dataretrievedopp)) {
+				$nbOpp = $dataretrievedopp;
+			} else {
+				$sql = "SELECT COUNT(n.rowid) as nb";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "projet as n";
+				$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
+				$sql .= " AND n.entity IN (" . getEntity('project') . ")";
+				$sql .= " AND " . Project::getViewFilterSQL('lead', 'n');
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbOpp = $obj->nb;
+					$db->free($resql);
+				} else {
+					dol_print_error($db);
+				}
+				dol_setcache($cachekeyopp, $nbOpp, 120);
+			}
+		}
+
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/project.php', ['socid' => $object->id, 'mode' => 'project']);
 		$head[$h][1] = $langs->trans("Projects");
 		if ($nbProject > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbProject . '</span>';
 		}
 		$head[$h][2] = 'project';
 		$h++;
+
+		if ($useopportunities) {
+			$langs->load("projects");
+			$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/societe/project.php', ['socid' => $object->id, 'mode' => 'lead']);
+			$head[$h][1] = $langs->trans("Opportunities");
+			if ($nbOpp > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbOpp . '</span>';
+			}
+			$head[$h][2] = 'opportunity';
+			$h++;
+		}
 	}
 
 	// Tab to link resources
@@ -1016,7 +1059,7 @@ function isInSEPA($object)
  *      @param	string		$massactionbutton	Mass action button
  *      @return	int
  */
-function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '', $massactionbutton = '')
+function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '', $massactionbutton = '', $mode = '')
 {
 	global $conf, $user, $action, $hookmanager, $form;
 	global $massaction, $arrayofselected, $arrayofmassactions;
@@ -1025,14 +1068,21 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		$langs->load("projects");
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
+		$islead = ($mode == 'lead');
 
 		$newcardbutton = '';
 		if ($user->hasRight('projet', 'creer') && empty($nocreatelink)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
+			if ($islead) {
+				$newcardbutton .= dolGetButtonTitle($langs->trans('AddOpportunity'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&usage_opportunity=1&backtopage=' . urlencode($backtopage));
+			} else {
+				$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
+			}
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, 'project', 0, '', '', $massactionbutton);
+		print load_fiche_titre($langs->trans($islead ? "OpportunitiesDedicatedToThisThirdParty" : "ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, 'project', 0, '', '', $massactionbutton);
 
 		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';
@@ -1043,6 +1093,9 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_lead_status as cls on p.fk_opp_status = cls.rowid";
 		$sql .= " WHERE p.fk_soc = " . ((int) $object->id);
 		$sql .= " AND p.entity IN (" . getEntity('project') . ")";
+		if ($mode == 'lead' || $mode == 'project') {
+			$sql .= " AND " . Project::getViewFilterSQL($mode, 'p');
+		}
 		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
