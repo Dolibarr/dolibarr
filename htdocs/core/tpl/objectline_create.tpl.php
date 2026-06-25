@@ -1267,9 +1267,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 				if (has_multicurrency_up === false) {
 					if (typeof up_locale === 'undefined') {
-						jQuery("#price_ht").val(up);
+						if (!Number.isNaN(up)) {
+							jQuery("#price_ht").val(up);
+						}
 					} else {
-						jQuery("#price_ht").val(up_locale);
+						if (!Number.isNaN(up_locale)) {
+							jQuery("#price_ht").val(up_locale);
+						}
 					}
 				}
 
