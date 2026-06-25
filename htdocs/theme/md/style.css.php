@@ -580,7 +580,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus {
+textarea:focus:not(.ia-input) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
