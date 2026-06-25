@@ -238,7 +238,6 @@ MailToSendInvoice=Klantfacturen
 MailToSendSupplierOrder=Aankooporders
 MailToSendSupplierInvoice=Facturen leveranciers
 MailToSendReception=Ontvangen
-MailToExpenseReport=Uitgaven rapporten
 MailToThirdparty=Klant
 AddBoxes=Widgets toevoegen
 ChartLoaded=Rekeningstelsel geladen

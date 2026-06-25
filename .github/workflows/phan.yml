@@ -33,7 +33,7 @@ jobs:
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Another method to get the list of changed files
       # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
@@ -47,9 +47,10 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.4
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan:5.5.2
+          extensions: ast
+          tools: cs2pr:1.8.6,phan:5.5.2
 
 
       - name: Run Phan analysis

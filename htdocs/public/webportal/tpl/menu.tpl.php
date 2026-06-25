@@ -62,6 +62,26 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+	// menu interventions
+	if (isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS')) {
+		$navMenu['ficheinter_list'] = array(
+			'id' => 'ficheinter_list',
+			'rank' => 35,
+			'url' => $context->getControllerUrl('ficheinterlist'),
+			'name' => $langs->trans('WebPortalFicheinterListMenu'),
+			'group' => 'administrative'
+		);
+	}
+	// menu tickets
+	if (isModEnabled('ticket') && getDolGlobalInt('WEBPORTAL_TICKET_LIST_ACCESS')) {
+		$navMenu['ticket_list'] = array(
+			'id' => 'ticket_list',
+			'rank' => 36,
+			'url' => $context->getControllerUrl('ticketlist'),
+			'name' => $langs->trans('WebPortalTicketListMenu'),
+			'group' => 'administrative'
+		);
+	}
 	// menu documents (GED)
 	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
 		$navMenu['document_list'] = array(

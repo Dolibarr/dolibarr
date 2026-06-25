@@ -11,7 +11,7 @@
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2026  Frédéric France		    <frederic.france@free.fr>
  * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -682,6 +682,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 			print '</tr>';
 
 			$tot_ht = $tot_ttc = $tot_tobill = 0;
+			$total_ht = $total_ttc = 0;
 			$societestatic = new Societe($db);
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);

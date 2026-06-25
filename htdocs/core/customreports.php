@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2020-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,10 @@
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
  * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
- * $search_xaxis = array('t.column');
+ * $search_xaxis = array('t.columnx');
+ * $search_yaxis = array('t.columny');		// for grid ???
+ * $search_measures = array('t.count');
+ * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -41,17 +44,12 @@
  * @var User $user
  *
  * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
- * @var ?int		$SHOWLEGEND			Show legend or not
- * @var	string		$customreportkey	Custom report key
- * @var string		$customsql			Custom SQL
- * @var ?string[]	$search_groupby		Array with the third dimension
  */
 '
 @phan-var-force ?int[] $toselect
 ';
 
 // Initialise values
-$search_groupby = array();
 $tabfamily = null;
 $objecttype = null;
 
@@ -66,21 +64,38 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	$search_measures = GETPOST('search_measures', 'array');
+	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
 
-	//$search_xaxis = GETPOST('search_xaxis', 'array');
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
+	} else {
+		$search_xaxis = array();
 	}
-	//$search_groupby = GETPOST('search_groupby', 'array');
 	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
 		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
+	} else {
+		$search_groupby = array();
 	}
-
 	'@phan-var-force string[] $search_groupby';
 
-	$search_yaxis = GETPOST('search_yaxis', 'array');
+	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
+
+	/**
+	 * Sanitize key
+	 *
+	 * @param	string	$value		Value
+	 * @return	string				Sanitized value
+	 */
+	function sanititzekey($value)
+	{
+		return preg_replace('/[^a-z0-9\._\-]+/', '', $value);
+	}
+
+	$search_measures = array_map('sanititzekey', $search_measures);
+	$search_xaxis = array_map('sanititzekey', $search_xaxis);
+	$search_yaxis = array_map('sanititzekey', $search_yaxis);
+	$search_groupby = array_map('sanititzekey', $search_groupby);
 
 	// Load variable for pagination
 	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -97,9 +112,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$object = null;
 } else {
 	// When included into a main page
+	/**
+	 * @var ?int		$SHOWLEGEND			Show legend or not
+	 * @var	string		$customreportkey	Custom report key
+	 * @var ?string		$customsql			Custom SQL
+	 * @var ?string[]	$search_groupby		Array with the third dimension
+	 * @var int			$page
+	 * @var string		$sortfield
+	 * @var string		$sortorder
+	 */
 	'
 	@phan-var-force int<0,1> $SHOWLEGEND
-	@phan-var-force string customreportkey
+	@phan-var-force string $customreportkey
+	@phan-var-force ?string $customsql
+	@phan-var-force ?string[]	$search_groupby		Array with the third dimension
+	@phan-var-force int $page
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
@@ -115,7 +144,8 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 }
 
 // In customreport context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 if (empty($mode)) {
 	$mode = 'graph';
@@ -126,6 +156,14 @@ if (!isset($search_measures)) {
 if (!isset($search_xaxis)) {
 	// Ensure value is set and not null.
 	$search_xaxis = array();
+}
+if (!isset($search_yaxis)) {
+	// Ensure value is set and not null.
+	$search_yaxis = array();
+}
+if (!isset($search_groupby)) {
+	// Ensure value is set and not null.
+	$search_groupby = array();
 }
 if (!isset($search_graph)) {
 	// Ensure value is set and not null
@@ -462,22 +500,24 @@ if ($action == 'viewgraph') {
 if (count($search_groupby)) {
 	$fieldtocount = '';
 	foreach ($search_groupby as $gkey => $gval) {
-		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
+		$gvalwithoutprefix = preg_replace('/^[a-z]+\./i', '', $gval);
+		$gvalsanitized = preg_replace('/[^a-z0-9\._\-]+/i', '', $gval);
 
-		if (preg_match('/\-year$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-year$/', '', $search_groupby[$gkey]);
+		if (preg_match('/\-year$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-year$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y')";
-		} elseif (preg_match('/\-month$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-month$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-month$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-month$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m')";
-		} elseif (preg_match('/\-day$/', $search_groupby[$gkey])) {
-			$tmpval = preg_replace('/\-day$/', '', $search_groupby[$gkey]);
+		} elseif (preg_match('/\-day$/', $gvalsanitized)) {
+			$tmpval = preg_replace('/\-day$/', '', $gvalsanitized);
 			$fieldtocount .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d')";
 		} else {
-			$fieldtocount = $search_groupby[$gkey];
+			$fieldtocount = $gvalsanitized;
 		}
 
-		$sql = "SELECT DISTINCT ".$fieldtocount." as val";
+		$sanitizedfieldtocount = $fieldtocount;
+		$sql = "SELECT DISTINCT ".$sanitizedfieldtocount." as val";	// $fieldtocount has been sanitized by previous lines as we can't use db->sanitie()
 
 		if (strpos($fieldtocount, 'te') === 0) {
 			$tabletouse = $object->table_element;

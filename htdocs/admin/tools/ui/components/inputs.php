@@ -90,7 +90,7 @@ $documentation->showSidebar(); ?>
 				'Disabled Input',
 				'<input id="label" name="label" class="minwidth200" maxlength="255" value="" disabled>',
 			);
-			echo $documentation->showCode($lines); ?>
+			$documentation->showCode($lines); ?>
 
 			<!-- Checkbox input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocCheckboxInputsDescription'); ?></p>
@@ -105,7 +105,7 @@ $documentation->showSidebar(); ?>
 			'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="customerinput" class="valignmiddle"><span class="valignmiddle">Customer</span><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
 			'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="supplierinput" class="valignmiddle"><span class="valignmiddle">Supplier</span><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1" checked></label></span>',
 			);
-			echo $documentation->showCode($lines); ?>
+			$documentation->showCode($lines); ?>
 
 			<!-- Radio input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocRadioInputsDescription'); ?></p>
@@ -118,7 +118,7 @@ $documentation->showSidebar(); ?>
 			'<input type="radio" id="idforradioinput1" name="radioinput" value="value1"><label for="idforradioinput1" class="marginrightonly"> Radio Input 1</label>',
 			'<input type="radio" id="idforradioinput2" name="radioinput" value="value2"><label for="idforradioinput2" class="marginrightonly"> Radio Input 2</label>'
 			);
-			echo $documentation->showCode($lines); ?>
+			$documentation->showCode($lines); ?>
 		</div>
 
 		<!-- Helper functions -->
@@ -174,7 +174,7 @@ $documentation->showSidebar(); ?>
 			'print $form->selectarray(\'htmlnameselectwithinemptyvalue\', $values, \'idnameselectwithinemptyvalue\', 0,0, 0, \'\', 0, 0, 0, \'\', \'minwidth200\');',
 
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 
 			<!-- Multiselect input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocMultiSelectInputsDescription'); ?></p>
@@ -212,7 +212,7 @@ $documentation->showSidebar(); ?>
 			'// Multiselect',
 			'print $form->multiselectarray(\'categories\', $values, GETPOST(\'categories\', \'array\'), 0, 0, \'minwidth200\', 0, 0);'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 
 			<!-- Date input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocDateSelectInputsDescription'); ?></p>
@@ -269,7 +269,7 @@ $documentation->showSidebar(); ?>
 			'// Date Select with hours',
 			'print $form->selectDate(\'\', \'re2\', 1, 1, 1);'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 
 
 			<!-- Editor input -->
@@ -306,7 +306,7 @@ $documentation->showSidebar(); ?>
 			'$doleditor = new DolEditor(\'desc\', GETPOST(\'desc\', \'restricthtml\'), \'\', 160, \'dolibarr_details\', \'\', false, true, getDolGlobalString(\'FCKEDITOR_ENABLE_DETAILS\'), ROWS_4, \'90%\');',
 			'print $form->multiselectarray(\'categories\', $values, GETPOST(\'categories\', \'array\'), 0, 0, \'minwidth200\', 0, 0);'
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Search Filter Tool Input -->
@@ -376,7 +376,7 @@ $documentation->showSidebar(); ?>
 			'</div>',
 
 			);
-			echo $documentation->showCode($lines, 'php');
+			$documentation->showCode($lines, 'php');
 
 			$lines = array(
 			'<?php',
@@ -403,7 +403,7 @@ $documentation->showSidebar(); ?>
 			'</div>',
 
 			);
-			echo $documentation->showCode($lines, 'php');
+			$documentation->showCode($lines, 'php');
 
 			?>
 

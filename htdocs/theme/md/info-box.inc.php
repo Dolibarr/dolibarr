@@ -93,22 +93,31 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
-}
 .member-individual-back {
 	padding: 2px;
 	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
+	background-color: #258fa5;
+	color: #fff;
 	border-radius: 3px;
 	white-space: nowrap;
 }
+.member-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #557b95;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	padding: 2px;
+	margin: 2px;
+	background-color: #40859d;
+	color: #fff;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -201,7 +210,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	min-height: <?php echo $heightbox; ?>px;
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
+	box-shadow: 1px 1px 3px rgba(128, 128, 128, 0.1);
 	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
@@ -445,10 +454,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-t
 	width: calc(100% - 20px);
 }
 .info-box-text{
-	font-size: 0.90em;
+	font-size: 0.88em;
 }
 .info-box-desc {
-	font-size: 0.92em;
+	font-size: 0.91em;
 }
 /* Force values for small screen 480 */
 /*

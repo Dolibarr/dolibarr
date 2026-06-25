@@ -132,21 +132,25 @@ class Thirdparties extends DolibarrApi
 	 * Get a list of third parties
 	 *
 	 * @since	3.8.0	Initial implementation
+	 * @since	21.0.0	Data pagination
 	 *
-	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer nor prospect, 4 for suppliers
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return	array						Array of thirdparty objects
+	 * @param	bool	$pagination_data	If this parameter is set to true, the response will include pagination data. The default value is false. Page starts from 0*
+	 * @return	array						Array of third party objects
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
-	 * @throws RestException
+	 * @throws RestException 400
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -176,9 +180,7 @@ class Thirdparties extends DolibarrApi
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cc";
 			}
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
-		$sql .= " AND t.fk_stcomm = st.id";
 		if ($mode == 1) {
 			$sql .= " AND t.client IN (1, 3)";
 		} elseif ($mode == 2) {
@@ -188,7 +190,7 @@ class Thirdparties extends DolibarrApi
 		} elseif ($mode == 4) {
 			$sql .= " AND t.fournisseur IN (1)";
 		}
-		// Select thirdparties of given category
+		// Select third parties of a given category
 		if ($category > 0) {
 			if (!empty($mode) && $mode != 4) {
 				$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_soc = t.rowid";
@@ -248,7 +250,7 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve third parties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
 			$message = '';
@@ -271,7 +273,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, $message);
 		}
 
-		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		//if $pagination_data is true, the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
@@ -329,8 +331,10 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->company->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -391,7 +395,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+					$this->company->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->company);
 				}
 				continue;
 			}
@@ -538,7 +542,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(501, 'Module "Products" needed for this request');
 		}
 
-		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			throw new RestException(501, 'Multiprices features activation needed for this request');
 		}
 
@@ -1078,7 +1082,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!is_array($result)) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -1648,7 +1652,7 @@ class Thirdparties extends DolibarrApi
 		$notification->socid = $id;
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1725,7 +1729,7 @@ class Thirdparties extends DolibarrApi
 			if ($field === 'fk_action') {
 				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
 			}
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		$event = $notification->event;
@@ -1822,7 +1826,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			$notification->$field = $value;
+			$notification->$field = $this->_checkValForAPI($field, $value, $notification);
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {

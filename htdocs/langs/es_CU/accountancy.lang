@@ -98,7 +98,6 @@ ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si e
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las cuentas contables de terceros (si establece el valor en 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
 BANK_DISABLE_DIRECT_INPUT=Deshabilitar el registro directo de la transacción en la cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar la exportación de borradores en el diario
-ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria (puede ser lenta si tiene muchos terceros, interrumpe la capacidad de buscar una parte del valor)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=diario de informe de gastos
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene nuevo Diario
 ACCOUNTING_INVENTORY_JOURNAL=diario de inventario

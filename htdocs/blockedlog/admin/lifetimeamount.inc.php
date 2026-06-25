@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +27,18 @@
  * @var Conf $conf
  * @var CommonObject $object
  *
- * @var array<string,float> $totalamountlifetime
- * @var array<string,float> $totalhtamountlifetime
+ * @var array<string,array<string,float>> $totalamountlifetime
+ * @var array<string,array<string,float>> $totalhtamountlifetime
  * @var int $foundoldformat
  * @var int $firstrecorddate
  * @var int $error
  * @var ?int $search_end
+ * @var int $includebeforev2
  */
-'@phan-var-force array<string,float> $totalamountlifetime';
-'@phan-var-force array<string,float> $totalhtamountlifetime';
+'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
+'@phan-var-force int $error';
+global $foundoldformat, $firstrecorddate, $error;
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -56,7 +60,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 $sql .= " WHERE entity = ".((int) $conf->entity);
 //$sql .= " AND action IN ('BILL_VALIDATE', 'BILL_SENTBYMAIL', 'PAYMENT_CUSTOMER_CREATE', 'CASHCONTROL_CLOSE', 'PAYMENT_CUSTOMER_DELETE', 'DOC_DOWNLOAD', 'DOC_PREVIEW')";
 $sql .= " AND action IN ('BILL_VALIDATE', 'PAYMENT_CUSTOMER_CREATE', 'PAYMENT_CUSTOMER_DELETE')";	// Only event into lifetime total
-$sql .= " AND date_creation < '".$db->idate($dateend)."'";
+if ($dateend > 0) {
+	$sql .= " AND date_creation < '".$db->idate($dateend)."'";
+}
+if (empty($includebeforev2)) {
+	$sql .= " AND object_format >= 'V2'";		// We take all record from the new format (V2)
+}
 $sql .= " GROUP BY action, module_source, object_format";
 
 $resql = $db->query($sql);
@@ -72,21 +81,24 @@ if ($resql) {
 		if (!empty($firstrecorddate)) {
 			$firstrecorddate = min($firstrecorddate, $db->jdate($obj->datemin, 'gmt'));
 		} else {
-			$firstrecorddate = $obj->datemin;
+			$firstrecorddate = $db->jdate($obj->datemin, 'gmt');
 		}
 
-		if (!isset($totalamountlifetime[$obj->action])) {
-			$totalamountlifetime[$obj->action] = 0;
+		if (!isset($totalamountlifetime[$obj->action][$obj->module_source])) {
+			$totalamountlifetime[$obj->action][$obj->module_source] = 0;
+		}
+		if (!isset($totalhtamountlifetime[$obj->action][$obj->module_source])) {
+			$totalhtamountlifetime[$obj->action][$obj->module_source] = 0;
 		}
 
 		// Total per action code and module
-		$totalamountlifetime[$obj->action] += $obj->sumamounts;
+		$totalamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts;
 
 		// If format of line is old, the sumamounts_taxexcl was not recorded. So we flag this case.
 		if (empty($obj->object_format) || $obj->object_format === 'V1') {
 			$foundoldformat = 1;
 		} else {
-			$totalhtamountlifetime[$obj->action] += $obj->sumamounts_taxexcl;
+			$totalhtamountlifetime[$obj->action][$obj->module_source] += $obj->sumamounts_taxexcl;
 		}
 	}
 } else {

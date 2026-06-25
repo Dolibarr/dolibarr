@@ -13,14 +13,14 @@ if [ "x$2" != "x" ]; then
 	START=$2
 fi
 
-if [ -z "$param1" ]; then
+if [[ "$param1" != 'pull' && "$param1" != 'merge' && "$param1" != 'all' ]]; then
     echo "Usage: $0 <pull|merge|all>  [xx]"
     echo "       where xx is version to start from (14, 18, ...)"
     echo
     echo "Example:"
-    echo "$0 pull   # For pull only"
-    echo "$0 merge  # For merge only"
-    echo "$0 all    # For pull then merge"
+    echo "$0 pull       # For pull only"
+    echo "$0 merge 20   # For merge only"
+    echo "$0 all        # For pull then merge"
     echo
     exit 1
 fi

@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
- * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Vincent de Grandpré     <vincent@de-grandpre.quebec>
+ * Copyright (C) 2025       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2026       Solution Libre SAS      <contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +32,13 @@
 include_once 'inc.php';
 
 /**
+ * @var DoliDB $b
  * @var Conf $conf
  * @var Translate $langs
  *
+ * @var string $dolibarr_main_data_root
  * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_character_set
  * @var string $dolibarr_main_db_host
  * @var string $dolibarr_main_db_port
  * @var string $dolibarr_main_db_name
@@ -98,8 +102,6 @@ if (!is_object($conf)) {
  * View
  */
 
-$form = new Form($db);
-
 pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 
 // Action to launch the repair script
@@ -137,6 +139,8 @@ $conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $
 $conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
 $db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, (string) $conf->db->pass, (string) $conf->db->name, (int) $conf->db->port);
+
+$form = new Form($db);
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
@@ -297,8 +301,8 @@ foreach ($sections as $section => $options) {
 		$tooltip = empty($opt['tooltip']) ? '' : $opt['tooltip'];
 		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
 		// Generate links with the right option and value
-		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
-		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
+		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test#pleasebepatient';
+		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed#pleasebepatient';
 		print '<tr>';
 		print '<td>' . $option . '</td>';
 		print '<td>';
@@ -308,8 +312,8 @@ foreach ($sections as $section => $options) {
 			print $info;
 		}
 		print '</td>';
-		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
-		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (launched)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch repair on option '.$option.'">repair</a>'.($value == 'confirmed' ? ' (launched)' : '').'</td>';
 		print '</tr>';
 	}
 }
@@ -338,6 +342,7 @@ $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_l
 	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha')) || GETPOST('repair_mailing_path', 'alpha');
 
 if ($ok && $oneoptionset) {
+	print '<div id="pleasebepatient"></div>';
 	// Show wait message
 	print $langs->trans("PleaseBePatient").'<br><br>';
 
@@ -396,8 +401,8 @@ if ($ok && GETPOST('standard', 'alpha')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contratligne.class.php';
 
 	print '<tr><td colspan="2"><br>*** Update denormalized_lower_planned_end_date.</td></tr>';
-	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat as c";
-	$sqltoupdatecontract .= " SET c.denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
+	$sqltoupdatecontract = "UPDATE ".MAIN_DB_PREFIX."contrat";
+	$sqltoupdatecontract .= " SET denormalized_lower_planned_end_date = (SELECT MIN(date_fin_validite) FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid AND cd.statut = ".ContratLigne::STATUS_OPEN.")";
 	$resqltoupdatecontract = $db->query($sqltoupdatecontract);
 
 	$extrafields = new ExtraFields($db);
@@ -411,7 +416,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 				'fichinter' => 'fichinter', 'fichinterdet' => 'fichinterdet',
 				'inventory' => 'inventory',
 				'actioncomm' => 'actioncomm', 'bom_bom' => 'bom_bom', 'mrp_mo' => 'mrp_mo',
-				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket');
+				'adherent_type' => 'adherent_type', 'user' => 'user', 'partnership' => 'partnership', 'projet' => 'projet', 'projet_task' => 'projet_task', 'ticket' => 'ticket', 'payment_various' => 'payment_various');
 	//$listofmodulesextra = array('fichinter'=>'fichinter');
 
 	print '<tr><td colspan="2"><br>*** Check that fields into the extra table structure match the table of definition. If not, add column into table</td></tr>';
@@ -2055,7 +2060,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					// Calcul de la somme des paiements reçus
 					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
-					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$totHt = ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
 					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
 					$totLocal1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
 					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
@@ -2068,8 +2073,8 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 							localtax1 = $totLocal1,
 							localtax2 = $totLocal2,
 							total_ttc = $totTtc,
-							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 ).",
-							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0 )."
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1).",
+							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0)."
 						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
@@ -2134,7 +2139,7 @@ if ($ok && GETPOST('repair_mailing_path')) {
 							while (($thumb = readdir($thumbs)) !== false) {
 								$res = dol_move($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb);
 								$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-								print ($msg);
+								print($msg);
 							}
 							// dol_delete_dir($origin.'/'.$file);
 						}
@@ -2142,7 +2147,7 @@ if ($ok && GETPOST('repair_mailing_path')) {
 						if (dol_is_file($origin.'/'.$file)) {
 							$res = dol_move($origin.'/'.$file, $destin.'/'.$file);
 							$msg = ($res ? '  * Migration successful' : 'Migration failed') . ' for file '.$origin.'/'.$file.'.<br>';
-							print ($msg);
+							print($msg);
 						}
 					}
 				}

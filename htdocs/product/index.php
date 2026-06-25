@@ -118,10 +118,8 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
-		// Ensure $listofsearchfields is set and array
-		$listofsearchfields = array();
-	}
+	$listofsearchfields = array();
+
 	// Search contract
 	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text' => 'ProductOrService');
@@ -361,7 +359,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			$lastmodified .= '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -430,7 +428,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$lastmodified .= dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				$lastmodified .= "</td>";
 				// Sell price
-				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);

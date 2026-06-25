@@ -13,7 +13,7 @@
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,12 +108,12 @@ class Paiement extends CommonObject
 	public $multicurrency_currency;
 
 	/**
-	 * @var array<float|string> array: invoice ID => amount for that invoice (in the main currency)
+	 * @var array<int,float|string|null> array: invoice ID => amount for that invoice (in the main currency)
 	 */
 	public $amounts = array();
 
 	/**
-	 * @var float[] array: invoice ID => amount for that invoice (in the invoice's currency)
+	 * @var array<int,float|null> array: invoice ID => amount for that invoice (in the invoice's currency)
 	 */
 	public $multicurrency_amounts = array();
 
@@ -303,7 +303,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	User	  $user                	Object user
 	 *  @param  int		  $closepaidinvoices   	1=Also close paid invoices to paid, 0=Do nothing more
-	 *  @param  Societe   $thirdparty           Thirdparty
+	 *  @param  Societe|null   $thirdparty           Thirdparty
 	 *  @return int                 			id of created payment, < 0 if error
 	 */
 	public function create($user, $closepaidinvoices = 0, $thirdparty = null)
@@ -518,6 +518,8 @@ class Paiement extends CommonObject
 								}
 								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
 							} else {
+								// Here $remaintopay is 0.
+
 								// If invoice is a down payment, we also convert down payment to discount
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
@@ -541,41 +543,47 @@ class Paiement extends CommonObject
 										$discount->fk_facture_source = $invoice->id;
 
 										// Loop on each vat rate
+										// Bucket by tva_tx and vat_src_code so the generated discount keeps the source VAT code
 										$i = 0;
 										foreach ($invoice->lines as $line) {
 											if ($line->product_type != 9 && $line->total_ht != 0) {    // no need to create discount if amount is null or is special product
-												if (!array_key_exists($line->tva_tx, $amount_ht)) {
-													$amount_ht[$line->tva_tx] = 0.0;
-													$amount_tva[$line->tva_tx] = 0.0;
-													$amount_ttc[$line->tva_tx] = 0.0;
-													$multicurrency_amount_ht[$line->tva_tx] = 0.0;
-													$multicurrency_amount_tva[$line->tva_tx] = 0.0;
-													$multicurrency_amount_ttc[$line->tva_tx] = 0.0;
+												$key = $line->tva_tx.'|'.(string) $line->vat_src_code;
+												if (!array_key_exists($key, $amount_ht)) {
+													$amount_ht[$key] = 0.0;
+													$amount_tva[$key] = 0.0;
+													$amount_ttc[$key] = 0.0;
+													$multicurrency_amount_ht[$key] = 0.0;
+													$multicurrency_amount_tva[$key] = 0.0;
+													$multicurrency_amount_ttc[$key] = 0.0;
 												}
-												$amount_ht[$line->tva_tx] += $line->total_ht;
-												$amount_tva[$line->tva_tx] += $line->total_tva;
-												$amount_ttc[$line->tva_tx] += $line->total_ttc;
-												$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
-												$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
-												$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+												$amount_ht[$key] += $line->total_ht;
+												$amount_tva[$key] += $line->total_tva;
+												$amount_ttc[$key] += $line->total_ttc;
+												$multicurrency_amount_ht[$key] += $line->multicurrency_total_ht;
+												$multicurrency_amount_tva[$key] += $line->multicurrency_total_tva;
+												$multicurrency_amount_ttc[$key] += $line->multicurrency_total_ttc;
 												$i++;
 											}
 										}
 
-										foreach ($amount_ht as $tva_tx => $xxx) {
-											$discount->amount_ht = abs($amount_ht[$tva_tx]);
-											$discount->total_ht = abs($amount_ht[$tva_tx]);
-											$discount->amount_tva = abs($amount_tva[$tva_tx]);
-											$discount->total_tva = abs($amount_tva[$tva_tx]);
-											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-											$discount->total_ttc = abs($amount_ttc[$tva_tx]);
-											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
-											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
-											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
-											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+										foreach ($amount_ht as $keyfordiscount => $xxx) {
+											$parts = explode('|', (string) $keyfordiscount, 2);
+											$tva_tx = $parts[0];
+											$vat_src_code = isset($parts[1]) ? $parts[1] : '';
+											$discount->amount_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->total_ht = abs($amount_ht[$keyfordiscount]);
+											$discount->amount_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->total_tva = abs($amount_tva[$keyfordiscount]);
+											$discount->amount_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->total_ttc = abs($amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$keyfordiscount]);
+											$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$keyfordiscount]);
+											$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
+											$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$keyfordiscount]);
 											$discount->tva_tx = abs((float) $tva_tx);
+											$discount->vat_src_code = $vat_src_code;
 
 											$result = $discount->create($user);
 											if ($result < 0) {
@@ -694,9 +702,9 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture classee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('f.fk_statut > 1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('f.fk_statut:>:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -1185,7 +1193,7 @@ class Paiement extends CommonObject
 	/**
 	 *  Return list of invoices the payment is related to.
 	 *
-	 *  @param	string		$filter         Filter
+	 *  @param	string		$filter         Filter. Use USF syntax.
 	 *  @return int|int[]					Return integer <0 if KO or array of invoice id
 	 *  @see getAmountsArray()
 	 */
@@ -1195,7 +1203,7 @@ class Paiement extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'facture as f'; // We keep link on invoice to allow use of some filters on invoice
 		$sql .= ' WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {

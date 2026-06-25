@@ -494,25 +494,25 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 
 			if ($key == 'logina') {
 				$logina = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $logina)) {
 					$logina = preg_replace('/^!/', '', $logina);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logina);
 				if ($result > 0) {
-					$sql .= " AND a.fk_user_author ".$condition." ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $condition == '=') {
+					$sql .= " AND a.fk_user_author ".$sanitizedcondition." ".((int) $userforfilter->id);
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND a.fk_user_author = 0";
 				}
 			}
 			if ($key == 'logini') {
 				$logini = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $logini)) {
 					$logini = preg_replace('/^!/', '', $logini);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $logini);
@@ -521,17 +521,17 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				$sql .= " AND ec.fk_c_type_contact = 26";	// FIXME do not use hardcoded ID
 				if ($result > 0) {
 					$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $condition == '=') {
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND ec.fk_socpeople = 0";
 				}
 				$sql .= ")";
 			}
 			if ($key == 'loginr') {
 				$loginr = $value;
-				$condition = '=';
+				$sanitizedcondition = '=';
 				if (preg_match('/^!/', $loginr)) {
 					$loginr = preg_replace('/^!/', '', $loginr);
-					$condition = '<>';
+					$sanitizedcondition = '<>';
 				}
 				$userforfilter = new User($db);
 				$result = $userforfilter->fetch(0, $loginr);
@@ -540,7 +540,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				$sql .= " WHERE AND ecr.fk_c_type_contact = 27";	// FIXME do not use hardcoded ID
 				if ($result > 0) {
 					$sql .= " AND ecr.fk_socpeople = ".((int) $userforfilter->id);
-				} elseif ($result < 0 || $condition == '=') {
+				} elseif ($result < 0 || $sanitizedcondition == '=') {
 					$sql .= " AND ecr.fk_socpeople = 0";
 				}
 				$sql .= ")";

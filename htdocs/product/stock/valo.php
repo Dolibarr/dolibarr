@@ -130,7 +130,7 @@ if ($result) {
 			print '</td>';
 			// Selling value
 			print '<td class="right">';
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				print $langs->trans("Variable");

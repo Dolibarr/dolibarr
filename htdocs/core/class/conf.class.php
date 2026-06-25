@@ -49,7 +49,7 @@ class Conf extends stdClass
 	public $global;
 
 	/**
-	 * @var stdClass 	To store browser info (->name, ->os, ->version, ->ua, ->layout, ...)
+	 * @var stdClass 	To store browser info (->name, ->os, ->version, ->ua, ->layout, ...). Set with the result of a call of getBrowserInfo()
 	 */
 	public $browser;
 
@@ -634,6 +634,12 @@ class Conf extends stdClass
 								if ($modulename == 'supplierproposal') {
 									$modulename = 'supplier_proposal';
 								}
+								if ($modulename == 'supplierorder') {
+									$modulename = 'supplier_order';
+								}
+								if ($modulename == 'supplierinvoice') {
+									$modulename = 'supplier_invoice';
+								}
 								$this->modules[$modulename] = $modulename; // Add this module in list of enabled modules
 
 								// deprecated in php 8.2
@@ -755,12 +761,19 @@ class Conf extends stdClass
 			// Define default dir_output and dir_temp for directories of modules
 			foreach ($this->modules as $module) {
 				//var_dump($module);
+				$dirformodule = $module;
+				// Add code to manage compatibility for old module name
+				if ($dirformodule == 'banque') {
+					$dirformodule = 'bank';
+				}
+				// To complete...
+
 				// For multicompany sharings
-				$this->$module->multidir_output = array($this->entity => $rootfordata."/".$module);
-				$this->$module->multidir_temp = array($this->entity => $rootfortemp."/".$module."/temp");
+				$this->$dirformodule->multidir_output = array($this->entity => $rootfordata."/".$dirformodule);
+				$this->$dirformodule->multidir_temp = array($this->entity => $rootfortemp."/".$dirformodule."/temp");
 				// For backward compatibility
-				$this->$module->dir_output = $rootfordata."/".$module;
-				$this->$module->dir_temp = $rootfortemp."/".$module."/temp";
+				$this->$dirformodule->dir_output = $rootfordata."/".$dirformodule;
+				$this->$dirformodule->dir_temp = $rootfortemp."/".$dirformodule."/temp";
 			}
 
 			// External modules storage
@@ -895,13 +908,6 @@ class Conf extends stdClass
 			$this->contrat->dir_output = $rootfordata."/contract";
 			$this->contrat->dir_temp = $rootfortemp."/contract/temp";
 
-			// Module bank
-			$this->bank->multidir_output = array($this->entity => $rootfordata."/bank");
-			$this->bank->multidir_temp = array($this->entity => $rootfortemp."/bank/temp");
-			// For backward compatibility
-			$this->bank->dir_output = $rootfordata."/bank";
-			$this->bank->dir_temp = $rootfortemp."/bank/temp";
-
 			// Set some default values
 			//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
 			$this->global->MAIN_MAIL_USE_MULTI_PART = 1;
@@ -1002,7 +1008,7 @@ class Conf extends stdClass
 				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
 			}
 			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
-				$this->global->THEME_ELDY_BORDER_RADIUS = 8;
+				$this->global->THEME_ELDY_BORDER_RADIUS = 10;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1013,6 +1019,11 @@ class Conf extends stdClass
 			// By default we enable feature to bill time spent
 			if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) {
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
+			}
+
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
 			}
 
 			// MAIN_HTML_TITLE
@@ -1029,14 +1040,7 @@ class Conf extends stdClass
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
 				// Mode automatic. Similar code than into main.inc.php
-				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-					$this->liste_limit = 8;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-					$this->liste_limit = 10;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-					$this->liste_limit = 20;
-				}
+				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
@@ -1163,6 +1167,11 @@ class Conf extends stdClass
 			// By default, accept to create members with no login
 			if (!isset($this->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 				$this->global->ADHERENT_LOGIN_NOT_REQUIRED = 1;
+			}
+
+			// By default, we use this constant now
+			if (! isset($this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION)) {
+				$this->global->MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION = 1;
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
@@ -1347,7 +1356,7 @@ class Conf extends stdClass
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction (except some non sensitive values)
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2; // TODO Switch value to 3
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = (defined('MAIN_SECURITY_CSRF_WITH_TOKEN') ? constant('MAIN_SECURITY_CSRF_WITH_TOKEN') : 3);
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 
@@ -1381,11 +1390,6 @@ class Conf extends stdClass
 			}
 			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-			}
-
-			if (!isset($this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER)) {
-				// Note value is always forced to 1 in API and customreport context to avoid bind SQL injection into user input filters.
-				$this->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
 			}
 
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {

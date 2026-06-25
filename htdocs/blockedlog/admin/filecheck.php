@@ -52,7 +52,12 @@ if (!$user->admin && !$user->hasRight('bockedlog', 'read')) {
 $error = 0;
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR' && !constant('CERTIF_LNE')) {
+	// Can add an edditional mention
+	$versionbadge .= ' - '.$langs->trans("NeedAThirdPartyStatement");
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -101,14 +106,21 @@ if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 print ' '.$form->textwithpicto('', $htmltooltip);
 print '</td></tr>'."\n";
 
+$showblockedlogversion = 0;
+if ($mysoc->country_code == 'FR') {
+	$showblockedlogversion = 1;
+}
 if (isALNERunningVersion()) {
+	$showblockedlogversion = 1;
+}
+
+if ($showblockedlogversion) {
 	print '<tr class="oddeven nohover">';
 	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
 	print $versionbadge;
 	print '</td>';
 	print '</tr>';
 }
-
 
 print '</table>';
 print '</div>';
@@ -118,7 +130,7 @@ $infotoshow = '';
 if ($mysoc->country_code == 'FR') {
 	$islne = isALNEQualifiedVersion(1, 1);
 	if ($islne) {
-		if (preg_match('/\-/', DOL_VERSION)) {
+		if (preg_match('/\-/', getBlockedLogVersionToShow())) {
 			// This is an alpha or beta version
 			$infotoshow = $langs->trans("LNECandidateVersionForCertificationFR", getBlockedLogVersionToShow());
 		} else {
@@ -626,7 +638,7 @@ if (empty($error) && !empty($xml)) {
 
 		// Print list of files
 		$outforlistoffiles = '<a href="#" onclick="console.log(\'Click\'); jQuery(\'#listofunalterablefiles\').toggle(); return false;">'.$langs->trans("ShowListOfFiles").'</a><br>';
-		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12">';
+		$outforlistoffiles .= '<textarea id="listofunalterablefiles" class="hideobject quatrevingtpercent" rows="12" spellcheck="false">';
 		$i = 0;
 		foreach ($listoffilestoanalyze as $dirtoanalyze) {
 			$entry = array();

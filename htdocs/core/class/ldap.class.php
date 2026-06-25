@@ -30,7 +30,7 @@
  *  Note:
  *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
  *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
- *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource)
+ *  @phan-file-suppress PhanTypeMismatchArgumentInternal (notifications concern 'resource')
  */
 
 /**
@@ -242,7 +242,8 @@ class Ldap
 	public $ldapcharset = 'UTF-8';
 
 	/**
-	 * @var bool|resource	The internal LDAP connection handle. Was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @var false|resource	The internal LDAP connection handle. Was a resource before PHP 8.1 and is an object of class LDAP\Connection since PHP 8.1
+	 * @phpstan-var LDAP\Connection
 	 */
 	public $connection;
 
@@ -346,7 +347,7 @@ class Ldap
 		if (empty($this->error)) {
 			// Loop on each ldap server
 			foreach ($this->server as $host) {
-				if ($connected) {
+				if ($connected) {  // @phpstan-ignore if.alwaysFalse
 					break;
 				}
 				if (empty($host)) {
@@ -384,7 +385,7 @@ class Ldap
 					}
 				}
 
-				if (is_resource($this->connection) || is_object($this->connection)) {
+				if ($this->connection !== false) {
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connectBind this->connection is ok", LOG_DEBUG);
 					}
@@ -436,7 +437,7 @@ class Ldap
 							}
 						}
 						// Try in anonymous
-						if (!$this->bind) {
+						if (!$this->bind) {  // @phpstan-ignore booleanNot.alwaysTrue
 							dol_syslog(get_class($this)."::connectBind try bind anonymously on ".$host, LOG_DEBUG);
 							$result = $this->bind();
 							if ($result) {
@@ -451,7 +452,7 @@ class Ldap
 					}
 				}
 
-				if (!$connected) {
+				if (!$connected) {  // @phpstan-ignore booleanNot.alwaysTrue
 					$this->unbind();
 				}
 			}	// End loop on each server
@@ -540,7 +541,7 @@ class Ldap
 				}
 			}
 		} else {
-			if (is_resource($this->connection)) {
+			if ($this->connection !== false) {
 				// @phan-suppress-next-line PhanTypeMismatchArgumentInternalReal PhanTypeSuspiciousIndirectVariable
 				$this->result = @ldap_unbind($this->connection);
 			}
@@ -1104,6 +1105,13 @@ class Ldap
 			return -3;
 		}
 
+		// Honor the admin-configured user search filter (LDAP_FILTER_CONNECTION)
+		// so an identifier match outside the configured scope does not leak
+		// attributes for an unrelated LDAP user (see #37120).
+		if (!empty($this->filter) && !preg_match('/^\s*\(\s*&\s*\(/', $filter)) {
+			$filter = '(&(' . $this->filter . ')' . $filter . ')';
+		}
+
 		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
@@ -1648,7 +1656,7 @@ class Ldap
 			$c = $result['count'];
 			$gids = array();
 			for ($i = 0; $i < $c; $i++) {
-				$gids[] = $result[$i]['gidnumber'][0];
+				$gids[] = (int) $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
 

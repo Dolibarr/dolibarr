@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Charlene Benke	 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,13 @@
 
 if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action'] != 'reset')) {	// We force security except to disable modules so we can do it if a problem occurs on a module
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
+}
+
+// The modules list is a setup hub: force the menu context to "home" when the
+// caller did not provide one, so the previously visited module's menu does not
+// stick when the user comes back to this page (issue 38058).
+if (!isset($_GET['mainmenu']) && !isset($_POST['mainmenu'])) {
+	$_GET['mainmenu'] = 'home';
 }
 
 // Load Dolibarr environment
@@ -206,15 +214,44 @@ if (GETPOST('buttonreset', 'alpha')) {
 if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
+
+	$isExternalDownload = 0;
+	$producttoinstall = GETPOST('producttoinstall', 'array');
+
 	// $original_file should match format module_modulename-x.y[.z].zip
-	$tmpfile = $_FILES['fileinstall']['tmp_name'];
+	if ($producttoinstall) {
+		$isExternalDownload = 1;
+		$tmpExternalModuleZipFile = $remotestore->getModuleZIP($producttoinstall); // Return the zip file path.
+		if ($tmpExternalModuleZipFile) {
+			// We fill $_FILES with the zip file we just created to reuse the same code as if file was uploaded by user
+			$_FILES['fileinstall'] = array(
+				'name' => basename($tmpExternalModuleZipFile),
+				'type' => 'application/zip',
+				'tmp_name' => $tmpExternalModuleZipFile,
+				'error' => 0,
+				'size' => filesize($tmpExternalModuleZipFile)
+			);
+		}
+	}
+
+	$tmpfile = (string) $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
 	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
+	if (empty($tmpfile)) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
+		$error++;
+	}
+
 	if (!$original_file) {
 		$langs->load("Error");
-		setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		if ($isExternalDownload) {
+			setEventMessages($langs->trans("ErrorFailToDownloadModuleFromSource", $producttoinstall['name']), null, 'warnings');
+		} else {
+			setEventMessages($langs->trans("ErrorModuleFileRequired"), null, 'warnings');
+		}
 		$error++;
 	} else {
 		if (!$error && !preg_match('/\.zip$/i', $original_file)) {
@@ -225,11 +262,6 @@ if ($action == 'install' && $allowonlineinstall) {
 		if (!$error && !preg_match('/^(module[a-zA-Z0-9]*_|theme_|).*\-([0-9][0-9\.]*)(\s\(\d+\)\s)?\.zip$/i', $original_file)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
-			$error++;
-		}
-		if (empty($tmpfile)) {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
 		}
 	}
@@ -246,7 +278,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error'], 0, 'addedfile', '', $isExternalDownload ? 1 : 0);
 		if ((int) $result > 0) {
 			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
@@ -307,7 +339,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 				*/
 
-				// Check if module is in the remote malware list
+				// Check if module is in the remote malware blacklist (at URL DolibarrModules::URL_FOR_BLACKLISTED_MODULES)
 				if (!$error) {
 					if (GETPOST('checkforcompliance') == 'on') {
 						try {
@@ -328,6 +360,7 @@ if ($action == 'install' && $allowonlineinstall) {
 
 				if (!$error) {
 					// TODO Make more test ???
+					// Call validateZipFile() in functions2.lib.php ?
 				}
 
 				// We check if this is a metapackage (and wecomplete with child packages)
@@ -527,7 +560,6 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
-
 // Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -653,7 +685,11 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Module ".get_class($objMod)." not qualified");
 							}
 						} else {
-							print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							// Skip warning for modules being refactored (class split in progress)
+							$silentModules = array('modSupplierOrder', 'modSupplierInvoice', 'modFournisseur');
+							if (!in_array($modName, $silentModules)) {
+								print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							}
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -842,6 +878,39 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$atleastonequalified = 0;
 	$atleastoneforfamily = 0;
 
+	print '<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery(".modulefamilygroup").each(function() {
+			var $group = jQuery(this);
+			var $title = $group.find(".titre.inline-block").first();
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($title.length && !$title.children(".modulefamilytoggleicon").length) {
+				$title.prepend("<i class=\"fa modulefamilytoggleicon paddingleft paddingleftright\"></i> ");
+			}
+			var $icon = $title.children(".modulefamilytoggleicon").first();
+			var isVisible = $nextContainer.is(":visible");
+			if ($icon.length && $nextContainer.length) {
+				$icon.toggleClass("fa-folder-open", isVisible);
+				$icon.toggleClass("fa-folder", !isVisible);
+			}
+		});
+
+		jQuery(document).on("click", ".modulefamilygroup", function() {
+			var $group = jQuery(this);
+			var $nextContainer = $group.nextAll(".div-table-responsive, .box-flex-container").first();
+			if ($nextContainer.length) {
+				var $icon = $group.find(".modulefamilytoggleicon").first();
+				var isVisible = $nextContainer.is(":visible");
+				$nextContainer.stop(true, true).slideToggle(150);
+				if ($icon.length) {
+					$icon.toggleClass("fa-folder-open", !isVisible);
+					$icon.toggleClass("fa-folder", isVisible);
+				}
+			}
+		});
+	});
+	</script>';
+
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -880,12 +949,19 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// We discard showing according to filters
 		if ($search_keyword) {
 			$qualified = 0;
-			if (preg_match('/'.preg_quote($search_keyword, '/').'/i', $modulename)
-				|| preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduletechnicalname)
-				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
-				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
-				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
-			) {
+			$search_keyword_array = explode(' ', $search_keyword);
+			$foundkeyword = 1;
+			foreach ($search_keyword_array as $word) {
+				if (!preg_match('/'.preg_quote($word, '/').'/i', $modulename)
+					&& !preg_match('/'.preg_quote($word, '/').'/i', $moduletechnicalname)
+					&& !($moduledesc && preg_match('/'.preg_quote($word, '/').'/i', $moduledesc))
+					&& !($moduledesclong && preg_match('/'.preg_quote($word, '/').'/i', $moduledesclong))
+					&& !($moduleauthor && preg_match('/'.preg_quote($word, '/').'/i', $moduleauthor))
+				) {
+					$foundkeyword = 0;
+				}
+			}
+			if ($foundkeyword) {
 				$qualified = 1;
 			}
 			if (!$qualified) {
@@ -1311,9 +1387,33 @@ if ($mode == 'marketplace') {
 	print '<td></td>';
 	print '</tr>';
 
-	$url = 'https://www.dolistore.com';
+
+	// Source Community github
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
+	print '<tr class="oddeven nohover" height="100">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
+
 
 	// Source Marketplace DoliStore
+	$url = 'https://www.dolistore.com';
+
 	print '<tr class="oddeven nohover" height="100">'."\n";
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
@@ -1340,28 +1440,6 @@ if ($mode == 'marketplace') {
 		$messagetoadd .= '</span>';
 
 		print $remotestore->libStatus($remotestore->dolistoreApiStatus, 2, $messagetoadd);
-	}
-	print '</td>';
-	print '</tr>';
-
-	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-
-	// Source Community github
-	print '<tr class="oddeven nohover" height="100">'."\n";
-	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
-	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
-	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>';
-	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
-	print '</td>';
-	print '<td class="center">';
-	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
-		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
-		if ($remotestore->githubFileError) {
-			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
-		}
-		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';
 	print '</tr>';
@@ -1404,10 +1482,10 @@ if ($mode == 'marketplace') {
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
 		<?php
-		print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
-
 		if ($search_keyword !== '') {
 			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
+		} else {
+			print $form->textwithpicto('', $langs->trans('DOLISTOREdescriptionLong'));
 		}
 		?>
 						&nbsp;
@@ -1520,7 +1598,7 @@ if ($mode == 'deploy') {
 			print $langs->trans("YouCanSubmitFile").'<br><br><br>';
 
 			print '<span class="opacitymedium"><input class="paddingright" type="checkbox" name="checkforcompliance" id="checkforcompliance"'.(getDolGlobalString('DISABLE_CHECK_ON_MALWARE_MODULES') ? ' disabled="disabled"' : 'checked="checked"').'>';
-			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp")).'</label>';
+			print '<label for="checkforcompliance">'.$form->textwithpicto($langs->trans("CheckIfModuleIsNotBlackListed"), $langs->trans("CheckIfModuleIsNotBlackListedHelp").'<br><br>'.DolibarrModules::URL_FOR_BLACKLISTED_MODULES).'</label>';
 			print '</span><br><br>';
 
 			$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb

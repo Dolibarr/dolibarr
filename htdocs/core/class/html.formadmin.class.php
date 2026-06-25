@@ -64,7 +64,7 @@ class FormAdmin
 	 *  @param      int<0,1>		$showwarning    Show a warning if language is not complete
 	 *  @param		int<0,1>		$disabled		Disable edit of select
 	 *  @param		string			$morecss		Add more css styles
-	 *  @param      int<0,2>       	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end
+	 *  @param      int<0,2>       	$showcode       1=Add language code into label at beginning, 2=Add language code into label at end, 3=Add language code into label at end with no parenthesis
 	 *  @param		int<0,1>		$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param		int<0,1>		$multiselect	Make the combo a multiselect
 	 *  @param		string[]		$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
@@ -144,11 +144,11 @@ class FormAdmin
 					$valuetoshow = '<span class="opacitymedium">'.$key.'</span> - '.$value;
 				}
 			}
-			if ($showcode == 2) {
+			if ($showcode == 2 || $showcode == 3) {
 				if ($mainlangonly) {
-					$valuetoshow = $value.' <span class="opacitymedium">('.preg_replace('/[_-].*$/', '', $key).')</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').preg_replace('/[_-].*$/', '', $key).($showcode == 3 ? '' : ')').'</span>';
 				} else {
-					$valuetoshow = $value.' <span class="opacitymedium">('.$key.')</span>';
+					$valuetoshow = $value.' <span class="opacitymedium">'.($showcode == 3 ? '' : '(').$key.($showcode == 3 ? '' : ')').'</span>';
 				}
 			}
 
@@ -165,6 +165,7 @@ class FormAdmin
 			}
 
 			$valuetoshow = picto_from_langcode($key, 'class="saturatemedium"').' '.$valuetoshow;
+
 			if ((is_string($selected) && (string) $selected == (string) $keytouse) || (is_array($selected) && in_array($keytouse, $selected))) {
 				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {
@@ -173,7 +174,7 @@ class FormAdmin
 		}
 		$out .= '</select>';
 
-		// Make select dynamic
+		// Make autocompletion
 		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);

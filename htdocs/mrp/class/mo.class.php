@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Noé Cendrier		<noe.cendrier@altairis.fr>
  *
@@ -58,7 +58,7 @@ class Mo extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -83,7 +83,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -512,8 +512,8 @@ class Mo extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int         		$limit        	Limit
 	 * @param  int         		$offset       	Offset
-	 * @param  string|array     $filter       	Filter USF.
-	 * @param  string      		$filtermode   	Filter mode (AND or OR)
+	 * @param  string|array<string,string>	$filter	Filter USF.
+	 * @param  'AND'|'OR'		$filtermode   	Filter mode (AND or OR)
 	 * @return self[]|int                 		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
@@ -742,9 +742,10 @@ class Mo extends CommonObject
 		$moline = new MoLine($this->db);
 
 		// Line to produce
-		$moline->fk_mo = $this->id;
+		$moline->fk_mo = (int) $this->id;
 		$moline->qty = (float) $this->qty;
 		$moline->fk_product = (int) $this->fk_product;
+		$moline->fk_warehouse = (int) $this->fk_warehouse;
 		$moline->position = 1;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -796,13 +797,13 @@ class Mo extends CommonObject
 
 
 	/**
-	 * Recurse through BOM only adding products to list to consume/produce
+	 * Recurse through BOM only adding products to the list of lines to consume/produce
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  string $role    MoLine Role that products are added as
-	 * @param  BOM $bom        BOM to parse lines from
-	 * @param  float $quantity Quantity modifier for sub products/BOM
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User 	$user      	User that modifies
+	 * @param  string 	$role    	MoLine Role that products are added as ('toproduce', 'toconsume', 'produced', 'consumed')
+	 * @param  BOM 		$bom        BOM to parse lines from
+	 * @param  float 	$quantity 	Quantity modifier for sub products/BOM
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function processBOM(User $user, $role, $bom, $quantity)
 	{
@@ -834,6 +835,12 @@ class Mo extends CommonObject
 					$this->errors[] = $this->error;
 				} else {
 					$moline->fk_product = $line->fk_product;
+					//$moline->fk_warehouse = !empty($line->fk_warehouse) ? $line->fk_warehouse : (!empty($bom->fk_warehouse) ? $bom->fk_warehouse : $this->fk_warehouse);
+					if (in_array($role, array('toconsume', 'consumed'))) {
+						$moline->fk_warehouse = null;
+					} else {	// to produce / produced
+						$moline->fk_warehouse = $this->fk_warehouse;		// We fill the production warehouse defined in MO. Do not use the one of the BOM, if a BOM has a production warehouse set, it should have been already copied into the MO.
+					}
 					$moline->role = $role;
 					$moline->position = $line->position;
 					$moline->qty_frozen = $line->qty_frozen;
@@ -841,7 +848,9 @@ class Mo extends CommonObject
 					if (!empty($line->fk_default_workstation)) {
 						$moline->fk_default_workstation = $line->fk_default_workstation;
 					}
+
 					$resultline = $moline->create($user, 0); // Never use triggers here
+					//var_dump($moline);
 					if ($resultline <= 0) {
 						$error++;
 						$this->error = $moline->error;
@@ -1534,10 +1543,12 @@ class Mo extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/mrp/mo_card.php';
 		if ($option == 'production') {
-			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
+			$baseurl = DOL_URL_ROOT.'/mrp/mo_production.php';
 		}
+
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1546,9 +1557,10 @@ class Mo extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -1855,7 +1867,7 @@ class Mo extends CommonObject
 		$this->tpl['label'] = '';
 		if (!empty($line->fk_product) && $line->fk_product > 0) {
 			$productstatic->fetch($line->fk_product);
-			$productstatic->load_virtual_stock();
+			$productstatic->load_stock(); // load_virtual_stock() is done in load_stock()
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {

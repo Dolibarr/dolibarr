@@ -567,11 +567,11 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", ".(!empty($desc) ? "'".$this->db->escape($desc)."'" : "null");
 			$sql .= ", ".(!empty($date) ? "'".$this->db->idate($date)."'" : "null");
-			$sql .= ", ".$duration;
+			$sql .= ", ".((int) $duration);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
 			//$sql.= ", ".price2num($txtva);
 			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
-			$sql .= ", ".$product_type;
+			$sql .= ", ".((int) $product_type);
 			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
 			$sql .= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";

@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -211,18 +211,16 @@ if (empty($reshook)) {
 				}
 			} else {
 				//check if the skill is present to use it
-				$find = false;
 				$keyFind = 0;
 				foreach ($SkillrecordsForActiveUser as $k => $sr) {
 					if ($sr->fk_skill == $line->fk_skill) {
 						$keyFind = $k;
-						$find = true;
 						break;
 					}
 				}
 				//we update the skill user
-				if ($find) {
-					$updSkill = $SkillrecordsForActiveUser[$k];
+				if ($keyFind) {
+					$updSkill = $SkillrecordsForActiveUser[$keyFind];
 
 					$updSkill->rankorder = $line->rankorder;
 					$updSkill->update($user);
