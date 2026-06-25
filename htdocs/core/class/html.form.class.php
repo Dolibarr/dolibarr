@@ -441,7 +441,10 @@ class Form
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
 
-			if (!is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
+			// ExtraLanguages::fetch_name_extralanguages() leaves $this->attributes empty
+			// when MAIN_USE_ALTERNATE_TRANSLATION_FOR is not configured, so PHP 8 raises
+			// 'Undefined array key' on the read below if we do not guard it (issue #34596).
+			if (empty($extralanguages->attributes[$object->element]) || !is_array($extralanguages->attributes[$object->element]) || empty($extralanguages->attributes[$object->element][$fieldname])) {
 				return ''; // No extralang field to show
 			}
 
@@ -4234,9 +4237,12 @@ class Form
 				}
 
 				$optstart = '<option value="' . $outkey . '"';
-				if ($selected && $selected == $objp->idprodfournprice) {
+				if ($selected && preg_match('/^idprod_/', (string) $selected) && (string) $selected == 'idprod_'.$objp->rowid) {
+					$optstart .= ' selected';
+				} elseif ($selected && (string) $selected == (string) $objp->idprodfournprice) {
 					$optstart .= ' selected';
 				}
+
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) {
 					$optstart .= ' disabled';
 				}
@@ -7744,7 +7750,7 @@ class Form
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar='.$usecalendar.' --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -7778,7 +7784,7 @@ class Form
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="'.($usecalendar == 'html' ? "date" : "text").'" class="maxwidthdate center" maxlength="11" value="'.$formatted_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '');
-					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-mm-dd' : $langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($usecalendar == 'html' ? 'yyyy-MM-dd' : $langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
 					// Icon calendar
@@ -10774,7 +10780,9 @@ class Form
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
 
-				if (!empty($extralanguages->attributes['societe']['name'])) {
+				// Guard against PHP 8 'Undefined array key' when MAIN_USE_ALTERNATE_TRANSLATION_FOR
+				// is not configured and fetch_name_extralanguages() leaves attributes empty (issue #34596).
+				if (!empty($extralanguages->attributes['societe']) && !empty($extralanguages->attributes['societe']['name'])) {
 					$object->fetchValuesForExtraLanguages();
 
 					$htmltext = '';

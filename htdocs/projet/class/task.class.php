@@ -1682,6 +1682,16 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret <= 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+		}
+
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
@@ -2135,6 +2145,16 @@ class Task extends CommonObjectLine
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			$ret = -1;
+		}
+
+		// Propagate trigger handler messages from $this->errors (plural array)
+		// to $this->error (singular string) so callers like the REST API can
+		// surface a useful message instead of an empty error tail.
+		if ($ret < 0 && empty($this->error) && !empty($this->errors)) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
 		}
 
 		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || getDolGlobalString('TIMESPENT_ALWAYS_UPDATE_THM'))) {
