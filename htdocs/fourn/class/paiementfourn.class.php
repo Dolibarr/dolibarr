@@ -314,6 +314,8 @@ class PaiementFourn extends Paiement
 											$discount->fk_soc = $invoice->socid;
 											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
+											$discount->multicurrency_code = $invoice->multicurrency_code;
+											$discount->multicurrency_tx = $invoice->multicurrency_tx;
 
 											// Loop on each vat rate
 											$i = 0;

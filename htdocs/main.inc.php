@@ -87,7 +87,7 @@ require_once 'filefunc.inc.php';
  * @var ?string $dolibarr_main_demo
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
 // This is used for example by form of boxes to save personalization of some options.
@@ -369,7 +369,29 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	if ((GETPOSTISSET('massaction') || $tmpaction) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
 		// We exclude some action that are not sensitive so legitimate
-		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('check', 'create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editfile', 'editvalidator', 'file_manager', 'history', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'testsetup', 'undeployconfirmed', 'validatenewpassword', 'view')))) {
+		$legitimate_actions = array(
+			'check',
+			'create',
+			'create2',
+			'createsite',
+			'createcard',
+			'edit',
+			'editcontract',
+			'editfile',
+			'editvalidator',
+			'file_manager',
+			'history',
+			'presend',
+			'presend_addmessage',
+			'preview',
+			'reconcile',
+			'specimen',
+			'testsetup',
+			'undeployconfirmed',
+			'validatenewpassword',
+			'view'
+		);
+		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, $legitimate_actions))) {
 			// Note: 'create' is for form to ask creattion, realcreation is action 'add'
 			// Note: 'check' if for the feature to control an archive.
 			$sensitiveget = true;
@@ -1286,7 +1308,7 @@ if (!defined('NOLOGIN')) {
 	}
 
 	// Check if user is active
-	if ($user->statut < 1) {
+	if ($user->status < 1) {
 		// If not active, we refuse the user
 		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);

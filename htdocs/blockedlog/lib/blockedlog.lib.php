@@ -33,7 +33,14 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	return constant('DOLCERT_VERSION');
+	$versionbadge = constant('DOLCERT_VERSION');
+
+	// Protection if we used a past old version not yet certified, we change version shown.
+	if (!constant('CERTIF_LNE')) {	// Hard coded in version
+		$versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);
+	};
+
+	return $versionbadge;
 }
 
 
@@ -395,7 +402,7 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 /**
  * Call remote API service to get the obfuscation key.
- * This function is called by blockedlog->getObfuscationKey();
+ * This function is only called by blockedlog->getObfuscationKey();
  *
  * @param 	string	$idprof1				Counter ID/value of ne record
  * @param 	string	$registrationnumber		Registration number
@@ -407,6 +414,11 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 	global $mysoc, $conf;
 
 	$obfuscationkey = 'ERROR';
+
+	if (empty($idprof1)) {
+		dol_syslog("callApiToGetObfuscationKey was called with empty idprof1", LOG_DEBUG);
+		return 'ERROR callApiToGetObfuscationKey was called with empty idprof1';
+	}
 
 	//if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
 		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
@@ -436,8 +448,8 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		$timeoutconnect = 3;
 		$timeoutresponse = 3;
 
-		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG);
-		dol_syslog("callApiToGetObfuscationKey call remote URL", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG);
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	try {
@@ -459,8 +471,8 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 			$reg = array();
 			if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
 				$obfuscationkey = $reg[1];
-				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key ".$obfuscationkey, LOG_DEBUG);
-				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key ".$obfuscationkey, LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
 			} else {
 				$obfuscationkey .= ' '.$tmpresult['content'];
 				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
@@ -472,9 +484,6 @@ function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = fals
 		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
 		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
 	}
-	/*} else {
-		$obfuscationkey = '';
-	}*/
 
 	return $obfuscationkey;
 }
@@ -652,7 +661,7 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 
 
 /**
- * Migrate an old database to add the .end file.
+ * Migrate an old database to add the .end flag.
  *
  * @return  int		Return -1 if KO, 1 if OK
  */

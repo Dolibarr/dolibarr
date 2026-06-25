@@ -275,7 +275,10 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_amount) {
-	$param .= '&search_module_source='.urlencode($search_module_source);
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if (!empty($search_module_source)) {
+	$param .= '&search_module_source='.urlencode(implode(',', $search_module_source));
 }
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
@@ -323,17 +326,19 @@ if (GETPOST('clearcache')) {
 // Get the remoteobfuscation key
 // Show an error to ask to retry later if we can't get it because it means we can't decode the HMAC KEY later so we can't validate record.
 $remoteobfuscationkey = '';
-try {
-	$remoteobfuscationkey = $block_static->getObfuscationKey();
-	// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
-} catch (Exception $e) {
-	$error++;
+if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+	try {
+		$remoteobfuscationkey = $block_static->getObfuscationKey();
+		// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
+	} catch (Exception $e) {
+		$error++;
 
-	print '<div class="error mess1">';
-	print $e->getMessage();
-	print '<br>';
-	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
-	print '</div>';
+		print '<div class="error mess1">';
+		print $e->getMessage();
+		print '<br>';
+		print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
+		print '</div>';
+	}
 }
 
 // Get the encoded HMAC key.
@@ -409,6 +414,7 @@ print '<input type="text" class="maxwidth100" name="search_module_source" list="
 if (isModEnabled('takepos')) {
 	print '<datalist id="search_module_sources">
 	    <option value="takepos">
+		<option value="backoffice">
 	</datalist>';
 }
 print '</td>';
@@ -843,7 +849,7 @@ if (is_array($blocks)) {
 		ksort($totalamount);
 		krsort($showtotalfor);
 
-		// Show the lifetime payment only if filters are ok
+		// Show the total for period if filters are ok
 		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature);
 
 		$countsource = 0;
@@ -858,7 +864,7 @@ if (is_array($blocks)) {
 			}
 			print '>';
 			print $langs->trans("TotalForThePeriod");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 			print ' <span class="opacitylow">(';
 			if ($afilterexists) {
 				print img_picto($langs->trans("ForPeriodAndFilters"), 'warning', 'class="pictofixedwidth"');
@@ -886,6 +892,7 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
+				$s = $actioncode;
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
 				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
@@ -946,7 +953,7 @@ if (is_array($blocks)) {
 			}
 		}
 
-
+		// Show total for lifetime
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
 			$countsource++;
@@ -965,6 +972,8 @@ if (is_array($blocks)) {
 			$firstrecorddate = 0;
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+			'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
 			print '<tr class="liste_titre totalblockedlog" style="border-top: 1px solid #222">';
 			print '<td colspan="'.$colspan.'"';
@@ -974,10 +983,10 @@ if (is_array($blocks)) {
 			print '>';
 
 			print $langs->trans("TotalForLifetime");
-			print ' - '.($source ? $langs->trans("PointOfSale").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-			if ($search_end && $search_end != -1) {
+			if (GETPOST('search_endyear') && $search_end && $search_end != -1) {
 				print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
 			} else {
 				print ' - '.$langs->trans("Now");

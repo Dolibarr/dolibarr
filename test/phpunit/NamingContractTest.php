@@ -154,6 +154,32 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$this->assertSame($content, $nc->applyTo($content)); // @phpstan-ignore method.notFound
 	}
 
+	// ── Generated list template — trackid placeholder (#32460 item 14) ────
+
+	/**
+	 * The generated list page must derive its e-mail trackid from the object name,
+	 * exactly like the card page (myobject_card.php) and core list pages
+	 * (comm/propal/list.php => 'pro', societe/list.php => 'thi'). The legacy literal
+	 * 'xxxx' placeholder is not a substitution token, so it used to leak verbatim into
+	 * every generated module and collide across modules in the mass e-mailing trackid.
+	 * Regression guard for #32460 (item 14, e-mail/trackid handling).
+	 *
+	 * @return void
+	 */
+	public function testListTemplateTrackidIsSubstituted(): void
+	{
+		$template = file_get_contents(dirname(__FILE__) . '/../../htdocs/modulebuilder/template/myobject_list.php');
+		$this->assertIsString($template); // @phpstan-ignore method.notFound
+
+		// The non-substitutable 'xxxx' placeholder must no longer carry the trackid.
+		$this->assertStringNotContainsString("\$trackid = 'xxxx'", $template, "The list template must not carry the 'xxxx' trackid placeholder"); // @phpstan-ignore method.notFound
+
+		// After generation the trackid derives from the object name, like the card page and core.
+		$nc     = new NamingContract('invoice', 'request');
+		$result = $nc->applyTo($template);
+		$this->assertStringContainsString("\$trackid = 'request'.\$object->id;", $result, 'Generated trackid must derive from the object name'); // @phpstan-ignore method.notFound
+	}
+
 	// ── NamingContract — applyToFilename ─────────────────────────────────
 
 	/**
