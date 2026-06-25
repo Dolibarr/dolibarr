@@ -64,8 +64,8 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 $id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
-if ($user->socid) {
-	$id = $user->socid;
+if ($user->isExternalUser()) {
+	$id = $user->isExternalUser();
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

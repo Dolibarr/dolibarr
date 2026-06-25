@@ -931,12 +931,6 @@ parameters:
 			path: ../../../htdocs/blockedlog/ajax/block-add.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/blockedlog/class/blockedlog.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -1017,12 +1011,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/booking_list.php
-
-		-
-			message: '#^Variable \$lineid might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/bookcal/booking_list.php
 
@@ -1354,12 +1342,6 @@ parameters:
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 4
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
@@ -1765,12 +1747,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/various_payment/document.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/document.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -1871,12 +1847,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 2
 			path: ../../../htdocs/compta/charges/index.php
-
-		-
-			message: '#^Variable \$mesg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/deplacement/stats/index.php
 
 		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
@@ -2035,12 +2005,6 @@ parameters:
 			path: ../../../htdocs/compta/index.php
 
 		-
-			message: '#^Variable \$morehtmlref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/localtax/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Localtax\) and ''getNomUrl'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -2081,18 +2045,6 @@ parameters:
 			identifier: equal.alwaysFalse
 			count: 5
 			path: ../../../htdocs/compta/localtax/clients.php
-
-		-
-			message: '#^Variable \$arrayofselected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/localtax/list.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/localtax/list.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<non\-empty\-array\<string, mixed\>\> will always evaluate to true\.$#'
@@ -2161,20 +2113,8 @@ parameters:
 			path: ../../../htdocs/compta/paiement/cheque/list.php
 
 		-
-			message: '#^Property RemiseCheque\:\:\$account_id \(int\) does not accept string\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/compta/paiement/cheque/list.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/paiement/cheque/list.php
-
-		-
-			message: '#^Variable \$arrayofselected might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/paiement/cheque/list.php
 
@@ -2233,12 +2173,6 @@ parameters:
 			path: ../../../htdocs/compta/prelevement/create.php
 
 		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/prelevement/demandes.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''bank\-transfer'' and ''bank\-transfer'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -2249,12 +2183,6 @@ parameters:
 			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/compta/resultat/clientfourn.php
-
-		-
-			message: '#^Variable \$annee might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/resultat/index.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -2657,12 +2585,6 @@ parameters:
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/core/ajax/ajaxdirpreview.php
-
-		-
-			message: '#^Variable \$original_file might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/ajax/ajaxdirtree.php
 
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
@@ -3247,18 +3169,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formsetup.class.php
 
 		-
-			message: '#^Property FormSetupItem\:\:\$saveCallBack \(callable\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 1
-			path: ../../../htdocs/core/class/html.formsetup.class.php
-
-		-
-			message: '#^Property FormSetupItem\:\:\$setValueFromPostCallBack \(callable\) in empty\(\) is not falsy\.$#'
-			identifier: empty.property
-			count: 1
-			path: ../../../htdocs/core/class/html.formsetup.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3503,12 +3413,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 2
 			path: ../../../htdocs/core/lib/agenda.lib.php
-
-		-
-			message: '#^Variable \$s might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/lib/bank.lib.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
@@ -3785,12 +3689,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: ../../../htdocs/core/lib/project.lib.php
-
-		-
-			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/lib/security.lib.php
 
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
@@ -4603,12 +4501,6 @@ parameters:
 			path: ../../../htdocs/cron/class/cronjob.class.php
 
 		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/cron/list.php
-
-		-
 			message: '#^Variable \$baseUri in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
@@ -4761,12 +4653,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
@@ -4947,12 +4833,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/fichinter/card-rec.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fichinter/card-rec.php
 
@@ -5155,12 +5035,6 @@ parameters:
 			path: ../../../htdocs/fourn/commande/list.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: '#^Call to function method_exists\(\) with FactureFournisseur and ''setCategories'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -5219,12 +5093,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/fourn/paiement/document.php
-
-		-
-			message: '#^Variable \$arrayofselected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/fourn/paiement/list.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -6502,12 +6370,6 @@ parameters:
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
-			path: ../../../htdocs/paybox/admin/paybox.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
 			path: ../../../htdocs/paypal/admin/paypal.php
 
 		-
@@ -6673,12 +6535,6 @@ parameters:
 			path: ../../../htdocs/product/inventory/card.php
 
 		-
-			message: '#^Variable \$backtopageforcancel might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/inventory/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Inventory\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -6693,7 +6549,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/product/list.php
 
 		-
@@ -8275,34 +8131,10 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_card.php
 
 		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_applications.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_note.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -8362,12 +8194,6 @@ parameters:
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
-			path: ../../../htdocs/salaries/list.php
-
-		-
-			message: '#^Variable \$selected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/salaries/list.php
 
 		-
@@ -8765,18 +8591,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/takepos/split.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/theme/eldy/manifest.json.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/theme/md/manifest.json.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'

@@ -572,6 +572,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
+	print '<div class="neutral nomargintop">';
 	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
@@ -581,9 +582,7 @@ if ($action == 'edit') {
 			print img_warning($langs->trans("Disabled"));
 		}
 	}
-
-	print "<br>\n";
-	print "<br>\n";
+	print '</div>';
 	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -765,7 +764,7 @@ if ($action == 'edit') {
 		$errormsg = '';
 
 		$listOfAllowedPorts = array('25', '465', '587', '2525');
-		if (!in_array($port, $listOfAllowedPorts)) {
+		if (!in_array((string) $port, $listOfAllowedPorts)) {
 			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
 		}
 

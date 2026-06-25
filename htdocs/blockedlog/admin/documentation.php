@@ -180,7 +180,7 @@ if (in_array($mysoc->country_code, array('FR')) && !userIsTaxAuditor()) {
 		print info_admin($htmltext, 0, 0, 'info');
 
 		// Show remind on good practices related to archives
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }
@@ -192,6 +192,9 @@ print '<center><br>';
 print $langs->trans("YouMayFindDocumentOn").'<br>';
 print '<br>';
 print img_picto('', 'url').' <a href="https://www.dolibarr.org/certifications-lf" target="_blank">https://www.dolibarr.org/certifications-lf</a>';
+if ($mysoc->country_code == 'FR') {
+	print '<br><br>'.$langs->trans("ApplicationUpdateResponsibilityFR");
+}
 print '<center>';
 
 

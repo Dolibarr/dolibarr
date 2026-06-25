@@ -2,7 +2,7 @@
 /* Copyright (C) 2019	    Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	    Charlene Benke		    <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1159,7 +1159,9 @@ class BOM extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/bom/bom_card.php';
+
+		$query = ['id' => $this->id];
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1168,9 +1170,10 @@ class BOM extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkclose = '';
 		if (empty($notooltip)) {
