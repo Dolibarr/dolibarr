@@ -147,7 +147,7 @@ class ExpeditionTest extends CommonClassTest
 		$warehouse = new Entrepot($db);
 		$warehouse->initAsSpecimen();
 		$warehouse->ref = 'EXPSTANDALONE-'.dol_now().'-'.mt_rand(1000, 9999);
-		$warehouse->label = 'Expedition standalone stock phpunit';
+		$warehouse->label = 'Expedition standalone stock phpunit '.$warehouse->ref;
 		$warehouse->statut = Entrepot::STATUS_OPEN_ALL;
 
 		$warehouseId = $warehouse->create($user);
