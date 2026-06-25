@@ -1057,6 +1057,7 @@ function isInSEPA($object)
  *      @param  int<0,1>    $nocreatelink   	1=Hide create project link
  *      @param	string		$morehtmlright		More html on right of title
  *      @param	string		$massactionbutton	Mass action button
+ *      @param	string		$mode				'lead' or 'project' to restrict the list to one side of the opportunity/project split, '' for all
  *      @return	int
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '', $massactionbutton = '', $mode = '')
