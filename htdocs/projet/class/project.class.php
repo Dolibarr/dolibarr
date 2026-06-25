@@ -1310,7 +1310,8 @@ class Project extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".$this->db->prefix()."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'".$setoppstatussql;
+			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= $setoppstatussql;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
@@ -2395,9 +2396,11 @@ class Project extends CommonObject
 			return $v > 0;
 		}));
 
+		// Values are already cast to int above, so the joined list is safe to inline.
+		$sanitizedids = implode(',', $wonlost);
 		// Fallback to a constant-false predicate when the dictionary has neither WON nor LOST,
 		// so the partition stays exhaustive and never produces invalid SQL.
-		$inclause = empty($wonlost) ? '0' : ($alias.'.fk_opp_status IN ('.implode(',', $wonlost).')');
+		$inclause = empty($wonlost) ? '0' : ($alias.'.fk_opp_status IN ('.$sanitizedids.')');
 
 		if ($view == 'lead') {
 			return '('.$alias.'.usage_opportunity = 1 AND ('.$alias.'.fk_opp_status IS NULL OR NOT ('.$inclause.')))';
