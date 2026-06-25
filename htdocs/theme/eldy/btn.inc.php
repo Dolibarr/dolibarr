@@ -488,3 +488,10 @@ button.btn-low-emphasis.--btn-icon:active {
 	background-size: 100%;
 	transition: background 0s;/* used for hover ripple effect */
 }
+
+
+input.button-save, input.button-cancel {
+	min-width: 110px;
+	margin-left: 5px !important;
+	margin-right: 5px !important;
+}

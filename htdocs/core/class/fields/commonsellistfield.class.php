@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025 		Open-Dsi         <support@open-dsi.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,9 @@ class CommonSellistField extends CommonField
 			$labelAlias[] = $tmp['alias'];
 		}
 		$keyField = (string) ($InfoFieldList[2] ?? '');
-		if (empty($keyField)) $keyField = 'rowid';
+		if (empty($keyField)) {
+			$keyField = 'rowid';
+		}
 		$keyFieldParent = (string) ($InfoFieldList[3] ?? '');
 		$tmp = array_map('trim', explode('|', $keyFieldParent));
 		$parentName = (string) ($tmp[0] ?? '');
@@ -302,8 +305,8 @@ class CommonSellistField extends CommonField
 					}
 					// Only selected values
 					if (!empty($selectedValues)) {
-						$tmp = "'" . implode("','", array_map(array($this->db, 'escape'), $selectedValues)) . "'";
-						$sql .= " AND " . $this->db->sanitize($keyField) . " IN (" . $this->db->sanitize($tmp, 1) . ")";
+						$sanitizedSqlIn = "'" . implode("','", array_map(array($this->db, 'escape'), $selectedValues)) . "'";
+						$sql .= " AND " . $this->db->sanitize($keyField) . " IN (" . $sanitizedSqlIn . ")";
 					}
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'

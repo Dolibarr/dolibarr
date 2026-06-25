@@ -14,6 +14,7 @@
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -969,6 +970,9 @@ if (empty($reshook)) {
 							$line->total_ttc = -$line->total_ttc;
 							$line->total_localtax1 = -$line->total_localtax1;
 							$line->total_localtax2 = -$line->total_localtax2;
+							$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
+							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
+							$line->multicurrency_total_ttc = -$line->multicurrency_total_ttc;
 
 							$result = $line->insert();
 
@@ -3108,7 +3112,7 @@ if ($action == 'create') {
 				array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
 			);
 			// Ask confirmation to clone
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 0);
 		}
 
 		// Confirmation of validation

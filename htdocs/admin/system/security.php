@@ -28,6 +28,7 @@ require '../../main.inc.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  *
@@ -77,14 +78,14 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_security');
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span>';
+print '<div class="info">';
+print '<span class="">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span>';
 print ' &nbsp; &nbsp; ';
 print '<a href="'.$_SERVER["PHP_SELF"].'">';
 print img_picto($langs->trans("Reload"), 'refresh').' ';
 print $langs->trans("Reload");
 print '</a>';
-print '<br>';
-print '<br>';
+print '</div>';
 
 
 print '<br>';
@@ -863,7 +864,7 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
 print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with a random seed + a crypt key defined into the conf.php file (in $dolibarr_main_instance_unique_id or $dolibarr_main_dolcrypt_key)<br>';
-print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
@@ -872,7 +873,28 @@ print '<input type="text" class="minwidth500 valignmiddle" name="exampletodecryp
 print '<input type="submit" class="reposition button small smallpaddingimp valignmiddle" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);
-	$decryptedstring = dolDecrypt($exampletodecrypt);
+	$decryptedstring = $exampletodecrypt;
+	if (preg_match('/^dolobfuscationv1/', $exampletodecrypt)) {
+		// Clear cache
+		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
+		// Reload obfuscationkey
+		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($db);
+		$obfuscationkey = $b->getObfuscationKey();
+
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		$registrationnumber = getHashUniqueIdOfRegistration();
+		print '<!-- registrationnumber '.$registrationnumber.' -->'."\n";
+		print '<!-- mysoc->idprof1 = '.$mysoc->idprof1.' -->'."\n";
+		print '<!-- session '.$_SESSION['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- conf->cache = '. (string) $conf->cache['obfuscationkey_'.((int) $conf->entity)].' -->'."\n";
+		print '<!-- obfuscationkey => '.$obfuscationkey.' -->'."\n";	// For debug only
+
+		$decryptedstring = dolDecrypt($exampletodecrypt, $obfuscationkey);
+	} elseif (preg_match('/^dolcrypt/', $exampletodecrypt)) {
+		$decryptedstring = dolDecrypt($exampletodecrypt);
+	}
 	if (ascii_check($decryptedstring)) {
 		print '<br> => <textarea rows="'.ROWS_1.'" class="valignmiddle quatrevingtpercent">'.dolPrintHTMLForTextArea($decryptedstring).'</textarea>';
 	} else {

@@ -49,7 +49,7 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string	$sortorder		Sort order
 	 * @param int		$limit			Limit for list
 	 * @param int	    $page			Page number
-	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:>:'20160101')"
 	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
 	 * @phan-return MultiCurrency[]
@@ -73,11 +73,10 @@ class MultiCurrencies extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

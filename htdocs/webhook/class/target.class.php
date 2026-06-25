@@ -67,7 +67,7 @@ class Target extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -770,7 +770,7 @@ class Target extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$baseurl = DOL_DOCUMENT_ROOT.'/webhook/target_card.php';
+		$baseurl = DOL_URL_ROOT.'/webhook/target_card.php';
 		$query = ['id' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2016       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Charlene Benke              <charlene@patas-monkey.com>
  * Copyright (C) 2019       Nicolas Zabouri             <info@inovea-conseil.com>
  * Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
@@ -40,6 +40,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -184,7 +185,6 @@ if (!$sortorder) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -247,13 +247,13 @@ $error = 0;
 
 // Check only if it's an internal user
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
+	$search_sale = $user->isExternalUser();
 }
 
 // Security check
 $orderid = GETPOSTINT('orderid');
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
@@ -1317,6 +1317,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 

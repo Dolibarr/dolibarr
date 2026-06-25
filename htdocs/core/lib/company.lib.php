@@ -592,9 +592,8 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('societe');
 	$extrafields->fetch_name_optionals_label('socpeople');
 

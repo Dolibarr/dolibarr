@@ -396,11 +396,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBillOfMaterials'), $langs->trans('ConfirmDeleteBillOfMaterials'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteBillOfMaterials'), $langs->trans('ConfirmDeleteBillOfMaterials'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'lineid' => $lineid]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Confirmation of validation
@@ -438,7 +438,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			);
 		}
 		if (!$error) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+			$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
 		} else {
 			setEventMessage($langs->trans('Error'), 'errors');
 			$action = '';
@@ -465,7 +465,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Close'), $text, 'confirm_close', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('Close'), $text, 'confirm_close', $formquestion, 0, 1, 220);
 	}
 
 	// Confirmation of reopen
@@ -489,22 +489,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $text, 'confirm_reopen', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ReOpen'), $text, 'confirm_reopen', $formquestion, 0, 1, 220);
 	}
 
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneBillOfMaterials', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneBillOfMaterials', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
+	// Confirmation of action setdraft
 	if ($action == 'setdraft') {
 		$text = $langs->trans('ConfirmSetToDraft', $object->ref);
 
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('SetToDraft'), $text, 'confirm_setdraft', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
@@ -741,14 +741,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>'."\n";
+					print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'setdraft'], true).'">'.$langs->trans("SetToDraft").'</a>'."\n";
 				}
 			}
 
 			// Modify
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
+					print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true).'">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 				}
@@ -758,7 +758,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
 					if (is_array($object->lines) && count($object->lines) > 0) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate&amp;token='.newToken().'">'.$langs->trans("Validate").'</a>'."\n";
+						print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'validate'], true).'">'.$langs->trans("Validate").'</a>'."\n";
 					} else {
 						$langs->load("errors");
 						print '<a class="butActionRefused classfortooltip" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>'."\n";
@@ -768,38 +768,38 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Re-open
 			if ($permissiontoadd && $object->status == $object::STATUS_CANCELED) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>'."\n";
+				print '<a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'reopen'], true).'">'.$langs->trans("ReOpen").'</a>'."\n";
 			}
 
 			// Create MO
 			if (isModEnabled('mrp')) {
 				if ($object->status == $object::STATUS_VALIDATED && $user->hasRight('mrp', 'write')) {
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&token='.newToken().'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>'."\n";
+					print '<a class="butAction" href="'.dolBuildUrl(DOL_URL_ROOT.'/mrp/mo_card.php', ['action' => 'create', 'fk_bom' => $object->id], true).'&backtopageforcancel='.urlencode(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id])).'">'.$langs->trans("CreateMO").'</a>'."\n";
 				}
 			}
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd);
 			}
 
 			// Close / Cancel
 			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
+				print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'close'], true).'">'.$langs->trans("Disable").'</a>'."\n";
 			}
 
 			/*
 			  if ($user->hasRight('bom', 'write')) {
 				  if ($object->status == 1) {
-					  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
+					  print '<a class="butActionDelete" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'disenable'], true).'">'.$langs->trans("Disable").'</a>'."\n";
 				  } else {
-					  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
+					  print '<a class="butAction" href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'enable'], true).'">'.$langs->trans("Enable").'</a>'."\n";
 				  }
 			  }
 			*/
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}

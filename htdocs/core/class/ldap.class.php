@@ -1105,6 +1105,13 @@ class Ldap
 			return -3;
 		}
 
+		// Honor the admin-configured user search filter (LDAP_FILTER_CONNECTION)
+		// so an identifier match outside the configured scope does not leak
+		// attributes for an unrelated LDAP user (see #37120).
+		if (!empty($this->filter) && !preg_match('/^\s*\(\s*&\s*\(/', $filter)) {
+			$filter = '(&(' . $this->filter . ')' . $filter . ')';
+		}
+
 		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned

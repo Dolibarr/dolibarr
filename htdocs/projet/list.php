@@ -1416,10 +1416,11 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
+print '<thead>';
 print '<tr class="liste_titre_filter">';
 // Action column left
 if ($conf->main_checkbox_left_column) {
-	print '<td class="liste_titre maxwidthsearch" id="action_column_left">';
+	print '<td class="liste_titre center maxwidthsearch" id="action_column_left">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1822,7 +1823,7 @@ if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print '</tr>'."\n";
+print '</tr></thead>'."\n";
 
 
 $i = 0;
@@ -2119,7 +2120,7 @@ while ($i < $imaxinloop) {
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
 			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
-			print '<div class="twolinesmax-normallineheight minwidth200onall small">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
 			print dolPrintHTML($obj->title);
 			print '</div>';
 			print '</td>';

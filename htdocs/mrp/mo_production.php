@@ -2,7 +2,7 @@
 /* Copyright (C) 2019-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Christian Humpel			<christian.humpel@gmail.com>
  * Copyright (C) 2023		Vincent de Grandpré			<vincent@de-grandpre.quebec>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Noé Cendrier		 <noe.cendrier@altairis.fr>
@@ -29,6 +29,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -42,15 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "stocks", "other", "product", "productbatch"));
@@ -71,7 +70,6 @@ $collapse = GETPOST('collapse', 'aZ09comma');
 
 // Initialize a technical objects
 $object = new Mo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $objectline = new MoLine($db);
 

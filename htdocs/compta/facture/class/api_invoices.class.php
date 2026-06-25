@@ -203,7 +203,7 @@ class Invoices extends DolibarrApi
 	 * @param int		$page			  	Page number
 	 * @param string	$thirdparty_ids	  	Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status			  	Filter by invoice status : draft | unpaid | paid | cancelled
-	 * @param string    $sqlfilters       	Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters       	Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	      	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
@@ -1743,7 +1743,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1870,7 +1870,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		foreach ($arrayofamounts as $id => $amount) {
@@ -2013,7 +2013,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -2126,7 +2126,7 @@ class Invoices extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string	$status				Filter by template status: draft | active | suspended
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object

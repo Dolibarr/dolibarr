@@ -92,7 +92,7 @@ class MyObject extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'email', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'langfile' the key of the language file for translation.
@@ -1044,7 +1044,7 @@ class MyObject extends CommonObject
 	{
 		$sql = "SELECT t.rowid, t.date_creation as datec";
 		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
-			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+			$sql .= ", GREATEST(t.tms, COALESCE(te.tms, t.tms)) as datem";
 		} else {
 			$sql .= ", t.tms as datem";
 		}

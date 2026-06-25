@@ -5,7 +5,7 @@
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,10 +77,8 @@ function expedition_prepare_head(Expedition $object)
  */
 function expedition_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 	$langs->load("sendings");
-
-	$extrafields = new ExtraFields($db);
 
 	$h = 0;
 	$head = array();

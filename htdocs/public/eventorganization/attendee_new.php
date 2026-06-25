@@ -684,19 +684,22 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-			$sendto = $thirdparty->email;
+			$sendto = !empty($thirdparty->email) ? $thirdparty->email :
+				$confattendee->email;
+
 			$from = getDolGlobalString('MAILING_EMAIL_FROM');
 			$urlback = $_SERVER["REQUEST_URI"];
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
-
-			$result = $mailfile->sendfile();
-			if ($result) {
-				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-			} else {
-				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			if (!empty($sendto)) {
+				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
+				$result = $mailfile->sendfile();
+				if ($result) {
+					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+				} else {
+					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+				}
 			}
 
 			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');

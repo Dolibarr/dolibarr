@@ -611,6 +611,16 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
+		} elseif ($massaction == 'generalmatchingpartial' && $permissiontoadd) {
+			$lettering = new Lettering($db);
+			$result = $lettering->updateGeneralMatching($toselect, true);
+			if ($result < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoMachingModified' : 'AccountancyOneMatchingModifiedSuccessfully'), array(), 'mesgs');
+				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+				exit;
+			}
 		} elseif ($action == 'generalunmatchingmanual' && $confirm == 'yes' && $permissiontodelete) {
 			$lettering = new Lettering($db);
 			$result = $lettering->deleteGeneralMatching($toselect);
@@ -801,6 +811,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 $arrayofmassactions = array();
 if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['generalmatchingmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralMatchingManual');
+	$arrayofmassactions['generalmatchingpartial']    = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralMatchingPartial');
 	$arrayofmassactions['pregeneralunmatchingmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('GeneralUnmatchingManual');
 }
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
@@ -859,7 +870,7 @@ if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=exporttopdf&' . $param, '', $permissiontoexport, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']);
 	if (!empty($socid)) {
