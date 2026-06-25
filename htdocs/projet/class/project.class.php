@@ -2384,6 +2384,9 @@ class Project extends CommonObject
 	{
 		global $db;
 
+		// Defensive: the alias is an internal SQL identifier, keep only safe characters.
+		$alias = preg_replace('/[^a-zA-Z0-9_]/', '', (string) $alias);
+
 		// dol_getIdFromCode() keeps its own static cache, so resolving on each call stays cheap.
 		$idwon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
 		$idlost = (int) dol_getIdFromCode($db, 'LOST', 'c_lead_status', 'code', 'rowid');

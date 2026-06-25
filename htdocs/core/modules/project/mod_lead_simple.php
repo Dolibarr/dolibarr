@@ -107,6 +107,7 @@ class mod_lead_simple extends ModeleNumRefProjects
 				$coyymm = substr($row[0], 0, 6);
 				$max = $row[0];
 			}
+			$db->free($resql);
 		}
 		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
@@ -144,6 +145,7 @@ class mod_lead_simple extends ModeleNumRefProjects
 			} else {
 				$max = 0;
 			}
+			$db->free($resql);
 		} else {
 			dol_syslog("mod_lead_simple::getNextValue", LOG_DEBUG);
 			return -1;
