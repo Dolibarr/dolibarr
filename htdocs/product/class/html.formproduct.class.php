@@ -591,6 +591,7 @@ class FormProduct
 		$langs->load("other");
 
 		$selected = (string) $selected;
+		$selectedScale = ($mode == 2 && $selected !== '' && is_numeric($selected)) ? (int) $selected : null;
 
 		$return = '';
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
@@ -633,7 +634,7 @@ class FormProduct
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
+				} elseif ($mode == 2 && $selectedScale !== null && (int) $lines->scale === $selectedScale) {
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';

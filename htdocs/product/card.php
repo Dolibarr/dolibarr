@@ -2365,11 +2365,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				if (!$object->isService()) {
+					$selected_weight_units = GETPOSTISSET('weight_units') ? GETPOSTINT('weight_units') : (is_numeric($object->weight_units) ? (int) $object->weight_units : '');
+					$selected_size_units = GETPOSTISSET('size_units') ? GETPOSTINT('size_units') : (is_numeric($object->length_units) ? (int) $object->length_units : '');
+					$selected_surface_units = GETPOSTISSET('surface_units') ? GETPOSTINT('surface_units') : (is_numeric($object->surface_units) ? (int) $object->surface_units : '');
+					$selected_volume_units = GETPOSTISSET('volume_units') ? GETPOSTINT('volume_units') : (is_numeric($object->volume_units) ? (int) $object->volume_units : '');
+					$selected_net_measure_units = GETPOSTISSET('net_measure_units') ? GETPOSTINT('net_measure_units') : (is_numeric($object->net_measure_units) ? (int) $object->net_measure_units : '');
+
 					if (!getDolGlobalString('PRODUCT_DISABLE_WEIGHT')) {
 						// Brut Weight
 						print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 						print '<input name="weight" size="5" value="'.(GETPOSTISSET('weight') ? GETPOST('weight') : $object->weight).'"> ';
-						print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units') ? GETPOST('weight_units') : (int) $object->weight_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("weight_units", "weight", $selected_weight_units, 0, 2);
 						print '</td></tr>';
 					}
 
@@ -2379,21 +2385,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<input name="size" size="5" value="'.(GETPOSTISSET('size') ? GETPOST('size') : $object->length).'">x';
 						print '<input name="sizewidth" size="5" value="'.(GETPOSTISSET('sizewidth') ? GETPOST('sizewidth') : $object->width).'">x';
 						print '<input name="sizeheight" size="5" value="'.(GETPOSTISSET('sizeheight') ? GETPOST('sizeheight') : $object->height).'"> ';
-						print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units') ? GETPOST('size_units') : (int) $object->length_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("size_units", "size", $selected_size_units, 0, 2);
 						print '</td></tr>';
 					}
 					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
 						// Brut Surface
 						print '<tr><td>'.$langs->trans("Surface").'</td><td>';
 						print '<input name="surface" size="5" value="'.(GETPOSTISSET('surface') ? GETPOST('surface') : $object->surface).'"> ';
-						print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units') ? GETPOST('surface_units') : (int) $object->surface_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("surface_units", "surface", $selected_surface_units, 0, 2);
 						print '</td></tr>';
 					}
 					if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 						// Brut Volume
 						print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 						print '<input name="volume" size="5" value="'.(GETPOSTISSET('volume') ? GETPOST('volume') : $object->volume).'"> ';
-						print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units') ? GETPOST('volume_units') : (int) $object->volume_units, 0, 2);
+						print $formproduct->selectMeasuringUnits("volume_units", "volume", $selected_volume_units, 0, 2);
 						print '</td></tr>';
 					}
 
@@ -2401,7 +2407,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						// Net Measure
 						print '<tr><td>'.$langs->trans("NetMeasure").'</td><td>';
 						print '<input name="net_measure" size="5" value="'.(GETPOSTISSET('net_measure') ? GETPOST('net_measure') : $object->net_measure).'"> ';
-						print $formproduct->selectMeasuringUnits("net_measure_units", "", GETPOSTISSET('net_measure_units') ? GETPOST('net_measure_units') : (int) $object->net_measure_units, 0, 0);
+						print $formproduct->selectMeasuringUnits("net_measure_units", "", $selected_net_measure_units, 0, 0);
 						print '</td></tr>';
 					}
 				}
