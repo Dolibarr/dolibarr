@@ -197,6 +197,26 @@ class ProjectLeadSeparationTest extends CommonClassTest
 	}
 
 	/**
+	 * Regression: an opportunity already marked Won/Lost must close even when no explicit
+	 * status is passed. fetch() loads the fk_opp_status column into the opp_status property,
+	 * so setClose() must read opp_status (not the unpopulated fk_opp_status property).
+	 *
+	 * @return void
+	 */
+	public function testSetCloseAcceptsAlreadyWonWithoutStatus()
+	{
+		global $conf;
+
+		$ids = $this->ensureWonLost();
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+
+		$p = $this->makeValidatedOpportunity($ids['won']);	// already Won, no explicit status on close
+		$res = $p->setClose($GLOBALS['user']);
+
+		$this->assertSame(1, $res);
+	}
+
+	/**
 	 * @return void
 	 */
 	public function testLeadNumberingPrefixAndIsolation()

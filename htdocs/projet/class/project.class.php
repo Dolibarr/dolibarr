@@ -1294,7 +1294,9 @@ class Project extends CommonObject
 			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($this->usage_opportunity)) {
 				$idoppstatuswon = (int) dol_getIdFromCode($this->db, 'WON', 'c_lead_status', 'code', 'rowid');
 				$idoppstatuslost = (int) dol_getIdFromCode($this->db, 'LOST', 'c_lead_status', 'code', 'rowid');
-				$targetoppstatus = ($opp_status > 0) ? (int) $opp_status : (int) $this->fk_opp_status;
+				// fetch() stores the fk_opp_status column into the $opp_status property, so read that one
+				// to recognise an opportunity already marked Won/Lost when no explicit status is passed.
+				$targetoppstatus = ($opp_status > 0) ? (int) $opp_status : (int) $this->opp_status;
 
 				if (!in_array($targetoppstatus, array($idoppstatuswon, $idoppstatuslost), true)) {
 					$this->error = 'ErrorCloseRequiresWonLost';
