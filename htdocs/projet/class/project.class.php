@@ -1274,26 +1274,44 @@ class Project extends CommonObject
 	/**
 	 * 		Close a project
 	 *
-	 * 		@param		User	$user		User that close project
-	 * 		@return		int					Return integer <0 if KO, 0 if already closed, >0 if OK
+	 * 		@param		User	$user			User that close project
+	 * 		@param		int		$opp_status		Target opportunity status rowid (c_lead_status) to set on close,
+	 * 											0 to keep the current one. When opportunities are used, an opportunity
+	 * 											can only be closed once its status is WON or LOST.
+	 * 		@return		int						Return integer <0 if KO, 0 if already closed, >0 if OK
 	 */
-	public function setClose($user)
+	public function setClose($user, $opp_status = 0)
 	{
 		$now = dol_now();
 
 		$error = 0;
 
 		if ($this->status != self::STATUS_CLOSED) {
+			$setoppstatussql = '';
+
+			// When opportunities are enabled, an opportunity must be won or lost before being closed.
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($this->usage_opportunity)) {
+				$idoppstatuswon = (int) dol_getIdFromCode($this->db, 'WON', 'c_lead_status', 'code', 'rowid');
+				$idoppstatuslost = (int) dol_getIdFromCode($this->db, 'LOST', 'c_lead_status', 'code', 'rowid');
+				$targetoppstatus = ($opp_status > 0) ? (int) $opp_status : (int) $this->fk_opp_status;
+
+				if (!in_array($targetoppstatus, array($idoppstatuswon, $idoppstatuslost), true)) {
+					$this->error = 'ErrorCloseRequiresWonLost';
+					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_WARNING);
+					return -1;
+				}
+
+				if ($opp_status > 0) {
+					$setoppstatussql = ", fk_opp_status = ".((int) $targetoppstatus).", opp_percent = ".(($targetoppstatus == $idoppstatuswon) ? 100 : 0);
+				}
+			}
+
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'".$setoppstatussql;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
-
-			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
-				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
-			}
 
 			dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1306,7 +1324,11 @@ class Project extends CommonObject
 				// End call triggers
 
 				if (!$error) {
-					$this->status = 2;
+					$this->status = self::STATUS_CLOSED;
+					if ($opp_status > 0) {
+						$this->fk_opp_status = (int) $targetoppstatus;
+						$this->opp_status = (int) $targetoppstatus;
+					}
 					$this->db->commit();
 					return 1;
 				} else {

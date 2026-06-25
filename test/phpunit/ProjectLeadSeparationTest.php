@@ -132,4 +132,61 @@ class ProjectLeadSeparationTest extends CommonClassTest
 		$this->assertFalse($inView($idPure, 'lead'), 'plain project not in lead');
 		$this->assertTrue($inView($idPure, 'project'), 'plain project in project');
 	}
+
+	/**
+	 * Create a validated opportunity project and return the loaded object.
+	 *
+	 * @param  int|null $opp	fk_opp_status value (null = open opportunity)
+	 * @return Project			Validated opportunity project
+	 */
+	private function makeValidatedOpportunity($opp)
+	{
+		global $db, $user;
+
+		$p = new Project($db);
+		$p->ref = 'TESTCLO'.uniqid();
+		$p->title = 'close fixture';
+		$p->usage_opportunity = 1;
+		$p->opp_status = $opp;
+		$id = $p->create($user);
+		$this->assertGreaterThan(0, $id, 'opportunity create');
+
+		$res = $p->setValid($user);
+		$this->assertGreaterThan(0, $res, 'opportunity validate');
+
+		return $p;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSetCloseRejectsOpenOpportunity()
+	{
+		global $conf;
+
+		$this->ensureWonLost();
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+
+		$p = $this->makeValidatedOpportunity(null);
+		$res = $p->setClose($GLOBALS['user']);	// no WON/LOST -> refused
+
+		$this->assertSame(-1, $res);
+		$this->assertStringContainsString('ErrorCloseRequiresWonLost', $p->error);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testSetCloseAcceptsWon()
+	{
+		global $conf;
+
+		$ids = $this->ensureWonLost();
+		$conf->global->PROJECT_USE_OPPORTUNITIES = 1;
+
+		$p = $this->makeValidatedOpportunity(null);
+		$res = $p->setClose($GLOBALS['user'], $ids['won']);	// WON provided -> accepted
+
+		$this->assertSame(1, $res);
+	}
 }
