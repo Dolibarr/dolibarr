@@ -684,6 +684,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	$defaultref = '';
 	$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
+	// Suggest an opportunity reference (OPP) when creating a lead. In leads-only mode (==2) the form is always an opportunity.
+	$usageopportunityforref = GETPOSTISSET('usage_opportunity') ? GETPOSTINT('usage_opportunity') : (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2 ? 1 : 0);
+	if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') >= 1 && $usageopportunityforref) {
+		$modele = getDolGlobalString('PROJECT_LEAD_ADDON', 'mod_lead_simple');
+	}
 
 	// Search template files
 	$file = '';
