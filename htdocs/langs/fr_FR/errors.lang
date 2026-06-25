@@ -214,6 +214,7 @@ ErrorFieldMustBeANumeric=Le champ <b>%s</b> doit être un numérique
 ErrorMandatoryParametersNotProvided=Paramètre(s) obligatoire(s) non fournis
 ErrorOppStatusRequiredIfUsage=Vous définissez que vous souhaitez utiliser ce projet pour suivre une opportunité, vous devez donc également renseigner le Statut initial de l'opportunité.
 ErrorOppStatusRequiredIfAmount=Vous avez fixé un montant estimé pour cette opportunité. Aussi, vous devez également entrer son statut
+ErrorCloseRequiresWonLost=Une opportunité doit être marquée Gagnée ou Perdue avant d'être clôturée.
 ErrorFailedToLoadModuleDescriptorForXXX=Échec de changement de la classe descripteur du module %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Mauvaise définition du tableau Menu dans le descripteur de module (mauvaise valeur pour la clé fk_menu)
 ErrorSavingChanges=Une erreur est survenue lors de la sauvegarde des modifications

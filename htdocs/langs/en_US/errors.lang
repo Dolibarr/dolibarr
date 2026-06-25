@@ -214,6 +214,7 @@ ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 ErrorOppStatusRequiredIfUsage=You choose to follow an opportunity in this project, so you must also fill out the Lead status.
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this lead. So you must also enter it's status.
+ErrorCloseRequiresWonLost=An opportunity must be set to Won or Lost before being closed.
 ErrorFailedToLoadModuleDescriptorForXXX=Failed to load module descriptor class for %s
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=An error has occurred when saving the changes
