@@ -2348,6 +2348,41 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Build the SQL WHERE fragment splitting projects into the "lead" view and the "project" view.
+	 *
+	 * The two views form an exhaustive and mutually exclusive partition of the projet table:
+	 *  - lead    : open opportunity   (usage_opportunity = 1 and opportunity status is neither WON nor LOST)
+	 *  - project : everything else    (usage_opportunity = 0, or an opportunity already marked WON or LOST)
+	 *
+	 * @param  string $view		View to filter on, 'lead' or 'project'
+	 * @param  string $alias	SQL alias of the projet table
+	 * @return string			SQL fragment without a leading 'AND' (empty string if $view is invalid)
+	 */
+	public static function getViewFilterSQL($view, $alias = 'p')
+	{
+		global $db;
+
+		// dol_getIdFromCode() keeps its own static cache, so resolving on each call stays cheap.
+		$idwon = (int) dol_getIdFromCode($db, 'WON', 'c_lead_status', 'code', 'rowid');
+		$idlost = (int) dol_getIdFromCode($db, 'LOST', 'c_lead_status', 'code', 'rowid');
+		$wonlost = array_values(array_filter(array($idwon, $idlost), static function ($v) {
+			return $v > 0;
+		}));
+
+		// Fallback to a constant-false predicate when the dictionary has neither WON nor LOST,
+		// so the partition stays exhaustive and never produces invalid SQL.
+		$inclause = empty($wonlost) ? '0' : ($alias.'.fk_opp_status IN ('.implode(',', $wonlost).')');
+
+		if ($view == 'lead') {
+			return '('.$alias.'.usage_opportunity = 1 AND ('.$alias.'.fk_opp_status IS NULL OR NOT ('.$inclause.')))';
+		} elseif ($view == 'project') {
+			return '('.$alias.'.usage_opportunity = 0 OR '.$inclause.')';
+		}
+
+		return '';
+	}
+
+	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
 	 * @param DoliDB $dbs 		Database handler
