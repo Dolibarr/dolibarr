@@ -108,6 +108,35 @@ $documentation->showSidebar(); ?>
 				<button class="butAction dialog-multi-trigger" style="margin:4px;" data-product-id="3" data-product-ref="REF-003" data-product-type="product" data-product-price="120.50"><span class="opacitylow">Row 3 |</span> Open</button>
 			</div>
 
+			<?php
+			$lines = array(
+				'<!-- ID selector: arms a single trigger -->',
+				'<button id="btn-open" class="butAction">Open</button>',
+				'',
+				'<!-- Class selector: one call arms every matching trigger -->',
+				'<button class="row-trigger" data-product-id="1">Row 1</button>',
+				'<button class="row-trigger" data-product-id="2">Row 2</button>',
+				'',
+				'<script>',
+				'Dolibarr.on("Ready", function () {',
+				'	// Single trigger',
+				'	Dolibarr.tools.uiDialog("#btn-open", {',
+				'		dialogId: "my-dialog",',
+				'		align: "center",',
+				'		url: "/path/to/modal.php"',
+				'	});',
+				'',
+				'	// Multiple triggers: dialogId is auto-suffixed per element (row-dialog-0, -1, ...)',
+				'	Dolibarr.tools.uiDialog(".row-trigger", {',
+				'		dialogId: "row-dialog",',
+				'		url: "/path/to/modal.php"',
+				'	});',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
+
 		</div>
 
 		<!-- HEADER & FOOTER -->
@@ -137,6 +166,28 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-footer-cancelonly"><span class="opacitylow">Dialog |</span> Cancel only</button>
 			</div>
 
+			<?php
+			$lines = array(
+				'<script>',
+				'// Header: title + optional FontAwesome icon and color',
+				'Dolibarr.tools.uiDialog("#btn-open", {',
+				'	dialogId: "dlg-header",',
+				'	header: { title: "My title", icon: "fas fa-user", iconColor: "#3bbfa8" },',
+				'	url: "/path/to/modal.php"',
+				'});',
+				'',
+				'// Footer: Cancel + Submit bar. submitFormId links the submit button',
+				'// to a <form id="my-form"> that lives inside the modal content.',
+				'Dolibarr.tools.uiDialog("#btn-open-2", {',
+				'	dialogId: "dlg-footer",',
+				'	url: "/path/to/modal.php",',
+				'	footer: { showCancel: true, showSubmit: true, submitFormId: "my-form", align: "right" }',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
+
 			<h3 class="nomarginbottom">Footer &amp; close buttons from modal content</h3>
 			<p class="documentation-text">
 				The <code>footer</code> JS param is optional. You can also define the footer directly inside the modal content file — the JS will automatically move it outside the scrollable area and anchor it at the bottom of the dialog.
@@ -157,6 +208,33 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-with-data-a" data-product-id="12" data-product-ref="REF-PROD-A" data-product-type="product" data-product-price="14.99"><span class="opacitylow">Dialog |</span> Product data</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-with-data-b" data-product-id="54" data-product-ref="REF-SERV-B" data-product-type="service" data-product-price="182.60"><span class="opacitylow">Dialog |</span> Service data</button>
 			</div>
+
+			<?php
+			$lines = array(
+				'<!-- Set data-* in kebab-case on the trigger -->',
+				'<button id="btn-open" data-product-id="12" data-product-ref="REF-A">Open</button>',
+				'',
+				'<script>',
+				'// Every data-* of the clicked trigger is appended to the AJAX url query',
+				'Dolibarr.tools.uiDialog("#btn-open", {',
+				'	dialogId: "dlg-data",',
+				'	url: "/path/to/modal.php"',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
+
+			<p class="documentation-text">In the modal, grab them in camelCase:</p>
+			<?php
+			$lines = array(
+				'<?php',
+				'',
+				'$id  = GETPOST("productId", "int");',
+				'$ref = GETPOST("productRef", "alpha");',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
 		</div>
 
 		<!-- BUTTONS -->
@@ -195,7 +273,7 @@ $documentation->showSidebar(); ?>
 			<h3 class="nomarginbottom">AJAX form submission</h3>
 			<p class="documentation-text nomargintop">
 				Add the class <code>dol-dialog-ajax</code> to the form. The dialog will intercept the submit event and send the form data via <code>fetch</code> (no page reload).
-				The server must return a JSON response. If <code>success: true</code>, the dialog closes. If <code>success: false</code>, an error message is displayed inside the modal.
+				The server must return a JSON response (use the <code>JsonResponse</code> class). If <code>result</code> is <code>1</code>, the dialog closes. If <code>result</code> is <code>0</code>, the <code>msg</code> is displayed as an error inside the modal.
 				Use the <code>onSuccess</code> callback to execute code after the dialog closes — it receives the full JSON response as argument.
 			</p>
 			<p class="documentation-text">
@@ -206,6 +284,43 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-with-form" data-use-ajax="0"><span class="opacitylow">Dialog |</span> Classic form</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-with-ajaxform" data-use-ajax="1"><span class="opacitylow">Dialog |</span> AJAX form</button>
 			</div>
+
+			<?php
+			$lines = array(
+				'<script>',
+				'// Classic submission (page reload): submit button linked to the form via submitFormId',
+				'Dolibarr.tools.uiDialog("#btn-form", {',
+				'	dialogId: "dlg-form",',
+				'	url: "/path/to/form.php",',
+				'	footer: { submitFormId: "my-form" }',
+				'});',
+				'',
+				'// AJAX submission: add class "dol-dialog-ajax" to the <form> inside the content',
+				'Dolibarr.tools.uiDialog("#btn-ajaxform", {',
+				'	dialogId: "dlg-ajaxform",',
+				'	url: "/path/to/form.php",',
+				'	footer: { submitFormId: "my-form" },',
+				'	onSuccess: function (data) { Dolibarr.tools.setEventMessage(data.msg); }',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
+
+			<p class="documentation-text">Server side — the AJAX endpoint must answer with a <code>JsonResponse</code>:</p>
+			<?php
+			$lines = array(
+				'<?php',
+				'',
+				'require_once DOL_DOCUMENT_ROOT.\'/core/class/jsonResponse.class.php\';',
+				'',
+				'$response = new JsonResponse();',
+				'$response->result = 1;          // 1 = success (dialog closes), 0 = error',
+				'$response->msg = "Saved!";      // shown via onSuccess, or as error when result = 0',
+				'print $response->getResponse();',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
 		</div>
 
 		<!-- SIZE -->
@@ -243,6 +358,30 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-xxl-center" ><span class="opacitylow">Dialog |</span> xxl</button>
 			</div>
 
+			<?php
+			$lines = array(
+				'<script>',
+				'// Responsive keywords: xs, lg, xl, xxl',
+				'Dolibarr.tools.uiDialog("#btn-lg", {',
+				'	dialogId: "dlg-lg",',
+				'	align: "right",',
+				'	width: "lg",',
+				'	url: "/path/to/modal.php"',
+				'});',
+				'',
+				'// Custom size: number (px) or any CSS unit. height is ignored when align is "right".',
+				'Dolibarr.tools.uiDialog("#btn-center", {',
+				'	dialogId: "dlg-size",',
+				'	align: "center",',
+				'	width: "50vw",   // or 600, "600px", "50%"',
+				'	height: "50vh",',
+				'	url: "/path/to/modal.php"',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
+
 		</div>
 
 		<!-- OTHERS -->
@@ -261,6 +400,21 @@ $documentation->showSidebar(); ?>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-notpersist" data-persist="0"><span class="opacitylow">Dialog |</span> Non-persistent</button>
 				<button class="butAction" style="margin:4px;" id="btn-dialog-params-nobackdrop" data-persist="0"><span class="opacitylow">Dialog |</span> No backdrop</button>
 			</div>
+
+			<?php
+			$lines = array(
+				'<script>',
+				'Dolibarr.tools.uiDialog("#btn-open", {',
+				'	dialogId: "dlg-others",',
+				'	url: "/path/to/modal.php",',
+				'	animation: false,  // disable open/close animation',
+				'	persist: false,    // rebuild and reload the content on every open',
+				'	isModal: false     // no backdrop (uses dialog.show() instead of showModal())',
+				'});',
+				'</script>',
+			);
+			$documentation->showCode($lines, 'php');
+			?>
 		</div>
 
 	</div>
