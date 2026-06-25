@@ -2051,6 +2051,7 @@ YouCanDownloadAdvancedDatFileTo=Vous pouvez aussi télécharger une <b>version p
 TestGeoIPResult=Test de conversion IP -> Pays
 ##### Projects #####
 ProjectsNumberingModules=Modèles de numérotation des références projets
+LeadsNumberingModules=Modèles de numérotation des références opportunités
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
 TasksNumberingModules=Modèles de numérotation des références tâches

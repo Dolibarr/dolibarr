@@ -2051,6 +2051,7 @@ YouCanDownloadAdvancedDatFileTo=You can also download a more <b>complete version
 TestGeoIPResult=Test of a conversion IP -> country
 ##### Projects #####
 ProjectsNumberingModules=Projects numbering module
+LeadsNumberingModules=Opportunities numbering module
 ProjectsSetup=Project module setup
 ProjectsModelModule=Project reports document model
 TasksNumberingModules=Tasks numbering module
