@@ -1399,6 +1399,15 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 	if ($mainmenu == 'commercial') {
 		$langs->load("companies");
 
+		// Opportunities (leads) - shown before proposals in the "projects and opportunities" mode (issue #23821).
+		// In leads-only mode (==2) opportunities stay in the dedicated Projects/Leads main menu, so we do not duplicate them here.
+		if (isModEnabled('project') && getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 1 && $user->hasRight('projet', 'lire')) {
+			$langs->load("projects");
+			$newmenu->add("/projet/list.php?mainmenu=commercial&leftmenu=opportunities&contextpage=lead&search_status=99", $langs->trans("Opportunities"), 0, $user->hasRight('projet', 'lire'), '', $mainmenu, 'opportunities', 50, '', '', '', img_picto('', 'project', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/projet/card.php?action=create&usage_opportunity=1&mainmenu=commercial&leftmenu=opportunities", $langs->trans("AddOpportunity"), 1, $user->hasRight('projet', 'creer'));
+			$newmenu->add("/projet/list.php?mainmenu=commercial&leftmenu=opportunities&contextpage=lead&search_status=99", $langs->trans("List"), 1, $user->hasRight('projet', 'lire'));
+		}
+
 		// Customer proposal
 		if (isModEnabled('propal')) {
 			$langs->load("propal");
@@ -2458,9 +2467,8 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 1) {
-				$newmenu->add("/projet/list.php?leftmenu=projects".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-				$newmenu->add('/projet/list.php?mainmenu=project&leftmenu=list&search_usage_opportunity=1&search_status=99&search_opp_status=openedopp&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
-				$newmenu->add('/projet/list.php?mainmenu=project&leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
+				// Opportunities are now reached from the Commercial main menu, so the project menu only lists projects.
+				$newmenu->add("/projet/list.php?leftmenu=projects&contextpage=project".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 			} elseif (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) {	// 2 = leads only
 				$newmenu->add(dolBuildUrl('/projet/list.php', ['mainmenu' => 'project', 'leftmenu' => 'list', 'search_usage_opportunity' => 1, 'search_status' => 99]), $langs->trans("List"), 2, $showmode);
 			}
