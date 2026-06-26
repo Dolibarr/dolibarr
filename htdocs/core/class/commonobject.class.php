@@ -2936,13 +2936,20 @@ abstract class CommonObject
 				// Update line price
 				if (!empty($this->lines)) {
 					foreach ($this->lines as &$line) {
+						$effectivemode = $mode;
+						// A line whose currency unit price is sourced from a fixed per-currency product price must keep
+						// that currency price: recompute the company-currency price instead, whatever the global mode (issue #32379)
+						if (!empty($line->multicurrency_subprice_source)) {
+							$effectivemode = 1;
+						}
+
 						// Amounts in company currency will be recalculated
-						if ($mode == 1) {
+						if ($effectivemode == 1) {
 							$line->subprice = 0;
 						}
 
 						// Amounts in foreign currency will be recalculated
-						if ($mode == 2) {
+						if ($effectivemode == 2) {
 							$line->multicurrency_subprice = 0;
 						}
 

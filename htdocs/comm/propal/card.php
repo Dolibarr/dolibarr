@@ -1354,6 +1354,7 @@ if (empty($reshook)) {
 			$price_min = 0;
 			$price_min_ttc = 0;
 			$tva_npr = 0;
+			$line_multicurrency_subprice_source = 0;
 			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 			$db->begin();
@@ -1525,6 +1526,23 @@ if (empty($reshook)) {
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
 							break;
 						}
+					}
+				}
+
+				// Foreign-currency document: use the product fixed per-currency price if any (issue #32379).
+				// A currency price typed by the user keeps priority (guard on empty price_*_devise).
+				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency
+					&& empty($price_ht_devise) && (string) $price_ht_devise !== '0'
+					&& empty($price_ttc_devise) && (string) $price_ttc_devise !== '0') {
+					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
+					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
+					if (!empty($mccurrencyprice)) {
+						if ($mccurrencyprice['price_base_type'] == 'TTC') {
+							$price_ttc_devise = $mccurrencyprice['price_ttc'];
+						} else {
+							$price_ht_devise = $mccurrencyprice['price'];
+						}
+						$line_multicurrency_subprice_source = 1;
 					}
 				}
 
@@ -1718,7 +1736,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $pu_ttc, $info_bits, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $date_start, $date_end, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise, 0, 0, $line_multicurrency_subprice_source);
 
 				if ($result > 0) {
 					$db->commit();
