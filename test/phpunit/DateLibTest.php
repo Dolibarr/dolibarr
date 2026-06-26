@@ -180,6 +180,42 @@ class DateLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Test num_public_holiday() with a non-GMT (server timezone) timestamp.
+	 *
+	 * Regression: a leave on Friday 2025-05-02 in a positive-offset timezone
+	 * (Europe/Paris = UTC+2 in May) was wrongly counted as a public holiday,
+	 * because the day was extracted in GMT (Thursday 2025-05-01 22:00 UTC =>
+	 * 1 May = LABORDAY1) instead of in the server timezone.
+	 *
+	 * @return	void
+	 */
+	public function testNumPublicHolidayTimezone()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Force a positive-offset timezone so that local midnight maps to the previous day in GMT
+		$savtz = date_default_timezone_get();
+		date_default_timezone_set('Europe/Paris');
+
+		// Friday 2025-05-02 at local midnight (= 2025-05-01 22:00 UTC). 2025-05-01 is LABORDAY1 (1 May).
+		$date = dol_mktime(0, 0, 0, 5, 2, 2025, 'tzserver');
+
+		// Single day (start == end, lastday = 1 => one iteration)
+		$result = num_public_holiday($date, $date, 'FR', 1);
+
+		// Restore TZ before asserting so a failure does not leak the timezone to other tests
+		date_default_timezone_set($savtz);
+
+		print __METHOD__." for Friday 2 may 2025 (TZ Europe/Paris) result=".$result."\n";
+		// Friday 2 May is a working day: must be 0. With the gmdate() bug it was read as 1 May => 1.
+		$this->assertEquals(0, $result, 'NumPublicHoliday: Friday 2025-05-02 must not be counted as public holiday in a non-GMT timezone');
+	}
+
+	/**
 	 * testNumOpenDay
 	 *
 	 * @return	void
