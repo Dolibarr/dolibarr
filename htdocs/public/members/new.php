@@ -1256,7 +1256,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$num = $db->num_rows($result);
 
 		print '<br><div class="div-table-responsive">';
-		print '<table class="tagtable liste">'."\n";
+		print '<table class="tagtable liste noborder">'."\n";
 		print '<input type="hidden" name="action" value="create">';
 
 		print '<tr class="liste_titre">';
