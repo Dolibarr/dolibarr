@@ -14598,7 +14598,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                      );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
- * @param bool|int		$userRight  	User action right. Use 0 if user has no permission. It will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
+ * @param bool|int		$userRight  	User action right. True or 1 of ok. Use 0 if user has no permission, it will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
  * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
@@ -14674,7 +14674,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				}
 				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
+				$out .= dolGetButtonAction($subbutton['text'], $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
 			$out .= "</div>";
 			$out .= "</div>";

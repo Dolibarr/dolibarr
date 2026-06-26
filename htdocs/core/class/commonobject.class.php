@@ -5963,6 +5963,10 @@ abstract class CommonObject
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
 			$this->tpl['strike'] = 1;
 		} elseif (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			// SUBTOTALS_SPECIAL_CODE is only defined when the subtotals module
+			// is loaded (htdocs/subtotals/class/commonsubtotal.class.php:24).
+			// Without the guard, printing origin lines from a PO into a vendor
+			// invoice fatals (#37663). Other tpl files already follow this pattern.
 			$this->tpl['strike'] = 1;
 		}
 
