@@ -151,6 +151,11 @@ class OrderLine extends CommonOrderLine
 	 */
 	public $packaging;
 
+	/**
+	 * @var int 1 if the multicurrency unit price comes from a fixed per-currency product price (issue #32379)
+	 */
+	public $multicurrency_subprice_source = 0;
+
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
@@ -209,7 +214,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.ref_ext,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
-		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
+		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_subprice_source, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,p.barcode as product_barcode,';
 		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
@@ -282,6 +287,7 @@ class OrderLine extends CommonOrderLine
 			$this->fk_multicurrency = $objp->fk_multicurrency;
 			$this->multicurrency_code = $objp->multicurrency_code;
 			$this->multicurrency_subprice	= $objp->multicurrency_subprice;
+			$this->multicurrency_subprice_source = $objp->multicurrency_subprice_source;
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
@@ -441,6 +447,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
 		}
+		if (empty($this->multicurrency_subprice_source)) {
+			$this->multicurrency_subprice_source = 0;
+		}
 
 		// if buy price not defined (if = ''), we set the buyprice as configured in margin admin setup
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
@@ -467,7 +476,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
 		$sql .= ' fk_unit,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_source, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_commande.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
@@ -503,6 +512,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ", ".(!empty($this->fk_multicurrency) ? ((int) $this->fk_multicurrency) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice, 'CU');
+		$sql .= ", ".((int) $this->multicurrency_subprice_source);
 		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
 		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
 		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
@@ -668,6 +678,7 @@ class OrderLine extends CommonOrderLine
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
 		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);

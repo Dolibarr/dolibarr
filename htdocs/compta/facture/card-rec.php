@@ -622,6 +622,9 @@ if (empty($reshook)) {
 			$special_code = 0;
 			// if (!GETPOST('qty')) $special_code=3; // Options should not exists on invoices
 
+			// 1 if the currency unit price comes from a fixed per-currency product price (issue #32379)
+			$line_multicurrency_subprice_source = 0;
+
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
 			// Ecrase $base_price_type par celui du produit
@@ -650,6 +653,18 @@ if (empty($reshook)) {
 				$price_base_type = empty($datapriceofproduct['price_base_type']) ? 'HT' : $datapriceofproduct['price_base_type'];
 				//$tva_tx = $datapriceofproduct['tva_tx'];
 				//$tva_npr = $datapriceofproduct['tva_npr'];
+
+				// Foreign-currency document: use the product fixed per-currency price if any (issue #32379).
+				// A currency price typed by the user keeps priority (guard on empty price_ht_devise).
+				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency
+					&& empty($price_ht_devise) && (string) $price_ht_devise !== '0') {
+					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
+					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
+					if (!empty($mccurrencyprice)) {
+						$price_ht_devise = $mccurrencyprice['price'];
+						$line_multicurrency_subprice_source = 1;
+					}
+				}
 
 				$tmpvat = (float) price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
@@ -759,7 +774,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, (float) $buyingprice, $fk_parent_line);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, (float) $price_ht_devise, $date_start_fill, $date_end_fill, (int) $fournprice, (float) $buyingprice, $fk_parent_line, $line_multicurrency_subprice_source);
 
 				if ($result > 0) {
 					// TODO add "insert" function into FactureLigneRec or add "invoicerecline.class.php" (same of "factureligne.class.php")
