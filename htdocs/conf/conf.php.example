@@ -97,9 +97,13 @@ $dolibarr_main_db_host='';
 // =====================
 // This parameter contains the port of the Dolibarr database.
 //
-// Default value: none
+// If left empty, the value is cast to 0. A port of 0 means MySQL/MySQLi falls
+// back to the port defined in the PHP configuration (mysqli.default_port), while
+// PostgreSQL falls back to its own default port (5432).
+//
+// Default value: 0
 // Examples:
-// $dolibarr_main_db_host='3306';
+// $dolibarr_main_db_port='3306';
 //
 $dolibarr_main_db_port='';
 
@@ -377,6 +381,27 @@ $dolibarr_main_restrict_ip='';
 //
 $dolibarr_nocsrfcheck='0';
 
+// dolibarr_main_csrf_with_token
+// =============================
+// Force the CSRF token protection level (the MAIN_SECURITY_CSRF_WITH_TOKEN constant) from this file, so it wins over
+// the value set in the back office and cannot be lowered from there. Useful for a server/hosting administrator.
+// Possible values: 0 (off), 1, 2 or 3 (strongest). The constant then appears read-only in the back office.
+// Examples:
+// $dolibarr_main_csrf_with_token = 3;
+//
+//$dolibarr_main_csrf_with_token = 3;
+
+
+// Forcing any other database constant from this file (hosting / security lock)
+// ============================================================================
+// More generally, any constant stored in the database (llx_const table) can be forced from the server side by setting
+// the matching environment variable named DOLIBARR_<CONSTANT_NAME>. You can define it either in the server environment
+// (Apache SetEnv, Nginx/PHP-FPM, Docker, systemd...), or directly in this conf.php file by assigning $_SERVER (or $_ENV).
+// The forced value overrides the database value at runtime and the constant becomes read-only in the back office.
+// Examples:
+// $_SERVER['DOLIBARR_MAIN_DISABLE_DNS_GET_RECORD'] = 1;
+// $_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = "default-src 'self'";
+
 // dolibarr_api_count_always_enabled
 // =================================
 // Set this value to 1 so disabling the count of each API call will not be possible from the admin setup pages.
@@ -520,6 +545,13 @@ $dolibarr_cron_allow_cli='0';
 // Examples:
 // $dolibarr_allow_download_external_modules=0;
 
+// dolibarr_main_distrib
+// =====================
+// Name of the Dolibarr distribution, set by the installer (used to adapt some behaviors to the packaging).
+// Default value: 'standard'
+// Examples:
+// $dolibarr_main_distrib='standard';
+
 
 
 //#################################
@@ -529,6 +561,7 @@ $dolibarr_cron_allow_cli='0';
 // Value to overwrite path to use shared libraries instead of embedded one
 //$dolibarr_lib_TCPDF_PATH='/usr/share/php/tcpdf';
 //$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
+//$dolibarr_lib_TCPDI_PATH='/usr/share/php/tcpdi';
 //$dolibarr_lib_FPDF_PATH='/usr/share/php/fpdf';
 //$dolibarr_lib_GEOIP_PATH='';
 //$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';

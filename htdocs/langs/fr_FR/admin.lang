@@ -2,6 +2,8 @@
 BoldRefAndPeriodOnPDF=Mettre en gras le texte de la référence du produit/service et la période dans le PDF.
 BoldLabelOnPDF=Imprime le libellé du produit/service en gras dans le PDF
 Foundation=Association
+ConstForcedByConfFile=Ce réglage est imposé au niveau du serveur : il ne peut pas être modifié ici.
+ConstForcedByConfFileWarning=Le réglage « %s » est imposé au niveau du serveur et ne peut pas être modifié ici. Votre modification ne sera pas prise en compte.
 Version=Version
 Publisher=Editeur
 Provider=Fournisseur

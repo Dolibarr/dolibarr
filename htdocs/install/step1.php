@@ -197,6 +197,50 @@ if (@file_exists($forcedfile)) {
 }
 
 
+// When the administrator chose to reuse the existing conf.php template, the form fields are disabled
+// (greyed) and therefore not submitted. So we source the parameters (paths + database connection) from the
+// template itself, which is the source of truth in that case.
+$usetemplate = (GETPOST('use_template', 'alpha') == 'on' || GETPOST('use_template', 'alpha') == '1');
+if (!empty($GLOBALS['force_install_usetemplate'])) {
+	$usetemplate = true;
+}
+if ($usetemplate && file_exists($conffile) && filesize($conffile) > 8) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
+	$confmanagertpl = new ConfFileManager();
+	$tplparams = $confmanagertpl->getConnectionParams((string) file_get_contents($conffile));
+	if (!empty($tplparams['document_root'])) {
+		$main_dir = $tplparams['document_root'];
+	}
+	if (!empty($tplparams['data_root'])) {
+		$main_data_dir = $tplparams['data_root'];
+	}
+	if (!empty($tplparams['url_root'])) {
+		$main_url = $tplparams['url_root'];
+	}
+	if (!empty($tplparams['db_type'])) {
+		$db_type = $tplparams['db_type'];
+	}
+	if ($tplparams['db_host'] !== '') {
+		$db_host = $tplparams['db_host'];
+	}
+	if ($tplparams['db_port'] !== '') {
+		$db_port = $tplparams['db_port'];
+	}
+	if (!empty($tplparams['db_name'])) {
+		$db_name = $tplparams['db_name'];
+	}
+	if ($tplparams['db_user'] !== '') {
+		$db_user = $tplparams['db_user'];
+	}
+	if (!empty($tplparams['db_prefix'])) {
+		$db_prefix = $tplparams['db_prefix'];
+	}
+	if ($tplparams['db_pass'] !== '') {
+		$db_pass = $tplparams['db_pass'];
+	}
+}
+
+
 $error = 0;
 
 
@@ -908,184 +952,122 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = bin2hex(random_bytes(32));		// Generate a random hash (64 hex chars)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
+	$confmanager = new ConfFileManager();
+
+	// Detect whether the administrator asked to reuse the conf.php template already in place.
+	$usetemplate = (GETPOST('use_template', 'alpha') == 'on' || GETPOST('use_template', 'alpha') == '1');
+	if (!empty($GLOBALS['force_install_usetemplate'])) {
+		$usetemplate = true;
+	}
+	$templateexists = (file_exists($conffile) && filesize($conffile) > 8);
+
+	if ($usetemplate && $templateexists) {
+		// Reuse the existing template: regenerate an exhaustive conf.php (same layout as a fresh generation) but
+		// keep the values already set in the template, comment deprecated variables and preserve the custom ones.
+		$rawtemplate = file_get_contents($conffile);
+		if ($rawtemplate === false) {
+			dolibarr_install_syslog("step1: failed to read the conf.php template", LOG_ERR);
+			return 1;
+		}
+
+		$result = $confmanager->buildFromTemplate($rawtemplate);
+
+		// Report (under a title) the unknown / deprecated / missing variables found while reusing the template.
+		if (!empty($result['unknown']) || !empty($result['deprecated']) || !empty($result['missing'])) {
+			print '<tr><td colspan="2"><b>'.$langs->trans("ConfTemplateReuseTitle").' :</b></td></tr>';
+		}
+		if (!empty($result['unknown'])) {
+			print '<tr><td>'.$langs->trans("ConfTemplateUnknownVars").' : '.dol_escape_htmltag(implode(', ', $result['unknown'])).'</td><td>'.img_picto('', 'warning').'</td></tr>';
+		}
+		if (!empty($result['deprecated'])) {
+			print '<tr><td>'.$langs->trans("ConfTemplateDeprecatedVars").' : '.dol_escape_htmltag(implode(', ', $result['deprecated'])).'</td><td>'.img_picto('', 'warning').'</td></tr>';
+		}
+		if (!empty($result['missing'])) {
+			// The list can be long, so it is collapsed behind a "+" toggle.
+			print '<tr><td>'.$langs->trans("ConfTemplateMissingVars", count($result['missing']));
+			print ' <a href="#" class="cursorpointer" onclick="jQuery(\'#confmissingvars\').toggle(); jQuery(this).find(\'span.fas\').toggleClass(\'fa-plus-square fa-minus-square\'); return false;"><span class="fas fa-plus-square valignmiddle"></span></a>';
+			print '<div id="confmissingvars" class="opacitymedium" style="display:none;">'.dol_escape_htmltag(implode(', ', $result['missing'])).'</div>';
+			print '</td><td>'.img_picto('', 'info').'</td></tr>';
+		}
+
+		$content = $result['content'];
+	} else {
+		// No template reused: generate an exhaustive, sectioned and commented conf.php from the canvas.
+		$values = array(
+			'dolibarr_main_url_root' => trim($main_url),
+			'dolibarr_main_document_root' => dol_sanitizePathName(trim($main_dir)),
+			'dolibarr_main_url_root_alt' => trim("/".$main_alt_dir_name),
+			'dolibarr_main_document_root_alt' => dol_sanitizePathName(trim($main_dir."/".$main_alt_dir_name)),
+			'dolibarr_main_data_root' => dol_sanitizePathName(trim($main_data_dir)),
+			'dolibarr_main_db_host' => trim($db_host),
+			'dolibarr_main_db_port' => (string) ((int) $db_port),
+			'dolibarr_main_db_name' => trim($db_name),
+			'dolibarr_main_db_prefix' => trim($main_db_prefix),
+			'dolibarr_main_db_user' => trim($db_user),
+			'dolibarr_main_db_pass' => trim($db_pass),
+			'dolibarr_main_db_type' => trim($db_type),
+			'dolibarr_main_db_character_set' => trim($db_character_set),
+			'dolibarr_main_db_collation' => trim($db_collation),
+			'dolibarr_main_force_https' => $main_force_https,
+			'dolibarr_main_instance_unique_id' => bin2hex(random_bytes(32)),
+			'dolibarr_main_distrib' => trim($dolibarr_main_distrib),
+		);
+
+		// Optional library / javascript / font path overrides (only written when forced by install.forced.php).
+		$forcedpaths = array(
+			'dolibarr_lib_FPDF_PATH' => $force_dolibarr_lib_FPDF_PATH,
+			'dolibarr_lib_TCPDF_PATH' => $force_dolibarr_lib_TCPDF_PATH,
+			'dolibarr_lib_FPDI_PATH' => $force_dolibarr_lib_FPDI_PATH,
+			'dolibarr_lib_TCPDI_PATH' => $force_dolibarr_lib_TCPDI_PATH,
+			'dolibarr_lib_GEOIP_PATH' => $force_dolibarr_lib_GEOIP_PATH,
+			'dolibarr_lib_NUSOAP_PATH' => $force_dolibarr_lib_NUSOAP_PATH,
+			'dolibarr_lib_ODTPHP_PATH' => $force_dolibarr_lib_ODTPHP_PATH,
+			'dolibarr_lib_ODTPHP_PATHTOPCLZIP' => $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP,
+		);
+		foreach ($forcedpaths as $pathkey => $pathvalue) {
+			if (!empty($pathvalue)) {
+				$values[$pathkey] = dol_sanitizePathName($pathvalue);
+			}
+		}
+		if (!empty($force_dolibarr_js_CKEDITOR)) {
+			$values['dolibarr_js_CKEDITOR'] = $force_dolibarr_js_CKEDITOR;
+		}
+		if (!empty($force_dolibarr_js_JQUERY)) {
+			$values['dolibarr_js_JQUERY'] = $force_dolibarr_js_JQUERY;
+		}
+		if (!empty($force_dolibarr_js_JQUERY_UI)) {
+			$values['dolibarr_js_JQUERY_UI'] = $force_dolibarr_js_JQUERY_UI;
+		}
+		if (!empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
+			$values['dolibarr_font_DOL_DEFAULT_TTF'] = $force_dolibarr_font_DOL_DEFAULT_TTF;
+		}
+		if (!empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
+			$values['dolibarr_font_DOL_DEFAULT_TTF_BOLD'] = $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD;
+		}
+
+		$content = $confmanager->build($values);
+	}
+
+	// Validate the generated content before overwriting the file (rollback to .old on failure).
+	if (!$confmanager->validateSyntax($content)) {
+		dolibarr_install_syslog("step1: generated conf.php content is not valid, rollback", LOG_ERR);
+		if (file_exists($conffile.'.old')) {
+			@dol_copy($conffile.'.old', $conffile, '0400');
+		}
+		print "<tr><td>";
+		print $langs->trans("SaveConfigurationFile");
+		print ' <strong>'.dol_escape_htmltag($conffile).'</strong>';
+		print "</td><td>";
+		print img_picto('Error', 'warning', 'class="error"');
+		print "</td></tr>";
+		return 1;
+	}
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {
 		clearstatcache();
-
-		fwrite($fp, '<?php'."\n");
-		fwrite($fp, '//'."\n");
-		fwrite($fp, '// File generated by Dolibarr installer '.DOL_VERSION.' on '.dol_print_date(dol_now(), '')."\n");
-		fwrite($fp, '//'."\n");
-		fwrite($fp, '// Take a look at conf.php.example file for an example of '.basename($conffile).' file'."\n");
-		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
-		fwrite($fp, '//'."\n");
-		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_document_root="'.dol_escape_php(dol_sanitizePathName(trim($main_dir))).'";');
-		fwrite($fp, "\n");
-
-		fwrite($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.dol_escape_php(trim("/".$main_alt_dir_name), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt="'.dol_escape_php(dol_sanitizePathName(trim($main_dir."/".$main_alt_dir_name))).'";');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_data_root="'.dol_escape_php(dol_sanitizePathName(trim($main_data_dir))).'";');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_host=\''.dol_escape_php(trim($db_host), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_port=\''.((int) $db_port).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_name=\''.dol_escape_php(trim($db_name), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_prefix=\''.dol_escape_php(trim($main_db_prefix), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_user=\''.dol_escape_php(trim($db_user), 1).'\';');
-		fwrite($fp, "\n");
-		fwrite($fp, '$dolibarr_main_db_pass=\''.dol_escape_php(trim($db_pass), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_type=\''.dol_escape_php(trim($db_type), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_character_set=\''.dol_escape_php(trim($db_character_set), 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_db_collation=\''.dol_escape_php(trim($db_collation), 1).'\';');
-		fwrite($fp, "\n");
-
-		// Authentication
-		fwrite($fp, '// Authentication settings');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_authentication=\'dolibarr\';');
-		fwrite($fp, "\n\n");
-
-		fwrite($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '// Security settings');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_prod=\'0\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_restrict_eval_methods=\'getDolGlobalString, getDolGlobalInt, getDolCurrency, getDolEntity, getDolDBType, fetchNoCompute, hasRight, isAdmin, isModEnabled, isStringVarMatching, abs, min, max, round, dol_now, preg_match\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_main_instance_unique_id=\''.dol_escape_php($key, 1).'\';');
-		fwrite($fp, "\n");
-
-		fwrite($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
-		fwrite($fp, "\n");
-		fwrite($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
-		fwrite($fp, "\n");
-
-		// Write params to overwrites default lib path
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_FPDF_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDF_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_FPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDF_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_TCPDF_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDF_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_TCPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDF_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_FPDI_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_FPDI_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_FPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDI_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_TCPDI_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_TCPDI_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_TCPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDI_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_GEOIP_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_GEOIP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_GEOIP_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_NUSOAP_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_NUSOAP_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_NUSOAP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_NUSOAP_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_ODTPHP_PATH)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATH = '';
-		}
-		fwrite($fp, '$dolibarr_lib_ODTPHP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATH)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) {
-			fwrite($fp, '//');
-			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
-		}
-		fwrite($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)).'";');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_js_CKEDITOR)) {
-			fwrite($fp, '//');
-			$force_dolibarr_js_CKEDITOR = '';
-		}
-		fwrite($fp, '$dolibarr_js_CKEDITOR=\''.dol_escape_php($force_dolibarr_js_CKEDITOR, 1).'\';');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_js_JQUERY)) {
-			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY = '';
-		}
-		fwrite($fp, '$dolibarr_js_JQUERY=\''.dol_escape_php($force_dolibarr_js_JQUERY, 1).'\';');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_js_JQUERY_UI)) {
-			fwrite($fp, '//');
-			$force_dolibarr_js_JQUERY_UI = '';
-		}
-		fwrite($fp, '$dolibarr_js_JQUERY_UI=\''.dol_escape_php($force_dolibarr_js_JQUERY_UI, 1).'\';');
-		fwrite($fp, "\n");
-
-		// Write params to overwrites default font path
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
-			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF = '';
-		}
-		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF, 1).'\';');
-		fwrite($fp, "\n");
-		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
-			fwrite($fp, '//');
-			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
-		}
-		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD, 1).'\';');
-		fwrite($fp, "\n");
-
-		// Other
-		fwrite($fp, '$dolibarr_main_distrib=\''.dol_escape_php(trim($dolibarr_main_distrib), 1).'\';');
-		fwrite($fp, "\n");
-
+		fwrite($fp, $content);
 		fclose($fp);
 
 		if (file_exists("$conffile")) {
@@ -1094,13 +1076,15 @@ function write_conf_file($conffile)
 
 			print "<tr><td>";
 			print $langs->trans("SaveConfigurationFile");
-			print ' <strong>'.$conffile.'</strong>';
+			print ' <strong>'.dol_escape_htmltag($conffile).'</strong>';
 			print "</td><td>";
 			print img_picto('OK', 'tick');
 			print "</td></tr>";
 		} else {
 			$error++;
 		}
+	} else {
+		$error++;
 	}
 
 	return $error;

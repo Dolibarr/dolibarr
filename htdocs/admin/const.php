@@ -105,7 +105,16 @@ if ($action == 'add') {
 	}
 
 	if (!$error) {
-		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0) {
+		if (isConstForcedByConfFile($constname)) {
+			// The constant is forced from the conf.php file: it always wins over the database value at runtime,
+			// so writing it here would have no effect. We warn the administrator instead of saving.
+			$langs->load("admin");
+			setEventMessages($langs->trans("ConstForcedByConfFileWarning", $constname), null, 'warnings');
+			$action = "";
+			$constname = "";
+			$constvalue = "";
+			$constnote = "";
+		} elseif (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
 			$constname = "";
@@ -122,6 +131,11 @@ if (!empty($consts) && $action == 'update') {
 	$nbmodified = 0;
 	foreach ($consts as $const) {
 		if (!empty($const["check"])) {
+			// A constant forced from the conf.php file always wins over the database value at runtime, so we skip it
+			// (its field is displayed read-only in the list anyway).
+			if (isConstForcedByConfFile($const["name"])) {
+				continue;
+			}
 			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0) {
 				$nbmodified++;
 			} else {
@@ -280,18 +294,26 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		$value = dolDecrypt($obj->value);
+		// A constant forced from conf.php (environment variable DOLIBARR_<NAME>, or a dedicated conf.php variable
+		// bridged into the constant) always wins over the database value at runtime, so it is shown read-only here
+		// with its effective value and cannot be edited.
+		$isforced = isConstForcedByConfFile($obj->name);
+		$value = $isforced ? getDolGlobalString($obj->name) : dolDecrypt($obj->value);
 
 		print "\n";
 
-		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name);
+		if ($isforced) {
+			print ' '.img_picto($langs->trans("ConstForcedByConfFile"), 'lock');
+		}
+		print '</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'"'.($isforced ? ' readonly title="'.dol_escape_htmltag($langs->trans("ConstForcedByConfFile")).'"' : '').'>';
 		print '</td>';
 
 		// Note

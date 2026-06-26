@@ -1515,6 +1515,11 @@ class Conf extends stdClass
 		if (!empty($this->file->mailing_limit_sendbyday)) {
 			$this->global->MAILING_LIMIT_SENDBYDAY = $this->file->mailing_limit_sendbyday;
 		}
+		// A dedicated conf.php variable ($dolibarr_main_csrf_with_token) can force the MAIN_SECURITY_CSRF_WITH_TOKEN
+		// constant over its database value (test !== '' so the value 0, i.e. disabled, can also be forced).
+		if (isset($this->file->csrf_with_token) && $this->file->csrf_with_token !== '') {
+			$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = $this->file->csrf_with_token;
+		}
 
 		return 0;
 	}

@@ -155,6 +155,37 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
+// Detect a configuration template already present on disk (a real conf.php, not an empty/just-<?php file,
+// holding at least one variable). Only then the administrator can choose to reuse it instead of generating
+// a brand new conf.php. The >8 size test matches the core convention (inc.php) to ignore an empty template.
+$templatepresent = false;
+$templateparsed = array('values' => array(), 'unknown' => array(), 'deprecated' => array(), 'missing' => array());
+if (is_file($conffile) && filesize($conffile) > 8) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
+	$confmanagerpreview = new ConfFileManager();
+	$rawconftemplate = file_get_contents($conffile);
+	if ($rawconftemplate !== false) {
+		$templateparsed = $confmanagerpreview->parse($rawconftemplate);
+		if (!empty($templateparsed['values'])) {
+			$templatepresent = true;
+		}
+	}
+}
+
+// Build the optional notices (deprecated / unknown / missing variables) shown next to the reuse checkbox.
+$templatenotices = '';
+if ($templatepresent) {
+	if (!empty($templateparsed['deprecated'])) {
+		$templatenotices .= '<br><span class="warning">'.$langs->trans("ConfTemplateDeprecatedVars").' : '.dol_escape_htmltag(implode(', ', $templateparsed['deprecated'])).'</span>';
+	}
+	if (!empty($templateparsed['unknown'])) {
+		$templatenotices .= '<br><span class="warning">'.$langs->trans("ConfTemplateUnknownVars").' : '.dol_escape_htmltag(implode(', ', $templateparsed['unknown'])).'</span>';
+	}
+	if (!empty($templateparsed['missing'])) {
+		$templatenotices .= '<br><span class="opacitymedium">'.$langs->trans("ConfTemplateMissingVars", count($templateparsed['missing'])).'</span>';
+	}
+}
+
 if (!empty($force_install_distrib)) {
 	print '<!-- $force_install_distrib = '.dol_escape_htmltag($force_install_distrib).' -->';
 }
@@ -179,6 +210,46 @@ if (!empty($force_install_message)) {
 ?>
 <div>
 
+<?php if ($templatepresent) { ?>
+<table class="nobordernopadding centpercent">
+	<tr>
+		<td colspan="3" class="label">
+		<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt="template"> <?php echo $langs->trans("UseConfTemplate"); ?></h3>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">
+			<input type="checkbox" id="use_template" name="use_template" value="on"<?php echo(GETPOST('use_template', 'alpha') ? ' checked' : ''); ?>>
+			<label for="use_template"><b><?php echo $langs->trans("UseConfTemplateLabel"); ?></b></label>
+		</td>
+		<td class="comment" colspan="2">
+			<span class="opacitymedium"><?php echo $langs->trans("UseConfTemplateHelp"); ?></span>
+			<br><span class="error"><?php echo $langs->trans("ConfTemplateDbMustExist"); ?></span>
+			<?php echo $templatenotices; ?>
+		</td>
+	</tr>
+</table>
+
+<!-- Notice shown above the setup form when reuse is active, to make clear the fields below are ignored -->
+<div id="conftemplatebanner" class="error"<?php echo(GETPOST('use_template', 'alpha') ? '' : ' style="display:none;"'); ?>>
+	<?php echo img_picto('', 'info', 'class="pictofixedwidth valignmiddle"').$langs->trans("ConfTemplateFormDisabled"); ?>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	// When reusing the existing conf.php template, all values come from that file: grey out the setup form
+	// below and show a banner above it, so it is clear those fields are not used.
+	function dolToggleTemplateMode() {
+		var on = jQuery('#use_template').is(':checked');
+		jQuery('#forminstall').find('input, select').not('#use_template').not('[type=submit]').not('[type=button]').not('[type=hidden]').prop('disabled', on);
+		jQuery('#conftemplatebanner').toggle(on);
+		if (!on && typeof init_needroot === 'function') { init_needroot(); }
+	}
+	jQuery('#use_template').on('change', dolToggleTemplateMode);
+	dolToggleTemplateMode();
+});
+</script>
+<?php } ?>
 
 <table class="nobordernopadding<?php if ($force_install_noedit) {
 	print ' hidewhennoedit';
