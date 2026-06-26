@@ -54,7 +54,7 @@ jobs:
       - TRAVIS_PHP_VERSION=8.4
       - TRAVIS_TYPE=pull_request
     - stage: PHP max
-      if: type = type = push
+      if: type = push
       php: '8.4'
       env:
       - DB=mysql
