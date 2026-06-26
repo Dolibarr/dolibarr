@@ -47,6 +47,7 @@ class LanguageOfCommentsSniff implements Sniff
 		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
 		' fonction ',
+		' formulaire ',
 		' ligne ',
 		' lignes ',
 		' modèle ',
@@ -102,7 +103,7 @@ class LanguageOfCommentsSniff implements Sniff
 		$contentLower = strtolower($content);
 
 		foreach ($this->frenchWords as $word) {
-			if (strpos($contentLower, $word) !== false) {
+			if (strpos($contentLower, $word) !== false || preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/', $word)) {
 				$error = "The comment appears to be in French (word detected: '%s'). Please write in English.";
 				$data  = [trim($word)];
 				$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
