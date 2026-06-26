@@ -563,6 +563,35 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_max_participants (max_partic
 ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
 
 
+-- Fixed sell prices per currency for products (issue #32379)
+create table llx_product_price_currency
+(
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer   DEFAULT 1 NOT NULL,
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_product			integer NOT NULL,
+  price_level			smallint  DEFAULT 1 NOT NULL,
+  fk_multicurrency		integer,
+  multicurrency_code	varchar(3) NOT NULL,
+  multicurrency_tx		double(24,8) DEFAULT 1,
+  price					double(24,8) DEFAULT NULL,
+  price_ttc				double(24,8) DEFAULT NULL,
+  price_base_type		varchar(3) DEFAULT 'HT',
+  date_price			datetime NOT NULL,
+  fk_user_author		integer
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_price_currency ADD UNIQUE INDEX uk_product_price_currency (fk_product, price_level, multicurrency_code, entity);
+ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_product (fk_product);
+ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_user_author (fk_user_author);
+
+-- Flag a document line whose currency unit price comes from a fixed per-currency product price (issue #32379)
+ALTER TABLE llx_propaldet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+ALTER TABLE llx_facturedet_rec ADD COLUMN multicurrency_subprice_source tinyint NOT NULL DEFAULT 0;
+
+
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';

@@ -203,6 +203,11 @@ class Product extends CommonObject
 	 */
 	public $price_label;
 
+	/**
+	 * @var array<int,array<string,array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}>>	Fixed sell prices per [price level][currency code] (issue #32379)
+	 */
+	public $multicurrency_prices = array();
+
 	//! Arrays for multiprices
 	/**
 	 * @var array<int,float>
@@ -2638,6 +2643,37 @@ class Product extends CommonObject
 		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
 	}
 
+	/**
+	 *	Return the fixed sell price defined for a given currency and price level, if any.
+	 *
+	 *	Used on sale documents in a foreign currency: when a fixed per-currency price exists it
+	 *	takes precedence over the company-currency catalog price and over the exchange-rate
+	 *	derivation. Returns an empty array when no fixed price is defined (caller then falls back
+	 *	to the exchange-rate computation).
+	 *
+	 *	@param	string	$currency_code	Currency code of the document (e.g. 'USD')
+	 *	@param	int		$price_level	Price level (>=1)
+	 *	@param	int		$socid			Third party id (reserved for per-customer currency prices, lot 2)
+	 *	@return	array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}|array{}	Fixed price or empty array
+	 */
+	public function getSellPriceInCurrency(string $currency_code, int $price_level = 1, int $socid = 0): array
+	{
+		if (empty($currency_code)) {
+			return array();
+		}
+		$level = $price_level > 0 ? $price_level : 1;
+
+		if (!empty($this->multicurrency_prices[$level][$currency_code])) {
+			return $this->multicurrency_prices[$level][$currency_code];
+		}
+		// Fall back to level 1 when the requested level has no per-currency price
+		if ($level != 1 && !empty($this->multicurrency_prices[1][$currency_code])) {
+			return $this->multicurrency_prices[1][$currency_code];
+		}
+
+		return array();
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Read price used by a provider.
@@ -3449,6 +3485,13 @@ class Product extends CommonObject
 							}
 						}
 					}
+				}
+
+				// Load fixed sell prices per currency (issue #32379)
+				if (isModEnabled('multicurrency') && empty($ignore_price_load)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/productpricecurrency.class.php';
+					$productpricecurrency = new ProductPriceCurrency($this->db);
+					$this->multicurrency_prices = $productpricecurrency->fetchAllForProduct($this->id);
 				}
 
 				if (isModEnabled('dynamicprices') && !empty($this->fk_price_expression) && empty($ignore_expression)) {
