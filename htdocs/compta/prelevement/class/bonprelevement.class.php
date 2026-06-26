@@ -1086,7 +1086,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." did=".$did." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." did=".(is_array($did) ? implode(',', $did) : $did)." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
