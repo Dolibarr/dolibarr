@@ -1066,8 +1066,13 @@ if ($action == "importSignature") {
 						if (!$error && empty($reshook)) {
 							$result = onlineSignatureWriteSignedPdf($sourcefile, $newpdffilename, $upload_dir . $filename, $online_sign_name, $sourceDefinition, $response, $error);
 							if ($result < 0) {
-								$error++;
+								$error = max(1, $error);
 							}
+						}
+
+						if (!$error && !dol_is_file($newpdffilename)) {
+							$error++;
+							$response = "error signed_pdf_not_created";
 						}
 
 						if (!$error && method_exists($object, 'indexFile')) {
@@ -1113,6 +1118,229 @@ if ($error) {
 }
 
 echo $response;
+
+
+/**
+ * Build a signed PDF for an online signature source.
+ *
+ * @param	string				$sourcefile			Full path to the source PDF
+ * @param	string				$newpdffilename		Full path to the signed PDF
+ * @param	string				$signaturefile		Full path to the signature image
+ * @param	string				$online_sign_name	Signer name
+ * @param	array<string,mixed>	$sourceDefinition	Online signature source definition
+ * @param	string				$response			Response message
+ * @param	int					$error				Error counter
+ * @return	int										1 if OK, -1 if KO
+ */
+function onlineSignatureWriteSignedPdf($sourcefile, $newpdffilename, $signaturefile, $online_sign_name, $sourceDefinition, &$response, &$error)
+{
+	global $langs;
+
+	try {
+		$pdf = pdf_getInstance();
+		if (class_exists('TCPDF')) {
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+		}
+		$pdf->SetFont(pdf_getPDFFont($langs));
+
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+			$pdf->SetCompression(false);
+		}
+
+		$pagecount = $pdf->setSourceFile($sourcefile);
+		$prefix = empty($sourceDefinition['signature_position_prefix']) ? dol_strtoupper((string) $sourceDefinition['source']) : (string) $sourceDefinition['signature_position_prefix'];
+		$allsignpages = getDolGlobalString($prefix . "_SIGNATURE_ON_ALL_PAGES");
+		$specificpage = getDolGlobalInt($prefix . "_SIGNATURE_ON_SPECIFIC_PAGE");
+		if ($specificpage < 0) {
+			$specificpage = max(1, $pagecount + 1 - abs($specificpage));
+		}
+		if (empty($specificpage)) {
+			$keywords = pdfExtractMetadata($sourcefile, 'Keywords');
+			$reg = array();
+			if (preg_match('/PAGESIGN=(\d+)/', $keywords, $reg)) {
+				$specificpage = (int) $reg[1];
+			}
+		}
+
+		$param = array();
+		$param['online_sign_name'] = $online_sign_name;
+		$param['pathtoimage'] = $signaturefile;
+		$s = array('w' => 0, 'h' => 0);
+		$signatureprinted = false;
+
+		for ($i = 1; $i < ($pagecount + 1); $i++) {
+			$tppl = $pdf->importPage($i);
+			$s = $pdf->getTemplatesize($tppl);
+			$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+			$pdf->useTemplate($tppl);
+
+			if ($allsignpages || (!empty($specificpage) && $specificpage == $i)) {
+				onlineSignatureSetImagePosition($param, $prefix, $s);
+				dolPrintSignatureImage($pdf, $langs, $param);
+				$signatureprinted = true;
+			}
+		}
+
+		if (!$allsignpages && !$signatureprinted) {
+			onlineSignatureSetImagePosition($param, $prefix, $s);
+			dolPrintSignatureImage($pdf, $langs, $param);
+		}
+
+		$pdf->Output($newpdffilename, "F");
+
+		return 1;
+	} catch (Exception $e) {
+		dol_syslog("Error when manipulating the PDF " . $sourcefile . " by onlineSign: " . $e->getMessage(), LOG_ERR);
+		$response = $e->getMessage();
+		$error++;
+	}
+
+	return -1;
+}
+
+/**
+ * Set the signature image position from Dolibarr constants or default values.
+ *
+ * @param	array<string,int|float|string>			$params		Image parameters
+ * @param	string									$prefix		Constant prefix
+ * @param	array<string,int|float>					$pagesize	PDF page size
+ * @return	void
+ */
+function onlineSignatureSetImagePosition(&$params, $prefix, $pagesize)
+{
+	$pagewidth = empty($pagesize['w']) ? 210 : (float) $pagesize['w'];
+	$pageheight = empty($pagesize['h']) ? 297 : (float) $pagesize['h'];
+
+	$xforimgstart = getDolGlobalString($prefix . "_SIGNATURE_XFORIMGSTART");
+	if ($xforimgstart !== '') {
+		$params['xforimgstart'] = (float) $xforimgstart;
+	} else {
+		$params['xforimgstart'] = $pagewidth / 2;
+	}
+
+	$yforimgstart = getDolGlobalString($prefix . "_SIGNATURE_YFORIMGSTART");
+	if ($yforimgstart !== '') {
+		$params['yforimgstart'] = (float) $yforimgstart;
+	} else {
+		$params['yforimgstart'] = $pageheight - 62;
+	}
+
+	$wforimg = getDolGlobalString($prefix . "_SIGNATURE_WFORIMG");
+	if ($wforimg !== '') {
+		$params['wforimg'] = (float) $wforimg;
+	} else {
+		$params['wforimg'] = $pagewidth - ((float) $params['xforimgstart'] + 16);
+		if ($params['wforimg'] <= 0) {
+			$params['wforimg'] = 80;
+		}
+	}
+}
+
+/**
+ * Finalize an external online signature source.
+ *
+ * @param	array<string,mixed>	$sourceDefinition	Online signature source definition
+ * @param	CommonObject		$object				Signed object
+ * @param	string				$online_sign_name	Signer name
+ * @param	string				$signaturefile		Full path to the signature image
+ * @param	string				$signedfile			Full path to the signed PDF
+ * @param	string				$response			Response message
+ * @return	int										1 if OK, -1 if KO
+ */
+function onlineSignatureFinalizeObject($sourceDefinition, $object, $online_sign_name, $signaturefile, $signedfile, &$response)
+{
+	global $db, $hookmanager, $action;
+
+	$online_sign_ip = getUserRemoteIP();
+	$parameters = array(
+		'source' => empty($sourceDefinition['source']) ? '' : (string) $sourceDefinition['source'],
+		'source_definition' => $sourceDefinition,
+		'signaturefile' => $signaturefile,
+		'signedfile' => $signedfile,
+		'online_sign_name' => $online_sign_name,
+		'online_sign_ip' => $online_sign_ip,
+	);
+	$reshook = $hookmanager->executeHooks('completeOnlineSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		$response = $hookmanager->error ? $hookmanager->error : "error in completeOnlineSignature hook";
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		return -1;
+	}
+	if ($reshook > 0) {
+		return 1;
+	}
+
+	if (!empty($sourceDefinition['signed_status_method']) && method_exists($object, (string) $sourceDefinition['signed_status_method']) && array_key_exists('signed_status_value', $sourceDefinition)) {
+		$method = (string) $sourceDefinition['signed_status_method'];
+		$signedtrigger = empty($sourceDefinition['signed_trigger']) ? '' : (string) $sourceDefinition['signed_trigger'];
+		if (empty($object->context) || !is_array($object->context)) {
+			$object->context = array();
+		}
+		$object->context['closedfromonlinesignature'] = 'closedfromonlinesignature';
+		$object->context['trigger_reason'] = 'online_signature';
+		$object->context['online_sign_name'] = $online_sign_name;
+		$object->context['online_sign_ip'] = $online_sign_ip;
+
+		$signatureuser = new User($db);
+		$result = $object->$method($signatureuser, $sourceDefinition['signed_status_value'], 0, $signedtrigger);
+		if ($result < 0) {
+			$response = empty($object->error) ? "error signed_status_method" : $object->error;
+			return -1;
+		}
+
+		return 1;
+	}
+
+	$response = "error online_signature_source_has_no_finalizer";
+	return -1;
+}
+
+/**
+ * Insert the generic online signature trace.
+ *
+ * @param	array<string,mixed>	$sourceDefinition	Online signature source definition
+ * @param	CommonObject		$object				Signed object
+ * @param	string				$name				Signer name
+ * @param	string				$ip					Signer IP
+ * @param	string				$pathoffile			Signed file path
+ * @return	int										1 if OK, -1 if KO
+ */
+function onlineSignatureRecordTrace($sourceDefinition, $object, $name, $ip, $pathoffile)
+{
+	global $db, $conf;
+
+	$objecttype = empty($sourceDefinition['elementtype']) ? (empty($object->element) ? '' : (string) $object->element) : (string) $sourceDefinition['elementtype'];
+	$objecttype = substr($objecttype, 0, 32);
+	$entity = empty($object->entity) ? (int) $conf->entity : (int) $object->entity;
+
+	$storedpath = str_replace('\\', '/', $pathoffile);
+	$dataroot = str_replace('\\', '/', rtrim(DOL_DATA_ROOT, '/\\')) . '/';
+	if (strpos($storedpath, $dataroot) === 0) {
+		$storedpath = substr($storedpath, strlen($dataroot));
+	}
+	$storedpath = substr($storedpath, 0, 255);
+
+	$sql = "INSERT INTO " . MAIN_DB_PREFIX . "onlinesignature";
+	$sql .= " (entity, object_type, object_id, datec, name, ip, pathoffile)";
+	$sql .= " VALUES (";
+	$sql .= ((int) $entity);
+	$sql .= ", '" . $db->escape($objecttype) . "'";
+	$sql .= ", " . ((int) $object->id);
+	$sql .= ", '" . $db->idate(dol_now()) . "'";
+	$sql .= ", '" . $db->escape($name) . "'";
+	$sql .= ", '" . $db->escape($ip) . "'";
+	$sql .= ", '" . $db->escape($storedpath) . "'";
+	$sql .= ")";
+
+	$resql = $db->query($sql);
+	if (!$resql) {
+		dol_syslog("Failed to insert online signature trace: " . $db->lasterror(), LOG_WARNING);
+		return -1;
+	}
+
+	return 1;
+}
 
 
 /**
