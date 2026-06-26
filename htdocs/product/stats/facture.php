@@ -6,6 +6,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		Jon Bendtsen		<jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2026		Vincent MAURY TimGroup	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +116,9 @@ if (!empty($search_date_endyear)) {
 }
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_type = GETPOSTINT('search_type');
+$search_company = GETPOSTINT('search_company');
+if (empty($search_type)) $search_type = -1;
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_date_startday = '';
@@ -125,6 +129,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_date_endyear = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_type = '-1';
+	$search_company = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -337,12 +343,18 @@ if ($id > 0 || !empty($ref)) {
 			if ($search_date_end) {
 				$sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
 			}
+			if ($search_type != '' && $search_type != '-1') {
+				$sql .= " AND f.type = ".((int) $search_type);
+			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
+			} elseif ($search_company > 0) {
+				$sql .= " AND f.fk_soc = ".((int) $search_company);
 			}
+
 			// Add where from extra fields
 			$extrafieldsobjectkey = 'facture';
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -435,6 +447,20 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
 				print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 				print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print $langs->trans('Company').' : '.$form->select_company($search_company, 'search_company', '(s.client:in:1,2,3)', 1);
+				print $langs->trans('Type').' : ';
+				$listtype = array(
+					Facture::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
+					Facture::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
+					Facture::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
+					Facture::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
+				);
+				if (getDolGlobalString('INVOICE_USE_SITUATION')) {
+					$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
+				}
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+				print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
+
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
