@@ -1358,7 +1358,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		if ($publiccounters) {
 			print '<th class="center">'.$langs->trans("Members").'</th>';
 		}
-		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
+		print '<th class="center"></th>';
 		print "</tr>\n";
 
 		$i = 0;

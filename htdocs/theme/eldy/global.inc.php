@@ -6024,6 +6024,9 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
 
 #dolpublictable {
 	min-width: 300px; font-size: 16px;
