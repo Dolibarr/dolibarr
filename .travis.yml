@@ -52,7 +52,7 @@ jobs:
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
-      - TRAVIS_TYPE=pull_request
+      - TRAVIS_TYPE=$TRAVIS_EVENT_TYPE
     - stage: PHP latest
       if: type = push AND branch = develop
       php: 'latest'
