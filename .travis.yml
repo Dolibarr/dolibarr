@@ -39,24 +39,27 @@ jobs:
   allow_failures:
   - php: 'latest'
   include:
-    - stage: PHP min and max
+    - stage: PHP min
       if: type = push
       php: '7.2'
       env:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
-    - stage: PHP min and max
+      - TRAVIS_TYPE=push
+    - stage: PHP max
       if: type = pull_request OR type = push
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_TYPE=pull_request
     - stage: PHP latest
       if: type = push AND branch = develop
       php: 'latest'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=latest
+      - TRAVIS_TYPE=push
 
 notifications:
   email:
@@ -78,6 +81,7 @@ before_install:
   sudo add-apt-repository -y ppa:ondrej/php
   sudo apt-get update
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
+  echo TRAVIS_TYPE=$TRAVIS_TYPE
 
 - |
   echo Install packages for PHP
@@ -351,28 +355,28 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
@@ -388,17 +392,16 @@ script:
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
     # Exclusions are defined in the ruleset.xml file
-    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
@@ -409,17 +412,16 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     set +e
