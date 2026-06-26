@@ -486,6 +486,11 @@ if (empty($reshook)) {
 		$invoice->fetch($placeid);
 	}
 
+	if (($action == "addline" || $action == "freezone" || $action == "addnote" || $action == "deleteline" || $action == "updateqty" || $action == "updateprice" || $action == "updatereduction" || $action == 'update_reduction_global') && empty($user->rights->takepos->editlines)) {
+		dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+		$action = '';
+	}
+
 	// If we add a line and no invoice yet, we create the invoice
 	if (($action == "addline" || $action == "freezone") && $placeid == 0) {
 		$invoice->socid = getDolGlobalString($constforcompanyid);
