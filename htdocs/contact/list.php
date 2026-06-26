@@ -1876,7 +1876,9 @@ while ($i < $imaxinloop) {
 
 		// Private/Public
 		if (!empty($arrayfields['p.priv']['checked'])) {
-			print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+			print '<td class="center">';
+			print $contactstatic->LibPubPriv($obj->priv, 2);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
