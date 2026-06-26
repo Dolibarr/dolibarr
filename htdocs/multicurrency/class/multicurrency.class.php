@@ -573,6 +573,35 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
+	 * Get the list of currencies enabled for the current entity (shared entities included).
+	 *
+	 * @param	DoliDB	$dbs	Database handler
+	 * @return	array<int,array{id:int,code:string,name:string}>	List of currencies ordered by code
+	 */
+	public static function getCurrencyList($dbs): array
+	{
+		$result = array();
+
+		$sql = "SELECT rowid, code, name FROM ".$dbs->prefix()."multicurrency";
+		$sql .= " WHERE entity IN (".getEntity('multicurrency').")";
+		$sql .= " ORDER BY code ASC";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $dbs->query($sql);
+		if (!$resql) {
+			dol_syslog(__METHOD__.' '.$dbs->lasterror(), LOG_ERR);
+			return $result;
+		}
+
+		while ($obj = $dbs->fetch_object($resql)) {
+			$result[] = array('id' => (int) $obj->rowid, 'code' => $obj->code, 'name' => $obj->name);
+		}
+		$dbs->free($resql);
+
+		return $result;
+	}
+
+	/**
 	 * Get the conversion of amount with invoice rate
 	 *
 	 * @param	int				$fk_facture				Id of invoice
