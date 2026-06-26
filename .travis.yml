@@ -46,13 +46,20 @@ jobs:
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.2
       - TRAVIS_TYPE=push
-    - stage: PHP max
-      if: type = pull_request OR type = push
+    - stage: PHP max pull_request
+      if: type = pull_request
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
-      - TRAVIS_TYPE=$TRAVIS_EVENT_TYPE
+      - TRAVIS_TYPE=pull_request
+    - stage: PHP max
+      if: type = type = push
+      php: '8.4'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_TYPE=push
     - stage: PHP latest
       if: type = push AND branch = develop
       php: 'latest'
