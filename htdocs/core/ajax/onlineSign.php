@@ -55,6 +55,7 @@ if (is_numeric($entity)) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -77,31 +78,33 @@ $online_sign_name = GETPOST("onlinesignname");
 
 $error = 0;
 $response = "";
+$object = null;
+$upload_dir = '';
+$filename = '';
+$newpdffilename = '';
 
 $type = $mode;
 
-global $dolibarr_main_instance_unique_id;
-$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
-
-// Security check
-$securekeyseed = '';
-if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-}
-
-if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
-	// Link may have expired because of a change into the keys used to forge the signature.
-	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
-}
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ajaxonlinesign'));
+
+$sourceDefinition = getOnlineSignatureSourceDefinition($type, $ref, (int) $entity);
+if (empty($sourceDefinition)) {
+	httponly_accessforbidden($langs->trans('ErrorBadParameters') . " - Bad value for source. Value not supported.", 400);
+}
+
+if (!isOnlineSignatureSourceEnabled($sourceDefinition)) {
+	httponly_accessforbidden($langs->trans('FeatureOnlineSignDisabled'), 403);
+}
+
+if (!empty($sourceDefinition['langfiles']) && is_array($sourceDefinition['langfiles'])) {
+	$langs->loadLangs($sourceDefinition['langfiles']);
+}
+
+// Security check
+if (empty($SECUREKEY) || !verifyOnlineSignatureSecureKey($sourceDefinition, $ref, (int) $entity, $SECUREKEY)) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided ' . dol_escape_htmltag($SECUREKEY) . ' does not match expected value for ref=' . dol_escape_htmltag($ref), 403);
+}
 
 
 /*
@@ -976,11 +979,133 @@ if ($action == "importSignature") {
 			}
 			$user = new User($db);
 			$object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'SHIPPING_MODIFY');
+		} else {
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+
+			$object = fetchOnlineSignatureObject($sourceDefinition, $ref, (int) $entity);
+			if (!is_object($object) || empty($object->id)) {
+				$error++;
+				$response = "error object_not_found";
+			}
+
+			if (!$error) {
+				$modulepart = empty($sourceDefinition['modulepart']) ? $type : (string) $sourceDefinition['modulepart'];
+				$upload_dir = getMultidirOutput($object, $modulepart, 1);
+				if (empty($upload_dir) || preg_match('/^error-/', (string) $upload_dir)) {
+					$error++;
+					$response = "Error document directory not found for online signature source " . dol_escape_htmltag($type);
+				} else {
+					$upload_dir = rtrim((string) $upload_dir, '/\\') . '/';
+				}
+			}
+
+			if (!$error) {
+				$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+				$filename = "signatures/" . $date . "_signature.png";
+				if (!dol_is_dir($upload_dir . "signatures/")) {
+					if (!dol_mkdir($upload_dir . "signatures/")) {
+						$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
+						$error++;
+					}
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir . $filename, $data);
+				if ($return === false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir . $filename);
+				}
+			}
+
+			if (!$error) {
+				$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
+				if ((empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT . '/' . $last_main_doc_file)) && method_exists($object, 'generateDocument')) {
+					$defaulttemplate = '';
+					$object->generateDocument($defaulttemplate, $langs);
+					$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
+				}
+
+				if (empty($last_main_doc_file)) {
+					$error++;
+					$response = "error document_not_found";
+				} elseif (preg_match('/\.pdf$/i', $last_main_doc_file)) {
+					$sourcefile = DOL_DATA_ROOT . '/' . $last_main_doc_file;
+					$sourcefilewithoutsign = preg_replace('/_signed-(\d+)\.pdf$/i', '.pdf', $sourcefile);
+					if (is_string($sourcefilewithoutsign) && dol_is_file($sourcefilewithoutsign)) {
+						$sourcefile = $sourcefilewithoutsign;
+					} elseif (!dol_is_file($sourcefile)) {
+						$sourcefile = $upload_dir . basename($last_main_doc_file);
+					}
+
+					if (!dol_is_file($sourcefile)) {
+						$error++;
+						$response = "error source_pdf_not_found";
+					} else {
+						$ref_pdf = pathinfo($sourcefile, PATHINFO_FILENAME);
+						$ref_pdf = preg_replace('/_signed-(\d+)$/', '', $ref_pdf);
+						$newpdffilename = dirname($sourcefile) . '/' . $ref_pdf . "_signed-" . $date . ".pdf";
+
+						$parameters = array(
+							'source' => $type,
+							'source_definition' => $sourceDefinition,
+							'sourcefile' => $sourcefile,
+							'newpdffilename' => $newpdffilename,
+							'signaturefile' => $upload_dir . $filename,
+							'online_sign_name' => $online_sign_name,
+						);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							$error++;
+							$response = $hookmanager->error ? $hookmanager->error : "error in AddSignature hook";
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+
+						if (!$error && empty($reshook)) {
+							$result = onlineSignatureWriteSignedPdf($sourcefile, $newpdffilename, $upload_dir . $filename, $online_sign_name, $sourceDefinition, $response, $error);
+							if ($result < 0) {
+								$error++;
+							}
+						}
+
+						if (!$error && method_exists($object, 'indexFile')) {
+							$object->indexFile($newpdffilename, 1);
+						}
+					}
+				} elseif (preg_match('/\.odt$/i', $last_main_doc_file)) {
+					$error++;
+					$response = "error document_format_not_supported";
+				} else {
+					$error++;
+					$response = "error document_format_not_supported";
+				}
+			}
+
+			if (!$error) {
+				$result = onlineSignatureFinalizeObject($sourceDefinition, $object, $online_sign_name, $upload_dir . $filename, $newpdffilename, $response);
+				if ($result < 0) {
+					$error++;
+				} else {
+					$response = "success";
+				}
+			}
 		}
 	} else {
 		$error++;
 		$response = 'error signature_not_found';
 	}
+}
+
+if (!$error && $response == 'success' && is_object($object) && !empty($object->id)) {
+	$pathoffile = '';
+	if (!empty($newpdffilename)) {
+		$pathoffile = $newpdffilename;
+	} elseif (!empty($upload_dir) && !empty($filename)) {
+		$pathoffile = $upload_dir . $filename;
+	}
+	onlineSignatureRecordTrace($sourceDefinition, $object, $online_sign_name, getUserRemoteIP(), $pathoffile);
 }
 
 if ($error) {

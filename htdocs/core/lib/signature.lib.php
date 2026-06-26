@@ -20,6 +20,291 @@
  */
 
 /**
+ * Return the default seed for online signature links.
+ *
+ * @return	string
+ */
+function getOnlineSignatureDefaultSecuritySeed()
+{
+	global $dolibarr_main_instance_unique_id;
+
+	return substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);
+}
+
+/**
+ * Return the source definition used by the public online signature workflow.
+ *
+ * External modules can expose their own sources with the hook
+ * getOnlineSignatureSourceDefinition in contexts onlinesign/ajaxonlinesign.
+ *
+ * @param	string				$source		Source code from URL
+ * @param	string				$ref		Object reference
+ * @param	int					$entity		Entity id
+ * @param	CommonObject|null	$obj		Object, when already available
+ * @return	array<string,mixed>				Source definition, empty array if unsupported
+ */
+function getOnlineSignatureSourceDefinition($source, $ref = '', $entity = 0, $obj = null)
+{
+	global $db, $hookmanager, $action;
+
+	$source = (string) $source;
+	if ($source == 'propale') {
+		$source = 'proposal';
+	}
+
+	$definitions = array(
+		'proposal' => array(
+			'source' => 'proposal',
+			'module' => 'propal',
+			'elementtype' => 'propal',
+			'modulepart' => 'propal',
+			'document_modulepart' => 'proposal',
+			'langfiles' => array('proposal', 'commercial'),
+			'allow_const' => 'PROPOSAL_ALLOW_ONLINESIGN',
+			'securekey_const' => 'PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'PROPAL',
+			'native_finalizer' => 'proposal',
+		),
+		'contract' => array(
+			'source' => 'contract',
+			'module' => 'contract',
+			'elementtype' => 'contract',
+			'modulepart' => 'contract',
+			'document_modulepart' => 'contract',
+			'langfiles' => array('contracts', 'commercial'),
+			'allow_const' => 'CONTRACT_ALLOW_ONLINESIGN',
+			'securekey_const' => 'CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'CONTRACT',
+			'signed_status_method' => 'setSignedStatus',
+			'signed_status_value' => 3,
+			'signed_trigger' => 'CONTRACT_MODIFY',
+			'native_finalizer' => 'signed_status',
+		),
+		'fichinter' => array(
+			'source' => 'fichinter',
+			'module' => 'intervention',
+			'elementtype' => 'fichinter',
+			'modulepart' => 'fichinter',
+			'document_modulepart' => 'fichinter',
+			'langfiles' => array('interventions', 'commercial'),
+			'allow_const' => 'FICHINTER_ALLOW_ONLINE_SIGN',
+			'securekey_const' => 'FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'FICHINTER',
+			'signed_status_method' => 'setSignedStatus',
+			'signed_status_value' => 3,
+			'signed_trigger' => 'FICHINTER_MODIFY',
+			'native_finalizer' => 'signed_status',
+		),
+		'societe_rib' => array(
+			'source' => 'societe_rib',
+			'module' => '',
+			'elementtype' => 'societe_rib',
+			'modulepart' => 'company',
+			'document_modulepart' => 'company',
+			'langfiles' => array('companies', 'commercial', 'withdrawals'),
+			'allow_const' => 'SOCIETE_RIB_ALLOW_ONLINESIGN',
+			'securekey_const' => 'SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'SOCIETE_RIB',
+			'native_finalizer' => 'societe_rib',
+		),
+		'expedition' => array(
+			'source' => 'expedition',
+			'module' => 'expedition',
+			'elementtype' => 'shipping',
+			'modulepart' => 'expedition',
+			'document_modulepart' => 'expedition',
+			'langfiles' => array('sendings', 'commercial'),
+			'allow_const' => 'EXPEDITION_ALLOW_ONLINESIGN',
+			'securekey_const' => 'EXPEDITION_ONLINE_SIGNATURE_SECURITY_TOKEN',
+			'signature_position_prefix' => 'SHIPMENT',
+			'signed_status_method' => 'setSignedStatus',
+			'signed_status_value' => 3,
+			'signed_trigger' => 'SHIPPING_MODIFY',
+			'native_finalizer' => 'signed_status',
+		),
+	);
+
+	$definition = empty($definitions[$source]) ? array() : $definitions[$source];
+	if (is_object($obj)) {
+		$definition['object'] = $obj;
+	}
+
+	if (!is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+	$hookmanager->initHooks(array('onlinesign', 'ajaxonlinesign'));
+
+	$parameters = array(
+		'source' => $source,
+		'ref' => $ref,
+		'entity' => (int) $entity,
+		'source_definition' => $definition,
+	);
+	$tmpobject = is_object($obj) ? $obj : new stdClass();
+	$reshook = $hookmanager->executeHooks('getOnlineSignatureSourceDefinition', $parameters, $tmpobject, $action);
+	if ($reshook < 0) {
+		return array();
+	}
+
+	if (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) {
+		if (!empty($hookmanager->resArray['source']) && $hookmanager->resArray['source'] == $source) {
+			$definition = array_replace($definition, $hookmanager->resArray);
+		} elseif (!empty($hookmanager->resArray['source_definition']) && is_array($hookmanager->resArray['source_definition'])) {
+			$definition = array_replace($definition, $hookmanager->resArray['source_definition']);
+		} elseif (!empty($hookmanager->resArray[$source]) && is_array($hookmanager->resArray[$source])) {
+			$definition = array_replace($definition, $hookmanager->resArray[$source]);
+		}
+	}
+
+	if (!empty($definition) && empty($definition['source'])) {
+		$definition['source'] = $source;
+	}
+
+	return $definition;
+}
+
+/**
+ * Tell if an online signature source can be used in the current environment.
+ *
+ * @param	array<string,mixed>	$definition		Source definition
+ * @return	bool
+ */
+function isOnlineSignatureSourceEnabled($definition)
+{
+	if (empty($definition) || !is_array($definition)) {
+		return false;
+	}
+
+	if (isset($definition['enabled']) && empty($definition['enabled'])) {
+		return false;
+	}
+
+	if (!empty($definition['module']) && !isModEnabled((string) $definition['module'])) {
+		return false;
+	}
+
+	if (!empty($definition['allow_const']) && !getDolGlobalInt((string) $definition['allow_const'])) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Return the seed used for a source secure key.
+ *
+ * @param	array<string,mixed>	$definition		Source definition
+ * @return	string
+ */
+function getOnlineSignatureSecuritySeed($definition)
+{
+	$defaultsalt = getOnlineSignatureDefaultSecuritySeed();
+	$constname = '';
+	if (!empty($definition['securekey_const'])) {
+		$constname = (string) $definition['securekey_const'];
+	} elseif (!empty($definition['source'])) {
+		$constname = dol_strtoupper((string) $definition['source']).'_ONLINE_SIGNATURE_SECURITY_TOKEN';
+	}
+
+	return $constname ? getDolGlobalString($constname, $defaultsalt) : $defaultsalt;
+}
+
+/**
+ * Return the secure key for an online signature source/ref/entity tuple.
+ *
+ * @param	array<string,mixed>	$definition		Source definition
+ * @param	string				$ref			Object reference
+ * @param	int					$entity			Entity id
+ * @return	string
+ */
+function getOnlineSignatureSecureKey($definition, $ref, $entity = 0)
+{
+	$source = empty($definition['source']) ? '' : (string) $definition['source'];
+	$securekeyseed = getOnlineSignatureSecuritySeed($definition);
+
+	return dol_hash($securekeyseed.$source.$ref.(isModEnabled('multicompany') ? (int) $entity : ''), 'hash');
+}
+
+/**
+ * Verify the secure key for an online signature source/ref/entity tuple.
+ *
+ * @param	array<string,mixed>	$definition		Source definition
+ * @param	string				$ref			Object reference
+ * @param	int					$entity			Entity id
+ * @param	string				$securekey		Key to verify
+ * @return	bool
+ */
+function verifyOnlineSignatureSecureKey($definition, $ref, $entity, $securekey)
+{
+	$source = empty($definition['source']) ? '' : (string) $definition['source'];
+	$securekeyseed = getOnlineSignatureSecuritySeed($definition);
+
+	if ($securekeyseed === '' || strpos($securekeyseed, "\0") !== false || $securekey === '') {
+		return false;
+	}
+
+	return (bool) dol_verifyHash($securekeyseed.$source.$ref.(isModEnabled('multicompany') ? (int) $entity : ''), $securekey, 'hash');
+}
+
+/**
+ * Load an object declared as an online signature source.
+ *
+ * @param	array<string,mixed>	$definition		Source definition
+ * @param	string				$ref			Object reference
+ * @param	int					$entity			Entity id
+ * @return	CommonObject|int					Object if found, 0 if not found, <0 if error
+ */
+function fetchOnlineSignatureObject($definition, $ref, $entity = 0)
+{
+	global $db;
+
+	if (!empty($definition['object']) && is_object($definition['object'])) {
+		return $definition['object'];
+	}
+
+	$source = empty($definition['source']) ? '' : (string) $definition['source'];
+
+	if ($source == 'proposal') {
+		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		$object = new Propal($db);
+		$result = $object->fetch(0, $ref, '', (int) $entity);
+		return ($result > 0) ? $object : $result;
+	} elseif ($source == 'contract') {
+		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+		$object = new Contrat($db);
+		$result = $object->fetch(0, $ref);
+		return ($result > 0) ? $object : $result;
+	} elseif ($source == 'fichinter') {
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$object = new Fichinter($db);
+		$result = $object->fetch(0, $ref);
+		return ($result > 0) ? $object : $result;
+	} elseif ($source == 'societe_rib') {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$object = new CompanyBankAccount($db);
+		$result = $object->fetch(0, $ref);
+		return ($result > 0) ? $object : $result;
+	} elseif ($source == 'expedition') {
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		$object = new Expedition($db);
+		$result = $object->fetch(0, $ref);
+		return ($result > 0) ? $object : $result;
+	}
+
+	if (empty($definition['elementtype'])) {
+		return -1;
+	}
+
+	$result = fetchObjectByElement(0, (string) $definition['elementtype'], $ref);
+	if (is_object($result)) {
+		return $result;
+	}
+
+	return (int) $result;
+}
+
+/**
  * Return string with full online Url to accept and sign a quote
  *
  * @param   string			$type		Type of URL ('proposal', ...)
@@ -68,7 +353,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $obj = null)
 {
-	global $dolibarr_main_url_root;
+	global $dolibarr_main_url_root, $langs;
 
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
@@ -93,120 +378,36 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		$urltouse = $urlwithroot;
 	}
 
-	global $dolibarr_main_instance_unique_id;
-	$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+	$entity = (empty($obj->entity) ? 0 : (int) $obj->entity);
+	$definition = getOnlineSignatureSourceDefinition($type, $ref, $entity, $obj);
+	if (empty($definition) || !isOnlineSignatureSourceEnabled($definition)) {
+		return is_object($langs) ? $langs->trans("FeatureOnlineSignDisabled") : 'FeatureOnlineSignDisabled';
+	}
 
-	$securekeyseed = '';
+	$securekeyseed = getOnlineSignatureSecuritySeed($definition);
+	if (strpos($securekeyseed, "\0") !== false) {
+		$constname = empty($definition['securekey_const']) ? dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN' : (string) $definition['securekey_const'];
+		return 'Invalid parameter '.$constname.'. Contains a null character.';
+	}
 
-	if ($type == 'proposal') {
-		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-		if (strpos($securekeyseed, "\0") !== false) {
-			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
-			return 'Invalid parameter PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
-		}
-
-		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
-		if ($mode == 1) {
-			$out .= 'proposal_ref';
-		}
-		if ($mode == 0) {
-			$out .= urlencode($ref);
-		}
-		$out .= ($mode ? '</span>' : '');
-		if ($mode == 1) {
-			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
-		} else {
-			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), 'hash'));
-		}
-		/*
-		if ($mode == 1) {
-			$out .= '&hashp=<span style="color: #666666">hash_of_file</span>';
-		} else {
-			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-			$propaltmp = new Propal($db);
-			$res = $propaltmp->fetch(0, $ref);
-			if ($res <= 0) {
-				return 'FailedToGetProposal';
-			}
-
-			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-			$ecmfile = new EcmFiles($db);
-
-			$ecmfile->fetch(0, '', $propaltmp->last_main_doc);
-
-			$hashp = $ecmfile->share;
-			if (empty($hashp)) {
-				$out = $langs->trans("FeatureOnlineSignDisabled");
-				return $out;
-			} else {
-				$out .= '&hashp='.$hashp;
-			}
-		}*/
-	} elseif ($type == 'contract') {
-		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-		if (strpos($securekeyseed, "\0") !== false) {
-			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
-			return 'Invalid parameter CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
-		}
-
-		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=contract&ref='.($mode ? '<span style="color: #666666">' : '');
-		if ($mode == 1) {
-			$out .= 'contract_ref';
-		}
-		if ($mode == 0) {
-			$out .= urlencode($ref);
-		}
-		$out .= ($mode ? '</span>' : '');
-		if ($mode == 1) {
-			$out .= "hash('".$securekeyseed."' + '".$type."' + contract_ref)";
-		} else {
-			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
-		}
-	} elseif ($type == 'fichinter') {
-		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-		if (strpos($securekeyseed, "\0") !== false) {
-			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
-			return 'Invalid parameter FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
-		}
-
-		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
-		if ($mode == 1) {
-			$out .= 'fichinter_ref';
-		}
-		if ($mode == 0) {
-			$out .= urlencode($ref);
-		}
-		$out .= ($mode ? '</span>' : '');
-		if ($mode == 1) {
-			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
-		} else {
-			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
-		}
-	} else {	// For example $type = 'societe_rib'
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-		if (strpos($securekeyseed, "\0") !== false) {
-			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
-			return 'Invalid parameter '.dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
-		}
-
-		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.$type.'&ref='.($mode ? '<span style="color: #666666">' : '');
-		if ($mode == 1) {
-			$out .= $type.'_ref';
-		}
-		if ($mode == 0) {
-			$out .= urlencode($ref);
-		}
-		$out .= ($mode ? '</span>' : '');
-		if ($mode == 1) {
-			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
-		} else {
-			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
-		}
+	$source = (string) $definition['source'];
+	$out = $urltouse.'/public/onlinesign/newonlinesign.php?source='.urlencode($source).'&ref='.($mode ? '<span style="color: #666666">' : '');
+	if ($mode == 1) {
+		$out .= dol_escape_htmltag($source).'_ref';
+	}
+	if ($mode == 0) {
+		$out .= urlencode($ref);
+	}
+	$out .= ($mode ? '</span>' : '');
+	if ($mode == 1) {
+		$out .= "hash('".$securekeyseed."' + '".$source."' + ".$source."_ref)";
+	} else {
+		$out .= '&securekey='.urlencode(getOnlineSignatureSecureKey($definition, $ref, $entity));
 	}
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
-		$out .= "&entity=".(empty($obj->entity) ? '' : (int) $obj->entity); // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".$entity; // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

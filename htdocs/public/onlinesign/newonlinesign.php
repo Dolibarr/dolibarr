@@ -66,6 +66,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
@@ -92,7 +93,7 @@ $message = GETPOST('message', 'aZ09');
 // currency (iso code)
 
 $suffix = GETPOST("suffix", 'aZ09');
-$source = (string) GETPOST("source", 'alpha');
+$source = (string) GETPOST("source", 'aZ09');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
@@ -141,54 +142,33 @@ if (!$action) {
 	}
 }
 
-global $dolibarr_main_instance_unique_id;
-$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
-
-// Check securitykey
-$securekeyseed = '';
-if ($source == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($source == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($source == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} elseif ($source == 'societe_rib') {
-	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-} else {
-	$securekeyseed = getDolGlobalString(dol_strtoupper((string) $source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
-}
-if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, 'hash')) {
-	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
-}
-
-if ($source == 'proposal') {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-	$object = new Propal($db);
-	$result = $object->fetch(0, $ref, '', $entity);
-} elseif ($source == 'contract') {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-	$object = new Contrat($db);
-	$result = $object->fetch(0, $ref);
-} elseif ($source == 'fichinter') {
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-	$object = new Fichinter($db);
-	$result = $object->fetch(0, $ref);
-} elseif ($source == 'societe_rib') {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-	$object = new CompanyBankAccount($db);
-	$result = $object->fetch(0, $ref);
-} elseif ($source == 'expedition') {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-	$object = new Expedition($db);
-	$result = $object->fetch(0, $ref);
-} else {
-	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
-}
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('onlinesign'));
 
+$sourceDefinition = getOnlineSignatureSourceDefinition($source, $ref, (int) $entity);
+if (empty($sourceDefinition)) {
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
+}
+
+if (!empty($sourceDefinition['langfiles']) && is_array($sourceDefinition['langfiles'])) {
+	$langs->loadLangs($sourceDefinition['langfiles']);
+}
+
+if (!isOnlineSignatureSourceEnabled($sourceDefinition)) {
+	httponly_accessforbidden($langs->trans('FeatureOnlineSignDisabled'), 403, 1);
+}
+
+if (!verifyOnlineSignatureSecureKey($sourceDefinition, $ref, (int) $entity, $SECUREKEY)) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
+}
+
+$object = fetchOnlineSignatureObject($sourceDefinition, $ref, (int) $entity);
+if (!is_object($object) || empty($object->id)) {
+	httponly_accessforbidden($langs->trans('ErrorRecordNotFound'), 404, 1);
+}
+
 $error = 0;
+$mesg = '';
 
 
 /*
@@ -429,7 +409,7 @@ if ($source == 'proposal') {
 		}
 	}
 
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 } elseif ($source == 'contract') { // Signature on contract
@@ -479,7 +459,7 @@ if ($source == 'proposal') {
 	}
 
 
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 } elseif ($source == 'fichinter') {
@@ -528,7 +508,7 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 } elseif ($source == 'societe_rib') {
@@ -631,14 +611,14 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	}
-	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
+	print '<input type="hidden" name="source" value="'.GETPOST("source", 'aZ09').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 } else {
 	$found = true;
 	$langs->load('companies');
 
-	if (!empty($object->socid) || !empty($object->fk_soc)) {
+	if (method_exists($object, 'fetch_thirdparty') && (!empty($object->socid) || !empty($object->fk_soc))) {
 		$result = $object->fetch_thirdparty();
 	}
 
@@ -650,31 +630,36 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
 	print '</td></tr>'."\n";
 
-	// Target
-	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow2">';
-	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<b>'.$object->thirdparty->name.'</b>';
-	print '</td></tr>'."\n";
+	if (!empty($object->thirdparty) && is_object($object->thirdparty) && !empty($object->thirdparty->name)) {
+		// Target
+		print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
+		print '</td><td class="CTableRow2">';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print '<b>'.$object->thirdparty->name.'</b>';
+		print '</td></tr>'."\n";
+	}
 
 	// Object
-	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $object->ref).'</b>';
+	$objectref = empty($object->ref) ? $ref : $object->ref;
+	$text = '<b>'.$langs->trans("Signature".dol_ucfirst($source)."Ref", $objectref).'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
 
-	$last_main_doc_file = $object->last_main_doc;
+	$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
 
-	if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+	if (method_exists($object, 'generateDocument') && (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$last_main_doc_file))) {
 		// It seems document has never been generated, or was generated and then deleted.
 		// So we try to regenerate it with its default template.
 		$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
 		$object->generateDocument($defaulttemplate, $langs);
+		$last_main_doc_file = empty($object->last_main_doc) ? '' : $object->last_main_doc;
 	}
 
-	$directdownloadlink = $object->getLastMainDocLink($source);
+	$documentmodulepart = empty($sourceDefinition['document_modulepart']) ? (empty($sourceDefinition['modulepart']) ? $source : (string) $sourceDefinition['modulepart']) : (string) $sourceDefinition['document_modulepart'];
+	$directdownloadlink = method_exists($object, 'getLastMainDocLink') ? $object->getLastMainDocLink($documentmodulepart) : '';
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
-		print img_mime($object->last_main_doc, '');
+		print img_mime($last_main_doc_file, '');
 		if ($message == "signed") {
 			print $langs->trans("DownloadSignedDocument").'</a>';
 		} else {
