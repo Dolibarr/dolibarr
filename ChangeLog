@@ -171,6 +171,7 @@ NEW: The OAuth login with Google stay on the requested page after the redirect i
 NEW: Add shipment online url to substitution array
 NEW: ModuleBuilder - selectable object tabs (+ fixes for multi-object generation)
 NEW: Add hook getTicketMessageEmailFrom to override sender in Ticket::sendTicketMessageByEmail
+NEW: Can export ODT documents as PDF/A (new MAIN_ODT_AS_PDFA option)
 
 For developers:
 ---------------
