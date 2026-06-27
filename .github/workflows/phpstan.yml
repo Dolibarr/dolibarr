@@ -108,6 +108,7 @@ jobs:
 
           else
             echo "$ALL_CHANGED_FILES" >> /tmp/phpstan-files.txt
+            echo cat /tmp/phpstan-files.txt
             cat /tmp/phpstan-files.txt
             phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
           fi
