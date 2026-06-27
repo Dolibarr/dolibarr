@@ -1160,7 +1160,7 @@ $totalarray['nbfield'] = 0;
 $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-$showinvalidemail = (int) !getDolGlobalInt('MAIN_DISABLE_SHOW_INVALID_EMAIL'); // to avoid slow display
+$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1275,7 +1275,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
