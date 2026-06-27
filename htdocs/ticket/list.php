@@ -251,12 +251,10 @@ if (empty($reshook)) {
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
 
-	global $error;
-	/** @phan-var-force int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {	// @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php
 		$objecttmp = new Ticket($db);
 		$db->begin();
 
@@ -483,7 +481,7 @@ if (!$user->socid && ($mode == "mine" || (!$user->admin && getDolGlobalString('T
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
@@ -665,11 +663,14 @@ $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
-if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $contextpage can't be empty
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
@@ -686,14 +687,11 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -770,6 +768,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'" >';
 
 if ($socid) {
@@ -786,6 +785,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/ticket/stats/index.php?mode=statistics&objecttype=ticket@ticket'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ticket', 'write'));
 
@@ -847,7 +847,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -904,7 +905,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayofstatus['openall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('OpenAll').'</b>', 'label' => '-- '.$langs->trans('OpenAll'));
 			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
-					$arrayofstatus['closeall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
+					$arrayofstatus['closeall'] = array('id' => 'closeall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
 				}
 				$arrayofstatus[$key2] = array('id' => $key2, 'labelhtml' => $val2, 'label' => $val2);
 			}

@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2026  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,7 +298,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_help_array;
 	/**
-	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
+	 * @var array<array<array{rule:string,file?:string,classfile:string,class:string,method:string,method_params:string[]}>>|array<array<string,string>>
 	 *
 	 * Other example:
 	 * modBanque: [<int>]=array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG')
@@ -1259,12 +1259,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * - Then data_xxx.sql (usually provided by external modules only)
 	 * - Then update_xxx.sql (usually provided by external modules only)
 	 * Files must be stored in subdirectory 'tables' or 'data' into directory $reldir (Example: '/install/mysql/' or '/module/sql/')
-	 * This function may also be called by :
-	 * - _load_tables('/install/mysql/', 'modulename') into the this->init() of core module descriptors.
-	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
+	 * This function may also be called by:
+	 * - _load_tables('/install/mysql/', 'modulename') in the init() of core module descriptors. This loads only files containing '-modulename.' in their name.
+	 * - _load_tables('/mymodule/sql/') in the init() of external module descriptors. Omitting the suffix loads every matching SQL file.
+	 * When $onlywithsuffix is not empty, files without '-<suffix>.' in their name are silently skipped.
+	 *
+	 * WARNING: This function can break a transaction making a rollback not working !
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
-	 * @param	string	$onlywithsuffix		Only with the defined suffix
+	 * @param	string	$onlywithsuffix		Only load filenames containing '-<suffix>.' (empty to disable filtering)
 	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')
@@ -1341,10 +1344,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}
+								}*/
 							}
 						}
 
@@ -1366,10 +1369,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}
+								}*/
 							}
 						}
 
@@ -1391,10 +1394,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}
+								}*/
 							}
 						}
 
@@ -1416,10 +1419,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								}
 							}
 							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-								$result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
+								/*                              $result = run_sql($dir.$file, !getDolGlobalString('MAIN_DISPLAY_SQL_INSTALL_LOG') ? 1 : 0, 0, 1);
 								if ($result <= 0) {
 									$error++;
-								}
+								}*/
 							}
 						}
 

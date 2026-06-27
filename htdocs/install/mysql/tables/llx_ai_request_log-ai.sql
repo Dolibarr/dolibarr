@@ -24,6 +24,7 @@ create table llx_ai_request_log
   entity					integer DEFAULT 1 NOT NULL,
   date_request				datetime,
   fk_user					integer NOT NULL,						-- ID of user
+  fk_actioncomm				integer,								-- Optional linked agenda event
   query_text				text,									-- User prompt
   tool_name					varchar(255),							-- Tool used
   provider					varchar(50),							-- LLM provider
@@ -31,6 +32,9 @@ create table llx_ai_request_log
   confidence				float,									-- LLM confidence
   status					varchar(50),							-- Response status
   error_msg					text,									-- Error message
+  input_hash				varchar(80),							-- Hash of input payload or source content
+  output_hash				varchar(80),							-- Hash of response payload
+  security_hash				varchar(80),							-- Hash linking entity/event/input/output metadata
   raw_request_payload		MEDIUMTEXT,								-- Request payload
   raw_response_payload		MEDIUMTEXT								-- Response payload
 )ENGINE=innodb;

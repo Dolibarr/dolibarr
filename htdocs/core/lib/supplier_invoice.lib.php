@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Marc Barilley           <marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
@@ -175,9 +175,8 @@ function supplierinvoice_prepare_head(FactureFournisseur $object)
  */
 function supplier_invoice_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture_fourn');
 	$extrafields->fetch_name_optionals_label('facture_fourn_det');
 	$extrafields->fetch_name_optionals_label('facture_fourn_rec');

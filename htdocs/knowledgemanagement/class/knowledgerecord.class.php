@@ -61,7 +61,7 @@ class KnowledgeRecord extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:SortField]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -502,6 +502,8 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_knowledgemanagement = ".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -529,8 +531,20 @@ class KnowledgeRecord extends CommonObject
 			}
 		}
 
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$result = $this->deleteCommon($user, $notrigger);
+
+		// Remove the linked files directory (uploads attached to the article)
+		if ($result > 0 && !empty($conf->knowledgemanagement->dir_output) && !empty($this->ref)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($this->ref);
+			if (file_exists($dir)) {
+				if (!@dol_delete_dir_recursive($dir)) {
+					$this->errors[] = 'ErrorFailToDeleteDir';
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**

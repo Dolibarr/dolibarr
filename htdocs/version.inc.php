@@ -38,7 +38,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 
 // The major version of Dolibarr
 define('DOL_MAJOR_VERSION', '24');
-define('DOL_MINOR_VERSION', '0.0-alpha');
+define('DOL_MINOR_VERSION', '0.0-beta');
 
 
 define('DOL_VERSION', constant('DOL_MAJOR_VERSION').'.'.constant('DOL_MINOR_VERSION'));

@@ -150,7 +150,7 @@ class DolibarrApiAccess implements iAuthenticate
 				}
 			} else {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification,";
 					$sql .= " gu.entity";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
@@ -161,7 +161,7 @@ class DolibarrApiAccess implements iAuthenticate
 					$sql .= " AND gu.entity = oat.entity";
 					$sql .= " AND oat.service = 'dolibarr_rest_api'";
 				} else {
-					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, rowid as token_rowid,";
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
 					$sql .= " oat.tms as date_modification";
 					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
 					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";

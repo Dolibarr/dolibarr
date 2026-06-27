@@ -334,6 +334,12 @@ class DoliDBMysqli extends DoliDB
 
 		$query = trim($query);
 
+
+		/*if ($usesavepoint && $this->transaction_opened) {
+			dol_syslog(get_class($this)."::query SAVEPOINT mysavepoint", LOG_DEBUG); // Log of request was not yet done previously
+			$this->db->query('SAVEPOINT mysavepoint');
+		}*/
+
 		if (!in_array($query, array('BEGIN', 'COMMIT', 'ROLLBACK'))) {
 			$SYSLOG_SQL_LIMIT = 10000; // limit log to 10kb per line to limit DOS attacks
 			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
@@ -371,6 +377,12 @@ class DoliDBMysqli extends DoliDB
 				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterrno." ".$this->lasterror.self::getCallerInfoString(), LOG_ERR);
 				//var_dump(debug_print_backtrace());
 			}
+
+			/*if ($usesavepoint && $this->transaction_opened) {	// Warning, after that errno will be erased
+				dol_syslog(get_class($this)."::query ROLLBACK TO SAVEPOINT mysavepoint", LOG_DEBUG); // Log of request was not yet done previously
+				$this->db->query('ROLLBACK TO SAVEPOINT mysavepoint');
+			}*/
+
 			$this->lastquery = $query;
 			$this->_results = $ret;
 		}
@@ -492,9 +504,9 @@ class DoliDBMysqli extends DoliDB
 	}
 
 	/**
-	 *	Libere le dernier resultset utilise sur cette connection
+	 *	Free the last pointer resultset used by this connection
 	 *
-	 *	@param  mysqli_result	$resultset	Curseur de la requete voulue
+	 *	@param  mysqli_result|null	$resultset		Result set of request
 	 *	@return	void
 	 */
 	public function free($resultset = null)
@@ -1058,6 +1070,7 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 
+		//print $sql;exit;
 		dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
 		if (!$this->query($sql)) {
 			return -1;

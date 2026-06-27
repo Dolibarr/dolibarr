@@ -664,7 +664,7 @@ class OrderLine extends CommonOrderLine
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}
-		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);

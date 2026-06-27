@@ -192,7 +192,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
-	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/card.php', ['id' => $object->id]);
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/product/stats/index.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Statistics');
 	$head[$h][2] = 'stats';
 	$h++;
@@ -383,9 +383,8 @@ function productlot_prepare_head($object)
  */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
 	$extrafields->fetch_name_optionals_label('product_lang');
 	$extrafields->fetch_name_optionals_label('product_price');
@@ -484,9 +483,8 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;

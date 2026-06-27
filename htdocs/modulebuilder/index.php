@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/NamingContractValidator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
@@ -66,7 +67,7 @@ $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel  = GETPOST('cancel', 'alpha');
 
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
 $module = (string) GETPOST('module', 'alpha');
@@ -277,11 +278,38 @@ function getLicenceHeader($user, $langs, $now)
  * Actions
  */
 
-if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("modulebuilder", "run") // already checked */) {
-	$modulename = ucfirst($modulename); // Force first letter in uppercase
-	$destdir = '/not_set/';
+/**
+ * Post-generation validation — logs and displays a warning if residual myobject/mymodule tokens remain.
+ *
+ * @param string       $destfile Path to the generated file
+ * @param NamingContract $nc     Contract used for generation
+ * @return void						No return value, warnings reported as event messages
+ */
+function modulebuilderValidateGeneratedFile(string $destfile, NamingContract $nc): void
+{
+	$content = file_get_contents($destfile);
+	if ($content === false) {
+		return;
+	}
+	$validator = new StrictNamingContractValidator();
+	$errors = $validator->validateContent($content, $destfile);
+	if (!empty($errors)) {
+		dol_syslog(
+			'ModuleBuilder NamingContract validation warning in ' . $destfile . ': '
+			. implode('; ', array_slice($errors, 0, 3)),
+			LOG_WARNING
+		);
+		$safeErrors = array_map('dol_escape_htmltag', array_slice($errors, 0, 5));
+		setEventMessages(implode('<br>', $safeErrors), null, 'warnings');
+	}
+}
 
-	if (preg_match('/[^a-z0-9_]/i', $modulename)) {
+if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission already done
+	$modulename = dol_string_nounprintableascii(dol_string_unaccent(ucwords($modulename))); 		// Force first letter in uppercase
+	$destdir = '/not_set/';
+	$ncModule = new NamingContract($modulename);
+
+	if (preg_match('/[^a-z0-9]/i', $modulename)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 	}
@@ -290,10 +318,10 @@ if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("mod
 		$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 		$destdir = $dirins.'/'.strtolower($modulename);
 
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename
-		);
+		$arrayreplacement = [
+			'mymodule' => $ncModule->moduleNameLower,
+			'MyModule' => $ncModule->moduleNameCase,
+		];
 		$result = dolCopyDir($srcdir, $destdir, '0', 0, $arrayreplacement);
 		//dol_mkdir($destfile);
 		if ($result <= 0) {
@@ -399,23 +427,22 @@ if ($dirins && $action == 'initmodule' && $modulename /* && $user->hasRight("mod
 		$licInfo = getLicenceHeader($user, $langs, $now);
 		foreach ($listofphpfilestoedit as $phpfileval) {
 			//var_dump($phpfileval['fullname']);
-			$arrayreplacement = array(
-				'mymodule' => strtolower($modulename),
-				'MyModule' => $modulename,
-				'MYMODULE' => strtoupper($modulename),
-				'My module' => $modulename,
-				'my module' => $modulename,
-				'Mon module' => $modulename,
-				'mon module' => $modulename,
-				'htdocs/modulebuilder/template' => strtolower($modulename),
-				'---Put here your own copyright and developer email---' => $licInfo,
-				'---Replace with your own copyright and developer email---' => $licInfo,
-				'Editor name' => $editorname,
-				'https://www.example.com' => $editorurl,
-				'$this->version = \'1.0\'' => '$this->version = \''.$version.'\'',
-				'$this->picto = \'generic\';' => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \''.$picto.'\';',
-				"modulefamily" => $family,
-				'500000' => $idmodule
+			$arrayreplacement = array_merge(
+				$ncModule->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncModule->moduleNameLower,
+					'---Put here your own copyright and developer email---'     => $licInfo,
+					'---Replace with your own copyright and developer email---' => $licInfo,
+					'Editor name'                                               => $editorname,
+					'https://www.example.com'                                   => $editorurl,
+					'$this->version = \'1.0\''                                  => '$this->version = \'' . $version . '\'',
+					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
+					'modulefamily'                                              => $family,
+					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
+					// array_merge — causing str_replace to search for '0' instead of '500000'.
+					// Use a string key that matches the exact assignment line to avoid this.
+					'$this->numero = 500000'                                    => '$this->numero = '.$idmodule,
+				]
 			);
 
 			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
@@ -518,29 +545,40 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 
 	if ($result > 0) {
 		//var_dump($phpfileval['fullname']);
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'myobject' => strtolower($objectname),
-			'MyObject' => $objectname,
-			'MYOBJECT' => strtoupper($objectname),
+		try {
+			$ncApiObj = new NamingContract($modulename, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncApiObj = null;
+		}
 
-			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
-		);
+		if (!$error && $ncApiObj !== null) {
+			$arrayreplacement = array_merge(
+				$ncApiObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncApiObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now),
+				]
+			);
 
-		if ($action == 'initapi') {			// Test on permission already done
-			if (count($objects) >= 1) {
-				addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+			if ($action == 'initapi') {			// Test on permission already done
+				if (count($objects) >= 1) {
+					addObjectsToApiFile($srcfile, $destfile, $objects, $modulename);
+				}
+				// Fix PHPDoc header and class-declaration residuals left by addObjectsToApiFile.
+				// 'MYOBJECT' (uppercase) is excluded to preserve the /* BEGIN MODULEBUILDER API MYOBJECT */
+				// placeholder that addObjectsToApiFile keeps for future object additions.
+				$headerFix = $arrayreplacement;
+				unset($headerFix['MYOBJECT']);
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				dolReplaceInFile($destfile, $headerFix);
+				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
+			} else {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				dolReplaceInFile($destfile, $arrayreplacement);
+				modulebuilderValidateGeneratedFile($destfile, $ncApiObj);
 			}
-		} else {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			dolReplaceInFile($destfile, $arrayreplacement);
 		}
 
 		if ($varnametoupdate) {
@@ -575,24 +613,28 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) /* && $user->h
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'My Object' => $objectname,
-			'MyObject' => $objectname,
-			'my object' => strtolower($objectname),
-			'myobject' => strtolower($objectname),
-			'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
-		);
+		try {
+			$ncSqlObj = new NamingContract($modulename, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncSqlObj = null;
+		}
 
-		dolReplaceInFile($destfile1, $arrayreplacement);
-		dolReplaceInFile($destfile2, $arrayreplacement);
+		if (!$error && $ncSqlObj !== null) {
+			$arrayreplacement = array_merge(
+				$ncSqlObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template'                             => $ncSqlObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now),
+				]
+			);
+
+			dolReplaceInFile($destfile1, $arrayreplacement);
+			dolReplaceInFile($destfile2, $arrayreplacement);
+			modulebuilderValidateGeneratedFile($destfile1, $ncSqlObj);
+			modulebuilderValidateGeneratedFile($destfile2, $ncSqlObj);
+		}
 	} else {
 		$langs->load("errors");
 		if ($result1 <= 0) {
@@ -1078,15 +1120,15 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module) /* && $user->h
 }
 
 // Init an object
-if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->hasRight("modulebuilder", "run") // already checked */) {
+if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on permission already done
 	$warning = 0;
 
-	$objectname = ucfirst($objectname);
+	$objectname = dol_string_nounprintableascii(dol_string_unaccent(ucwords($objectname))); 		// Force first letter in uppercase
 
 	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
 
-	if (preg_match('/[^a-z0-9_]/i', $objectname)) {
+	if (preg_match('/[^a-z0-9]/i', $objectname)) {
 		$error++;
 		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
 		$tabobj = 'newobject';
@@ -1098,8 +1140,20 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		$tabobj = 'newobject';
 	}
 
+	try {
+		$ncObj = new NamingContract($module, $objectname);
+	} catch (\InvalidArgumentException $e) {
+		$error++;
+		setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+		$ncObj = null;
+	}
+
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$destdir = $dirins.'/'.strtolower($module);
+
+	// Optional tabs selected by user, and detection of an already generated object (for idempotence warning)
+	$enabledtabs = filterEnabledTabs(GETPOST('enabledtab', 'array'), getModuleBuilderObjectTabs());
+	$objectalreadyexists = dol_is_file($destdir.'/class/'.strtolower($objectname).'.class.php');
 
 	// The dir was not created by init
 	dol_mkdir($destdir.'/class');
@@ -1138,7 +1192,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		} else {
 			/**
 			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'email', 'phone', 'ip', 'url', 'password')
-			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 			 *  'label' the translation key.
 			 *  'picto' is code of a picto to show before value in forms
 			 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -1394,46 +1448,61 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 	$filetogenerate = array();
 	if (!$error) {
 		// Copy some files
-		$filetogenerate = array(
-			'myobject_card.php' => strtolower($objectname).'_card.php',
-			'myobject_note.php' => strtolower($objectname).'_note.php',
-			'myobject_contact.php' => strtolower($objectname).'_contact.php',
-			'myobject_document.php' => strtolower($objectname).'_document.php',
-			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
-			'myobject_list.php' => strtolower($objectname).'_list.php',
-			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
-			'ajax/myobject.php' => 'ajax/'.strtolower($objectname).'.php',
-			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-			//'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
-			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-			'sql/llx_mymodule_myobject.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-			'sql/llx_mymodule_myobject_extrafields.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_mymodule_myobject_extrafields.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
-			//'scripts/mymodule.php' => 'scripts/'.strtolower($objectname).'.php',
-			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
-			'class/myobjectstats.class.php' => 'class/'.strtolower($objectname).'stats.class.php',
-		//'class/api_mymodule.class.php' => 'class/api_'.strtolower($module).'.class.php',
-			'stats/myobject_index.php' => 'stats/'.strtolower($objectname).'_index.php',
-		);
+		$filetogenerate = [];
+		foreach ([
+			'myobject_card.php',
+			'myobject_note.php',
+			'myobject_contact.php',
+			'myobject_document.php',
+			'myobject_agenda.php',
+			'myobject_list.php',
+			'admin/myobject_extrafields.php',
+			'ajax/myobject.php',
+			'lib/mymodule_myobject.lib.php',
+			//'test/phpunit/MyObjectTest.php',
+			'sql/llx_mymodule_myobject.sql',
+			'sql/llx_mymodule_myobject.key.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql',
+			'sql/llx_mymodule_myobject_extrafields.key.sql',
+			//'scripts/mymodule.php',
+			'class/myobject.class.php',
+			'class/myobjectstats.class.php',
+			//'class/api_mymodule.class.php',
+			'stats/myobject_index.php',
+		] as $templateFile) {
+			$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+		}
+
+		// Exclude tab page files for tabs not selected by user
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			if (!in_array($tabkey, $enabledtabs, true)) {
+				unset($filetogenerate[$tabinfo['file']]);
+			}
+		}
 
 		if (GETPOST('includerefgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 
-			$filetogenerate += array(
-				'core/modules/mymodule/mod_myobject_advanced.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
-				'core/modules/mymodule/mod_myobject_standard.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
-				'core/modules/mymodule/modules_myobject.php' => 'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
-			);
+			foreach ([
+				'core/modules/mymodule/mod_myobject_advanced.php',
+				'core/modules/mymodule/mod_myobject_standard.php',
+				'core/modules/mymodule/modules_myobject.php',
+			] as $templateFile) {
+				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+			}
 		}
 		if (GETPOST('includedocgeneration', 'aZ09')) {
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module).'/doc');
 
-			$filetogenerate += array(
-				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php' => 'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
-				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php' => 'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
-			);
+			foreach ([
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
+				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
+			] as $templateFile) {
+				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+			}
 		}
+		$class = null;
 		if (GETPOST('generatepermissions', 'aZ09')) {
 			$firstobjectname = 'myobject';
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -1604,9 +1673,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 			'user' => 2,
 			'object' => 'MyObject'
 		);";
-			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
-			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-			$stringtoadd = preg_replace('/myobject/', strtolower($objectname), $stringtoadd);
+			$stringtoadd = $ncObj->applyTo($stringtoadd);
 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
 		}
@@ -1655,39 +1722,143 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 		$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
 	}
 
+	if (! $error && GETPOST('nogeneratelines', 'aZ09')) {
+		$checkComment = checkExistComment($moduledescriptorfile, 0);
+		if ($checkComment < 0) {
+			$warning++;
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Menus"), basename($moduledescriptorfile)), null, 'warnings');
+		} else {
+			// File path
+			$TFilePaths = [
+				$destdir . '/class/' . strtolower($objectname) . '.class.php',
+				$destdir . '/class/api_' . strtolower($module) . '.class.php',
+				$destdir . '/' . strtolower($objectname) . '_card.php'
+			];
+
+			// Pattern to remove everything between the tags
+			$pattern = '/\/\/BEGIN MODULEBUILDER LINES.*?\/\/END MODULEBUILDER LINES\s*/s';
+			foreach ($TFilePaths as $filePath) {
+				// Skip files that were not generated (e.g. the API class when API generation is disabled);
+				// a missing optional file must not abort the whole object generation.
+				if (file_exists($filePath) && !removePatternFromFile($filePath, $pattern)) {
+					$error++;
+				}
+			}
+		}
+	}
+
+	// Apply object tab selection on the generated lib file:
+	// selected tabs -> hardcode the show flag to 1 (visible without extra config) ; unselected -> remove flag declaration and tab block
+	if (!$error) {
+		$libdestfile = $destdir.'/'.$ncObj->applyToFilename('lib/mymodule_myobject.lib.php');
+		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+			$marker = $tabinfo['marker'];
+			if (in_array($tabkey, $enabledtabs, true)) {
+				$arrayreplacement = array(
+					'/\$'.$tabinfo['var'].' = getDolGlobalInt\([^;]*\);/' => '$'.$tabinfo['var'].' = 1;'
+				);
+				if (dolReplaceInFile($libdestfile, $arrayreplacement, '', '0', 0, 1) < 0) {
+					$error++;
+					dol_syslog("modulebuilder: failed to activate tab flag '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
+			} else {
+				if (!removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TABFLAG '.$marker.'.*?\/\/ END MODULEBUILDER TABFLAG '.$marker.'\s*/s')
+					|| !removePatternFromFile($libdestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB '.$marker.'.*?\/\/ END MODULEBUILDER TAB '.$marker.'\s*/s')) {
+					$error++;
+					dol_syslog("modulebuilder: failed to purge tab '".$tabkey."' in ".$libdestfile, LOG_ERR);
+				}
+			}
+		}
+		// Agenda has an extra event widget on the card page: purge it too to avoid a dead link when the agenda tab is excluded
+		if (!$error && !in_array('agenda', $enabledtabs, true)) {
+			$carddestfile = $destdir.'/'.$ncObj->applyToFilename('myobject_card.php');
+			if (!removePatternFromFile($carddestfile, '/\h*\/\/ BEGIN MODULEBUILDER TAB AGENDA.*?\/\/ END MODULEBUILDER TAB AGENDA\s*/s')) {
+				$error++;
+				dol_syslog("modulebuilder: failed to purge agenda widget in ".$carddestfile, LOG_ERR);
+			}
+		}
+		if ($objectalreadyexists) {
+			setEventMessages($langs->trans("WarningTabSelectionOnRegeneration"), null, 'warnings');
+		}
+	}
+
 	if (!$error) {
 		// Edit PHP files to make replacement
 		foreach ($filetogenerate as $destfile) {
 			$phpfileval['fullname'] = $destdir.'/'.$destfile;
 
 			//var_dump($phpfileval['fullname']);
-			$arrayreplacement = array(
-				'mymodule' => strtolower($module),
-				'MyModule' => $module,
-				'MYMODULE' => strtoupper($module),
-				'My module' => $module,
-				'my module' => $module,
-				'mon module' => $module,
-				'Mon module' => $module,
-				'htdocs/modulebuilder/template/' => strtolower($modulename),
-				'myobject' => strtolower($objectname),
-				'MyObject' => $objectname,
-				//'MYOBJECT' => strtoupper($objectname),
-				'---Replace with your own copyright and developer email---' => getLicenceHeader($user, $langs, $now)
+			$licenceValue = getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+				? dol_print_date($now, '%Y') . ' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+				: getLicenceHeader($user, $langs, $now);
+
+			$arrayreplacement = array_merge(
+				$ncObj->getSubstitutionMap(),
+				[
+					'htdocs/modulebuilder/template/'                            => $ncObj->moduleNameLower,
+					'---Replace with your own copyright and developer email---' => $licenceValue,
+				]
 			);
 
-			if (getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')) {
-				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
+			if (basename($phpfileval['fullname']) === 'mod'.$module.'.class.php') {
+				// Module descriptor: substitute content but keep the persistent MODULEBUILDER markers intact
+				$result = dolReplaceInFilePreservingModuleBuilderMarkers($phpfileval['fullname'], $arrayreplacement);
+			} else {
+				$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			}
-
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
+			} else {
+				modulebuilderValidateGeneratedFile($phpfileval['fullname'], $ncObj);
 			}
 		}
 	}
 
+	if (!$error && $ncObj !== null) {
+		// Apply object name substitution to ALL PHP files in the module directory.
+		// initmodule only substitutes the module name; files it creates (e.g. testmodindex.php,
+		// lib/testmod.lib.php, admin/setup.php) still contain myobject/mymodule placeholders
+		// that must be resolved when an object is first added.
+		$licenceValueAll = getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			? dol_print_date($now, '%Y') . ' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR')
+			: getLicenceHeader($user, $langs, $now);
+		$moduleReplacementAll = array_merge(
+			$ncObj->getSubstitutionMap(),
+			[
+				'htdocs/modulebuilder/template/'                            => $ncObj->moduleNameLower,
+				'---Replace with your own copyright and developer email---' => $licenceValueAll,
+			]
+		);
+		$allModulePhpFiles = dol_dir_list($destdir, 'files', 1, '\.php$');
+		// The module descriptor must NOT go through the blanket substitution: it keeps persistent
+		// MYOBJECT/MYMODULE markers (TOPMENU/LEFTMENU) reused when generating subsequent objects, and its
+		// own placeholders are already resolved by initmodule and the dedicated menu/permission blocks.
+		$moduledescriptorbasename = 'mod'.$module.'.class.php';
+		if (is_array($allModulePhpFiles) && !empty($allModulePhpFiles)) {
+			foreach ($allModulePhpFiles as $phpFileval) {
+				if (basename($phpFileval['fullname']) === $moduledescriptorbasename) {
+					continue;
+				}
+				$result = dolReplaceInFile($phpFileval['fullname'], $moduleReplacementAll);
+				if ($result < 0) {
+					setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpFileval['fullname']), null, 'warnings');
+				}
+			}
+		}
+		// Delete initmodule placeholder files superseded by initobject-generated files.
+		$moduleLowerForPlaceholder = strtolower($module);
+		foreach ([
+			$destdir . '/stats/myobject_index.php',
+			$destdir . '/lib/' . $moduleLowerForPlaceholder . '_myobject.lib.php',
+		] as $placeholder) {
+			if (file_exists($placeholder)) {
+				dol_delete_file($placeholder);
+			}
+		}
+	}
+
+	$object = null;
 	if (!$error) {
 		// Edit the class file to write properties
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask);
@@ -1705,7 +1876,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname /* && $user->ha
 			writePropsInAsciiDoc($file, $objectname, $destfile);
 		}
 	}
-	if (!$error) {
+	if (!$error && $object !== null) {
 		// Edit sql with new properties
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, '', $object);
 
@@ -1757,6 +1928,7 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) /* && $user->ha
 		dol_include_once($pathtofile);
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($db);
@@ -1768,6 +1940,8 @@ if ($dirins && $action == 'initdic' && $module && empty($cancel) /* && $user->ha
 			}
 		} else {
 			$error++;
+		}
+		if ($moduleobj === null) {
 			$langs->load("errors");
 			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
@@ -1863,10 +2037,17 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 
 		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
+			// Preserve case for composite types such as 'integer:Societe:societe/class/societe.class.php:1:(...__SHARED_ENTITIES__...)'
+			// because the colon-separated parts include PHP class names (case-sensitive) and __XXX__ substitution
+			// tokens that are uppercase by convention. Only lowercase simple atomic types (#34602).
+			$proptype = GETPOST('proptype', 'alpha');
+			if (strpos($proptype, ':') === false && strpos($proptype, '_') === false) {
+				$proptype = strtolower($proptype);
+			}
 			$addfieldentry = array(
 				'name' => GETPOST('propname', 'aZ09'),
 				'label' => GETPOST('proplabel', 'alpha'),
-				'type' => strtolower(GETPOST('proptype', 'alpha')),
+				'type' => $proptype,
 				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'nohtml'), 	// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible' => GETPOST('propvisible', 'alphanohtml'),
 				'enabled' => GETPOST('propenabled', 'alphanohtml'),
@@ -1876,6 +2057,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'foreignkey' => GETPOST('propforeignkey', 'alpha'),
 				'searchall' => GETPOSTINT('propsearchall'),
 				'isameasure' => GETPOSTINT('propisameasure'),
+				'showoncombobox' => GETPOSTINT('propshowoncombobox'),
 				'comment' => GETPOST('propcomment', 'alpha'),
 				'help' => GETPOST('prophelp', 'alpha'),
 				'css' => GETPOST('propcss', 'alpha'),        // Can be 'maxwidth500 widthcentpercentminusxx' for example
@@ -1907,6 +2089,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
 
+	$object = null;
 	// Edit the class file to write properties
 	if (!$error) {
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
@@ -1919,7 +2102,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 	}
 
 	// Edit sql with new properties
-	if (!$error) {
+	if (!$error && $object !== null) {
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
 
 		if ($result <= 0) {
@@ -1951,6 +2134,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
 
+	$object = null;
 	// Edit the class file to write properties
 	if (!$error) {
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
@@ -1963,7 +2147,7 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey /* && $user->
 	}
 
 	// Edit sql with new properties
-	if (!$error) {
+	if (!$error && $object !== null) {
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
 
 		if ($result <= 0) {
@@ -2063,32 +2247,45 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 		$dir = $dirins.'/'.$modulelowercase;
 
 		// Delete some files
-		$filetodelete = array(
-			'myobject_card.php' => strtolower($objectname).'_card.php',
-			'myobject_note.php' => strtolower($objectname).'_note.php',
-			'myobject_contact.php' => strtolower($objectname).'_contact.php',
-			'myobject_document.php' => strtolower($objectname).'_document.php',
-			'myobject_agenda.php' => strtolower($objectname).'_agenda.php',
-			'myobject_list.php' => strtolower($objectname).'_list.php',
-			'admin/myobject_extrafields.php' => 'admin/'.strtolower($objectname).'_extrafields.php',
-			'ajax/myobject.lib.php' => 'ajax/'.strtolower($objectname).'.php',
-			'lib/mymodule_myobject.lib.php' => 'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-			'test/phpunit/MyObjectTest.php' => 'test/phpunit/'.strtolower($objectname).'Test.php',
-			'sql/llx_mymodule_myobject.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-			'sql/llx_mymodule_myobject_extrafields.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-			'sql/llx_mymodule_myobject.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-			'sql/llx_mymodule_myobject_extrafields.key.sql' => 'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
-			'scripts/myobject.php' => 'scripts/'.strtolower($objectname).'.php',
-			'class/myobject.class.php' => 'class/'.strtolower($objectname).'.class.php',
-			'class/myobjectstats.class.php' => 'class/'.strtolower($objectname).'stats.class.php',
-			'class/api_myobject.class.php' => 'class/api_'.strtolower($module).'.class.php',
-			'core/modules/mymodule/mod_myobject_advanced.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
-			'core/modules/mymodule/mod_myobject_standard.php' => 'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
-			'core/modules/mymodule/modules_myobject.php' => 'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
-			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php' => 'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
-			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php' => 'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php',
-			'stats/myobject_index.php' => 'stats/'.strtolower($objectname).'_index.php',
-		);
+		try {
+			$ncObjDel = new NamingContract($module, $objectname);
+		} catch (\InvalidArgumentException $e) {
+			$error++;
+			setEventMessages($langs->trans("SpaceOrSpecialCharAreNotAllowed"), null, 'errors');
+			$ncObjDel = null;
+		}
+		$filetodelete = [];
+		if (!$error && $ncObjDel !== null) {
+			foreach ([
+				'myobject_card.php',
+				'myobject_note.php',
+				'myobject_contact.php',
+				'myobject_document.php',
+				'myobject_agenda.php',
+				'myobject_list.php',
+				'admin/myobject_extrafields.php',
+				'lib/mymodule_myobject.lib.php',
+				'sql/llx_mymodule_myobject.sql',
+				'sql/llx_mymodule_myobject_extrafields.sql',
+				'sql/llx_mymodule_myobject.key.sql',
+				'sql/llx_mymodule_myobject_extrafields.key.sql',
+				'scripts/myobject.php',
+				'class/myobject.class.php',
+				'class/myobjectstats.class.php',
+				'core/modules/mymodule/mod_myobject_advanced.php',
+				'core/modules/mymodule/mod_myobject_standard.php',
+				'core/modules/mymodule/modules_myobject.php',
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php',
+				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php',
+				'stats/myobject_index.php',
+			] as $templateFile) {
+				$filetodelete[$templateFile] = $ncObjDel->applyToFilename($templateFile);
+			}
+			// Exceptions: target filenames differ from simple token substitution
+			$filetodelete['ajax/myobject.lib.php']         = 'ajax/' . $ncObjDel->objectNameLower . '.php';
+			$filetodelete['test/phpunit/MyObjectTest.php'] = 'test/phpunit/' . $ncObjDel->objectNameLower . 'Test.php';
+			$filetodelete['class/api_myobject.class.php']  = 'class/api_' . $ncObjDel->moduleNameLower . '.class.php';
+		}
 
 		//menu for the object selected
 		// load class and check if menu,permission,documentation exist for this object
@@ -2199,6 +2396,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2210,6 +2408,8 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -2285,6 +2485,7 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') /* && 
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2296,6 +2497,8 @@ if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey') /* && 
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -2355,6 +2558,7 @@ if ($dirins && $action == 'generatepackage' /* && $user->hasRight("modulebuilder
 	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
+	$moduleobj = null;
 	if (class_exists($class)) {
 		try {
 			$moduleobj = new $class($db);
@@ -2366,6 +2570,8 @@ if ($dirins && $action == 'generatepackage' /* && $user->hasRight("modulebuilder
 		}
 	} else {
 		$error++;
+	}
+	if ($moduleobj === null) {
 		$langs->load("errors");
 		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
@@ -3290,6 +3496,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule') {
 	$modulelowercase = strtolower($module);
 	$loadclasserrormessage = '';
 
+	$class = null;
 	// Load module
 	try {
 		$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
@@ -3505,13 +3712,13 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'" spellcheck="false"><br>';
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'" spellcheck="false"><br>';
 	print '</div></div>';
 
 	print '</div>';	// End div tagtable
@@ -3610,7 +3817,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = $langs->trans("Export").'-'.$langs->trans("Import");
+		$head2[$h][1] = $langs->trans("ImportExportProfiles");
 		$head2[$h][2] = 'exportimport';
 		$h++;
 
@@ -3684,6 +3891,16 @@ if ($module == 'initmodule') {
 				// List of setup pages
 				$listofsetuppages = dol_dir_list($realpathofmodule.'/admin', 'files', 0, '\.php$');
 				foreach ($listofsetuppages as $setuppage) {
+					// If this is a page for extrafields setup of an object
+					$reg = array();
+					if (preg_match('/^([a-z]+)_extrafields.php/', $setuppage['relativename'], $reg)) {
+						// Check that object has $isextrafieldmanaged property set. If not, we should not show this file.
+						$fileofclass = $realpathofmodule.'/class/'.$reg[1].'.class.php';
+						if (is_readable($fileofclass) && !preg_match('/public\s+\$isextrafieldmanaged\s+=\s+1/', file_get_contents($fileofclass))) {
+							continue;
+						}
+					}
+
 					//var_dump($setuppage);
 					print '<tr><td>';
 					print '<span class="fa fa-file"></span> ';
@@ -3750,7 +3967,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("Description");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'desc') {
-						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->description).'">';
+						print '<input class="minwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->description).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifydesc" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -3821,7 +4038,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("Picto");
 					print '</td><td>';
 					if ($action == 'edit_modulepicto' && GETPOST('keydescription', 'alpha') === 'picto') {
-						print '<input class="minwidth200 maxwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'">';
+						print '<input class="minwidth200 maxwidth500" name="propsmodule" value="'.dol_escape_htmltag($moduleobj->picto).'" spellcheck="false">';
 
 						print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]] where faprefix can be far,far, facolor can be a text like \'red\' orvalue like \'#FF0000\' and fasize is CSS font size like \'1em\'');
 
@@ -3844,7 +4061,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("EditorName");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_name') {
-						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'">';
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_name).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyname" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -3857,7 +4074,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("EditorUrl");
 					print '</td><td>';
 					if ($action == 'edit_moduledescription' && GETPOST('keydescription', 'alpha') === 'editor_url') {
-						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'">';
+						print '<input name="propsmodule" value="'.dol_escape_htmltag($moduleobj->editor_url).'" spellcheck="false">';
 						print '<input class="reposition button smallpaddingimp" type="submit" name="modifyeditorurl" value="'.$langs->trans("Modify").'"/>';
 						print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"/>';
 					} else {
@@ -4085,6 +4302,9 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="objects">';
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 
+				// Tabs selected by default = all optional tabs; reflect posted state on redisplay
+				$enabledtabsdefault = GETPOSTISSET('enabledtab') ? GETPOST('enabledtab', 'array') : array_keys(getModuleBuilderObjectTabs());
+
 				print '<span class="opacitymedium">'.$langs->trans("EnterNameOfObjectDesc").'</span><br><br>';
 
 				print '<div class="tagtable">';
@@ -4123,6 +4343,14 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
+				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
+				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
+					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';
+					print '<input type="checkbox" name="enabledtab[]" id="enabledtab_'.$tabkey.'" value="'.dol_escape_htmltag($tabkey).'"'.$checked.'> ';
+					print '<label for="enabledtab_'.$tabkey.'">'.dol_escape_htmltag($langs->trans($tabinfo['label'])).'</label> &nbsp; ';
+				}
+				print '<br>';
 				print '<br>';
 				print '<input type="submit" class="button small" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
@@ -6777,6 +7005,7 @@ if ($module == 'initmodule') {
 				exit;
 			}
 
+			$outputfilezip = null;
 			$arrayversion = explode('.', $moduleobj->version, 3);
 			if (count($arrayversion)) {
 				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).(empty($arrayversion[2]) ? '' : ".".$arrayversion[2]).".zip";

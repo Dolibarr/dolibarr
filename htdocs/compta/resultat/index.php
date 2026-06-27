@@ -7,7 +7,7 @@
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,6 +155,7 @@ $name = '';
 $period = '';
 $periodlink = '';
 $exportlink = '';
+$description = '';
 
 $encaiss = array();
 $encaiss_ttc = array();
@@ -995,6 +996,7 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 
 $action = "balance";
 $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 // Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
@@ -1051,7 +1053,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	}
 
 	print '<tr class="oddeven">';
-	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $annee), "%B")."</td>";
+	print "<td>".dol_print_date(dol_mktime(12, 0, 0, $mois_modulo, 1, $year_start), "%B")."</td>";
 	for ($annee = $year_start; $annee <= $year_end_for_table; $annee++) {
 		$annee_decalage = $annee;
 		if ($mois > 12) {

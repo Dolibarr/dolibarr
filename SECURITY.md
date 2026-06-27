@@ -66,7 +66,7 @@ Reports are processed around once a month.
 ONLY vulnerabilities discovered, when the following setup on test platform is used, are "valid":
 
 * The version to analyze must be the last version available in the "develop" branch. Also, reports on vulnerabilities already fixed (so already reported) in the develop branch will not be validated.
-* Installation must be done properly for a production usage. This oncludes:
+* Installation must be done properly for a production usage. This includes:
 ** creation of the install.lock in the last step of installation process.
 ** $dolibarr_main_prod must be set to 1 in conf.php
 ** $dolibarr_nocsrfcheck must be kept to the value 0 in conf.php (this is the default value)
@@ -124,7 +124,8 @@ Scope is the web application (backoffice) and the APIs.
 * SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.
+* Vulnerabilities of type XSS exploited by using Javascript into a website page of the website module is not a vulnerability when user has the permission "Edit page" (being able to set javascript in the CMS is the expected behaviour in the website module).
+* Vulnerabilities that allow to run PHP code on the server into a website page is not a vulnerability when user has the superpermission "Edit PHP content in website page" (being able to run php code is the expected behaviour in the website module), except if the command is a RCE command (and $dolibarr_website_allow_custom_php remains to 0 or 1).
 
 
 ## Be informed of a new vulnerability

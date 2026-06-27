@@ -26,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -53,18 +53,15 @@ $action      = GETPOST('action', 'aZ09');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
-$groups	    = GETPOST('groups', 'array:int');
-$resources	= GETPOST('resources', 'array:int');
-//$lineid   = GETPOST('lineid', 'int');
+$groups	= GETPOST('groups', 'array:int');
+$resources = GETPOST('resources', 'array:int');
 
 // Initialize a technical objects
 $object = new Workstation($db);
-
-//$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array
 

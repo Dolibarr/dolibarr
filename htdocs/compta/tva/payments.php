@@ -150,6 +150,7 @@ if (preg_match('/^cs\./', $sortfield)
 //print $sql;
 
 dol_syslog("compta/tva/payments.php: select payment", LOG_DEBUG);
+$num = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

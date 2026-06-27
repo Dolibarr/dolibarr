@@ -16,6 +16,7 @@
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1386,6 +1387,10 @@ class FactureFournisseur extends CommonInvoice
 			$facligne->desc = $remise->description; // Line description
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
+			$facligne->localtax1_tx = $remise->localtax1_tx;
+			$facligne->localtax1_type = $remise->localtax1_type;
+			$facligne->localtax2_tx = $remise->localtax1_tx;
+			$facligne->localtax2_type = $remise->localtax1_type;
 			$facligne->subprice = -(float) $remise->amount_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->product_type = 0;
@@ -1416,6 +1421,8 @@ class FactureFournisseur extends CommonInvoice
 			$facligne->total_ht  = -(float) $remise->amount_ht;
 			$facligne->total_tva = -(float) $remise->amount_tva;
 			$facligne->total_ttc = -(float) $remise->amount_ttc;
+			$facligne->total_localtax1 = -(float) $remise->total_localtax1;
+			$facligne->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;

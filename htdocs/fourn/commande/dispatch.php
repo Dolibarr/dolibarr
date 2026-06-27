@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	        <christophe@altairis.fr>
- * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +71,8 @@ $fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 $hookmanager->initHooks(array('ordersupplierdispatch'));
@@ -423,6 +423,7 @@ $sellby = 0;
 $qty = 0;
 $price = '0';
 $entrepot = 0;
+$product = 0;
 
 // Remove a dispatched line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive) {
@@ -1318,7 +1319,7 @@ if ($id > 0 || !empty($ref)) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 						$lot = new Productlot($db);
 						$lot->fetch(0, $objp->pid, $objp->batch);
-						print '<td class="dispatch_batch_number">'.$lot->getNomUrl(1).'</td>';
+						print '<td class="dispatch_batch_number" data-col="batch"  data-batch="' . dolPrintHTMLForAttribute($objp->batch) . '" data-productid="' . $objp->fk_product . '" >'.$lot->getNomUrl(1).'</td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc">'.dol_print_date($lot->sellby, 'day').'</td>';
 						}
@@ -1326,7 +1327,7 @@ if ($id > 0 || !empty($ref)) {
 							print '<td class="dispatch_dluo">'.dol_print_date($lot->eatby, 'day').'</td>';
 						}
 					} else {
-						print '<td class="dispatch_batch_number"></td>';
+						print '<td class="dispatch_batch_number" data-col="batch" data-batch="" data-productid="' . $objp->fk_product . '" ></td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="dispatch_dlc"></td>';
 						}

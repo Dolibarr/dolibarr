@@ -527,7 +527,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' '.((int) $this->fk_code_ventilation).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.((int) $this->special_code).',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".price2num($this->total_ht).",";
@@ -536,8 +536,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
 		$sql .= ", ".((float) $this->situation_percent);
-		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
-		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".(!empty($this->fk_prev_id) ? ((int) $this->fk_prev_id) : "null");
+		$sql .= ", ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->fk_multicurrency;

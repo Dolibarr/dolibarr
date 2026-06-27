@@ -352,6 +352,16 @@ class BookKeeping extends CommonObject
 		}
 		$sql .= " AND entity = ".$conf->entity; // Do not use getEntity for accounting features
 
+		// Allow duplicates in incomes or loss statements
+		$accountProfit = getDolGlobalString('ACCOUNTING_RESULT_PROFIT');
+		$accountLoss   = getDolGlobalString('ACCOUNTING_RESULT_LOSS');
+
+		if (($accountProfit && $this->numero_compte === trim($accountProfit)) ||
+			($accountLoss   && $this->numero_compte === trim($accountLoss))) {
+			// If the account being processed corresponds to the “Profit” or “Loss” constant, the detection is bypassed
+			$sql .= " AND 1 = 2";
+		}
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -477,7 +487,9 @@ class BookKeeping extends CommonObject
 				$result = -3;
 				$error++;
 				$this->error = 'BookkeepingRecordAlreadyExists';
-				dol_syslog(__METHOD__.' '.$this->error, LOG_WARNING);
+				$this->errors[] = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+
+				dol_syslog(get_class($this).":: create duplicate record detected: doc_type={$this->doc_type}, doc_ref={$this->doc_ref}, fk_doc={((int) $this->fk_doc)}, fk_docdet={((int) $this->fk_docdet)}", LOG_WARNING);
 			}
 		} else {
 			$result = -5;
@@ -976,6 +988,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.sens,";
 			$sql .= " t.multicurrency_amount,";
 			$sql .= " t.multicurrency_code,";
+			$sql .= " t.matching_general,";
 			$sql .= " t.lettering_code,";
 			$sql .= " t.date_lettering,";
 			$sql .= " t.fk_user_author,";
@@ -1104,6 +1117,7 @@ class BookKeeping extends CommonObject
 					$line->sens = $obj->sens;
 					$line->multicurrency_amount = $obj->multicurrency_amount;
 					$line->multicurrency_code = $obj->multicurrency_code;
+					$line->matching_general = (bool) $obj->matching_general;
 					$line->lettering_code = $obj->lettering_code;
 					$line->date_lettering = $this->db->jdate($obj->date_lettering);
 					$line->fk_user_author = $obj->fk_user_author;
@@ -2617,9 +2631,9 @@ class BookKeeping extends CommonObject
 	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
 	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
-	 * @param 	string  $thirdpartyname         Thirdparty name
-	 * @param 	string  $reference              Reference of the element
-	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param 	string   $thirdpartyname		Thirdparty name
+	 * @param 	?string  $reference				Reference of the element
+	 * @param 	?string  $labelaccount			Label of the accounting account
 	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
@@ -3945,6 +3959,11 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var string Sens
 	 */
 	public $sens;
+
+	/**
+	 * @var bool
+	 */
+	public $matching_general;
 
 	/**
 	 * @var ?string

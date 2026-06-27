@@ -5,7 +5,7 @@
  * Copyright (C) 2017       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Benjamin B.             <b.crozon@trebisol.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,6 +220,7 @@ if ($modecompta == "RECETTES-DEPENSES" || $modecompta == "BOOKKEEPINGCOLLECTED")
 }
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
+$sql = '';
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
@@ -499,13 +500,13 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if ($modecompta=='CREANCES-DETTES') {
-						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev])?$cumulative_ht[$caseprev]:0);
-						$cumulative_year = (!empty($cumulative_ht[$case])?$cumulative_ht[$case]:0);
+					if ($modecompta == 'CREANCES-DETTES') {
+						$cumulative_previous_year = (!empty($cumulative_ht[$caseprev]) ? $cumulative_ht[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative_ht[$case]) ? $cumulative_ht[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					} else {
-						$cumulative_previous_year = (!empty($cumulative[$caseprev])?$cumulative[$caseprev]:0);
-						$cumulative_year = (!empty($cumulative[$case])?$cumulative[$case]:0);
+						$cumulative_previous_year = (!empty($cumulative[$caseprev]) ? $cumulative[$caseprev] : 0);
+						$cumulative_year = (!empty($cumulative[$case]) ? $cumulative[$case] : 0);
 						$isset_cumulative_previous_year = isset($cumulative_ht[$caseprev]);
 					}
 					if (!empty($cumulative_previous_year) && !empty($cumulative_year)) {
@@ -648,11 +649,11 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	// Percentage total
 	if ($annee > $minyear && $annee <= max($nowyear, $maxyear)) {
 		if ($modecompta == 'CREANCES-DETTES') {
-			$total_previous_year = (!empty($total_ht[$annee - 1])?$total_ht[$annee - 1]:0);
-			$total_year = (!empty($total_ht[$annee])?$total_ht[$annee]:0);
+			$total_previous_year = (!empty($total_ht[$annee - 1]) ? $total_ht[$annee - 1] : 0);
+			$total_year = (!empty($total_ht[$annee]) ? $total_ht[$annee] : 0);
 		} else {
-			$total_previous_year = (!empty($total[$annee - 1])?$total[$annee - 1]:0);
-			$total_year = (!empty($total[$annee])?$total[$annee]:0);
+			$total_previous_year = (!empty($total[$annee - 1]) ? $total[$annee - 1] : 0);
+			$total_year = (!empty($total[$annee]) ? $total[$annee] : 0);
 		}
 		if (!empty($total_previous_year) && !empty($total_year)) {
 			$percent = (round(($total_year - $total_previous_year) / $total_previous_year, 4) * 100);

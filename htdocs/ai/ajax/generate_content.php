@@ -75,7 +75,9 @@ if (is_null($jsonData)) {
 $ai = new Ai($db);
 
 // Get parameters
-$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
+// Default value is 'textgeneration'.
+// Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'textrephraser', 'textspellchecker', 'imagegeneration', 'videogeneration', ...
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];
 
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];						// Can be '' for text, 'html', ...
 

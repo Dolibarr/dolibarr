@@ -115,7 +115,7 @@ class StockTransfer extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -150,8 +150,8 @@ class StockTransfer extends CommonObject
 		'description'              => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 3,),
 		'fk_project'               => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'position' => 32, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
 		'fk_soc'                   => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1/*, 'help'=>"LinkToThirdparty"*/, 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax100'),
-		'fk_warehouse_source'      => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt source', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferSource', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
-		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt de destination', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferDestination', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
+		'fk_warehouse_source'      => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'WarehouseSource', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferSource', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
+		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'WarehouseDestination', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferDestination', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
 		'note_public'              => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
 		'note_private'             => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
 		'date_creation'            => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),

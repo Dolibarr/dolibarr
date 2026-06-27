@@ -155,7 +155,6 @@ PredefinedGroups=Grupos predefinidos
 ValueNotIntoChartOfAccount=Este valor de la cuenta de contabilidad no existe en el gráfico de la cuenta
 ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibido: La transacción ha sido validada.
-AccountancyUnletteringModifiedSuccessfully=%s No reconciliado modificado con éxito
 ConfirmMassDeleteBookkeepingWriting=Confirmación de eliminación masiva.
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos obligatorios de la instalación no se realizaron, favor de completar
 ErrorNoAccountingCategoryForThisCountry=No hay ningún grupo de cuentas contables disponibles para el país %s(vea %s-%s-%s)

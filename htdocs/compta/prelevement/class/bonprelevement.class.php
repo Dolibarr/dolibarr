@@ -178,7 +178,7 @@ class BonPrelevement extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
@@ -350,7 +350,7 @@ class BonPrelevement extends CommonObject
 	 * @param	string	$bic			BIC used
 	 * @param	string	$iban			IBAN used
 	 * @param	string	$rum			RUM
-	 * @param	string	$id_prelevement_demande		ID of debit or credit request
+	 * @param	int     $id_prelevement_demande		ID of debit or credit request
 	 * @return	int						>0 if OK, <0 if KO
 	 */
 	public function addWithdrawDetail($invoice_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $type = 'debit-order', $sourcetype = '', $bic = '', $iban = '', $rum = '', $id_prelevement_demande = 0)
@@ -418,7 +418,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$bic			BIC used
 	 *  @param	string	$iban			IBAN used
 	 *  @param	string	$rum			RUM used
-	 *  @param	string	$id_prelevement_demande		ID of debit or credit request
+	 *  @param	int     $id_prelevement_demande		ID of debit or credit request
 	 *	@return	int						>0 if OK, <0 if KO
 	 */
 	public function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key, $sourcetype = '', $bic = '', $iban = '', $rum = '', $id_prelevement_demande = 0)
@@ -427,7 +427,7 @@ class BonPrelevement extends CommonObject
 		$concat = getDolGlobalInt('MAIN_MODULE_PRELEVEMENT_CONCAT');	// ??? what is this for. Seems not used.
 
 		if ($concat == 1) {
-			/*
+			/**
 			 * @deprecated. This code can't work because code_... fields are empty. Not used. To remove.
 			 * We aggregate the lines.
 			 */
@@ -458,9 +458,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_soc";
 			$sql .= ", client_nom";
 			$sql .= ", amount";
-			//$sql .= ", bic";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", iban";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", rum";		// no more required, we have fk_prelevement_demande
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
@@ -468,9 +465,6 @@ class BonPrelevement extends CommonObject
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));
-			//$sql .= ", '" . $this->db->escape($bic) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape(dolEncrypt($iban)) . "'";		// no more required, we have fk_prelevement_demande
-			//$sql .= ", '" . $this->db->escape($rum) . "'";		// no more required, we have fk_prelevement_demande
 			$sql .= ", " . ((int) $id_prelevement_demande);
 			$sql .= (($sourcetype == 'salary') ? ", " . ((int) $client_id) : '');
 			$sql .= ")";
@@ -1325,6 +1319,7 @@ class BonPrelevement extends CommonObject
 						$baninloop = $fac[11];
 
 						$verif = checkSwiftForAccount(null, $bicinloop);
+
 						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							dol_syslog(__METHOD__." now call checkIbanForAccount(null, ".$baninloop.")");
 							$verif = checkIbanForAccount(null, $baninloop);
@@ -1341,7 +1336,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1349,7 +1344,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1357,7 +1352,7 @@ class BonPrelevement extends CommonObject
 								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$error++;
 							}
@@ -1994,7 +1989,7 @@ class BonPrelevement extends CommonObject
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$iban = dolDecrypt($obj->iban);
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, (string) $obj->drum, $obj->rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;
@@ -2181,7 +2176,7 @@ class BonPrelevement extends CommonObject
 							$refobj = "SAL" . $obj->idfac;
 						}
 
-						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, $drum, $rum, $type, $obj->fac_ref_supplier);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $refobj, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type, $obj->fac_ref_supplier);
 
 						$this->total += $obj->somme;
 						$i++;
@@ -2322,8 +2317,8 @@ class BonPrelevement extends CommonObject
 
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
-		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc((string) $row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		// 3 char + '-' + 10 (yymmddHHMM) + '-' + id + '-' + code. Must be under 32 (SEPA char limit for MndtId is however 35).
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc((string) $row_drum . ($row_code_client ? '-' . $row_code_client : ''), 17, 'right', 'UTF-8', 1);
 	}
 
 

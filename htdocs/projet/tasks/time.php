@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
  * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
@@ -53,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formintervention.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'bills', 'orders', 'companies');
@@ -312,7 +313,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_date = $timespent_date;
 				$object->timespent_withhour = 0;
 			}
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
@@ -347,7 +351,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_withhour = 0;
 			}
 
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
@@ -504,6 +511,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
 					$object->fetchTimeSpent($value);    // $value is ID of 1 line in timespent table
+					if (!array_key_exists($object->timespent_fk_user, $arrayoftasks)) {
+						$arrayoftasks[$object->timespent_fk_user] = [
+						 (int) $object->timespent_fk_product => ['timespent' => 0, 'totalvaluetodivideby3600' => 0]
+						];
+					}
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
@@ -575,8 +587,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 							$idprodline = $fk_product;
 						}
 
-						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+						// Add lines. Pass type=1 (service) explicitly so the invoice line is tagged
+						// as a service even when no product is bound to the time entry. Otherwise
+						// the default $type=0 leaks through and the PDF labels the operation as
+						// "Delivery of goods" instead of "Provision of services" (issue #34571).
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice").' - '.$username . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject, '', '', 0, 0, 0, 'HT', 0, Product::TYPE_SERVICE);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -675,7 +690,11 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						}
 						$idprodline = $value['fk_product'];
 					}
-					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject);
+					// Pass type=1 (service) explicitly so the invoice line is tagged as a service
+					// even when no product is bound to the time entry. Otherwise the default
+					// $type=0 leaks through and the PDF labels the operation as
+					// "Delivery of goods" instead of "Provision of services" (issue #34571).
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), (float) $remiseproject, '', '', 0, 0, 0, 'HT', 0, Product::TYPE_SERVICE);
 					if ($lineid < 0) {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -942,7 +961,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$projectstatic->fetch_thirdparty();
 		}
 		$res = $projectstatic->fetch_optionals();
-	} elseif ($object->fetch($id, $ref) >= 0) {
+	} elseif ($object->fetch($id, $ref) > 0) {
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 			$object->fetchComments();
 		}
@@ -1436,6 +1455,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 		print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
 
+		// Carry the task id through the filter submit so that the timespent list
+		// stays scoped to the current task instead of falling back to the global view.
+		print '<input type="hidden" name="id" value="' . ((int) $id) . '">';
 		print '<input type="hidden" name="projectid" value="' . $projectidforalltimes . '">';
 		print '<input type="hidden" name="withproject" value="' . $withproject . '">';
 		print '<input type="hidden" name="tab" value="' . $tab . '">';
@@ -2463,7 +2485,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500',  ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', ($user->hasRight('produit', 'lire') ? 0 : 1), '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);

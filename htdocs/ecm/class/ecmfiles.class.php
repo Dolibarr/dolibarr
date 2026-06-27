@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,12 +352,12 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($extraparams) ? 'NULL' : "'".$this->db->escape($extraparams)."'").',';
 		$sql .= " '".$this->db->idate($this->date_c)."',";
 		$sql .= ' '.(!isset($this->date_m) || dol_strlen((string) $this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
-		$sql .= ' '.(!isset($this->fk_user_c) ? $user->id : $this->fk_user_c).',';
-		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : $this->fk_user_m).',';
+		$sql .= ' '.(!isset($this->fk_user_c) ? ((int) $user->id) : ((int) $this->fk_user_c)).',';
+		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : ((int) $this->fk_user_m)).',';
 		$sql .= ' '.(!isset($this->acl) ? 'NULL' : "'".$this->db->escape($this->acl)."'").',';
 		$sql .= ' '.(!isset($this->src_object_type) ? 'NULL' : "'".$this->db->escape($this->src_object_type)."'").',';
-		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : $this->src_object_id).',';
-		$sql .= ' '.(empty($this->agenda_id) ? 'NULL' : (int) $this->agenda_id);
+		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : ((int) $this->src_object_id)).',';
+		$sql .= ' '.(empty($this->agenda_id) ? 'NULL' : ((int) $this->agenda_id));
 		$sql .= ')';
 
 		$this->db->begin();
@@ -784,11 +784,11 @@ class EcmFiles extends CommonObject
 		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
 		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
-		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
+		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? ((int) $this->fk_user_m) : ((int) $user->id)).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
-		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
+		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? ((int) $this->src_object_id) : "null").',';
 		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null").',';
-		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? (int) $this->agenda_id : "null");
+		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? ((int) $this->agenda_id) : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 		$this->db->begin();
 

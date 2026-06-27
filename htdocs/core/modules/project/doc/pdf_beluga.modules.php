@@ -45,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -291,7 +290,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -414,16 +413,6 @@ class pdf_beluga extends ModelePDFProjects
 						'disableamount' => 1,
 						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang' => 'interventions'),
-					'trip' => array(
-						'name' => "TripsAndExpenses",
-						'title' => "ListExpenseReportsAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'datefieldname' => 'dated',
-						'margin' => 'minus',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
-						'lang' => 'trip'),
 					'expensereport' => array(
 						'name' => "ExpensesReports",
 						'title' => "ListExpenseReportsAssociatedProject",

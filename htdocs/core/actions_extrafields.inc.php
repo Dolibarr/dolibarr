@@ -247,7 +247,8 @@ if ($action == 'add') {
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
 					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
-					(GETPOST('showintooltip', 'int') ? 1 : 0)
+					(GETPOST('showintooltip', 'int') ? 1 : 0),
+					GETPOSTINT('personal_data')
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -434,7 +435,8 @@ if ($action == 'update') {
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
 					GETPOST("ai_prompt"),
 					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
-					(GETPOST('showintooltip', 'int') ? 1 : 0)
+					(GETPOST('showintooltip', 'int') ? 1 : 0),
+					GETPOSTINT('personal_data')
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
