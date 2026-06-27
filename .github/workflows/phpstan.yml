@@ -112,6 +112,7 @@ jobs:
                 exit 0
             fi
 
+            echo phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
             phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
           fi
         # continue-on-error: true
