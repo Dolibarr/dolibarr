@@ -101,14 +101,18 @@ jobs:
         # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
-          > /tmp/phpstan-files.txt
           if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phpstan_full"* ]] ; then
-            # Run on all files in integration branch
+            # Run phpstan on all files in integration branch
             phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
-
           else
-            echo "$ALL_CHANGED_FILES" >> /tmp/phpstan-files.txt
-            cat /tmp/phpstan-files.txt
+            PHP_FILES=$(echo "$ALL_CHANGED_FILES" | tr ' ' '\n' | grep -E '\.php$' || true)
+            echo "PHP_FILES=$PHP_FILES"
+            if [ -z "$PHP_FILES" ]; then
+                echo "No PHP files to analyse. Skipping Phan."
+                exit 0
+            fi
+
+            echo phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
             phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
           fi
         # continue-on-error: true
