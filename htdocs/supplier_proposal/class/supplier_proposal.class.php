@@ -2136,6 +2136,19 @@ class SupplierProposal extends CommonObject
 			// End call triggers
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal";
+			$sql .= " WHERE fk_supplier_proposal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
+		}
+
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'supplier_proposaldet';
 			$ef = $main."_extrafields";

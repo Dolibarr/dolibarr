@@ -1483,28 +1483,41 @@ class FactureFournisseur extends CommonInvoice
 			// Fin appel triggers
 		}
 
-		// If invoice was converted into a discount not yet consumed, we remove discount
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
-		$sql .= ' AND fk_invoice_supplier_line IS NULL';
-		$resql = $this->db->query($sql);
+		// Remove linked categories.
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice";
+		$sql .= " WHERE fk_supplier_invoice = ".((int) $this->id);
 
-		// If invoice has consumned discounts
-		$this->fetch_lines();
-		$list_rowid_det = array();
-		foreach ($this->lines as $key => $invoiceline) {
-			$list_rowid_det[] = $invoiceline->id;
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$error++;
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
 		}
 
-		// Consumned discounts are freed
-		if (count($list_rowid_det)) {
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
-			$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
+		if (!$error) {
+			// If invoice was converted into a discount not yet consumed, we remove discount
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
+			$sql .= ' AND fk_invoice_supplier_line IS NULL';
+			$resql = $this->db->query($sql);
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			if (!$this->db->query($sql)) {
-				$error++;
+			// If invoice has consumned discounts
+			$this->fetch_lines();
+			$list_rowid_det = array();
+			foreach ($this->lines as $key => $invoiceline) {
+				$list_rowid_det[] = $invoiceline->id;
+			}
+
+			// Consumned discounts are freed
+			if (count($list_rowid_det)) {
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
+				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(implode(',', $list_rowid_det)).')';
+
+				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$error++;
+				}
 			}
 		}
 
@@ -1562,18 +1575,6 @@ class FactureFournisseur extends CommonInvoice
 						$error++;
 					}
 				}
-			}
-		}
-
-		// Remove linked categories.
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_invoice";
-			$sql .= " WHERE fk_invoice = ".((int) $this->id);
-
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->errors[] = $this->db->lasterror();
 			}
 		}
 
