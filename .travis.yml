@@ -264,7 +264,7 @@ before_script:
       sleep 3
       sudo ps fauxww
       echo "MySQL set root password"
-      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
+      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8mb4'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
       echo "MySQL grant"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
       echo "MySQL list current users"
@@ -310,6 +310,8 @@ before_script:
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+    echo '$'dolibarr_main_db_character=\'utf8mb4\'';' >> $CONF_FILE
+    #echo '$'dolibarr_main_db_collation=\'travis\'';' >> $CONF_FILE
     echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
