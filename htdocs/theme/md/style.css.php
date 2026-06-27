@@ -360,7 +360,7 @@ $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
 // @phan-suppress-next-line PhanRedefinedClassReference
-$nbtopmenuentries = $menumanager->showmenu('topnb');
+$nbtopmenuentries = method_exists($menumanager, 'showmenu') ? $menumanager->showmenu('topnb') : 0;
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
@@ -5911,6 +5911,10 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
+
 span.buttonpaymentsmall {
 	text-shadow: none;
 }
