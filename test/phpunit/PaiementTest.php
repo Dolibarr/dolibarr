@@ -25,14 +25,20 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/paiement/class/paiement.class.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/master.inc.php';
+/**
+ * @var DoliDB $db
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var User $user
+ */
+require_once dirname(__FILE__) . '/../../htdocs/compta/paiement/class/paiement.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__) . '/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__) . '/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -73,7 +79,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementPrepareInvoice()
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -91,7 +97,7 @@ class PaiementTest extends CommonClassTest
 		$result = $invoice->validate($user);
 		$this->assertLessThan($result, 0, 'Facture::validate failed');
 
-		print __METHOD__." invoiceid=".$invoice->id." total_ttc=".$invoice->total_ttc."\n";
+		print __METHOD__ . " invoiceid=" . $invoice->id . " total_ttc=" . $invoice->total_ttc . "\n";
 		$this->assertGreaterThan(0, $invoice->total_ttc, 'Specimen invoice should have a positive TTC amount');
 
 		return $invoice->id;
@@ -107,7 +113,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementCreate($invoiceid)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -128,8 +134,8 @@ class PaiementTest extends CommonClassTest
 		// closepaidinvoices=0 on purpose: keep the invoice validated (status 1) so that the
 		// deletion test below is allowed (a payment linked to a closed invoice cannot be deleted).
 		$paymentid = $payment->create($user, 0);
-		print __METHOD__." paymentid=".$paymentid."\n";
-		$this->assertLessThan($paymentid, 0, 'Paiement::create failed: '.$payment->error);
+		print __METHOD__ . " paymentid=" . $paymentid . "\n";
+		$this->assertLessThan($paymentid, 0, 'Paiement::create failed: ' . $payment->error);
 
 		// create() must have computed ->amount from the ->amounts array
 		$this->assertEquals($amount, (float) price2num($payment->amount, 'MT'), 'Payment amount differs from dispatched amount');
@@ -147,7 +153,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementAddToBank($data)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -163,7 +169,7 @@ class PaiementTest extends CommonClassTest
 		$account->initAsSpecimen();
 		$account->date_solde = dol_now(); // Date of initial balance is required by Account::create
 		$accountid = $account->create($user);
-		$this->assertLessThan($accountid, 0, 'Account::create failed: '.$account->error);
+		$this->assertLessThan($accountid, 0, 'Account::create failed: ' . $account->error);
 
 		$payment = new Paiement($db);
 		$payment->fetch($data['paymentid']);
@@ -171,8 +177,8 @@ class PaiementTest extends CommonClassTest
 		$payment->amounts = $payment->getAmountsArray();
 
 		$bankline = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $accountid, '', '');
-		print __METHOD__." bankline=".$bankline."\n";
-		$this->assertLessThan($bankline, 0, 'Paiement::addPaymentToBank failed: '.$payment->error);
+		print __METHOD__ . " bankline=" . $bankline . "\n";
+		$this->assertLessThan($bankline, 0, 'Paiement::addPaymentToBank failed: ' . $payment->error);
 
 		return $data;
 	}
@@ -187,7 +193,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementFetch($data)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -195,7 +201,7 @@ class PaiementTest extends CommonClassTest
 
 		$payment = new Paiement($db);
 		$result = $payment->fetch($data['paymentid']);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__ . " result=" . $result . "\n";
 		$this->assertLessThan($result, 0, 'Paiement::fetch failed');
 
 		$this->assertEquals($data['paymentid'], $payment->id);
@@ -214,7 +220,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementInvoiceSommePaiement($data)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -223,7 +229,7 @@ class PaiementTest extends CommonClassTest
 		$invoice = new Facture($db);
 		$invoice->fetch($data['invoiceid']);
 		$sum = (float) price2num($invoice->getSommePaiement(), 'MT');
-		print __METHOD__." sommePaiement=".$sum."\n";
+		print __METHOD__ . " sommePaiement=" . $sum . "\n";
 
 		$this->assertEquals($data['amount'], $sum, 'getSommePaiement does not match the payment amount');
 
@@ -240,7 +246,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementUpdateDateAndNum($data)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -251,11 +257,11 @@ class PaiementTest extends CommonClassTest
 
 		// Both updaters return 0 on success
 		$result = $payment->update_date(dol_now() - 86400);
-		print __METHOD__." update_date=".$result."\n";
+		print __METHOD__ . " update_date=" . $result . "\n";
 		$this->assertEquals(0, $result, 'Paiement::update_date failed');
 
 		$result = $payment->update_num('CHK-TEST-001');
-		print __METHOD__." update_num=".$result."\n";
+		print __METHOD__ . " update_num=" . $result . "\n";
 		$this->assertEquals(0, $result, 'Paiement::update_num failed');
 
 		return $data;
@@ -271,7 +277,7 @@ class PaiementTest extends CommonClassTest
 	 */
 	public function testPaiementDelete($data)
 	{
-		global $conf,$user,$langs,$db;
+		global $conf, $user, $langs, $db;
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
@@ -280,8 +286,8 @@ class PaiementTest extends CommonClassTest
 		$payment = new Paiement($db);
 		$payment->fetch($data['paymentid']);
 		$result = $payment->delete($user);
-		print __METHOD__." result=".$result."\n";
-		$this->assertLessThan($result, 0, 'Paiement::delete failed: '.$payment->error);
+		print __METHOD__ . " result=" . $result . "\n";
+		$this->assertLessThan($result, 0, 'Paiement::delete failed: ' . $payment->error);
 
 		// After deletion the invoice must report nothing paid anymore
 		$invoice = new Facture($db);
