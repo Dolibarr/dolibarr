@@ -1354,6 +1354,7 @@ class Facture extends CommonInvoice
 			}
 
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+			$object->lines[$i]->fk_code_ventilation = 0; // Do not clone accounting binding
 		}
 
 		// Create clone
