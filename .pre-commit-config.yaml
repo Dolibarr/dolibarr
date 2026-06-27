@@ -256,7 +256,8 @@ repos:
     rev: 3.3.1
     hooks:
       - id: sqlfluff-lint
-        stages: [pre-commit, manual]  # manual needed for ci
+        #stages: [pre-commit, manual]  # manual needed for ci
+        stages: [manual]  # manual needed for ci
         exclude: (?x)^
           (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql
