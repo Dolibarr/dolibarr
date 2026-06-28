@@ -5391,15 +5391,22 @@ class Societe extends CommonObject
 	public function calculateVATNumberFromProperties($thirdparty)
 	{
 		if ($thirdparty->country_code == 'FR' && empty($thirdparty->tva_intra) && !empty($thirdparty->tva_assuj)) {
-			$siren = trim($thirdparty->idprof1);
-			if (empty($siren)) {
-				$siren = (int) substr(str_replace(' ', '', $thirdparty->idprof2), 0, 9);
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
+			$siren = preg_replace('/\s+/', '', (string) $thirdparty->idprof1);
+			$siret = preg_replace('/\s+/', '', (string) $thirdparty->idprof2);
+			if (!isValidSiren($siren)) {
+				if (!isValidSiret($siret)) {
+					return '';
+				}
+
+				$siren = substr($siret, 0, 9);
 			}
 			if (!empty($siren)) {
 				// [FR + key code + SIREN number ]
 				// Key VAT = [12 + 3 * (SIREN modulo 97)] modulo 97
-				$cle = (12 + 3 * $siren % 97) % 97;
-				$tva_intra = 'FR' . $cle . $siren;
+				$cle = (12 + 3 * (((int) $siren) % 97)) % 97;
+				$tva_intra = 'FR' . str_pad((string) $cle, 2, '0', STR_PAD_LEFT) . $siren;
 			}
 		}
 
