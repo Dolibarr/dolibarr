@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -255,7 +255,7 @@ class PaymentSalary extends CommonObject
 		$totalamount = (float) price2num($totalamount, 'MT'); // this is to ensure the following test is no biaised by a potential float equal to 0.0000000000001
 		if ($totalamount == 0) {
 			return -1;
-		} // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		} // Negative amounts are accepted (for direct debit rejections) but not zero
 
 
 		$this->db->begin();
@@ -799,7 +799,7 @@ class PaymentSalary extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
+		global $langs; // TODO Return the English label and translate at display time
 
 		$langs->load('compta');
 		/*if ($mode == 0)
