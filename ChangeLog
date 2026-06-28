@@ -211,7 +211,7 @@ The following changes may create regressions for some external modules, but were
 
 ***** ChangeLog for 23.0.4 compared to 23.0.3 *****
 
-SEC #39000 Escalation to admin when user has clone permission - credit Abderrahmane Aksoum on the fix commit
+SEC #39000 Escalation to admin when user has clone permission - credit Abderrahmane Aksoum
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
