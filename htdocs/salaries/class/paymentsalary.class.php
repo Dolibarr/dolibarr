@@ -255,7 +255,7 @@ class PaymentSalary extends CommonObject
 		$totalamount = (float) price2num($totalamount, 'MT'); // this is to ensure the following test is no biaised by a potential float equal to 0.0000000000001
 		if ($totalamount == 0) {
 			return -1;
-		} // Negative amounts are accepted (for direct debit rejections) but not zero
+		} // Negative amounts are accepted (for direct debit rejections) but not null
 
 
 		$this->db->begin();
