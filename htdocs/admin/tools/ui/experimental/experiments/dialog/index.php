@@ -52,7 +52,7 @@ if ($action == 'addticketexample') {
 	$ticketMsg .= '<b>Socid:</b> '.GETPOSTINT('socid').'<br>';
 	$ticketMsg .= '<b>Description:</b> '.GETPOST('description');
 
-	setEventMessages($ticketMsg, '', 'mesgs');
+	setEventMessages($ticketMsg, null, 'mesgs');
 }
 
 $experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/dialog/assets/';

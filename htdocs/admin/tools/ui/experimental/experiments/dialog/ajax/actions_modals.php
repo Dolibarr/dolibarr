@@ -5,8 +5,7 @@ if (!defined('NOREQUIREAJAX')) {define('NOREQUIREAJAX', 1);}
 if (!defined('NOREQUIRESOC')) {define('NOREQUIRESOC', 1);}
 if (!defined('NOCSRFCHECK')) {define('NOCSRFCHECK', 1);}
 
-$res=0;
-if (! $res && file_exists("../../../../../../../main.inc.php")) : $res=@include '../../../../../../../main.inc.php'; endif;
+require '../../../../../../../main.inc.php';
 
 /**
  * @var DoliDB      $db

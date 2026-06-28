@@ -3,6 +3,11 @@
 require '../../../../../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
+/**
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if ($user->socid > 0) {
 	accessforbidden();
 }

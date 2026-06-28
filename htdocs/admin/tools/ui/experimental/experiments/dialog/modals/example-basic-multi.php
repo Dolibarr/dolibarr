@@ -2,6 +2,11 @@
 // Load Dolibarr environment
 require '../../../../../../../main.inc.php';
 
+/**
+ * @var Translate $langs
+ * @var User      $user
+ */
+
 if ($user->socid > 0) {
 	accessforbidden();
 }
