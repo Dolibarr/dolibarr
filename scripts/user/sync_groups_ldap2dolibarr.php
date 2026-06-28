@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2013 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -198,11 +198,11 @@ if ($result >= 0) {
 				if ($tmpkey === 'count') {	// @phpstan-ignore-line
 					continue;
 				}
-				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+				if (empty($userList[$userdn])) { // Fetch the user
+					// rfc2307 schema: members are listed in the memberUid attribute as login names only
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
-					} else { // Pour les autres schémas, les membres sont listés sous forme de DN completes
+					} else { // For other schemas, members are listed as full DNs
 						$userFilter = explode(',', $userdn);
 						$userKey = $ldap->getAttributeValues('('.$userFilter[0].')', getDolGlobalString('LDAP_KEY_USERS'));
 					}
@@ -213,9 +213,9 @@ if ($result >= 0) {
 					$fuser = new User($db);
 
 					if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
-						$fuser->fetch(0, '', $userKey[0]); // Chargement du user concerné par le SID
+						$fuser->fetch(0, '', $userKey[0]); // Load the user matched by SID
 					} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
-						$fuser->fetch(0, $userKey[0]); // Chargement du user concerné par le login
+						$fuser->fetch(0, $userKey[0]); // Load the user matched by login
 					}
 
 					$userList[$userdn] = $fuser;

@@ -3,7 +3,7 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -204,9 +204,9 @@ if ($result >= 0) {
 			$fuser = new User($db);
 
 			if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
-				$fuser->fetch(0, '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le SID
+				$fuser->fetch(0, '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by SID
 			} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
-				$fuser->fetch(0, $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le login
+				$fuser->fetch(0, $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by login
 			}
 
 			// Propriete membre
