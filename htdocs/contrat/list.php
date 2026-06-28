@@ -1353,7 +1353,8 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, 1, 1).'</td>';
+			$showinvalidemail = (int) !getDolGlobalInt('MAIN_DISABLE_SHOW_INVALID_EMAIL'); // to avoid slow display
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
 		}
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
