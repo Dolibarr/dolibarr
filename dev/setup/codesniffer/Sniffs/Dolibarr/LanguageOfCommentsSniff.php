@@ -106,7 +106,7 @@ class LanguageOfCommentsSniff implements Sniff
 			return;
 		}
 
-		if (strpos($content, 'Copyright') === false && preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/', $content)) {
+		if (strpos($content, 'Copyright') === false && preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/u', $content)) {
 			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
 			$data  = [trim($content)];
 			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
