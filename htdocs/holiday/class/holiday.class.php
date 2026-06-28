@@ -728,9 +728,9 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$nbopenedday = num_open_day($this->date_debut_gmt, $this->date_fin_gmt, 0, 1, $this->halfday);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if (($balance - $nbopenedday) < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString("HOLIDAY_DISALLOW_NEGATIVE_BALANCE")) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -852,9 +852,9 @@ class Holiday extends CommonObject
 		if ($checkBalance > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$nbopenedday = num_open_day($this->date_debut_gmt, $this->date_fin_gmt, 0, 1, $this->halfday);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if (($balance - $nbopenedday) < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString("HOLIDAY_DISALLOW_NEGATIVE_BALANCE")) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
@@ -983,9 +983,9 @@ class Holiday extends CommonObject
 		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$nbopenedday = num_open_day($this->date_debut_gmt, $this->date_fin_gmt, 0, 1, $this->halfday);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
 
-			if (($balance - $nbopenedday) < 0) {
+			if (($balance - $daysAsked) < 0 && getDolGlobalString("HOLIDAY_DISALLOW_NEGATIVE_BALANCE")) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
 				return -1;
 			}
