@@ -5403,7 +5403,7 @@ class Societe extends CommonObject
 				$siren = substr($siret, 0, 9);
 			}
 			if (!empty($siren)) {
-				// [FR + code clé  + numéro SIREN ]
+				// [FR + key code + SIREN number ]
 				// Key VAT = [12 + 3 × (SIREN modulo 97)] modulo 97
 				$cle = (12 + 3 * (((int) $siren) % 97)) % 97;
 				$tva_intra = 'FR' . str_pad((string) $cle, 2, '0', STR_PAD_LEFT) . $siren;
