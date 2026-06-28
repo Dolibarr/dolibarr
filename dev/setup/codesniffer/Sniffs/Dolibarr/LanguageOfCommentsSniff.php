@@ -98,15 +98,20 @@ class LanguageOfCommentsSniff implements Sniff
 	{
 		$tokens = $phpcsFile->getTokens();
 		$content = $tokens[$stackPtr]['content'];
+		// Basic cleanup (lowercase for comparison)
+		$contentLower = strtolower($content);
+
+		// content contains french examples
+		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french')) {
+			return;
+		}
+
 		if (strpos($content, 'Copyright') === false && preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/', $content)) {
 			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
 			$data  = [trim($content)];
 			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
 			return; // We stop at the first occurrence.
 		}
-
-		// Basic cleanup (lowercase for comparison)
-		$contentLower = strtolower($content);
 
 		foreach ($this->frenchWords as $word) {
 			if (strpos($contentLower, $word) !== false) {
