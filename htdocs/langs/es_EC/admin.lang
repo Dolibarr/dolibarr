@@ -1108,7 +1108,6 @@ PasswordTogetVCalExport =Clave para autorizar enlace de exportación
 PastDelayVCalExport=No exportar eventos más antiguos de
 ClickToDialSetup=Configuración del módulo - Haga clic para marcar
 ClickToDialUseTelLink=Utilizar sólo un enlace "tel:" en los números de teléfono
-CashDesk=Punto de venta
 CashDeskSetup=Configuración del módulo de punto de venta
 CashDeskThirdPartyForSell=Tercero genérico predeterminado para usar en ventas
 CashDeskBankAccountForSell=Cuenta predeterminada para recibir pagos en efectivo

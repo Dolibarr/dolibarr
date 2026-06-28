@@ -170,25 +170,39 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $user;
+		global $conf, $langs, $mysoc, $user;
 
 		$sql = array();
+
+		// Detect minimal version of PHP
+		if (version_compare(PHP_VERSION, '7.0.0') < 0) {
+			$errmsg = 'Error: You are using a too low version of PHP';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->error = $errmsg;
+			return 0;
+		}
+
+		// Clear cache
+		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
 
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 
 		// any value of $options except 'acceptredirect' will bypass this redirection
-		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {
+		if (isALNEQualifiedVersion(1, 1) && $options == 'acceptredirect') {		// Redirect done for all french companies, even if not assujeti.
 			// We first switch on registration page
 			header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/registration.php?origin=initmodule&withtab=0');
 			exit;
 		}
 
-
-		$this->db->begin();
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		// Check the context of running company is defined
+		if (empty($mysoc->country_code)) {
+			$errmsg = 'Error: The context of the running company is not defined';
+			dol_syslog($errmsg, LOG_ERR);
+			$this->error = $errmsg;
+			return 0;
+		}
 
 		// Check that the HTTPS is forced
 		$s = $b->canBeEnabled();
@@ -197,37 +211,146 @@ class modBlockedLog extends DolibarrModules
 			return 0;
 		}
 
-		// Create HMAC if it does not exists yet
-		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
+		// If we are here, it means the registration has been done, we can activate the module (this means creating a HMAC key).
+
+		$this->db->begin();
+
+		$error = 0;
+
+		// Generate and save the HMAC key if it does not exists yet
+		$hmac_encoded_secret_key = $b->getEncodedHMACSecretKey();
+
 		if (empty($hmac_encoded_secret_key)) {
-			// Add key
-			$randomsecret = bin2hex(random_bytes(32)); // 64 char hex - 256 bits
+			// No HMAC key yet, we generate one.
+			$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
-			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;
+			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+			//$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
 
-			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+			$obfuscationkey = '';
+			if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+				try {
+					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
+					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
+				} catch (Exception $e) {
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
+					$obfuscationkey = '';
+				}
 
-			if ($result < 0) {
-				dol_print_error($this->db);
-				$this->db->rollback();
+				if (empty($obfuscationkey)) {
+					$error++;
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					setEventMessages($langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping), null, 'errors');
+				}
 
-				return 0;
+				if (!$error) {
+					// Save HMAC key to obfuscate it with the $obfuscationkey
+					//$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+					$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
+					if ($result < 0) {
+						$error++;
+						setEventMessages($b->error, $b->errors, 'errors');
+					}
+				}
+			} else {
+				$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolcrypt'); 	// gitleaks:allow
+				if ($result < 0) {
+					$error++;
+					setEventMessages($b->error, $b->errors, 'errors');
+				}
 			}
 		} else {
-			// Decode the HMAC key
-			$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+			// This case should not happen. If using a certified version, the module can't be disabled and reinitialized, so
+			// we should not reach this code. In case it happens in future (or if using F5 just after enabling module), we reach this protection
+			// that check everything is still ok and report a warning if not.
 
-			if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
-				$this->error = 'Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY using the $dolibarr_main_crypt_key. A value was found in config parameters in database but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.';
-				$this->error .= 'Restore the value of $dolibarr_main_crypt_key that was used for encryption in database and restart the migration.';
-				$this->error .= 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
-				$this->db->rollback();
+			// Here we have the obfuscated value of BLOCKEDLOG_HMAC_KEY in $hmac_encoded_secret_key. We need to unobfuscate it.
+			$hmac_secret_key = '';
+			try {
+				$hmac_secret_key = $b->getClearHMACSecretKey($hmac_encoded_secret_key);		// Note: On network trouble, an Exception is thrown to the caller
+			} catch (Exception $e) {
+				$firsterrormessage = $e->getMessage();
 
-				return 0;
+				// Another chance to get HMAC when saved with old obfuscation method (dolcrypt) - Migration will be done at next writing.
+				$hmac_encoded_secret_key_alt = $b->getEncodedHMACSecretKey(1, 1);
+				if (!empty($hmac_encoded_secret_key_alt)) {
+					try {
+						$hmac_secret_key_alt = $b->getClearHMACSecretKey($hmac_encoded_secret_key_alt);		// Note: On network trouble, an Exception is thrown to the caller
+
+						if (preg_match('/^BLOCKEDLOGHMAC/', (string) $hmac_secret_key_alt)) {
+							$hmac_secret_key = $hmac_secret_key_alt;
+							$firsterrormessage = '';
+						}
+					} catch (Exception $e) {
+						if (empty($firsterrormessage)) {
+							$firsterrormessage = $e->getMessage();
+						}
+					}
+				} else {
+					if (empty($firsterrormessage)) {
+						$firsterrormessage = $e->getMessage();
+					}
+				}
+
+				if ($firsterrormessage) {	// If error
+					$error++;
+					$this->error = 'modBlockLog init Error: '.$firsterrormessage.'. ';
+				}
 			}
+			if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+				$error++;
+				$this->error .= 'modBlockedLog init Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the remote obfuscation key. The value was found in llx_const table but decoding with obfuscation key failed. May be the remote server to get the obfuscation key to decode it was offline.';
+				$this->error .= ' If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+			}
+			/*
+			if (preg_match('/^dolobfuscationv1/', $hmac_encoded_secret_key)) {
+				// New method
+				$obfuscationkey = '';
+				try {
+					dol_syslog("mysoc->profid1 = ".$mysoc->idprof1);
+					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
+					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
+				} catch (Exception $e) {
+					$error++;
+					$this->error = $e->getMessage();
+					$obfuscationkey = '';
+				}
+
+				if (empty($obfuscationkey)) {
+					$error++;
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					$this->error = $langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping);
+				}
+
+				$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key, $obfuscationkey);
+
+				if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+					$error++;
+					$this->error = 'modBlockedLog init Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the remote obfuscation key. The value was found in llx_const table but decoding with '.$obfuscationkey.' failed. May be the remote server to get the obfucation key to decode it was offline.';
+					$this->error .= 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+				}
+			} else {
+				// Old method for backward compatibility
+				// Note: The migration of the way to store the HMAC key from old method to the new one will be done automatically at next recording by buildFinalSignatureHash()
+				$hmac_secret_key = dolDecrypt($hmac_encoded_secret_key);
+
+				if (! preg_match('/^BLOCKEDLOGHMAC/', $hmac_secret_key)) {
+					$error++;
+					$this->error = 'modBlockedLog init Error: Failed to decode the crypted value of the parameter BLOCKEDLOG_HMAC_KEY '.$hmac_encoded_secret_key.' using the $dolibarr_main_crypt_key. The value was found in llx_const table but decoding failed. May be the database data were restored onto another environment and the coding/decoding key $dolibarr_main_dolcrypt_key was not restored with the same value in conf.php file.';
+					$this->error .= 'Restore the value of $dolibarr_main_crypt_key that was used for encryption in database and restart the migration.';
+					$this->error .= 'If you don\'t use the Unalterable Log module, you can also remove the BLOCKEDLOG_HMAC_KEY entry from llx_const table. If you use the Unalterable Log, this is not possible because this will invalidate all past record.';
+				}
+			}
+			*/
 		}
 
-		$this->db->commit();
+		if ($error) {
+			$this->db->rollback();
+			return 0;
+		} else {
+			$this->db->commit();
+		}
 
 
 		// We add an entry to show we enable the module
@@ -238,6 +361,7 @@ class modBlockedLog extends DolibarrModules
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
 		$object->date = dol_now();
+		$object->label = 'Module enabled';
 
 		// Add first entry in unalterable Log to track that module was activated
 		$action = 'MODULE_SET';
@@ -288,6 +412,7 @@ class modBlockedLog extends DolibarrModules
 
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		$b = new BlockedLog($this->db);
 
 		dol_syslog("modBlockedLog::remove option=".$options, LOG_DEBUG);
 
@@ -299,8 +424,9 @@ class modBlockedLog extends DolibarrModules
 		$object->date = dol_now();
 		$object->label = 'Module disabled';
 
-		$b = new BlockedLog($this->db);
-		$result = $b->setObjectData($object, 'MODULE_RESET', 0, $user, 0);
+		// Add entry in unalterable Log to track that module was activated
+		$action = 'MODULE_RESET';
+		$result = $b->setObjectData($object, $action, 0, $user, 0);
 		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->errors;

@@ -840,6 +840,7 @@ if (empty($reshook)) {
 				$clone->id = 0;
 				$clone->email = (getDolGlobalString('USER_MAIL_REQUIRED') ? GETPOST('new_email', 'alphanohtml') : '');
 				$clone->api_key = '';
+				$clone->admin = ($user->admin ? $object->admin : 0); 	// If I am admin, I can clone the admin flag of a user, otherwiseadmin flag is forced to false.
 
 				$parts = explode(' ', GETPOST('clone_name'), 2);
 				$clone->firstname = $parts[0];
@@ -2395,8 +2396,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 						print '<!-- List of groups of the user -->'."\n";
 						print '<table class="noborder centpercent">'."\n";
-						print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
-						print '<th class="liste_titre right">';
+						print '<tr class="liste_titre">';
+						//print '<th class="liste_titre">'.$langs->trans("Groups").'</th>'."\n";
+						print '<th class="liste_titre right" colspan="2">';
 						if ($permissiontoeditgroup) {
 							print $form->select_dolgroups(0, 'group', 1, $exclude, 0, '', array(), (string) $object->entity, false, 'maxwidth150');
 							print ' &nbsp; ';

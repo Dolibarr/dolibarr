@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011		Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,9 +131,8 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
  */
 function expensereport_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;

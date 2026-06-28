@@ -237,4 +237,40 @@ class ExpenseReportTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result);
 		return $result;
 	}
+
+	/**
+	 * testExpenseReportLineFetch
+	 *
+	 * @return	void
+	 */
+	public function testExpenseReportLineFetch()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$expensereport = new ExpenseReport($db);
+		$expensereport->initAsSpecimen();
+		$expensereport->status = 0;
+		$expensereport->fk_statut = 0;
+		$createresult = $expensereport->create($user);
+		$this->assertGreaterThan(0, $createresult, "Setup failed, cannot create expense report: ".$expensereport->error);
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expensereport_det WHERE fk_expensereport = ".((int) $expensereport->id)." ORDER BY rowid ASC";
+		$resql = $db->query($sql);
+		$lineobj = ($resql ? $db->fetch_object($resql) : null);
+		$this->assertNotNull($lineobj, "Setup failed, no line created for the expense report");
+		$lineid = (int) $lineobj->rowid;
+
+		$line = new ExpenseReportLine($db);
+		$fetchresult = $line->fetch($lineid);
+		print __METHOD__." lineid=".$lineid." result=".$fetchresult."\n";
+
+		$this->assertGreaterThan(0, $fetchresult, "ExpenseReportLine::fetch() must succeed for an existing line");
+		$this->assertEquals($lineid, $line->id, "Fetched line id does not match the requested one");
+
+		$expensereport->delete($user);
+	}
 }

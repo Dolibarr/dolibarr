@@ -4,7 +4,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud	    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017		Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,9 +222,8 @@ function member_type_prepare_head(AdherentType $object)
  */
 function member_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('adherent');
 	$extrafields->fetch_name_optionals_label('adherent_type');
 
