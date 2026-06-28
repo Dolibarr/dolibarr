@@ -14,6 +14,7 @@ on:
 concurrency:
   group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
 

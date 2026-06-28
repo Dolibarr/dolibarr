@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Verify tag is on main
+      - name: Verify tag is on expected branch and not on main
         run: |
           TAG_COMMIT=$(git rev-list -n 1 $GITHUB_REF)
           if ! git branch --contains $TAG_COMMIT | grep -q "18.0"; then

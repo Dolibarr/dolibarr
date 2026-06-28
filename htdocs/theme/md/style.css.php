@@ -360,7 +360,7 @@ $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
 // @phan-suppress-next-line PhanRedefinedClassReference
-$nbtopmenuentries = $menumanager->showmenu('topnb');
+$nbtopmenuentries = (is_object($menumanager) && method_exists($menumanager, 'showmenu')) ? $menumanager->showmenu('topnb') : 0;
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
@@ -5911,6 +5911,10 @@ div.backgreypublicpayment {
 	color: #222;
 	opacity: 0.3;
 }
+a.poweredbyhref {
+	text-decoration: none;
+}
+
 span.buttonpaymentsmall {
 	text-shadow: none;
 }
@@ -6425,11 +6429,11 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
-.cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
+.cal_other_month   { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FCFCFC; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -6441,6 +6445,7 @@ table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !i
 .cal_peruser         { padding: 0px; height: 22px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px !important; }
 .cal_impair        { background: #FBFBFB; }
+.cal_showmore      { opacity: 0.5 }
 .peruser_busy      { background: #CC8888; }
 .peruser_notbusy   { background: #EEDDDD; opacity: 0.5; }
 div.event { margin-top: 4px; margin-bottom: 4px; margin-left: 2px; margin-right: 2px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
