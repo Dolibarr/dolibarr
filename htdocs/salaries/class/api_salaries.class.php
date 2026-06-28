@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
  * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -334,7 +334,7 @@ class Salaries extends DolibarrApi
 	 */
 	public function getPayments($pid)
 	{
-		// A payment of salary can be done on different salaires of didderent user, so only users with permission
+		// A payment of salary can be done on different salaries of different users, so only users with permission
 		// to read all area allowed.
 		// TODO To support read or readchild case, the get must be done with a SQL that include the paid user with
 		// a where on current user and childids of current user.

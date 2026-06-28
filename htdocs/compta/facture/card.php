@@ -1191,7 +1191,7 @@ if (empty($reshook)) {
 						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
 						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
 					} else {
-						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the “create” function of the Payment class
+						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the "create" function of the Payment class
 						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
 						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
 						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
@@ -3494,7 +3494,7 @@ if (empty($reshook)) {
 
 						// Change each progression percent on each lines
 						foreach ($object->lines as $line) {
-							// no traitement for special product
+							// no processing for special product
 							if ($line->product_type == 9) {
 								continue;
 							}
@@ -4788,7 +4788,7 @@ if ($action == 'create') {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				'@phan-var-force Contrat $objectsrc';
-				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
+				// Recalculate contrat->price (excl. VAT), contrat->total (incl. VAT), contrat->tva
 				$objectsrc->update_price(1, 'auto', 1);
 			}
 
@@ -5578,7 +5578,7 @@ if ($action == 'create') {
 
 		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
 			// Date invoice point of tax (Leistungsdatum / service date for tax).
-			// Only editable while the invoice is a draft — once validated, the
+			// Only editable while the invoice is a draft -- once validated, the
 			// invoice is a legally issued document and date_pointoftax is the
 			// basis for the VAT-return period assignment under accrual taxation
 			// (Soll-Versteuerung). To correct, set the invoice back to draft or

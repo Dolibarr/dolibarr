@@ -9,7 +9,7 @@
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +277,7 @@ foreach ($tableau as $key => $const) {	// Loop on each param
 			print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/mails_templates.php', ['action' => 'create', 'type_template' => $tmp[1], 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"])]).'">'.img_picto('', 'add').'</a>';
 		} elseif (preg_match('/MAIL_FROM$/i', $const)) {
 			print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue_'.$const.'" value="'.dol_escape_htmltag($obj->value).'">';
-		} else { // type = 'string' ou 'chaine'
+		} else { // type = 'string' or 'chaine'
 			print '<input type="text" class="flat minwidth300" name="constvalue_'.$const .'" value="'.dol_escape_htmltag($obj->value).'">';
 		}
 		print '</td>';
