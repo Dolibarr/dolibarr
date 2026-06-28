@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
@@ -1376,7 +1376,7 @@ if (!empty($object->thirdparty)) {
 					"invoice_supplier_rec"
 				];
 
-				// seller.tva_assuj -> à injecter dans jsConf ou ailleurs
+				// seller.tva_assuj -> to inject into jsConf or elsewhere
 				if (supplierElements.includes(jsConf.docObject.element) && !jsConf.docObject.seller_tva_assuj) {
 					if (tva_tx !== 0) {
 						tva_tx = 0;

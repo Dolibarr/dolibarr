@@ -1070,7 +1070,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
  *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
@@ -1355,7 +1355,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  *
  *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
- *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>		     Value sanitized (string or array). It may be '' if format check fails.
  */
@@ -2416,7 +2416,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 	//$isAlreadyHTML = dol_textishtml($s);
 
 	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
-	// encode only special char like é but not &, <, >, ", ' if already HTML.
+	// encode only special char like accented chars but not &, <, >, ", ' if already HTML.
 	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
 	$allowedtags = 'common';
@@ -2530,7 +2530,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	} else {
 		// We make a manipulation by calling the html_entity_decode() to convert content into NON HTML UTF8 string.
 		// Because content can be or not already HTML.
-		// For example, this decode &egrave; into è so string is UTF8 (but numbers entities like &#39; is not decoded).
+		// For example, this decode &egrave; into its UTF-8 char so string is UTF8 (but numbers entities like &#39; is not decoded).
 		// In a future, we should not need this
 
 		$tmp = (string) $stringtoescape;
@@ -4897,7 +4897,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		if (dol_strlen($phone) == 12) { //ex: +223 AB_CD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "TH") { //Thaïlande
+	} elseif (strtoupper($countrycode) == "TH") { //Thailand
 		if (dol_strlen($phone) == 11) { //ex: +66_ABC_DE_FGH
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3);
 		} elseif (dol_strlen($phone) == 12) { //ex: +66_A_BCD_EF_GHI
@@ -4928,7 +4928,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 14) { //ex: +971_ABC_DEF_GHIK
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DZ") { //Algérie
+	} elseif (strtoupper($countrycode) == "DZ") { //Algeria
 		if (dol_strlen($phone) == 13) { //ex: +213_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
 		}
@@ -4938,7 +4938,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 12) { //ex: +32_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "PF") { //Polynésie française
+	} elseif (strtoupper($countrycode) == "PF") { //French Polynesia
 		if (dol_strlen($phone) == 12) { //ex: +689_AB_CD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
 		}
@@ -4950,7 +4950,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		if (dol_strlen($phone) == 12) { //ex: +962_A_BCD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 1) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
 		}
-	} elseif (strtoupper($countrycode) == "JM") { //Jamaïque
+	} elseif (strtoupper($countrycode) == "JM") { //Jamaica
 		if (dol_strlen($newphone) == 12) { //ex: +1867_ABC_DEFG
 			$newphone = substr($newphone, 0, 5) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 4);
 		}
@@ -5516,15 +5516,15 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 
 
 /**
- *	Truncate a string to a particular length adding '…' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
+ *	Truncate a string to a particular length adding '...' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding '...'). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added '...', or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
- *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
+ *  @param	int		$nodot				Truncation do not add '...' after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
@@ -5548,7 +5548,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 	if ($trunc == 'right') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
-			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add '...'
 			return dol_substr($newstring, 0, $size, $stringencoding) . ($nodot ? '' : '…');
 		} else {
 			//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
@@ -5566,7 +5566,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 	} elseif ($trunc == 'left') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
-			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add '...'
 			return '…' . dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
 		} else {
 			return $string;
@@ -5588,7 +5588,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *
  * @param 	string		$key		Key
  * @param	string		$morecss	Add more css to the object
- * @return 	string					Pïcto for the key
+ * @return 	string					Picto for the key
  */
 function getPictoForType($key, $morecss = '')
 {
@@ -7816,8 +7816,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 					                        Default 0 if unknown.
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
- *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
- *											- '0' if ($rounding is defined):                 price2num('W9ç', 'MT', 0) => '9',  price2num('W9ç', 'MT', 1) => '0',   price2num('W9ç', 'MT', 2) => '9'
+ *											- text unchanged or partial if ($rounding = ''): price2num('W9c', '', 0)   => '9c', price2num('W9c', '', 1)   => 'W9c', price2num('W9c', '', 2)   => '9c'
+ *											- '0' if ($rounding is defined):                 price2num('W9c', 'MT', 0) => '9',  price2num('W9c', 'MT', 1) => '0',   price2num('W9c', 'MT', 2) => '9'
  *											Note: The best way to guarantee a numeric value is to add a cast (float) before the price2num().
  *											If amount is null or '', it returns '' if $rounding = '', it returns '0' if $rounding is defined.
  *
@@ -12164,7 +12164,7 @@ function dol_eval_new($s)
 	];
 
 	$prohibited_token_arrangements = [
-		// Variable functions « $a( », « "$a"( », « 'FN_NAME'( », ('FN_NAME')()
+		// Variable functions "$a(", '"$a"(', "'FN_NAME'(", ('FN_NAME')()
 		' T_VARIABLE ( ',
 		' " ( ',
 		' \' ( ',
@@ -15615,7 +15615,7 @@ function getElementProperties($elementType)
 
 	if ($reshook) {
 		$elementProperties = $hookmanager->resArray;
-	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for security against misconfigured external modules
 		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
 	}
 
