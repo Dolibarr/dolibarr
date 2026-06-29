@@ -2707,18 +2707,25 @@ if (empty($reshook)) {
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', (string) $prod->tva_tx));
 
 				// Foreign-currency document: use the product fixed per-currency price if any (issue #32379).
-				// A currency price typed by the user keeps priority (guard on empty price_*_devise).
-				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency
-					&& empty($price_ht_devise) && (string) $price_ht_devise !== '0'
-					&& empty($price_ttc_devise) && (string) $price_ttc_devise !== '0') {
+				// Freeze the line when no currency price was submitted (apply the fixed price) AND when the submitted
+				// price equals the product fixed price - the product picker prefills the field, so a kept prefilled
+				// value must still be marked sourced, otherwise the freeze never triggers through the normal UI flow.
+				if (isModEnabled('multicurrency') && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency) {
 					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
 					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
 					if (!empty($mccurrencyprice)) {
 						// Always consume the fixed currency price as HT (stored 'price' is the HT equivalent), so a
 						// TTC-based product price flows through the HT line path and the document total is not
 						// under-valued by 1/(1+VAT) (issue #32379)
-						$price_ht_devise = $mccurrencyprice['price'];
-						$line_multicurrency_subprice_source = 1;
+						$nocurrencytyped = ((string) $price_ht_devise === '' && (string) $price_ttc_devise === '');
+						$equalsfixedht = ((string) $price_ttc_devise === '' && (string) $price_ht_devise !== ''
+							&& abs((float) price2num($price_ht_devise, 'CU') - (float) price2num($mccurrencyprice['price'], 'CU')) < 0.00001);
+						if ($nocurrencytyped) {
+							$price_ht_devise = $mccurrencyprice['price'];
+							$line_multicurrency_subprice_source = 1;
+						} elseif ($equalsfixedht) {
+							$line_multicurrency_subprice_source = 1;
+						}
 					}
 				}
 
