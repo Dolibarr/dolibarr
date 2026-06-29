@@ -17,7 +17,7 @@
 -- ============================================================================
 
 -- Fixed sell prices per currency for a product (independent from exchange rate).
--- One row per (product, price level, entity, currency).
+-- One row per (product, customer, price level, entity, currency). fk_soc = 0 means the catalog price (any customer).
 
 create table llx_product_price_currency
 (
@@ -25,6 +25,7 @@ create table llx_product_price_currency
   entity				integer   DEFAULT 1 NOT NULL,			-- Multi company id
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer NOT NULL,
+  fk_soc				integer   DEFAULT 0 NOT NULL,			-- Customer id for a per-customer price, 0 for the catalog price
   price_level			smallint  DEFAULT 1 NOT NULL,
   fk_multicurrency		integer,
   multicurrency_code	varchar(3) NOT NULL,

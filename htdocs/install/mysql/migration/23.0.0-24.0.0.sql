@@ -570,6 +570,7 @@ create table llx_product_price_currency
   entity				integer   DEFAULT 1 NOT NULL,
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer NOT NULL,
+  fk_soc				integer   DEFAULT 0 NOT NULL,
   price_level			smallint  DEFAULT 1 NOT NULL,
   fk_multicurrency		integer,
   multicurrency_code	varchar(3) NOT NULL,
@@ -581,7 +582,10 @@ create table llx_product_price_currency
   fk_user_author		integer
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_price_currency ADD UNIQUE INDEX uk_product_price_currency (fk_product, price_level, multicurrency_code, entity);
+-- Add fk_soc on dev databases that created the table before the per-customer dimension (issue #32379)
+ALTER TABLE llx_product_price_currency ADD COLUMN fk_soc integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_product_price_currency DROP INDEX uk_product_price_currency;
+ALTER TABLE llx_product_price_currency ADD UNIQUE INDEX uk_product_price_currency (fk_product, fk_soc, price_level, multicurrency_code, entity);
 ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_product (fk_product);
 ALTER TABLE llx_product_price_currency ADD INDEX idx_product_price_currency_fk_user_author (fk_user_author);
 

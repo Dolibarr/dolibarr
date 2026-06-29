@@ -2653,7 +2653,7 @@ class Product extends CommonObject
 	 *
 	 *	@param	string	$currency_code	Currency code of the document (e.g. 'USD')
 	 *	@param	int		$price_level	Price level (>=1)
-	 *	@param	int		$socid			Third party id (reserved for per-customer currency prices, lot 2)
+	 *	@param	int		$socid			Third party id: when >0 a per-customer currency price takes precedence over the catalog one
 	 *	@return	array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}|array{}	Fixed price or empty array
 	 */
 	public function getSellPriceInCurrency(string $currency_code, int $price_level = 1, int $socid = 0): array
@@ -2663,6 +2663,25 @@ class Product extends CommonObject
 		}
 		$level = $price_level > 0 ? $price_level : 1;
 
+		// A per-customer fixed currency price (fk_soc = socid) takes precedence over the catalog one (fk_soc = 0).
+		// It is resolved on demand because Product::fetch() only preloads catalog prices.
+		if ($socid > 0) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/productpricecurrency.class.php';
+			$ppc = new ProductPriceCurrency($this->db);
+			$levels = ($level != 1) ? array($level, 1) : array(1);
+			foreach ($levels as $trylevel) {
+				if ($ppc->fetchByKey($this->id, $trylevel, $currency_code, $socid) > 0) {
+					return array(
+						'price' => $ppc->price,
+						'price_ttc' => $ppc->price_ttc,
+						'price_base_type' => $ppc->price_base_type,
+						'multicurrency_tx' => $ppc->multicurrency_tx,
+					);
+				}
+			}
+		}
+
+		// Catalog price (preloaded by fetch())
 		if (!empty($this->multicurrency_prices[$level][$currency_code])) {
 			return $this->multicurrency_prices[$level][$currency_code];
 		}
