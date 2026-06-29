@@ -209,7 +209,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		if (getDolGlobalBool('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {
 			$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 		} else {
-			$sql .= ' AND (x.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR x.fk_validator = ' . $user->id . ')';
+			$sql .= ' AND (x.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR x.fk_validator = ' . ((int) $user->id) . ')';
 		}
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
