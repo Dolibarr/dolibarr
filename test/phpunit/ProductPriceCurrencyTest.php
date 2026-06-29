@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/productpricecurrency.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -71,6 +72,26 @@ class ProductPriceCurrencyTest extends CommonClassTest
 		$this->assertGreaterThan(0, $id, 'Product creation failed: '.$product->error);
 
 		return $product;
+	}
+
+	/**
+	 * Create a throwaway customer for the tests.
+	 *
+	 * @return	int		Societe id (>0)
+	 */
+	private function createTestSoc(): int
+	{
+		global $db, $user;
+
+		$societe = new Societe($db);
+		$societe->name = 'PPC soc '.dol_print_date(dol_now(), '%Y%m%d%H%M%S').mt_rand(1, 9999);
+		$societe->client = 1;
+		$societe->code_client = -1;
+		$societe->country_id = 1;
+		$socid = $societe->create($user);
+		$this->assertGreaterThan(0, $socid, 'Societe creation failed: '.$societe->error.' '.implode(',', $societe->errors));
+
+		return $socid;
 	}
 
 	/**
@@ -193,5 +214,63 @@ class ProductPriceCurrencyTest extends CommonClassTest
 		$all = $ppc->fetchAllForProduct($product->id);
 		$this->assertEquals(100.0, $all[1]['USD']['price']);
 		$this->assertEquals(80.0, $all[2]['GBP']['price']);
+	}
+
+	/**
+	 * A per-customer currency price (fk_soc) takes precedence over the catalog one; other customers fall back to catalog.
+	 *
+	 * @return void
+	 */
+	public function testPerCustomerCurrencyPriceTakesPrecedence()
+	{
+		global $db, $user;
+
+		$product = $this->createTestProduct(20.0);
+		$socid = $this->createTestSoc();
+
+		$ppc = new ProductPriceCurrency($db);
+		// Catalog price (fk_soc = 0)
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 100.0, 'HT', 20.0, $user, 1, 1.1, 0), 'Catalog set failed: '.$ppc->error);
+		// Customer-specific price (fk_soc = socid)
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 70.0, 'HT', 20.0, $user, 1, 1.1, $socid), 'Customer set failed: '.$ppc->error);
+
+		// Simulate the catalog cache the same way Product::fetch() would (without depending on the
+		// multicurrency module being enabled in the test environment). The per-customer price is
+		// resolved on demand from the database, the catalog one from this cache.
+		$resolver = new Product($db);
+		$resolver->id = $product->id;
+		$resolver->multicurrency_prices = array(
+			1 => array('USD' => array('price' => 100.0, 'price_ttc' => 120.0, 'price_base_type' => 'HT', 'multicurrency_tx' => 1.1)),
+		);
+
+		$resCustomer = $resolver->getSellPriceInCurrency('USD', 1, $socid);
+		$this->assertEquals(70.0, $resCustomer['price'], 'Customer-specific currency price must win over catalog');
+
+		$resCatalog = $resolver->getSellPriceInCurrency('USD', 1, 0);
+		$this->assertEquals(100.0, $resCatalog['price'], 'Catalog price expected when no customer');
+
+		$resOther = $resolver->getSellPriceInCurrency('USD', 1, $socid + 999999);
+		$this->assertEquals(100.0, $resOther['price'], 'Unknown customer must fall back to catalog price');
+	}
+
+	/**
+	 * fetchAllForProduct (catalog cache) must not include per-customer currency prices.
+	 *
+	 * @return void
+	 */
+	public function testFetchAllForProductExcludesCustomerPrices()
+	{
+		global $db, $user;
+
+		$product = $this->createTestProduct(20.0);
+		$socid = $this->createTestSoc();
+
+		$ppc = new ProductPriceCurrency($db);
+		$ppc->setPriceCurrency($product->id, 'USD', 100.0, 'HT', 20.0, $user, 1, 1.1, 0);
+		$ppc->setPriceCurrency($product->id, 'USD', 70.0, 'HT', 20.0, $user, 1, 1.1, $socid);
+
+		$all = $ppc->fetchAllForProduct($product->id);
+		$this->assertCount(1, $all[1], 'Only the catalog USD price must be in the catalog cache');
+		$this->assertEquals(100.0, $all[1]['USD']['price'], 'Catalog price expected in cache, not the customer one');
 	}
 }

@@ -74,6 +74,11 @@ class ProductPriceCurrency
 	public $multicurrency_tx;
 
 	/**
+	 * @var int Customer id for a per-customer price, 0 for the catalog price.
+	 */
+	public $fk_soc;
+
+	/**
 	 *	Constructor.
 	 *
 	 *	@param	DoliDB	$db		Database handler
@@ -98,10 +103,11 @@ class ProductPriceCurrency
 	 *	@param	User	$user					User doing the change
 	 *	@param	int		$level					Price level (>=1)
 	 *	@param	float	$multicurrency_tx		Exchange rate at input time (informative only)
+	 *	@param	int		$socid					Customer id for a per-customer price, 0 for the catalog price
 	 *	@param	int		$notrigger				1 to disable triggers
 	 *	@return	int								Row id (>0) if OK, -1 if KO
 	 */
-	public function setPriceCurrency(int $fk_product, string $multicurrency_code, float $price, string $price_base_type, float $vat_tx, User $user, int $level = 1, float $multicurrency_tx = 1.0, int $notrigger = 0): int
+	public function setPriceCurrency(int $fk_product, string $multicurrency_code, float $price, string $price_base_type, float $vat_tx, User $user, int $level = 1, float $multicurrency_tx = 1.0, int $socid = 0, int $notrigger = 0): int
 	{
 		global $conf;
 
@@ -117,6 +123,9 @@ class ProductPriceCurrency
 		if ($level <= 0) {
 			$level = 1;
 		}
+		if ($socid < 0) {
+			$socid = 0;
+		}
 
 		// Compute HT/TTC pair
 		if ($price_base_type === 'TTC') {
@@ -131,7 +140,7 @@ class ProductPriceCurrency
 
 		$this->db->begin();
 
-		$exists = $this->fetchByKey($fk_product, $level, $multicurrency_code);
+		$exists = $this->fetchByKey($fk_product, $level, $multicurrency_code, $socid);
 		if ($exists < 0) {
 			$this->db->rollback();
 			return -1;
@@ -149,9 +158,10 @@ class ProductPriceCurrency
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
 			$sql = "INSERT INTO ".$this->db->prefix()."product_price_currency";
-			$sql .= " (entity, fk_product, price_level, fk_multicurrency, multicurrency_code, multicurrency_tx, price, price_ttc, price_base_type, date_price, fk_user_author)";
+			$sql .= " (entity, fk_product, fk_soc, price_level, fk_multicurrency, multicurrency_code, multicurrency_tx, price, price_ttc, price_base_type, date_price, fk_user_author)";
 			$sql .= " VALUES (".((int) $conf->entity);
 			$sql .= ", ".((int) $fk_product);
+			$sql .= ", ".((int) $socid);
 			$sql .= ", ".((int) $level);
 			$sql .= ", ".($fk_multicurrency > 0 ? ((int) $fk_multicurrency) : "null");
 			$sql .= ", '".$this->db->escape($multicurrency_code)."'";
@@ -179,6 +189,7 @@ class ProductPriceCurrency
 		$this->price_ttc = $price_ttc;
 		$this->price_base_type = $price_base_type;
 		$this->multicurrency_tx = $multicurrency_tx;
+		$this->fk_soc = $socid;
 
 		$this->db->commit();
 
@@ -191,13 +202,15 @@ class ProductPriceCurrency
 	 *	@param	int		$fk_product				Product id
 	 *	@param	int		$level					Price level
 	 *	@param	string	$multicurrency_code		Currency code
+	 *	@param	int		$socid					Customer id for a per-customer price, 0 for the catalog price
 	 *	@return	int								1 if found, 0 if not found, -1 if SQL error
 	 */
-	public function fetchByKey(int $fk_product, int $level, string $multicurrency_code): int
+	public function fetchByKey(int $fk_product, int $level, string $multicurrency_code, int $socid = 0): int
 	{
-		$sql = "SELECT rowid, price, price_ttc, price_base_type, multicurrency_tx";
+		$sql = "SELECT rowid, fk_soc, price, price_ttc, price_base_type, multicurrency_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_price_currency";
 		$sql .= " WHERE fk_product = ".((int) $fk_product);
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$sql .= " AND price_level = ".((int) $level);
 		$sql .= " AND multicurrency_code = '".$this->db->escape($multicurrency_code)."'";
 		$sql .= " AND entity IN (".getEntity('productprice').")";
@@ -218,6 +231,7 @@ class ProductPriceCurrency
 		}
 
 		$this->id = (int) $obj->rowid;
+		$this->fk_soc = (int) $obj->fk_soc;
 		$this->price = (float) $obj->price;
 		$this->price_ttc = (float) $obj->price_ttc;
 		$this->price_base_type = $obj->price_base_type;
@@ -228,7 +242,9 @@ class ProductPriceCurrency
 	}
 
 	/**
-	 *	Load all fixed currency prices of a product, grouped by price level then currency code.
+	 *	Load all catalog (fk_soc = 0) fixed currency prices of a product, grouped by price level then currency code.
+	 *
+	 *	Per-customer prices are not loaded here: they are resolved on demand by fetchByKey() with a socid.
 	 *
 	 *	@param	int		$fk_product		Product id
 	 *	@return	array<int,array<string,array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}>>	Indexed by [price_level][currency_code]
@@ -243,6 +259,7 @@ class ProductPriceCurrency
 		$sql = "SELECT price_level, multicurrency_code, price, price_ttc, price_base_type, multicurrency_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_price_currency";
 		$sql .= " WHERE fk_product = ".((int) $fk_product);
+		$sql .= " AND fk_soc = 0";
 		$sql .= " AND entity IN (".getEntity('productprice').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -273,9 +290,10 @@ class ProductPriceCurrency
 	 *	@param	int		$level					Price level
 	 *	@param	string	$multicurrency_code		Currency code
 	 *	@param	User	$user					User doing the change
+	 *	@param	int		$socid					Customer id for a per-customer price, 0 for the catalog price
 	 *	@return	int								>0 if OK, -1 if KO
 	 */
-	public function deleteCurrencyPrice(int $fk_product, int $level, string $multicurrency_code, User $user): int
+	public function deleteCurrencyPrice(int $fk_product, int $level, string $multicurrency_code, User $user, int $socid = 0): int
 	{
 		global $conf;
 
@@ -289,6 +307,7 @@ class ProductPriceCurrency
 
 		$sql = "DELETE FROM ".$this->db->prefix()."product_price_currency";
 		$sql .= " WHERE fk_product = ".((int) $fk_product);
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$sql .= " AND price_level = ".((int) $level);
 		$sql .= " AND multicurrency_code = '".$this->db->escape($multicurrency_code)."'";
 		$sql .= " AND entity = ".((int) $conf->entity);
