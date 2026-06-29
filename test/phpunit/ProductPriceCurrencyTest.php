@@ -273,4 +273,34 @@ class ProductPriceCurrencyTest extends CommonClassTest
 		$this->assertCount(1, $all[1], 'Only the catalog USD price must be in the catalog cache');
 		$this->assertEquals(100.0, $all[1]['USD']['price'], 'Catalog price expected in cache, not the customer one');
 	}
+
+	/**
+	 * Bulk init creates the missing catalog price and never overwrites an existing one.
+	 *
+	 * @return void
+	 */
+	public function testInitCatalogCurrencyPricesIsNonDestructive()
+	{
+		global $db, $user;
+
+		$product = $this->createTestProduct(20.0);
+
+		$ppc = new ProductPriceCurrency($db);
+		// Pre-existing USD catalog price that must survive the bulk init untouched
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 999.0, 'HT', 20.0, $user, 1, 1.0, 0), 'Pre-set failed: '.$ppc->error);
+
+		// Entity-wide bulk init for USD and GBP, price level 1 (rate is 1 when none is configured in the test env)
+		$created = $ppc->initCatalogCurrencyPrices($user, array('USD', 'GBP'), 1);
+		$this->assertGreaterThanOrEqual(1, $created, 'At least the missing GBP price of the test product must be created');
+
+		// The pre-existing USD price of the test product must be left untouched
+		$checkUsd = new ProductPriceCurrency($db);
+		$this->assertSame(1, $checkUsd->fetchByKey($product->id, 1, 'USD', 0), 'USD price must still exist');
+		$this->assertEquals(999.0, $checkUsd->price, 'Existing USD price must not be overwritten by the bulk init');
+
+		// The missing GBP price must have been created from the company price (50) and the current rate (1)
+		$checkGbp = new ProductPriceCurrency($db);
+		$this->assertSame(1, $checkGbp->fetchByKey($product->id, 1, 'GBP', 0), 'GBP price must now exist');
+		$this->assertEquals(50.0, $checkGbp->price, 'GBP price must equal company price 50 * rate 1');
+	}
 }
