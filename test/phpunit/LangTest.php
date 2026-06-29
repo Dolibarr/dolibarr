@@ -122,13 +122,13 @@ class LangTest extends CommonClassTest
 		$newlang->setDefaultLang('fr_FR');
 		$newlang->load("admin");
 
-		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b>
+		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b> (french comment)
 		// The ->transnoentities() does not escape nothing into entities.
 		$result = $newlang->transnoentities("ModuleMustBeEnabled", '<b>é</b><span class="red">aaa</span>');
 		print "result=".$result.PHP_EOL;
 		$this->assertEquals('Le module <b><b>é</b><span class="red">aaa</span></b> doit être activé', $result, 'Translation transnoentities ko');
 
-		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b>
+		// ErrorModuleRequirePHPVersion is a string than contains accent é and <b> (french comment)
 		// The ->trans() escapes content into ModuleMustBeEnabled except b, strong, a, i, br and span tags,
 		// but content of parameters are escaped
 		$result = $newlang->trans("ModuleMustBeEnabled", '<b>é</b><span class="red">aaa</span>');
