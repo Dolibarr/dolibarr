@@ -426,6 +426,12 @@ class MultiCurrency extends CommonObject
 
 		$currencyRate = new CurrencyRate($this->db);
 		$currencyRate->rate = (float) price2num($rate);
+		// Pre-fill the inverse rate (1 foreign currency = rate_direct company currency) so the rate_direct
+		// display (MULTICURRENCY_USE_RATE_DIRECT) is meaningful for synced/automatic rates. The rate page
+		// sets rate_direct explicitly and does not go through addRate(), so manual input keeps priority.
+		if ($currencyRate->rate > 0) {
+			$currencyRate->rate_direct = (float) (1 / $currencyRate->rate);
+		}
 
 		if ($currencyRate->create($user, $this->id) > 0) {
 			$this->rate = $currencyRate;
