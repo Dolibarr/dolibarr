@@ -520,9 +520,10 @@ if (empty($reshook)) {
 									$lines[$i]->fk_unit,
 									$object->origin,
 									$lines[$i]->rowid,
-									0,
+									(!empty($lines[$i]->multicurrency_subprice_source) ? $lines[$i]->multicurrency_subprice : 0),
 									$lines[$i]->ref_ext,
-									0
+									0,
+									$lines[$i]->multicurrency_subprice_source
 								);
 
 								if ($result < 0) {

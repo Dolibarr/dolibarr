@@ -2124,9 +2124,10 @@ if (empty($reshook)) {
 											$lines[$i]->situation_percent ?? 100,
 											$lines[$i]->fk_prev_id ?? 0,
 											$lines[$i]->fk_unit,
-											0,
+											(!empty($lines[$i]->multicurrency_subprice_source) ? $lines[$i]->multicurrency_subprice : 0),
 											'',
-											0
+											0,
+											$lines[$i]->multicurrency_subprice_source
 										);
 
 										if ($result > 0) {
