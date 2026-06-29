@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016  Juanjo Menent        	<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -680,9 +680,9 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Mets a jour le montant total
+	 *	Update the total amount
 	 *
-	 *	@return 	int		0 en cas de success
+	 *	@return 	int		0 on success
 	 */
 	public function updateAmount()
 	{

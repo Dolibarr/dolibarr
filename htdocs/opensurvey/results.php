@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 				$nouveauchoix .= "1";
 			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
-			} else { // else it's zéro
+			} else { // else it's zero
 				$nouveauchoix .= "0";
 			}
 		}
@@ -740,7 +740,7 @@ if ($object->format == "D") {
 	// Displaying the months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utilisé pour supprimer le suffixe @* qui déplaît logiquement à strftime()
+		$cur = intval($toutsujet[$i]); // intval() is used to strip the @* suffix which naturally confuses strftime()
 
 		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
@@ -1123,7 +1123,7 @@ if ($nbofcheckbox >= 2) {
 	print '</tr>'."\n";
 }
 
-// S'il a oublié de remplir un nom
+// If they forgot to fill in a name
 if (GETPOSTISSET("boutonp") && GETPOST("nom") == "") {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 }
@@ -1136,7 +1136,7 @@ if (isset($erreur_ajout_date) && $erreur_ajout_date) {
 	setEventMessages($langs->trans("ErrorWrongDate"), null, 'errors');
 }
 
-//fin du tableau
+// End of table
 print '</table>'."\n";
 print '</div>'."\n";
 

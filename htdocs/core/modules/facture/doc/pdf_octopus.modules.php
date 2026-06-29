@@ -1560,7 +1560,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			// Show if Option VAT debit option is on also if transmitter is french
 			// Decret n°2099-1299 2022-10-07
-			// French mention : "Option pour le paiement de la taxe d'après les débits"
+			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -2747,10 +2747,10 @@ class pdf_octopus extends ModelePDFFactures
 
 		$form = new Form($db);
 
-		$tab_height -= 29; // Réduction de la hauteur global du tableau
+		$tab_height -= 29; // Reduce the overall table height
 		$displayWarranty = $this->displayRetainedWarranty($object);
 		if (!$displayWarranty) {
-			$tab_height -= 19; // Réduction de la hauteur global du tableau
+			$tab_height -= 19; // Reduce the overall table height
 		}
 
 
@@ -2837,7 +2837,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 
 		// Output Rect
-		// KEEPTHIS => Affiche les bords extérieurs
+		// KEEPTHIS => Display outer borders
 		$this->printRoundedRectBtp($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D');	// Rect prend une longueur en 3eme param et 4eme param
 
 		$pdf->line($this->posx_cumul_anterieur - 1, $tab_top, $this->posx_cumul_anterieur - 1, $tab_top + $tab_height);
@@ -2942,7 +2942,7 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($x, $tab_top + 8);
 			$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['HT'], 0, '', 1, -1, 2), '', 'R');
 
-			// Travaux supplémentaires
+			// Additional work
 			$pdf->SetXY($x, $tab_top + 12);
 			$pdf->MultiCell(32, 2, price($this->TDataSituation[$col]['travaux_sup'], 0, '', 1, -1, 2), '', 'R');
 
@@ -3042,7 +3042,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		$retenue_garantie = 0;
 		$retenue_garantie_anterieure = 0;
-		// Init tous les champs à 0
+		// Initialize all fields to 0
 		$TDataSituation['cumul_anterieur'] = array(
 			'HT' => 0,	//montant HT normal
 			'TVA' => 0,   //montant de la TVA sur le HTnet
@@ -3063,7 +3063,7 @@ class pdf_octopus extends ModelePDFFactures
 
 				// Read each line to
 				// 1. recalculer le total_ht pour chaque taux de TVA
-				// 2. recalculer la TVA associée à ce montant HT
+				// 2. recalculate the VAT associated with this net amount
 				// 3. If applicable, store this information as "travaux_sup" (additional work) if this line is not linked to a line from the previous situation.
 				foreach ($previousInvoice->lines as $k => $l) {
 					$total_ht = (float) $l->total_ht;
@@ -3135,7 +3135,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 		}
 
-		//Le nouveau cumul = cumul antérieur + current
+		// New cumulative = previous cumulative + current
 		$TDataSituation['nouveau_cumul'] = $this->sumSituation($TDataSituation['current'], $TDataSituation['cumul_anterieur']);
 
 		return $TDataSituation;
@@ -3549,7 +3549,7 @@ class pdf_octopus extends ModelePDFFactures
 
 			$ref = $outputlangs->transnoentities("InvoiceSituation").$outputlangs->convToOutputCharset(" n°".$invoice->situation_counter);
 
-			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement like 'décompte général définitif') or not.
+			// TODO Discuss whether to declare a final invoice as a DGD (definitive general statement, "decompte general definitif") or not.
 			if (getDolGlobalInt('INVOICE_SITUATION_USE_DGD')) {
 				if ($invoice->situation_final) {
 					$ref .= ' - DGD';

@@ -1319,6 +1319,7 @@ class BonPrelevement extends CommonObject
 						$baninloop = $fac[11];
 
 						$verif = checkSwiftForAccount(null, $bicinloop);
+
 						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							dol_syslog(__METHOD__." now call checkIbanForAccount(null, ".$baninloop.")");
 							$verif = checkIbanForAccount(null, $baninloop);
@@ -1335,7 +1336,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1343,7 +1344,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1351,7 +1352,7 @@ class BonPrelevement extends CommonObject
 								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$error++;
 							}
