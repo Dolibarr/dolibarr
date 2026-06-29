@@ -104,7 +104,7 @@ class LanguageOfCommentsSniff implements Sniff
 		$contentLower = strtolower($content);
 
 		// content contains french examples
-		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french') || strpos($contentLower, 'fr_FR')) {
+		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french') || strpos($content, 'fr_FR')) {
 			return;
 		}
 
