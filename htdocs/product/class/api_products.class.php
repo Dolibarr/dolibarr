@@ -1006,6 +1006,26 @@ class Products extends DolibarrApi
 		// Clean data
 		$multicurrency_code = sanitizeVal($multicurrency_code, 'alphanohtml');
 
+		// Validate inputs
+		$price_base_type = strtoupper(trim((string) $price_base_type));
+		if (!in_array($price_base_type, array('HT', 'TTC'), true)) {
+			throw new RestException(400, "price_base_type must be 'HT' or 'TTC'");
+		}
+		if ((float) $price < 0) {
+			throw new RestException(400, 'price must be a positive value');
+		}
+		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
+		if (MultiCurrency::getIdFromCode($this->db, $multicurrency_code) <= 0) {
+			throw new RestException(404, 'Currency ' . $multicurrency_code . ' not found or not enabled in this entity');
+		}
+		if ((int) $socid > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+			$thirdparty = new Societe($this->db);
+			if ($thirdparty->fetch((int) $socid) <= 0) {
+				throw new RestException(404, 'Thirdparty not found');
+			}
+		}
+
 		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
 		$ppc = new ProductPriceCurrency($this->db);
 		$res = $ppc->setPriceCurrency($id, $multicurrency_code, (float) $price, $price_base_type, (float) $vat_tx, DolibarrApiAccess::$user, (int) $level, (float) $multicurrency_tx, (int) $socid);
@@ -1021,16 +1041,17 @@ class Products extends DolibarrApi
 	 *
 	 * @since	24.0.0	Initial implementation
 	 *
-	 * @param	int		$id		Product ID
+	 * @param	int		$id			Product ID
+	 * @param	int		$socid		Customer id to read that customer's own fixed prices, 0 for the catalog prices
 	 *
-	 * @return array				Array of sell prices per currency
+	 * @return array				Array of sell prices per currency, indexed by [price_level][currency_code]
 	 *
 	 * @throws RestException 404
 	 * @throws RestException 403
 	 *
 	 * @url GET {id}/sell_prices_currency
 	 */
-	public function getSellPricesPerCurrency($id)
+	public function getSellPricesPerCurrency($id, $socid = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
@@ -1043,6 +1064,12 @@ class Products extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		if ((int) $socid > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
+			$ppc = new ProductPriceCurrency($this->db);
+			return $ppc->fetchAllForProduct((int) $id, (int) $socid);
 		}
 
 		return $this->product->multicurrency_prices;
