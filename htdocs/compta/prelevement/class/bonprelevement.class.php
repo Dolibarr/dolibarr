@@ -1985,10 +1985,39 @@ class BonPrelevement extends CommonObject
 						}
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
+						// Get the default value
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$iban = dolDecrypt($obj->iban);
+						$bic = $obj->bic;
+						$drum = $obj->drum;
+						$rum = $obj->rum;
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, (string) $obj->drum, $obj->rum, $type);
+						// But if a force bank account is defined, we use it instead
+						if (!empty($obj->fk_prelevement_demande)) {
+							$companybankaccountid = 0;
+
+							$sqltmp = "SELECT fk_societe_rib FROM ".MAIN_DB_PREFIX."prelevement_demande";
+							$sqltmp .= " WHERE rowid = ".((int) $obj->fk_prelevement_demande);
+
+							$resqltmp = $this->db->query($sqltmp);
+
+							$objtmp = $this->db->fetch_object($resqltmp);
+							if ($objtmp) {
+								$companybankaccountid = (int) $objtmp->fk_societe_rib;
+							}
+
+							$bankaccount = new CompanyBankAccount($this->db);
+							$bankaccount->fetch($companybankaccountid);
+							if ($bankaccount->id > 0) {
+								$daterum = $bankaccount->date_rum;
+								$iban = $bankaccount->iban;
+								$bic = $bankaccount->bic;
+								$drum = $bankaccount->id;
+								$rum = $bankaccount->rum;
+							}
+						}
+
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;
