@@ -120,9 +120,12 @@ function printCustomerCurrencyPriceInputs($db, $form, $object, $socid)
  * @param	int			$socid		Customer id (> 0)
  * @param	float		$vat_tx		VAT rate of the customer price (used to derive the HT/TTC counterpart)
  * @param	User		$user		Current user
+ * @param	bool		$allowdelete	When true an empty input removes the price (edit mode, inputs are prefilled);
+ *										when false an empty input is ignored (add mode, inputs are not prefilled, so an
+ *										empty field must not wipe a price already set for this customer)
  * @return	int						Number of errors (0 if OK)
  */
-function saveCustomerCurrencyPrices($db, $fk_product, $socid, $vat_tx, $user)
+function saveCustomerCurrencyPrices($db, $fk_product, $socid, $vat_tx, $user, $allowdelete = true)
 {
 	global $conf;
 
@@ -149,7 +152,11 @@ function saveCustomerCurrencyPrices($db, $fk_product, $socid, $vat_tx, $user)
 		}
 
 		if ($raw === '' || $raw === null) {
-			// Empty input means the per-customer price must be removed.
+			if (!$allowdelete) {
+				// Add mode: the inputs are not prefilled, so an empty field must not remove an existing price.
+				continue;
+			}
+			// Edit mode: an empty input means the per-customer price must be removed.
 			$res = $ppc->deleteCurrencyPrice($fk_product, 1, $code, $user, $socid);
 		} else {
 			// Store the current exchange rate at input time (informative only).
@@ -942,8 +949,9 @@ if (empty($reshook)) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 				$action = 'add_customer_price';
 			} else {
-				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379)
-				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user) > 0) {
+				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
+				// Add mode: empty currency inputs must not delete prices already set for this customer.
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user, false) > 0) {
 					$error++;
 				}
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -1094,8 +1102,9 @@ if (empty($reshook)) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 				$action = 'update_customer_price';
 			} else {
-				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379)
-				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user) > 0) {
+				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
+				// Edit mode: inputs are prefilled, so an empty input removes the matching currency price.
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user, true) > 0) {
 					$error++;
 				}
 				setEventMessages($langs->trans("Save"), null, 'mesgs');
