@@ -8230,7 +8230,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
 	background-color: var(--inputbackgroundcolor);
-	box-shadow: 1px 1px 10px #aaa;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 	display:none;
 	<?php echo $right; ?>:0px;						/* pop is align on right */
 	padding: 0 0 0 0;
@@ -8239,7 +8239,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 4px;
+	border-radius: 6px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {

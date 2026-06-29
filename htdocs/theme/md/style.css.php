@@ -4341,7 +4341,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
-	border-top: 2px solid #111 !important;
+	border-top: 2px solid #AAA !important;
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
