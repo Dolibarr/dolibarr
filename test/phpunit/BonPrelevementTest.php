@@ -66,6 +66,7 @@ class BonPrelevementTest extends CommonClassTest
 	const IBAN_B_DEFAULT  = 'FR7630001007941234567890379'; // default bank account of COMPANY_B
 	const IBAN_B_SPECIFIC = 'FR7630001007941234567890476'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
+	const XSD_PAIN_008    = __DIR__.'/../assets/xsd/pain.008.001.02.xsd';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -126,10 +127,11 @@ class BonPrelevementTest extends CommonClassTest
 		$ribADef->iban = self::IBAN_A_DEFAULT;
 		$ribADef->bic = self::BIC;
 		$ribADef->rum = 'RUM-A-DEF-01';
-		$ribADef->frstrecur = 'FRST';
+		$ribADef->date_rum = dol_now();
+		$ribADef->frstrecur = 'RCUR';
 		$ribADef->default_rib = 1;
 		self::$ribADefaultId = (int) $ribADef->create($user); // minimal INSERT
-		$ribADef->update($user); // persists iban, bic, rum, default_rib
+		$ribADef->update($user); // persists iban, bic, rum, date_rum, default_rib
 
 		// RIB_A_SPECIFIC: second bank account for COMPANY_A, non-default
 		$ribASpec = new CompanyBankAccount($db);
@@ -138,7 +140,8 @@ class BonPrelevementTest extends CommonClassTest
 		$ribASpec->iban = self::IBAN_A_SPECIFIC;
 		$ribASpec->bic = self::BIC;
 		$ribASpec->rum = 'RUM-A-SPEC-01';
-		$ribASpec->frstrecur = 'FRST';
+		$ribASpec->date_rum = dol_now();
+		$ribASpec->frstrecur = 'RCUR';
 		$ribASpec->default_rib = 0;
 		self::$ribASpecificId = (int) $ribASpec->create($user);
 		$ribASpec->update($user);
@@ -159,7 +162,8 @@ class BonPrelevementTest extends CommonClassTest
 		$ribBDef->iban = self::IBAN_B_DEFAULT;
 		$ribBDef->bic = self::BIC;
 		$ribBDef->rum = 'RUM-B-DEF-01';
-		$ribBDef->frstrecur = 'FRST';
+		$ribBDef->date_rum = dol_now();
+		$ribBDef->frstrecur = 'RCUR';
 		$ribBDef->default_rib = 1;
 		self::$ribBDefaultId = (int) $ribBDef->create($user);
 		$ribBDef->update($user);
@@ -170,7 +174,8 @@ class BonPrelevementTest extends CommonClassTest
 		$ribBSpec->iban = self::IBAN_B_SPECIFIC;
 		$ribBSpec->bic = self::BIC;
 		$ribBSpec->rum = 'RUM-B-SPEC-01';
-		$ribBSpec->frstrecur = 'FRST';
+		$ribBSpec->date_rum = dol_now();
+		$ribBSpec->frstrecur = 'RCUR';
 		$ribBSpec->default_rib = 0;
 		self::$ribBSpecificId = (int) $ribBSpec->create($user);
 		$ribBSpec->update($user);
@@ -266,7 +271,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the direct debit order with both requests
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId, $demBId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -282,6 +287,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Total must be 100 + 300
 		$this->assertEquals(400.0, $bon->total,
 			'Order total must equal the sum of both invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -318,7 +325,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the direct debit order with both requests
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId, $demBId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -339,6 +346,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Total must be 100 + 300
 		$this->assertEquals(400.0, $bon->total,
 			'Order total must equal the sum of both invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -375,7 +384,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with ONLY the first request ($demAId)
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -390,6 +399,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Total must be 100 only
 		$this->assertEquals(100.0, $bon->total,
 			'Order total must equal only the included request');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -430,7 +441,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with both COMPANY_A requests only
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id, $demA2Id), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -446,6 +457,8 @@ class BonPrelevementTest extends CommonClassTest
 		$this->assertArrayNotHasKey(self::IBAN_B_DEFAULT, $ibanAmounts,
 			'COMPANY_B bank account must not appear in a COMPANY_A-only order');
 		$this->assertEquals(300.0, $bon->total);
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -483,7 +496,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with ONLY the specific-RIB request ($demA1Id)
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -498,6 +511,8 @@ class BonPrelevementTest extends CommonClassTest
 		// Total must be 100 only
 		$this->assertEquals(100.0, $bon->total,
 			'Order total must equal only the included request');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -541,7 +556,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with all four requests in interleaved order
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id, $demB1Id, $demA2Id, $demB2Id), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
@@ -558,6 +573,8 @@ class BonPrelevementTest extends CommonClassTest
 			'INV_B2 with forced bank account must use IBAN_B_SPECIFIC');
 		$this->assertEquals(1000.0, $bon->total,
 			'Order total must equal the sum of all four invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -621,6 +638,34 @@ class BonPrelevementTest extends CommonClassTest
 		$this->assertNotNull($obj, 'Payment request not found in DB for invoice #'.$fac->id);
 
 		return (int) $obj->rowid;
+	}
+
+	/**
+	 * Asserts that a generated SEPA XML file validates against the pain.008.001.02 XSD schema.
+	 *
+	 * @param string $filename Path to the SEPA XML file
+	 * @return void
+	 */
+	private function assertSepaXmlValid(string $filename): void
+	{
+		$this->assertFileExists($filename, 'SEPA XML file does not exist: '.$filename);
+		$this->assertFileExists(self::XSD_PAIN_008, 'XSD schema file not found: '.self::XSD_PAIN_008);
+
+		$dom = new DOMDocument();
+		$loaded = $dom->load($filename);
+		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$filename);
+
+		libxml_use_internal_errors(true);
+		$valid = $dom->schemaValidate(self::XSD_PAIN_008);
+		$errors = libxml_get_errors();
+		libxml_clear_errors();
+		libxml_use_internal_errors(false);
+
+		$messages = array();
+		foreach ($errors as $error) {
+			$messages[] = trim($error->message).' (line '.$error->line.')';
+		}
+		$this->assertTrue($valid, 'SEPA XML does not validate against pain.008.001.02 XSD: '.implode('; ', $messages));
 	}
 
 	/**
