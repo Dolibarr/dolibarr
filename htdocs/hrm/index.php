@@ -206,7 +206,11 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (!$user->hasRight('holiday', 'readall')) {
-		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
+		if (getDolGlobalBool('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {
+			$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
+		} else {
+			$sql .= ' AND (x.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR x.fk_validator = ' . $user->id . ')';
+		}
 	}
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);

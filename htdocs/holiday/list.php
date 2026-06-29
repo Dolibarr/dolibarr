@@ -361,7 +361,11 @@ if (!empty($search_status) && $search_status != -1) {
 }
 
 if (!$user->hasRight('holiday', 'readall')) {
-	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
+	if (getDolGlobalBool('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {
+		$sql .= ' AND cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
+	} else {
+		$sql .= ' AND (cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR cp.fk_validator = ' . $user->id .')';
+	}
 }
 if ($id > 0) {
 	$sql .= " AND cp.fk_user = ".((int) $id);
