@@ -2714,11 +2714,10 @@ if (empty($reshook)) {
 					$pricelevel = (!empty($object->thirdparty->price_level) ? $object->thirdparty->price_level : 1);
 					$mccurrencyprice = $prod->getSellPriceInCurrency($object->multicurrency_code, $pricelevel, $object->thirdparty->id);
 					if (!empty($mccurrencyprice)) {
-						if ($mccurrencyprice['price_base_type'] == 'TTC') {
-							$price_ttc_devise = $mccurrencyprice['price_ttc'];
-						} else {
-							$price_ht_devise = $mccurrencyprice['price'];
-						}
+						// Always consume the fixed currency price as HT (stored 'price' is the HT equivalent), so a
+						// TTC-based product price flows through the HT line path and the document total is not
+						// under-valued by 1/(1+VAT) (issue #32379)
+						$price_ht_devise = $mccurrencyprice['price'];
 						$line_multicurrency_subprice_source = 1;
 					}
 				}
@@ -3632,7 +3631,7 @@ if (empty($reshook)) {
 					$fk_unit = $originLine->fk_unit;
 					$pu_ht_devise = $originLine->multicurrency_subprice;
 
-					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $fk_code_ventilation, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise);
+					$res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $fk_code_ventilation, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit, $pu_ht_devise, '', 0, $originLine->multicurrency_subprice_source);
 
 					if ($res > 0) {
 						$importCount++;

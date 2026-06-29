@@ -1838,7 +1838,7 @@ class Commande extends CommonOrder
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
@@ -3169,7 +3169,7 @@ class Commande extends CommonOrder
 	 *  @param		int				$multicurrency_subprice_source	1 if the currency unit price comes from a fixed per-currency product price (issue #32379)
 	 *  @return   	int              					Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = null)
 	{
 		global $mysoc, $langs, $user;
 
@@ -3367,7 +3367,7 @@ class Commande extends CommonOrder
 
 			// Multicurrency
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;

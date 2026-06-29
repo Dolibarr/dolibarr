@@ -707,9 +707,9 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}
-		if (empty($this->multicurrency_subprice_source)) {
-			$this->multicurrency_subprice_source = 0;
-		}
+		// Do NOT normalize multicurrency_subprice_source here: a null value must reach the SQL build untouched
+		// so a plain line update leaves the stored freeze flag in place (issue #32379). The (int) cast below
+		// handles any non-null empty value, and insert() resets it separately.
 		if (empty($this->multicurrency_total_ht)) {
 			$this->multicurrency_total_ht = 0;
 		}
@@ -781,7 +781,10 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
-		$sql .= ", multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($this->multicurrency_subprice_source !== null) {
+			$sql .= ", multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		}
 		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);

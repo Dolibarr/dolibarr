@@ -678,7 +678,10 @@ class OrderLine extends CommonOrderLine
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
-		$sql .= " , multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($this->multicurrency_subprice_source !== null) {
+			$sql .= " , multicurrency_subprice_source=".((int) $this->multicurrency_subprice_source);
+		}
 		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
 		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
 		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);

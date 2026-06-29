@@ -930,7 +930,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_unit,
 							$newinvoiceline->multicurrency_subprice,
 							$newinvoiceline->ref_ext,
-							1
+							1,
+							$newinvoiceline->multicurrency_subprice_source
 						);
 
 						if ($result < 0) {
@@ -1016,7 +1017,8 @@ class Facture extends CommonInvoice
 							$line->fk_unit,
 							$line->multicurrency_subprice,
 							$line->ref_ext,
-							1
+							1,
+							$line->multicurrency_subprice_source
 						);
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
@@ -1115,7 +1117,8 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->fk_unit,
 						$_facrec->lines[$i]->multicurrency_subprice,
 						$_facrec->lines[$i]->ref_ext,
-						1
+						1,
+						$_facrec->lines[$i]->multicurrency_subprice_source
 					);
 
 					foreach ($this->lines as $line) {
@@ -4477,7 +4480,7 @@ class Facture extends CommonInvoice
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice	= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 
 			$this->line->multicurrency_total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->multicurrency_total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva); // For credit note and if qty is negative, total is negative
@@ -4569,7 +4572,7 @@ class Facture extends CommonInvoice
 	 *  @param	integer			$rang		    	rank of line
 	 *  @return	int									Return integer < 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = 0)
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = null)
 	{
 		global $user;
 
@@ -4798,7 +4801,7 @@ class Facture extends CommonInvoice
 
 			// Multicurrency
 			$this->line->multicurrency_subprice		= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->multicurrency_total_tva 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
 			$this->line->multicurrency_total_ttc 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);

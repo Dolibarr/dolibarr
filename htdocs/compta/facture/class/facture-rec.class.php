@@ -1193,7 +1193,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int				$multicurrency_subprice_source	1 if $pu_ht_devise comes from a fixed per-currency product price (issue #32379)
 	 *	@return    	int             					Return integer <0 if KO, Id of line if OK
 	 */
-	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $multicurrency_subprice_source = 0)
+	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0, $fk_parent_line = 0, $multicurrency_subprice_source = null)
 	{
 		global $mysoc;
 
@@ -1325,7 +1325,10 @@ class FactureRec extends CommonInvoice
 		$sql .= ", special_code=".((int) $special_code);
 		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape((string) $fk_unit)."'" : "null");
 		$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
-		$sql .= ', multicurrency_subprice_source = '.((int) $multicurrency_subprice_source);
+		// A null flag means "leave the stored value untouched", so a plain line update never clears the freeze flag (issue #32379)
+		if ($multicurrency_subprice_source !== null) {
+			$sql .= ', multicurrency_subprice_source = '.((int) $multicurrency_subprice_source);
+		}
 		$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
 		$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
 		$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);

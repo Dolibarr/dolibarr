@@ -136,7 +136,94 @@ class PropalCurrencyPriceTest extends CommonClassTest
 		$reloaded->fetch_lines();
 
 		$this->assertEquals(100.0, (float) $reloaded->lines[0]->multicurrency_subprice, 'Sourced currency price must be preserved on rate change');
+		// The freeze flag itself must survive, otherwise a further rate change would silently recompute the price
+		$this->assertEquals(1, (int) $reloaded->lines[0]->multicurrency_subprice_source, 'Freeze flag must survive the rate change');
 		// Company-currency price must have been recomputed (100 / 1.5 != previous 100 / 1.1)
 		$this->assertNotEquals($subpriceBefore, (float) $reloaded->lines[0]->subprice, 'Company price must be recomputed from the new rate');
+	}
+
+	/**
+	 * The freeze must hold across REPEATED rate changes AND a plain line edit: the flag must never be wiped,
+	 * otherwise the fixed currency price is silently lost on a subsequent recompute. (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testFreezeSurvivesRepeatedRateChangesAndEdit()
+	{
+		global $db;
+
+		list($propal,) = $this->buildProposalWithSourcedLine();
+
+		// Two successive rate changes in mode 2 (recompute currency): the fixed price must stay put both times.
+		$propal->setMulticurrencyRate(1.5, 2);
+		$r1 = new Propal($db);
+		$r1->fetch($propal->id);
+		$r1->fetch_lines();
+		$this->assertEquals(1, (int) $r1->lines[0]->multicurrency_subprice_source, 'Flag must survive the first rate change');
+
+		$r1->multicurrency_tx = 1.5;
+		$r1->setMulticurrencyRate(1.2, 2);
+		$r2 = new Propal($db);
+		$r2->fetch($propal->id);
+		$r2->fetch_lines();
+		$this->assertEquals(100.0, (float) $r2->lines[0]->multicurrency_subprice, 'Fixed currency price must survive repeated rate changes');
+		$this->assertEquals(1, (int) $r2->lines[0]->multicurrency_subprice_source, 'Flag must survive repeated rate changes');
+
+		// A plain line edit (quantity change, no flag passed) must not clear the freeze flag either.
+		$line = $r2->lines[0];
+		$r2->updateline($line->id, $line->subprice, 5, $line->remise_percent, $line->tva_tx, 0, 0, ($line->desc ? $line->desc : $line->description), 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+		$r3 = new Propal($db);
+		$r3->fetch($propal->id);
+		$r3->fetch_lines();
+		$this->assertEquals(1, (int) $r3->lines[0]->multicurrency_subprice_source, 'Flag must survive a plain line edit');
+	}
+
+	/**
+	 * A fixed currency price defined in TTC base must yield the right document total: it is consumed as its
+	 * stored HT equivalent so the currency TTC total is not under-valued by 1/(1+VAT). (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testTtcSourcedPriceGivesCorrectCurrencyTotal()
+	{
+		global $db, $user;
+
+		$societe = new Societe($db);
+		$societe->name = 'PPC TTC '.dol_print_date(dol_now(), '%Y%m%d%H%M%S').mt_rand(1, 9999);
+		$societe->client = 1;
+		$societe->code_client = -1;
+		$societe->country_id = 1;
+		$socid = $societe->create($user);
+		$this->assertGreaterThan(0, $socid);
+
+		$product = new Product($db);
+		$product->ref = 'PPCTTC'.dol_print_date(dol_now(), '%Y%m%d%H%M%S').mt_rand(1, 9999);
+		$product->label = 'Currency TTC test';
+		$product->type = Product::TYPE_PRODUCT;
+		$product->status = 1;
+		$product->price = 90;
+		$product->price_base_type = 'HT';
+		$product->tva_tx = 20;
+		$pid = $product->create($user);
+		$this->assertGreaterThan(0, $pid);
+
+		$propal = new Propal($db);
+		$propal->socid = $socid;
+		$propal->date = dol_now();
+		$propal->multicurrency_code = 'USD';
+		$propalid = $propal->create($user);
+		$this->assertGreaterThan(0, $propalid);
+		$propal->multicurrency_code = 'USD';
+		$propal->multicurrency_tx = 1.1;
+
+		// A 120 USD TTC product price (VAT 20) is consumed as its HT equivalent (100) on the HT line path.
+		$pu_ht_devise = 100.0;
+		$res = $propal->addline('Currency TTC line', '', 1, 20, 0, 0, $pid, 0, 'HT', '', 0, 0, 0, 0, 0, 0, 0, '', '', '', array(), null, '', 0, $pu_ht_devise, 0, 0, 1);
+		$this->assertGreaterThan(0, $res, 'addline failed: '.$propal->error);
+
+		$propal->fetch($propalid);
+		$propal->fetch_lines();
+		$this->assertEqualsWithDelta(100.0, (float) $propal->lines[0]->multicurrency_subprice, 0.01, 'Currency HT subprice must be 100');
+		$this->assertEqualsWithDelta(120.0, (float) $propal->lines[0]->multicurrency_total_ttc, 0.01, 'Currency TTC total must be 120, not 100');
 	}
 }
