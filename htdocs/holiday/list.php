@@ -364,7 +364,7 @@ if (!$user->hasRight('holiday', 'readall')) {
 	if (getDolGlobalBool('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {
 		$sql .= ' AND cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	} else {
-		$sql .= ' AND (cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR cp.fk_validator = ' . $user->id .')';
+		$sql .= ' AND (cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).') OR cp.fk_validator = ' . ((int) $user->id) .')';
 	}
 }
 if ($id > 0) {
