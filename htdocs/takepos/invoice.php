@@ -963,7 +963,17 @@ if (empty($reshook)) {
 				}
 
 				if (empty($err)) {
-					$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, $pu_ht_devise, '', 0, $line_multicurrency_subprice_source);
+					// When a fixed per-currency price applies, blank the company-currency price so calcul_price_total
+					// derives it from the currency price / rate, keeping multicurrency_total = total * rate consistent
+					// with the proposal/order/invoice cards (issue #32379)
+					$pu_company_ht = $line['price'];
+					$pu_company_ttc = $line['price_ttc'];
+					if (!empty($line_multicurrency_subprice_source)) {
+						$pu_company_ht = '';
+						$pu_company_ttc = '';
+						$price_base_type = 'HT';
+					}
+					$idoflineadded = $invoice->addline($line['description'], $pu_company_ht, $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $pu_company_ttc, $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, $pu_ht_devise, '', 0, $line_multicurrency_subprice_source);
 				}
 			}
 
