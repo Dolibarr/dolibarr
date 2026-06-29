@@ -8,7 +8,9 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: #32379 Products can have a fixed sell price per currency, used on sale documents (proposal, order, invoice) instead of the exchange-rate conversion
+NEW: #32379 Products can have a fixed sell price per currency (per price level and optionally per customer), used on sale documents (proposal, order, invoice, recurring invoice, POS) and through the API/import instead of the exchange-rate conversion
+NEW: #32379 New CLI tool scripts/product/init_currency_prices.php to bulk-initialize missing per-currency product prices from the current exchange rate
+NEW: #32379 The inverse exchange rate (rate_direct) is now auto-filled when a multicurrency rate is created, making the direct-rate display meaningful for synced rates
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)
