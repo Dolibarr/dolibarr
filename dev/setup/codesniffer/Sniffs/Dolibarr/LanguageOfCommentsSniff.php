@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ class LanguageOfCommentsSniff implements Sniff
 		' entier ',
 		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
+		' fonction ',
+		' formulaire ',
 		' ligne ',
 		' lignes ',
 		' modèle ',
@@ -96,6 +98,12 @@ class LanguageOfCommentsSniff implements Sniff
 	{
 		$tokens = $phpcsFile->getTokens();
 		$content = $tokens[$stackPtr]['content'];
+		if (strpos($content, 'Copyright') === false && preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/', $content)) {
+			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
+			$data  = [trim($content)];
+			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
+			return; // We stop at the first occurrence.
+		}
 
 		// Basic cleanup (lowercase for comparison)
 		$contentLower = strtolower($content);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018  Jean-François Ferry 	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2025  Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
@@ -1460,7 +1460,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *      Charge dans cache la liste des sévérité de tickets (paramétrable dans dictionnaire)
+	 *      Load into cache the list of ticket severities (configurable in the dictionary)
 	 *
 	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
 	 */

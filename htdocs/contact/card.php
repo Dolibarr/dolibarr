@@ -1405,7 +1405,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
-		print $object->LibPubPriv($object->priv);
+		print $object->LibPubPriv($object->priv, 1);
 		print '</td></tr>';
 
 		print '</table>';

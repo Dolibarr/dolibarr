@@ -63,8 +63,8 @@ jobs:
             phpstan-cache-${{ matrix.php-version }}-${{ github.base_ref }}-
             phpstan-cache-${{ matrix.php-version }}-
 
-      - name: Show debug into
-        run: cd ./.github/tmp && ls -al
+      - name: Show debug info
+        run: ls -al ./.github/tmp || echo "Cache directory not found (first run)"
 
       # Another method to get the list of changed files
       # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
@@ -101,15 +101,19 @@ jobs:
         # shellcheck disable=2086
         run: |
           # shellcheck disable=2086
-          > /tmp/phpstan-files.txt
           if [ "${{ github.ref_name }}" == "develop" ] || [[ "${{ github.ref_name }}" == *.0 ]]|| [[ "${{ github.head_ref }}" == *"phpstan_full"* ]] ; then
-            # Run on all files in integration branch
-            phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
-
+            # Run phpstan on all files in integration branch
+            phpstan analyse --no-progress --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php | tee _stan.xml | cs2pr --graceful-warnings
           else
-            echo "$ALL_CHANGED_FILES" >> /tmp/phpstan-files.txt
-            cat /tmp/phpstan-files.txt
-            phpstan -vvv analyse --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
+            PHP_FILES=$(echo "$ALL_CHANGED_FILES" | tr ' ' '\n' | grep -E '\.php$' || true)
+            echo "PHP_FILES=$PHP_FILES"
+            if [ -z "$PHP_FILES" ]; then
+                echo "No PHP files to analyse. Skipping PHPStan."
+                exit 0
+            fi
+
+            echo phpstan analyse --no-progress --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES}
+            phpstan analyse --no-progress --error-format=checkstyle --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php ${ALL_CHANGED_FILES} | tee _stan.xml | cs2pr --graceful-warnings
           fi
         # continue-on-error: true
 

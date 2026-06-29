@@ -171,6 +171,7 @@ NEW: The OAuth login with Google stay on the requested page after the redirect i
 NEW: Add shipment online url to substitution array
 NEW: ModuleBuilder - selectable object tabs (+ fixes for multi-object generation)
 NEW: Add hook getTicketMessageEmailFrom to override sender in Ticket::sendTicketMessageByEmail
+NEW: Can export ODT documents as PDF/A (new MAIN_ODT_AS_PDFA option)
 
 For developers:
 ---------------
@@ -205,6 +206,12 @@ The following changes may create regressions for some external modules, but were
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
 * Old deprecated module Paybox has been removed.
 * Old deprecated module Deplacement has been removed.
+
+
+
+***** ChangeLog for 23.0.4 compared to 23.0.3 *****
+
+SEC #39000 Escalation to admin when user has clone permission - credit Abderrahmane Aksoum
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
