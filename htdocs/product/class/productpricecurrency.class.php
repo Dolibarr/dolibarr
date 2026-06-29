@@ -224,6 +224,8 @@ class ProductPriceCurrency
 	 */
 	public function fetchByKey(int $fk_product, int $level, string $multicurrency_code, int $socid = 0): int
 	{
+		global $conf;
+
 		$sql = "SELECT rowid, fk_soc, price, price_ttc, price_base_type, multicurrency_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_price_currency";
 		$sql .= " WHERE fk_product = ".((int) $fk_product);
@@ -231,6 +233,8 @@ class ProductPriceCurrency
 		$sql .= " AND price_level = ".((int) $level);
 		$sql .= " AND multicurrency_code = '".$this->db->escape($multicurrency_code)."'";
 		$sql .= " AND entity IN (".getEntity('productprice').")";
+		// On a product shared across entities, prefer the current entity's own price, then the most recent row, so the result is deterministic (issue #32379)
+		$sql .= " ORDER BY CASE WHEN entity = ".((int) $conf->entity)." THEN 0 ELSE 1 END, rowid DESC";
 		$sql .= " LIMIT 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
