@@ -128,6 +128,91 @@ class DocumentCurrencyPriceFlagTest extends CommonClassTest
 	}
 
 	/**
+	 * Call updateline by parameter name, filling defaults for the rest (robust to signature differences).
+	 *
+	 * @param	object					$object		Document object
+	 * @param	array<string,mixed>		$named		Values keyed by parameter name
+	 * @return	int									updateline return
+	 */
+	private function updatelineByName($object, array $named): int
+	{
+		$ref = new ReflectionMethod(get_class($object), 'updateline');
+		$args = array();
+		foreach ($ref->getParameters() as $p) {
+			$name = $p->getName();
+			if (array_key_exists($name, $named)) {
+				$args[] = $named[$name];
+			} elseif ($p->isDefaultValueAvailable()) {
+				$args[] = $p->getDefaultValue();
+			} else {
+				$args[] = null;
+			}
+		}
+		return (int) $ref->invokeArgs($object, $args);
+	}
+
+	/**
+	 * The freeze flag on an invoice line must survive a document rate change AND a plain line edit, otherwise
+	 * the fixed currency price is silently recomputed afterwards. This guards the FactureLigne::update() path,
+	 * which used to normalize a null flag to 0 and clear the freeze. (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testInvoiceFreezeSurvivesRateChangeAndEdit()
+	{
+		global $db, $user;
+
+		$socid = $this->createSoc();
+		$pid = $this->createProduct();
+
+		$invoice = new Facture($db);
+		$invoice->socid = $socid;
+		$invoice->date = dol_now();
+		$invoice->type = Facture::TYPE_STANDARD;
+		$invoice->multicurrency_code = 'USD';
+		$fid = $invoice->create($user);
+		$this->assertGreaterThan(0, $fid, 'Invoice creation failed: '.$invoice->error);
+
+		$invoice->multicurrency_code = 'USD';
+		$invoice->multicurrency_tx = 1.1;
+
+		$res = $this->addlineByName($invoice, array(
+			'desc' => 'sourced line', 'pu_ht' => 0, 'qty' => 2, 'txtva' => 20,
+			'fk_product' => $pid, 'price_base_type' => 'HT', 'pu_ht_devise' => 100.0,
+			'multicurrency_subprice_source' => 1,
+		));
+		$this->assertGreaterThan(0, $res, 'Invoice addline failed: '.$invoice->error);
+
+		// A rate change in mode 2 (recompute currency) must keep the fixed currency price and the flag.
+		$reloaded = new Facture($db);
+		$reloaded->fetch($fid);
+		$reloaded->fetch_lines();
+		$reloaded->multicurrency_tx = 1.1;
+		$reloaded->setMulticurrencyRate(1.5, 2);
+
+		$afterrate = new Facture($db);
+		$afterrate->fetch($fid);
+		$afterrate->fetch_lines();
+		$this->assertEquals(100.0, (float) $afterrate->lines[0]->multicurrency_subprice, 'Fixed currency price must survive the rate change');
+		$this->assertEquals(1, (int) $afterrate->lines[0]->multicurrency_subprice_source, 'Freeze flag must survive the rate change');
+
+		// A plain line edit (quantity change, no flag passed) must not clear the freeze flag.
+		$line = $afterrate->lines[0];
+		$this->updatelineByName($afterrate, array(
+			'rowid' => $line->id, 'desc' => 'sourced line', 'pu' => $line->subprice, 'qty' => 5,
+			'remise_percent' => $line->remise_percent, 'txtva' => $line->tva_tx,
+			'price_base_type' => 'HT', 'type' => $line->product_type,
+			'pu_ht_devise' => $line->multicurrency_subprice,
+		));
+
+		$afteredit = new Facture($db);
+		$afteredit->fetch($fid);
+		$afteredit->fetch_lines();
+		$this->assertEquals(1, (int) $afteredit->lines[0]->multicurrency_subprice_source, 'Freeze flag must survive a plain line edit');
+		$this->assertEquals(100.0, (float) $afteredit->lines[0]->multicurrency_subprice, 'Fixed currency price must survive a plain line edit');
+	}
+
+	/**
 	 * A sourced currency price flag set at addline time is persisted on order lines.
 	 *
 	 * @return void

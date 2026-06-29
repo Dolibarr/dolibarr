@@ -841,7 +841,7 @@ class Propal extends CommonObject
 			$this->line->fk_multicurrency = $this->fk_multicurrency;
 			$this->line->multicurrency_code = $this->multicurrency_code;
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
@@ -934,7 +934,7 @@ class Propal extends CommonObject
 	 *	@param      int				$rang   			Line rank
 	 *  @return     int     							Return 0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0, $multicurrency_subprice_source = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0, $multicurrency_subprice_source = null)
 	{
 		global $mysoc, $langs;
 
@@ -1079,7 +1079,7 @@ class Propal extends CommonObject
 
 			// Multicurrency
 			$this->line->multicurrency_subprice		= (float) $pu_ht_devise;
-			$this->line->multicurrency_subprice_source = (int) $multicurrency_subprice_source;
+			$this->line->multicurrency_subprice_source = ($multicurrency_subprice_source === null ? null : (int) $multicurrency_subprice_source);
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
