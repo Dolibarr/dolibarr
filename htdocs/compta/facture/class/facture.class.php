@@ -1488,6 +1488,9 @@ class Facture extends CommonInvoice
 			$line->fk_multicurrency = $src_line->fk_multicurrency;
 			$line->multicurrency_code = $src_line->multicurrency_code;
 			$line->multicurrency_subprice = $src_line->multicurrency_subprice;
+			// Carry the fixed-per-currency freeze flag so a later invoice rate change does not silently
+			// recompute a price that was frozen on the source order (issue #32379)
+			$line->multicurrency_subprice_source = $src_line->multicurrency_subprice_source;
 			$line->multicurrency_total_ht = $src_line->multicurrency_total_ht;
 			$line->multicurrency_total_tva = $src_line->multicurrency_total_tva;
 			$line->multicurrency_total_ttc = $src_line->multicurrency_total_ttc;
