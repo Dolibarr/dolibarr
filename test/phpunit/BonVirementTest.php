@@ -53,7 +53,7 @@ $langs->load("main");
 class BonVirementTest extends CommonClassTest
 {
 	// ---------------------------------------------------------------------------
-	// Test IBANs — valid (mod97 check compliant).
+	// Test IBANs valid (mod97 check compliant).
 	// Distinct from BonPrelevementTest IBANs to avoid collisions when both
 	// suites run against the same database instance.
 	// ---------------------------------------------------------------------------
@@ -230,12 +230,12 @@ class BonVirementTest extends CommonClassTest
 	 *
 	 * Verifies that when two different suppliers each have one invoice with a
 	 * specific bank account forced in the bank transfer request, the generated
-	 * SEPA file contains the forced IBAN for each transaction — not the
-	 * supplier's default bank account.
+	 * SEPA file contains the forced IBAN for each transaction (not the
+	 * supplier's default bank account.)
 	 *
 	 * Scenario:
-	 *   INV_A (100) → request with RIB_A_SPECIFIC → expects IBAN_A_SPECIFIC
-	 *   INV_B (300) → request with RIB_B_SPECIFIC → expects IBAN_B_SPECIFIC
+	 *   INV_A (100) -> request with RIB_A_SPECIFIC -> expects IBAN_A_SPECIFIC
+	 *   INV_B (300) -> request with RIB_B_SPECIFIC -> expects IBAN_B_SPECIFIC
 	 *
 	 * @return void
 	 */
@@ -264,7 +264,7 @@ class BonVirementTest extends CommonClassTest
 							   array($demAId, $demBId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
-		// Parse the SEPA file and extract IBAN → amount pairs
+		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
 		// Invoice A must use COMPANY_A's specific IBAN
@@ -288,8 +288,8 @@ class BonVirementTest extends CommonClassTest
 	 * the generated SEPA file contains each supplier's default IBAN (default_rib=1).
 	 *
 	 * Scenario:
-	 *   INV_A (100) → request with no forced RIB → expects IBAN_A_DEFAULT
-	 *   INV_B (300) → request with no forced RIB → expects IBAN_B_DEFAULT
+	 *   INV_A (100) -> request with no forced RIB -> expects IBAN_A_DEFAULT
+	 *   INV_B (300) -> request with no forced RIB -> expects IBAN_B_DEFAULT
 	 *
 	 * @return void
 	 */
@@ -308,7 +308,7 @@ class BonVirementTest extends CommonClassTest
 		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
 		$facB = $this->createValidatedSupplierInvoice(self::$socidB, 300.0);
 
-		// No forced bank account: fk_societe_rib will be NULL → default RIB used
+		// No forced bank account: fk_societe_rib will be NULL -> default RIB used
 		$demAId = $this->createPaymentRequest($facA, 100.0);
 		$demBId = $this->createPaymentRequest($facB, 300.0);
 
@@ -318,7 +318,7 @@ class BonVirementTest extends CommonClassTest
 							   array($demAId, $demBId), self::$fkBankAccount);
 		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
-		// Parse the SEPA file and extract IBAN → amount pairs
+		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
 		// Invoice A must use COMPANY_A's default IBAN
@@ -343,12 +343,12 @@ class BonVirementTest extends CommonClassTest
 	 * testTwoSuppliersDefaultRibFilteredToFirst
 	 *
 	 * Verifies that when $dids is limited to only the first payment request,
-	 * only COMPANY_A's invoice appears in the SEPA file — even though a second
-	 * request exists in the database for COMPANY_B.
+	 * only COMPANY_A's invoice appears in the SEPA file (even though a second
+	 * request exists in the database for COMPANY_B.)
 	 *
 	 * Scenario:
-	 *   INV_A (100) → request with no forced RIB → expects IBAN_A_DEFAULT  (in $dids)
-	 *   INV_B (300) → request with no forced RIB → must NOT appear in file  (not in $dids)
+	 *   INV_A (100) -> request with no forced RIB -> expects IBAN_A_DEFAULT  (in $dids)
+	 *   INV_B (300) -> request with no forced RIB -> must NOT appear in file  (not in $dids)
 	 *
 	 * @return void
 	 */
@@ -403,8 +403,8 @@ class BonVirementTest extends CommonClassTest
 	 * No IBAN from COMPANY_B should appear in the file.
 	 *
 	 * Scenario:
-	 *   INV_A1 (100) → request with RIB_A_SPECIFIC → expects IBAN_A_SPECIFIC
-	 *   INV_A2 (200) → request without forced RIB  → expects IBAN_A_DEFAULT
+	 *   INV_A1 (100) -> request with RIB_A_SPECIFIC -> expects IBAN_A_SPECIFIC
+	 *   INV_A2 (200) -> request without forced RIB  -> expects IBAN_A_DEFAULT
 	 *
 	 * @return void
 	 */
@@ -425,7 +425,7 @@ class BonVirementTest extends CommonClassTest
 
 		// First request: specific bank account forced (not the default)
 		$demA1Id = $this->createPaymentRequest($facA1, 100.0, self::$ribASpecificId);
-		// Second request: no forced bank account (ribId=0 → default will be used)
+		// Second request: no forced bank account (ribId=0 -> default will be used)
 		$demA2Id = $this->createPaymentRequest($facA2, 200.0);
 
 		// Generate the order with both COMPANY_A requests only
@@ -436,10 +436,10 @@ class BonVirementTest extends CommonClassTest
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
-		// INV_A1: forced bank account → must use IBAN_A_SPECIFIC
+		// INV_A1: forced bank account -> must use IBAN_A_SPECIFIC
 		$this->assertEquals(100.0, $ibanAmounts[self::IBAN_A_SPECIFIC],
 			'INV_A1 with forced bank account must use IBAN_A_SPECIFIC');
-		// INV_A2: no forced account → must fall back to default IBAN_A_DEFAULT
+		// INV_A2: no forced account -> must fall back to default IBAN_A_DEFAULT
 		$this->assertEquals(200.0, $ibanAmounts[self::IBAN_A_DEFAULT],
 			'INV_A2 without forced account must use IBAN_A_DEFAULT (default_rib=1)');
 		// No IBAN from COMPANY_B must appear in this order
@@ -454,12 +454,12 @@ class BonVirementTest extends CommonClassTest
 	 * testOneSupplierTwoRibsSpecificOnly
 	 *
 	 * Verifies that when $dids contains only the request with the specific bank
-	 * account, only that invoice appears in the SEPA file — even though a second
-	 * request (using the default RIB) exists in the database.
+	 * account, only that invoice appears in the SEPA file (even though a second
+	 * request using the default RIB exists in the database.)
 	 *
 	 * Scenario:
-	 *   INV_A1 (100) → request with RIB_A_SPECIFIC → expects IBAN_A_SPECIFIC  (in $dids)
-	 *   INV_A2 (200) → request without forced RIB   → must NOT appear in file   (not in $dids)
+	 *   INV_A1 (100) -> request with RIB_A_SPECIFIC -> expects IBAN_A_SPECIFIC  (in $dids)
+	 *   INV_A2 (200) -> request without forced RIB   -> must NOT appear in file   (not in $dids)
 	 *
 	 * @return void
 	 */
@@ -513,10 +513,10 @@ class BonVirementTest extends CommonClassTest
 	 * consecutive requests.
 	 *
 	 * Scenario (requests created in interleaved order):
-	 *   INV_A1 (100) → forced: RIB_A_SPECIFIC → expects IBAN_A_SPECIFIC
-	 *   INV_B1 (300) → no forced RIB → default  → expects IBAN_B_DEFAULT
-	 *   INV_A2 (200) → no forced RIB → default  → expects IBAN_A_DEFAULT
-	 *   INV_B2 (400) → forced: RIB_B_SPECIFIC → expects IBAN_B_SPECIFIC
+	 *   INV_A1 (100) -> forced: RIB_A_SPECIFIC -> expects IBAN_A_SPECIFIC
+	 *   INV_B1 (300) -> no forced RIB -> default  -> expects IBAN_B_DEFAULT
+	 *   INV_A2 (200) -> no forced RIB -> default  -> expects IBAN_A_DEFAULT
+	 *   INV_B2 (400) -> forced: RIB_B_SPECIFIC -> expects IBAN_B_SPECIFIC
 	 *
 	 * @return void
 	 */
@@ -539,8 +539,8 @@ class BonVirementTest extends CommonClassTest
 
 		// Interleaved requests: forced, no RIB, no RIB, forced
 		$demA1Id = $this->createPaymentRequest($facA1, 100.0, self::$ribASpecificId); // forced
-		$demB1Id = $this->createPaymentRequest($facB1, 300.0);                        // → RIB_B_DEFAULT
-		$demA2Id = $this->createPaymentRequest($facA2, 200.0);                        // → RIB_A_DEFAULT
+		$demB1Id = $this->createPaymentRequest($facB1, 300.0);                        // -> RIB_B_DEFAULT
+		$demA2Id = $this->createPaymentRequest($facA2, 200.0);                        // -> RIB_A_DEFAULT
 		$demB2Id = $this->createPaymentRequest($facB2, 400.0, self::$ribBSpecificId); // forced
 
 		// Generate the order with all four requests in interleaved order
@@ -621,9 +621,7 @@ class BonVirementTest extends CommonClassTest
 		$this->assertEquals(1, $result, 'demande_prelevement() failed for invoice #'.$fac->id.': '.$fac->error);
 
 		// Retrieve the row ID of the freshly inserted request
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande"
-			." WHERE fk_facture_fourn = ".((int) $fac->id)." AND traite = 0"
-			." ORDER BY rowid DESC LIMIT 1";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_facture_fourn = ".((int) $fac->id)." AND traite = 0 ORDER BY rowid DESC LIMIT 1";
 		$resql = $db->query($sql);
 		$obj = $db->fetch_object($resql);
 		$this->assertNotNull($obj, 'Payment request not found in DB for invoice #'.$fac->id);
