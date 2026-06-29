@@ -62,6 +62,7 @@ class BonVirementTest extends CommonClassTest
 	const IBAN_B_DEFAULT  = 'FR7630001007941234567890864'; // default bank account of COMPANY_B
 	const IBAN_B_SPECIFIC = 'FR7630001007941234567890961'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
+	const XSD_PAIN_001    = __DIR__.'/../assets/xsd/pain.001.001.03.xsd';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -177,9 +178,26 @@ class BonVirementTest extends CommonClassTest
 		$account->iban = 'FR7630001007941234567891058'; // valid IBAN, not used in assertions
 		$account->bic = self::BIC;
 		$account->ics = 'FR77ZZZ123456789'; // SEPA identifier (also used for bank-transfer)
+		$account->ics_transfer = 'FR77ZZZ123456789'; // used when SEPA_USE_IDS is enabled
 		$account->owner_name = 'TestCorp';
 		$account->currency_code = 'EUR';
 		self::$fkBankAccount = (int) $account->create($user);
+	}
+
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @param string       $name       Name
+	 * @param array<mixed> $data      Test data
+	 * @param string       $dataName   Test data name.
+	 */
+	public function __construct($name = null, array $data = array(), $dataName = '')
+	{
+		parent::__construct($name, $data, $dataName);
+
+		// This const is tested in prelevement_check_config(), it SHOULD be set.
+		$this->savconf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT = self::$fkBankAccount;
 	}
 
 	/**
@@ -258,6 +276,8 @@ class BonVirementTest extends CommonClassTest
 		// Total must be 100 + 300
 		$this->assertEquals(400.0, $bon->total,
 			'Order total must equal the sum of both invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -315,6 +335,8 @@ class BonVirementTest extends CommonClassTest
 		// Total must be 100 + 300
 		$this->assertEquals(400.0, $bon->total,
 			'Order total must equal the sum of both invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -366,6 +388,8 @@ class BonVirementTest extends CommonClassTest
 		// Total must be 100 only
 		$this->assertEquals(100.0, $bon->total,
 			'Order total must equal only the included request');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -422,6 +446,8 @@ class BonVirementTest extends CommonClassTest
 		$this->assertArrayNotHasKey(self::IBAN_B_DEFAULT, $ibanAmounts,
 			'COMPANY_B bank account must not appear in a COMPANY_A-only order');
 		$this->assertEquals(300.0, $bon->total);
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -474,6 +500,8 @@ class BonVirementTest extends CommonClassTest
 		// Total must be 100 only
 		$this->assertEquals(100.0, $bon->total,
 			'Order total must equal only the included request');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	/**
@@ -534,6 +562,8 @@ class BonVirementTest extends CommonClassTest
 			'INV_B2 with forced bank account must use IBAN_B_SPECIFIC');
 		$this->assertEquals(1000.0, $bon->total,
 			'Order total must equal the sum of all four invoices');
+
+		$this->assertSepaXmlValid($bon->filename);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -599,6 +629,34 @@ class BonVirementTest extends CommonClassTest
 		$this->assertNotNull($obj, 'Payment request not found in DB for invoice #'.$fac->id);
 
 		return (int) $obj->rowid;
+	}
+
+	/**
+	 * Asserts that a generated SEPA XML file validates against the pain.001.001.03 XSD schema.
+	 *
+	 * @param string $filename Path to the SEPA XML file
+	 * @return void
+	 */
+	private function assertSepaXmlValid(string $filename): void
+	{
+		$this->assertFileExists($filename, 'SEPA XML file does not exist: '.$filename);
+		$this->assertFileExists(self::XSD_PAIN_001, 'XSD schema file not found: '.self::XSD_PAIN_001);
+
+		$dom = new DOMDocument();
+		$loaded = $dom->load($filename);
+		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$filename);
+
+		libxml_use_internal_errors(true);
+		$valid = $dom->schemaValidate(self::XSD_PAIN_001);
+		$errors = libxml_get_errors();
+		libxml_clear_errors();
+		libxml_use_internal_errors(false);
+
+		$messages = array();
+		foreach ($errors as $error) {
+			$messages[] = trim($error->message).' (line '.$error->line.')';
+		}
+		$this->assertTrue($valid, 'SEPA XML does not validate against pain.001.001.03 XSD: '.implode('; ', $messages));
 	}
 
 	/**
