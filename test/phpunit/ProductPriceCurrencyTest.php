@@ -275,6 +275,43 @@ class ProductPriceCurrencyTest extends CommonClassTest
 	}
 
 	/**
+	 * End-to-end: when the multicurrency module is enabled, Product::fetch() populates the catalog cache
+	 * and getSellPriceInCurrency() resolves the stored price from it.
+	 *
+	 * @return void
+	 */
+	public function testFetchPopulatesMulticurrencyPricesWhenModuleEnabled()
+	{
+		global $db, $user, $conf;
+
+		$product = $this->createTestProduct(20.0);
+		$ppc = new ProductPriceCurrency($db);
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 123.0, 'HT', 20.0, $user, 1, 1.1, 0), 'Set failed: '.$ppc->error);
+
+		// Force the multicurrency module on so fetch() loads the per-currency cache (it is off in the test env).
+		// isModEnabled() reads $conf->modules[<module>].
+		$savmodule = isset($conf->modules['multicurrency']) ? $conf->modules['multicurrency'] : null;
+		$conf->modules['multicurrency'] = 'multicurrency';
+
+		$reloaded = new Product($db);
+		$reloaded->fetch($product->id);
+
+		// Restore the module flag immediately to avoid leaking into other tests
+		if ($savmodule === null) {
+			unset($conf->modules['multicurrency']);
+		} else {
+			$conf->modules['multicurrency'] = $savmodule;
+		}
+
+		$this->assertArrayHasKey(1, $reloaded->multicurrency_prices, 'fetch() must populate price level 1');
+		$this->assertArrayHasKey('USD', $reloaded->multicurrency_prices[1], 'fetch() must populate the USD price');
+		$this->assertEquals(123.0, $reloaded->multicurrency_prices[1]['USD']['price'], 'Cache must hold the stored catalog price');
+
+		$res = $reloaded->getSellPriceInCurrency('USD', 1, 0);
+		$this->assertEquals(123.0, $res['price'], 'Resolver must return the catalog price from the populated cache');
+	}
+
+	/**
 	 * Bulk init creates the missing catalog price and never overwrites an existing one.
 	 *
 	 * @return void
