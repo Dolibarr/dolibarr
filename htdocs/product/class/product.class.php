@@ -7306,7 +7306,8 @@ class Product extends CommonObject
 	{
 		$tables = array(
 			'product_customer_price',
-			'product_customer_price_log'
+			'product_customer_price_log',
+			'product_price_currency'	// Per-customer fixed sell prices per currency (issue #32379)
 		);
 
 		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
