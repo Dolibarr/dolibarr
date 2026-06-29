@@ -9309,7 +9309,7 @@ class Form
 		$opt .= $objp->ref;
 		$objRef = $objp->ref;
 		if (!empty($filterkey) && $filterkey != '') {
-			$objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+			$objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', (string) $objRef, 1);
 		}
 
 		$opt .= "</option>\n";
@@ -10706,7 +10706,7 @@ class Form
 				if (!empty($draganddrop)) {
 					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 				}
-				$listoffieldsforselection .='</li>';
+				$listoffieldsforselection .= '</li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}

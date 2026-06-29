@@ -153,7 +153,7 @@ if ($action == 'add' && $permissiontoadd) {
 		$error++;
 	}
 
-	// gestion des fréquences et des échéances
+	// frequency and due date management
 	$frequency = GETPOSTINT('frequency');
 	$rec_year = GETPOST('rec_year');
 	$rec_month = GETPOST('rec_month');

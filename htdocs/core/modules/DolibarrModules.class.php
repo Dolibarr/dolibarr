@@ -1259,14 +1259,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * - Then data_xxx.sql (usually provided by external modules only)
 	 * - Then update_xxx.sql (usually provided by external modules only)
 	 * Files must be stored in subdirectory 'tables' or 'data' into directory $reldir (Example: '/install/mysql/' or '/module/sql/')
-	 * This function may also be called by :
-	 * - _load_tables('/install/mysql/', 'modulename') into the this->init() of core module descriptors.
-	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
+	 * This function may also be called by:
+	 * - _load_tables('/install/mysql/', 'modulename') in the init() of core module descriptors. This loads only files containing '-modulename.' in their name.
+	 * - _load_tables('/mymodule/sql/') in the init() of external module descriptors. Omitting the suffix loads every matching SQL file.
+	 * When $onlywithsuffix is not empty, files without '-<suffix>.' in their name are silently skipped.
 	 *
 	 * WARNING: This function can break a transaction making a rollback not working !
 	 *
 	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
-	 * @param	string	$onlywithsuffix		Only with the defined suffix
+	 * @param	string	$onlywithsuffix		Only load filenames containing '-<suffix>.' (empty to disable filtering)
 	 * @return 	int<0,1>             			Return integer <=0 if KO, >0 if OK
 	 */
 	protected function _load_tables($reldir, $onlywithsuffix = '')

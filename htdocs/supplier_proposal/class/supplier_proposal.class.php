@@ -309,7 +309,7 @@ class SupplierProposal extends CommonObject
 	 * 	@param  int		$remise_percent  	Discount effected on Product
 	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 *
-	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
+	 *	TODO Replace call to this function by using the SupplierProposalLine object.
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0)
 	{
@@ -1373,11 +1373,11 @@ class SupplierProposal extends CommonObject
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
+				$this->db->free($resql);
+
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-
-				$this->db->free($resql);
 
 				$this->lines = array();
 
@@ -1464,10 +1464,6 @@ class SupplierProposal extends CommonObject
 					$this->error = $this->db->error();
 					return -1;
 				}
-
-				// Retrieve all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
 
 				return 1;
 			}
@@ -2066,6 +2062,19 @@ class SupplierProposal extends CommonObject
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal";
+			$sql .= " WHERE fk_supplier_proposal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
 		}
 
 		if (!$error) {
@@ -2682,9 +2691,11 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i] = new SupplierProposalLine($this->db);
 				$this->lines[$i]->id = $obj->rowid; // for backward compatibility
 				$this->lines[$i]->rowid = $obj->rowid;
+
 				$this->lines[$i]->label = $obj->custom_label;
 				$this->lines[$i]->description = $obj->description; // deprecated
 				$this->lines[$i]->desc = $obj->description;
+
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;

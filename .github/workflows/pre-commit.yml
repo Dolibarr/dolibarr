@@ -14,6 +14,7 @@ on:
 concurrency:
   group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
 
@@ -29,7 +30,7 @@ jobs:
       #  if: false
 
       # Checkout git sources to analyze
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
       #- name: Get changed files

@@ -1792,9 +1792,10 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 		$arrayofemail = array();
-		$Query = 0;
 
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP') && is_object($client)) {
+			$Query = null;
+
 			try {
 				// Uncomment this to output debug info
 				//$client->getConnection()->enableDebug();
@@ -1806,18 +1807,19 @@ class EmailCollector extends CommonObject
 
 				$f = $client->getFolders(false, $tmpsourcedir);	// Note the search of directory do a search on sourcedir*
 				if ($f) {
-					foreach ($f as $_f) {
-						if ($_f->path == $this->source_directory && $_f instanceof Webklex\PHPIMAP\Folder) {
-							$Query = $_f->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+					// getFolders does a sourcedir* match so INBOX also returns INBOX.Traites
+					// etc. Pick the folder whose full_name matches the requested source
+					// before falling back to the first result, otherwise polling can land
+					// on an empty subfolder instead of INBOX (#37357).
+					$folder = $f[0];
+					foreach ($f as $candidate) {
+						if ($candidate instanceof Webklex\PHPIMAP\Folder && $candidate->full_name === $tmpsourcedir) {
+							$folder = $candidate;
+							break;
 						}
 					}
-					// @phpstan-ignore-line
-					if (empty($Query)) {
-						$error++;
-						$this->error = "Source directory ".$sourcedir." not found";
-						$this->errors[] = $this->error;
-						dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_WARNING);
-						return -1;
+					if ($folder instanceof Webklex\PHPIMAP\Folder) {
+						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					}
 				} else {
 					$error++;
@@ -1835,6 +1837,15 @@ class EmailCollector extends CommonObject
 				$this->error = $e->getMessage();
 				$this->errors[] = $this->error;
 				dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_ERR);
+				return -1;
+			}
+
+			// @phpstan-ignore-line
+			if (empty($Query)) {
+				$error++;
+				$this->error = "Source directory ".$sourcedir." not found";
+				$this->errors[] = $this->error;
+				dol_syslog("EmailCollector::doCollectOneCollector ".$this->error, LOG_WARNING);
 				return -1;
 			}
 
@@ -4091,10 +4102,10 @@ class EmailCollector extends CommonObject
 	/**
 	 * getmsg
 	 *
-	 * @param 	IMAP\Connection|resource $mbox   	Structure
-	 * @param 	int				$mid		Message Id / Message Number  Email
-	 * @param 	string			$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
-	 * @return 	-1|1						Return -1 if error, 1 if OK
+	 * @param 	IMAP\Connection|resource 	$mbox   	Structure
+	 * @param 	int							$mid		Message Id / Message Number  Email
+	 * @param 	string						$destdir    Target dir for attachments. Leave blank to parse without writing to disk.
+	 * @return 	int<-1,1>								Return -1 if error, 1 if OK
 	 */
 	private function getmsg($mbox, $mid, $destdir = ''): int
 	{
