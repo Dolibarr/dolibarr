@@ -1004,26 +1004,15 @@ class EmailCollector extends CommonObject
 
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
-							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
-							if (strtolower($sourcefield) == 'header') {		// extract from HEADER
-								if (preg_match('/^options_/', $tmpproperty)) {
-									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : '';
+							$valuetoset = (strtolower($sourcefield) == 'body') ? $valueextracted : $this->decodeSMTPSubject($valueextracted);
+							if (preg_match('/^options_/', $tmpproperty)) {
+								$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetoset;
+							} else {
+								if (property_exists($object, $tmpproperty)) {
+									$object->$tmpproperty = $valuetoset;
 								} else {
-									if (property_exists($object, $tmpproperty)) {
-										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
-									} else {
-										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
-									}
-								}
-							} else {	// extract from BODY
-								if (preg_match('/^options_/', $tmpproperty)) {
-									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
-								} else {
-									if (property_exists($object, $tmpproperty)) {
-										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
-									} else {
-										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
-									}
+									$tmp[$tmpproperty] = $valuetoset;
 								}
 							}
 
@@ -4304,7 +4293,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Decode a subject string according to RFC2047
 	 * Example: '=?Windows-1252?Q?RE=A0:_ABC?=' => 'RE : ABC...'
-	 * Example: '=?UTF-8?Q?A=C3=A9B?=' => 'AéB'
+	 * Example: '=?UTF-8?Q?A=C3=A9B?=' => 'A[e acute]B'
 	 * Example: '=?UTF-8?B?2KLYstmF2KfbjNi0?=' =>
 	 * Example: '=?utf-8?B?UkU6IG1vZHVsZSBkb2xpYmFyciBnZXN0aW9ubmFpcmUgZGUgZmljaGllcnMg?= =?utf-8?B?UsOpZsOpcmVuY2UgZGUgbGEgY29tbWFuZGUgVFVHRURJSklSIOKAkyBwYXNz?= =?utf-8?B?w6llIGxlIDIyLzA0LzIwMjA=?='
 	 *
