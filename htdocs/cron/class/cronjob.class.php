@@ -1347,48 +1347,54 @@ class Cronjob extends CommonObject
 		$cronjobid = (int) $this->id;
 		$cronjobpid = (int) $this->pid;
 		$dbs = $this->db;
-		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs) {
-			if (empty($cronjobid) || empty($dbs)) {
+		/** @var array{armed: bool} $shutdownhandlerstate */
+		$shutdownhandlerstate = array('armed' => true);
+		register_shutdown_function(static function () use ($cronjobid, $cronjobpid, $dbs, &$shutdownhandlerstate) {
+			if (empty($shutdownhandlerstate['armed']) || empty($cronjobid) || empty($dbs)) {
 				return;
 			}
 
 			try {
-				// Ensure we are not trapped into a transaction left open by the job.
-				$dbs->rollback();
+				try {
+					// Ensure we are not trapped into a transaction left open by the job.
+					$dbs->rollback();
+				} catch (Throwable $e) {
+					// Ignore
+				}
+
+				// If job is already closed, do nothing.
+				$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
+				$resql = $dbs->query($sql);
+				if (!$resql) {
+					return;
+				}
+				$obj = $dbs->fetch_object($resql);
+				$dbs->free($resql);
+
+				if (!$obj || (int) $obj->processing !== 1 || !empty($obj->datelastresult)) {
+					return;
+				}
+
+				// Protect against unlocking a job started by another PID (concurrent runner).
+				if (!empty($obj->pid) && (int) $obj->pid !== (int) $cronjobpid) {
+					return;
+				}
+
+				$now = dol_now();
+				$lastoutput = 'Cron job aborted unexpectedly (shutdown).';
+
+				$lastError = error_get_last();
+				if (is_array($lastError) && !empty($lastError['message'])) {
+					$lastoutput .= ' Last error: '.dol_trunc($lastError['message'], 2000, 'right', 'UTF-8', 1);
+				}
+
+				$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
+				$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+				$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
+				$dbs->query($sql);
 			} catch (Throwable $e) {
 				// Ignore
 			}
-
-			// If job is already closed, do nothing.
-			$sql = "SELECT processing, pid, datelastresult FROM ".MAIN_DB_PREFIX."cronjob WHERE rowid = ".((int) $cronjobid);
-			$resql = $dbs->query($sql);
-			if (!$resql) {
-				return;
-			}
-			$obj = $dbs->fetch_object($resql);
-			$dbs->free($resql);
-
-			if (!$obj || (int) $obj->processing !== 1 || !empty($obj->datelastresult)) {
-				return;
-			}
-
-			// Protect against unlocking a job started by another PID (concurrent runner).
-			if (!empty($obj->pid) && (int) $obj->pid !== (int) $cronjobpid) {
-				return;
-			}
-
-			$now = dol_now();
-			$lastoutput = 'Cron job aborted unexpectedly (shutdown).';
-
-			$lastError = error_get_last();
-			if (is_array($lastError) && !empty($lastError['message'])) {
-				$lastoutput .= ' Last error: '.dol_trunc($lastError['message'], 2000, 'right', 'UTF-8', 1);
-			}
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
-			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
-			$dbs->query($sql);
 		});
 
 		// Run a method
@@ -1596,6 +1602,7 @@ class Cronjob extends CommonObject
 			$conf->setEntityValues($this->db, $savcurrententity);
 			return -1;
 		}
+		$shutdownhandlerstate['armed'] = false;
 
 		$conf->setEntityValues($this->db, $savcurrententity);
 
