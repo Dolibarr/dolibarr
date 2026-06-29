@@ -251,10 +251,10 @@ abstract class ActionsCardCommon
 			}
 
 			// Zip
-			$this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
+			$this->tpl['select_zip'] = $formcompany->select_ziptown((string) $this->object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6);
 
 			// Town
-			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+			$this->tpl['select_town'] = $formcompany->select_ziptown((string) $this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
 			// Country
 			$this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
