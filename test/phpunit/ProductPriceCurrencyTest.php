@@ -340,4 +340,47 @@ class ProductPriceCurrencyTest extends CommonClassTest
 		$this->assertSame(1, $checkGbp->fetchByKey($product->id, 1, 'GBP', 0), 'GBP price must now exist');
 		$this->assertEquals(50.0, $checkGbp->price, 'GBP price must equal company price 50 * rate 1');
 	}
+
+	/**
+	 * Merging two thirdparties must drop the origin per-currency rows that would collide with an existing
+	 * dest row on the unique key (the dest price wins), remap the non-colliding ones, and never raise a
+	 * duplicate-key error. Guards the portable dedup in Product::replaceThirdparty(). (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testReplaceThirdpartyDedupCurrencyPrices()
+	{
+		global $db, $user;
+
+		$product = $this->createTestProduct(20.0);
+		$socOrigin = $this->createTestSoc();
+		$socDest = $this->createTestSoc();
+
+		$ppc = new ProductPriceCurrency($db);
+		// Dest already has a USD price: it must survive the merge untouched (the kept row).
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 100.0, 'HT', 20.0, $user, 1, 1.1, $socDest), 'Dest USD set failed: '.$ppc->error);
+		// Origin has a colliding USD price (same product/level/currency/entity) -> must be deleted, not remapped.
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'USD', 90.0, 'HT', 20.0, $user, 1, 1.1, $socOrigin), 'Origin USD set failed: '.$ppc->error);
+		// Origin has a GBP price with no dest counterpart -> must be remapped to dest.
+		$this->assertGreaterThan(0, $ppc->setPriceCurrency($product->id, 'GBP', 80.0, 'HT', 20.0, $user, 1, 0.85, $socOrigin), 'Origin GBP set failed: '.$ppc->error);
+
+		$res = Product::replaceThirdparty($db, $socOrigin, $socDest);
+		$this->assertTrue($res, 'replaceThirdparty must succeed without a duplicate-key error');
+
+		// Dest keeps its own USD price (100), not the origin one (90).
+		$destUsd = new ProductPriceCurrency($db);
+		$this->assertSame(1, $destUsd->fetchByKey($product->id, 1, 'USD', $socDest), 'Dest USD price must still exist');
+		$this->assertEquals(100.0, $destUsd->price, 'Dest USD price must be kept (origin colliding row dropped)');
+
+		// The non-colliding origin GBP price is remapped to dest.
+		$destGbp = new ProductPriceCurrency($db);
+		$this->assertSame(1, $destGbp->fetchByKey($product->id, 1, 'GBP', $socDest), 'Origin GBP price must be remapped to dest');
+		$this->assertEquals(80.0, $destGbp->price, 'Remapped GBP price value must be preserved');
+
+		// Origin keeps no per-currency price after the merge.
+		$origUsd = new ProductPriceCurrency($db);
+		$this->assertSame(0, $origUsd->fetchByKey($product->id, 1, 'USD', $socOrigin), 'Origin USD price must be gone (deleted as duplicate)');
+		$origGbp = new ProductPriceCurrency($db);
+		$this->assertSame(0, $origGbp->fetchByKey($product->id, 1, 'GBP', $socOrigin), 'Origin GBP price must be gone (remapped away)');
+	}
 }
