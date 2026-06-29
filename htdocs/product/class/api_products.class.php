@@ -1004,7 +1004,7 @@ class Products extends DolibarrApi
 		}
 
 		// Clean data
-		$multicurrency_code = sanitizeVal($multicurrency_code, 'alphanohtml');
+		$multicurrency_code = strtoupper(sanitizeVal($multicurrency_code, 'alphanohtml'));
 
 		// Validate inputs
 		$price_base_type = strtoupper(trim((string) $price_base_type));
@@ -1023,6 +1023,10 @@ class Products extends DolibarrApi
 			$thirdparty = new Societe($this->db);
 			if ($thirdparty->fetch((int) $socid) <= 0) {
 				throw new RestException(404, 'Thirdparty not found');
+			}
+			// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+			if (!DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+				throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
 			}
 		}
 
@@ -1067,6 +1071,10 @@ class Products extends DolibarrApi
 		}
 
 		if ((int) $socid > 0) {
+			// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+			if (!DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+				throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+			}
 			require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
 			$ppc = new ProductPriceCurrency($this->db);
 			return $ppc->fetchAllForProduct((int) $id, (int) $socid);
@@ -1108,8 +1116,13 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
+		// A per-customer price is thirdparty-scoped data: enforce the caller's thirdparty perimeter (issue #32379)
+		if ((int) $socid > 0 && !DolibarrApi::_checkAccessToResource('societe', (int) $socid)) {
+			throw new RestException(403, 'Access to thirdparty ' . $socid . ' not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
 		// Clean data
-		$multicurrency_code = sanitizeVal($multicurrency_code, 'alphanohtml');
+		$multicurrency_code = strtoupper(sanitizeVal($multicurrency_code, 'alphanohtml'));
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
 		$ppc = new ProductPriceCurrency($this->db);
