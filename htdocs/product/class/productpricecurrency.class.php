@@ -140,13 +140,30 @@ class ProductPriceCurrency
 
 		$this->db->begin();
 
-		$exists = $this->fetchByKey($fk_product, $level, $multicurrency_code, $socid);
-		if ($exists < 0) {
+		// Existence is tested on the CURRENT entity only. With Multicompany product-price sharing,
+		// fetchByKey() reads getEntity('productprice') (possibly several entities); using it here would let
+		// an UPDATE hit a row owned by another entity, while the INSERT always writes $conf->entity. (issue #32379)
+		$existing_rowid = 0;
+		$sqlexist = "SELECT rowid FROM ".$this->db->prefix()."product_price_currency";
+		$sqlexist .= " WHERE fk_product = ".((int) $fk_product);
+		$sqlexist .= " AND fk_soc = ".((int) $socid);
+		$sqlexist .= " AND price_level = ".((int) $level);
+		$sqlexist .= " AND multicurrency_code = '".$this->db->escape($multicurrency_code)."'";
+		$sqlexist .= " AND entity = ".((int) $conf->entity);
+		$resexist = $this->db->query($sqlexist);
+		if (!$resexist) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
+		if ($objexist = $this->db->fetch_object($resexist)) {
+			$existing_rowid = (int) $objexist->rowid;
+		}
+		$this->db->free($resexist);
 
-		if ($exists > 0) {
+		if ($existing_rowid > 0) {
+			$this->id = $existing_rowid;
 			$sql = "UPDATE ".$this->db->prefix()."product_price_currency SET";
 			$sql .= " price = ".((float) $price_ht);
 			$sql .= ", price_ttc = ".((float) $price_ttc);
@@ -182,7 +199,7 @@ class ProductPriceCurrency
 			return -1;
 		}
 
-		if ($exists == 0) {
+		if ($existing_rowid == 0) {
 			$this->id = (int) $this->db->last_insert_id($this->db->prefix()."product_price_currency");
 		}
 		$this->price = $price_ht;
@@ -242,14 +259,16 @@ class ProductPriceCurrency
 	}
 
 	/**
-	 *	Load all catalog (fk_soc = 0) fixed currency prices of a product, grouped by price level then currency code.
+	 *	Load fixed currency prices of a product, grouped by price level then currency code.
 	 *
-	 *	Per-customer prices are not loaded here: they are resolved on demand by fetchByKey() with a socid.
+	 *	By default only catalog prices (fk_soc = 0) are returned, which is what Product::fetch() preloads.
+	 *	Pass a $socid to read that customer's own fixed prices instead.
 	 *
 	 *	@param	int		$fk_product		Product id
+	 *	@param	int		$socid			Customer id for per-customer prices, 0 for the catalog prices
 	 *	@return	array<int,array<string,array{price:float,price_ttc:float,price_base_type:string,multicurrency_tx:float}>>	Indexed by [price_level][currency_code]
 	 */
-	public function fetchAllForProduct(int $fk_product): array
+	public function fetchAllForProduct(int $fk_product, int $socid = 0): array
 	{
 		$result = array();
 		if ($fk_product <= 0) {
@@ -259,7 +278,7 @@ class ProductPriceCurrency
 		$sql = "SELECT price_level, multicurrency_code, price, price_ttc, price_base_type, multicurrency_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_price_currency";
 		$sql .= " WHERE fk_product = ".((int) $fk_product);
-		$sql .= " AND fk_soc = 0";
+		$sql .= " AND fk_soc = ".((int) $socid);
 		$sql .= " AND entity IN (".getEntity('productprice').")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -320,10 +339,12 @@ class ProductPriceCurrency
 			$this->db->rollback();
 			return -1;
 		}
+		$nbdeleted = $this->db->affected_rows($resql);
 
 		$this->db->commit();
 
-		return 1;
+		// 1 if a row was actually removed, 0 if there was nothing to delete in this entity
+		return $nbdeleted > 0 ? 1 : 0;
 	}
 
 	/**
@@ -337,9 +358,10 @@ class ProductPriceCurrency
 	 *	@param	User		$user		User running the initialization
 	 *	@param	string[]	$codes		Currency codes to process; empty means all enabled currencies
 	 *	@param	int			$level		Price level to process; 0 means all levels
-	 *	@return	int						Number of created prices, -1 on error
+	 *	@param	bool		$dryrun		When true, only count the prices that WOULD be created (no write)
+	 *	@return	int						Number of created (or, in dry-run, would-be-created) prices, -1 on error
 	 */
-	public function initCatalogCurrencyPrices(User $user, array $codes = array(), int $level = 0): int
+	public function initCatalogCurrencyPrices(User $user, array $codes = array(), int $level = 0, bool $dryrun = false): int
 	{
 		global $conf;
 
@@ -362,10 +384,12 @@ class ProductPriceCurrency
 			$rates[$code] = (is_array($tmp) && !empty($tmp[1])) ? (float) $tmp[1] : 1.0;
 		}
 
-		// Latest company price per (product, level) in the current entity
+		// Latest company price per (product, level) in the current entity.
+		// Source rows are read on $conf->entity only (not getEntity('productprice')) so init reads and
+		// writes the same entity: setPriceCurrency() always inserts on $conf->entity. (issue #32379)
 		$sql = "SELECT pr.fk_product, pr.price_level, pr.price, pr.price_ttc, pr.price_base_type, pr.tva_tx";
 		$sql .= " FROM ".$this->db->prefix()."product_price as pr";
-		$sql .= " WHERE pr.entity IN (".getEntity('productprice').")";
+		$sql .= " WHERE pr.entity = ".((int) $conf->entity);
 		if ($level > 0) {
 			$sql .= " AND pr.price_level = ".((int) $level);
 		}
@@ -386,6 +410,11 @@ class ProductPriceCurrency
 		}
 		$this->db->free($resql);
 
+		// Wrap the whole batch so a mid-run failure leaves no partial state (issue #32379)
+		if (!$dryrun) {
+			$this->db->begin();
+		}
+
 		$count = 0;
 		foreach ($rows as $obj) {
 			$fk_product = (int) $obj->fk_product;
@@ -398,24 +427,47 @@ class ProductPriceCurrency
 			}
 			foreach ($codes as $code) {
 				// Non-destructive: only create a currency price when none exists yet for this key
-				$exists = $this->fetchByKey($fk_product, $plevel, $code, 0);
-				if ($exists < 0) {
+				// in the CURRENT entity (writes always target $conf->entity).
+				$existsql = "SELECT rowid FROM ".$this->db->prefix()."product_price_currency";
+				$existsql .= " WHERE fk_product = ".((int) $fk_product);
+				$existsql .= " AND fk_soc = 0";
+				$existsql .= " AND price_level = ".((int) $plevel);
+				$existsql .= " AND multicurrency_code = '".$this->db->escape($code)."'";
+				$existsql .= " AND entity = ".((int) $conf->entity);
+				$resexist = $this->db->query($existsql);
+				if (!$resexist) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+					if (!$dryrun) {
+						$this->db->rollback();
+					}
 					return -1;
 				}
-				if ($exists > 0) {
+				$already = ($this->db->num_rows($resexist) > 0);
+				$this->db->free($resexist);
+				if ($already) {
+					continue;
+				}
+				if ($dryrun) {
+					$count++;
 					continue;
 				}
 				$rate = $rates[$code];
 				$res = $this->setPriceCurrency($fk_product, $code, $companyprice * $rate, $base, $vat, $user, $plevel, $rate, 0);
 				if ($res <= 0) {
 					dol_syslog(__METHOD__.' setPriceCurrency failed for product '.$fk_product.' '.$code.': '.$this->error, LOG_ERR);
+					$this->db->rollback();
 					return -1;
 				}
 				$count++;
 			}
 		}
 
-		dol_syslog(__METHOD__.' created '.$count.' currency prices', LOG_INFO);
+		if (!$dryrun) {
+			$this->db->commit();
+		}
+
+		dol_syslog(__METHOD__.' '.($dryrun ? 'would create ' : 'created ').$count.' currency prices', LOG_INFO);
 
 		return $count;
 	}

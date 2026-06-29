@@ -34,5 +34,6 @@ create table llx_product_price_currency
   price_ttc				double(24,8) DEFAULT NULL,				-- Fixed price inc tax, in the currency
   price_base_type		varchar(3) DEFAULT 'HT',
   date_price			datetime NOT NULL,
-  fk_user_author		integer
+  fk_user_author		integer,
+  import_key			varchar(14)								-- Key used on mass import to allow rollback of an import batch
 )ENGINE=innodb;
