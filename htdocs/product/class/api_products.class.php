@@ -993,6 +993,9 @@ class Products extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 			throw new RestException(403);
 		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
+		}
 
 		$result = $this->product->fetch($id);
 		if ($result <= 0) {
@@ -1060,6 +1063,9 @@ class Products extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
 		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
+		}
 
 		$result = $this->product->fetch($id);
 		if ($result <= 0) {
@@ -1105,6 +1111,9 @@ class Products extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer') && !DolibarrApiAccess::$user->hasRight('service', 'supprimer')) {
 			throw new RestException(403);
+		}
+		if (!isModEnabled('multicurrency')) {
+			throw new RestException(400, 'API not available: the multicurrency module is not enabled');
 		}
 
 		$result = $this->product->fetch($id);
