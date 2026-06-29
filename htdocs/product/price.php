@@ -735,7 +735,7 @@ if (empty($reshook)) {
 
 	// Add or update price by quantity
 	if ($action == 'update_price_by_qty' && $permissiontoadd) {
-		// Récupération des variables
+		// Get the variables
 		$rowid = GETPOSTINT('rowid');
 		$priceid = GETPOSTINT('priceid');
 		$newprice = price2num(GETPOST("price"), 'MU', 2);
@@ -753,7 +753,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (!$error) {
-			// Calcul du prix HT et du prix unitaire
+			// Compute the net price and the unit price
 			if ($object->price_base_type == 'TTC') {
 				$price = (float) price2num($newprice) / (1 + ($object->tva_tx / 100));
 			}
@@ -761,7 +761,7 @@ if (empty($reshook)) {
 			$price = price2num($newprice, 'MU');
 			$unitPrice = price2num((float) $price / (float) $quantity, 'MU');
 
-			// Ajout / mise à jour
+			// Add / update
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
 				$sql .= " price=".((float) $price).",";

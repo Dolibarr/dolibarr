@@ -132,7 +132,7 @@ class PropaleLigne extends CommonObjectLine
 	public $subprice;
 
 	/**
-	 * Unit price including tax — set when the line was entered with price_base_type='TTC', 0 otherwise.
+	 * Unit price including tax - set when the line was entered with price_base_type='TTC', 0 otherwise.
 	 * Used to preserve the original entry mode on no-op edits (avoids rounding drift).
 	 * @var float
 	 */

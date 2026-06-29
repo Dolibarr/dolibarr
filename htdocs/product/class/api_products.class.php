@@ -2437,7 +2437,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		// Récupérer les contacts externes et internes
+		// Get external and internal contacts
 		$contacts = $this->product->liste_contact(-1, 'external', 0, $type);
 		$socpeoples = $this->product->liste_contact(-1, 'internal', 0, $type);
 
