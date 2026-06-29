@@ -325,4 +325,98 @@ class ProductPriceCurrency
 
 		return 1;
 	}
+
+	/**
+	 *	Initialize the missing catalog (fk_soc = 0) per-currency sell prices in bulk.
+	 *
+	 *	For each priced product/level in the current entity and each enabled currency other than the
+	 *	company currency, a fixed currency price equal to the company price converted at the current rate
+	 *	is created WHEN NONE EXISTS YET. Existing per-currency prices are never modified (non-destructive),
+	 *	so the tool is safe to run several times.
+	 *
+	 *	@param	User		$user		User running the initialization
+	 *	@param	string[]	$codes		Currency codes to process; empty means all enabled currencies
+	 *	@param	int			$level		Price level to process; 0 means all levels
+	 *	@return	int						Number of created prices, -1 on error
+	 */
+	public function initCatalogCurrencyPrices(User $user, array $codes = array(), int $level = 0): int
+	{
+		global $conf;
+
+		// Resolve the list of currency codes to process (the company currency never needs a fixed price)
+		if (empty($codes)) {
+			foreach (MultiCurrency::getCurrencyList($this->db) as $currency) {
+				if ($currency['code'] != $conf->currency) {
+					$codes[] = $currency['code'];
+				}
+			}
+		}
+		if (empty($codes)) {
+			return 0;
+		}
+
+		// Prefetch the current rate of each currency once
+		$rates = array();
+		foreach ($codes as $code) {
+			$tmp = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+			$rates[$code] = (is_array($tmp) && !empty($tmp[1])) ? (float) $tmp[1] : 1.0;
+		}
+
+		// Latest company price per (product, level) in the current entity
+		$sql = "SELECT pr.fk_product, pr.price_level, pr.price, pr.price_ttc, pr.price_base_type, pr.tva_tx";
+		$sql .= " FROM ".$this->db->prefix()."product_price as pr";
+		$sql .= " WHERE pr.entity IN (".getEntity('productprice').")";
+		if ($level > 0) {
+			$sql .= " AND pr.price_level = ".((int) $level);
+		}
+		$sql .= " AND pr.date_price = (SELECT MAX(pr2.date_price) FROM ".$this->db->prefix()."product_price as pr2";
+		$sql .= " WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity = pr.entity)";
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$rows = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$rows[] = $obj;
+		}
+		$this->db->free($resql);
+
+		$count = 0;
+		foreach ($rows as $obj) {
+			$fk_product = (int) $obj->fk_product;
+			$plevel = (int) $obj->price_level;
+			$base = ($obj->price_base_type == 'TTC') ? 'TTC' : 'HT';
+			$companyprice = ($base == 'TTC') ? (float) $obj->price_ttc : (float) $obj->price;
+			$vat = (float) $obj->tva_tx;
+			if ($companyprice == 0.0) {
+				continue;
+			}
+			foreach ($codes as $code) {
+				// Non-destructive: only create a currency price when none exists yet for this key
+				$exists = $this->fetchByKey($fk_product, $plevel, $code, 0);
+				if ($exists < 0) {
+					return -1;
+				}
+				if ($exists > 0) {
+					continue;
+				}
+				$rate = $rates[$code];
+				$res = $this->setPriceCurrency($fk_product, $code, $companyprice * $rate, $base, $vat, $user, $plevel, $rate, 0);
+				if ($res <= 0) {
+					dol_syslog(__METHOD__.' setPriceCurrency failed for product '.$fk_product.' '.$code.': '.$this->error, LOG_ERR);
+					return -1;
+				}
+				$count++;
+			}
+		}
+
+		dol_syslog(__METHOD__.' created '.$count.' currency prices', LOG_INFO);
+
+		return $count;
+	}
 }
