@@ -64,6 +64,109 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 	$prodcustprice = new ProductCustomerPrice($db);
 }
 
+/**
+ * Print the per-customer fixed currency price input rows for the customer-price form (issue #32379).
+ *
+ * One row per enabled currency other than the company currency. In edit mode (socid > 0) the existing
+ * per-customer prices (price level 1) are prefilled. Customer prices are level-agnostic, so level 1 is used.
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	Form		$form		Form handler
+ * @param	Product		$object		Product being edited
+ * @param	int			$socid		Customer id (0 when adding, the inputs are then empty)
+ * @return	void
+ */
+function printCustomerCurrencyPriceInputs($db, $form, $object, $socid)
+{
+	global $conf, $langs;
+
+	if (!isModEnabled('multicurrency')) {
+		return;
+	}
+	$currencies = MultiCurrency::getCurrencyList($db);
+	if (!is_array($currencies) || empty($currencies)) {
+		return;
+	}
+
+	$ppc = new ProductPriceCurrency($db);
+	foreach ($currencies as $currency) {
+		$code = $currency['code'];
+		// The company currency never needs a fixed per-currency price.
+		if ($code == $conf->currency) {
+			continue;
+		}
+
+		$value = '';
+		$base = $object->price_base_type;
+		if ($socid > 0 && $ppc->fetchByKey($object->id, 1, $code, $socid) > 0) {
+			$base = $ppc->price_base_type;
+			$value = ($base == 'TTC') ? price($ppc->price_ttc) : price($ppc->price);
+		}
+
+		print '<tr><td>'.$langs->trans('SellPriceInCurrency').' ('.dol_escape_htmltag($code).')</td><td>';
+		print '<input name="mccustprice_'.dol_escape_htmltag($code).'" size="10" value="'.dol_escape_htmltag($value).'"> ';
+		print $form->selectPriceBaseType($base, 'mccustbase_'.$code);
+		print '</td></tr>';
+	}
+}
+
+/**
+ * Persist the per-customer fixed currency prices submitted in the customer-price form (issue #32379).
+ *
+ * An empty input removes the matching per-customer price. Customer prices are level-agnostic (level 1).
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	int			$fk_product	Product id
+ * @param	int			$socid		Customer id (> 0)
+ * @param	float		$vat_tx		VAT rate of the customer price (used to derive the HT/TTC counterpart)
+ * @param	User		$user		Current user
+ * @return	int						Number of errors (0 if OK)
+ */
+function saveCustomerCurrencyPrices($db, $fk_product, $socid, $vat_tx, $user)
+{
+	global $conf;
+
+	if (!isModEnabled('multicurrency') || $socid <= 0) {
+		return 0;
+	}
+	$currencies = MultiCurrency::getCurrencyList($db);
+	if (!is_array($currencies) || empty($currencies)) {
+		return 0;
+	}
+
+	$errors = 0;
+	$ppc = new ProductPriceCurrency($db);
+	foreach ($currencies as $currency) {
+		$code = $currency['code'];
+		if ($code == $conf->currency) {
+			continue;
+		}
+
+		$raw = GETPOST('mccustprice_'.$code, 'alphanohtml');
+		$base = GETPOST('mccustbase_'.$code, 'aZ09');
+		if ($base != 'TTC') {
+			$base = 'HT';
+		}
+
+		if ($raw === '' || $raw === null) {
+			// Empty input means the per-customer price must be removed.
+			$res = $ppc->deleteCurrencyPrice($fk_product, 1, $code, $user, $socid);
+		} else {
+			// Store the current exchange rate at input time (informative only).
+			$tmprate = MultiCurrency::getIdAndTxFromCode($db, $code);
+			$tx = (is_array($tmprate) && !empty($tmprate[1])) ? (float) $tmprate[1] : 1.0;
+			$res = $ppc->setPriceCurrency($fk_product, $code, GETPOSTFLOAT('mccustprice_'.$code), $base, (float) $vat_tx, $user, 1, $tx, $socid);
+		}
+
+		if ($res < 0) {
+			$errors++;
+			setEventMessages($ppc->error, $ppc->errors, 'errors');
+		}
+	}
+
+	return $errors;
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
@@ -839,6 +942,10 @@ if (empty($reshook)) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 				$action = 'add_customer_price';
 			} else {
+				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379)
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user) > 0) {
+					$error++;
+				}
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				$action = '';
 			}
@@ -987,6 +1094,10 @@ if (empty($reshook)) {
 				setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 				$action = 'update_customer_price';
 			} else {
+				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379)
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user) > 0) {
+					$error++;
+				}
 				setEventMessages($langs->trans("Save"), null, 'mesgs');
 				$action = '';
 			}
@@ -2206,6 +2317,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<input name="discount_percent" size="10" value="'.price($discount_percent).'">';
 		print '</td></tr>';
 
+		// Fixed sell prices per currency for this customer (issue #32379)
+		printCustomerCurrencyPriceInputs($db, $form, $object, GETPOSTINT('socid'));
+
 		// Extrafields
 		$extrafields->fetch_name_optionals_label("product_customer_price");
 		$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
@@ -2339,6 +2453,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<tr><td>'.$langs->trans("Discount").'</td><td>';
 		print '<input name="discount_percent" size="10" value="'.price($prodcustprice->discount_percent).'">';
 		print '</td></tr>';
+
+		// Fixed sell prices per currency for this customer (issue #32379)
+		printCustomerCurrencyPriceInputs($db, $form, $object, $prodcustprice->fk_soc);
 
 		// Extrafields
 		$extrafields->fetch_name_optionals_label("product_customer_price");
