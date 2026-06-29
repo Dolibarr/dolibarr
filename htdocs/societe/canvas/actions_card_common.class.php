@@ -315,7 +315,7 @@ abstract class ActionsCardCommon
 
 			$this->tpl['checkcustomercode'] = $this->object->check_codeclient();
 			$this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
-			$this->tpl['address'] = dol_nl2br($this->object->address);
+			$this->tpl['address'] = dol_nl2br((string) $this->object->address);
 
 			$img = picto_from_langcode($this->object->country_code);
 			if ($this->object->isInEEC()) {
@@ -323,11 +323,11 @@ abstract class ActionsCardCommon
 			}
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
-			$this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
-			$this->tpl['phone_mobile'] 	= dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
-			$this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 1);
-			$this->tpl['url'] 		= dol_print_url($this->object->url);
+			$this->tpl['phone'] 	= dol_print_phone((string) $this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+			$this->tpl['phone_mobile'] 	= dol_print_phone((string) $this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_MOB');
+			$this->tpl['fax'] 		= dol_print_phone((string) $this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
+			$this->tpl['email'] 	= dol_print_email((string) $this->object->email, 0, $this->object->id, 1);
+			$this->tpl['url'] 		= dol_print_url((string) $this->object->url);
 
 			$this->tpl['tva_assuj'] = yn($this->object->tva_assuj);
 
