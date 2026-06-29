@@ -4210,6 +4210,7 @@ class Facture extends CommonInvoice
 	 *  @param	float			$pu_ht_devise				Unit price in foreign currency
 	 *  @param	string			$ref_ext		    		External reference of the line
 	 *  @param	int				$noupdateafterinsertline	No update after insert of line
+	 *  @param	int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return	int             							Return integer <0 if KO, Id of line if OK
 	 */
 	public function addline(
@@ -4573,6 +4574,7 @@ class Facture extends CommonInvoice
 	 * 	@param	int<0,1>		$notrigger			disable line update trigger
 	 *  @param	string			$ref_ext		    External reference of the line
 	 *  @param	integer			$rang		    	rank of line
+	 *  @param	int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return	int									Return integer < 0 if KO, > 0 if OK
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = array(), $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0, $multicurrency_subprice_source = null)
