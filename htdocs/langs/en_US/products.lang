@@ -149,6 +149,7 @@ PriceQtyMin=Price quantity min.
 PriceQtyMinCurrency=Price (currency) for this qty.
 SellPriceInCurrency=Sell price per currency
 CurrencyPriceUpdated=Per-currency prices updated
+ProductsPricePerCurrency=Product fixed sell prices per currency
 WithoutDiscount=Without discount
 VATRateForSupplierProduct=Tax Rate (for this vendor/product)
 DiscountQtyMin=Discount for this qty.

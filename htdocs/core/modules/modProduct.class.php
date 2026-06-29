@@ -1025,6 +1025,46 @@ class modProduct extends DolibarrModules
 				'pr.date_price' => '2020-12-31');
 		}
 
+		if (isModEnabled('multicurrency')) {
+			// Import products fixed sell prices per currency
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_pricecurrency';
+			$this->import_label[$r] = "ProductsPricePerCurrency"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('ppc' => MAIN_DB_PREFIX.'product_price_currency');
+			$this->import_tables_creator_array[$r] = array('ppc' => 'fk_user_author'); // Fields to store import user id
+			$this->import_fields_array[$r] = array(
+				'ppc.fk_product' => "ProductOrService*",
+				'ppc.price_level' => "PriceLevel",
+				'ppc.fk_multicurrency' => "CurrencyCodeId",
+				'ppc.multicurrency_code' => "CurrencyCode*",
+				'ppc.multicurrency_tx' => "CurrencyRate",
+				'ppc.price_base_type' => "PriceBase",
+				'ppc.price' => "PriceLevelUnitPriceHT",
+				'ppc.price_ttc' => "PriceLevelUnitPriceTTC",
+				'ppc.date_price' => 'DateCreation*');
+
+			$this->import_regex_array[$r] = array(
+				'ppc.date_price' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
+			);
+
+			$this->import_convertvalue_array[$r] = array(
+				'ppc.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_examplevalues_array[$r] = array(
+				'ppc.fk_product' => "ref:PRODUCT_REF or id:123456",
+				'ppc.price_level' => "1",
+				'ppc.fk_multicurrency' => "eg: 2 = the rowid for code of multicurrency currency",
+				'ppc.multicurrency_code' => "USD",
+				'ppc.multicurrency_tx' => "1.12345",
+				'ppc.price_base_type' => "HT (for excl tax) or TTC (for inc tax)",
+				'ppc.price' => "100",
+				'ppc.price_ttc' => "120",
+				'ppc.date_price' => '2020-12-31');
+		}
+
 
 		if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES')) {
 			$r++;
