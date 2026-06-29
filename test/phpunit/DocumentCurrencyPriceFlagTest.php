@@ -213,6 +213,63 @@ class DocumentCurrencyPriceFlagTest extends CommonClassTest
 	}
 
 	/**
+	 * Same freeze guarantee on the most-used document type: an order line freeze must survive a rate change
+	 * AND a plain edit. Commande shares the propal update() pattern (no null->0 reset), so this locks it. (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testOrderFreezeSurvivesRateChangeAndEdit()
+	{
+		global $db, $user;
+
+		$socid = $this->createSoc();
+		$pid = $this->createProduct();
+
+		$order = new Commande($db);
+		$order->socid = $socid;
+		$order->date = dol_now();
+		$order->multicurrency_code = 'USD';
+		$oid = $order->create($user);
+		$this->assertGreaterThan(0, $oid, 'Order creation failed: '.$order->error);
+
+		$order->multicurrency_code = 'USD';
+		$order->multicurrency_tx = 1.1;
+
+		$res = $this->addlineByName($order, array(
+			'desc' => 'sourced line', 'pu_ht' => 0, 'qty' => 2, 'txtva' => 20,
+			'fk_product' => $pid, 'price_base_type' => 'HT', 'pu_ht_devise' => 100.0,
+			'multicurrency_subprice_source' => 1,
+		));
+		$this->assertGreaterThan(0, $res, 'Order addline failed: '.$order->error);
+
+		$reloaded = new Commande($db);
+		$reloaded->fetch($oid);
+		$reloaded->fetch_lines();
+		$reloaded->multicurrency_tx = 1.1;
+		$reloaded->setMulticurrencyRate(1.5, 2);
+
+		$afterrate = new Commande($db);
+		$afterrate->fetch($oid);
+		$afterrate->fetch_lines();
+		$this->assertEquals(100.0, (float) $afterrate->lines[0]->multicurrency_subprice, 'Fixed currency price must survive the rate change');
+		$this->assertEquals(1, (int) $afterrate->lines[0]->multicurrency_subprice_source, 'Freeze flag must survive the rate change');
+
+		$line = $afterrate->lines[0];
+		$this->updatelineByName($afterrate, array(
+			'rowid' => $line->id, 'desc' => 'sourced line', 'pu' => $line->subprice, 'qty' => 5,
+			'remise_percent' => $line->remise_percent, 'txtva' => $line->tva_tx,
+			'price_base_type' => 'HT', 'type' => $line->product_type,
+			'pu_ht_devise' => $line->multicurrency_subprice,
+		));
+
+		$afteredit = new Commande($db);
+		$afteredit->fetch($oid);
+		$afteredit->fetch_lines();
+		$this->assertEquals(1, (int) $afteredit->lines[0]->multicurrency_subprice_source, 'Freeze flag must survive a plain line edit');
+		$this->assertEquals(100.0, (float) $afteredit->lines[0]->multicurrency_subprice, 'Fixed currency price must survive a plain line edit');
+	}
+
+	/**
 	 * A sourced currency price flag set at addline time is persisted on order lines.
 	 *
 	 * @return void
