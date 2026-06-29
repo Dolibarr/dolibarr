@@ -89,23 +89,27 @@ if (empty($user->id)) {
 	$user->loadRights();
 }
 
+// Mass price initialization is an administrative operation
+if (empty($user->admin)) {
+	print "Error: this script must run as an administrator user.\n";
+	exit(1);
+}
+
 print '--- start'.($dryrun ? ' (test mode, no write)' : '')."\n";
 
 $ppc = new ProductPriceCurrency($db);
 
 if ($dryrun) {
-	// In test mode we do not write: just report the scope.
-	$nbcurrencies = count($codes) > 0 ? count($codes) : 0;
-	if ($nbcurrencies == 0) {
-		foreach (MultiCurrency::getCurrencyList($db) as $currency) {
-			if ($currency['code'] != $conf->currency) {
-				$nbcurrencies++;
-			}
-		}
+	// Test mode: count exactly what would be created, without writing anything.
+	$wouldcreate = $ppc->initCatalogCurrencyPrices($user, $codes, $onelevel, true);
+	if ($wouldcreate < 0) {
+		print "Error: ".$ppc->error."\n";
+		$db->close();
+		exit(1);
 	}
-	print "Would process ".$nbcurrencies." currency(ies)";
+	print "Would create ".$wouldcreate." missing per-currency price(s)";
 	print ($onelevel > 0 ? " on price level ".$onelevel : " on all price levels").".\n";
-	print "Re-run with 'confirm' to create the missing per-currency prices.\n";
+	print "Re-run with 'confirm' to create them.\n";
 	$db->close();
 	exit(0);
 }

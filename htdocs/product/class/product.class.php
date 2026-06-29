@@ -7304,6 +7304,35 @@ class Product extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		// product_price_currency has a unique key (fk_product, fk_soc, price_level, multicurrency_code, entity).
+		// Drop origin rows that would collide with an existing dest row once fk_soc is remapped, otherwise the
+		// generic fk_soc UPDATE below fails with a duplicate-key error and the whole merge is rolled back. (issue #32379)
+		// Resolve the rowids first, then delete them in a plain statement: a multi-table/self-referencing DELETE
+		// is not portable (MySQL error 1093, and the PostgreSQL SQL converter does not translate it).
+		$idstodelete = array();
+		$sqlfind = "SELECT ppc.rowid FROM ".$dbs->prefix()."product_price_currency as ppc";
+		$sqlfind .= " INNER JOIN ".$dbs->prefix()."product_price_currency as keep ON";
+		$sqlfind .= " keep.fk_product = ppc.fk_product AND keep.price_level = ppc.price_level";
+		$sqlfind .= " AND keep.multicurrency_code = ppc.multicurrency_code AND keep.entity = ppc.entity";
+		$sqlfind .= " AND keep.fk_soc = ".((int) $dest_id);
+		$sqlfind .= " WHERE ppc.fk_soc = ".((int) $origin_id);
+		$resqlfind = $dbs->query($sqlfind);
+		if (!$resqlfind) {
+			return false;
+		}
+		while ($objfind = $dbs->fetch_object($resqlfind)) {
+			$idstodelete[] = (int) $objfind->rowid;
+		}
+		$dbs->free($resqlfind);
+
+		if (!empty($idstodelete)) {
+			$sqldedup = "DELETE FROM ".$dbs->prefix()."product_price_currency";
+			$sqldedup .= " WHERE rowid IN (".$dbs->sanitize(implode(',', $idstodelete)).")";
+			if (!$dbs->query($sqldedup)) {
+				return false;
+			}
+		}
+
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log',
