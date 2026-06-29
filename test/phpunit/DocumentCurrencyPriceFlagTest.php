@@ -270,6 +270,54 @@ class DocumentCurrencyPriceFlagTest extends CommonClassTest
 	}
 
 	/**
+	 * The nominal flow: an invoice built from an order (createFromOrder) must carry the freeze flag of the
+	 * source order line, otherwise a later invoice rate change silently recomputes the frozen price. (issue #32379)
+	 *
+	 * @return void
+	 */
+	public function testInvoiceFromOrderKeepsFreezeFlag()
+	{
+		global $db, $user;
+
+		$socid = $this->createSoc();
+		$pid = $this->createProduct();
+
+		$order = new Commande($db);
+		$order->socid = $socid;
+		$order->date = dol_now();
+		$order->multicurrency_code = 'USD';
+		$oid = $order->create($user);
+		$this->assertGreaterThan(0, $oid, 'Order creation failed: '.$order->error);
+
+		$order->multicurrency_code = 'USD';
+		$order->multicurrency_tx = 1.1;
+		$res = $this->addlineByName($order, array(
+			'desc' => 'sourced line', 'pu_ht' => 0, 'qty' => 2, 'txtva' => 20,
+			'fk_product' => $pid, 'price_base_type' => 'HT', 'pu_ht_devise' => 100.0,
+			'multicurrency_subprice_source' => 1,
+		));
+		$this->assertGreaterThan(0, $res, 'Order addline failed: '.$order->error);
+
+		$srcorder = new Commande($db);
+		$srcorder->fetch($oid);
+		$srcorder->fetch_lines();
+		$this->assertEquals(1, (int) $srcorder->lines[0]->multicurrency_subprice_source, 'Precondition: order line must be frozen');
+
+		// createFromOrder returns 1 on success and exposes the new invoice id on $invoice->id
+		$invoice = new Facture($db);
+		$res = $invoice->createFromOrder($srcorder, $user);
+		$this->assertGreaterThan(0, $res, 'createFromOrder failed: '.$invoice->error);
+		$this->assertGreaterThan(0, $invoice->id, 'createFromOrder did not set the new invoice id');
+
+		$reloaded = new Facture($db);
+		$reloaded->fetch($invoice->id);
+		$reloaded->fetch_lines();
+		$this->assertNotEmpty($reloaded->lines, 'No invoice lines');
+		// The freeze flag must be carried from the order line so a later invoice rate change does not recompute it
+		$this->assertEquals(1, (int) $reloaded->lines[0]->multicurrency_subprice_source, 'Invoice-from-order line must keep the freeze flag');
+	}
+
+	/**
 	 * A sourced currency price flag set at addline time is persisted on order lines.
 	 *
 	 * @return void
