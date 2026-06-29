@@ -753,7 +753,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
 		}
 		if (!$error) {
-			// Calcul du prix HT et du prix unitaire
+			// Compute the net price and the unit price
 			if ($object->price_base_type == 'TTC') {
 				$price = (float) price2num($newprice) / (1 + ($object->tva_tx / 100));
 			}
