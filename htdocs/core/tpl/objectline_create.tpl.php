@@ -1023,7 +1023,7 @@ if (!empty($object->thirdparty)) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=" + jsConf.docObject.socid);
 					$.post(jsConf.url.fetchProductUrl,
-						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.newtoken, 'addalsovatforthirdpartyid': 1 },
+						{ 'id': $(this).val(), 'socid': jsConf.docObject.socid, 'token': jsConf.conf.newtoken, 'addalsovatforthirdpartyid': 1, 'multicurrency_code': (typeof jsConf.docObject.multicurrency_code !== 'undefined' ? jsConf.docObject.multicurrency_code : '') },
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
@@ -1057,6 +1057,13 @@ if (!empty($object->thirdparty)) {
 							} else {
 								console.log("objectline_create.tpl set content of price_ht");
 								jQuery("#price_ht").val(data.price_ht);
+							}
+
+							// Prefill the currency unit price from the product fixed per-currency price; it primes over the company price (issue #32379)
+							if (typeof data.multicurrency_price_ht !== 'undefined' && data.multicurrency_price_ht !== '' && jQuery("#multicurrency_price_ht").length) {
+								jQuery("#multicurrency_price_ht").val(data.multicurrency_price_ht);
+								jQuery("#price_ht").val('');
+								jQuery("#price_ttc").val('');
 							}
 
 							// useful to retrieve percent from customer specific price
