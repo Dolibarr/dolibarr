@@ -640,6 +640,7 @@ class Propal extends CommonObject
 	 * 		@param		float			$pu_ht_devise		Unit price in currency
 	 * 		@param		int    			$fk_remise_except	Id discount if line is from a discount
 	 *  	@param		int				$noupdateafterinsertline	No update after insert of line
+	 *  	@param		int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *    	@return    	int         		    			Return >0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
@@ -932,6 +933,7 @@ class Propal extends CommonObject
 	 * 	@param		float			$pu_ht_devise		Unit price in currency
 	 * 	@param		int				$notrigger			Disable line update trigger
 	 *	@param      int				$rang   			Line rank
+	 *	@param      int				$multicurrency_subprice_source	Source of the currency unit price (1 = fixed per-currency product price, 0 = computed from the exchange rate)
 	 *  @return     int     							Return 0 if OK, <0 if KO
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0, $multicurrency_subprice_source = null)
