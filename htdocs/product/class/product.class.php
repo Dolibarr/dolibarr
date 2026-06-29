@@ -7326,8 +7326,9 @@ class Product extends CommonObject
 		$dbs->free($resqlfind);
 
 		if (!empty($idstodelete)) {
+			$sanitizedids = $dbs->sanitize(implode(',', $idstodelete));
 			$sqldedup = "DELETE FROM ".$dbs->prefix()."product_price_currency";
-			$sqldedup .= " WHERE rowid IN (".$dbs->sanitize(implode(',', $idstodelete)).")";
+			$sqldedup .= " WHERE rowid IN (".$sanitizedids.")";
 			if (!$dbs->query($sqldedup)) {
 				return false;
 			}
