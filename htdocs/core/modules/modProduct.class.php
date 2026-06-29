@@ -1036,6 +1036,7 @@ class modProduct extends DolibarrModules
 			$this->import_tables_creator_array[$r] = array('ppc' => 'fk_user_author'); // Fields to store import user id
 			$this->import_fields_array[$r] = array(
 				'ppc.fk_product' => "ProductOrService*",
+				'ppc.fk_soc' => "Customer",
 				'ppc.price_level' => "PriceLevel",
 				'ppc.fk_multicurrency' => "CurrencyCodeId",
 				'ppc.multicurrency_code' => "CurrencyCode*",
@@ -1050,11 +1051,13 @@ class modProduct extends DolibarrModules
 			);
 
 			$this->import_convertvalue_array[$r] = array(
-				'ppc.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+				'ppc.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product'),
+				'ppc.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty')
 			);
 
 			$this->import_examplevalues_array[$r] = array(
 				'ppc.fk_product' => "ref:PRODUCT_REF or id:123456",
+				'ppc.fk_soc' => "0 (catalog) or ref:CUSTOMER_REF or id:123456",
 				'ppc.price_level' => "1",
 				'ppc.fk_multicurrency' => "eg: 2 = the rowid for code of multicurrency currency",
 				'ppc.multicurrency_code' => "USD",

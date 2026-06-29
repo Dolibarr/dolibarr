@@ -978,6 +978,7 @@ class Products extends DolibarrApi
 	 * @param	int			$level					Price level
 	 * @param	float		$vat_tx					VAT rate (For example 8.5. Should not be a string)
 	 * @param	float		$multicurrency_tx		Currency rate
+	 * @param	int			$socid					Customer id for a per-customer price, 0 for the catalog price
 	 *
 	 * @return int									ID of the sell price per currency record
 	 *
@@ -987,7 +988,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url POST {id}/sell_prices_currency
 	 */
-	public function addSellPriceCurrency($id, $multicurrency_code, $price, $price_base_type = 'HT', $level = 1, $vat_tx = 0, $multicurrency_tx = 1)
+	public function addSellPriceCurrency($id, $multicurrency_code, $price, $price_base_type = 'HT', $level = 1, $vat_tx = 0, $multicurrency_tx = 1, $socid = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'creer') && !DolibarrApiAccess::$user->hasRight('service', 'creer')) {
 			throw new RestException(403);
@@ -1007,7 +1008,7 @@ class Products extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
 		$ppc = new ProductPriceCurrency($this->db);
-		$res = $ppc->setPriceCurrency($id, $multicurrency_code, (float) $price, $price_base_type, (float) $vat_tx, DolibarrApiAccess::$user, (int) $level, (float) $multicurrency_tx);
+		$res = $ppc->setPriceCurrency($id, $multicurrency_code, (float) $price, $price_base_type, (float) $vat_tx, DolibarrApiAccess::$user, (int) $level, (float) $multicurrency_tx, (int) $socid);
 		if ($res <= 0) {
 			throw new RestException(500, 'Error : ' . $ppc->error);
 		}
@@ -1055,6 +1056,7 @@ class Products extends DolibarrApi
 	 * @param	int			$id						Product ID
 	 * @param	string		$multicurrency_code		Currency code (example 'USD')
 	 * @param	int			$level					Price level
+	 * @param	int			$socid					Customer id for a per-customer price, 0 for the catalog price
 	 *
 	 * @return int									1 if deleted, 0 if nothing to delete
 	 *
@@ -1064,7 +1066,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url DELETE {id}/sell_prices_currency/{multicurrency_code}
 	 */
-	public function deleteSellPriceCurrency($id, $multicurrency_code, $level = 1)
+	public function deleteSellPriceCurrency($id, $multicurrency_code, $level = 1, $socid = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'supprimer') && !DolibarrApiAccess::$user->hasRight('service', 'supprimer')) {
 			throw new RestException(403);
@@ -1084,7 +1086,7 @@ class Products extends DolibarrApi
 
 		require_once DOL_DOCUMENT_ROOT . '/product/class/productpricecurrency.class.php';
 		$ppc = new ProductPriceCurrency($this->db);
-		$res = $ppc->deleteCurrencyPrice($id, (int) $level, $multicurrency_code, DolibarrApiAccess::$user);
+		$res = $ppc->deleteCurrencyPrice($id, (int) $level, $multicurrency_code, DolibarrApiAccess::$user, (int) $socid);
 		if ($res < 0) {
 			throw new RestException(500, 'Error : ' . $ppc->error);
 		}
