@@ -2681,13 +2681,21 @@ class Product extends CommonObject
 			}
 		}
 
-		// Catalog price (preloaded by fetch())
+		// Catalog price (preloaded by fetch()). Fall back to level 1 when the requested level has none.
+		$catalog = array();
 		if (!empty($this->multicurrency_prices[$level][$currency_code])) {
-			return $this->multicurrency_prices[$level][$currency_code];
+			$catalog = $this->multicurrency_prices[$level][$currency_code];
+		} elseif ($level != 1 && !empty($this->multicurrency_prices[1][$currency_code])) {
+			$catalog = $this->multicurrency_prices[1][$currency_code];
 		}
-		// Fall back to level 1 when the requested level has no per-currency price
-		if ($level != 1 && !empty($this->multicurrency_prices[1][$currency_code])) {
-			return $this->multicurrency_prices[1][$currency_code];
+		if (!empty($catalog)) {
+			// Rebuild a strictly-typed array so the declared return shape is honoured.
+			return array(
+				'price' => (float) $catalog['price'],
+				'price_ttc' => (float) $catalog['price_ttc'],
+				'price_base_type' => (string) $catalog['price_base_type'],
+				'multicurrency_tx' => (float) $catalog['multicurrency_tx'],
+			);
 		}
 
 		return array();
