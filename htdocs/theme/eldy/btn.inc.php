@@ -54,6 +54,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
+			--butactioncancelbg: #e3e3e3;
 			--butactionbg: rgb(<?php print $butactionbg; ?>);
 			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
@@ -203,10 +204,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	/* border: 1px solid #633; */
 	color: #633 !important;
 }
+.button.button-cancel, .button.button-cancel:link, .button.button-cancel:visited, .button.button-cancel:hover, .button.button-cancel:active, .button.button-cancel {
+	background: var(--butactioncancelbg) !important;
+	border: none;
+	color: #333 !important;
+}
 
 .butActionDelete:hover {
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
+.button.button-cancel:hover {
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+}
+
 
 /*
 .butActionDelete#action-delete::before {
@@ -222,6 +232,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 */
 
 .butActionRefused {
+	pointer-events: none;
+	cursor: default;
+	opacity: 0.4;
+	box-shadow: none;
+
 	text-decoration: none !important;
 	text-transform: uppercase;
 	font-weight: bold !important;
@@ -492,6 +507,17 @@ button.btn-low-emphasis.--btn-icon:active {
 
 input.button-save, input.button-cancel {
 	min-width: 110px;
-	margin-left: 5px !important;
-	margin-right: 5px !important;
+	margin-left: 8px !important;
+	margin-right: 8px !important;
+}
+
+/* smartphone */
+
+@media only screen and (max-width: 767px)
+{
+	input.button-save, input.button-cancel {
+		min-width: 90px;
+		margin-left: 4px !important;
+		margin-right: 4px !important;
+	}
 }

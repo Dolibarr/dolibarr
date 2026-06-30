@@ -1044,7 +1044,7 @@ class MyObject extends CommonObject
 	{
 		$sql = "SELECT t.rowid, t.date_creation as datec";
 		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
-			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+			$sql .= ", GREATEST(t.tms, COALESCE(te.tms, t.tms)) as datem";
 		} else {
 			$sql .= ", t.tms as datem";
 		}

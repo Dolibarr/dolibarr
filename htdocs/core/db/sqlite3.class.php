@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ class DoliDBSqlite3 extends DoliDB
 					$line .= "CREATE ".(preg_match('/UNIQUE/', $reg[2]) ? 'UNIQUE ' : '')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
 				}
 				if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $line, $reg)) {
-					// Pour l'instant les contraintes ne sont pas créées
+					// Constraints are not yet created
 					dol_syslog(get_class().'::query line emptied');
 					$line = 'SELECT 0;';
 				}
@@ -347,7 +347,7 @@ class DoliDBSqlite3 extends DoliDB
 			return false;
 		}
 
-		//print "Resultat fonction connect: ".$this->db;
+		//print "Result of connect function: ".$this->db;
 		return $this->db;
 	}
 
@@ -417,8 +417,8 @@ class DoliDBSqlite3 extends DoliDB
 		// Convert MySQL syntax to SQLite syntax
 		$reg = array();
 		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
-			// Ajout d'une clef étrangère à la table
-			// procédure de replacement de la table pour ajouter la contrainte
+			// Adding a foreign key to the table
+			// table replacement procedure to add the constraint
 			// Example : ALTER TABLE llx_adherent ADD CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid)
 			// -> CREATE TABLE ( ... ,CONSTRAINT adherent_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid))
 			$foreignFields = $reg[5];
@@ -619,8 +619,7 @@ class DoliDBSqlite3 extends DoliDB
 		if (preg_match("/^SELECT/i", $this->queryString)) {
 			return $this->num_rows($resultset);
 		}
-		// mysql necessite un link de base pour cette fonction contrairement
-		// a pqsql qui prend un resultset
+		// mysql requires a base link for this function, unlike pgsql which takes a resultset
 		return $this->db->changes();
 	}
 
@@ -1350,8 +1349,8 @@ class DoliDBSqlite3 extends DoliDB
 		$result = array();
 		static $pragmas;
 		if (!isset($pragmas)) {
-			// Définition de la liste des pragmas utilisés qui ne retournent qu'une seule valeur
-			// indépendante de la base de données.
+			// Define the list of pragmas used that return only a single value
+			// independent of the database.
 			// cf. http://www.sqlite.org/pragma.html
 			$pragmas = array(
 				'application_id', 'auto_vacuum', 'automatic_index', 'busy_timeout', 'cache_size',
@@ -1379,7 +1378,7 @@ class DoliDBSqlite3 extends DoliDB
 				//dol_syslog(get_class($this)."::select_db getServerParametersValues $var=". print_r($obj, true), LOG_DEBUG);
 				$result[$var] = $obj[0];
 			} else {
-				// TODO Récupérer le message
+				// TODO Retrieve the message
 				$result[$var] = 'FAIL';
 			}
 		}

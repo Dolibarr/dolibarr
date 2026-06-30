@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -723,7 +723,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		// parcourir les objects
 		$o = 0;
 		foreach ($permissions as &$object) {
-			// récupérer la permission de l'objet
+			// get the object permission
 			$p = 1;
 			foreach ($object as &$obj) {
 				if (str_contains($obj[5], 'read')) {
