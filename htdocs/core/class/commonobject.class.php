@@ -99,7 +99,7 @@ abstract class CommonObject
 	public $warning;
 
 	/**
-	* @var string[]	Array of warning strings
+	 * @var string[]	Array of warning strings
 	 */
 	public $warnings = array();
 
@@ -5963,6 +5963,10 @@ abstract class CommonObject
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
 			$this->tpl['strike'] = 1;
 		} elseif (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			// SUBTOTALS_SPECIAL_CODE is only defined when the subtotals module
+			// is loaded (htdocs/subtotals/class/commonsubtotal.class.php:24).
+			// Without the guard, printing origin lines from a PO into a vendor
+			// invoice fatals (#37663). Other tpl files already follow this pattern.
 			$this->tpl['strike'] = 1;
 		}
 
@@ -6775,7 +6779,6 @@ abstract class CommonObject
 		if (!$this->table_element) {
 			return 0;
 		}
-
 		$this->array_options = array();
 
 		if (!is_array($optionsArray)) {
@@ -6822,7 +6825,6 @@ abstract class CommonObject
 				$numrows = $this->db->num_rows($resql);
 				if ($numrows) {
 					$tab = $this->db->fetch_array($resql);
-
 					foreach ($tab as $key => $value) {
 						// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && !is_int($key)) {
@@ -6861,8 +6863,9 @@ abstract class CommonObject
 						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								global $objectoffield;        // We set a global variable to $objectoffield so
-								$objectoffield = $this;        // we can use it inside computed formula
+								// We set a global variable to $objectoffield so we can use it inside computed formula
+								$objectoffield = dol_clone($this, 2);
+								global $objectoffield;
 								$this->array_options['options_' . $key] = dol_eval((string) $extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '2');
 							}
 						}
@@ -6877,7 +6880,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				$this->errors[] = $this->db->lasterror;
+				$this->errors[] = $this->db->lasterror();
 				return -1;
 			}
 		}
@@ -6969,6 +6972,13 @@ abstract class CommonObject
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
 			$attributeEmptyOnClone = $extrafields->attributes[$this->table_element]['emptyonclone'][$attributeKey];
+			/*
+			$attributeEnabled  = $extrafields->attributes[$this->table_element]['enabled'][$attributeKey];
+			$enabled = 0;
+			if (!empty($extrafields->attributes[$this->table_element]['enabled'][$key])) {
+				$enabled = (int) dol_eval((string) $extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '2');
+			}
+			*/
 
 			// If we clone, we have to clean unique extrafields to prevent duplicates.
 			// If we clone, we have to clean extrafields having "empty on clone" option on.
@@ -6986,7 +6996,7 @@ abstract class CommonObject
 			}
 
 			// Similar code than into insertExtraFields
-			if ($attributeRequired) {
+			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$v = $this->array_options[$key];
 				if (ExtraFields::isEmptyValue($v, $attributeType)) {
 					$langs->load("errors");
@@ -7442,15 +7452,16 @@ abstract class CommonObject
 			$value = $this->array_options["options_".$key];
 
 			$attributeKey      = $key;
-			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$key];
-			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$key];
-			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$key];
-			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$key];
+			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
+			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
-			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$key];
+			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+			//$attributeEnabled  = $extrafields->attributes[$this->table_element]['enabled'][$attributeKey];
 
 			// Similar code than into insertExtraFields
-			if ($attributeRequired) {
+			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$mandatorypb = false;
 				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') {
 					$mandatorypb = true;
@@ -7670,7 +7681,7 @@ abstract class CommonObject
 				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
-					$sql.= " SET ".$this->db->sanitize($key)." = null";
+					$sql .= " SET ".$this->db->sanitize($key)." = null";
 				} elseif (!empty($sanitizedGeoDataType['ST_Function'])) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
 					$sql .= " SET ".$this->db->sanitize($key)." = ".$this->db->sanitize($sanitizedGeoDataType['ST_Function'])."('".$this->db->escape($this->array_options["options_".$key])."')";
@@ -9475,7 +9486,6 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 			$value_arr = explode(',', $fieldValue);
-			$value_arr = array_map(array($this->db, 'escape'), $value_arr);
 
 			$selectkey = "rowid";
 			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -9596,7 +9606,7 @@ abstract class CommonObject
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
 						$ef_name = 'options_' . $key;
-						$ef_value = $this->array_options[$ef_name]??'';
+						$ef_value = $this->array_options[$ef_name] ?? '';
 						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {

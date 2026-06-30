@@ -5,7 +5,7 @@
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2026      Joachim Küter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -438,8 +438,8 @@ function dol_stringtotime($string, $gm = 1)
 	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
-		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
-		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
+		// Date is in format 'DD/MM/YY' or 'DD/MM/YY HH:MM:SS'
+		// Date is in format 'DD/MM/YYYY' or 'DD/MM/YYYY HH:MM:SS'
 		$sday = (int) $reg[1];
 		$smonth = (int) $reg[2];
 		$syear = (int) $reg[3];
@@ -632,7 +632,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 		$month += 1;
 	}
 
-	// On se deplace au debut du mois suivant, et on retire un jour
+	// Move to the start of the next month, then subtract one day
 	$datelim = dol_mktime(23, 59, 59, $month, 1, $year, $gm);
 	$datelim -= (3600 * 24);
 
@@ -909,7 +909,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1200,7 +1200,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1496,7 +1496,7 @@ function getFirstDayOfEachWeek($TWeek, $year)
 	$TFirstDayOfWeek = array();
 	foreach ($TWeek as $weekNb) {
 		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
-			$year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+			$year++; // If we have both week 1 and week 52, it means we are changing year
 		}
 		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb));
 	}

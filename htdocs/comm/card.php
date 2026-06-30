@@ -1777,12 +1777,6 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 
-		// Add invoice
-		if (isModEnabled('deplacement') && $object->status == 1) {
-			$langs->load("trips");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddTrip").'</a></div>';
-		}
-
 		if (isModEnabled('invoice') && $object->status == 1) {
 			if (!$user->hasRight('facture', 'creer')) {
 				$langs->load("bills");

@@ -195,7 +195,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		// Refuse and cancel any trigger event if we are running a certified version without forcing https.
 		// This is a security requirement for certification. We do this check before any other to avoid any risk of logging an event that should be blocked because of non respect of certification rules.
 		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 		$isqualified = isALNERunningVersion(1);
 		if ($isqualified && (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') == 1) && !isHTTPS() && !in_array($action, array('DOC_PREVIEW', 'DOC_DOWNLOAD'))) {
@@ -605,22 +605,22 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			fwrite($fh, '----- ');
 			fwrite($fh,  $langs->transnoentitiesnoconv("TotalForThePeriod"));
 			fwrite($fh,  ' - '.($source ? $langs->transnoentitiesnoconv("PointOfSale").' '.ucfirst($source) : $langs->transnoentitiesnoconv("BackOffice")));
-			//fwrite($fh,  ' ('.$langs->trans("ForPeriodAndFilters").')');
+			fwrite($fh,  ' ('.$yearmonthtoexport.($periodnotcomplete ? '-'.$suffixperiod : '').')');
 			fwrite($fh, ' -----');
 			fwrite($fh, "\n");
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
 				$amountstoshow = '';
-				$s = '';
+				$s = $actioncode;
 				if ($actioncode == 'BILL_VALIDATE') {
 					$s = 'BILLED = '.$langs->transnoentitiesnoconv("Turnover");
-					$amountstoshow = $totalhtamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT").' - '.$totalvatamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("VAT").' - '.$totalamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
+					$amountstoshow = (float) $totalhtamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("HT").' - '.(float) $totalvatamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("VAT").' - '.(float) $totalamount['BILL_VALIDATE'][$source].' '.$langs->transnoentitiesnoconv("TTC");
 				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
 					$s = 'PAID   = '.$langs->transnoentitiesnoconv("TurnoverCollected");
-					$amountstoshow = $totalamount['PAYMENT_CUSTOMER'][$source];
+					$amountstoshow = (float) $totalamount['PAYMENT_CUSTOMER'][$source];
 				}
 
-				fwrite($fh, ' SUMMARY PERIOD '.$s.'  =  '.$amountstoshow."\n");
+				fwrite($fh, 'SUMMARY PERIOD '.$s.'  =  '.$amountstoshow."\n");
 			}
 		}
 
@@ -635,6 +635,8 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 		$firstrecorddate = 0;
 		global $foundoldformat, $firstrecorddate;
 		include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+		'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+		'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
 		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
@@ -647,7 +649,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 			fwrite($fh, '----- ');
 			fwrite($fh,  $langs->transnoentitiesnoconv("TotalForLifetime"));
 			fwrite($fh,  ' - '.($source ? $langs->transnoentitiesnoconv("PointOfSale").' '.ucfirst($source) : $langs->transnoentitiesnoconv("BackOffice")));
-			//fwrite($fh,  ' ('.$langs->transnoentitiesnoconv("ForPeriodAndFilters").')');
+			fwrite($fh,  '  (>='.dol_print_date($firstrecorddate, 'standard').')');
 			fwrite($fh, "\n");
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
@@ -662,7 +664,7 @@ if ($action == 'export' && $user->hasRight('blockedlog', 'read')) {		// read is 
 				}
 
 				// Add a final line with perpetual total for invoice validations
-				fwrite($fh, ' SUMMARY LIFETIME '.$s.' (>='.dol_print_date($firstrecorddate, 'standard').')  =  '.$amountstoshow."\n");
+				fwrite($fh, 'SUMMARY LIFETIME '.$s.'  =  '.$amountstoshow."\n");
 			}
 		}
 
@@ -936,6 +938,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		$amountttclifetime['BILL_VALIDATE'] = $amountttclifetime['PAYMENT_CUSTOMER'] = null;
 
 		$footer = '';
+		$errorlines = '';
 
 		$handle = fopen($fullpath, "r");
 		if ($handle) {
@@ -959,7 +962,22 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 
 				$block_static->id = 0;	// reset tmp record
 
-				if ($formatexport == 'VE1' && !empty($line[1])) {	// Format V23
+				// Test if line is an empty line
+				if (trim((string) $line[0]) == '' && trim((string) $line[1]) == '') {
+					$lineanalyzed = 2;
+				}
+
+				// Test if line is an comment line
+				if (preg_match('/^-----/', (string) $line[0])) {
+					$lineanalyzed = 2;
+				}
+
+				// Test if line is an error alert line
+				if (preg_match('/^ERROR/', (string) $line[0])) {
+					$lineanalyzed = 3;
+				}
+
+				if (empty($lineanalyzed) && $formatexport == 'VE1' && !empty($line[1])) {	// Format Blockedlog V1-
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
@@ -985,7 +1003,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					$statusline = (string) $line[16];
 				}
 
-				if ($formatexport == 'VE2' && !empty($line[1])) {	// Format V24+
+				if (empty($lineanalyzed) && $formatexport == 'VE2' && !empty($line[1])) {	// Format Blockedlog V2+
 					$lineanalyzed = 1;
 					$linetech = $line[0];
 
@@ -1057,7 +1075,7 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					*/
 				}
 
-				if ($lineanalyzed && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
+				if ($lineanalyzed == 1 && ($lineactioncode == 'BILL_VALIDATE' || $lineactioncode == 'PAYMENT_CUSTOMER_CREATE' || $lineactioncode == 'PAYMENT_CUSTOMER_DELETE')) {
 					// For action = BILL_VALIDATE, we keep only first invoice found, but this should not happen because edition of invoice is never possible on
 					// certified version (locked) and very difficult on other version.
 					if ($lineactioncode != 'BILL_VALIDATE' || empty($refinvoicefound[$lineref])) {
@@ -1074,52 +1092,20 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 					}
 				}
 
-				// Test if line is an empty line
-				if (trim((string) $line[0]) == '' && trim((string) $line[1]) == '') {
-					$lineanalyzed = 2;
-				}
-
-				// Test if line is an comment line
-				if (preg_match('/^-----/', (string) $line[0])) {
-					$lineanalyzed = 2;
-				}
-
 				// Test if line is a summary line
-				if (preg_match('/^\s*SUMMARY /', (string) $line[0])) {
+				if (preg_match('/^SUMMARY /', (string) $line[0])) {
 					// We are on a line for summary information
 					$lineanalyzed = 2;
-					/*
-					if (preg_match('/^SUMMARY PERIOD BILLED/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					if (preg_match('/^SUMMARY PERIOD PAID/', (string) $line[0])) {
-						// Do nothing, we recalculate amount from previous lines
-					}
-					*/
-					/*
-					if (preg_match('/^SUMMARY LIFETIME BILLED/', (string) $line[0])) {
-						// We load data from line
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME BILLED[^\d]*\s:\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+\s([\d\.]+)\s[^\d]+/', $amountstring, $reg)) {
-							$amounthtlifetime['BILL_VALIDATE'] = (float) $reg[1];
-							$amountvatlifetime['BILL_VALIDATE'] = (float) $reg[2];
-							$amountttclifetime['BILL_VALIDATE'] = (float) $reg[3];
-						}
-					}
-					if (preg_match('/^SUMMARY LIFETIME PAID/', (string) $line[0])) {
-						$amountstring = (string) $line[0];
-						if (preg_match('/^SUMMARY LIFETIME PAID[^\d]*\s:\s([\d\.]+)/', $amountstring, $reg)) {
-							$amounthtlifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-							$amountvatlifetime['PAYMENT_CUSTOMER'] = 0.0;
-							$amountttclifetime['PAYMENT_CUSTOMER'] = (float) $reg[1];
-						}
-					}
-					*/
 				}
 
 				if ($lineanalyzed == 2) {
 					// We are in the footer section with comments
-					$footer .= (string) $line[0]."\n";
+					$footer .= (string) str_replace(array(';', '*'), '', implode(' ', $line))."\n";
+				}
+
+				if ($lineanalyzed == 3) {
+					// We are in the footer section with comments
+					$errorlines .= (string) $line[0]."\n";
 				}
 
 				if (preg_match('/END - ([a-z0-9_]+)=([a-z0-9]+) - ([a-z0-9_]+)=([a-z0-9]+)$/', (string) $line[0], $reg)) {
@@ -1187,111 +1173,23 @@ if ($action == 'check' || $action == 'checkconfirmed') {
 		}
 		print '<br><br>';
 
-		/*
-		if (!userIsTaxAuditor()) {
-			if ($nbLinesModifiedInExportButKo) {
-				print img_picto('', 'cross', 'class="error valignmiddle pictofixedwidth"');
-				print '<b>'.$langs->trans("nbLinesModifiedInExportButKo").'</b>: ';
-				print '<br><br>';
-			}
-		}
-		*/
-
 		if ($nbLinesModifiedBeforeExport) {
 			print img_picto('', 'warning', 'class="error valignmiddle pictofixedwidth"');
 			print '<b>'.$langs->trans("nbLinesModifiedBeforeExport").'</b>';
 			print '<br><br>';
 		}
 
-		/*
-		print img_picto('', 'minus', 'class="valignmiddle pictofixedwidth"');
-		print '<b>'.$langs->trans("DetectionOfSystemRestoration").'</b>: ';
-		print '<span class="opacitymedium">';
-		print $langs->trans("FeatureOnlyWhenArchiveAnalyzedFrom", "https://www.dolibarr.org/onlinecheckarchive.php");
-		print '</span><br>';
-		print '<br>';
-		*/
+		// Now print the error line section
+		if ($errorlines) {
+			print img_picto('', 'warning', 'class="error valignmiddle center pictofixedwidth"').'<b>'.$errorlines.'</b><br>';
 
-		/*
-		print '<hr>';
-
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
-		foreach ($arraykeys as $key) {
-			$totalhttoshow = $totalhtamountforaction[$key];
-			$totalvattoshow = $totalvatamountforaction[$key];
-			$totaltoshow = $totalamountforaction[$key];
-
-			print '<b>'.dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$key)).'</b>';
-			if ($key == 'BILL_VALIDATE') {
-				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER') {
-				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
-			}
-			print ': ';
-
-			if ($key == 'PAYMENT_CUSTOMER') {
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			} else {
-				print $langs->trans("HT").': ';
-				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("VAT").': ';
-				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("TTC").': ';
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			}
 			print '<br>';
 		}
-		*/
-
-		// Now print the value for lifetime amounts.
-		/*
-		$arraykeys = array('BILL_VALIDATE', 'PAYMENT_CUSTOMER');
-		foreach ($arraykeys as $key) {
-			if (is_null($amounthtlifetime[$key])) {		// If not entry found, we discard
-				continue;
-			}
-			$totalhttoshow = $amounthtlifetime[$key];
-			$totalvattoshow = $amountvatlifetime[$key];
-			$totaltoshow = $amountttclifetime[$key];
-
-			print '<b>'.dolPrintHTML($langs->trans("LifetimeAmountShort").' '.$langs->trans('log'.$key)).'</b>';
-			if ($key == 'BILL_VALIDATE') {
-				print ' <span class="opacitymedium">('.$langs->trans("Turnover").')</span>';
-			} elseif ($key == 'PAYMENT_CUSTOMER') {
-				print ' <span class="opacitymedium">('.$langs->trans("TurnoverCollected").')</span>';
-			}
-			print ': ';
-
-			if ($key == 'PAYMENT_CUSTOMER') {
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			} else {
-				print $langs->trans("HT").': ';
-				print '<span class="amount">'.price($totalhttoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("VAT").': ';
-				print '<span class="amount">'.price($totalvattoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-
-				print ' - ';
-
-				print $langs->trans("TTC").': ';
-				print '<span class="amount">'.price($totaltoshow, 0, $langs, 1, -1, -1, getDolCurrency()).'</span>';
-			}
-			print '<br>';
-		}
-		*/
 
 		// Now print the foot section
 		print img_picto('', 'tick', 'class="valignmiddle center pictofixedwidth"');
 		print '<b>'.$langs->trans("Summary").'</b>';
-		print '<textarea class="centpercent" rows="14">';
+		print '<textarea class="centpercent" rows="14" spellcheck="false">';
 		print dol_htmlcleanlastbr($footer);
 		print '</textarea>';
 
@@ -1517,7 +1415,7 @@ if ($action != 'check' && $action != 'checkconfirmed') {
 		0,
 		-1,
 		'',
-		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check'.$param)))
+		array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1, 'hideshared' => 1, 'buttons' => array(0 => array('picto' => img_picto($langs->trans("ControlFile"), 'question'), 'url' => $_SERVER["PHP_SELF"].'?action=check&token=notrequired'.$param)))
 	);
 }
 

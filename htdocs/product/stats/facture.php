@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2026		Jon Bendtsen		<jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -447,12 +447,14 @@ if ($id > 0 || !empty($ref)) {
 				print '</div>';
 
 				$i = 0;
+				$colspan = 3;
 				print '<div class="div-table-responsive">';
-				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore centpercent">';
 				print '<tr class="liste_titre">';
 				// Action column
 				if ($conf->main_checkbox_left_column) {
 					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+					$colspan++;
 				}
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
@@ -547,7 +549,7 @@ if ($id > 0 || !empty($ref)) {
 				} else {
 					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
-				print '<td colspan="3"></td>';
+				print '<td colspan="'.$colspan.'"></td>';
 				print '<td class="center">'.$total_qty.'</td>';
 				print '<td class="right">'.price($total_ht).'</td>';
 				print '<td></td>';

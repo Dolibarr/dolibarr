@@ -15,7 +15,7 @@
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
  * Copyright (C) 2018		Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020	Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
@@ -2087,7 +2087,7 @@ class Societe extends CommonObject
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
-				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
+				$this->stcomm_picto = $obj->stcomm_picto; // commercial status picto
 
 				$this->email = $obj->email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
@@ -3493,7 +3493,7 @@ class Societe extends CommonObject
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
-			// TODO: Tester si tel non deja present dans tableau contact
+			// TODO: Test if phone is not already present in contact array
 			$contact_phone['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->phone.">";
 		}
 		return $contact_phone;
@@ -5391,15 +5391,22 @@ class Societe extends CommonObject
 	public function calculateVATNumberFromProperties($thirdparty)
 	{
 		if ($thirdparty->country_code == 'FR' && empty($thirdparty->tva_intra) && !empty($thirdparty->tva_assuj)) {
-			$siren = trim($thirdparty->idprof1);
-			if (empty($siren)) {
-				$siren = (int) substr(str_replace(' ', '', $thirdparty->idprof2), 0, 9);
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
+			$siren = preg_replace('/\s+/', '', (string) $thirdparty->idprof1);
+			$siret = preg_replace('/\s+/', '', (string) $thirdparty->idprof2);
+			if (!isValidSiren($siren)) {
+				if (!isValidSiret($siret)) {
+					return '';
+				}
+
+				$siren = substr($siret, 0, 9);
 			}
 			if (!empty($siren)) {
-				// [FR + code clé  + numéro SIREN ]
-				// Key VAT = [12 + 3 × (SIREN modulo 97)] modulo 97
-				$cle = (12 + 3 * $siren % 97) % 97;
-				$tva_intra = 'FR' . $cle . $siren;
+				// [FR + key code + SIREN number ]
+				// Key VAT = [12 + 3 * (SIREN modulo 97)] modulo 97
+				$cle = (12 + 3 * (((int) $siren) % 97)) % 97;
+				$tva_intra = 'FR' . str_pad((string) $cle, 2, '0', STR_PAD_LEFT) . $siren;
 			}
 		}
 

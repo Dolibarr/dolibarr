@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
  * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
@@ -1010,8 +1010,8 @@ class DiscountAbsolute extends CommonObject
 		}
 
 		if (empty($this->amount_ttc)) {
-			// Dans le cas où le montant ttc vient d'une remise scindée on le prend tel quel
-			// car de recalculer le montant ttc à partir du montant ht créé des erreurs de précision.
+			// If the total amount comes from a split discount, we take it as-is
+			// because recalculating the total amount from the net amount creates precision errors.
 			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
 			$this->multicurrency_amount_ttc = price2num(((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2)  * (float) $this->multicurrency_tx, 'MT');
 		}
