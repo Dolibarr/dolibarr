@@ -2650,7 +2650,6 @@ class ExtraFields
 				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
 				if (getDolGlobalBool('MAIN_GEOPHP_ENABLE_VIEWMODE')) {
-					$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
 					$tmparray = $dolgeophp->parseGeoString($value);
 					$geojson = $tmparray['geojson'];
 					$centroidjson = $tmparray['centroidjson'];
@@ -2668,7 +2667,6 @@ class ExtraFields
 				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
 				if (getDolGlobalBool('MAIN_GEOPHP_ENABLE_VIEWMODE')) {
-					$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
 					$tmparray = $dolgeophp->parseGeoString($value);
 					$geojson = $tmparray['geojson'];
 					$centroidjson = $tmparray['centroidjson'];
