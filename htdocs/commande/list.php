@@ -434,6 +434,15 @@ if (empty($reshook)) {
 			if ($cmd->fetch($id_order) <= 0) {
 				continue;
 			}
+
+			// Skip orders that cannot be billed, to mirror the "CreateBill" button availability on the order card
+			// (card.php only shows it when status > STATUS_DRAFT and the order is not already billed): this excludes
+			// draft and canceled orders, as well as orders already classified as billed.
+			if ($cmd->status <= Commande::STATUS_DRAFT || !empty($cmd->billed)) {
+				setEventMessages($langs->trans('WarningOrderNotEligibleForInvoicing', $cmd->ref), null, 'warnings');
+				continue;
+			}
+
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
@@ -693,6 +702,7 @@ if (empty($reshook)) {
 				}
 
 				$id = $objecttmp->id; // For builddoc action
+				$lastref = $objecttmp->ref; // Refresh ref after validation (was the draft PROVxxxx ref set at creation)
 
 				// Builddoc
 				$donotredirect = 1;
