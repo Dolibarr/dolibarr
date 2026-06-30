@@ -105,9 +105,9 @@ function filecheckLineDiff($a, $b)
 }
 
 /**
- * Diff of the changed region using a classic LCS dynamic programming matrix.
- * Falls back to a plain block replacement when the region is too large to keep
- * the matrix in memory.
+ * Diff of the changed region. For large regions, the region is recursively split on
+ * unique common lines (anchors, patience-diff style) so the expensive LCS only runs
+ * on small segments. This keeps small changes detected instead of one big block.
  *
  * @param	string[]	$a	Changed lines of the original file
  * @param	string[]	$b	Changed lines of the local file
@@ -115,14 +115,12 @@ function filecheckLineDiff($a, $b)
  */
 function filecheckMiddleDiff($a, $b)
 {
+	$a = array_values($a);
+	$b = array_values($b);
 	$na = count($a);
 	$nb = count($b);
 
-	if ($na == 0 && $nb == 0) {
-		return array();
-	}
-	// Too big to build a full LCS matrix: show the region as a plain replacement.
-	if ($na * $nb > 4000000) {
+	if ($na == 0 || $nb == 0) {
 		$result = array();
 		foreach ($a as $line) {
 			$result[] = array('-', $line);
@@ -132,6 +130,81 @@ function filecheckMiddleDiff($a, $b)
 		}
 		return $result;
 	}
+
+	// Small enough region: a direct LCS gives the optimal line-level diff.
+	if ($na * $nb <= 1000000) {
+		return filecheckLcs($a, $b);
+	}
+
+	// Large region: split on a unique common line (anchor) and recurse on both sides.
+	$anchor = filecheckFindAnchor($a, $b);
+	if ($anchor !== null) {
+		return array_merge(
+			filecheckMiddleDiff(array_slice($a, 0, $anchor[0]), array_slice($b, 0, $anchor[1])),
+			array(array(' ', $a[$anchor[0]])),
+			filecheckMiddleDiff(array_slice($a, $anchor[0] + 1), array_slice($b, $anchor[1] + 1))
+		);
+	}
+
+	// No anchor available in a very large region: fall back to a plain block replacement.
+	$result = array();
+	foreach ($a as $line) {
+		$result[] = array('-', $line);
+	}
+	foreach ($b as $line) {
+		$result[] = array('+', $line);
+	}
+	return $result;
+}
+
+/**
+ * Find a line that appears exactly once in both arrays (a unique common "anchor"),
+ * choosing the candidate closest to the middle of $a to balance the recursion.
+ *
+ * @param	string[]	$a	Lines
+ * @param	string[]	$b	Lines
+ * @return	?array{0:int,1:int}		[index in $a, index in $b] of the anchor, or null if none found
+ */
+function filecheckFindAnchor($a, $b)
+{
+	$countA = array();
+	foreach ($a as $line) {
+		$countA[$line] = (isset($countA[$line]) ? $countA[$line] : 0) + 1;
+	}
+	$countB = array();
+	$posB = array();
+	foreach ($b as $j => $line) {
+		$countB[$line] = (isset($countB[$line]) ? $countB[$line] : 0) + 1;
+		$posB[$line] = $j;
+	}
+
+	$middle = (int) (count($a) / 2);
+	$best = null;
+	$bestdist = -1;
+	foreach ($a as $i => $line) {
+		if ($countA[$line] == 1 && isset($countB[$line]) && $countB[$line] == 1) {
+			$dist = abs($i - $middle);
+			if ($bestdist < 0 || $dist < $bestdist) {
+				$bestdist = $dist;
+				$best = array($i, $posB[$line]);
+			}
+		}
+	}
+
+	return $best;
+}
+
+/**
+ * Diff of two small arrays of lines using a classic LCS dynamic programming matrix.
+ *
+ * @param	string[]	$a	Lines of the original file
+ * @param	string[]	$b	Lines of the local file
+ * @return	array<array{0:string,1:string}>		List of [type, line]
+ */
+function filecheckLcs($a, $b)
+{
+	$na = count($a);
+	$nb = count($b);
 
 	// LCS length matrix
 	$lcs = array();
