@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conference Or Booth
 AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Applicant or visitor
 Speaker=Speaker
 # Template Mail

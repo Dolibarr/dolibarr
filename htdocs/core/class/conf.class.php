@@ -1008,7 +1008,7 @@ class Conf extends stdClass
 				$this->global->THEME_SHOW_BORDER_ON_INPUT = 1;
 			}
 			if (!isset($this->global->THEME_ELDY_BORDER_RADIUS)) {
-				$this->global->THEME_ELDY_BORDER_RADIUS = 8;
+				$this->global->THEME_ELDY_BORDER_RADIUS = 10;
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1019,6 +1019,11 @@ class Conf extends stdClass
 			// By default we enable feature to bill time spent
 			if (!isset($this->global->PROJECT_BILL_TIME_SPENT)) {
 				$this->global->PROJECT_BILL_TIME_SPENT = 1;
+			}
+
+			// By default we enable feature to feature of layout for email
+			if (!isset($this->global->MAIN_EMAIL_USE_LAYOUT)) {
+				$this->global->MAIN_EMAIL_USE_LAYOUT = 1;
 			}
 
 			// MAIN_HTML_TITLE
@@ -1035,14 +1040,7 @@ class Conf extends stdClass
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
 				// Mode automatic. Similar code than into main.inc.php
-				$this->liste_limit = 15;
-				if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 700) {
-					$this->liste_limit = 8;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
-					$this->liste_limit = 10;
-				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
-					$this->liste_limit = 20;
-				}
+				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined

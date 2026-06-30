@@ -286,6 +286,17 @@ return [
 		'dolibarr_main_demo' => 'string',
 		'dolibarr_main_document_root' => 'string',
 		'dolibarr_main_url_root' => 'string',
+		'dolibarr_font_DOL_DEFAULT_TTF' => '?string',
+		'dolibarr_font_DOL_DEFAULT_TTF_BOLD' => '?string',
+		'dolibarr_js_CKEDITOR' => '?string',
+		'dolibarr_js_JQUERY' => '?string',
+		'dolibarr_js_JQUERY_UI' => '?string',
+		'dolibarr_lib_NUSOAP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATHTOPCLZIP' => '?string',
+		'dolibarr_lib_PHPEXCELNEW_PATH' => '?string',
+		'dolibarr_lib_TCPDF_PATH' => '?string',
+		'dolibarr_lib_TCPDI_PATH' => '?string',
 		'errormsg' => 'string',
 		'extrafields' => '\ExtraFields',
 		'filter' => 'string',
@@ -476,6 +487,7 @@ return [
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
+		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
 		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
@@ -538,6 +550,7 @@ return [
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 		'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+		'sqlite3'  => PHAN_DIR . '/stubs/sqlite3.phan_php',
 		'tidy'  => PHAN_DIR . '/stubs/tidy.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],

@@ -1164,7 +1164,6 @@ PastDelayVCalExport=Não exportar eventos antigos de
 ClickToDialSetup=Configurações do módulo clique para discar
 ClickToDialUseTelLink=Use apenas o link "tel." para os números de telefone
 ClickToDialUseTelLinkDesc=Use este método se seus usuários tiverem um softphone ou uma interface de software, instalados no mesmo computador que o navegador e chamados quando você clicar em um link que comece com "tel:" em seu navegador. Se você precisar de um link que comece com "sip:" ou uma solução de servidor completo (sem necessidade de instalação de software local), você deve definir isso como "Não" e preencher o próximo campo.
-CashDesk=Ponto de vendas
 CashDeskBankAccountForSell=Conta default para usar nos pagamentos em dinheiro
 CashDeskBankAccountForCheque=Conta padrão a ser usada para receber pagamentos por cheque
 CashDeskBankAccountForCB=Conta default para usar nos pagamentos em cartão de crédito

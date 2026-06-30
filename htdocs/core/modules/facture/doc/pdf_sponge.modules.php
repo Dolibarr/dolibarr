@@ -159,6 +159,9 @@ class pdf_sponge extends ModelePDFFactures
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
 
+		$this->showAmountBeforeDiscount = (getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') || getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT_INVOICE')) ? 0 : 1;
+		$this->showDiscountAmount =  (getDolGlobalInt('MAIN_HIDE_AMOUNT_DISCOUNT') || getDolGlobalInt('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT_INVOICE')) ? 0 : 1;
+
 		if ($mysoc === null) {
 			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
 			return;
@@ -1570,7 +1573,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			// Show if Option VAT debit option is on also if transmitter is french
 			// Decret n°2099-1299 2022-10-07
-			// French mention : "Option pour le paiement de la taxe d'après les débits"
+			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -1901,7 +1904,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Show total discount only if there is some discount on lines
 		if ($total_discount_on_lines > 0 && !$object->isSituationInvoice()) {
 			// Show discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
+			if ($this->showAmountBeforeDiscount && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
@@ -1914,7 +1917,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Show total NET before discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') && $object->type != 2) {
+			if ($this->showDiscountAmount && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);

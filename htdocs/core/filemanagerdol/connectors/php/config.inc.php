@@ -54,8 +54,9 @@ $entity = ((!empty($_SESSION['dol_entity']) && $_SESSION['dol_entity'] > 1) ? $_
 if (!getDolGlobalString('WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES')) {
 	accessforbidden('Upload of files in medias directory using this legacy tool is no more allowed');
 }
+
 // If upload has been allowed with WYSIWYG_ALLOW_UPLOAD_MEDIA_FILES set, we check permissions.
-if (!$user->hasRight('website', 'write')) {
+if (empty($user->admin) && !$user->hasRight('website', 'write')) {
 	accessforbidden('Need to have website write permission to upload files in medias directory.');
 }
 

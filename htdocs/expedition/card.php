@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -43,12 +43,12 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
-
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -56,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -116,7 +115,6 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 $object = new Expedition($db);
 $objectorder = new Commande($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -783,6 +781,7 @@ if (empty($reshook)) {
 		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
+
 		if ($action == 'settrueWeight') {		// Test on permission not required
 			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
@@ -1780,8 +1779,9 @@ if ($action == 'create' && $usercancreate) {
 			print $langs->trans("Weight");
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="' . GETPOST('weight') . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
-			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units'), 0, 2);
+
+			print '<input name="weight" size="4" value="' . dol_escape_htmltag(GETPOST('weight')) . '"> ';	// Do not use GETPOSTINT here, we must accept '' also.
+			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOST('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
@@ -1983,7 +1983,7 @@ if ($action == 'create' && $usercancreate) {
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 							$productChildrenNb = $product->hasFatherOrChild(1);
 						}
 						if ($productChildrenNb > 0) {
@@ -2116,13 +2116,16 @@ if ($action == 'create' && $usercancreate) {
 							// Quantity to send
 							print '<td class="center">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
-								if (GETPOSTINT('qtyl' . $indiceAsked)) {
-									$deliverableQty = GETPOSTINT('qtyl' . $indiceAsked);
+								if (GETPOSTISSET('qtyl'.$indiceAsked) && GETPOST('qtyl'.$indiceAsked) !== '') {
+									$deliverableQty = GETPOSTFLOAT('qtyl'.$indiceAsked, 'MS');
 								}
 								print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
 								$qtylValue = $deliverableQty;
 								if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 									$qtylValue = '';
+								} elseif (is_numeric($qtylValue)) {
+									// Render as locale number so GETPOSTFLOAT() on submit reads it back via price2num option=2 without confusing '.' for a thousand separator in es_ES.
+									$qtylValue = price($qtylValue);
 								}
 								print '<input name="qtyl' . $indiceAsked . '" id="qtyl' . $indiceAsked . '" class="qtyl right" type="text" size="4" value="' . $qtylValue . '">';
 							} else {
@@ -2266,6 +2269,8 @@ if ($action == 'create' && $usercancreate) {
 									$qtylValue = $deliverableQty;
 									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 										$qtylValue = '';
+									} elseif (is_numeric($qtylValue)) {
+										$qtylValue = price($qtylValue);
 									}
 									print '<input class="qtyl ' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '_' . $subj . '" type="text" size="4" value="' . $qtylValue . '">';
 									print '</td>';
@@ -2383,6 +2388,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl' . $tooltipClass . ' right" title="' . $tooltipTitle . '" name="qtyl' . $indiceAsked . '_' . $subj . '" id="qtyl' . $indiceAsked . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_id . '">';
@@ -2514,6 +2521,8 @@ if ($action == 'create' && $usercancreate) {
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';
+										} elseif (is_numeric($qtylValue)) {
+											$qtylValue = price($qtylValue);
 										}
 										print '<input class="qtyl right ' . $tooltipClass . '" title="' . $tooltipTitle . '" name="' . $inputName . '" id="' . $inputName . '" type="text" size="4" value="' . $qtylValue . '">';
 										print '</td>';

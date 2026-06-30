@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
@@ -326,7 +326,7 @@ class Adherent extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
@@ -433,7 +433,7 @@ class Adherent extends CommonObject
 		$this->public = 0;
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
-		// les champs optionnels sont vides
+		// Optional fields are empty
 		$this->array_options = array();
 
 		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
@@ -2525,7 +2525,7 @@ class Adherent extends CommonObject
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;
@@ -2610,7 +2610,11 @@ class Adherent extends CommonObject
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
-				$result .= $this->getFullName($langs, 0, ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
+				if (empty($this->lastname) && empty($this->firstname) && !empty($this->company)) {
+					$result .= $this->company;
+				} else {
+					$result .= $this->getFullName($langs, 0, ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
+				}
 			}
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';

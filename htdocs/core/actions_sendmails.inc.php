@@ -448,7 +448,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$db->begin();	// Transaction for post action must start after sending email to avoid lock when sending email that may be long
 
 						if (empty($actiontypecode)) {
-							$actiontypecode = 'AC_OTH_AUTO'; // Event inserted into agenda automatically
+							$actiontypecode = 'AC_EMAIL'; // Event inserted into agenda automatically
 						}
 
 						$object->socid = $sendtosocid; // To link to a company

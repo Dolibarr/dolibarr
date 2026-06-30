@@ -52,7 +52,7 @@ ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
 
 -- V24 migration
-
+ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
 ALTER TABLE llx_actioncomm_reminder MODIFY COLUMN fk_user integer DEFAULT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_user;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_contact integer DEFAULT NULL AFTER fk_soc;
@@ -126,6 +126,7 @@ CREATE TABLE llx_ai_request_log
   entity				        integer DEFAULT 1 NOT NULL,
   date_request			    	datetime,
   fk_user     			    	integer NOT NULL,
+  fk_actioncomm			    	integer,
   query_text        	  		text,
   tool_name     		    	varchar(255),
   provider   			      	varchar(50),
@@ -133,16 +134,26 @@ CREATE TABLE llx_ai_request_log
   confidence        	  		float,
   status            	  		varchar(50),
   error_msg         	  		text,
+  input_hash         	  		varchar(80),
+  output_hash        	  		varchar(80),
+  security_hash      	  		varchar(80),
   raw_request_payload   		MEDIUMTEXT,
   raw_response_payload			MEDIUMTEXT
 )ENGINE=innodb;
+
+ALTER TABLE llx_ai_request_log ADD COLUMN fk_actioncomm integer;
+ALTER TABLE llx_ai_request_log ADD COLUMN input_hash varchar(80);
+ALTER TABLE llx_ai_request_log ADD COLUMN security_hash varchar(80);
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_entity (entity);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_date (date_request);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_user (fk_user);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_fk_actioncomm (fk_actioncomm);
 ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_status (status);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_input_hash (input_hash);
+ALTER TABLE llx_ai_request_log ADD INDEX idx_ai_request_log_security_hash (security_hash);
 
 -- Add parent group support for usergroup inheritance
 ALTER TABLE llx_usergroup ADD COLUMN fk_parent integer DEFAULT NULL AFTER entity;
@@ -159,6 +170,9 @@ ALTER TABLE llx_adherent_type ADD COLUMN minimumamount    double(24,8) DEFAULT N
 ALTER TABLE llx_adherent_type ADD COLUMN amountformuladescription text;
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN signature_backward varchar(100) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN type_code varchar(8) DEFAULT '';
+ALTER TABLE llx_blockedlog ADD COLUMN note varchar(128) DEFAULT NULL;
 
 ALTER TABLE llx_website_page ADD COLUMN keep_history integer DEFAULT 5;
 ALTER TABLE llx_website_page ADD COLUMN metarobots varchar(128) after keywords;
@@ -559,10 +573,16 @@ ALTER TABLE llx_reception            ADD COLUMN IF NOT EXISTS date_sent datetime
 ALTER TABLE llx_fichinter            ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
 ALTER TABLE llx_projet               ADD COLUMN IF NOT EXISTS date_sent datetime DEFAULT NULL;
 
+ALTER TABLE llx_c_tva ADD COLUMN einvoice_vatex	varchar(32);
+
+
 -- SQL with disabled check must be at end
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 --noqa:enable=PRS
+
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
 -- end of migration
