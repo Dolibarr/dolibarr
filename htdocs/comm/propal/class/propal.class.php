@@ -3103,8 +3103,8 @@ class Propal extends CommonObject
 
 		$this->fetchObjectLinked($id, $this->element);
 		foreach ($this->linkedObjectsIds as $objecttype => $objectid) {
-			// Nouveau système du common object renvoi des rowid et non un id linéaire de 1 à n
-			//We are therefore traversing a list of objects as a single object
+			// New system of common object return rowids and no linear id from 1 to n
+			// We are therefore traversing a list of objects as a single object
 			foreach ($objectid as $key => $object) {
 				// Case of invoices directly linked
 				if ($objecttype == 'facture') {
@@ -3184,6 +3184,19 @@ class Propal extends CommonObject
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_propal";
+			$sql .= " WHERE fk_propal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
 		}
 
 		// Delete extrafields of lines and lines

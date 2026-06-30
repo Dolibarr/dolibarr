@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ class FichinterRec extends Fichinter
 	{
 		$this->db = $db;
 
-		//status dans l'ordre de l'intervention
+		// status in intervention order
 		$this->labelStatus[0] = 'Draft';
 		$this->labelStatus[1] = 'Closed';
 
@@ -875,7 +875,7 @@ class FichinterRec extends Fichinter
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
-		// si on et arrivé à la fin des génération
+		// if we have reached the end of the generation cycle
 		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
 			$sql .= ' , status = 1';
 		}
