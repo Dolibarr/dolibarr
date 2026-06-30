@@ -2682,11 +2682,17 @@ class Product extends CommonObject
 		}
 
 		// Catalog price (preloaded by fetch()). Fall back to level 1 when the requested level has none.
+		// Each level slice is read into a local first so the empty() offset test does not run on the
+		// typed property directly (it would otherwise widen its declared shape to a nullable one).
 		$catalog = array();
-		if (!empty($this->multicurrency_prices[$level][$currency_code])) {
-			$catalog = $this->multicurrency_prices[$level][$currency_code];
-		} elseif ($level != 1 && !empty($this->multicurrency_prices[1][$currency_code])) {
-			$catalog = $this->multicurrency_prices[1][$currency_code];
+		$levelPrices = $this->multicurrency_prices[$level] ?? array();
+		if (!empty($levelPrices[$currency_code])) {
+			$catalog = $levelPrices[$currency_code];
+		} elseif ($level != 1) {
+			$defaultPrices = $this->multicurrency_prices[1] ?? array();
+			if (!empty($defaultPrices[$currency_code])) {
+				$catalog = $defaultPrices[$currency_code];
+			}
 		}
 		if (!empty($catalog)) {
 			// Rebuild a strictly-typed array so the declared return shape is honoured.
