@@ -288,7 +288,7 @@ if ($result < 0) {
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 } else {
-	// Calcul de $min et $max
+	// Calculate $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -311,7 +311,7 @@ if ($result < 0) {
 	}
 
 	// CRED PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear = array();
 	'@phan-var-force array<array<string,int|float>> $tblyear';
 	$tblyear[0] = array();
@@ -347,7 +347,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 	}
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();
@@ -396,7 +396,7 @@ if ($result < 0) {
 	unset($tblyear[2]);
 
 	// DEDBT PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();
@@ -431,7 +431,7 @@ if ($result < 0) {
 		}
 	}
 
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();

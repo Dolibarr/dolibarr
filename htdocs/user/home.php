@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
 if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
-	// Redirection vers la page de l'utilisateur
+	// Redirect to the user's own page
 	header("Location: card.php?id=".$user->id);
 	exit;
 }

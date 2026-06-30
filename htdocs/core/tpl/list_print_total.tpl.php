@@ -36,6 +36,7 @@
 @phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
 @phan-var-force string $sql
 @phan-var-force ?string $sqlfields
+@phan-var-force int	$num
 @phan-var-force ?int	$limit
 ';
 

@@ -275,7 +275,10 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_amount) {
-	$param .= '&search_module_source='.urlencode($search_module_source);
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if (!empty($search_module_source)) {
+	$param .= '&search_module_source='.urlencode(implode(',', $search_module_source));
 }
 if ($search_pos_source) {
 	$param .= '&search_pos_source='.urlencode($search_pos_source);
@@ -323,17 +326,19 @@ if (GETPOST('clearcache')) {
 // Get the remoteobfuscation key
 // Show an error to ask to retry later if we can't get it because it means we can't decode the HMAC KEY later so we can't validate record.
 $remoteobfuscationkey = '';
-try {
-	$remoteobfuscationkey = $block_static->getObfuscationKey();
-	// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
-} catch (Exception $e) {
-	$error++;
+if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+	try {
+		$remoteobfuscationkey = $block_static->getObfuscationKey();
+		// Note: To emulate a pb in getting the obfuscation key, there is some code to uncomment into the method
+	} catch (Exception $e) {
+		$error++;
 
-	print '<div class="error mess1">';
-	print $e->getMessage();
-	print '<br>';
-	print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
-	print '</div>';
+		print '<div class="error mess1">';
+		print $e->getMessage();
+		print '<br>';
+		print '<a class="" href="'.$_SERVER["PHP_SELF"].'?clearcache=1">'.$langs->trans("Retry").'</a>';
+		print '</div>';
+	}
 }
 
 // Get the encoded HMAC key.
@@ -409,6 +414,7 @@ print '<input type="text" class="maxwidth100" name="search_module_source" list="
 if (isModEnabled('takepos')) {
 	print '<datalist id="search_module_sources">
 	    <option value="takepos">
+		<option value="backoffice">
 	</datalist>';
 }
 print '</td>';
@@ -557,23 +563,45 @@ if (is_array($blocks)) {
 	// Get the last record of the chain (may be used later).
 	$lastrecord = $block_static->getLastRecord();
 
-	// Check that there was no deletion on the end of chain.
-	// Note: We can find a similar code into the blockedlog_archive
 	$lockfile = $block_static->getEndOfChainFlagFile();
 	$lockline = '';
 
-	if (!file_exists($lockfile)) {
-		$error++;
+	// Check that there was no deletion on the end of chain.
+	// Note: We can find a similar code into the blockedlog_archive
+	if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+		if (!file_exists($lockfile)) {
+			$error++;
 
-		print '<tr><td class="center" colspan="'.$colspan.'">';
-		if ($mysoc->country_code == 'FR') {
-			print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+			print '<tr><td class="center" colspan="'.$colspan.'">';
+			if ($mysoc->country_code == 'FR') {
+				print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+			} else {
+				print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+			}
+			print '</td></tr>';
 		} else {
-			print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+			$lockline = trim(file_get_contents($lockfile));
 		}
-		print '</td></tr>';
 	} else {
-		$lockline = trim(file_get_contents($lockfile));
+		$sql = "SELECT value from ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$lockline = $obj->value;
+			} else {
+				$error++;
+
+				print '<tr><td class="center" colspan="'.$colspan.'">';
+				if ($mysoc->country_code == 'FR') {
+					print '<span class="error">'.$langs->trans("ErrorEndOfChainFlagWasRemoved").'</span>';
+				} else {
+					print '<span class="warning">'.$langs->trans("WarningNoProtectionOnEndOfChain").'</span>';
+				}
+				print '</td></tr>';
+			}
+		}
 	}
 
 	if (! $error) {
@@ -821,16 +849,38 @@ if (is_array($blocks)) {
 		ksort($totalamount);
 		krsort($showtotalfor);
 
+		// Show the total for period if filters are ok
+		$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature);
+
+		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
+			$countsource++;
+
+			// Line of title for total for period for $source
 			print '<tr class="liste_titre totalblockedlog">';
-			print '<td colspan="'.$colspan.'">';
+			print '<td colspan="'.$colspan.'"';
+			if ($countsource == 1) {
+				print ' style="border-top: 1px solid #000;"';
+			}
+			print '>';
 			print $langs->trans("TotalForThePeriod");
-			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
-			print ' <span class="opacitylow">('.$langs->trans("ForPeriodAndFilters").')</span>';
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
+			print ' <span class="opacitylow">(';
+			if ($afilterexists) {
+				print img_picto($langs->trans("ForPeriodAndFilters"), 'warning', 'class="pictofixedwidth"');
+			}
+			print $langs->trans("ForPeriodAndFilters").')</span>';
 			print '</td>';
 			print '</tr>';
 
 			foreach ($totalamount as $actioncode => $totalamountofcodepersource) {
+				if ($actioncode == 'BILL_VALIDATE' && (!empty($search_code) && !in_array('BILL_VALIDATE', $search_code))) {
+					continue;
+				}
+				if ($actioncode == 'PAYMENT_CUSTOMER' && (!empty($search_code) && !in_array('PAYMENT_CUSTOMER', $search_code))) {
+					continue;
+				}
+
 				// Total
 				print '<tr class="liste_total totalblockedlog">';
 
@@ -842,13 +892,13 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
+				$s = $actioncode;
 				if ($actioncode == 'BILL_VALIDATE') {
-					print ' <span class="opacitylow">('.$langs->trans("Turnover").')</span>';
+					$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
 				} elseif ($actioncode == 'PAYMENT_CUSTOMER') {
-					print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')</span>';
+					$s = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("TurnoverCollected");
 				}
-				//print '<br><span class="opacitylow">'.$langs->trans("ForPeriodAndFilters").'</span>';
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('log'.$actioncode));
 				print '</td>';
 
 				// Action
@@ -856,38 +906,19 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				$totalhttoshow = 0;
-				foreach ($totalhtamount[$actioncode] as $tmpsource => $value) {	// Loop on each module
-					if ($tmpsource == $source) {
-						$totalhttoshow += $value;
-					}
-				}
-				$totalvattoshow = 0;
-				foreach ($totalvatamount[$actioncode] as $tmpsource => $value) {
-					if ($tmpsource == $source) {
-						$totalvattoshow += $value;
-					}
-				}
-				$totaltoshow = 0;
-				foreach ($totalamount[$actioncode] as $tmpsource => $value) {
-					if ($tmpsource == $source) {
-						$totaltoshow += $value;
-					}
-				}
-
 				if ($actioncode == 'BILL_VALIDATE') {
-					print price($totalhttoshow);
+					print '<span class="amount">'.price($totalhtamount[$actioncode][$source]).'</span>';
 					print ' '.$langs->trans("HT");
 
 					print ' - ';
 
-					print price($totalvattoshow);
+					print '<span class="amount">'.price($totalvatamount[$actioncode][$source]).'</span>';
 					print ' '.$langs->trans("VAT");
 
 					print ' - ';
 				}
 
-				print price($totaltoshow);
+				print '<span class="amount">'.price($totalamount[$actioncode][$source]).'</span>';
 				if ($actioncode == 'BILL_VALIDATE') {
 					print ' '.$langs->trans("TTC");
 				}
@@ -922,33 +953,40 @@ if (is_array($blocks)) {
 			}
 		}
 
-
-		// TODO Show the lifetime payment only if we click on a link.
-		//$afilterexists = ($search_id || ($search_fk_user > 0) || $search_ref || $search_amount || $search_signature || !empty($search_module_source) || $search_pos_source);
-		//if (! $afilterexists) {
-
+		// Show total for lifetime
+		$countsource = 0;
 		foreach ($showtotalfor as $source => $tmpval) {
-			// Get lifetime amount of all invoices validated and payments created/deleted.
-			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
+			$countsource++;
 
-			$totalamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-			$totalhtamountlifetime = array('BILL_VALIDATE' => 0, 'PAYMENT_CUSTOMER_CREATE' => 0, 'PAYMENT_CUSTOMER_DELETE' => 0);
-			$foundoldformat = 0;
-			$firstrecorddate = 0;
 			if (empty($search_end) || $search_end == -1) {
 				$search_end = dol_now();
 			}
+
+			// Get lifetime amount of all invoices validated and payments created/deleted.
+			// We do not use $totalamountalllines because it is only for the period, but we want lifetime amount since the first record to now.
+
+			$totalamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+			$totalhtamountlifetime = array('BILL_VALIDATE' => array(), 'PAYMENT_CUSTOMER_CREATE' => array(), 'PAYMENT_CUSTOMER_DELETE' => array());
+
+			$foundoldformat = 0;
+			$firstrecorddate = 0;
 			global $foundoldformat, $firstrecorddate;
 			include DOL_DOCUMENT_ROOT.'/blockedlog/admin/lifetimeamount.inc.php';
+			'@phan-var-force array<string,array<string,float>> $totalamountlifetime';
+			'@phan-var-force array<string,array<string,float>> $totalhtamountlifetime';
 
+			print '<tr class="liste_titre totalblockedlog" style="border-top: 1px solid #222">';
+			print '<td colspan="'.$colspan.'"';
+			if ($countsource == 1) {
+				print ' style="border-top: 1px solid #000;"';
+			}
+			print '>';
 
-			print '<tr class="liste_titre totalblockedlog">';
-			print '<td colspan="'.$colspan.'">';
 			print $langs->trans("TotalForLifetime");
-			print ' - '.($source ? $langs->trans("POS").' '.ucfirst($source) : $langs->trans("BackOffice"));
+			print ' - '.($source ? ($source == 'takepos' ? $langs->trans("PointOfSale").' ' : '').ucfirst($source) : $langs->trans("BackOffice"));
 
 			print ' <span class="opacitymedium">('.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-			if ($search_end && $search_end != -1) {
+			if (GETPOST('search_endyear') && $search_end && $search_end != -1) {
 				print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
 			} else {
 				print ' - '.$langs->trans("Now");
@@ -969,15 +1007,11 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logBILL_VALIDATE'));
-				print ' <span class="opacitylow">('.$langs->trans("Turnover").')';
-				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-				if ($search_end && $search_end != -1) {
-					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
-				} else {
-					print ' - '.$langs->trans("Now");
-				}
-				print '</span> &nbsp; ';
+
+				$s = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("Turnover");
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('logBILL_VALIDATE'));
+
+				print ' &nbsp; ';
 
 				// If there is at least one record with old format
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog WHERE object_format < 'V2' and action = 'BILL_VALIDATE' LIMIT 1";
@@ -998,7 +1032,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print ($foundoldformat ? '' : price($totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->trans("HT")).($foundoldformat ? '' : " - ".price($totalamountlifetime['BILL_VALIDATE'] - $totalhtamountlifetime['BILL_VALIDATE']).' '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").price($totalamountlifetime['BILL_VALIDATE']).' '.$langs->trans("TTC");
+				print ($foundoldformat ? '' : '<span class="amount">'.price($totalhtamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->trans("HT")).($foundoldformat ? '' : ' - <span class="amount">'.price((float) $totalamountlifetime['BILL_VALIDATE'][$source] - (float) $totalhtamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->transnoentitiesnoconv("VAT")).($foundoldformat ? '' : " - ").'<span class="amount">'.price($totalamountlifetime['BILL_VALIDATE'][$source]).'</span> '.$langs->trans("TTC");
 				print '</td>';
 
 				// Details link
@@ -1042,15 +1076,10 @@ if (is_array($blocks)) {
 
 				// ID
 				print '<td colspan="4">';
-				print dolPrintHTML($langs->trans("TotalForAction").' '.$langs->trans('logPAYMENT_CUSTOMER'));
-				print ' <span class="opacitylow">('.$langs->trans("TurnoverCollected").')';
-				print '<br>'.$langs->trans("LifetimeAmountShort").': '.dol_print_date($firstrecorddate, 'dayhour', 'tzuserrel');
-				if ($search_end && $search_end != -1) {
-					print ' - '.dol_print_date($search_end, 'dayhoursec', 'tzuserrel');
-				} else {
-					print ' - '.$langs->trans("Now");
-				}
-				print '</span>';
+
+				$s = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("TurnoverCollected");
+				print $form->textwithpicto($s, $langs->trans("TotalForAction").' '.$langs->trans('logPAYMENT_CUSTOMER'));
+
 				print '</td>';
 
 				// Action
@@ -1058,7 +1087,7 @@ if (is_array($blocks)) {
 
 				// Amount (HT)
 				print '<td class="right nowraponall" colspan="3">';
-				print price($totalamountlifetime['PAYMENT_CUSTOMER_CREATE'] + $totalamountlifetime['PAYMENT_CUSTOMER_DELETE']);
+				print '<span class="amount">'.price((float) $totalamountlifetime['PAYMENT_CUSTOMER_CREATE'][$source] + (float) $totalamountlifetime['PAYMENT_CUSTOMER_DELETE'][$source]).'</span>';
 				print '</td>';
 
 				// Details link

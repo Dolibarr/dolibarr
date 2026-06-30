@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ class FormMargin
 
 			// calcul des marges
 			if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
-				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // remise globale considérée comme produit
+				if (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '1') { // global discount treated as product
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
 					$marginInfos['pa_total'] += $pa;
@@ -135,7 +135,7 @@ class FormMargin
 					//}
 					//else
 					$marginInfos['margin_on_products'] += $pv - $pa;
-				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // remise globale considérée comme service
+				} elseif (getDolGlobalString('MARGIN_METHODE_FOR_DISCOUNT') == '2') { // global discount treated as service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
 					$marginInfos['pa_total'] += $pa;
