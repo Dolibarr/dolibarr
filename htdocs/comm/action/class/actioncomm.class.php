@@ -1963,15 +1963,31 @@ class ActionComm extends CommonObject
 		global $conf, $langs;
 
 		if ($this->code == 'AC_COMPANY_CREATE' && !empty($this->thirdparty->name)) {
+			static $defaultlabeltemplates = null;
+
 			$langs->loadLangs(array('agenda', 'companies'));
 			$translatedlabel = $langs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
-			$defaultlabels = array($translatedlabel, 'Third party '.$this->thirdparty->name.' created');
+			$defaultlabels = array($translatedlabel);
+			$thirdpartynameplaceholder = '__THIRDPARTY_NAME__';
 
-			foreach (array('en_US', 'fr_FR') as $langcode) {
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang($langcode);
-				$outputlangs->loadLangs(array('agenda', 'companies'));
-				$defaultlabels[] = $outputlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $this->thirdparty->name);
+			if ($defaultlabeltemplates === null) {
+				$defaultlabeltemplates = array('Third party '.$thirdpartynameplaceholder.' created');
+
+				foreach (array_keys($langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2)) as $langcode) {
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang($langcode);
+					$outputlangs->loadLangs(array('agenda', 'companies'));
+					$defaultlabel = $outputlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartynameplaceholder);
+					if ($defaultlabel != 'NewCompanyToDolibarr') {
+						$defaultlabeltemplates[] = $defaultlabel;
+					}
+				}
+
+				$defaultlabeltemplates = array_unique($defaultlabeltemplates);
+			}
+
+			foreach ($defaultlabeltemplates as $defaultlabeltemplate) {
+				$defaultlabels[] = str_replace($thirdpartynameplaceholder, $this->thirdparty->name, $defaultlabeltemplate);
 			}
 
 			if (in_array($this->label, array_unique($defaultlabels), true)) {
