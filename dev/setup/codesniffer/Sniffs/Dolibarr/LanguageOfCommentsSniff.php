@@ -24,7 +24,9 @@ use PHP_CodeSniffer\Files\File;
  */
 class LanguageOfCommentsSniff implements Sniff
 {
-	// List of words that betray a comment in French
+	/**
+	 * @var string[] List of words that betray a comment in French
+	 */
 	public $frenchWords = [
 		' additionner ',
 		' arrondir ',
@@ -102,7 +104,7 @@ class LanguageOfCommentsSniff implements Sniff
 		$contentLower = strtolower($content);
 
 		// content contains french examples
-		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french')) {
+		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french') || strpos($content, 'fr_FR')) {
 			return;
 		}
 
