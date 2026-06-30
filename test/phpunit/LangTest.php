@@ -314,11 +314,11 @@ class LangTest extends CommonClassTest
 	 * @param string  $dict        Dictionary file for translation
 	 * @param string  $expected    Expected translation result
 	 * @param string  $key         Key for translation
-	 * @param ?string $param1      Parameter 1 for translation
-	 * @param ?string $param2      Parameter 2 for translation
-	 * @return string
+	 * @param string  $param1      Parameter 1 for translation
+	 * @param string  $param2      Parameter 2 for translation
+	 * @return void
 	 */
-	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = null, $param2 = null)
+	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = '', $param2 = ''): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
