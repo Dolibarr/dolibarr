@@ -1051,7 +1051,7 @@ class Products extends DolibarrApi
 	 * @param	int		$id			Product ID
 	 * @param	int		$socid		Customer id to read that customer's own fixed prices, 0 for the catalog prices
 	 *
-	 * @return array				Array of sell prices per currency, indexed by [price_level][currency_code]
+	 * @return array<int,mixed>			Array of sell prices per currency, indexed by [price_level][currency_code]
 	 *
 	 * @throws RestException 404
 	 * @throws RestException 403

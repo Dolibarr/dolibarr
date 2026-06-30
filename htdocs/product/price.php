@@ -84,7 +84,7 @@ function printCustomerCurrencyPriceInputs($db, $form, $object, $socid)
 		return;
 	}
 	$currencies = MultiCurrency::getCurrencyList($db);
-	if (!is_array($currencies) || empty($currencies)) {
+	if (empty($currencies)) {
 		return;
 	}
 
@@ -133,7 +133,7 @@ function saveCustomerCurrencyPrices($db, $fk_product, $socid, $vat_tx, $user, $a
 		return 0;
 	}
 	$currencies = MultiCurrency::getCurrencyList($db);
-	if (!is_array($currencies) || empty($currencies)) {
+	if (empty($currencies)) {
 		return 0;
 	}
 
@@ -951,7 +951,7 @@ if (empty($reshook)) {
 			} else {
 				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
 				// Add mode: empty currency inputs must not delete prices already set for this customer.
-				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user, false) > 0) {
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, (float) $tva_tx, $user, false) > 0) {
 					$error++;
 				}
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -1104,7 +1104,7 @@ if (empty($reshook)) {
 			} else {
 				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
 				// Edit mode: inputs are prefilled, so an empty input removes the matching currency price.
-				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, $tva_tx, $user, true) > 0) {
+				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, (float) $tva_tx, $user, true) > 0) {
 					$error++;
 				}
 				setEventMessages($langs->trans("Save"), null, 'mesgs');
@@ -1130,7 +1130,7 @@ if (empty($reshook)) {
 		$productpricecurrency = new ProductPriceCurrency($db);
 
 		$db->begin();
-		if (is_array($mccurrencies) && !empty($mccurrencies)) {
+		if (!empty($mccurrencies)) {
 			foreach ($mccurrencies as $currency) {
 				$mccode = $currency['code'];
 				// Skip the company currency, no per-currency price needed for it.
@@ -1739,7 +1739,7 @@ if (isModEnabled('multicurrency')) {
 
 	// Keep only currencies different from the company currency.
 	$mccurrencieslist = array();
-	if (is_array($mccurrencies) && !empty($mccurrencies)) {
+	if (!empty($mccurrencies)) {
 		foreach ($mccurrencies as $currency) {
 			if ($currency['code'] != $conf->currency) {
 				$mccurrencieslist[] = $currency;
