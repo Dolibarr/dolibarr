@@ -3,7 +3,7 @@
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,7 +279,7 @@ function getLicenceHeader($user, $langs, $now)
  */
 
 /**
- * Post-generation validation — logs and displays a warning if residual myobject/mymodule tokens remain.
+ * Post-generation validation -- logs and displays a warning if residual myobject/mymodule tokens remain.
  *
  * @param string       $destfile Path to the generated file
  * @param NamingContract $nc     Contract used for generation
@@ -439,7 +439,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 					'$this->picto = \'generic\';'                               => (empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \'' . $picto . '\';',
 					'modulefamily'                                              => $family,
 					// Key '500000' would be cast to int(500000) by PHP, then renumbered to 0 by
-					// array_merge — causing str_replace to search for '0' instead of '500000'.
+					// array_merge -- causing str_replace to search for '0' instead of '500000'.
 					// Use a string key that matches the exact assignment line to avoid this.
 					'$this->numero = 500000'                                    => '$this->numero = '.$idmodule,
 				]
@@ -2057,6 +2057,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'foreignkey' => GETPOST('propforeignkey', 'alpha'),
 				'searchall' => GETPOSTINT('propsearchall'),
 				'isameasure' => GETPOSTINT('propisameasure'),
+				'showoncombobox' => GETPOSTINT('propshowoncombobox'),
 				'comment' => GETPOST('propcomment', 'alpha'),
 				'help' => GETPOST('prophelp', 'alpha'),
 				'css' => GETPOST('propcss', 'alpha'),        // Can be 'maxwidth500 widthcentpercentminusxx' for example
@@ -6235,7 +6236,7 @@ if ($module == 'initmodule') {
 					value1 = $("#crud").val();
 					value2 = $("#permissionObj").val();
 
-					// Vérifie si les deux sélections sont faites
+					// Check if both selections are made
 					if (value1 && value2) {
 						switch(value1.toLowerCase()){
 							case "read":

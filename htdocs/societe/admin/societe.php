@@ -161,7 +161,7 @@ if ($action == 'setdoc') {
 
 	dolibarr_set_const($db, "COMPANY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity);
 
-	// On active le modele
+	// Enable the model
 	$type = 'company';
 	$ret = delDocumentModel(GETPOST('value', 'alpha'), $type);
 	if ($ret > 0) {
@@ -813,7 +813,7 @@ print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60"></td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
 
-// Utilisation formulaire Ajax sur choix societe
+// Use of Ajax form for thirdparty selection
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"), $langs->trans('UseSearchToSelectCompanyTooltip'), 1).' </td>';
@@ -947,7 +947,7 @@ print '</a></td>';
 print '</tr>';
 
 if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
-	// Default Prospect/Customer thirdparty type on customer création
+	// Default Prospect/Customer thirdparty type on customer creation
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType", $langs->transnoentitiesnoconv("MenuNewThirdParty"), $langs->transnoentitiesnoconv("MenuNewCustomer")).'</td>';
 	print '<td>';

@@ -65,7 +65,7 @@ if (!$user->admin) {
  * Actions
  */
 
-if (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR')) {	// If we are in mode for tax auditor
+if (getDolGlobalString('BLOCKEDLOG_FOR_TAX_AUDITOR') && userIsTaxAuditor()) {	// If we are in mode for tax auditor
 	header("Location: ".DOL_URL_ROOT.'/blockedlog/admin/blockedlog_archives.php');
 	exit;
 }
@@ -139,13 +139,13 @@ if ($action == 'update') {
 		$error++;
 	}
 
-	// Check validity of prof id
-	if ($tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty, 1) <= 0) {
+	// Check validity of prof id if we try to save a new one
+	if ($tmpthirdparty->idprof1 && GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF1') != $tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty, 1) <= 0) {
 		$langs->loadLangs(array("errors", "companies"));
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
 	}
-	if ($tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty, 1) <= 0) {
+	if ($tmpthirdparty->idprof2 && GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF2') != $tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty, 1) <= 0) {
 		$langs->loadLangs(array("errors", "companies"));
 		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof2, $langs->transcountry("ProfId2Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
@@ -252,35 +252,74 @@ if ($action == 'update') {
 		}
 	}
 	if (!$error) {
-		$db->commit();
-
 		// If HMAC key was not saved, we do it now
+
+		// Clear cache
+		unset($_SESSION['obfuscationkey_'.((int) $conf->entity)]);
+		unset($conf->cache['obfuscationkey_'.((int) $conf->entity)]);
 
 		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($db);
 
 		$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 
+		// This code is similar to the code into the init of module.
 		if (empty($hmac_encoded_secret_key)) {
-			// No key yet, we generate one.
+			// No HMAC key yet, we generate one.
 			$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
 			$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
-			$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
+			//$hmac_secret_key = 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A';
 
-			$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory. If not found, it will be created.
+			$obfuscationkey = '';
+			if (isALNERunningVersion(1)) {		// Note we are here if registration page requested, so for all french users, even if not assujeti.
+				try {
+					$obfuscationkey = $b->getObfuscationKey();	// Get the obfuscation key from memory or remote server. If not found, we retrieve it.
+					//$obfuscationkey = '';		// Uncomment this to test if obfuscation key can't be retrieved.
+				} catch (Exception $e) {
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
+					$obfuscationkey = '';
+				}
+				if (empty($obfuscationkey)) {
+					$error++;
+					$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+					setEventMessages($langs->trans('FailedToGetRemoteObfuscationKeyReTryLater', $url_for_ping), null, 'errors');
+				}
 
-			$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
+				if (!$error) {
+					// Save HMAC key obfuscating it with remote $obfuscationkey
+					$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolobfuscationv1-'.$mysoc->idprof1, $obfuscationkey); 	// gitleaks:allow
+					if ($result < 0) {
+						$error++;
+						setEventMessages($b->error, $b->errors, 'errors');
+					}
+				}
+			} else {
+				$result = $b->saveHMACSecretKey($hmac_secret_key, 'dolcrypt', $obfuscationkey); 	// gitleaks:allow
+				if ($result < 0) {
+					$error++;
+					setEventMessages($b->error, $b->errors, 'errors');
+				}
+			}
+		} else {
+			// If a HMAC key already exists, we don't need to create one.
+			// If it was store using the old method "dolcrypt", it will be converted into the new method "dolobfuscationv1-<siret>" at next recording by buildFinalSignatureHash().
 		}
 
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
 
-		//setEventMessages("SetupSaved", null, 'mesgs');
-		$urltouse = $_SERVER["PHP_SELF"]."?mode=forceregistration";
-		$urltouse .= (($withtab && GETPOST('origin')) ? '&withtab='.$withtab : '');
-		$urltouse .= (GETPOST('origin') ? '&origin='.GETPOST('origin') : '');
+			//setEventMessages("SetupSaved", null, 'mesgs');
+			$urltouse = $_SERVER["PHP_SELF"]."?mode=forceregistration";
+			$urltouse .= (($withtab && GETPOST('origin')) ? '&withtab='.$withtab : '');
+			$urltouse .= (GETPOST('origin') ? '&origin='.GETPOST('origin') : '');
 
-		header("Location: ".$urltouse);
-		exit;
+			header("Location: ".$urltouse);
+			exit;
+		}
 	} else {
 		$db->rollback();
 	}

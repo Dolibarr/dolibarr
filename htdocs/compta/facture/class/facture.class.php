@@ -619,7 +619,13 @@ class Facture extends CommonInvoice
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
-			$this->array_options = $_facrec->array_options;
+			// Keep POSTed extrafields if the caller already populated array_options
+			// (htdocs/compta/facture/card.php:1235 calls setOptionalsFromPost before
+			// create()). Falling back to the template values when nothing was POSTed
+			// preserves cron behavior for auto-generated recurring invoices (#37775).
+			if (empty($this->array_options)) {
+				$this->array_options = $_facrec->array_options;
+			}
 
 			if (!$this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
@@ -4410,7 +4416,7 @@ class Facture extends CommonInvoice
 
 			// Rank to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
