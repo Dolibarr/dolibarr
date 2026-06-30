@@ -488,11 +488,9 @@ if (empty($error) && !empty($xml)) {
 				$out .= '<tr class="oddeven">';
 				$out .= '<td>'.$i.'</td>'."\n";
 				$out .= '<td>'.dol_escape_htmltag($file['filename']);
-				if ($enableremotecheck) {
-					$out .= ' <a href="#" class="showfilediff" data-file="'.dol_escape_htmltag($file['filename']).'" data-algo="'.dol_escape_htmltag($file['algo']).'" data-hash="'.dol_escape_htmltag($file['expectedhash']).'">';
-					$out .= img_picto($langs->trans("ShowDiffWithOriginal"), 'split', 'class="paddingleft"');
-					$out .= '</a>';
-				}
+				$out .= ' <a href="#" class="showfilediff" data-file="'.dol_escape_htmltag($file['filename']).'" data-algo="'.dol_escape_htmltag($file['algo']).'" data-hash="'.dol_escape_htmltag($file['expectedhash']).'">';
+				$out .= img_picto($langs->trans("ShowDiffWithOriginal"), 'split', 'class="paddingleft"');
+				$out .= '</a>';
 				$out .= '</td>'."\n";
 				$out .= '<td class="center" title="'.dol_escape_htmltag($file['expectedhash']).'">'.dol_escape_htmltag(dol_trunc($file['expectedhash'], 16)).'</td>'."\n";
 				$out .= '<td class="center" title="'.dol_escape_htmltag($file['hash']).'">'.dol_escape_htmltag(dol_trunc($file['hash'], 16)).'</td>'."\n";
@@ -523,28 +521,26 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</div>';
 
 		// Ajax loader for the per-file diff against the original version
-		if ($enableremotecheck) {
-			$out .= '<script>'."\n";
-			$out .= 'jQuery(document).ready(function() {'."\n";
-			$out .= '	jQuery(".showfilediff").on("click", function(e) {'."\n";
-			$out .= '		e.preventDefault();'."\n";
-			$out .= '		var link = jQuery(this);'."\n";
-			$out .= '		var row = link.closest("tr");'."\n";
-			$out .= '		var existing = row.next(".filediffrow");'."\n";
-			$out .= '		if (existing.length) { existing.toggle(); return false; }'."\n";
-			$out .= '		var colspan = row.children("td").length;'."\n";
-			$out .= '		var newrow = jQuery(\'<tr class="filediffrow"><td colspan="\'+colspan+\'"><div class="filediffcontent opacitymedium">'.dol_escape_js($langs->trans("Loading")).'...</div></td></tr>\');'."\n";
-			$out .= '		row.after(newrow);'."\n";
-			$out .= '		jQuery.get("'.dol_escape_js(DOL_URL_ROOT).'/blockedlog/admin/filecheck_diff.php", { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: "'.newToken().'" }, function(data) {'."\n";
-			$out .= '			newrow.find(".filediffcontent").removeClass("opacitymedium").html(data);'."\n";
-			$out .= '		}).fail(function() {'."\n";
-			$out .= '			newrow.find(".filediffcontent").html("'.dol_escape_js($langs->trans("Error")).'");'."\n";
-			$out .= '		});'."\n";
-			$out .= '		return false;'."\n";
-			$out .= '	});'."\n";
-			$out .= '});'."\n";
-			$out .= '</script>'."\n";
-		}
+		$out .= '<script>'."\n";
+		$out .= 'jQuery(document).ready(function() {'."\n";
+		$out .= '	jQuery(".showfilediff").on("click", function(e) {'."\n";
+		$out .= '		e.preventDefault();'."\n";
+		$out .= '		var link = jQuery(this);'."\n";
+		$out .= '		var row = link.closest("tr");'."\n";
+		$out .= '		var existing = row.next(".filediffrow");'."\n";
+		$out .= '		if (existing.length) { existing.toggle(); return false; }'."\n";
+		$out .= '		var colspan = row.children("td").length;'."\n";
+		$out .= '		var newrow = jQuery(\'<tr class="filediffrow"><td colspan="\'+colspan+\'"><div class="filediffcontent opacitymedium">'.dol_escape_js($langs->trans("Loading")).'...</div></td></tr>\');'."\n";
+		$out .= '		row.after(newrow);'."\n";
+		$out .= '		jQuery.get("'.dol_escape_js(DOL_URL_ROOT).'/blockedlog/admin/filecheck_diff.php", { file: link.attr("data-file"), algo: link.attr("data-algo"), expectedhash: link.attr("data-hash"), token: "'.newToken().'" }, function(data) {'."\n";
+		$out .= '			newrow.find(".filediffcontent").removeClass("opacitymedium").html(data);'."\n";
+		$out .= '		}).fail(function() {'."\n";
+		$out .= '			newrow.find(".filediffcontent").html("'.dol_escape_js($langs->trans("Error")).'");'."\n";
+		$out .= '		});'."\n";
+		$out .= '		return false;'."\n";
+		$out .= '	});'."\n";
+		$out .= '});'."\n";
+		$out .= '</script>'."\n";
 
 		$out .= '<br>';
 

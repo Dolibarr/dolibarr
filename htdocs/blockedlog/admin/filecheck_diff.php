@@ -241,9 +241,17 @@ if (!empty($errormsg)) {
 	llxFooterFragment();
 }
 
-// Build the URL of the original file for the running version (GitHub raw of the matching tag).
+// Build the URL of the original file for the running version.
+// For a stable version (eg 24.0.0) the matching git tag exists, so we compare against that tag.
+// For an alpha/beta/rc version no tag exists yet, so we compare against the develop branch.
 $baseurl = getDolGlobalString('MAIN_FILECHECK_DIFF_BASEURL', 'https://raw.githubusercontent.com/Dolibarr/dolibarr');
-$originurl = $baseurl.'/'.DOL_VERSION.'/htdocs'.$file;
+if (preg_match('/alpha|beta|rc/i', DOL_VERSION)) {
+	$ref = 'develop';
+} else {
+	$ref = DOL_VERSION;
+}
+$ref = getDolGlobalString('MAIN_FILECHECK_DIFF_REF', $ref);
+$originurl = $baseurl.'/'.$ref.'/htdocs'.$file;
 
 $res = getURLContent($originurl, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only.
 if (!empty($res['curl_error_no']) || (isset($res['http_code']) && !in_array((int) $res['http_code'], array(0, 200), true))) {
