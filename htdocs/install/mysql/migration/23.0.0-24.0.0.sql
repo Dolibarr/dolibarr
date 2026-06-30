@@ -575,4 +575,6 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 --noqa:enable=PRS
 
 
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
 -- end of migration

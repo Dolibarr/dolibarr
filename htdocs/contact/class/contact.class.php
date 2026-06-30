@@ -1921,16 +1921,25 @@ class Contact extends CommonObject
 	 *	Return translated label of Public or Private
 	 *
 	 * 	@param      int			$status		Type (0 = public, 1 = private)
+	 *  @param		int			$decorate	0=No decorate, 1=Add html decorated code (color) around text, 2=Show picto for private and empty for public
 	 *  @return     string					Label translated
 	 */
-	public function LibPubPriv($status)
+	public function LibPubPriv($status, $decorate = 0)
 	{
 		// phpcs:enable
 		global $langs;
 		if ($status == '1') {
-			return $langs->trans('ContactPrivate');
+			$s = ($decorate == 2 ? '' : $langs->trans('ContactPrivate'));
+			if ($decorate) {
+				$s = '<span title="'.$langs->trans('ContactPrivateDesc').'">'.img_picto('', 'private', 'class="paddingrightonly"').$s.'</span>';
+			}
+			return $s;
 		} else {
-			return $langs->trans('ContactPublic');
+			$s = ($decorate == 2 ? '' : $langs->trans('ContactPublic'));
+			if ($decorate) {
+				$s = '<span title="'.$langs->trans('ContactPublicDesc').'">'.img_picto('', 'public', 'class="paddingrightonly"').$s.'</span>';
+			}
+			return $s;
 		}
 	}
 

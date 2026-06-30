@@ -1070,7 +1070,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowiframe'
  *                                                                                                                                                                                                                                                                                                                                                                                                                 'restricthtmlallowlinkscript'
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
@@ -1355,7 +1355,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
  *
  *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
- *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>		     Value sanitized (string or array). It may be '' if format check fails.
  */
@@ -1508,7 +1508,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
  */
 function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
 {
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/securitycore.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/securitycore.lib.php';
 
 	global $dolibarr_main_force_https;
 
@@ -2416,7 +2416,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
 	//$isAlreadyHTML = dol_textishtml($s);
 
 	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
-	// encode only special char like é but not &, <, >, ", ' if already HTML.
+	// encode only special char like accented chars but not &, <, >, ", ' if already HTML.
 	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
 	$allowedtags = 'common';
@@ -2530,7 +2530,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	} else {
 		// We make a manipulation by calling the html_entity_decode() to convert content into NON HTML UTF8 string.
 		// Because content can be or not already HTML.
-		// For example, this decode &egrave; into è so string is UTF8 (but numbers entities like &#39; is not decoded).
+		// For example, this decode &egrave; into its UTF-8 char so string is UTF8 (but numbers entities like &#39; is not decoded).
 		// In a future, we should not need this
 
 		$tmp = (string) $stringtoescape;
@@ -4414,12 +4414,12 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param 	int			$socid 			Id of third party if known
  * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
  * @param	int			$max			Max number of characters to show. Use -1 to hide the mail text and show only the picto.
- * @param	int			$showinvalid	1=Show warning if syntax email is wrong
+ * @param	int			$showinvalid	0=no check on email, 1=Show warning if syntax email is wrong (fast), 2=Check also DNS domain (slow)
  * @param	int|string	$withpicto		0=Show email, 1=Show picto of email + email, 2=Show only picto
  * @param	string		$morecss		More CSS
  * @return	string						HTML Link
  */
-function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 0, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
+function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max = 0, $showinvalid = 2, $withpicto = 0, $morecss = 'paddingrightonly')
 {
 	global $user, $langs, $hookmanager;
 
@@ -4460,7 +4460,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			if (!isValidEmail($emailonly)) {
 				$langs->load("errors");
 				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $emailonly), '', 'paddingrightonly');
-			} elseif (!isValidMailDomain($emailonly)) {
+			} elseif ($showinvalid == 2 && !isValidMailDomain($emailonly)) {
 				$langs->load("errors");
 				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly), '', 'paddingrightonly');
 			}
@@ -4495,7 +4495,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			if (!isValidEmail($emailonly)) {
 				$langs->load("errors");
 				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadEMail", $email));
-			} elseif (!isValidMailDomain($emailonly)) {
+			} elseif ($showinvalid == 2 && !isValidMailDomain($emailonly)) {
 				$langs->load("errors");
 				$newemail .= img_warning($langs->transnoentitiesnoconv("ErrorBadMXDomain", $emailonly));
 			}
@@ -4897,7 +4897,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		if (dol_strlen($phone) == 12) { //ex: +223 AB_CD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
 		}
-	} elseif (strtoupper($countrycode) == "TH") { //Thaïlande
+	} elseif (strtoupper($countrycode) == "TH") { //Thailand
 		if (dol_strlen($phone) == 11) { //ex: +66_ABC_DE_FGH
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 3);
 		} elseif (dol_strlen($phone) == 12) { //ex: +66_A_BCD_EF_GHI
@@ -4928,7 +4928,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 14) { //ex: +971_ABC_DEF_GHIK
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 4);
 		}
-	} elseif (strtoupper($countrycode) == "DZ") { //Algérie
+	} elseif (strtoupper($countrycode) == "DZ") { //Algeria
 		if (dol_strlen($phone) == 13) { //ex: +213_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 3) . $separ . substr($newphone, 7, 3) . $separ . substr($newphone, 10, 3);
 		}
@@ -4938,7 +4938,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		} elseif (dol_strlen($phone) == 12) { //ex: +32_ABC_DEF_GHI
 			$newphone = substr($newphone, 0, 3) . $separ . substr($newphone, 3, 3) . $separ . substr($newphone, 6, 3) . $separ . substr($newphone, 9, 3);
 		}
-	} elseif (strtoupper($countrycode) == "PF") { //Polynésie française
+	} elseif (strtoupper($countrycode) == "PF") { //French Polynesia
 		if (dol_strlen($phone) == 12) { //ex: +689_AB_CD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 2) . $separ . substr($newphone, 6, 2) . $separ . substr($newphone, 8, 2) . $separ . substr($newphone, 10, 2);
 		}
@@ -4950,7 +4950,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		if (dol_strlen($phone) == 12) { //ex: +962_A_BCD_EF_GH
 			$newphone = substr($newphone, 0, 4) . $separ . substr($newphone, 4, 1) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 7, 2) . $separ . substr($newphone, 9, 2);
 		}
-	} elseif (strtoupper($countrycode) == "JM") { //Jamaïque
+	} elseif (strtoupper($countrycode) == "JM") { //Jamaica
 		if (dol_strlen($newphone) == 12) { //ex: +1867_ABC_DEFG
 			$newphone = substr($newphone, 0, 5) . $separ . substr($newphone, 5, 3) . $separ . substr($newphone, 8, 4);
 		}
@@ -5516,15 +5516,15 @@ function dol_substr($string, $start, $length = null, $stringencoding = '', $trun
 
 
 /**
- *	Truncate a string to a particular length adding '…' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
+ *	Truncate a string to a particular length adding '...' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding '...'). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added '...', or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
- *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
+ *  @param	int		$nodot				Truncation do not add '...' after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
@@ -5548,7 +5548,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 	if ($trunc == 'right') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
-			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add '...'
 			return dol_substr($newstring, 0, $size, $stringencoding) . ($nodot ? '' : '…');
 		} else {
 			//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
@@ -5566,7 +5566,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 	} elseif ($trunc == 'left') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
 		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
-			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add '...'
 			return '…' . dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
 		} else {
 			return $string;
@@ -5588,7 +5588,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *
  * @param 	string		$key		Key
  * @param	string		$morecss	Add more css to the object
- * @return 	string					Pïcto for the key
+ * @return 	string					Picto for the key
  */
 function getPictoForType($key, $morecss = '')
 {
@@ -7816,8 +7816,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  * 					                        Default 0 if unknown.
  *	@return	string							Amount with universal numeric format (Example: '99.99999'), or error message.
  *											If conversion fails to return a numeric, it returns:
- *											- text unchanged or partial if ($rounding = ''): price2num('W9ç', '', 0)   => '9ç', price2num('W9ç', '', 1)   => 'W9ç', price2num('W9ç', '', 2)   => '9ç'
- *											- '0' if ($rounding is defined):                 price2num('W9ç', 'MT', 0) => '9',  price2num('W9ç', 'MT', 1) => '0',   price2num('W9ç', 'MT', 2) => '9'
+ *											- text unchanged or partial if ($rounding = ''): price2num('W9c', '', 0)   => '9c', price2num('W9c', '', 1)   => 'W9c', price2num('W9c', '', 2)   => '9c'
+ *											- '0' if ($rounding is defined):                 price2num('W9c', 'MT', 0) => '9',  price2num('W9c', 'MT', 1) => '0',   price2num('W9c', 'MT', 2) => '9'
  *											Note: The best way to guarantee a numeric value is to add a cast (float) before the price2num().
  *											If amount is null or '', it returns '' if $rounding = '', it returns '0' if $rounding is defined.
  *
@@ -10854,6 +10854,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$already_payed_all = $object->totalpaid + $object->totaldeposits + $object->totalcreditnotes;
 		}
 
+		$substitutionarray['__SIMPLE_HTML_TABLE__'] = is_object($object) && !empty($object->lines) ? showSimpleHTMLTable($outputlangs, $object) : "";
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_TEXT__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ht, $outputlangs, $conf->currency, true) : '';
@@ -12163,7 +12164,7 @@ function dol_eval_new($s)
 	];
 
 	$prohibited_token_arrangements = [
-		// Variable functions « $a( », « "$a"( », « 'FN_NAME'( », ('FN_NAME')()
+		// Variable functions "$a(", '"$a"(', "'FN_NAME'(", ('FN_NAME')()
 		' T_VARIABLE ( ',
 		' " ( ',
 		' \' ( ',
@@ -12551,6 +12552,16 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			print 'Bad string syntax to evaluate. Some data were output when it should not when evaluating: ' . $s;
 		}
 		return $tmps;
+	} catch (Exception $e) {
+		if ($isObBufferActive) {
+			// Clean up buffer which was left behind due to exception.
+			$tmpo = ob_get_clean();		// This close the buffer
+			$isObBufferActive = false;
+		}
+		$error = 'dol_eval try/catch error for string: ' . $s . ' - Error: ';
+		$error .= $e->getMessage();
+		dol_syslog($error, LOG_WARNING);
+		return 'Exception during evaluation: ' . $s;
 	} catch (Error $e) {
 		if ($isObBufferActive) {
 			// Clean up buffer which was left behind due to exception.
@@ -13665,6 +13676,84 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 }
 
 /**
+ * Returns simple order table template as string
+ *
+ * @param	Translate	$outputlangs	Output language
+ * @param   Object		$object			Object
+ * @return	string						template
+ */
+function showSimpleHTMLTable($outputlangs, $object)
+{
+	global $conf;
+
+	$discountIsAvailable = false;
+	$orderPositionHasNoPrice = false;
+
+	if (!property_exists($object->lines[0], "remise_percent") ||
+		!property_exists($object->lines[0], "fk_unit") ||
+		!property_exists($object->lines[0], "multicurrency_total_ttc") ||
+		!property_exists($object->lines[0], "description") ||
+		!property_exists($object->lines[0], "qty")) {
+		return"";
+	}
+
+	foreach ($object->lines as $order_position) {
+		if (!property_exists($order_position, "price")) {
+			$orderPositionHasNoPrice = true;
+			break;
+		}
+
+		if (!empty($order_position->remise_percent)) {
+			$discountIsAvailable = true;
+			break;
+		}
+	};
+
+	if ($orderPositionHasNoPrice) {
+		return "";
+	}
+
+	$discountHeader = $discountIsAvailable ? '<th style="width:120px">'.$outputlangs->trans("Discount").'</th>' : '';
+
+	$table = '<table border="0" cellpadding="1" cellspacing="1">';
+	$table .= '
+	<thead>
+		<tr>
+			<th style="width:50px; text-align:left">#</th>
+			<th style="text-align:left">'.$outputlangs->trans("Description").'</th>
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Price").'</th>
+			<th style="width:100px; text-align:right;">'.$outputlangs->trans("Quantity").'</th>
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Unit").'</th>'.
+			$discountHeader.'
+			<th style="width:120px; text-align:right;">'.$outputlangs->trans("Sum").'</th>
+		</tr>
+	</thead>
+	<tbody>';
+
+	foreach ($object->lines as $index => $order_position) {
+		$position = $index + 1;
+		$price = price($order_position->price, 0, $outputlangs, 0, -1, -1, $conf->currency);
+		$unit = measuringUnitString($order_position->fk_unit, '', null, 1);
+		$total = price($order_position->multicurrency_total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency);
+		$discount = $discountIsAvailable ? '<td style="text-align:center">'.$order_position->remise_percent.'%</td>' : "";
+
+		$table .= '
+			<tr>
+				<td>'.$position.'</td>
+				<td>'.$order_position->description.'</td>
+				<td style="text-align:right">'.$price.'</td>
+				<td style="text-align:right">'.$order_position->qty.'</td>
+				<td style="text-align:right">'.$unit.'</td>'.
+				$discount.'
+				<td style="text-align:right">'.$total.'</td>
+			</tr>';
+	}
+	$table .= '</tbody></table>';
+
+	return $table;
+}
+
+/**
  * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
  *
  * @param   CommonObject	$object		Object
@@ -14501,15 +14590,15 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$label      	Long label (or tooltip of button if param $text is provided). Also used as tooltip in title attribute. Can be escaped HTML content or full simple text. Used only if $url not defined.
  * @param string    	$text       	Optional : Short label on button. Can be escaped HTML content or full simple text.
  * @param string 		$actionType 	'default', 'edit', 'danger', 'email', 'clone', 'cancel', 'delete', ...
- * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
- *                                                                                                                                                      Example when an array is used:
- *                                                                                                                                                      $arrayforbutaction = array(
- *                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
- *                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
- *                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
- *                                                                                                                                                      );                                                                                                               );
+ * @param string|array<int,array{lang:string,enabled:bool,perm:bool|int,label:string,text?:string,url:string,urlroot?:string,isDropDown?:int<0,1>}> 	$url        	Url for link or array of subbutton description
+ *                                                                                                                                                                      Example when an array is used:
+ *                                                                                                                                                                      $arrayforbutaction = array(
+ *                                                                                                                                                                      10 => array('attr' => array('class'=>''), 'lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+ *                                                                                                                                                                      20 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleAction', 'urlroot'=>dol_build_patch('/mymodule/mypage.php?action=create')),
+ *                                                                                                                                                                      30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
+ *                                                                                                                                                                      );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
- * @param bool|int		$userRight  	User action right. Use 0 if user has no permission. It will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
+ * @param bool|int		$userRight  	User action right. True or 1 of ok. Use 0 if user has no permission, it will add the message "No permission" on tooltip (if no other message explicitly provided). Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
  * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
@@ -14585,7 +14674,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				}
 				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
-				$out .= dolGetButtonAction('', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
+				$out .= dolGetButtonAction($subbutton['text'], $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
 			$out .= "</div>";
 			$out .= "</div>";
@@ -15526,7 +15615,7 @@ function getElementProperties($elementType)
 
 	if ($reshook) {
 		$elementProperties = $hookmanager->resArray;
-	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for sécurity against misconfigured external modules
+	} elseif (!empty($hookmanager->resArray) && is_array($hookmanager->resArray)) { // resArray is always an array but for security against misconfigured external modules
 		$elementProperties = array_replace($elementProperties, $hookmanager->resArray);
 	}
 

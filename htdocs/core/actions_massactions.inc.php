@@ -1234,6 +1234,7 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				// TODO Change signature of delete for Societe
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
 			} else {
+				$objecttmp->oldcopy = dol_clone($objecttmp);
 				$result = $objecttmp->delete($user);
 			}
 

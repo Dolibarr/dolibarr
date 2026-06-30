@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
@@ -1623,6 +1623,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
@@ -3012,7 +3013,7 @@ while ($i < $imaxinloop) {
 					print '</a>';
 
 					if (!empty($shippableInfos['warning'])) {
-						// On ne remonte plus le détail textwarning, mais on garde l’icône d’avertissement
+						// We no longer show the textwarning detail, but we keep the warning icon
 						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
 					}
 				}

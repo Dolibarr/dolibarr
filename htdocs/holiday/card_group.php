@@ -286,7 +286,7 @@ if (empty($reshook)) {
 				}
 			}
 			foreach ($TusersToProcess as $u) {
-				// Check if there is already holiday for this period pour chaque user
+				// Check if there is already holiday for this period for each user
 				$verifCP = $object->verifDateHolidayCP($u, $date_debut, $date_fin, $halfday);
 				if (!$verifCP) {
 					//setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
@@ -483,7 +483,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
        </script>'."\n";
 
 
-		// Formulaire de demande
+		// Leave request form
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
@@ -570,7 +570,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print $form->textwithpicto($langs->trans("DateDebCP"), $langs->trans("FirstDayOfHoliday"));
 		print '</td>';
 		print '<td>';
-		// Si la demande ne vient pas de l'agenda
+		// If the request does not come from the agenda
 		if (!GETPOST('date_debut_')) {
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {

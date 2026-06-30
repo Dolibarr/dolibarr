@@ -81,7 +81,7 @@ abstract class CommonClassTest extends TestCase
 	 *
 	 * @var integer
 	 */
-	public $nbLinesToShow = 100;
+	public $nbLinesToShow = 50;
 
 	/**
 	 * Log file from which to extract lines in case of failing test
@@ -146,6 +146,7 @@ abstract class CommonClassTest extends TestCase
 	 */
 	public function onNotSuccessfulTest($t): void // @phpstan-ignore missingType.parameter
 	{
+		global $db;
 
 		// Get the lines that were added since the start of the test
 
@@ -214,7 +215,7 @@ abstract class CommonClassTest extends TestCase
 
 		if ($nbLinesToShow) {
 			print "\n";
-			print "########## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
+			print "########## We output the last ".$nbLinesToShow." lines of the file ".basename($this->logfile)." for the failed test ".$failedTestMethod." (file has ".$totalLines." lines) ".PHP_EOL;
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
 				// Show partial log file contents when requested.
@@ -230,6 +231,7 @@ abstract class CommonClassTest extends TestCase
 		print "##[endgroup]".PHP_EOL;
 
 		// Print last line of file /var/log/apache2/travis_error_log (Unix only)
+		/* File travis_error_log seems not found on travis
 		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
 			$logFile = '/var/log/apache2/travis_error_log';
 
@@ -245,6 +247,20 @@ abstract class CommonClassTest extends TestCase
 				echo "File $logFile does not exist or is not readable.\n";
 			}
 		}
+		*/
+
+		// Try to output DB info
+		print "\n";
+		print "########## We try to output some DB info".PHP_EOL;
+		$resql = $db->query("SHOW ENGINE INNODB STATUS");
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			print $obj->Status.PHP_EOL;
+		} else {
+			print $db->lasterror().PHP_EOL;
+		}
+
+		print PHP_EOL;
 
 		/** @phpstan-ignore method.notFound */
 		/** @phpstan-ignore-next-line */
@@ -435,7 +451,7 @@ abstract class CommonClassTest extends TestCase
 		'dav' => 'Dav',
 		'debugbar' => 'DebugBar',
 		'shipping' => 'Expedition',
-		'deplacement' => 'Deplacement',					// TODO Remove module
+		'deplacement' => null,
 		"documentgeneration" => 'DocumentGeneration',  // TODO: fill in proper name
 		'don' => 'Don',
 		'dynamicprices' => 'DynamicPrices',

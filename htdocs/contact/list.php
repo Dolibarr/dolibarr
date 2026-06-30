@@ -1823,11 +1823,12 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTML($obj->email).'">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
-				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, 0, 1);
+				$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
+				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
 			}
 			print '</td>';
 			if (!$i) {
@@ -1899,7 +1900,9 @@ while ($i < $imaxinloop) {
 
 		// Private/Public
 		if (!empty($arrayfields['p.priv']['checked'])) {
-			print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+			print '<td class="center">';
+			print $contactstatic->LibPubPriv($obj->priv, 2);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

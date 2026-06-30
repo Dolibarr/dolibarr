@@ -1,10 +1,18 @@
 <?php
 /* Copyright (C) 2026 ATM Consulting <support@atm-consulting.fr>
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -152,6 +160,32 @@ class NamingContractTest extends \PHPUnit\Framework\TestCase
 		$nc      = new NamingContract('invoice', 'request');
 		$content = 'class CommonObject extends DolibarrObject {}';
 		$this->assertSame($content, $nc->applyTo($content)); // @phpstan-ignore method.notFound
+	}
+
+	// ── Generated list template — trackid placeholder (#32460 item 14) ────
+
+	/**
+	 * The generated list page must derive its e-mail trackid from the object name,
+	 * exactly like the card page (myobject_card.php) and core list pages
+	 * (comm/propal/list.php => 'pro', societe/list.php => 'thi'). The legacy literal
+	 * 'xxxx' placeholder is not a substitution token, so it used to leak verbatim into
+	 * every generated module and collide across modules in the mass e-mailing trackid.
+	 * Regression guard for #32460 (item 14, e-mail/trackid handling).
+	 *
+	 * @return void
+	 */
+	public function testListTemplateTrackidIsSubstituted(): void
+	{
+		$template = file_get_contents(dirname(__FILE__) . '/../../htdocs/modulebuilder/template/myobject_list.php');
+		$this->assertIsString($template); // @phpstan-ignore method.notFound
+
+		// The non-substitutable 'xxxx' placeholder must no longer carry the trackid.
+		$this->assertStringNotContainsString("\$trackid = 'xxxx'", $template, "The list template must not carry the 'xxxx' trackid placeholder"); // @phpstan-ignore method.notFound
+
+		// After generation the trackid derives from the object name, like the card page and core.
+		$nc     = new NamingContract('invoice', 'request');
+		$result = $nc->applyTo($template);
+		$this->assertStringContainsString("\$trackid = 'request'.\$object->id;", $result, 'Generated trackid must derive from the object name'); // @phpstan-ignore method.notFound
 	}
 
 	// ── NamingContract — applyToFilename ─────────────────────────────────
