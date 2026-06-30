@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
- * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
@@ -196,6 +196,11 @@ class MoLine extends CommonObjectLine
 	 * @var int Service Workstation
 	 */
 	public $fk_default_workstation;
+
+	/**
+	 * @var ?int Id of the child BOM linked to this line (not stored in the line table, set on the fly for display)
+	 */
+	public $fk_bom_child;
 
 	/**
 	 * Constructor
