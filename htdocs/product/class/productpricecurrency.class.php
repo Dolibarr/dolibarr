@@ -297,7 +297,7 @@ class ProductPriceCurrency
 			$result[(int) $obj->price_level][$obj->multicurrency_code] = array(
 				'price' => (float) $obj->price,
 				'price_ttc' => (float) $obj->price_ttc,
-				'price_base_type' => $obj->price_base_type,
+				'price_base_type' => (string) $obj->price_base_type,
 				'multicurrency_tx' => (float) $obj->multicurrency_tx,
 			);
 		}

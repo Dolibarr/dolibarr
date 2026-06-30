@@ -46,6 +46,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  *
  * @phan-file-suppress PhanUndeclaredExtendedClass
  * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanTypeMismatchProperty
+ * @phan-file-suppress PhanTypeMismatchArgumentProbablyReal
  */
 class PropalCurrencyPriceTest extends CommonClassTest
 {

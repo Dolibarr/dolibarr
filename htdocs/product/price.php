@@ -951,6 +951,7 @@ if (empty($reshook)) {
 			} else {
 				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
 				// Add mode: empty currency inputs must not delete prices already set for this customer.
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder (product id then customer id is the intended order)
 				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, (float) $tva_tx, $user, false) > 0) {
 					$error++;
 				}
@@ -1104,6 +1105,7 @@ if (empty($reshook)) {
 			} else {
 				// Save the per-customer fixed currency prices submitted alongside the customer price (issue #32379).
 				// Edit mode: inputs are prefilled, so an empty input removes the matching currency price.
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder (product id then customer id is the intended order)
 				if (saveCustomerCurrencyPrices($db, $object->id, $prodcustprice->fk_soc, (float) $tva_tx, $user, true) > 0) {
 					$error++;
 				}
