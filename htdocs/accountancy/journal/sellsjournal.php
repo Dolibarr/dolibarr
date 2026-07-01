@@ -1394,7 +1394,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 						print '""' . $sep;
 						print '"' . $langs->trans("VAT") . ' - ' . implode(', ', $def_tva[$key][$k]) . ' %"' . $sep;
-						print '"' . csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("VAT") . implode($def_tva[$key][$k]) . ' %' . ($numtax ? ' - Localtax ' . $numtax : '')) . $labelCustomerDiscountExtension) . '"' . $sep;
+						print '"' . csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $invoicestatic->ref, $langs->trans("VAT") . implode($def_tva[$key][$k]) . ' %') . $labelCustomerDiscountExtension) . '"' . $sep;
 						print '"' . ($mt < 0 ? price(-$mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 						print '"' . $journal . '"';
