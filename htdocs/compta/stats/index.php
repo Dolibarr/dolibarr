@@ -267,8 +267,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
-	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 * List of payments (old payments are not seen by this query because, on old
+	 * versions, they were not linked via paiement_facture. We add them later)
 	 */
 	$sql = "SELECT date_format(p.datep, '%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -733,7 +733,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Invoice a encaisser : </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja réglé des invoices partiellement réglées</td></tr>";
+ print "<tr class=\"oddeven\"><td class=\"right\" colspan=\"5\"><i>Invoices to collect: </i></td><td class=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug here because it does not exclude already paid partially settled invoices</td></tr>";
  }
  $db->free($resql);
  }
@@ -745,7 +745,7 @@ print '</div>';
 
 /*
  *
- * Propales signees, et non facturees
+ * Signed but not invoiced proposals
  *
  */
 
@@ -782,7 +782,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td class=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- g here, it should exclude already invoiced amount></tr>";
  }
  $db->free($resql);
  }
@@ -790,7 +790,7 @@ print '</div>';
  {
  dol_print_error($db);
  }
- print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr class="oddeven"><td class=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td class=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug here because bug on two previous</td></tr>";
  }
  print "</table>";
 

@@ -1229,7 +1229,7 @@ class Memo extends CommonObject
 	}
 
 	/**
-	 * Vérifie si une couleur est un code hex valide
+	 * Checks if a color is a valid hex code
 	 *
 	 * @param mixed $color the color to check
 	 * @return bool
@@ -1243,7 +1243,7 @@ class Memo extends CommonObject
 		// Remove spaces at the beginning/end
 		$color = trim($color);
 
-		// Vérifie #fff ou #ffffff
+		// Checks for #fff or #ffffff
 		return preg_match('/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/', $color) === 1;
 	}
 
