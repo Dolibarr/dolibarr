@@ -1421,7 +1421,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
-					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
+					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') { // If confirmed, proceed with deletion
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
@@ -1464,7 +1464,7 @@ if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->rowid > 0) {
 					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
-					$nbfile++;
+					$nbfile++; // Count of files analyzed
 					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
 						$nbfiletodelete++;
 						if ($nbfiletodelete <= $MAXTODELETE) {
@@ -2057,7 +2057,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
-					// Calcul de la somme des paiements reçus
+					// Calculate the sum of received payments
 					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
 					$totHt = ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);

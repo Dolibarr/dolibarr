@@ -461,6 +461,7 @@ $leftmenuwidth = 254;
 	--textbutaction : #<?php print $textbutaction; ?>;
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--colorwhitelight: #eee;
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -517,6 +518,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
 				--colorwhite: #000;
+				--colorwhitelight: #333;
 	      }
 
 		body, button {
@@ -734,7 +736,7 @@ textarea {
 	border-right:solid 1px var(--inputbordercolor);
 	border-bottom:solid 1px var(--inputbordercolor);
 
-	background-color: #FFF;
+	/* background-color: #FFF; */
 	padding:8px;
 	margin-left:1px;
 	margin-bottom:1px;
@@ -4339,7 +4341,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
-	border-top: 2px solid #111 !important;
+	border-top: 2px solid #AAA !important;
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
@@ -5778,7 +5780,7 @@ div.boximport {
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 
-.fieldrequired { font-weight: bold; color: #000055; }
+.fieldrequired { font-weight: bold; }
 #tablesubscribe .fieldrequired {
 	font-weight: inherit !important;
 	color: inherit !important;

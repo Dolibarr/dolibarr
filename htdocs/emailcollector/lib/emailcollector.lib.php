@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -149,9 +149,9 @@ function getAttachments($jk, $mbox)
 /**
  * Get content of a joined file from its position into a given email
  *
- * @param integer $jk numéro du mail
- * @param string $fpos position de la pièce jointe
- * @param integer $type type de la pièce jointe
+ * @param integer $jk mail number
+ * @param string $fpos attachment position
+ * @param integer $type attachment type
  * @param \IMAP\Connection $mbox object connection imap
  * @return string data
  */

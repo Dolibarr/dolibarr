@@ -52,7 +52,7 @@ jobs:
       # Restore old cache
       - name: Restore phpstan cache
         id: cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ./.github/tmp
           key: phpstan-cache-${{ matrix.php-version }}-${{ env.CACHE_KEY_PART }}-${{
@@ -119,7 +119,7 @@ jobs:
 
       # Save cache
       - name: Save phpstan cache
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         if: ${{ success() || ( ! cancelled() && steps.cache.outputs.cache-hit != 'true' ) }}
         with:
           path: ./.github/tmp

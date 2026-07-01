@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -372,7 +372,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
-					$action = 'create'; // Force chargement page création
+					$action = 'create'; // Force loading of creation page
 				}
 
 				if (empty($companybankaccount->rum)) {
@@ -453,7 +453,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-					$action = 'createcard'; // Force chargement page création
+					$action = 'createcard'; // Force loading of creation page
 				}
 			}
 

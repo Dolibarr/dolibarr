@@ -360,7 +360,7 @@ class IntracommReport extends CommonObject
 
 		$declaration_des = $e->addChild('declaration_des');
 		$declaration_des->addChild('num_des', self::getDeclarationNumber($this->numero_declaration));
-		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra ?? ''); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
+		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra ?? ''); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Must be 13 characters
 		$declaration_des->addChild('mois_des', (string) $period_month);
 		$declaration_des->addChild('an_des', (string) $period_year);
 
