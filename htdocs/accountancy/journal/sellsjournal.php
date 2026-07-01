@@ -1526,8 +1526,8 @@ if (empty($action) || $action == 'view') {
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"];
-		$invoicestatic->close_code = $val["close_code"];
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -1570,7 +1570,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $val['ref']).'</span>';
+			print '<span class="error">'.$langs->trans('ErrorInvoiceContainsLinesNotYetBoundedShort', $invoicestatic->ref).'</span>';
 			print '</td>';
 			// Subledger account
 			print "<td>";
