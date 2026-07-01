@@ -273,7 +273,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId, $demBId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
@@ -327,7 +327,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId, $demBId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
@@ -386,7 +386,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demAId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -443,7 +443,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id, $demA2Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -498,7 +498,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -558,7 +558,7 @@ class BonPrelevementTest extends CommonClassTest
 		$bon = new BonPrelevement($db);
 		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
 							   array($demA1Id, $demB1Id, $demA2Id, $demB2Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -600,13 +600,13 @@ class BonPrelevementTest extends CommonClassTest
 		$fac->mode_reglement_code = 'PRE'; // direct debit payment mode
 
 		$result = $fac->create($user);
-		$this->assertGreaterThan(0, $result, 'Facture::create() failed: '.$fac->error);
+		$this->assertGreaterThan(0, $result, 'Facture::create() failed: '.$fac->errorsToString());
 
 		// Service line at 0% VAT so total_ttc = $amount
 		$fac->addline('Service test', $amount, 1, 0);
 
 		$result = $fac->validate($user);
-		$this->assertGreaterThanOrEqual(0, $result, 'Facture::validate() failed: '.$fac->error);
+		$this->assertGreaterThanOrEqual(0, $result, 'Facture::validate() failed: '.$fac->errorsToString());
 
 		return $fac;
 	}
@@ -627,7 +627,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Insert a row in llx_prelevement_demande with fk_societe_rib = $ribId
 		$result = $fac->demande_prelevement($user, $amount, 'direct-debit', 'facture', 0, $ribId);
-		$this->assertEquals(1, $result, 'demande_prelevement() failed for invoice #'.$fac->id.': '.$fac->error);
+		$this->assertEquals(1, $result, 'demande_prelevement() failed for invoice #'.$fac->id.': '.$fac->errorsToString());
 
 		// Retrieve the row ID of the freshly inserted request
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_facture = ".((int) $fac->id)." AND traite = 0 ORDER BY rowid DESC LIMIT 1";
