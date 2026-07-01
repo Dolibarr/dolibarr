@@ -155,12 +155,13 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
-// Detect a configuration template already present on disk (a real conf.php, not an empty/just-<?php file,
-// holding at least one variable). Only then the administrator can choose to reuse it instead of generating
-// a brand new conf.php. The >8 size test matches the core convention (inc.php) to ignore an empty template.
+// Detect a configuration template that was already present on disk BEFORE the installer created a conf.php.
+// check.php records that fact in the session ($confexists), because when no conf.php exists it copies
+// conf.php.example over conf.php, which would otherwise look like a template. Only a real pre-existing conf.php
+// (with at least one value) lets the administrator choose to reuse it. The >8 size test matches inc.php convention.
 $templatepresent = false;
 $templateparsed = array('values' => array(), 'unknown' => array(), 'deprecated' => array(), 'missing' => array());
-if (is_file($conffile) && filesize($conffile) > 8) {
+if (!empty($_SESSION['dol_install_conf_preexisted']) && is_file($conffile) && filesize($conffile) > 8) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
 	$confmanagerpreview = new ConfFileManager();
 	$rawconftemplate = file_get_contents($conffile);

@@ -78,6 +78,12 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
+// Start a session (before any HTML output) so we can remember, for the next page (fileconf.php), whether a filled
+// conf.php already existed before the installer created one below.
+if (session_status() !== PHP_SESSION_ACTIVE) {
+	session_start();
+}
+
 dolibarr_install_syslog("- check: Dolibarr install/upgrade process started");
 
 
@@ -326,6 +332,9 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 	// First install: no upgrade necessary/required
 	$allowupgrade = false;
 }
+
+// Remember, for the next page (fileconf.php), whether a filled conf.php already existed before this check created one.
+$_SESSION['dol_install_conf_preexisted'] = $confexists;
 
 
 // File is missing and cannot be created
