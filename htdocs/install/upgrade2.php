@@ -4250,13 +4250,15 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/barre_top/default.php',
 		'/core/modules/modComptabiliteExpert.class.php',
 		'/core/modules/modCommercial.class.php',
+		'/core/modules/modPaybox.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
+		'/core/modules/modactivite.class.php',		// A file from an external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php', // now has position 99
 		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
 		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',

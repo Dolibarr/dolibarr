@@ -840,6 +840,7 @@ if (empty($reshook)) {
 				$clone->id = 0;
 				$clone->email = (getDolGlobalString('USER_MAIL_REQUIRED') ? GETPOST('new_email', 'alphanohtml') : '');
 				$clone->api_key = '';
+				$clone->admin = ($user->admin ? $object->admin : 0); 	// If I am admin, I can clone the admin flag of a user, otherwiseadmin flag is forced to false.
 
 				$parts = explode(' ', GETPOST('clone_name'), 2);
 				$clone->firstname = $parts[0];

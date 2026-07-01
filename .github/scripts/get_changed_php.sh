@@ -48,8 +48,11 @@ while true; do
 	response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
 		"https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}/files?per_page=${per_page}&page=${page}")
 
+        phan_exclude_file_regex=$(php -r '$config = require("dev/tools/phan/config.php"); echo $config["exclude_file_regex"];')
+
+
 	# Filter for files ending with .php and add them to the list
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.php$")) | .filename')
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not)) | .filename' | grep -vP "$phan_exclude_file_regex")
 	changed_php_files+=("${files[@]}")
 
 	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.lang$")) | .filename')
