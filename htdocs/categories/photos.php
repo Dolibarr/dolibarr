@@ -149,7 +149,7 @@ if ($object->id) {
 	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
-	 * Confirmation deletion of picture
+	 * Confirm photo deletion
 	 */
 	if ($action == 'delete') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.urlencode($type).'&file='.urlencode(GETPOST("file")), $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
@@ -204,15 +204,15 @@ if ($object->id) {
 	print '</div>'."\n";
 
 	/*
-	 * Ajouter une photo
+	 * Add a photo
 	*/
 	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
-		// Affiche formulaire upload
+		// Display upload form
 		$formfile = new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, 0, $user->hasRight('categorie', 'creer'), 50, $object, '', 0, '', 0);
 	}
 
-	// Affiche photos
+	// Display photos
 	if ($action != 'ajout_photo') {
 		$nbphoto = 0;
 		$nbbyrow = 5;
@@ -262,7 +262,7 @@ if ($object->id) {
 				print '<br>'.$viewfilename;
 				print '<br>';
 
-				// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+				// Suggest generation of the thumbnail if it doesn't exist and if the size exceeds the limits
 				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight)) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&action=addthumb&type='.$type.'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 				}
