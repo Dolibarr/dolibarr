@@ -589,8 +589,8 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"] ?? 0;
-		$invoicestatic->close_code = $val["close_code"] ?? '';
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -614,7 +614,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 		if (isset($errorforinvoice[$key]) && $errorforinvoice[$key] == 'somelinesarenotbound') {
 			$error++;
 			$errorforline++;
-			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', (string) $val['ref']), null, 'errors');
+			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', (string) ($val['ref'] ?? '')), null, 'errors');
 		}
 
 		// Warranty
@@ -1205,8 +1205,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$invoicestatic->id = (int) $key;
 		$invoicestatic->ref = (string) $val["ref"];
-		$invoicestatic->type = $val["type"] ?? 0;
-		$invoicestatic->close_code = $val["close_code"] ?? '';
+		$invoicestatic->type = (int) ($val["type"] ?? 0);
+		$invoicestatic->close_code = (string) ($val["close_code"] ?? '');
 
 		$date = dol_print_date($val["date"], 'day');
 
@@ -1231,7 +1231,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				//if ($mt) {
 				print '"'.$key.'"'.$sep;
 				print '"'.$date.'"'.$sep;
-				print '"'.($val["ref"] ?? '').'"'.$sep;
+				print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 				print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print '"'.length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY')).'"'.$sep;
@@ -1251,7 +1251,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.($val["ref"] ?? '').'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg($companystatic->accountancy_code_customer_general).'"'.$sep;
@@ -1272,7 +1272,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			//if ($mt) {
 			print '"'.$key.'"'.$sep;
 			print '"'.$date.'"'.$sep;
-			print '"'.($val["ref"] ?? '').'"'.$sep;
+			print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 			print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1301,7 +1301,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				if ($mt) {
 					print '"'.$key.'"'.$sep;
 					print '"'.$date.'"'.$sep;
-					print '"'.($val["ref"] ?? '').'"'.$sep;
+					print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 					print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1322,7 +1322,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 				//if ($mt) {
 				print '"'.$key.'"'.$sep;
 				print '"'.$date.'"'.$sep;
-				print '"'.($val["ref"] ?? '').'"'.$sep;
+				print '"'.((string) ($val["ref"] ?? '')).'"'.$sep;
 				print '"'.csvClean(dol_trunc($companystatic->name, 32)).'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 				print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
@@ -1344,7 +1344,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					//if ($mt) {
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
-					print '"' . ($val["ref"] ?? '') . '"' . $sep;
+					print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
 					print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
 					print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
 					print '"' . length_accountg($companystatic->accountancy_code_customer_general) . '"' . $sep;
@@ -1367,7 +1367,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					//if ($mt) {
 					print '"' . $key . '"' . $sep;
 					print '"' . $date . '"' . $sep;
-					print '"' . ($val["ref"] ?? '') . '"' . $sep;
+					print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
 					print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -1388,7 +1388,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 					if ($mt) {
 						print '"' . $key . '"' . $sep;
 						print '"' . $date . '"' . $sep;
-						print '"' . ($val["ref"] ?? '') . '"' . $sep;
+						print '"' . ((string) ($val["ref"] ?? '')) . '"' . $sep;
 						print '"' . csvClean(dol_trunc($companystatic->name, 32)) . '"' . $sep;
 						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
 						print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
