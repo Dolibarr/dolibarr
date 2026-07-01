@@ -112,7 +112,12 @@ class LanguageOfCommentsSniff implements Sniff
 
 		// Avoid matching special characters directly preceded or followed with []'"
 		// Avoid matching special characters in a "word/identifier" like string with '_'.
-		if (strpos($content, 'Copyright') === false && preg_match('/(?<!_\w{0,20})(?<![<>\/\'"\[])[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]+(?![\'"\[]\/)(?![<>\/\'"\[])(?!\w*_)/u', $content)) {
+		// Implementation:
+		// - Start with word (\b);
+		// - Require that this word does not contain '_'
+		// - Match all word characters up to the accented character.
+		// - Require that the character is not preceded or following by specific delimieters
+		if (strpos($content, 'Copyright') === false && preg_match('/\b(?![\p{L}_]*_[\p{L}_]*\b)([\p{L}_]*)(?<![<>\/\'"\[])[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]+(?![\'"\[]\/)(?![<>\/\'"\[])/u', $content)) {
 			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
 			$data  = [trim($content)];
 			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
