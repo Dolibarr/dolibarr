@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1422,7 +1422,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 
 	// Check if nb of image is valid
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
-		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		// Get the corresponding image (index - 1 because $imageNumber is 1-based)
 		$img = $images->item($imageNumber - 1);
 		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');

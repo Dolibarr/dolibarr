@@ -59,6 +59,9 @@
  * @var string $description
  * @var Object $objp
  * @var int	$dateSelector
+ * @var int	$inputalsopricewithtax
+ * @var int	$outputalsopricetotalwithtax
+ * @var int $disableremove
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -107,6 +110,34 @@ if (empty($inputalsopricewithtax)) {
 if (empty($outputalsopricetotalwithtax)) {
 	$outputalsopricetotalwithtax = 0;
 }
+
+$situationinvoicelinewithparent = 0;
+$situationinvoicelinewithchild = 0;
+
+if (getDolGlobalInt('INVOICE_USE_SITUATION') && in_array($object->element, array('facture', 'facturedet'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+
+	// Set if invoice line has a parent
+	if (isset($line->fk_prev_id)) {
+		if ($object->isSituationInvoice()) {	// Method isSituationInvoice() exists only on invoices
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+	// Set if invoice line has a child
+	$sqlcheckchild = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_prev_id = ".((int) $line->id);
+	$resqlcheckchild = $db->query($sqlcheckchild);
+	if ($resqlcheckchild) {
+		$objcheckchild = $db->fetch_object($resqlcheckchild);
+		if ($objcheckchild->count > 0) {
+			$situationinvoicelinewithchild = 1;
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
+
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -408,7 +439,8 @@ if (empty($positiverates)) {
 print $tooltiponprice;
 print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true, $line->info_bits);
 print $tooltiponpriceend;
-?></td>
+print '</td>';
+?>
 
 <td class="linecoluht nowraponall right">
 	<?php
@@ -421,7 +453,9 @@ print $tooltiponpriceend;
 	?>
 </td>
 
-<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
+<?php
+// Multicurrency unit price excluding tax - HT
+if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 	<td class="linecoluht_currency nowraponall right">
 	<?php $coldisplay++;
 	if (empty($line->fk_remise_except)) {
@@ -433,12 +467,12 @@ print $tooltiponpriceend;
 	</td>
 <?php }
 
-// Multicurrency HT
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
-	if (!$upinctax && $line->total_ttc && $line->qty) {
-		$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
+	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
+		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
 	}
 	if (!$upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
@@ -446,10 +480,11 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	if (empty($line->fk_remise_except)) {
 		print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
 	}	// if upinctax can't be known, we show subprice excl ta
-	?></td>
+	?>
+	</td>
 <?php }
 
-// Multicurrency TTC
+// Multicurrency unit price including tax - TTC
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) { ?>
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->multicurrency_subprice_ttc) ? $line->multicurrency_subprice_ttc : null;
@@ -600,16 +635,6 @@ $objectRights = $this->getRights();
 $tmppermtoedit = $objectRights->creer;
 
 if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
-	$situationinvoicelinewithparent = 0;
-	if (isset($line->fk_prev_id) && in_array($object->element, array('facture', 'facturedet'))) {
-		/** @var CommonInvoice $object */
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
-			// Set constant to disallow editing during a situation cycle
-			$situationinvoicelinewithparent = 1;
-		}
-	}
-
 	// Asset info
 	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
@@ -664,7 +689,7 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 	// Delete picto
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
+	if (!$situationinvoicelinewithchild && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a child line.
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';

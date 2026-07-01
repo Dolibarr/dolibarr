@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace codesniffer\Sniffs\Dolibarr;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -24,7 +26,9 @@ use PHP_CodeSniffer\Files\File;
  */
 class LanguageOfCommentsSniff implements Sniff
 {
-	// List of words that betray a comment in French
+	/**
+	 * @var string[] List of words that betray a comment in French
+	 */
 	public $frenchWords = [
 		' additionner ',
 		' arrondir ',
@@ -46,6 +50,8 @@ class LanguageOfCommentsSniff implements Sniff
 		' entier ',
 		// ' facture ', // avoid french name of dolibarr object
 		' factures ',
+		' fonction ',
+		' formulaire ',
 		' ligne ',
 		' lignes ',
 		' modèle ',
@@ -96,9 +102,22 @@ class LanguageOfCommentsSniff implements Sniff
 	{
 		$tokens = $phpcsFile->getTokens();
 		$content = $tokens[$stackPtr]['content'];
-
 		// Basic cleanup (lowercase for comparison)
 		$contentLower = strtolower($content);
+
+		// content contains french examples
+		if (strpos($contentLower, 'france') !== false || strpos($contentLower, 'french') || strpos($content, 'fr_FR')) {
+			return;
+		}
+
+		// Avoid matching special characters directly preceded or followed with []'"
+		// Avoid matching special characters in a "word/identifier" like string with '_'.
+		if (strpos($content, 'Copyright') === false && preg_match('/(?<!_\w{0,20})(?<![<>\/\'"\[])[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]+(?![\'"\[]\/)(?![<>\/\'"\[])(?!\w*_)/u', $content)) {
+			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
+			$data  = [trim($content)];
+			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
+			return; // We stop at the first occurrence.
+		}
 
 		foreach ($this->frenchWords as $word) {
 			if (strpos($contentLower, $word) !== false) {

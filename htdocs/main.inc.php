@@ -369,7 +369,29 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	if ((GETPOSTISSET('massaction') || $tmpaction) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions (except the listed exceptions that are usually post for pre-actions and not real action) and mass actions are processed as sensitive.
 		// We exclude some action that are not sensitive so legitimate
-		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, array('check', 'create', 'create2', 'createsite', 'createcard', 'edit', 'editcontract', 'editfile', 'editvalidator', 'file_manager', 'history', 'presend', 'presend_addmessage', 'preview', 'reconcile', 'specimen', 'testsetup', 'undeployconfirmed', 'validatenewpassword', 'view')))) {
+		$legitimate_actions = array(
+			'check',
+			'create',
+			'create2',
+			'createsite',
+			'createcard',
+			'edit',
+			'editcontract',
+			'editfile',
+			'editvalidator',
+			'file_manager',
+			'history',
+			'presend',
+			'presend_addmessage',
+			'preview',
+			'reconcile',
+			'specimen',
+			'testsetup',
+			'undeployconfirmed',
+			'validatenewpassword',
+			'view'
+		);
+		if (GETPOSTISSET('massaction') || (strpos($tmpaction, 'display') !== 0 && !in_array($tmpaction, $legitimate_actions))) {
 			// Note: 'create' is for form to ask creattion, realcreation is action 'add'
 			// Note: 'check' if for the feature to control an archive.
 			$sensitiveget = true;
@@ -2165,7 +2187,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
  *  @param      string			$head    			Lines in the HEAD
  *  @param      string			$title   			Title of web page
  *  @param      string			$target  			Target to use in menu links (Example: '' or '_top')
- *	@param		int<0,1>		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
+ *	@param		int<0,1>		$disablejs			Do not output links to js (Ex: when function used by an ajax subform)
  *	@param		int<0,1>		$disablehead		Do not output head section
  *	@param		string[]		$arrayofjs			Array of js files to add in header
  *	@param		string[]		$arrayofcss			Array of css files to add in header
@@ -3247,7 +3269,7 @@ function top_menu_search()
 		if (empty($defaultAction)) {
 			$defaultAction = $item['url'];
 		}
-		$buttonList .= '<button class="dropdown-item global-search-item tdoverflowmax300" data-target="'.dol_escape_htmltag($item['url']).'" >';
+		$buttonList .= '<button class="dropdown-item global-search-item '.(empty($conf->dol_optimize_smallscreen) ? 'tdoverflowmax400' : 'tdoverflowmax300').'" data-target="'.dol_escape_htmltag($item['url']).'" >';
 		$buttonList .= $item['text'];
 		$buttonList .= '</button>';
 	}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2022		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ function isValidSiret($siret, $lengthonly = 0)
 
 /**
  *  Check the syntax validity of a Portuguese (PT) Tax Identification Number (TIN).
- *  (NIF = Número de Identificação Fiscal)
+ *  (NIF = Numero de Identificacao Fiscal)
  *
  *  @param		string		$str		NIF to check
  *  @return		boolean					True if valid, False otherwise
@@ -125,7 +125,7 @@ function isValidTinForPT($str)
 
 /**
  *  Check the syntax validity of an Algerian (DZ) Tax Identification Number (TIN).
- *  (NIF = Numéro d'Identification Fiscale)
+ *  (NIF = Tax Identification Number)
  *
  *  @param		string		$str		TIN to check
  *  @return		boolean					True if valid, False otherwise
@@ -146,7 +146,7 @@ function isValidTinForDZ($str)
 
 /**
  *  Check the syntax validity of a Belgium (BE) Tax Identification Number (TIN).
- *  (NN = Numéro National)
+ *  (NN = National Number)
  *
  *  @param		string		$str		NN to check
  *  @return		boolean					True if valid, False otherwise
@@ -168,9 +168,9 @@ function isValidTinForBE($str)
 
 /**
  *  Check the syntax validity of a Spanish (ES) Tax Identification Number (TIN), where:
- *  - NIF = Número de Identificación Fiscal (used for residents only before 2008. Used for both residents and companies since 2008.)
- *  - CIF = Código de Identificación Fiscal (used for companies only before 2008. Replaced by NIF since 2008.)
- *  - NIE = Número de Identidad de Extranjero
+ *  - NIF = Numero de Identificacion Fiscal (used for residents only before 2008. Used for both residents and companies since 2008.)
+ *  - CIF = Codigo de Identificacion Fiscal (used for companies only before 2008. Replaced by NIF since 2008.)
+ *  - NIE = Numero de Identidad de Extranjero
  *
  *  @param		string		$str		TIN to check
  *  @return		int<-4,3>				1 if NIF ok, 2 if CIF ok, 3 if NIE ok, -1 if NIF bad, -2 if CIF bad, -3 if NIE bad, -4 if unexpected bad
