@@ -148,6 +148,32 @@ class ConfFileManagerTest extends CommonClassTest
 	}
 
 	/**
+	 * Test that an empty dolibarr_main_csrf_with_token stays unset (commented), and is NOT turned into 0.
+	 *
+	 * The empty default must remain "absent" (no forcing) and must never be cast to the real value 0
+	 * (which would force CSRF protection off). A value of '0' or '3' on the other hand is a real, active value.
+	 *
+	 * @return	void
+	 */
+	public function testCsrfWithTokenEmptyIsNotZero()
+	{
+		$confmanager = new ConfFileManager();
+
+		// Empty default => commented assignment => variable not defined once the file is executed.
+		$varsEmpty = $this->evalConfContent($confmanager->build(array()));
+		$this->assertArrayNotHasKey('dolibarr_main_csrf_with_token', $varsEmpty, 'Empty value must stay unset, not become 0');
+
+		// Explicit 0 (force CSRF off) is a real, active value kept as a string.
+		$varsZero = $this->evalConfContent($confmanager->build(array('dolibarr_main_csrf_with_token' => '0')));
+		$this->assertArrayHasKey('dolibarr_main_csrf_with_token', $varsZero);
+		$this->assertSame('0', $varsZero['dolibarr_main_csrf_with_token']);
+
+		// Explicit 3 (strongest) is kept as a string too.
+		$varsThree = $this->evalConfContent($confmanager->build(array('dolibarr_main_csrf_with_token' => '3')));
+		$this->assertSame('3', $varsThree['dolibarr_main_csrf_with_token']);
+	}
+
+	/**
 	 * Test parse(): active assignments are read, commented lines ignored, unknown/deprecated/missing classified.
 	 *
 	 * @return	void
