@@ -101,7 +101,7 @@ $manageCustomerDepositInInvoice = getDolGlobalInt('ACCOUNTING_MANAGE_CUSTOMER_DE
 $labelCustomerDiscountExtension = ' (AC)';
 
 $cptcli = 'NotDefined';
-$accountCustomerDeposit = getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 'NotDefined');
+$accountCustomerDeposit = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 'NotDefined');
 $accountCustomerDepositVAT = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT_FOR_VAT', 'NotDefined');
 
 /*
