@@ -13435,6 +13435,50 @@ function dol_getmypid()
 }
 
 /**
+ * Generate a SQL search string for a criteria coming from a multiselect search filter (array of ids selected into a Form::multiselectarray combo).
+ * The special value -2 means "not defined" and searches records where the field is NULL or 0.
+ * Other accepted values are int ids > 0. Other values ('', '0', '-1', ...) are ignored, so an empty array or an array
+ * with only ignored values returns '' (no filter).
+ *
+ * @param	string				$field		Name of the SQL field to filter on, including SQL alias. Example: "f.fk_mode_reglement"
+ * @param	int[]|string[]		$values		Array of values selected into the search filter (int ids > 0 and/or -2 for "not defined")
+ * @return	string							The statement to append to the SQL query (starting with " AND ("), or '' if there is nothing to filter on
+ * @see natural_search(), Form::multiselectarray()
+ */
+function natural_search_multiselect($field, $values)
+{
+	global $db;
+
+	if (!is_array($values) || !count($values)) {
+		return '';
+	}
+
+	$ids = array();
+	$searchnotdefined = false;
+	foreach ($values as $value) {
+		if ((int) $value == -2) {	// -2 is the special value to search records with the field not defined
+			$searchnotdefined = true;
+		} elseif ((int) $value > 0) {
+			$ids[] = (int) $value;
+		}
+	}
+
+	$sqlfilters = array();
+	if (count($ids)) {
+		$sqlfilters[] = natural_search($field, implode(',', $ids), 2, 1);	// Returns "(field IN (id1,id2,...))"
+	}
+	if ($searchnotdefined) {
+		$sqlfilters[] = "(".$field." IS NULL OR ".$field." = 0)";
+	}
+
+	if (!count($sqlfilters)) {
+		return '';
+	}
+
+	return " AND (".implode(" OR ", $sqlfilters).")";
+}
+
+/**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
  * @param   string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
