@@ -1078,7 +1078,7 @@ class FormFile
 						$addcolumforpicto = ($delallowed || $printer || $morepicto);
 						$colspan = (4 + ($addcolumforpicto ? 1 : 0));
 						$colspanmore = 0;
-						$parameters = array('tmpout' => $tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
+						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
 						if (empty($res)) {
 							$tmpout .= $hookmanager->resPrint; 	// Complete line
