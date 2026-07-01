@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  * \file       htdocs/core/modules/mailings/fraise.modules.php
  * \ingroup    mailing
- * \brief      File of class to generate target according to rule Fraise
+ * \brief      Class file to generate targets according to the Fraise rule
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *    Class to generate target according to rule Fraise
+ *   Class to generate targets according to the Fraise rule
  */
 class mailing_fraise extends MailingTargets
 {
@@ -71,9 +71,9 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *    On the main mailing area, there is a box with statistics.
-	 *    If you want to add a line in this report you must provide an
-	 *    array of SQL request that returns two field:
+	 *    In the main mailing area, there is a box with statistics.
+	 *    If you want to add a line in this report, you must provide an
+	 *    array of SQL requests that return two fields:
 	 *    One called "label", One called "nb".
 	 *
 	 *    @return        string[]        Array with SQL requests
@@ -95,12 +95,12 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *    Return here number of distinct emails returned by your selector.
+	 *    Returns the number of distinct emails returned by your selector.
 	 *    For example if this selector is used to extract 500 different
 	 *    emails from a text file, this function must return 500.
 	 *
-	 *    @param      string    	$sql        Requete sql de comptage
-	 *    @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 *    @param      string    	$sql        SQL query for counting
+	 *    @return     int|string      			Number of recipients, or <0 if error, or '' if N/A
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -118,9 +118,9 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *   Displays the filter form that appears on the mailing recipient selection page
 	 *
-	 *   @return     string      Retourne zone select
+	 *   @return     string      Returns the select area
 	 */
 	public function formFilter()
 	{
@@ -222,7 +222,7 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *  Provide the URL to the car of the source information of the recipient for the mailing
+	 *  Provides the URL to the card of the source information of the recipient for the mailing
 	 *
 	 *  @param	int		$id		ID
 	 *  @return string      	URL link
@@ -235,10 +235,10 @@ class mailing_fraise extends MailingTargets
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Ajoute destinataires dans table des cibles
+	 *  Adds recipients to the targets table
 	 *
 	 *  @param    int        $mailing_id        Id of emailing
-	 *  @return int                       Return integer < 0 si erreur, nb ajout si ok
+	 *  @return int                       Returns integer < 0 if error, number added if successful
 	 */
 	public function add_to_target($mailing_id)
 	{
