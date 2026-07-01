@@ -383,8 +383,9 @@ $dolibarr_nocsrfcheck='0';
 
 // dolibarr_main_csrf_with_token
 // =============================
-// Force the CSRF token protection level (the MAIN_SECURITY_CSRF_WITH_TOKEN constant) from this file, so it wins over
-// the value set in the back office and cannot be lowered from there. Useful for a server/hosting administrator.
+// Force the CSRF token protection level from this file. Useful for a hosting administrator who wants to enforce
+// the security level of a Dolibarr instance. This overrides the MAIN_SECURITY_CSRF_WITH_TOKEN constant, so it wins
+// over the value set in the back office and cannot be changed from there.
 // Possible values: 0 (off), 1, 2 or 3 (strongest). The constant then appears read-only in the back office.
 // Examples:
 // $dolibarr_main_csrf_with_token = 3;
