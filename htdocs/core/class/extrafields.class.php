@@ -1485,6 +1485,15 @@ class ExtraFields
 			}
 		} elseif ($type == 'sellist') {		// List of values selected from a table (1 choice)
 			$out = '';
+			// Into search filters of list pages, render the combo as a multiselect to allow searching on several values
+			// at once, with an extra "Not defined" entry (special value -2). SQL criteria is forged into
+			// extrafields_list_search_sql.tpl.php. Restricted to the 'search_' prefix so other $mode == 1 callers
+			// (like advtargetemailing.php) that expect a scalar value keep the single select, and excluded when the
+			// ajax select2 mode is on (rendering not compatible).
+			$multiselectdata = null;
+			if ($mode == 1 && strpos($keyprefix, 'search_') === 0 && getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS') && !getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
+				$multiselectdata = array(-2 => '- '.$langs->trans("NotDefined").' -');
+			}
 			if (!empty($conf->use_javascript_ajax)) {
 				if (getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
 					// generate an ajax select2 infinite list
@@ -1515,14 +1524,16 @@ class ExtraFields
 					$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 					$out .= '	<option value="'.$value.'" selected>'.$this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey).'</option>';
 					$out .= '</select>';
-				} elseif (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
+				} elseif ($multiselectdata === null && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 				}
 			}
 			if (!getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
 				//$out .= '<!-- type = sellist -->';
-				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				if ($multiselectdata === null) {
+					$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				}
 				if (is_array($param['options'])) {
 					// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
 
@@ -1707,7 +1718,9 @@ class ExtraFields
 						dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 						$resql = $this->db->query($sql);
 						if ($resql) {
-							$out .= '<option value="0">&nbsp;</option>';
+							if ($multiselectdata === null) {
+								$out .= '<option value="0">&nbsp;</option>';
+							}
 							$num = $this->db->num_rows($resql);
 							$i = 0;
 							while ($i < $num) {
@@ -1733,7 +1746,7 @@ class ExtraFields
 									$labeltoshow = $obj->$nameFields;
 								}
 
-								if ($value == $obj->rowid) {
+								if ($multiselectdata === null && $value == $obj->rowid) {
 									if (!$notrans) {
 										foreach ($fields_label as $field_toshow) {
 											$translabel = $langs->trans($obj->$field_toshow);
@@ -1756,10 +1769,14 @@ class ExtraFields
 										$parent = $parentName.':'.$obj->{$parentField};
 									}
 
-									$out .= '<option value="'.$obj->rowid.'"';
-									$out .= ($value == $obj->rowid ? ' selected' : '');
-									$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-									$out .= '>'.$labeltoshow.'</option>';
+									if ($multiselectdata !== null) {
+										$multiselectdata[$obj->rowid] = $labeltoshow;
+									} else {
+										$out .= '<option value="'.$obj->rowid.'"';
+										$out .= ($value == $obj->rowid ? ' selected' : '');
+										$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+										$out .= '>'.$labeltoshow.'</option>';
+									}
 								}
 
 								$i++;
@@ -1778,17 +1795,28 @@ class ExtraFields
 						}
 
 						$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
-						$out .= '<option value="0">&nbsp;</option>';
+						if ($multiselectdata === null) {
+							$out .= '<option value="0">&nbsp;</option>';
+						}
 						if (is_array($data)) {
 							foreach ($data as $data_key => $data_value) {
-								$out .= '<option value="'.$data_key.'"';
-								$out .= ($value == $data_key ? ' selected' : '');
-								$out .= '>'.$data_value.'</option>';
+								if ($multiselectdata !== null) {
+									$multiselectdata[$data_key] = $data_value;
+								} else {
+									$out .= '<option value="'.$data_key.'"';
+									$out .= ($value == $data_key ? ' selected' : '');
+									$out .= '>'.$data_value.'</option>';
+								}
 							}
 						}
 					}
 				}
-				$out .= '</select>';
+				if ($multiselectdata !== null) {
+					$value_arr = is_array($value) ? $value : ((string) $value !== '' ? explode(',', (string) $value) : array());
+					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $multiselectdata, $value_arr, 0, 0, '', 0, '100%');
+				} else {
+					$out .= '</select>';
+				}
 			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = $value;
@@ -2031,6 +2059,7 @@ class ExtraFields
 
 						$sql .= $sqlwhere;
 						$sql .= ' ORDER BY '.implode(', ', $fields_label);
+						$sql .= ' LIMIT '.getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
 
 						dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
 
@@ -2097,6 +2126,10 @@ class ExtraFields
 							}
 							$this->db->free($resql);
 
+							if ($mode == 1 && strpos($keyprefix, 'search_') === 0 && getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS')) {
+								// Add a "Not defined" entry (special value -2) to allow the search of records with no value set
+								$data = array(-2 => '- '.$langs->trans("NotDefined").' -') + $data;
+							}
 							$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, 0, 0, '', 0, '100%');
 						} else {
 							print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
@@ -2111,6 +2144,10 @@ class ExtraFields
 						}
 
 						$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
+						if ($mode == 1 && strpos($keyprefix, 'search_') === 0 && getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS')) {
+							// Add a "Not defined" entry (special value -2) to allow the search of records with no value set
+							$data = array(-2 => '- '.$langs->trans("NotDefined").' -') + $data;
+						}
 						$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, 0, 0, '', 0, '100%');
 					}
 				}
@@ -3167,12 +3204,20 @@ class ExtraFields
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
-				} elseif ($key_type == 'select') {
-					// to detect if we are in search context
+				} elseif ($key_type == 'select' || ($key_type == 'sellist' && GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix))) {
+					// sellist is an array when used into a search filter rendered as a multiselect (option MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS),
+					// otherwise it is a scalar and is handled by the default case below
 					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
 						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
+						// Remove non-scalar entries (forged requests) and values emptied by the sanitizer
+						// so the imploded criteria has no empty part (would forge a broken SQL filter)
+						foreach ($value_arr as $value_arr_key => $value_arr_val) {
+							if (!is_scalar($value_arr_val) || (string) $value_arr_val === '') {
+								unset($value_arr[$value_arr_key]);
+							}
+						}
 						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);

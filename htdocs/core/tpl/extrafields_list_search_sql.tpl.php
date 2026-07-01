@@ -60,6 +60,11 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
 		$typ = $extrafields->attributes[$extrafieldsobjectkey]['type'][$tmpkey];
 
+		if (is_array($crit) && in_array($typ, array('sellist', 'chkbxlst'))) {
+			// Multiselect filter criteria can be restored as an array (for example from the search session with restore_lastsearch_values)
+			$crit = implode(',', $crit);
+		}
+
 		if ($crit != '' && in_array($typ, array('date', 'datetime', 'timestamp'))) {
 			if (is_numeric($crit)) {
 				if ($typ == 'date') {
@@ -84,6 +89,27 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				}
 				$morewhere .= ")";
 			}
+		} elseif ($crit != '' && in_array($typ, array('sellist', 'chkbxlst')) && preg_match('/(^|,)-2(,|$)/', $crit)) {
+			// Criteria coming from a multiselect search filter (option MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS) with
+			// the special entry -2 = "not defined" selected. We search records with no value set, plus records matching the other selected keys.
+			// An empty sellist/chkbxlst value can be stored as NULL, '' or '0' depending on how the record was saved.
+			$critkeys = array();
+			foreach (explode(',', $crit) as $critvalue) {
+				if ($critvalue !== '' && $critvalue != '0' && $critvalue != '-1' && $critvalue != '-2') {
+					$critkeys[] = $critvalue;
+				}
+			}
+			$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IS NULL OR ".$extrafieldsobjectprefix.$tmpkey." = '' OR ".$extrafieldsobjectprefix.$tmpkey." = '0'";
+			if (count($critkeys)) {
+				$modeforsearch = 3; // List of string keys
+				if ($typ == 'chkbxlst') {
+					$modeforsearch = 4; // Search inside a comma separated string
+				} elseif (preg_match('/^\d+(,\d+)*$/', implode(',', $critkeys))) {
+					$modeforsearch = 2; // List of int keys
+				}
+				$morewhere .= " OR ".natural_search($extrafieldsobjectprefix.$tmpkey, implode(',', $critkeys), $modeforsearch, 1);
+			}
+			$morewhere .= ")";
 		} elseif ($crit != ''
 			&& (!in_array($typ, array('select', 'sellist', 'select', 'link')) || $crit != '0')
 			&& (!in_array($typ, array('link')) || ($crit != '0' && $crit != '-1'))) {
@@ -96,6 +122,10 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			}
 			if (in_array($typ, array('sellist')) && !is_numeric($crit)) {
 				$mode_search = 0;// Search on a foreign key string
+				if (preg_match('/,/', $crit)) {
+					// List of keys coming from a multiselect search filter (not gated on the option so saved criteria keep working if the option is disabled later)
+					$mode_search = preg_match('/^\d+(,\d+)+$/', $crit) ? 2 : 3;
+				}
 			}
 			if (in_array($typ, array('chkbxlst', 'checkbox', 'select'))) {
 				$mode_search = 4; // Search on a multiselect field with sql type = text
