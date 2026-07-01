@@ -238,6 +238,30 @@ if ($usetemplate && file_exists($conffile) && filesize($conffile) > 8) {
 	if ($tplparams['db_pass'] !== '') {
 		$db_pass = $tplparams['db_pass'];
 	}
+
+	// For any mandatory value the template did NOT provide (commented out, absent or empty), fall back to the same
+	// defaults as a fresh install (the values pre-filled in fileconf.php): auto-detected paths and standard database
+	// defaults. We key on $tplparams (what the template really provided) rather than the local vars, because some of
+	// them were pre-computed earlier from an empty path (e.g. $main_data_dir became '/documents'). document_root is
+	// resolved first so data_root can derive from it. Credentials (db_user/db_pass) are instance-specific, never guessed.
+	if (empty($tplparams['document_root'])) {
+		$main_dir = detect_dolibarr_main_document_root();
+	}
+	if (empty($tplparams['data_root'])) {
+		$main_data_dir = detect_dolibarr_main_data_root($main_dir);
+	}
+	if (empty($tplparams['url_root'])) {
+		$main_url = detect_dolibarr_main_url_root();
+	}
+	if (empty($tplparams['db_type'])) {
+		$db_type = 'mysqli';
+	}
+	if ($tplparams['db_host'] === '') {
+		$db_host = 'localhost';
+	}
+	if (empty($tplparams['db_name'])) {
+		$db_name = 'dolibarr';
+	}
 }
 
 
@@ -971,7 +995,24 @@ function write_conf_file($conffile)
 			return 1;
 		}
 
-		$result = $confmanager->buildFromTemplate($rawtemplate);
+		// Fresh-install fallbacks (auto-detected paths + standard database defaults) used for any mandatory variable
+		// left empty/commented in the template, so the regenerated conf.php never has an empty mandatory value.
+		$fallbackvalues = array(
+			'dolibarr_main_url_root' => trim($main_url),
+			'dolibarr_main_document_root' => dol_sanitizePathName(trim($main_dir)),
+			'dolibarr_main_url_root_alt' => trim("/".$main_alt_dir_name),
+			'dolibarr_main_document_root_alt' => dol_sanitizePathName(trim($main_dir."/".$main_alt_dir_name)),
+			'dolibarr_main_data_root' => dol_sanitizePathName(trim($main_data_dir)),
+			'dolibarr_main_db_host' => trim($db_host),
+			'dolibarr_main_db_port' => (string) ((int) $db_port),
+			'dolibarr_main_db_name' => trim($db_name),
+			'dolibarr_main_db_prefix' => trim($main_db_prefix),
+			'dolibarr_main_db_type' => trim($db_type),
+			'dolibarr_main_db_character_set' => trim($db_character_set),
+			'dolibarr_main_db_collation' => trim($db_collation),
+		);
+
+		$result = $confmanager->buildFromTemplate($rawtemplate, $fallbackvalues);
 
 		// Report (under a title) the unknown / deprecated / missing variables found while reusing the template.
 		if (!empty($result['unknown']) || !empty($result['deprecated']) || !empty($result['missing'])) {

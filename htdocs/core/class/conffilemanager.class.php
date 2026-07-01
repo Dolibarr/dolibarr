@@ -95,12 +95,12 @@ class ConfFileManager
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_url_root_alt', 'default' => '/custom', 'type' => 'string', 'mode' => $s, 'comment' => 'Relative sub URL for external modules'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_document_root_alt', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Absolute path for external modules'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_data_root', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Absolute path of the documents directory'),
-			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_host', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Database server host name or ip address'),
+			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_host', 'default' => 'localhost', 'type' => 'string', 'mode' => $s, 'comment' => 'Database server host name or ip address'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_port', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Database server port. Default 0, see conf.php.example for more details'),
-			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_name', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Database name'),
+			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_name', 'default' => 'dolibarr', 'type' => 'string', 'mode' => $s, 'comment' => 'Database name'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_user', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Database user'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_pass', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Database password (may be prefixed by crypted: or dolcrypt:)'),
-			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_type', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Database driver: mysqli or pgsql'),
+			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_type', 'default' => 'mysqli', 'type' => 'string', 'mode' => $s, 'comment' => 'Database driver: mysqli or pgsql'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_character_set', 'default' => 'utf8', 'type' => 'string', 'mode' => $s, 'comment' => 'Database character set'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_collation', 'default' => 'utf8_unicode_ci', 'type' => 'string', 'mode' => $s, 'comment' => 'Database collation'),
 			array('section' => 'Main parameters', 'key' => 'dolibarr_main_db_encryption', 'default' => '', 'type' => 'int', 'mode' => $c, 'comment' => 'Deprecated reversible AES encryption of llx_const values (0 = off). Do not use'),
@@ -398,30 +398,43 @@ class ConfFileManager
 	/**
 	 *	Build an exhaustive conf.php (same layout as build()) reusing the values of an existing template.
 	 *
-	 *	The values already set in the template are kept and the missing ones are filled with their default.
+	 *	The values already set in the template are kept. A variable that is commented out, absent or present but
+	 *	empty is NOT reused: it falls back to $fallbackValues (the fresh-install values resolved by the installer,
+	 *	e.g. auto-detected paths and standard database defaults) and finally to the canvas default. This guarantees
+	 *	mandatory variables are never left empty when reusing a partial template.
 	 *	A fresh instance_unique_id is always generated; when the database password is dolcrypt-encrypted the
 	 *	old key is pinned into dolcrypt_key so it stays decryptable. Deprecated variables are kept commented for
 	 *	reference, and custom/unknown variables are preserved verbatim, so nothing is silently lost.
 	 *
-	 *	@param	string	$rawTemplate	Raw content of the existing conf.php template.
+	 *	@param	string					$rawTemplate	Raw content of the existing conf.php template.
+	 *	@param	array<string,string>	$fallbackValues	Values used when a canvas variable is missing/empty in the template (keyed by variable name).
 	 *	@return	array{content:string,unknown:string[],deprecated:string[],missing:string[]}
 	 */
-	public function buildFromTemplate($rawTemplate)
+	public function buildFromTemplate($rawTemplate, $fallbackValues = array())
 	{
+		if (!is_array($fallbackValues)) {
+			$fallbackValues = array();
+		}
+
 		$parsed = $this->parse($rawTemplate);
 
 		// Re-use the values already set in the template for the known canvas variables.
 		$values = array();
 		foreach ($this->getCanvas() as $descriptor) {
-			if (array_key_exists($descriptor['key'], $parsed['values'])) {
+			$key = $descriptor['key'];
+			$reused = null;
+			if (array_key_exists($key, $parsed['values'])) {
 				// 'raw' values (array(...) or pre-quoted literals) are kept verbatim; the others are unquoted
 				// so build() re-serializes them properly (and does not double-escape).
-				if ($descriptor['type'] === 'raw') {
-					$values[$descriptor['key']] = $parsed['values'][$descriptor['key']];
-				} else {
-					$values[$descriptor['key']] = $this->unquoteScalar($parsed['values'][$descriptor['key']]);
-				}
+				$reused = ($descriptor['type'] === 'raw') ? $parsed['values'][$key] : $this->unquoteScalar($parsed['values'][$key]);
 			}
+			// A template value present but empty is treated like a missing one (so mandatory variables fall back).
+			if ($reused !== null && !$this->isEmptyValue($reused)) {
+				$values[$key] = $reused;
+			} elseif (isset($fallbackValues[$key]) && $fallbackValues[$key] !== '') {
+				$values[$key] = $fallbackValues[$key];
+			}
+			// else: leave unset -> build() applies the canvas default
 		}
 
 		// A fresh instance_unique_id is always generated (see resolveInstanceKey).

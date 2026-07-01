@@ -148,6 +148,29 @@ class ConfFileManagerTest extends CommonClassTest
 	}
 
 	/**
+	 * Test that mandatory variables missing from the values fall back to the fresh-install defaults.
+	 *
+	 * When reusing a template, a variable that is commented out or absent is not parsed, so build() must
+	 * fill it with the same default as a brand new install (the values pre-filled in the fileconf.php form).
+	 *
+	 * @return	void
+	 */
+	public function testMandatoryDefaultsMatchFreshInstall()
+	{
+		$confmanager = new ConfFileManager();
+
+		$vars = $this->evalConfContent($confmanager->build(array()));
+
+		$this->assertSame('mysqli', $vars['dolibarr_main_db_type'], 'Missing db_type must default to mysqli, not empty');
+		$this->assertSame('localhost', $vars['dolibarr_main_db_host'], 'Missing db_host must default to localhost');
+		$this->assertSame('dolibarr', $vars['dolibarr_main_db_name'], 'Missing db_name must default to dolibarr');
+		$this->assertSame('llx_', $vars['dolibarr_main_db_prefix'], 'Missing db_prefix must default to llx_');
+		$this->assertSame('utf8', $vars['dolibarr_main_db_character_set'], 'Missing character set must default to utf8');
+		$this->assertSame('utf8_unicode_ci', $vars['dolibarr_main_db_collation'], 'Missing collation must default to utf8_unicode_ci');
+		$this->assertSame('dolibarr', $vars['dolibarr_main_authentication'], 'Missing authentication must default to dolibarr');
+	}
+
+	/**
 	 * Test that an empty dolibarr_main_csrf_with_token stays unset (commented), and is NOT turned into 0.
 	 *
 	 * The empty default must remain "absent" (no forcing) and must never be cast to the real value 0
@@ -276,6 +299,43 @@ class ConfFileManagerTest extends CommonClassTest
 
 		// The previous key must be pinned so dolcrypt-encrypted data stays decryptable after id regeneration.
 		$this->assertSame($oldid, $vars['dolibarr_main_dolcrypt_key']);
+	}
+
+	/**
+	 * Test that reusing a partial template fills empty/commented/absent mandatory variables.
+	 *
+	 * A variable commented out, absent or present-but-empty must fall back to the provided fallback value,
+	 * then to the canvas (fresh-install) default, so a reused template never yields an empty mandatory value.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplateFillsEmptyMandatory()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_document_root='/var/www/htdocs';\n";	// active => kept
+		$template .= "//\$dolibarr_main_data_root='/old/documents';\n";	// commented => must fall back
+		$template .= "//\$dolibarr_main_db_host='';\n";			// commented => must fall back
+		$template .= "\$dolibarr_main_db_type='';\n";			// present but empty => must fall back
+		$template .= "\$dolibarr_main_db_name='mydb';\n";			// active => kept
+		$template .= "\$dolibarr_mycustom='keepme';\n";			// custom => preserved
+
+		$fallback = array('dolibarr_main_data_root' => '/detected/documents');
+
+		$result = $confmanager->buildFromTemplate($template, $fallback);
+		$vars = $this->evalConfContent($result['content']);
+
+		// Active values kept.
+		$this->assertSame('mydb', $vars['dolibarr_main_db_name']);
+		$this->assertSame('/var/www/htdocs', $vars['dolibarr_main_document_root']);
+		// Commented variable filled from the provided fallback.
+		$this->assertSame('/detected/documents', $vars['dolibarr_main_data_root']);
+		// Commented / empty variables without a fallback filled from the canvas (fresh-install) default.
+		$this->assertSame('localhost', $vars['dolibarr_main_db_host']);
+		$this->assertSame('mysqli', $vars['dolibarr_main_db_type']);
+		// Custom variable preserved.
+		$this->assertSame('keepme', $vars['dolibarr_mycustom']);
 	}
 
 	/**
