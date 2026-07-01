@@ -1831,7 +1831,7 @@ class Mo extends CommonObject
 					}
 					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
-				if (empty($reshook) && (empty($supportedProductTypes) || in_array((int) ($line->product_type ?? 0), $supportedProductTypes))) {
+				if (empty($reshook) && (empty($supportedProductTypes) || in_array((int) $line->product_type, $supportedProductTypes))) {
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
