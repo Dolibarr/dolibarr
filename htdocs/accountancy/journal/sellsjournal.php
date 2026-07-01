@@ -359,7 +359,7 @@ if ($result) {
 				}
 				$db->free($resql2);
 			} else {
-				dol_syslog(__FUNCTION__ . ' Error :' . $db->lasterror(), LOG_ERR);
+				dol_print_error($db);
 			}
 		}
 
