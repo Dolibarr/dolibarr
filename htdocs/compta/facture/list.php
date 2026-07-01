@@ -133,8 +133,8 @@ $search_status = GETPOST('search_status', 'array:intcomma');
 // } elseif (is_array($search_status) && count($search_status) == 0) {
 // 	$search_status = '';
 // }
-$search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
-$search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
+$search_paymentmode = GETPOST('search_paymentmode', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
+$search_paymentterms = GETPOST('search_paymentterms', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_bankaccount = GETPOST('search_bankaccount', 'intcomma');
 $search_fk_input_reason = GETPOSTINT('search_fk_input_reason');
 $search_module_source = GETPOST('search_module_source', 'alpha');
@@ -445,8 +445,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_multicurrency_montant_ttc = '';
 	$search_dispute_status = '';
 	$search_status = [];
-	$search_paymentmode = '';
-	$search_paymentterms = '';
+	$search_paymentmode = [];
+	$search_paymentterms = [];
 	$search_bankaccount = '';
 	$search_fk_input_reason = '';
 	$search_module_source = '';
@@ -980,12 +980,8 @@ if (is_array($search_status) && count($search_status) > 0) {
 	$sql .= " AND f.fk_statut IN (" . $db->sanitize(implode(',', array_map('intval', $search_statusArray))) . ")";
 }
 
-if ($search_paymentmode > 0) {
-	$sql .= " AND f.fk_mode_reglement = ".((int) $search_paymentmode);
-}
-if ($search_paymentterms > 0) {
-	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
-}
+$sql .= natural_search_multiselect("f.fk_mode_reglement", $search_paymentmode);
+$sql .= natural_search_multiselect("f.fk_cond_reglement", $search_paymentterms);
 if ($search_bankaccount > 0) {
 	$sql .= " AND ba.rowid = ".((int) $search_bankaccount);
 }
@@ -1428,11 +1424,15 @@ if (count($search_status) > 0) {
 		$param .= '&search_status[]='.urlencode($val);
 	}
 }
-if ($search_paymentmode > 0) {
-	$param .= '&search_paymentmode='.urlencode((string) ($search_paymentmode));
+if (count($search_paymentmode) > 0) {
+	foreach ($search_paymentmode as $val) {
+		$param .= '&search_paymentmode[]='.urlencode((string) $val);
+	}
 }
-if ($search_paymentterms > 0) {
-	$param .= '&search_paymentterms='.urlencode((string) ($search_paymentterms));
+if (count($search_paymentterms) > 0) {
+	foreach ($search_paymentterms as $val) {
+		$param .= '&search_paymentterms[]='.urlencode((string) $val);
+	}
 }
 if ($search_bankaccount > 0) {
 	$param .= '&search_bankaccount='.urlencode((string) ($search_bankaccount));
@@ -1548,13 +1548,15 @@ $trackid = 'inv'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($massaction == 'makepayment') {
+	// Preselect the payment mode of the confirm dialog from the list filter, only when a single payment mode is selected in the multiselect
+	$paiementidpreselected = (count($search_paymentmode) == 1 && (int) reset($search_paymentmode) > 0) ? (string) reset($search_paymentmode) : '';
 	$formconfirm = '';
 	$formquestion = array(
 		// 'text' => $langs->trans("ConfirmClone"),
 		// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 		// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 		array('type' => 'date', 'name' => 'datepaiment', 'label' => $langs->trans("Date"), 'datenow' => 1),
-		array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements(GETPOST('search_paymentmode'), 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
+		array('type' => 'other', 'name' => 'paiementid', 'label' => $langs->trans("PaymentMode"), 'value' => $form->select_types_paiements($paiementidpreselected, 'paiementid', '', 0, 0, 1, 0, 1, '', 1)),
 		array('type' => 'other', 'name' => 'bankid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes('', 'bankid', 0, '', 0, '', 0, '', 1)),
 		array('type' => 'other', 'name' => 'note_private', 'label' => $langs->trans("Comments"), 'value' => '<textarea name="note_private" id="note_private" class="minwidth200" rows="3"></textarea>'),
 		//array('type' => 'other', 'name' => 'invoicesid', 'label' => '', 'value'=>'<input type="hidden" id="invoicesid" name="invoicesid" value="'.implode('#',GETPOST('toselect','array')).'">'),
@@ -1777,13 +1779,13 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 // Payment mode
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 0, 1, 'minwidth100 maxwidth100', 1);
+	print $form->multiSelectTypesPaiements($search_paymentmode, 'search_paymentmode', '', 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
 // Payment terms
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre left">';
-	print $form->getSelectConditionsPaiements((int) $search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
+	print $form->multiSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
 // Bank account

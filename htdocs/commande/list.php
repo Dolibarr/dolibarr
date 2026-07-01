@@ -153,9 +153,9 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
 
-$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'intcomma');
+$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'intcomma');
-$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'intcomma');
+$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'array:intcomma');	// Array from the multiselect combo. A scalar value (old links, saved filters) is exploded into an array by GETPOST.
 $search_fk_input_reason = GETPOST('search_fk_input_reason', 'intcomma');
 
 $search_option = GETPOST('search_option', 'alpha');
@@ -385,9 +385,9 @@ if (empty($reshook)) {
 		$search_billed = '';
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
-		$search_fk_cond_reglement = '';
+		$search_fk_cond_reglement = [];
 		$search_fk_shipping_method = '';
-		$search_fk_mode_reglement = '';
+		$search_fk_mode_reglement = [];
 		$search_fk_input_reason = '';
 		$search_option = '';
 		$search_import_key = '';
@@ -1169,15 +1169,11 @@ if ($search_project_ref != '') {
 if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
 }
-if ($search_fk_cond_reglement > 0) {
-	$sql .= " AND c.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
-}
+$sql .= natural_search_multiselect("c.fk_cond_reglement", $search_fk_cond_reglement);
 if ($search_fk_shipping_method > 0) {
 	$sql .= " AND c.fk_shipping_method = ".((int) $search_fk_shipping_method);
 }
-if ($search_fk_mode_reglement > 0) {
-	$sql .= " AND c.fk_mode_reglement = ".((int) $search_fk_mode_reglement);
-}
+$sql .= natural_search_multiselect("c.fk_mode_reglement", $search_fk_mode_reglement);
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
@@ -1562,14 +1558,18 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 if ($search_billed != '') {
 	$param .= '&search_billed='.urlencode($search_billed);
 }
-if ($search_fk_cond_reglement > 0) {
-	$param .= '&search_fk_cond_reglement='.urlencode((string) ($search_fk_cond_reglement));
+if (count($search_fk_cond_reglement) > 0) {
+	foreach ($search_fk_cond_reglement as $val) {
+		$param .= '&search_fk_cond_reglement[]='.urlencode((string) $val);
+	}
 }
 if ($search_fk_shipping_method > 0) {
 	$param .= '&search_fk_shipping_method='.urlencode((string) ($search_fk_shipping_method));
 }
-if ($search_fk_mode_reglement > 0) {
-	$param .= '&search_fk_mode_reglement='.urlencode((string) ($search_fk_mode_reglement));
+if (count($search_fk_mode_reglement) > 0) {
+	foreach ($search_fk_mode_reglement as $val) {
+		$param .= '&search_fk_mode_reglement[]='.urlencode((string) $val);
+	}
 }
 if ($search_fk_input_reason > 0) {
 	$param .= '&search_fk_input_reason='.urlencode((string) ($search_fk_input_reason));
@@ -1925,13 +1925,13 @@ if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 // Payment term
 if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements((int) $search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+	print $form->multiSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
 // Payment mode
 if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1, '', 1);
+	print $form->multiSelectTypesPaiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 1, 'minwidth100 maxwidth100', -1);
 	print '</td>';
 }
 // Channel
