@@ -1071,6 +1071,11 @@ class FormFile
 							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
 							$out .= $morepicto;
 						}
+						if (is_object($hookmanager)) {
+								$parameters = array('modulepart' => $modulepart, 'relativepath' => $relativepath, 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS[ ? $GLOBALS['id'] : ''));
+								$hookmanager->executeHooks('formBuilddocLineAction', $parameters, $file);
+								$out .= $hookmanager->resPrint;
+						}
 						$out .= '</td>';
 					}
 
