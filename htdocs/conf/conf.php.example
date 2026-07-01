@@ -388,9 +388,9 @@ $dolibarr_nocsrfcheck='0';
 // over the value set in the back office and cannot be changed from there.
 // Possible values: 0 (off), 1, 2 or 3 (strongest). The constant then appears read-only in the back office.
 // Examples:
-// $dolibarr_main_csrf_with_token = 3;
+// $dolibarr_main_csrf_with_token = '3';
 //
-//$dolibarr_main_csrf_with_token = 3;
+//$dolibarr_main_csrf_with_token = '3';
 
 
 // Forcing any other database constant from this file (hosting / security lock)
