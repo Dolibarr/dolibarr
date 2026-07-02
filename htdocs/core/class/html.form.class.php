@@ -1290,6 +1290,11 @@ class Form
 		$selectedCode = $phonecode;
 		$numberValue = $parsed['number'];
 
+		// Remove country code
+		if (strpos($numberValue, $selectedCode) === 0) {
+			$numberValue = str_replace($selectedCode, '', $numberValue);
+		}
+
 		// Add back trunk prefix for display (e.g. "644986885" → "0644986885" for France)
 		if ($numberValue !== '' && $selectedCode !== '') {
 			$trunkPrefix = dol_get_trunk_prefix($this->db, $selectedCode);
