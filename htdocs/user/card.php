@@ -1355,36 +1355,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Tel
 	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 	if (!empty($ldap_phone)) {
+		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_phone" value="'.dol_escape_htmltag($ldap_phone).'">';
 		print $ldap_phone;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_phone" value="'.dol_escape_htmltag(GETPOST('office_phone', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'object_phoning', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Tel portable
 	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 	if (!empty($ldap_mobile)) {
+		print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="user_mobile" value="'.dol_escape_htmltag($ldap_mobile).'">';
 		print $ldap_mobile;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'" spellcheck="false">';
+		print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'object_phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
 	// Fax
 	print '<tr><td>'.$langs->trans("Fax").'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 	if (!empty($ldap_fax)) {
+		print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
 		print $ldap_fax;
 	} else {
-		print '<input class="maxwidth200 widthcentpercentminusx" type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
+		print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'object_phoning_fax', 'maxwidth200 widthcentpercentminusx');
 	}
 	print '</td></tr>';
 
@@ -2899,10 +2899,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel pro
 			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_phone" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_phone.'">';
+				print $form->showPhoneInput($object->office_phone, 'office_phone', $object->country_id, 'phoning', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
 			}
@@ -2911,10 +2911,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Tel mobile
 			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				   print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'" spellcheck="false">';
+				print $form->showPhoneInput($object->user_mobile, 'user_mobile', $object->country_id, 'phoning_mobile', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
 			}
@@ -2923,10 +2923,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Fax
 			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
 			print '<td>';
-			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_fax.'">';
+				print $form->showPhoneInput($object->office_fax, 'office_fax', $object->country_id, 'phoning_fax', 'maxwidth200 widthcentpercentminusx');
 			} else {
+				print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
 			}
