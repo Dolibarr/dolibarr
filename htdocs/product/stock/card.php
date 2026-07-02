@@ -382,12 +382,12 @@ if ($action == 'create') {
 
 	// Phone / Fax
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+	print $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+	print '</td></tr>';
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+	print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+	print '</td></tr>';
 
 	// Warehouse usage
 	if (getDolGlobalInt("MAIN_FEATURES_LEVEL")) {
@@ -982,11 +982,11 @@ if ($action == 'create') {
 
 			// Phone / Fax
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
+			print $form->showPhoneInput($object->phone, 'phone', $object->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+			print '</td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
+			print $form->showPhoneInput($object->fax, 'fax', $object->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+			print '</td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
