@@ -1349,6 +1349,8 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+		} elseif ($type == 'phone' && $mode != 1) {
+			$out = $form->showPhoneInput($value, $keyprefix.$key.$keysuffix, (is_object($object) && !empty($object->country_id)) ? $object->country_id : 0);
 		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
