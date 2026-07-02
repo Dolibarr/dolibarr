@@ -132,6 +132,72 @@ function dol_get_trunk_prefix($db, $phone_code)
 }
 
 /**
+ * Get the list of all distinct national trunk prefixes known in llx_c_country
+ *
+ * @param	DoliDB	$db		Database handler
+ * @return	string[]		List of distinct non-empty trunk prefixes (e.g. array('0','1','8','06'))
+ */
+function dol_get_all_trunk_prefixes($db)
+{
+	static $cache = null;
+	if ($cache !== null) {
+		return $cache;
+	}
+
+	$cache = array();
+	$sql = "SELECT DISTINCT trunk_prefix FROM ".$db->prefix()."c_country";
+	$sql .= " WHERE trunk_prefix IS NOT NULL AND trunk_prefix != ''";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$cache[] = $obj->trunk_prefix;
+		}
+		$db->free($resql);
+	}
+
+	return $cache;
+}
+
+/**
+ * Build a natural_search() SQL fragment for a phone/fax field, tolerant of the
+ * international storage format "+{code} {number}" vs a national search input
+ * (e.g. searching "0645821542" must still match stored "+33 645821542").
+ *
+ * @param	DoliDB			$db			Database handler
+ * @param	string|string[]	$fields		Field(s) to search, same as natural_search()
+ * @param	string			$value		Raw value entered by the user
+ * @param	int				$nofirstand	1=Do not output the first 'AND'
+ * @return	string			SQL to append to the query ('' if no value)
+ */
+function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
+{
+	$value = trim((string) $value);
+	if ($value === '') {
+		return '';
+	}
+
+	$stripped = preg_replace('/[\s\-\.\(\)]/', '', $value);
+
+	$candidates = array($stripped);
+	if (strpos($stripped, '+') !== 0) {
+		foreach (dol_get_all_trunk_prefixes($db) as $prefix) {
+			if ($prefix !== '' && strpos($stripped, $prefix) === 0) {
+				$candidates[] = substr($stripped, strlen($prefix));
+			}
+		}
+	}
+
+	$candidates = array_values(array_unique(array_filter($candidates, function ($c) {
+		return $c !== '';
+	})));
+	if (empty($candidates)) {
+		$candidates = array($value);
+	}
+
+	return natural_search($fields, implode('|', $candidates), 0, $nofirstand);
+}
+
+/**
  * Get the phone calling code for a country
  *
  * @param	DoliDB	$db				Database handler

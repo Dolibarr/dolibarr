@@ -40,6 +40,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -462,10 +463,10 @@ if ($search_accountancy_code != '') {
 	$sql .= natural_search("u.accountancy_code", $search_accountancy_code);
 }
 if ($search_phonepro != '') {
-	$sql .= natural_search("u.office_phone", $search_phonepro);
+	$sql .= dol_natural_search_phone($db, "u.office_phone", $search_phonepro);
 }
 if ($search_phonemobile != '') {
-	$sql .= natural_search("u.user_mobile", $search_phonemobile);
+	$sql .= dol_natural_search_phone($db, "u.user_mobile", $search_phonemobile);
 }
 if ($search_email != '') {
 	$sql .= natural_search("u.email", $search_email);

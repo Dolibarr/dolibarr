@@ -36,6 +36,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -314,7 +315,7 @@ if ($search_country && $search_country != '-1') {
 	$sql .= " AND t.fk_country IN (".$db->sanitize($search_country).')';
 }
 if ($search_phone) {
-	$sql .= natural_search('t.phone', $search_phone);
+	$sql .= dol_natural_search_phone($db, 't.phone', $search_phone);
 }
 if ($search_email) {
 	$sql .= natural_search('t.email', $search_email);
