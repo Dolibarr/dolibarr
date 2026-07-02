@@ -180,6 +180,11 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+if (in_array($action, array('addline', 'freezone', 'addnote', 'deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+	$action = '';
+}
+
 if (empty($reshook)) {
 	// Action to record a payment on a TakePOS invoice
 	if ($action == 'valid' && $user->hasRight('facture', 'creer')) {
@@ -484,11 +489,6 @@ if (empty($reshook)) {
 		}
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
-	}
-
-	if (($action == "addline" || $action == "freezone" || $action == "addnote" || $action == "deleteline" || $action == "updateqty" || $action == "updateprice" || $action == "updatereduction" || $action == 'update_reduction_global') && empty($user->rights->takepos->editlines)) {
-		dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
-		$action = '';
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
