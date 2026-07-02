@@ -219,8 +219,8 @@ print '</td></tr>'."\n";
 
 // Telephone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input name="phone" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE')).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_ACCOUNTANT_PHONE'), 'phone', getDolGlobalInt('MAIN_INFO_ACCOUNTANT_COUNTRY'), 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
