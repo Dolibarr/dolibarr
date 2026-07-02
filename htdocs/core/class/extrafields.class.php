@@ -1798,11 +1798,12 @@ class ExtraFields
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, 0, 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
+			$selectedvalue = ((string) $value !== '' ? $value : $default);
 			foreach ($param['options'] as $keyopt => $val) {
-				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
+				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
-				$out .= ($value == $keyopt ? 'checked' : '');
+				$out .= ((string) $selectedvalue == (string) $keyopt ? ' checked' : '');
 				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {	// List of values selected from a table (n choices)

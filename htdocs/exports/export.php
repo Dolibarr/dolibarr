@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2015       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/exports/export.php
  *       \ingroup    export
- *       \brief      Pages of export Wizard
+ *       \brief      Export Wizard pages
  */
 
 require_once '../main.inc.php';
@@ -185,7 +185,7 @@ $result = restrictedArea($user, 'export');
  * Actions
  */
 
-if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Selection of field at step 2
+if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Select field at step 2
 	$fieldsarray = $objexport->array_export_fields[0];
 	$fieldsentitiesarray = $objexport->array_export_entities[0];
 	$fieldsdependenciesarray = $objexport->array_export_dependencies[0];
@@ -209,7 +209,7 @@ if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Sel
 		 var_dump($fieldsdependenciesarray);*/
 		$listofdependencies = array();
 		if (!empty($fieldsentitiesarray[$field]) && !empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]])) {
-			// We found a dependency on the type of field
+			// Found a dependency on the field type
 			$tmp = $fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
 			if (is_array($tmp)) {
 				$listofdependencies = $tmp;
@@ -217,7 +217,7 @@ if ($action == 'selectfield' && $user->hasRight('export', 'creer')) {     // Sel
 				$listofdependencies = array($tmp);
 			}
 		} elseif (!empty($field) && !empty($fieldsdependenciesarray[$field])) {
-			// We found a dependency on a dedicated field
+			// Found a dependency on a specific field
 			$tmp = $fieldsdependenciesarray[$field]; // $fieldsdependenciesarray=array('fd.fieldx'=>'fd.rowid') or array('fd.fieldx'=>array('fd.rowid','ab.rowid'))
 			if (is_array($tmp)) {
 				$listofdependencies = $tmp;
@@ -434,7 +434,7 @@ if ($step == 4 && $action == 'submitFormField' && $user->hasRight('export', 'lir
 		accessforbidden();
 	}
 
-	// on boucle sur les champs selectionne pour recuperer la valeur
+	// loop over selected fields to retrieve the value
 	if (is_array($objexport->array_export_TypeFields[0])) {
 		$_SESSION["export_filtered_fields"] = array();
 		foreach ($objexport->array_export_TypeFields[0] as $code => $type) {	// $code: s.fieldname $value: Text|Boolean|List:ccc
@@ -566,7 +566,7 @@ if ($step == 2 && $datatoexport) {
 	print $objexport->array_export_module[0]->getName();
 	print '</td></tr>';
 
-	// Lot de donnees a exporter
+	// Dataset to export
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
@@ -829,7 +829,7 @@ if ($step == 3 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectFilterFields").'...</span><br><br>';
 
 
-	// un formulaire en plus pour recuperer les filtres
+	// An extra form to get the filters
 	print '<form action="'.$_SERVER["PHP_SELF"].'?step=4&action=submitFormField&datatoexport='.$datatoexport.'" name="FilterField" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -989,7 +989,7 @@ if ($step == 4 && $datatoexport) {
 	print dolPrintHTML($titleofmodule);
 	print '</td></tr>';
 
-	// Lot de donnees a exporter
+	// Dataset to export
 	print '<tr><td>'.$langs->trans("DatasetToExport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objexport->array_export_icon[0]);
@@ -1264,7 +1264,7 @@ if ($step == 5 && $datatoexport) {
 	$head[$h][1] = $langs->trans("Step")." 2";
 	$h++;
 
-	// si le filtrage est parameter pour l'export ou pas
+	// whether filtering is a parameter for the export or not
 	if ($usefilters && isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		$head[$h][0] = DOL_URL_ROOT.'/exports/export.php?step=3&datatoexport='.$datatoexport;
 		$head[$h][1] = $langs->trans("Step")." 3";

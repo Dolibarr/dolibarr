@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -724,7 +724,7 @@ if ($action == "importSignature") {
 								}
 								foreach ($dirmodels as $reldir) {
 									$file = "pdf_" . $last_modelpdf . ".modules.php";
-									// On vérifie l'emplacement du modele
+									// Check the template location
 									$file = dol_buildpath($reldir . $modelpath . $file, 0);
 									if (file_exists($file)) {
 										$filefound = $file;

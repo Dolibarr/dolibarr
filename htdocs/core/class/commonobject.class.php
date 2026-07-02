@@ -4072,7 +4072,7 @@ abstract class CommonObject
 
 		$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
 
-		// Define constants to find lines to sum (field name int the table_element_line not into table_element)
+		// Define constants to find lines to sum (field name into the table_element_line not into table_element)
 		$fieldtva = 'total_tva';
 		$fieldlocaltax1 = 'total_localtax1';
 		$fieldlocaltax2 = 'total_localtax2';
@@ -5702,9 +5702,10 @@ abstract class CommonObject
 
 			// Recalculate unit price with tax if not defined
 			if (empty((float) $line->subprice_ttc) && $line->qty) {	// subprice_ttc may be not stored on old version or not defined for lines with no unit price (like a discount)
-				// So we calculate an estimated value just to show something on screen
+				// So we calculate an estimated value just to show something on screen.
+				// Not: the unit price is always for 100% of line, it is not a prorata of situation invoice (when total is)
 				if ($line->remise_percent != 100) {
-					$line->subprice_ttc = (float) price2num($line->total_ttc / $line->qty / (1 - $line->remise_percent / 100), 'MU');
+					$line->subprice_ttc = (float) price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / $line->qty / (1 - $line->remise_percent / 100), 'MU');
 				} else {
 					// Other method is less accurate
 					$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
@@ -5963,6 +5964,10 @@ abstract class CommonObject
 		if ($restrictlist == 'services' && $line->product_type != Product::TYPE_SERVICE) {
 			$this->tpl['strike'] = 1;
 		} elseif (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+			// SUBTOTALS_SPECIAL_CODE is only defined when the subtotals module
+			// is loaded (htdocs/subtotals/class/commonsubtotal.class.php:24).
+			// Without the guard, printing origin lines from a PO into a vendor
+			// invoice fatals (#37663). Other tpl files already follow this pattern.
 			$this->tpl['strike'] = 1;
 		}
 
@@ -6806,7 +6811,7 @@ abstract class CommonObject
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || (!in_array($extrafields->attributes[$this->table_element]['type'][$name], ['separate', 'point', 'multipts', 'linestrg','polygon']))) {
 					$sql .= ", ".$this->db->sanitize($name);
 				}
-				// use geo sql fonction to read as text
+				// use geo sql function to read as text
 				if (!empty($extrafields->attributes[$this->table_element]['type'][$name]) && in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
 					$sql .= ", ST_AsWKT(".$name.") as ".$this->db->sanitize($name);

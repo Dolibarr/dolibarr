@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke  		<charlene@patas-monkey.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +179,7 @@ if ($reshook < 0) {
 	}
 }
 
-// Define filename with prefix on filters predica (each predica set must have on cache file)
+// Define filename with prefix based on filter criteria (each criterion set must have a corresponding cache file)
 $shortfilename = 'dolibarrcalendar';
 $filename = $shortfilename;
 // Complete long filename
@@ -380,10 +381,10 @@ print '</body></html>';
 function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 {
 
-	// quelques filtres possible au nivau du tableau $filters
-	// logina : user login who is create interventional (author)
-	// logini : user login who make the intenventional
-	// loginr : user login who is responsible of interventional
+	// some filters possible in the $filters array
+	// logina : user login who creates intervention (author)
+	// logini : user login who performs the intervention
+	// loginr : user login who is responsible for intervention
 
 	global $hookmanager;
 	global $db;
@@ -441,9 +442,9 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		$eventarray = array();
 
 		$sql = "SELECT f.rowid,";
-		$sql .= " fd.date,"; // on récupère la date et la durée sur le détail d'inter pour avoir aussi l'heure
-		$sql .= " f.datee,"; // End ne sera pas utilisée
-		$sql .= " fd.duree,"; // durée de l'intervention
+		$sql .= " fd.date,"; // We get the date and the duration from the detail of the interventaion as well as the hour
+		$sql .= " f.datee,"; // End will not be used
+		$sql .= " fd.duree,"; // Duration of the intervention
 		$sql .= " f.datec, f.tms as datem,";
 		$sql .= " f.ref, f.ref_client, fd.description, f.note_private, f.note_public,";
 		$sql .= " f.fk_soc,";
@@ -633,7 +634,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				// $event['event_paid'] = $this->event_paid;
 				$event['status'] = $obj->fk_statut;
 
-				// // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
+				// // TODO: find a way to call "$this->fetch_userassigned();" without overriding "$this" properties
 				// $this->id = $obj->rowid;
 				// $this->fetch_userassigned(false);
 
@@ -699,7 +700,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		}
 
 		// Create temp file
-		// Temporary file (allow call of function by different threads
+		// Temporary file (allows calling the function by different threads
 		$outputfiletmp = tempnam($conf->fichinter->dir_temp, 'tmp');
 		dolChmod($outputfiletmp);
 

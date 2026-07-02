@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -464,13 +464,13 @@ class CUnits extends CommonDict
 		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
-		// Calcul en unité de base
+		// Calculate in base unit
 		$scaleUnitPow = $this->scaleOfUnitPow($fk_unit);
 
 		// convert to standard unit
 		$value *= $scaleUnitPow;
 		if ($fk_new_unit != 0) {
-			// Calcul en unité de base
+			// Calculate in base unit
 			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
 			if (!empty($scaleUnitPow)) {
 				// convert to new unit
