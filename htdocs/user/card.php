@@ -161,8 +161,12 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
-// Salary and other HR fields must only be editable by users allowed to see them (same rights as the display, see issue #32909)
-$permissiontoeditsalary = ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids)) || (isModEnabled('salaries') && $user->hasRight("salaries", "readall")) || (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read")));
+// Permission to read salary and hourly rate
+$permissiontoseesalary = (empty($user->socid) && (
+	(isModEnabled('salaries') && $user->hasRight("salaries", "read") && ($id == 0 || in_array($id, $childids)))		// If user is a manager of employee
+	|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
+	|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read")))
+	|| (!isModEnabled('salaries') && !isModEnabled('hrm') && ($id == 0 || in_array($id, $childids))));
 
 $passwordismodified = false;
 $ldap = null;
@@ -337,7 +341,7 @@ if (empty($reshook)) {
 			$object->employee = GETPOSTINT('employee');
 
 			// Only users allowed to see salary/HR fields can modify them (issue #32909)
-			if ($permissiontoeditsalary) {
+			if ($permissiontoseesalary) {
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				$object->thm = price2num($object->thm);
 				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
@@ -531,7 +535,7 @@ if (empty($reshook)) {
 				$object->employee = GETPOSTINT('employee');
 
 				// Only users allowed to see salary/HR fields can modify them (issue #32909)
-				if ($permissiontoeditsalary) {
+				if ($permissiontoseesalary) {
 					$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 					$object->thm = price2num($object->thm);
 					$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
@@ -1484,9 +1488,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids))
-		|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+	if ($permissiontoseesalary) {
 		$langs->load("salaries");
 
 		// THM
@@ -1810,9 +1812,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Sensitive salary/value information
-			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+			if ($permissiontoseesalary) {
 				$langs->load("salaries");
 
 				// Salary
@@ -3027,9 +3027,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Sensitive salary/value information
-			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (isModEnabled('salaries') && $user->hasRight("salaries", "readall"))
-				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
+			if ($permissiontoseesalary) {
 				$langs->load("salaries");
 
 				// Salary
