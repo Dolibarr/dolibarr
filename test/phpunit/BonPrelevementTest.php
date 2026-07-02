@@ -86,6 +86,8 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $ribBSpecificId = 0;
 	/** @var int Row ID of the issuer bank account (llx_bank_account) */
 	protected static $fkBankAccount = 0;
+	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
+	protected static $setUpError = '';
 
 	/**
 	 * setUpBeforeClass
@@ -127,6 +129,9 @@ class BonPrelevementTest extends CommonClassTest
 		$socA->country_id = 1; // France (rowid=1 in c_country)
 		$socA->code_client = -1; // -1 = auto-generate customer code
 		self::$socidA = (int) $socA->create($user);
+		if (self::$socidA <= 0) {
+			self::$setUpError .= 'Societe::create() (COMPANY_A) failed: '.$socA->errorsToString().' ';
+		}
 
 		// RIB_A_DEFAULT: first bank account for COMPANY_A, will be the default (default_rib=1)
 		$ribADef = new CompanyBankAccount($db);
@@ -163,6 +168,9 @@ class BonPrelevementTest extends CommonClassTest
 		$socB->country_id = 1;
 		$socB->code_client = -1; // -1 = auto-generate customer code
 		self::$socidB = (int) $socB->create($user);
+		if (self::$socidB <= 0) {
+			self::$setUpError .= 'Societe::create() (COMPANY_B) failed: '.$socB->errorsToString().' ';
+		}
 
 		$ribBDef = new CompanyBankAccount($db);
 		$ribBDef->socid = self::$socidB;
@@ -192,7 +200,7 @@ class BonPrelevementTest extends CommonClassTest
 		// Issuer bank account (llx_bank_account) passed as fk_bank_account
 		// ------------------------------------------------------------------
 		$account = new Account($db);
-		$account->ref = 'BONPRELEV-TEST';
+		$account->ref = 'BONPRELTEST'; // max 12 chars (llx_bank_account.ref is varchar(12))
 		$account->label = 'BonPrelevTest Issuer';
 		$account->country_id = 1; // France
 		$account->date_solde = dol_now();
@@ -202,6 +210,9 @@ class BonPrelevementTest extends CommonClassTest
 		$account->owner_name = 'TestCorp';
 		$account->currency_code = 'EUR';
 		self::$fkBankAccount = (int) $account->create($user);
+		if (self::$fkBankAccount <= 0) {
+			self::$setUpError .= 'Account::create() (issuer) failed: '.$account->errorsToString().' ';
+		}
 	}
 
 	/**
@@ -283,8 +294,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
 		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
@@ -337,8 +348,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
 		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
@@ -396,8 +407,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Create one invoice for each company
 		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
@@ -452,8 +463,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Two invoices for COMPANY_A with different amounts
 		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
@@ -507,8 +518,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Two invoices for COMPANY_A with different amounts
 		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
@@ -564,8 +575,8 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
 
 		// Interleaved invoices: A1, B1, A2, B2
 		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
