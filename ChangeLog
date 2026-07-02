@@ -9,7 +9,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Installer generates an exhaustive, sectioned and commented conf.php, and can reuse an existing one (keeping its values, regenerating the instance unique id, migrating deprecated variables)
-NEW: A setup constant can be forced read-only in the back office from conf.php, using $dolibarr_main_csrf_with_token or the generic DOLIBARR_<NAME> environment variable; a warning is shown if such a setting is changed there
+NEW: A setup constant can be forced read-only in the back office from conf.php, using $dolibarr_main_csrf_with_token, $dolibarr_main_disable_dns_get_record or the generic DOLIBARR_<NAME> environment variable; a warning is shown if such a setting is changed there
 NEW: Experimental module "Quick memo" to put post-it on any screens (#37422)
 NEW: Thirdparty bank account asks for bank country, state, currency and status (#38031)
 NEW: New Stock transfer module stabilization and full functional coverage (#37557)

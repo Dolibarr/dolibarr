@@ -85,6 +85,7 @@ class ConfFileManagerTest extends CommonClassTest
 		$this->assertContains('dolibarr_main_db_host', $keys);
 		$this->assertContains('dolibarr_main_instance_unique_id', $keys);
 		$this->assertContains('dolibarr_main_csrf_with_token', $keys);
+		$this->assertContains('dolibarr_main_disable_dns_get_record', $keys);
 	}
 
 	/**

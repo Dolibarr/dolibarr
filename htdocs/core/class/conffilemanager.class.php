@@ -136,6 +136,7 @@ class ConfFileManager
 			array('section' => 'Security', 'key' => 'dolibarr_main_restrict_ip', 'default' => '', 'type' => 'string', 'mode' => $s, 'comment' => 'Restrict backoffice access to a list of IP/CIDR'),
 			array('section' => 'Security', 'key' => 'dolibarr_nocsrfcheck', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Disable CSRF protection (0, 1 or 2). Keep 0 in most cases'),
 			array('section' => 'Security', 'key' => 'dolibarr_main_csrf_with_token', 'default' => '', 'type' => 'string', 'mode' => $c, 'comment' => 'Force MAIN_SECURITY_CSRF_WITH_TOKEN (0,1,2,3) over the database value. See conf.php.example'),
+			array('section' => 'Security', 'key' => 'dolibarr_main_disable_dns_get_record', 'default' => '', 'type' => 'string', 'mode' => $c, 'comment' => 'Force MAIN_DISABLE_DNS_GET_RECORD (0 or 1) over the database value. See conf.php.example'),
 			array('section' => 'Security', 'key' => 'dolibarr_api_count_always_enabled', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 so API call count can not be disabled from admin'),
 			array('section' => 'Security', 'key' => 'dolibarr_cron_allow_cli', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Set to 1 to allow command lines in the internal Job scheduler'),
 			array('section' => 'Security', 'key' => 'dolibarr_mailing_limit_sendbyweb', 'default' => '0', 'type' => 'string', 'mode' => $s, 'comment' => 'Hard limit for mailing sent by web (-1 to forbid)'),

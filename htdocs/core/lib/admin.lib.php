@@ -673,9 +673,16 @@ function isConstForcedByConfFile($name)
 	if (isset($_SERVER['DOLIBARR_'.$name]) || isset($_ENV['DOLIBARR_'.$name])) {
 		return true;
 	}
-	// Dedicated conf.php variables bridged into a constant in Conf::setValues().
-	if ($name === 'MAIN_SECURITY_CSRF_WITH_TOKEN' && is_object($conf) && isset($conf->file->csrf_with_token) && $conf->file->csrf_with_token !== '') {
-		return true;
+	// Dedicated conf.php variables bridged into a constant in Conf::setValues() (constant name => conf->file property).
+	$bridgedconstants = array(
+		'MAIN_SECURITY_CSRF_WITH_TOKEN' => 'csrf_with_token',
+		'MAIN_DISABLE_DNS_GET_RECORD' => 'disable_dns_get_record',
+	);
+	if (isset($bridgedconstants[$name]) && is_object($conf)) {
+		$fileprop = $bridgedconstants[$name];
+		if (isset($conf->file->$fileprop) && $conf->file->$fileprop !== '') {
+			return true;
+		}
 	}
 	return false;
 }

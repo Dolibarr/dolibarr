@@ -393,6 +393,18 @@ $dolibarr_nocsrfcheck='0';
 //$dolibarr_main_csrf_with_token = '3';
 
 
+// dolibarr_main_disable_dns_get_record
+// ====================================
+// Force, from this file, whether the DNS record lookup (used for example to validate email domains in the back
+// office) is disabled. Useful for a hosting administrator on a server without outgoing DNS. This overrides the
+// MAIN_DISABLE_DNS_GET_RECORD constant, so it wins over the value set in the back office and cannot be changed there.
+// Possible values: 0 (DNS lookup enabled) or 1 (disabled). The constant then appears read-only in the back office.
+// Examples:
+// $dolibarr_main_disable_dns_get_record = '1';
+//
+//$dolibarr_main_disable_dns_get_record = '1';
+
+
 // Forcing any other database constant from this file (hosting / security lock)
 // ============================================================================
 // More generally, any constant stored in the database (llx_const table) can be forced from the server side by setting
@@ -400,7 +412,6 @@ $dolibarr_nocsrfcheck='0';
 // (Apache SetEnv, Nginx/PHP-FPM, Docker, systemd...), or directly in this conf.php file by assigning $_SERVER (or $_ENV).
 // The forced value overrides the database value at runtime and the constant becomes read-only in the back office.
 // Examples:
-// $_SERVER['DOLIBARR_MAIN_DISABLE_DNS_GET_RECORD'] = 1;
 // $_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = "default-src 'self'";
 
 // dolibarr_api_count_always_enabled
