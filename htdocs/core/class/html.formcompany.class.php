@@ -153,11 +153,11 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Affiche formulaire de selection des modes de reglement
+	 *  Displays form for selecting settlement methods
 	 *
 	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
-	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *  @param  string	$htmlname   	Name of the select form
 	 *	@param	int		$empty			Add empty value in list
 	 *	@return	void
 	 */
@@ -414,10 +414,10 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Provides the dropdown of the active regions including the actif country.
+	 *   Provides the dropdown of the active regions including the active country.
 	 *   The key of the list is the code (there may be more than one entry for a
 	 *   code but in that case the fields country and language are different).
-	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
+	 *   a given code but in this case, the country and language field differs).
 	 *   This way the links with the regions are made independent of its name.
 	 *
 	 *   @param		string		$selected		Preselected value
@@ -1186,7 +1186,7 @@ class FormCompany extends Form
 	 *  @param	Contact|Client|null	$prospectstatic Prospect object
 	 *  @param  int					$statusprospect	status of prospect
 	 *  @param  int					$idprospect     id of prospect
-	 *  @param  'html'|'js'			$mode      		select if we want activate de html part or js
+	 *  @param  'html'|'js'			$mode      		select whether to activate the HTML part or JS
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
