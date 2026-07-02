@@ -29,6 +29,9 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
