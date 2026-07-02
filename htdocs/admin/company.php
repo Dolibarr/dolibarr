@@ -520,20 +520,20 @@ print '</td></tr>'."\n";
 
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_TEL'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_TEL'), 'phone', $mysoc->country_id, 'object_phoning', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Phone mobile
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("PhoneMobile").'</label></td><td>';
-print img_picto('', 'object_phoning_mobile', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone_mobile" id="phone_mobile" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'), 'phone_mobile', $mysoc->country_id, 'object_phoning_mobile', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150" name="fax" id="fax" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_FAX'))).'"></td></tr>';
+print $form->showPhoneInput(getDolGlobalString('MAIN_INFO_SOCIETE_FAX'), 'fax', $mysoc->country_id, 'object_phoning_fax', 'maxwidth150 widthcentpercentminusx');
+print '</td></tr>';
 print '</td></tr>'."\n";
 
 // Email
