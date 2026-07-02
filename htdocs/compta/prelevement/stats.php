@@ -75,7 +75,7 @@ $mode = 'statistics';
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/orders_list.php', ['mode' => 'common', 'type' => $type]), '', 1, array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/orders_list.php', ['mode' => 'kanban', 'type' => $type]), '', 1, array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildurl(DOL_URL_ROOT.'/compta/prelevement/stats.php', ['type' => $type]), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/stats.php', ['type' => $type]), '', 2, array('morecss' => 'reposition'));
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => $type]));
