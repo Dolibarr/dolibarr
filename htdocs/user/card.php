@@ -161,6 +161,9 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
+// Salary and other HR fields must only be editable by users allowed to see them (same rights as the display, see issue #32909)
+$permissiontoeditsalary = ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids)) || (isModEnabled('salaries') && $user->hasRight("salaries", "readall")) || (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read")));
+
 $passwordismodified = false;
 $ldap = null;
 
@@ -333,14 +336,17 @@ if (empty($reshook)) {
 			$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 			$object->employee = GETPOSTINT('employee');
 
-			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
-			$object->thm = price2num($object->thm);
-			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-			$object->tjm = price2num($object->tjm);
-			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
-			$object->salary = price2num($object->salary);
-			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			// Only users allowed to see salary/HR fields can modify them (issue #32909)
+			if ($permissiontoeditsalary) {
+				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+				$object->thm = price2num($object->thm);
+				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+				$object->tjm = price2num($object->tjm);
+				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+				$object->salary = price2num($object->salary);
+				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+			}
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 
@@ -524,16 +530,19 @@ if (empty($reshook)) {
 				$object->fk_user_holiday_validator = GETPOSTINT("fk_user_holiday_validator") > 0 ? GETPOSTINT("fk_user_holiday_validator") : 0;
 				$object->employee = GETPOSTINT('employee');
 
-				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
-				$object->thm = price2num($object->thm);
-				$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-				$object->tjm = price2num($object->tjm);
-				$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
-				$object->salary = price2num($object->salary);
-				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
-				$object->salaryextra = price2num($object->salaryextra);
-				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
-				$object->weeklyhours = price2num($object->weeklyhours);
+				// Only users allowed to see salary/HR fields can modify them (issue #32909)
+				if ($permissiontoeditsalary) {
+					$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
+					$object->thm = price2num($object->thm);
+					$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
+					$object->tjm = price2num($object->tjm);
+					$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
+					$object->salary = price2num($object->salary);
+					$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
+					$object->salaryextra = price2num($object->salaryextra);
+					$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
+					$object->weeklyhours = price2num($object->weeklyhours);
+				}
 
 				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$object->dateemployment = $dateemployment;
