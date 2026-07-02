@@ -162,7 +162,8 @@ if ($id > 0) {
 }
 
 // Salary and other HR fields must only be editable by users allowed to see them (same rights as the display, see issue #32909)
-$permissiontoeditsalary = (!empty($user->admin) || (isModEnabled('salaries') && $user->hasRight('salaries', 'readall')) || (isModEnabled('hrm') && $user->hasRight('hrm', 'employee', 'read')));
+$permissiontoeditsalary = ((isModEnabled('salaries') && $user->hasRight("salaries", "read") && in_array($id, $childids)) || (isModEnabled('salaries') && $user->hasRight("salaries", "readall")) || (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read")));
+
 $passwordismodified = false;
 $ldap = null;
 
