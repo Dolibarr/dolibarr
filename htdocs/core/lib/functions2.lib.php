@@ -3114,8 +3114,8 @@ function csvClean($newvalue, $charset = '', $separator = '')
 		$addquote = 1;
 	}
 
-	// Rule 4 CSV: If value is a string started with =, we must add "
-	if (preg_match('/^\s*=/', $newvalue)) {
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
+	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
 		$addquote = 1;
 	}
 
