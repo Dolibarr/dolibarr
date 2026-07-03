@@ -6055,6 +6055,7 @@ input#cardholder-name {
 #tablesubscribe { width: 100%; }
 #tablesubscribe tr td { font-size: 1.15em; }
 #tablesubscribe .price-registration { font-size: 1.5em; }
+#tablesubscribe .selectphonecode { font-size: 0.94em; }
 
 
 div#card-element {
