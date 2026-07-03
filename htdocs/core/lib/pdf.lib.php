@@ -2916,6 +2916,9 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
+			if (empty($object->lines[$i]->remise_percent)) {
+				return 0;
+			}
 			if (empty($multicurrency)) {
 				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
 			} else {
