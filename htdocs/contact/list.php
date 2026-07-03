@@ -1801,12 +1801,12 @@ while ($i < $imaxinloop) {
 
 		// EMail
 		if (!empty($arrayfields['p.email']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">';
+			print '<td class="nowraponall tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">';
 			if ($contextpage == 'poslist') {
 				print $obj->email;
 			} else {
 				$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
-				print dol_print_email($obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
+				print dol_print_email((string) $obj->email, $obj->rowid, $obj->socid, 1, 18, $showinvalidemail, 1);
 			}
 			print '</td>';
 			if (!$i) {

@@ -253,7 +253,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 			}
 		}
 		if (!$error) {
-			$candidature->validate($user);
+			$result = $candidature->validate($user);
 			if ($result <= 0) {
 				$error++;
 				$errmsg .= implode('<br>', $candidature->errors);
@@ -488,6 +488,7 @@ if ($action != 'dosubmit') {
 
 		// Other attributes
 		$object = new RecruitmentCandidature($db);
+		$parameters = array();
 		$parameters['tpl_context'] = 'public';	// define template context to public
 		$parameters['tdclass'] = 'left';
 		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");

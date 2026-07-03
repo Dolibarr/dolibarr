@@ -187,7 +187,7 @@ function dol_natural_search_phone($db, $fields, $value, $nofirstand = 0)
 		}
 	}
 
-	$candidates = array_values(array_unique(array_filter($candidates, function ($c) {
+	$candidates = array_values(array_unique(array_filter($candidates, function (string $c) {
 		return $c !== '';
 	})));
 	if (empty($candidates)) {
