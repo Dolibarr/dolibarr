@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -38,14 +45,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -59,7 +58,7 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode = GETPOST('mode', 'alpha');
 $groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
@@ -92,7 +91,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Mo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 

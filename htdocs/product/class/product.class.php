@@ -1060,6 +1060,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim((string) $this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim((string) $this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 		// Barcode value
 		$this->barcode = trim($this->barcode);
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
@@ -1496,6 +1509,19 @@ class Product extends CommonObject
 		$this->accountancy_code_sell_intra = trim($this->accountancy_code_sell_intra);
 		$this->accountancy_code_sell_export = trim($this->accountancy_code_sell_export);
 
+		// Normalize the accountancy codes the way the admin dropdown does it, so an API client that
+		// sends '606111000' ends up with the same '606111' value the GUI stores (see issue #32343).
+		// When ACCOUNTING_MANAGE_ZERO is on, trailing zeros are part of the code and must be kept.
+		if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			$this->accountancy_code_buy = clean_account($this->accountancy_code_buy);
+			$this->accountancy_code_buy_intra = clean_account($this->accountancy_code_buy_intra);
+			$this->accountancy_code_buy_export = clean_account($this->accountancy_code_buy_export);
+			$this->accountancy_code_sell = clean_account($this->accountancy_code_sell);
+			$this->accountancy_code_sell_intra = clean_account($this->accountancy_code_sell_intra);
+			$this->accountancy_code_sell_export = clean_account($this->accountancy_code_sell_export);
+		}
+
 		$this->db->begin();
 
 		$result = 0;
@@ -1509,8 +1535,11 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-			// Note that this->oldcopy must be object and not stdClass, if not the method hasbatch() will not work.
-			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
+			// Note that this->oldcopy must be a Product instance (not stdClass), otherwise the method
+			// hasbatch() called below will fatal. Callers may set oldcopy via dol_clone($obj, 2) (which
+			// returns a stdClass with scalar properties only) and then we cannot call methods on it,
+			// so re-clone with native=1 in that case (see issues #38663, #38638).
+			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id)) || !($this->oldcopy instanceof Product)) {
 				$this->oldcopy = dol_clone($this, 1);	// 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
@@ -1897,7 +1926,7 @@ class Product extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && isModEnabled('variants')) {
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -2697,6 +2726,11 @@ class Product extends CommonObject
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$this->packaging = (float) $obj->packaging;
 				}
+				// Expose the supplier minimum purchase quantity so callers can enforce qty_min
+				// on top of packaging-multiple rounding (#38783). pfp.quantity is the lowest
+				// qty for which this price line is valid; for "below-min" callers this is the
+				// floor they must round up to.
+				$this->fourn_qty = $obj->quantity;
 				$result = $obj->fk_product;
 				return $result;
 			} else { // If not found
@@ -2762,6 +2796,9 @@ class Product extends CommonObject
 						if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 							$this->packaging = (float) $obj->packaging;
 						}
+						// Expose pfp.quantity so callers can enforce qty_min on top of packaging
+						// rounding (#38783).
+						$this->fourn_qty = $obj->quantity;
 						$result = $obj->fk_product;
 						return $result;
 					} else {
@@ -2959,7 +2996,7 @@ class Product extends CommonObject
 
 				// check if price have really change before log
 				$newPriceData = $this->getArrayForPriceCompare($level);
-				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!empty(array_diff_assoc($newPriceData, $lastPriceData)) || (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES'))) {
 					$this->_log_price($user, $level); // Save price for level into table product_price
 				}
 
@@ -3265,7 +3302,7 @@ class Product extends CommonObject
 							/*
 							 $this->prices_by_qty[$i]=$result["price_by_qty"];
 							 $this->prices_by_qty_id[$i]=$result["rowid"];
-							 // Récuperation de la liste des prix selon qty si flag positionné
+							 // Get the pricelist according to the qty if flag is set
 							 if ($this->prices_by_qty[$i] == 1)
 							 {
 							 $sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
@@ -3320,7 +3357,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[0] = $result["price_by_qty"];
 							$this->prices_by_qty_id[0] = $result["rowid"];
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[0] == 1) {
 								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -3382,7 +3419,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
 							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -3997,7 +4034,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats réception fournisseur pour le produit/service
+	 * Loads supplier reception statistics table for given product or service
 	 *
 	 * @param	int    	$socid           	Id thirdparty to filter on a thirdparty
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
@@ -4449,7 +4486,7 @@ class Product extends CommonObject
 	/**
 	 *  Load array of statistics for recurring supplier invoice for product/service
 	 *
-	 * 	@param	int	$socid 	Id societe
+	 * 	@param	int	$socid 	Supplier ID
 	 * 	@return	int			Array of stats in $this->stats_facturefournrec, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facturefournrec($socid = 0)
@@ -5662,6 +5699,9 @@ class Product extends CommonObject
 	public function hasVariants()
 	{
 		$nb = 0;
+		if (!isModEnabled('variants')) {
+			return $nb;
+		}
 		$sql = "SELECT count(rowid) as nb FROM ".$this->db->prefix()."product_attribute_combination WHERE fk_product_parent = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('product').")";
 
@@ -6674,6 +6714,9 @@ class Product extends CommonObject
 						break;
 					}
 				}
+			} elseif (getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE') && empty($productCachedList)) {
+				// if all sub product are not stock managed when use parent stock
+				$this->load_stock('warehouseopen');
 			}
 		}
 

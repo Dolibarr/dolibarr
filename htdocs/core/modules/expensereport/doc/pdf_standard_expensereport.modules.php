@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -676,7 +676,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
-		// ajout du fondu vert en bas de page à droite
+		// add green fade at bottom right of page
 		$image_fondue = $conf->mycompany->dir_output.'/fondu_vert_.jpg';
 		$pdf->Image($image_fondue,20,107,200,190);
 

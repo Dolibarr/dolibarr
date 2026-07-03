@@ -53,7 +53,7 @@ $object = new BOM($db);
 $hookmanager->initHooks(array('bomnote', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Massactions
-$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

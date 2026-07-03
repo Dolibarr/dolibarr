@@ -1743,7 +1743,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {
@@ -1870,7 +1870,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		foreach ($arrayofamounts as $id => $amount) {
@@ -2013,7 +2013,7 @@ class Invoices extends DolibarrApi
 	{
 		require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('facture', 'paiement')) {
 			throw new RestException(403);
 		}
 		if (empty($id)) {

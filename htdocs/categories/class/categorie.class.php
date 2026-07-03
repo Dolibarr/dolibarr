@@ -682,6 +682,13 @@ class Categorie extends CommonObject
 		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 		$this->visible = ($this->visible != "" ? intval($this->visible) : 0);
 
+		if ($this->fk_parent > 0 && $this->fk_parent == $this->id) {
+			$langs->load('categories');
+			$this->error = $langs->trans("ErrorCategoryCannotBeItsOwnParent");
+			dol_syslog($this->error, LOG_WARNING);
+			return -1;
+		}
+
 		if ($this->already_exists()) {
 			$this->error = $langs->trans("ImpossibleUpdateCat");
 			$this->error .= " : ".$langs->trans("CategoryExistsAtSameLevel");
@@ -1065,11 +1072,11 @@ class Categorie extends CommonObject
 					if ($onlyids) {
 						$objs[] = $rec['fk_object'];
 					} else {
-						$tmpobj->id = 0;
-						$tmpobj->fetch($rec['fk_object']);	// The fetch will erase $tmpobj->id only if it succeed.
+						$tmpobj = new $classnameforobj($this->db);
+						$tmpobj->fetch($rec['fk_object']);	// The fetch will set $tmpobj->id only if it succeed.
 						// @phpstan-ignore-next-line
 						if ($tmpobj->id > 0) {		// Failing fetch may happen for example when a category supplier was set and third party was moved as customer only. The object supplier can't be loaded.
-							$objs[] = clone $tmpobj;
+							$objs[] = $tmpobj;
 						}
 					}
 				}

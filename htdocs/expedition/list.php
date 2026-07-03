@@ -6,11 +6,11 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -42,14 +50,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", 'companies', 'bills', 'products', 'orders'));
@@ -117,7 +117,6 @@ $object = new Expedition($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('shipmentlist'));
-$extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -745,13 +744,13 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= ' AND e.signed_status = '.urlencode($search_signed_status);
+	$sql .= " AND e.signed_status = ".((int) $search_signed_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.((int) $search_billed);
+	$sql .= " AND e.billed = ".((int) $search_billed);
 }
 if ($search_fk_user_author > 0) {
 	$sql .= ' AND e.fk_user_author = '.((int) $search_fk_user_author);

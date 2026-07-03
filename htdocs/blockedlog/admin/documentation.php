@@ -76,7 +76,7 @@ $formcompany = new FormCompany($db);
 $block_static = new BlockedLog($db);
 $block_static->loadTrackedEvents();
 
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
@@ -86,7 +86,7 @@ $help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inalt
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-blockedlog page-admin_blockedlog');
 
-if ($withtab) {
+if ($withtab && !userIsTaxAuditor()) {
 	$linkback = '<a href="'.dolBuildUrl($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 } else {
 	$linkback='';
@@ -180,7 +180,7 @@ if (in_array($mysoc->country_code, array('FR')) && !userIsTaxAuditor()) {
 		print info_admin($htmltext, 0, 0, 'info');
 
 		// Show remind on good practices related to archives
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }
@@ -192,6 +192,9 @@ print '<center><br>';
 print $langs->trans("YouMayFindDocumentOn").'<br>';
 print '<br>';
 print img_picto('', 'url').' <a href="https://www.dolibarr.org/certifications-lf" target="_blank">https://www.dolibarr.org/certifications-lf</a>';
+if ($mysoc->country_code == 'FR') {
+	print '<br><br>'.$langs->trans("ApplicationUpdateResponsibilityFR");
+}
 print '<center>';
 
 

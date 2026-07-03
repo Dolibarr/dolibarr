@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1114,11 +1114,11 @@ class Skill extends CommonObject
 		$result = '';
 		switch ($code) {
 			case 0: $result = $langs->trans("TypeKnowHow");
-				break; //"Savoir Faire"
+				break; // "Know-how"
 			case 1: $result = $langs->trans("TypeHowToBe");
-				break; // "Savoir être"
+				break; // "Soft skills"
 			case 9: $result = $langs->trans("TypeKnowledge");
-				break; //"Savoir"
+				break; // "Knowledge"
 		}
 		return $result;
 	}
@@ -1126,9 +1126,9 @@ class Skill extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array<string,mixed>		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param      string	    			$option             Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata			Array of data
+	 *  @return		string										HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

@@ -68,9 +68,6 @@ if (isModEnabled('order')) {
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
 if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
@@ -218,6 +215,9 @@ $expensereport = null;
 $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
+
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
 
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
@@ -659,20 +659,6 @@ $listofreferent = array(
 		'nototal' => 1,
 		'test' => isModEnabled('mrp') && $user->hasRight('mrp', 'read')
 	),
-	'trip' => array(
-		'name' => "TripsAndExpenses",
-		'title' => "ListExpenseReportsAssociatedProject",
-		'class' => 'Deplacement',
-		'table' => 'deplacement',
-		'datefieldname' => 'dated',
-		'margin' => 'minus',
-		'disableamount' => 1,
-		'urlnew' => DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
-		'lang' => 'trips',
-		'buttonnew' => 'AddTrip',
-		'testnew' => $user->hasRight('deplacement', 'creer'),
-		'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
-	),
 	'expensereport' => array(
 		'name' => "ExpenseReports",
 		'title' => "ListExpenseReportsAssociatedProject",
@@ -1089,8 +1075,11 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 
-				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') {
+				// Change sign of $total_ht_by_line and $total_ttc_by_line for supplier proposal and supplier order.
+				// Skip when the element already participates to the margin computation via margin='minus'
+				// (line 1095 below will revert sign too, and double-negation would silently flip the value
+				// back to positive - see PROJECT_ELEMENTS_FOR_MINUS_MARGIN=order_supplier in #34684).
+				if (($tablename == 'commande_fournisseur' || $tablename == 'supplier_proposal') && $margin !== 'minus') {
 					$total_ht_by_line = -$total_ht_by_line;
 					$total_ttc_by_line = -$total_ttc_by_line;
 				}

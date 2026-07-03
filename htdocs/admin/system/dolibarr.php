@@ -61,7 +61,14 @@ $sfurl = '';
 $version = '0.0';
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if (!$islne) {
+		$versionbadge .= ' - '.$langs->trans("NotCertified");
+	}
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -159,7 +166,7 @@ if (function_exists('curl_init')) {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
 		}
 	} else {
-		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction smallpaddingimp">'.$langs->trans("Check").'</a>';
+		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion&token='.newToken().'" class="butAction smallpaddingimp">'.$langs->trans("Check").'</a>';
 	}
 }
 
@@ -181,10 +188,20 @@ if (getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
 }
 print '</td></tr>'."\n";
 
+$showblockedlogversion = 0;
+if ($mysoc->country_code == 'FR') {
+	$showblockedlogversion = 1;
+}
 if (isALNERunningVersion()) {
+	$showblockedlogversion = 1;
+}
+if ($showblockedlogversion) {
 	print '<tr class="oddeven nohover">';
 	print '<td width="300">'.$langs->trans("VersionOfModule", $langs->transnoentitiesnoconv("BlockedLog")).'</td><td>';
 	print $versionbadge;
+
+	print ' &nbsp; <a href="'.DOL_URL_ROOT.'/blockedlog/admin/filecheck.php">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("FileCheck").'</a>';
+
 	print '</td>';
 	print '</tr>';
 }

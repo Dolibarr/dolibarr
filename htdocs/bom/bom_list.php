@@ -73,7 +73,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new BOM($db);
-$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -490,7 +490,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
