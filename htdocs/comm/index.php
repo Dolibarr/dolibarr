@@ -624,7 +624,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="tdoverflowmax250 minwidth100">';
-				print $companystatic->getNomUrl(1, 'customer');
+				print $companystatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100 right">';
 				print convertSecondToTime($obj->duration);
