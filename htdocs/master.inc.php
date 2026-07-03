@@ -72,6 +72,8 @@ require_once 'filefunc.inc.php';
 @phan-var-force ?string $dolibarr_main_db_cryptkey
 @phan-var-force ?string $dolibarr_main_limit_users
 @phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_csrf_with_token
+@phan-var-force ?string $dolibarr_main_disable_dns_get_record
 ';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';

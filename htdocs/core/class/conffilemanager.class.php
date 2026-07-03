@@ -526,18 +526,19 @@ class ConfFileManager
 	public function validateSyntax($content)
 	{
 		try {
-			token_get_all((string) $content, TOKEN_PARSE);
+			// TOKEN_PARSE makes token_get_all() throw a ParseError on invalid PHP; a valid conf.php yields tokens.
+			$tokens = token_get_all((string) $content, TOKEN_PARSE);
 		} catch (\ParseError $e) {
 			return false;
 		}
-		return true;
+		return count($tokens) > 0;
 	}
 
 	/**
 	 *	Serialize a value according to its canvas descriptor type.
 	 *
-	 *	@param	array{type:string}	$descriptor		Canvas descriptor.
-	 *	@param	string				$value			Value to serialize.
+	 *	@param	array{type:string,default:string}	$descriptor		Canvas descriptor.
+	 *	@param	string								$value			Value to serialize.
 	 *	@return	string	PHP literal representation.
 	 */
 	private function serializeValue($descriptor, $value)
