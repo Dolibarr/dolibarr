@@ -505,6 +505,8 @@ class modPropale extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$this->_load_tables('/install/mysql/', 'propal');
+
 		// Remove permissions and default values
 		$this->remove($options);
 
