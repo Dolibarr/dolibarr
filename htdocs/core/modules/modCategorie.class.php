@@ -944,6 +944,15 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("order")) {
 			$this->_load_tables('/install/mysql/', 'commande');
 		}
+		if (isModEnabled("propal")) {
+			$this->_load_tables('/install/mysql/', 'propal');
+		}
+		if (isModEnabled("project")) {
+			$this->_load_tables('/install/mysql/', 'project');
+		}
+		if (isModEnabled("knowledgemanagement")) {
+			$this->_load_tables('/install/mysql/', 'knowledgemanagement');
+		}
 
 		// Permissions
 		$this->remove($options);
