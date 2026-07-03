@@ -419,7 +419,7 @@ class ConfFileManager
 
 		$parsed = $this->parse($rawTemplate);
 
-		// Re-use the values already set in the template for the known canvas variables.
+		// Reuse the values already set in the template for the known canvas variables.
 		$values = array();
 		foreach ($this->getCanvas() as $descriptor) {
 			$key = $descriptor['key'];
