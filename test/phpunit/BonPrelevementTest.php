@@ -88,6 +88,8 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $fkBankAccount = 0;
 	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
 	protected static $setUpError = '';
+	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
+	protected static $savmysoc;
 
 	/**
 	 * setUpBeforeClass
@@ -104,8 +106,16 @@ class BonPrelevementTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $db, $user;
+		global $db, $user, $mysoc;
 		parent::setUpBeforeClass(); // Opens the parent transaction ($db->begin())
+
+		// BonPrelevement::generate() requires $mysoc to be in a SEPA country (global $mysoc,
+		// not restored between test classes by CommonClassTest). Some other test class run
+		// earlier in the same PHPUnit process (e.g. PricesTest) may have left it on a
+		// non-SEPA country, so force it here and restore it in tearDownAfterClass().
+		self::$savmysoc = clone $mysoc;
+		$mysoc->country_code = 'FR';
+		$mysoc->country_id = 1;
 
 		// Enable the prelevement module if not already active
 		if (!isModEnabled('prelevement')) {
@@ -205,6 +215,23 @@ class BonPrelevementTest extends CommonClassTest
 		if (self::$fkBankAccount <= 0) {
 			self::$setUpError .= 'Account::create() (issuer) failed: '.$account->errorsToString().' ';
 		}
+	}
+
+	/**
+	 * tearDownAfterClass
+	 *
+	 * Restores the global $mysoc forced in setUpBeforeClass() before rolling back
+	 * the parent transaction, so this class does not leak state to test classes
+	 * that run after it in the same PHPUnit process.
+	 *
+	 * @return void
+	 */
+	public static function tearDownAfterClass(): void
+	{
+		global $mysoc;
+		$mysoc = self::$savmysoc;
+
+		parent::tearDownAfterClass(); // Rolls back the parent transaction ($db->rollback())
 	}
 
 	/**
