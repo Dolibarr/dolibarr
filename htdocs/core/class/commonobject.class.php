@@ -9844,7 +9844,7 @@ abstract class CommonObject
 								$out .= $extrafields->showOutputField($key, $value, '', $this->table_element);
 								break;
 							case "create":
-								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
+								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,ip,password'));
 								if (in_array($extrafields->attributes[$this->table_element]['type'][$key], $listoftypestoshowpicto)) {
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
