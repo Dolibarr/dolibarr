@@ -1390,14 +1390,14 @@ if ($step == 5 && $datatoexport) {
 	$htmltabloflibs .= '</table><br>';
 
 	print '<br>';
-	print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span>';
+	print '<div class="info"><span class="">'.$form->textwithpicto($langs->trans("NowClickToGenerateToBuildExportFile"), $htmltabloflibs, 1, 'help', '', 0, 2, 'helphonformat').'</span></div>';
 	//print $htmltabloflibs;
 
 	print '</div>';
 
 
 	if ($sqlusedforexport && $user->admin) {
-		print info_admin($langs->trans("SQLUsedForExport").':<br> '.$sqlusedforexport, 0, 0, '1', '', 'TechnicalInformation').'<br>';
+		print info_admin($langs->trans("SQLUsedForExport").':<br><span class="small">'.$sqlusedforexport.'</span>', 0, 0, 'info', '', 'TechnicalInformation').'<br>';
 		print '<br>';
 	}
 
