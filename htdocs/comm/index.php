@@ -74,7 +74,8 @@ if (!empty($user->socid) && $user->socid > 0) {
 
 $total = 0;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $now = dol_now();
 
