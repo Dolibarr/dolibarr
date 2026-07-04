@@ -573,4 +573,22 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
+-- =============================================================================
+-- Add MAIN_MAX_DECIMALS_CURRENCY_RATE constant
+-- =============================================================================
+-- Currency exchange rates are ratios (not prices) and need 6-8 decimals for
+-- weak currencies (e.g. 1 MXN = 0.050462 EUR). The DB column
+-- llx_multicurrency_rate.rate is double(24,8), so the default of 8 matches
+-- the column precision.
+--
+-- This constant is read by price2num() when the 'CR' rounding mode is used,
+-- and by the form that lets the user edit the rate on an invoice.
+-- =============================================================================
+
+INSERT INTO llx_const (name, entity, value, type, visible, note)
+SELECT 'MAIN_MAX_DECIMALS_CURRENCY_RATE', 0, '8', 'chaine', 0, 'Maximum number of decimals for currency exchange rates'
+WHERE NOT EXISTS (
+	SELECT 1 FROM llx_const WHERE name = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' AND entity = 0
+);
+
 -- end of migration

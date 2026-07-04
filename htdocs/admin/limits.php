@@ -56,11 +56,13 @@ $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$cu
 $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
+$mainmaxdecimalscurrencyrate = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . (!empty($currencycode) ? '_' . $currencycode : '');
 
 $valmainmaxdecimalsunit = GETPOSTINT($mainmaxdecimalsunit);
 $valmainmaxdecimalstot = GETPOSTINT($mainmaxdecimalstot);
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
+$valmainmaxdecimalscurrencyrate = GETPOSTINT($mainmaxdecimalscurrencyrate);
 
 if (!$user->admin) {
 	accessforbidden();
@@ -119,6 +121,7 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, $mainmaxdecimalscurrencyrate, $valmainmaxdecimalscurrencyrate, 'chaine', 0, '', $conf->entity);
 
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -193,6 +196,9 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
 	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
+
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_MAX_DECIMALS_CURRENCY_RATE'), $langs->trans('MAIN_MAX_DECIMALS_CURRENCY_RATE_Help')) . '</td>';
+	print '<td><input class="flat right" name="' . $mainmaxdecimalscurrencyrate . '" size="3" value="' . (GETPOSTISSET($mainmaxdecimalscurrencyrate) ? GETPOST($mainmaxdecimalscurrencyrate) : getDolGlobalInt($mainmaxdecimalscurrencyrate, 8)) . '"></td></tr>';
 
 	print '</table>';
 
