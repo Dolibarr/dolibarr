@@ -8828,6 +8828,12 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						// Protect the raw '&' of the plain text before the DOMDocument round trip (same trick as in
+						// dol_htmlentitiesbr()), otherwise saveHTML() encodes it into '&amp;' and the text becomes
+						// entity-bearing content that dol_textishtml() will detect as HTML at output time, so line breaks
+						// would no longer be converted at rendering. A pre-existing entity, for example a literal '&amp;'
+						// inside a URL, becomes '__PROTECTand__amp;' and is so restored unchanged.
+						$out = str_replace('&', '__PROTECTand__', $out);
 						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
@@ -8848,10 +8854,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
 						$out = str_replace('<br>', '', $out);
-						// DOMDocument::saveHTML() has also encoded the raw '&' of the plain text into '&amp;'. Restore it,
-						// otherwise the text becomes entity-bearing content that dol_textishtml() will detect as HTML at
-						// output time, and line breaks would no longer be converted by dol_htmlentitiesbr().
-						$out = str_replace('&amp;', '&', $out);
+						$out = str_replace('__PROTECTand__', '&', $out);
 					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
