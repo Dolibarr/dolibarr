@@ -8848,6 +8848,10 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					if (!$outishtml) {		// If $out was not HTML content we made before a dol_nl2br so we must do the opposite operation now
 						$out = str_replace('<br>', '', $out);
+						// DOMDocument::saveHTML() has also encoded the raw '&' of the plain text into '&amp;'. Restore it,
+						// otherwise the text becomes entity-bearing content that dol_textishtml() will detect as HTML at
+						// output time, and line breaks would no longer be converted by dol_htmlentitiesbr().
+						$out = str_replace('&amp;', '&', $out);
 					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
