@@ -310,8 +310,10 @@ if ($resql) {
 			print '</td>';
 
 			// Label
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<div class="twolinesmax-normallineheight minwidth100onall">';
 			print dolPrintHTML($projectstatic->title);
+			print '</div>';
 			print '</td>';
 
 			// Thirdparty
