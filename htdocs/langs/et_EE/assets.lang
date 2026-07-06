@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Uus vara
+AccountancyCodeAsset=Raamatupidamise kood (vara)
+AccountancyCodeDepreciationAsset=Raamatupidamise kood (amortisatsioonivara konto)
+AccountancyCodeDepreciationExpense=Raamatupidamise kood (amortisatsioonikulu konto)
+AssetsLines=Varad
+ConfirmValidateAsset=Kas olete kindel, et soovite seda vara viitega <b>%s</b> valideerida?
+DeleteType=Kustuta
+DeleteAnAssetType=Vara mudeli kustutamine
+ConfirmDeleteAssetType=Kas olete kindel, et soovite selle varamudeli kustutada?
+ShowTypeCard=Näita mudelit '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Varad
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Varade kirjeldus
+# Admin page
+AssetSetup=Varade seadistamine
+AssetSetupPage=Varade seadistamise leht
+ExtraFieldsAssetModel=Täiendavad atribuudid (vara mudel)
+AssetsType=Varade mudel
+AssetsTypeId=Vara mudeli ID
+AssetsTypeLabel=Vara mudeli silt
+AssetsTypes=Varade mudelid
+ASSET_ACCOUNTANCY_CATEGORY=Põhivara arvestusgrupp
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportsionaalne periood päevades amortisatsiooni arvutamiseks ühe aasta jooksul
+# Menu
+MenuAssets=Varad
+MenuNewAsset=Uus vara
+MenuAssetModels=Mudelivarad
+MenuListAssets=Loend
+MenuNewAssetModel=Uue vara mudel
+MenuListAssetModels=Loend
+# Module
+ConfirmDeleteAsset=Kas sa tõesti tahad selle vara eemaldada?
+# Tab
+AssetDepreciationOptions=Amortisatsioonivõimalused
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Amortisatsioon
+# Asset
+Asset=Vara
+Assets=Varad
+AssetReversalAmountHT=Tühistamise summa (ilma maksudeta)
+AssetAcquisitionValueHT=Soetussumma (ilma maksudeta)
+AssetRecoveredVAT=Tagastatud käibemaks
+AssetReversalDate=Pöördkuupäev
+AssetDateAcquisition=Omandamise kuupäev
+AssetDateStart=Käivitamise kuupäev
+AssetAcquisitionType=Omandamise tüüp
+AssetAcquisitionTypeNew=Uus
+AssetAcquisitionTypeOccasion=Kasutatud
+AssetType=Vara tüüp
+AssetTypeIntangible=Immateriaalne
+AssetTypeTangible=Käegakatsutav
+AssetTypeInProgress=Tegemisel
+AssetTypeFinancial=Rahandus
+AssetNotDepreciated=Pole amortiseerunud
+AssetDisposal=Jäätmekäitlus
+AssetConfirmDisposalAsk=Kas olete kindel, et soovite vara <b> %s</b> käsutada?
+AssetConfirmReOpenAsk=Kas olete kindel, et soovite vara <b> %s</b> uuesti avada?
+# Asset status
+AssetInDraft=Mustand
+AssetInProgress=Tegemisel
+AssetDisposed=Hävitatud
+AssetRecorded=Arvestatud
+# Asset disposal
+AssetDisposalDate=Käivitamiskuupäev
+AssetDisposalAmount=Jäätmekäitlusväärtus
+AssetDisposalType=Jäätmekäitluse tüüp
+AssetDisposalDepreciated=Amortiseerige üleandmise aastal
+AssetDisposalSubjectToVat=Käibemaksuga maksustatav utiliseerimine
+# Asset model
+AssetModel=Vara mudel
+AssetModels=Vara mudelid
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Majanduslik amortisatsioon
+AssetDepreciationOptionAcceleratedDepreciation=Kiirendatud amortisatsioon (maks)
+AssetDepreciationOptionDepreciationType=Amortisatsiooni tüüp
+AssetDepreciationOptionDepreciationTypeLinear=Lineaarne
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiivne
+AssetDepreciationOptionDepreciationTypeExceptional=Erakordne
+AssetDepreciationOptionDegressiveRate=Kahanevat määra
+AssetDepreciationOptionDuration=Kestus
+AssetDepreciationOptionDurationType=Tüüpkestus
+AssetDepreciationOptionDurationTypeAnnual=Aastane
+AssetDepreciationOptionDurationTypeMonthly=Igakuine
+AssetDepreciationOptionDurationTypeDaily=Igapäevane
+AssetDepreciationOptionRate=Hind (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortisatsioonibaas (ilma käibemaksuta)
+AssetDepreciationOptionAmountBaseDeductibleHT=Mahaarvatav baas (ilma käibemaksuta)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Viimase amortisatsiooni kogusumma (ilma käibemaksuta)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Majanduslik amortisatsioon
+AssetAccountancyCodeAsset=Vara
+AssetAccountancyCodeDepreciationAsset=Amortisatsioon
+AssetAccountancyCodeDepreciationExpense=Amortisatsioonikulu
+AssetAccountancyCodeValueAssetSold=Müüdud vara väärtus
+AssetAccountancyCodeReceivableOnAssignment=Saadaval võõrandamisel
+AssetAccountancyCodeProceedsFromSales=Müügist saadud tulu
+AssetAccountancyCodeVatCollected=Kogutud käibemaks
+AssetAccountancyCodeVatDeductible=Varadelt tagasi saadud käibemaks
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Kiirendatud amortisatsioon (maks)
+AssetAccountancyCodeAcceleratedDepreciation=Konto
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortisatsioonikulu
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Tagasivõtmine/ettenägemine
+# Asset depreciation
+AssetBaseDepreciationHT=Amortisatsioonibaas (ilma käibemaksuta)
+AssetDepreciationBeginDate=Amortisatsiooni alguskuupäev
+AssetDepreciationDuration=Kestus
+AssetDepreciationRate=Hind (%%)
+AssetDepreciationDate=Amortisatsioonikuupäev
+AssetDepreciationHT=Amortisatsioon (ilma käibemaksuta)
+AssetCumulativeDepreciationHT=Kumulatiivne amortisatsioon (ilma käibemaksuta)
+AssetResidualHT=Jääkväärtus (ilma käibemaksuta)
+AssetDispatchedInBookkeeping=Kajastatud amortisatsioon
+AssetFutureDepreciationLine=Tulevane amortisatsioon
+AssetDepreciationReversal=Pöördumine
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Leitud vara või mudeli ID-d pole esitatud
+AssetErrorFetchAccountancyCodesForMode=Viga raamatupidamiskontode toomisel amortisatsioonirežiimi '%s' jaoks
+AssetErrorDeleteAccountancyCodesForMode=Viga raamatupidamiskontode kustutamisel amortisatsioonirežiimist '%s'
+AssetErrorInsertAccountancyCodesForMode=Viga amortisatsioonirežiimi '%s' raamatupidamiskontode sisestamisel
+AssetErrorFetchDepreciationOptionsForMode=Viga amortisatsioonirežiimi '%s' valikute toomisel
+AssetErrorDeleteDepreciationOptionsForMode=Viga '%s' amortisatsioonirežiimi valikute kustutamisel
+AssetErrorInsertDepreciationOptionsForMode=Viga amortisatsioonirežiimi valikute '%s' sisestamisel
+AssetErrorFetchDepreciationLines=Viga registreeritud kulumiridade toomisel
+AssetErrorClearDepreciationLines=Viga registreeritud kulumiridade (tühistamise ja tulevaste) kustutamisel
+AssetErrorAddDepreciationLine=Viga amortisatsioonirea lisamisel
+AssetErrorCalculationDepreciationLines=Viga amortisatsiooniridade arvutamisel (tagasimakse ja tulevane)
+AssetErrorReversalDateNotProvidedForMode='%s' amortisatsioonimeetodi puhul tühistamise kuupäeva ei ole esitatud.
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' amortisatsioonimeetodi puhul peab tühistamiskuupäev olema suurem või võrdne käesoleva majandusaasta algusega.
+AssetErrorReversalAmountNotProvidedForMode=Amortisatsioonimeetodi '%s' jaoks tühistamise summat ei esitata.
+AssetErrorFetchCumulativeDepreciation=Viga akumuleeritud amortisatsiooni summa toomisel amortisatsioonirealt
+AssetErrorSetLastCumulativeDepreciation=Viga viimase akumuleeritud amortisatsiooni summa registreerimisel

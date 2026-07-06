@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal模組設定
+PaypalDesc=此模組允許客戶以<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal付款</a>。這可以用於臨時付款或與Dolibarr項目有關的付款（發票，訂單等）。
+PaypalOrCBDoPayment=使用PayPal（信用卡或PayPal）付款
+PaypalDoPayment=用PayPal付款
+PAYPAL_API_SANDBOX=測試/沙盒模式
+PAYPAL_API_USER=API用戶名
+PAYPAL_API_PASSWORD=API密碼
+PAYPAL_API_SIGNATURE=API簽名
+PAYPAL_SSLVERSION=Curl SSL版本
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=提供“完整”付款（信用卡+ PayPal）或僅“ PayPal”
+PaypalModeIntegral=完整
+PaypalModeOnlyPaypal=PayPal
+ONLINE_PAYMENT_CSS_URL=線上支付頁面上CSS樣式表的可選擇網址
+ThisIsTransactionId=這是交易編號:<b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=通過電子郵件發送文件時，請包含PayPal付款網址
+NewOnlinePaymentReceived=收到新的線上付款
+NewOnlinePaymentFailed=新的線上付款已嘗試但失敗
+ONLINE_PAYMENT_SENDEMAIL=每次付款後（成功或失敗）的通知電子郵件地址
+ReturnURLAfterPayment=付款後返回網址
+ValidationOfOnlinePaymentFailed=線上付款驗證失敗
+PaymentSystemConfirmPaymentPageWasCalledButFailed=付款系統調用付款確認頁面返回錯誤
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API調用失敗。
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API調用失敗。
+DetailedErrorMessage=錯誤訊息詳細資訊
+ShortErrorMessage=簡短錯誤訊息
+ErrorCode=錯誤代碼
+ErrorSeverityCode=錯誤嚴重度代碼
+OnlinePaymentSystem=線上支付系統
+PaypalLiveEnabled=啟用PayPal“線上”模式（否則為測試/沙盒模式）
+PaypalImportPayment=匯入PayPal付款
+PostActionAfterPayment=付款後發布操作
+ARollbackWasPerformedOnPostActions=對所有Post操作執行了回滾。如果有必要，您必須手動完成發布操作。
+ValidationOfPaymentFailed=付款驗證失敗
+CardOwner=持卡人
+PayPalBalance=PayPal信用餘額

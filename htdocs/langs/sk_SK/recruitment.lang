@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Nábor
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Spravujte a sledujte náborové kampane na nové pracovné pozície
+# Admin page
+RecruitmentSetup = Nastavenie náboru
+RecruitmentSetupPage = Tu zadajte nastavenie hlavných možností pre modul náboru
+RecruitmentArea=Oblasť náboru
+PublicInterfaceRecruitmentDesc=Verejné stránky úloh sú verejné adresy URL na zobrazenie a odpovedanie na otvorené úlohy. Pre každú otvorenú úlohu existuje jeden odlišný odkaz, ktorý sa nachádza v každom zázname o úlohe.
+EnablePublicRecruitmentPages=Povoliť verejné stránky otvorených úloh
+
+NbOfEmployeesExpected=Očakávaný počet zamestnancov
+JobLabel=Označenie pracovnej pozície
+WorkPlace=Pracovné miesto
+DateExpected=Očakávaný dátum
+FutureManager=Budúci manažér
+ResponsibleOfRecruitement=Zodpovedný za nábor
+IfJobIsLocatedAtAPartner=Ak sa práca nachádza na mieste partnera
+PositionToBeFilled=Poradie úlohy
+PositionsToBeFilled=Pracovné pozície
+ListOfPositionsToBeFilled=Zoznam pracovných pozícií
+NewPositionToBeFilled=Nové pracovné pozície
+JobOfferToBeFilled=Pracovná pozícia na obsadenie
+ThisIsInformationOnJobPosition=Informácie o pracovnej pozícii, ktorá sa má obsadiť
+ContactForRecruitment=Kontakt pre nábor
+EmailRecruiter=Email recruiter
+ToUseAGenericEmail=Ak chcete použiť všeobecný e-mail. Ak nie je definovaný, použije sa e-mailová adresa zodpovedného za nábor
+NewCandidature=Nová aplikácia
+ListOfCandidatures=Zoznam aplikácií
+Remuneration=Mzda
+RequestedRemuneration=Požadovaný plat
+ProposedRemuneration=Navrhovaný plat
+ContractProposed=Navrhnutá zmluva
+ContractSigned=Zmluva podpísaná
+ContractRefused=Zmluva odmietnutá
+RecruitmentCandidature=Aplikácia
+JobPositions=Pracovné pozície
+RecruitmentCandidatures=Aplikácie
+InterviewToDo=Kontakty na sledovanie
+AnswerCandidature=Odpoveď aplikácie
+YourCandidature=Vaša aplikácia
+YourCandidatureAnswerMessage=Ďakujeme za vašu žiadosť.<br>...
+JobClosedTextCandidateFound=Pracovná pozícia je uzavretá. Pozícia je obsadená.
+JobClosedTextCanceled=Pracovná pozícia je uzavretá.
+ExtrafieldsJobPosition=Doplnkové atribúty (pracovné pozície)
+ExtrafieldsApplication=Doplnkové atribúty (žiadosti o zamestnanie)
+MakeOffer=Ponúknuť
+WeAreRecruiting=Robíme nábor. Toto je zoznam voľných pozícií, ktoré sa majú obsadiť...
+NoPositionOpen=Momentálne nie sú otvorené žiadne pozície
+ConfirmClose=Potvrďte zrušenie
+ConfirmCloseAsk=Naozaj chcete zrušiť túto náborovú kandidatúru?
+Recruitment=Nábor
+ApplyJobCandidature=Uchádzajte sa o túto prácu
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidátka na zamestnanie s e-mailovou adresou %s už existuje.
+RecruitmentCandidatureSaved=Kandidatúra na nábor bola úspešne uložená
+NoOpenJobOffer=Momentálne nie sú žiadne otvorené pracovné ponuky

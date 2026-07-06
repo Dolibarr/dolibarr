@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Ekitaldien Antolaketa
+EventOrganizationDescription = Ekitaldien Antolaketa Modulu Proiektuaren Bidez
+EventOrganizationDescriptionLong= Ekitaldi baten antolaketa kudeatu (ikuskizuna, hitzaldiak, parte-hartzaileak edo hizlariak, iradokizunak, botoa edo izena emateko orrialde publikoekin)
+EventOrganizationMenuLeft = Antolatutako ekitaldiak
+EventOrganizationConferenceOrBoothMenuLeft = Konferentzia edo standa
+PaymentEvent=Ekitaldiaren ordainketa.
+EventFee=Ekitaldiaren kuota
+# Admin page
+NewRegistration=Izen-ematea
+EventOrganizationSetup=Ekitaldien Antolakuntzaren konfigurazioa
+EventOrganization=Ekitaldien antolaketa
+EventOrganizationSetupPage = Ekitaldien Antolakuntzaren Konfigurazio Orria
+EVENTORGANIZATION_TASK_LABEL = Proiektua baliozkotzean automatikoki sortzeko zereginen etiketa
+EVENTORGANIZATION_TASK_LABELTooltip = Ekitaldi bat antolatzeko balioztatzen duzunean, zeregin batzuk automatikoki sor daitezke proiektuan<br><br>Adibidez: <br>Bidali Deialdia Konferentziaetarako<br>Bidali Deialdia Kabinentzat<br>Balioztatu Konferentziak iradokizunak<br>Balioztatu Eskaera Kabinentzat<br>Ekitaldirako harpidetza irekiak parte-hartzaileentzat<br>Ekitaldiaren oroigarria bidali hizlariei<br>Ekitaldiaren oroigarria bidali stand-eko antolatzaileei<br>Ekitaldiaren oroigarria bidali parte-hartzaileei
+EVENTORGANIZATION_TASK_LABELTooltip2=Zereginak automatikoki sortu behar ez badituzu, utzi hutsik.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Norbaitek konferentzia bat iradokitzen duenean automatikoki sortzen den hirugarrenen artean gehitzeko kategoria
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Hirugarrenen artean gehitzeko kategoria, stand bat iradokitzen dutenean automatikoki sortzen dena
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konferentzia baten iradokizuna jaso ondoren bidaltzeko mezu elektronikoaren txantiloia.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stand baten iradokizuna jaso ondoren bidaltzeko mezu elektronikoaren txantiloia.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Stand batean izena eman ondoren bidaltzeko mezu elektronikoaren txantiloia.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Ekitaldi baterako izen-ematea ordaindu ondoren bidaltzeko mezu elektronikoaren txantiloia.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = "Bidali mezu elektronikoak" ekintzatik hizlariei mezu elektronikoak bidaltzean erabiltzeko mezu elektronikoaren txantiloia
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Parte-hartzaileen zerrendako "Bidali mezu elektronikoak" ekintzatik mezu elektronikoak bidaltzean erabiltzeko mezu elektronikoaren txantiloia
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Parte-hartzaile bat sortu/gehitzeko formularioan, hirugarrenen zerrenda kategoria horretako hirugarrenetara mugatzen du.
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Parte-hartzaile bat sortu/gehitzeko formularioan, hirugarrenen zerrenda izaera hau duten hirugarrenetara mugatzen da
+# Object
+OrganizedEvent=Antolatutako ekitaldia
+EventOrganizationConfOrBooth= Konferentzia edo standa
+EventOrganizationConfOrBoothes=Biltzarrak edo standak
+ManageOrganizeEvent = Ekitaldi baten antolaketa kudeatu
+ConferenceOrBooth = Konferentzia edo standa
+ConferenceOrBoothTab = Konferentzia edo standa
+AmountPaid = Ordaindutako zenbatekoa
+DateOfRegistration = Erregistroaren data
+ConferenceOrBoothAttendee = Konferentzia edo standeko parte-hartzailea
+ApplicantOrVisitor=Eskatzailea edo bisitaria
+Speaker=Hizlaria
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Zure konferentzia eskaera jaso da
+YourOrganizationEventBoothRequestWasReceived = Zure standaren eskaera jaso da
+EventOrganizationEmailAskConf = Konferentziarako eskaera.
+EventOrganizationEmailAskBooth = Standaren eskaera.
+EventOrganizationEmailBoothPayment = Zure standaren ordainketa
+EventOrganizationEmailRegistrationPayment = Ekitaldi baterako izen-ematea
+EventOrganizationMassEmailAttendees = Bertaratutakoei komunikazioa
+EventOrganizationMassEmailSpeakers = Hizlariekiko komunikazioa.
+ToSpeakers=Hizlariei
+# Event
+AllowUnknownPeopleSuggestConf=Utzi jendeari konferentziak proposatzen
+AllowUnknownPeopleSuggestConfHelp=Utzi ezezagunei egin nahi duten konferentzia bat iradokitzen
+AllowUnknownPeopleSuggestBooth=Jendeari stand bat eskatzeko aukera eman
+AllowUnknownPeopleSuggestBoothHelp=Ezezagunek stand bat eskatzeko aukera izan dezaten utzi
+PriceOfRegistration=Izen-ematearen prezioa.
+PriceOfRegistrationHelp=Ekitaldian izena emateko edo parte hartzeko ordaindu beharreko prezioa
+PriceOfBooth=Postu bat jartzeko harpidetza prezioa
+PriceOfBoothHelp=Postu bat jartzeko harpidetza prezioa
+EventOrganizationICSLinkProject=Lotu ICS gertaerarako
+EventOrganizationICSLink=Lotu ICS konferentzietarako
+ConferenceOrBoothInformation=Konferentzia edo standaren informazioa
+ConferenceOrBoothFormat=Konferentzia edo kabina modua
+ConferenceOrBoothFormatID=Konferentzia edo kabina moduaren IDa
+ConferenceOrBoothFormatCode=Konferentzia edo kabina moduaren kodea
+ConferenceOrBoothFormatLabel=Konferentzia edo kabina moduaren etiketa
+Attendees=Bertaratutakoak
+ListOfAttendeesOfEvent=Ekitaldiko proiektuetako parte-hartzaileen zerrenda
+ListOfConfOrBoothOfEvent=Ekitaldi-proiektuen hitzaldien edo standen zerrenda
+DownloadICSLink=Deskargatu ICS fitxategia
+EVENTORGANIZATION_SECUREKEY=Konferentzia bat iradokitzeko erregistro-orri publikoaren gakoa ziurtatzeko hazia
+SERVICE_BOOTH_LOCATION=Stand baten kokapenari buruzko faktura-errenkadan erabilitako zerbitzua
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Ekitaldi baterako parte-hartzaile baten harpidetzari buruzko faktura-errenkadarako erabilitako zerbitzua
+NbVotes=Boto kopurua
+# Status
+EvntOrgDraft = Zirriborroa
+EvntOrgSuggested = Iradokitakoa
+EvntOrgConfirmed = Baieztatuta
+EvntOrgNotQualified = Ez da kualifikatua
+EvntOrgDone = Eginda
+EvntOrgCancelled = Ezeztatuta
+# Other
+SuggestForm = Iradokizun orria
+SuggestOrVoteForConfOrBooth = Iradokizun edo botoetarako orrialdea
+EvntOrgRegistrationHelpMessage = Hemen, konferentzia baten alde bozkatu dezakezu edo ekitaldirako berri bat proposatu. Ekitaldian zehar stand bat izateko eskaera ere egin dezakezu.
+EvntOrgRegistrationConfHelpMessage = Hemen, ekitaldian zehar animatzeko konferentzia berri bat proposa dezakezu.
+EvntOrgRegistrationBoothHelpMessage = Hemen, ekitaldian zehar stand bat izateko eskaera egin dezakezu.
+ListOfSuggestedConferences = Iradokitako biltzarren zerrenda
+ListOfSuggestedBooths=Iradokitako kabinak
+ListOfConferencesOrBooths=Ekitaldi proiektuen hitzaldiak edo standak
+SuggestConference = Konferentzia berri bat proposatu
+SuggestBooth = Iradoki kabina bat
+ViewAndVote = Ikusi eta bozkatu iradokitako ekitaldiak
+PublicAttendeeSubscriptionGlobalPage = Ekitaldian izena emateko esteka publikoa
+PublicAttendeeSubscriptionPage = Ekitaldi honetarako izena emateko esteka publikoa soilik
+MissingOrBadSecureKey = Segurtasun-giltza baliogabea da edo falta da
+EvntOrgWelcomeMessage = Formulario honek ekitaldian parte-hartzaile berri gisa izena emateko aukera ematen dizu
+EvntOrgDuration = Konferentzia hau %s helbidean hasten da eta %s helbidean amaitzen da.
+ConferenceAttendeeFee = '%s' ekitaldirako konferentziako parte-hartzailearen kuota %s-tik %s-ra gertatzen da.
+BoothLocationFee = Ekitaldiaren standaren kokapena: '%s' %s-tik %s-ra gertatzen da
+EventType = Gertaera mota
+LabelOfBooth=Standaren etiketa
+LabelOfconference=Konferentziaren etiketa
+ConferenceIsNotConfirmed=Izen-ematea ez dago eskuragarri, konferentzia ez dago baieztatuta oraindik
+EventRegistrationAreClosed=Ekitaldiaren izen-ematea itxita dago
+DateMustBeBeforeThan=%s %s baino lehenago egon behar da
+DateMustBeAfterThan=%s %s-ren ondoren egon behar da
+MaxNbOfAttendeesReached=Parte-hartzaile kopuru maximoa lortu da
+NewSubscription=Izen-ematea
+OrganizationEventConfRequestWasReceived=Zure konferentziarako iradokizuna jaso da
+OrganizationEventBoothRequestWasReceived=Zure stand eskaera jaso da
+OrganizationEventPaymentOfBoothWasReceived=Zure standaren ordainketa erregistratu da
+OrganizationEventPaymentOfRegistrationWasReceived=Ekitaldiaren izen-ematearen ordainketa erregistratu da
+OrganizationEventBulkMailToAttendees=Hau ekitaldian parte-hartzaile gisa parte hartu duzula gogorarazteko abisua da.
+OrganizationEventBulkMailToSpeakers=Hau ekitaldian hizlari gisa parte hartu duzula gogorarazteko abisua da.
+OrganizationEventLinkToThirdParty=Hirugarren baten esteka (bezeroa, hornitzailea edo bazkidea)
+OrganizationEvenLabelName=Konferentziaren edo standaren izen publikoa
+NewSuggestionOfBooth=Kabina baten eskaera
+NewSuggestionOfConference=Konferentzia bat egiteko eskaera
+EvntOrgRegistrationWelcomeMessage = Ongi etorri konferentzia edo standen iradokizunen orrialdera.
+EvntOrgRegistrationConfWelcomeMessage = Ongi etorri konferentziaren iradokizunen orrialdera.
+EvntOrgRegistrationBoothWelcomeMessage = Ongi etorri standaren iradokizunen orrialdera.
+EvntOrgVoteHelpMessage = Hemen, proiekturako iradokitako ekitaldiak ikusi eta bozkatu ditzakezu
+VoteOk = Zure botoa onartu da.
+AlreadyVoted = Ekitaldi honen alde bozkatu duzu dagoeneko.
+VoteError = Errore bat gertatu da bozketan zehar, saiatu berriro mesedez.
+SubscriptionOk=Zure erregistroa erregistratu da
+AmountOfRegistrationPaid=Ordaindutako matrikula zenbatekoa
+ConfAttendeeSubscriptionConfirmation = Ekitaldi baterako harpidetzaren baieztapena
+Attendee = Parte-hartzailea
+PaymentConferenceAttendee = Konferentziako parte-hartzaileen ordainketa
+PaymentBoothLocation = Standaren kokapenaren ordainketa
+DeleteConferenceOrBoothAttendee=Kendu parte-hartzailea
+RegistrationAndPaymentWereAlreadyRecorder=Izen-ematea eta ordainketa erregistratu dira dagoeneko <b>%s</b> helbide elektronikoan.
+EmailAttendee=Parte-hartzailearen helbide elektronikoa
+EmailCompany=Enpresaren posta elektronikoa
+EmailCompanyForInvoice=Enpresaren helbide elektronikoa (fakturarako, parte-hartzailearen helbide elektronikoaren desberdina bada)
+ErrorSeveralCompaniesWithEmailContactUs=Hainbat enpresa aurkitu dira helbide elektroniko honekin, beraz, ezin dugu zure erregistroa automatikoki balioztatu. Jarri gurekin harremanetan %s helbidean eskuzko balidazioa egiteko.
+ErrorSeveralCompaniesWithNameContactUs=Izen hori duten hainbat enpresa aurkitu dira, beraz, ezin dugu zure erregistroa automatikoki balioztatu. Jarri gurekin harremanetan %s helbidean eskuzko balioztatzeko.
+NoPublicActionsAllowedForThisEvent=Ez dago ekitaldi publikorik publikoarentzat irekita ekitaldi honetarako
+MaxNbOfAttendees=Gehienezko parte-hartzaile kopurua
+DateStartEvent=Gertaeraren hasiera data
+DateEndEvent=Gertaeraren amaiera data
+ModifyStatus=Aldatu egoera
+ConfirmModifyStatus=Egoera aldaketa berretsi
+ConfirmModifyStatusQuestion=Ziur zaude hautatutako %s erregistroa(k) aldatu nahi dituzula?
+RecordsUpdated=%s Erregistroak eguneratuta
+RecordUpdated=Erregistroa eguneratu da
+NoRecordUpdated=Ez da erregistrorik eguneratu
+ProfitPerValidatedAttendee=Parte-hartzaile bakoitzeko irabazia
+Confirmed=Baieztatuta
+NotSelected=Hautatu gabe
+TheLinkIsAvailableOnTheProjectEventCard=Konferentzia bat proposatzeko edo bozkatzeko edo stand bat eskatzeko estekak proiektuaren/ekitaldiaren orrialdean daude.
+ShowedUp=Agertu zen

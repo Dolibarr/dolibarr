@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+StandingOrderToProcess=Procesar
+WithdrawalsReceipts=Órdenes de domiciliación bancaria
+StatusPaid=Pagado
+StatusRefused=Rechazado
+StatusMotif4=Pedidos

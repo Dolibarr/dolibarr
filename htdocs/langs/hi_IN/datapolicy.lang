@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = डेटा गोपनीयता नीति
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = डेटा गोपनीयता को प्रबंधित करने के लिए मॉड्यूल (GDPR के अनुरूप)
+# Administration page
+datapolicySetup = मॉड्यूल डेटा गोपनीयता नीति सेटअप
+DataDeletion=डेटा हटाना
+DataAnonymization=डेटा का गुमनामीकरण
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = आपके देश के कानूनों के आधार पर (उदाहरण <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> GDPR का अनुच्छेद 5</a>), व्यक्तिगत डेटा को उस अवधि से अधिक नहीं रखा जाना चाहिए, जिस अवधि के लिए डेटा को उस उद्देश्य के लिए आवश्यक है जिसके लिए इसे एकत्र किया गया था, अभिलेखीय उद्देश्यों को छोड़कर। <br> यह मॉड्यूल बिना किसी घटना के एक निश्चित अवधि के बाद स्वचालित रूप से एक अनामीकरण कर देगा (वह अवधि जो आपने नीचे इंगित की होगी) और यदि ऑब्जेक्ट में कोई मौजूदा व्यावसायिक ऑब्जेक्ट संतान नहीं है।
+NB_MONTHS = %s महीने
+ONE_YEAR = 1 वर्ष
+NB_YEARS = %s वर्ष
+DATAPOLICY_TIERS_CLIENT = ग्राहक
+DATAPOLICY_TIERS_PROSPECT = संभावना
+DATAPOLICY_TIERS_PROSPECT_CLIENT = संभावित/ग्राहक
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = न कोई संभावना/न कोई ग्राहक
+DATAPOLICY_TIERS_FOURNISSEUR = देने वाला
+DATAPOLICY_CONTACT_CLIENT = ग्राहक
+DATAPOLICY_CONTACT_PROSPECT = संभावना
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = संभावित/ग्राहक
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = न कोई संभावना/न कोई ग्राहक
+DATAPOLICY_CONTACT_FOURNISSEUR = देने वाला
+DATAPOLICY_ADHERENT = सदस्य
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = आप अपने सभी प्रासंगिक संपर्कों को GDPR ईमेल भेज सकते हैं (जिन्हें अभी तक ईमेल नहीं मिला है और जिनके लिए आपने उनके GDPR समझौते के बारे में कुछ भी पंजीकृत नहीं किया है)। ऐसा करने के लिए, निम्न बटन का उपयोग करें।
+SendAgreement = ईमेल भेजो
+AllAgreementSend = सभी ईमेल भेज दिए गए हैं
+TXTLINKDATAPOLICYACCEPT = लिंक "समझौता" के लिए पाठ
+TXTLINKDATAPOLICYREFUSE = लिंक "असहमति" के लिए पाठ
+DelayForAnonymization=गुमनामीकरण में देरी
+DelayForDeletion=हटाने में देरी
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR : व्यक्तिगत डेटा का प्रसंस्करण
+DATAPOLICY_consentement = व्यक्तिगत डेटा के प्रसंस्करण के लिए सहमति प्राप्त की गई
+DATAPOLICY_opposition_traitement = अपने व्यक्तिगत डेटा के प्रसंस्करण का विरोध करता है
+DATAPOLICY_opposition_prospection = पूर्वेक्षण के प्रयोजनों के लिए अपने व्यक्तिगत डेटा के प्रसंस्करण का विरोध करता है
+# Notes added during an anonymization
+DATAPOLICY_date = सहमति/असहमति की तिथि GDPR
+DATAPOLICY_send = अनुबंध ईमेल भेजे जाने की तिथि
+MailSent = ईमेल भेज दिया गया है
+NUMBER_MONTH_BEFORE_DELETION = हटाए जाने से पहले महीनों की संख्या
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

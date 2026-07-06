@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Thiết lập mô-đun Quy trình
+WorkflowDesc=Mô-đun này cung cấp một số hành động tự động. Theo mặc định, quy trình làm việc được mở (bạn có thể thực hiện mọi thứ theo thứ tự bạn muốn) nhưng ở đây bạn có thể kích hoạt một số hành động tự động.
+ThereIsNoWorkflowToModify=Không có sửa đổi quy trình làm việc có sẵn với các mô-đun kích hoạt.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Tự động tạo đơn đặt hàng bán sau khi đề xuất thương mại được ký (đơn đặt hàng mới sẽ có cùng số tiền với đề xuất)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi đề xuất thương mại được ký (hóa đơn mới sẽ có cùng số tiền với đề xuất)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi hợp đồng được xác nhận
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Tự động tạo hóa đơn khách hàng sau khi đơn đặt hàng bán được đóng (hóa đơn mới sẽ có cùng số tiền với đơn đặt hàng)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Khi tạo vé, tự động tạo can thiệp.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Khi đơn đặt hàng bán hàng được thiết lập để xuất hóa đơn, hãy phân loại các đề xuất nguồn liên kết là đã xuất hóa đơn (và nếu số tiền của đơn đặt hàng bằng với tổng số tiền của các đề xuất liên kết đã ký)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Khi hóa đơn của khách hàng được xác thực, hãy phân loại các đề xuất nguồn liên kết là đã được lập hóa đơn (và nếu số tiền của hóa đơn bằng tổng số tiền của các đề xuất liên kết đã ký)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Khi hóa đơn của khách hàng được thiết lập là đã thanh toán, hãy phân loại các đơn đặt hàng nguồn liên kết là đã xuất hóa đơn (và nếu số tiền của hóa đơn bằng với tổng số tiền của các đơn đặt hàng được liên kết). Nếu bạn tạo 1 hóa đơn cho n đơn hàng, điều này cũng có thể thiết lập tất cả các đơn hàng thành đã xuất hóa đơn.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Khi hóa đơn của khách hàng được xác thực, hãy phân loại tất cả các đơn đặt hàng bán hàng nguồn liên kết là đã xuất hóa đơn (và nếu số tiền của hóa đơn bằng tổng số tiền của các đơn đặt hàng bán hàng nguồn liên kết). Nếu bạn tạo 1 hóa đơn chung cho n đơn hàng, điều này có thể đặt tất cả các đơn đặt hàng nguồn thành đã xuất hóa đơn.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Khi hóa đơn của khách hàng được xác thực, hãy phân loại đơn hàng bán hàng được liên kết (nếu chỉ có một) là đã lập hóa đơn, nếu tổng số tiền của đơn hàng bán hàng được liên kết bằng tổng số tiền của tất cả các hóa đơn được phát hành từ đơn hàng đó. Nếu bạn tạo n hóa đơn cho 1 đơn hàng, điều này cho phép đặt đơn hàng thành đã lập hóa đơn ngay khi tất cả các hóa đơn được xác thực.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Khi một lô hàng được xác thực, hãy phân loại các đơn đặt hàng bán hàng có nguồn liên kết là đã được vận chuyển (và nếu số lượng được vận chuyển bởi tất cả các lô hàng giống như trong đơn hàng để cập nhật)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Khi một lô hàng được đóng lại, hãy phân loại đơn đặt hàng nguồn liên kết là đã được vận chuyển (và nếu số lượng được vận chuyển bởi tất cả các lô hàng giống như trong đơn hàng để cập nhật)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Khi hóa đơn của nhà cung cấp được xác thực, hãy phân loại đề xuất của nhà cung cấp nguồn được liên kết là đã được lập hóa đơn (và nếu số tiền của hóa đơn bằng tổng số tiền của các đề xuất được liên kết)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Khi hóa đơn của nhà cung cấp được xác thực, hãy phân loại đơn đặt hàng mua nguồn liên kết là đã được xuất hóa đơn (và nếu số tiền của hóa đơn bằng tổng số tiền của các đơn đặt hàng được liên kết)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Khi một lần tiếp nhận được xác thực, hãy phân loại đơn đặt hàng mua nguồn liên kết là đã nhận (và nếu số lượng nhận được của tất cả các lần tiếp nhận giống như trong đơn đặt hàng mua để cập nhật)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Khi một lần tiếp nhận đã đóng, hãy phân loại các lệnh mua nguồn liên kết là đã nhận (và nếu số lượng nhận được của tất cả các lần tiếp nhận được phát hành từ lệnh mua giống như trong lệnh mua để cập nhật)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Khi hóa đơn của khách hàng được xác thực, hãy phân loại lô hàng nguồn được liên kết là đã đóng (và nếu số tiền trên hóa đơn bằng tổng số tiền của các lô hàng được liên kết)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Khi hóa đơn của khách hàng được xác thực, hãy phân loại lô hàng nguồn được liên kết là đã được lập hóa đơn (và nếu số tiền trên hóa đơn giống với tổng số tiền của các lô hàng được liên kết)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Khi hóa đơn mua hàng được xác thực, hãy phân loại các khoản tiếp nhận nguồn liên kết là đã đóng (và nếu số tiền của hóa đơn bằng tổng số tiền của các khoản tiếp nhận được liên kết)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Khi hóa đơn mua hàng được xác thực, hãy phân loại các khoản tiếp nhận nguồn liên kết là đã được lập hóa đơn (và nếu số tiền trên hóa đơn bằng tổng số tiền của các khoản tiếp nhận được liên kết)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Khi tạo một vé, hãy liên kết nó với các hợp đồng khả dụng, khớp với cùng một bên thứ ba với vé đó
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Khi liên kết tự động một vé với hợp đồng, hãy tìm kiếm hợp đồng trong số các hợp đồng của công ty mẹ
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Đóng tất cả các biện pháp can thiệp liên quan đến phiếu khi phiếu bị đóng
+AutomaticCreation=Tạo tự động
+AutomaticClassification=Phân loại tự động
+AutomaticClosing=Tự động đóng
+AutomaticLinking=Liên kết tự động

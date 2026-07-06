@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Planlı işleri oku
+Permission23102 = Planlı iş oluştur/güncelle
+Permission23103 = Planlı iş sil
+Permission23104 = Planlı iş yürüt
+# Admin
+CronSetup=Planlı iş yönetimi ayarları
+URLToLaunchCronJobs=Nitelikli cron işlerini bir tarayıcıdan kontrol etmek ve başlatmak için URL
+OrToLaunchASpecificJob=Veya belirli bir işi tarayıcıdan kontrol edip başlatmak için
+KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
+FileToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için komut satırı
+CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
+CronExplainHowToRunWin=Microsoft(tm) Windows ortamında, komut satırını her 5 dakikada bir çalıştırmak için Zamanlanmış Görev araçlarını kullanabilirsiniz.
+CronMethodDoesNotExists=%s sınıfı herhangi bir %s yöntemini içermiyor
+CronMethodNotAllowed=%s sınıfının %s yöntemi, yasaklanmış yöntemler listesinde yer alıyor
+CronJobDefDesc=Cron iş profilleri modül tanımlayıcı dosyasında tanımlanır. Modül etkinleştirildiğinde yüklenir ve kullanılabilir hale gelir; böylece işleri yönetici araçları menüsünden %s yönetebilirsiniz.
+CronJobProfiles=Önceden tanımlanmış cron görevi profillerinin listesi
+# Menu
+EnabledAndDisabled=Etkin ve engelli
+# Page list
+CronLastOutput=En son çalıştırma çıktısı
+CronLastResult=En son sonuç kodu
+CronCommand=Komut
+CronList=Planlı İşler
+CronDelete=Planlı işleri sil
+CronConfirmDelete=Bu zamanlanmış işleri silmek istediğinizden emin misiniz?
+CronExecute=Şimdi başlat
+CronConfirmExecute=Bu zamanlanmış işleri şimdi yürütmek istediğinizden emin misiniz?
+CronInfo=Zamanlanmış iş modülü, işlerin otomatik olarak yürütülmesi için planlanmasına izin verir. İşler manuel olarak da başlatılabilir.
+CronTask=İş
+CronNone=Zamanlanmış görevin sonraki yürütülmesi
+CronNotYetRan=Asla yürütülmedi
+CronDtStart=Bundan önce değil
+CronDtEnd=Bundan sonra değil
+CronDtNextLaunch=Sonraki yürütme
+CronDtLastLaunch=Son yürütmenin başlama tarihi
+CronDtLastResult=Son yürütmenin bitiş tarihi
+CronFrequency=Sıklık
+CronClass=Sınıf
+CronMethod=Yöntem
+CronModule=Modül
+CronNoJobs=Kayıtlı iş yok
+CronPriority=Öncelik
+CronLabel=Açıklama
+CronNbRun=Lansman sayısı
+CronMaxRun=Maksimum başlatma sayısı
+CronEach=Her
+JobFinished=İş başlatıldı ve bitirildi
+Scheduled=planlanmış
+#Page card
+CronAdd=İş ekle
+CronEvery=İşi her çalıştır
+CronObject=Oluşturulacak durum/nesne
+CronArgs=Parametreler
+CronSaveSucess=Kayıt başarılı
+CronNote=Yorum
+CronFieldMandatory=%s alanı zorunludur
+CronErrEndDateStartDt=Bitiş tarihi başlama tarihinden önce olamaz
+StatusAtInstall=Modül kurulumundaki durum
+CronStatusActiveBtn=Planlamayı etkinleştir
+CronStatusInactiveBtn=Engelle
+CronTaskInactive=Bu iş devre dışı bırakıldı (planlanmadı)
+CronId=Kimlik
+CronClassFile=Sınıfıyla beraber dosya adı
+CronModuleHelp=Dolibarr modül dizininin adı (harici Dolibarr modülüyle de çalışır). <BR> Örneğin, Dolibarr Ürün nesnesinin getirme yöntemini çağırmak için /htdocs/<u>product</u> /class/product.class.php, modülün değeri şöyledir:<br><i>product</i>
+CronClassFileHelp=Yüklenecek ilgili yol ve dosya adı (yol, web sunucusu kök dizinine göredir). <BR> Örneğin Dolibarr Ürün nesnesinin getirme yöntemini çağırmak için htdocs/product/class/<u>product.class.php</u>, sınıf dosyası adı değeri:<br><i>product/class/product .class.php</i>
+CronObjectHelp=Yüklenecek nesne adı. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için, sınıf dosyası adının değeri şu şekildedir:<br><i>Ürün</i>
+CronMethodHelp=Başlatılacak nesne yöntemi. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için, yöntemin değeri şu şekildedir: <br><i>getir</i>
+CronArgsHelp=Yöntem argümanları. <BR> Örneğin, Dolibarr Ürün nesnesi /htdocs/product/class/product.class.php'nin fetch yöntemini çağırmak için parametrelerin değeri <br><i>0, ProductRef</i>
+CronCommandHelp=Yürütülecek sistem komut satırı.
+CronCreateJob=Yeni Planlı İş oluştur
+CronFrom=Gönderen
+# Info
+# Common
+CronType=İş türü
+CronType_method=PHP Sınıfının çağrı yöntemi
+CronType_command=Kabuk komutu
+CronCannotLoadClass=%s sınıf dosyası yüklenemiyor (%s sınıfını kullanmak için)
+CronModuleNotEnabledInThisEntity=kron modülü bu varlıkta etkinleştirilmedi (%s nesnesinin %s yöntemini kullanmak için)
+CronCannotLoadObject=%s sınıf dosyası yüklendi, ancak içinde %s nesnesi bulunamadı
+UseMenuModuleToolsToAddCronJobs=Zamanlanmış işleri görmek ve düzenlemek için "<a href="%s">Ana Sayfa - Yönetici araçları - Zamanlanmış işler</a>" menüsüne gidin.
+JobDisabled=İş engellendi
+MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
+MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluşturun. Parametreler şunlardır: sıkıştırma ('gz' veya 'bz' veya 'none'), yedekleme türü ('mysql', 'pgsql', 'auto'), 1, oluşturulacak 'otomatik' veya dosya adı, saklanacak yedek dosya sayısı
+MakeSendLocalDatabaseDumpShort=Yerel veritabanı yedeğini gönder
+MakeSendLocalDatabaseDump=Yerel veritabanı yedeğini e-postayla gönderin. Parametreler şunlardır: Kime, kimden, konu, mesaj, dosya adı (Gönderilen dosyanın adı), filtre (yalnızca veritabanının yedeğini almak için 'sql')
+BackupIsTooLargeSend=Üzgünüz, son yedekleme dosyası e-postayla gönderilemeyecek kadar büyük
+CleanUnfinishedCronjobShort=Bitmemiş cronjob'ı temizle
+CleanUnfinishedCronjob=İşlem artık çalışmadığında temiz cronjob işlem sırasında takılı kaldı
+WarningCronDelayed=Dikkat: Performans amaçlı olarak etkinleştirilmiş işlerin bir sonraki yürütme tarihi ne olursa olsun, işleriniz çalıştırılmadan önce maksimum %s saat ertelenebilir.
+DATAPOLICYJob=Veri temizleyici ve anonimleştirici
+JobXMustBeEnabled=%s işi etkinleştirilmelidir
+EmailIfError=Hata durumunda uyarı için e-posta
+JobNotFound=%s işi, işler listesinde bulunamadı (modülü devre dışı bırakmayı/etkinleştirmeyi deneyin)
+ErrorInBatch=%s işi çalıştırılırken hata oluştu
+
+# Cron Boxes
+LastExecutedScheduledJob=Son yürütülen zamanlanmış iş
+NextScheduledJobExecute=Yürütülecek sonraki zamanlanmış iş
+NumberScheduledJobError=Hatalı planlanmış işlerin sayısı
+NumberScheduledJobNeverFinished=Hiç tamamlanmamış planlanmış işlerin sayısı

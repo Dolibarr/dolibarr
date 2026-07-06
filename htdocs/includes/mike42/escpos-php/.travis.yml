@@ -1,0 +1,41 @@
+---
+dist: trusty
+sudo: required
+
+language: php
+
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
+  - nightly
+
+matrix:
+  allow_failures:
+    - php: nightly
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y imagemagick ghostscript unifont
+
+install:
+  - composer install
+
+before_script:
+  # Install 'imagick' plugin
+  - bash -c 'if [[ $TRAVIS_PHP_VERSION != hhvm* ]]; then printf "\n" | pecl install imagick; fi'
+  # Directory for coverage report
+  - mkdir -p build/logs/
+
+script:
+  # Check code style
+  - php vendor/bin/phpcs --standard=psr2 src/ -n
+  # Run tests
+  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_success:
+  # Upload coverage statistics to coveralls service after test
+  - wget -c -nc https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+  - php coveralls.phar -v
+...

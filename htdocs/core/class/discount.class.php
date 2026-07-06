@@ -1,0 +1,1077 @@
+<?php
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Noé Cendrier		<noe.cendrier@altairis.fr>
+ * Copyright (C) 2026		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *		\file       htdocs/core/class/discount.class.php
+ * 		\ingroup    core propal facture commande
+ *		\brief      File of class to manage absolute discounts
+ */
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
+/**
+ *		Class to manage absolute discounts
+ */
+class DiscountAbsolute extends CommonObject
+{
+	/**
+	 * @var int 	Thirdparty ID
+	 * @deprecated  Use socid instead.
+	 */
+	public $fk_soc;
+	/**
+	 * @var int 	Thirdparty ID
+	 */
+	public $socid;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $discount_type; // 0 => customer discount, 1 => supplier discount
+
+	/**
+	 * @var float
+	 */
+	public $total_ht;
+	/**
+	 * @var float
+	 */
+	public $total_tva;
+	/**
+	 * @var float
+	 */
+	public $total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $amount_ht; 	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $amount_tva; // deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $amount_ttc; // deprecated
+
+	/**
+	 * @var float
+	 */
+	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
+	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
+	public $multicurrency_total_ttc;
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $multicurrency_amount_ht;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $multicurrency_amount_tva;	// deprecated
+	/**
+	 * @var string|float
+	 * @deprecated
+	 */
+	public $multicurrency_amount_ttc;	// deprecated
+
+	/**
+	 * @var float
+	 */
+	public $multicurrency_subprice;
+
+	/**
+	 * @var int
+	 */
+	public $fk_invoice_supplier;
+
+	/**
+	 * @var int
+	 */
+	public $fk_invoice_supplier_line;
+
+	/**
+	 * @var string|float Vat rate
+	 */
+	public $tva_tx;
+	/**
+	 * @var string|float Localtax1 rate
+	 */
+	public $localtax1_tx;
+	/**
+	 * @var string|float Localtax2 rate
+	 */
+	public $localtax2_tx;
+	/**
+	 * @var string|float Localtax1 type
+	 */
+	public $localtax1_type;
+	/**
+	 * @var string|float Localtax2 type
+	 */
+	public $localtax2_type;
+	/**
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
+	 * @var int User ID of the user authorising the discount
+	 */
+	public $fk_user;
+
+	/**
+	 * @var string description
+	 */
+	public $description;
+
+	/**
+	 * Date creation record (datec)
+	 *
+	 * @var int
+	 */
+	public $datec;
+
+	/**
+	 * @var int ID invoice line when a discount is used into an invoice line (for absolute discounts)
+	 */
+	public $fk_facture_line;
+
+	/**
+	 * @var int ID invoice when a discount line is used into an invoice (for credit note)
+	 */
+	public $fk_facture;
+
+	/**
+	 * @var int ID credit note or deposit used to create the discount
+	 */
+	public $fk_facture_source;
+	/**
+	 * @var string
+	 */
+	public $ref_facture_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
+	public $type_facture_source;
+
+	/**
+	 * @var int
+	 */
+	public $fk_invoice_supplier_source;
+	/**
+	 * @var string
+	 */
+	public $ref_invoice_supplier_source; // Ref credit note or deposit used to create the discount
+	/**
+	 * @var int
+	 */
+	public $type_invoice_supplier_source;
+
+	/* Customer Discount */
+	const TYPE_CUSTOMER = 0;
+
+	/* Supplier Discount */
+	const TYPE_SUPPLIER = 1;
+
+	/**
+	 *	Constructor
+	 *
+	 *  @param  	DoliDB		$db		Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+
+	/**
+	 *	Load object from database into memory
+	 *
+	 *  @param      int		$rowid       					id discount to load
+	 *  @param      int		$fk_facture_source				fk_facture_source
+	 *  @param		int		$fk_invoice_supplier_source		fk_invoice_supplier_source
+	 *	@return		int<-1,1>								Return integer <0 if KO, =0 if not found, >0 if OK
+	 */
+	public function fetch($rowid, $fk_facture_source = 0, $fk_invoice_supplier_source = 0)
+	{
+		// Check parameters
+		if (!$rowid && !$fk_facture_source && !$fk_invoice_supplier_source) {
+			$this->error = 'ErrorBadParameters';
+			return -1;
+		}
+
+		$sql = "SELECT sr.rowid, sr.fk_soc, sr.discount_type,";
+		$sql .= " sr.fk_user,";
+		$sql .= " sr.amount_ht, sr.amount_tva, sr.amount_localtax1, sr.amount_localtax2, sr.amount_ttc, sr.tva_tx, sr.localtax1_tx, sr.localtax1_type, sr.localtax2_tx, sr.localtax2_type, sr.vat_src_code,";
+		$sql .= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
+		$sql .= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
+		$sql .= " sr.datec,";
+		$sql .= " f.ref as ref_facture_source, f.type as type_facture_source,";
+		$sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as sr";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."facture as f ON sr.fk_facture_source = f.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
+		if ($rowid) {
+			$sql .= " AND sr.rowid = ".((int) $rowid);
+		}
+		if ($fk_facture_source) {
+			$sql .= " AND sr.fk_facture_source = ".((int) $fk_facture_source);
+		}
+		if ($fk_invoice_supplier_source) {
+			$sql .= " AND sr.fk_invoice_supplier_source = ".((int) $fk_invoice_supplier_source);
+		}
+
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+				$this->fk_soc = $obj->fk_soc;
+				$this->socid = $obj->fk_soc;
+				$this->discount_type = $obj->discount_type;
+
+				$this->total_ht = $obj->amount_ht;
+				$this->total_tva = $obj->amount_tva;
+				$this->total_localtax1 = $obj->amount_localtax1;
+				$this->total_localtax2 = $obj->amount_localtax2;
+				$this->total_ttc = $obj->amount_ttc;
+				// For backward compatibility
+				$this->amount_ht = $this->total_ht;
+				$this->amount_tva = $this->total_tva;
+				$this->amount_ttc = $this->total_ttc;
+
+				$this->multicurrency_total_ht = $this->multicurrency_subprice = $obj->multicurrency_amount_ht;
+				$this->multicurrency_total_tva = $obj->multicurrency_amount_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_amount_ttc;
+				// For backward compatibility
+				$this->multicurrency_amount_ht = $this->multicurrency_total_ht;
+				$this->multicurrency_amount_tva = $this->multicurrency_total_tva;
+				$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
+
+				$this->tva_tx = $obj->tva_tx;
+				$this->localtax1_tx = $obj->localtax1_tx;
+				$this->localtax1_type = $obj->localtax1_type;
+				$this->localtax2_tx = $obj->localtax2_tx;
+				$this->localtax2_type = $obj->localtax2_type;
+				$this->vat_src_code = $obj->vat_src_code;
+
+				$this->fk_user = $obj->fk_user;
+				$this->fk_facture_line = $obj->fk_facture_line;
+				$this->fk_facture = $obj->fk_facture;
+				$this->fk_facture_source = $obj->fk_facture_source; // Id credit note or deposit source
+				$this->ref_facture_source = $obj->ref_facture_source; // Ref credit note or deposit  source
+				$this->type_facture_source = $obj->type_facture_source; // Type credit note or deposit  source
+				$this->fk_invoice_supplier_line = $obj->fk_invoice_supplier_line;
+				$this->fk_invoice_supplier = $obj->fk_invoice_supplier;
+				$this->fk_invoice_supplier_source = $obj->fk_invoice_supplier_source; // Id credit note or deposit source
+				$this->ref_invoice_supplier_source = $obj->ref_invoice_supplier_source; // Ref credit note or deposit  source
+				$this->type_invoice_supplier_source = $obj->type_invoice_supplier_source; // Type credit note or deposit  source
+				$this->description = $obj->description;
+				$this->datec = $this->db->jdate($obj->datec);
+
+				$this->db->free($resql);
+				return 1;
+			} else {
+				$this->db->free($resql);
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      Create a discount into database
+	 *
+	 *      @param      User	$user       User that create
+	 *      @return     int<-1,1>      		Return integer <0 if KO, >0 if OK
+	 */
+	public function create($user)
+	{
+		global $conf;
+
+		// Clean parameters
+		$this->amount_ht = price2num($this->amount_ht);
+		$this->amount_tva = price2num($this->amount_tva);
+		$this->amount_ttc = price2num($this->amount_ttc);
+
+		$this->tva_tx = price2num($this->tva_tx);
+		$this->localtax1_tx = price2num($this->localtax1_tx);
+		$this->localtax1_type = price2num($this->localtax1_type);
+		$this->localtax2_tx = price2num($this->localtax2_tx);
+		$this->localtax2_type = price2num($this->localtax2_type);
+
+		$this->multicurrency_amount_ht = price2num($this->multicurrency_amount_ht);
+		$this->multicurrency_amount_tva = price2num($this->multicurrency_amount_tva);
+		$this->multicurrency_amount_ttc = price2num($this->multicurrency_amount_ttc);
+
+		if (empty($this->multicurrency_amount_ht)) {
+			$this->multicurrency_amount_ht = 0;
+		}
+		if (empty($this->multicurrency_amount_tva)) {
+			$this->multicurrency_amount_tva = 0;
+		}
+		if (empty($this->multicurrency_amount_ttc)) {
+			$this->multicurrency_amount_ttc = 0;
+		}
+		if (empty($this->tva_tx)) {
+			$this->tva_tx = 0;
+		}
+		if (empty($this->localtax1_tx)) {
+			$this->localtax1_tx = 0;
+			$this->localtax1_type = 0;
+		}
+		if (empty($this->localtax2_tx)) {
+			$this->localtax2_tx = 0;
+			$this->localtax2_type = 0;
+		}
+
+		// Check parameters
+		if (empty($this->description)) {
+			$this->error = 'BadValueForPropertyDescriptionOfDiscount';
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$userid = $user->id;
+		if (!($userid > 0)) {		// For example when record is saved into an anonymous context with a not loaded object $user.
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$tmpinvoice = new Facture($this->db);
+			$tmpinvoice->fetch($this->fk_facture_source);
+			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
+		}
+
+		// Insert request
+		$sql = "INSERT INTO ".$this->db->prefix()."societe_remise_except";
+		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
+		$sql .= " amount_ht, amount_tva, amount_localtax1, amount_localtax2, amount_ttc, tva_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, vat_src_code,";
+		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
+		$sql .= " fk_facture_source, fk_invoice_supplier_source, multicurrency_code, multicurrency_tx";
+		$sql .= ")";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".((int) $this->socid).", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".((int) $userid).", '".$this->db->escape($this->description)."',";
+		$sql .= " ".price2num($this->amount_ht).", ".price2num($this->amount_tva).", ";
+		$sql .= " ".($this->total_localtax1 ? price2num($this->total_localtax1) : 0).", ".($this->total_localtax2 ? price2num($this->total_localtax2) : 0).", ".price2num($this->amount_ttc).", ".price2num($this->tva_tx).",";
+		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax1_type).", ";
+		$sql .= " ".($this->localtax2_tx ? price2num($this->localtax2_tx) : 0).", ".($this->localtax2_type ? price2num($this->localtax2_type) : 0).", '".$this->db->escape($this->vat_src_code)."',";
+		$sql .= " ".price2num($this->multicurrency_amount_ht).", ".price2num($this->multicurrency_amount_tva).", ";
+		$sql .= " ".price2num($this->multicurrency_amount_ttc).", ";
+		$sql .= " ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " ".($this->fk_invoice_supplier_source ? ((int) $this->fk_invoice_supplier_source) : "null").",";
+		$sql .= " ".($this->multicurrency_code ? "'".$this->db->escape($this->multicurrency_code)."'" : "null").",";
+		$sql .= " ".($this->multicurrency_tx ? price2num($this->multicurrency_tx) : "null");
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."societe_remise_except");
+			return $this->id;
+		} else {
+			$this->error = $this->db->lasterror().' - sql='.$sql;
+			return -1;
+		}
+	}
+
+
+	/**
+	 *  Delete object in database. If fk_facture_source is defined, we delete all family with same fk_facture_source. If not, only with id is removed
+	 *
+	 *  @param	User	$user		Object of user asking to delete
+	 *  @return	int<-2,1>			Return integer <0 if KO, >0 if OK
+	 */
+	public function delete($user)
+	{
+		// Check if we can remove the discount
+		if ($this->fk_facture_source) {
+			$sql = "SELECT COUNT(rowid) as nb";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except";
+			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
+			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
+			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
+			//$sql.=" AND rowid != ".$this->id;
+
+			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj->nb > 0) {
+					$this->error = 'ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved';
+					return -2;
+				}
+			} else {
+				dol_print_error($this->db);
+				return -1;
+			}
+		}
+
+		// Check if we can remove the discount
+		if ($this->fk_invoice_supplier_source) {
+			$sql = "SELECT COUNT(rowid) as nb";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except";
+			$sql .= " WHERE (fk_invoice_supplier_line IS NOT NULL"; // Not used as absolute simple discount
+			$sql .= " OR fk_invoice_supplier IS NOT NULL)"; // Not used as credit note and not used as deposit
+			$sql .= " AND fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source);
+			//$sql.=" AND rowid != ".$this->id;
+
+			dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj->nb > 0) {
+					$this->error = 'ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved';
+					return -2;
+				}
+			} else {
+				dol_print_error($this->db);
+				return -1;
+			}
+		}
+
+		$this->db->begin();
+
+		// Delete but only if not used
+		$sql = "DELETE FROM ".$this->db->prefix()."societe_remise_except ";
+		if ($this->fk_facture_source) {
+			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same series
+		} elseif ($this->fk_invoice_supplier_source) {
+			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same series
+		} else {
+			$sql .= " WHERE rowid = ".((int) $this->id); // Delete only line
+		}
+		$sql .= " AND (fk_facture_line IS NULL"; // Not used as absolute simple discount
+		$sql .= " AND fk_facture IS NULL)"; // Not used as credit note and not used as deposit
+		$sql .= " AND (fk_invoice_supplier_line IS NULL"; // Not used as absolute simple discount
+		$sql .= " AND fk_invoice_supplier IS NULL)"; // Not used as credit note and not used as deposit
+
+		dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
+
+		require_once DOL_DOCUMENT_ROOT. '/core/class/commoninvoice.class.php';
+		$result = $this->db->query($sql);
+		if ($result) {
+			// If source of discount was a credit note or deposit, we change source statut.
+			if ($this->fk_facture_source) {
+				$sql = "UPDATE ".$this->db->prefix()."facture";
+				$sql .= " set paye=0, fk_statut=1";
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_facture_source);
+
+				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			} elseif ($this->fk_invoice_supplier_source) {
+				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
+				$sql .= " set paye=0, fk_statut=1";
+				$sql .= " WHERE type IN (".$this->db->sanitize(CommonInvoice::TYPE_CREDIT_NOTE.", ".CommonInvoice::TYPE_DEPOSIT).") AND rowid = ".((int) $this->fk_invoice_supplier_source);
+
+				dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			} else {
+				$this->db->commit();
+				return 1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Link the discount to a particular invoice line or a particular invoice.
+	 *	When discount is a global discount used as an invoice line, we link using rowidline.
+	 *	When discount is from a credit note used to reduce payment of an invoice, we link using rowidinvoice
+	 *
+	 *	@param		int		$rowidline		Invoice line id (To use discount into invoice lines)
+	 *	@param		int		$rowidinvoice	Invoice id (To use discount as a credit note to reduce payment of invoice)
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
+	 *	@return		int<-3,1>				Return integer <0 if KO, >0 if OK
+	 */
+	public function link_to_invoice($rowidline, $rowidinvoice, $notrigger = 0)
+	{
+		// phpcs:enable
+		global $user;
+
+		// Check parameters
+		if (!$rowidline && !$rowidinvoice) {
+			$this->error = 'ErrorBadParameters';
+			return -1;
+		}
+		if ($rowidline && $rowidinvoice) {
+			$this->error = 'ErrorBadParameters';
+			return -2;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
+		if (!empty($this->discount_type)) {
+			if ($rowidline) {
+				$sql .= " SET fk_invoice_supplier_line = ".((int) $rowidline);
+			}
+			if ($rowidinvoice) {
+				$sql .= " SET fk_invoice_supplier = ".((int) $rowidinvoice);
+			}
+		} else {
+			if ($rowidline) {
+				$sql .= " SET fk_facture_line = ".((int) $rowidline);
+			}
+			if ($rowidinvoice) {
+				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
+			}
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::link_to_invoice", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!empty($this->discount_type)) {
+				$this->fk_invoice_supplier_line = $rowidline;
+				$this->fk_invoice_supplier = $rowidinvoice;
+			} else {
+				$this->fk_facture_line = $rowidline;
+				$this->fk_facture = $rowidinvoice;
+			}
+
+			// If a discount comes from a source invoice (deposit/credit note/excess) and is applied to another invoice,
+			// also create a link between the source invoice and the target invoice.
+			if ($rowidinvoice) {
+				$sourcetype = '';
+				$targettype = '';
+				$sourceinvoiceid = 0;
+
+				if (!empty($this->discount_type)) {
+					$sourcetype = 'invoice_supplier';
+					$targettype = 'invoice_supplier';
+					$sourceinvoiceid = (int) $this->fk_invoice_supplier_source;
+				} else {
+					$sourcetype = 'facture';
+					$targettype = 'facture';
+					$sourceinvoiceid = (int) $this->fk_facture_source;
+				}
+
+				if ($sourceinvoiceid > 0 && $sourceinvoiceid !== (int) $rowidinvoice) {
+					$sqlcheck = "SELECT 1";
+					$sqlcheck .= " FROM ".$this->db->prefix()."element_element";
+					$sqlcheck .= " WHERE fk_source = ".((int) $sourceinvoiceid);
+					$sqlcheck .= " AND sourcetype = '".$this->db->escape($sourcetype)."'";
+					$sqlcheck .= " AND fk_target = ".((int) $rowidinvoice);
+					$sqlcheck .= " AND targettype = '".$this->db->escape($targettype)."'";
+					$sqlcheck .= $this->db->plimit(1);
+
+					$rescheck = $this->db->query($sqlcheck);
+					if ($rescheck && $this->db->num_rows($rescheck) === 0) {
+						$sqladd = "INSERT INTO ".$this->db->prefix()."element_element (fk_source, sourcetype, fk_target, targettype)";
+						$sqladd .= " VALUES (".((int) $sourceinvoiceid).", '".$this->db->escape($sourcetype)."', ".((int) $rowidinvoice).", '".$this->db->escape($targettype)."')";
+						$this->db->query($sqladd); // Best-effort: do not fail discount link if object link can't be created.
+					}
+				}
+			}
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -3;
+		}
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Link the discount to a particular invoice line or a particular invoice.
+	 *	Do not call this if discount is linked to a reconcialiated invoice
+	 *
+	 *  @param      int		$notrigger		0 = launch triggers after, 1 = disable triggers
+	 *	@return		int<-3,1>					Return integer <0 if KO, >0 if OK
+	 */
+	public function unlink_invoice($notrigger = 0)
+	{
+		// phpcs:enable
+		global $user;
+
+		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
+		if (!empty($this->discount_type)) {
+			$sql .= " SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
+		} else {
+			$sql .= " SET fk_facture_line = NULL, fk_facture = NULL";
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('DISCOUNT_MODIFY', $user);
+				if ($result < 0) {
+					return -2;
+				}
+				// End call triggers
+			}
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -3;
+		}
+	}
+
+
+	/**
+	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
+	 *
+	 *	@param		?Societe	$company		Object third party for filter
+	 *	@param		?User		$user			Filtre on an author of the discount
+	 * 	@param		string		$filter			Filter other. Warning: Do not use a user input value here.
+	 * 	@param		int|float	$maxvalue		Filter on max value for discount
+	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
+	 *  @param      int<0,1>	$multicurrency  Return multicurrency_amount instead of amount
+	 * 	@return		int<-1,-1>|float			Return integer <0 if KO, amount otherwise
+	 */
+	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
+	{
+		global $conf, $hookmanager;
+
+		dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
+
+		$parameters = array(
+			'company' => $company,
+			'user' => $user,
+			'filter' => $filter,
+			'maxvalue' => $maxvalue,
+			'discount_type' => $discount_type,
+			'multicurrency' => $multicurrency
+		);
+
+		$reshook = $hookmanager->executeHooks('getAvailableDiscounts', $parameters);
+		if (empty($reshook)) {
+			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.entity = ".$conf->entity;
+			$sql .= " AND rc.discount_type=".((int) $discount_type);
+			if (!empty($discount_type)) {
+				$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+			} else {
+				$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
+			}
+			if (is_object($company)) {
+				$sql .= " AND rc.fk_soc = ".((int) $company->id);
+			}
+			if (is_object($user)) {
+				$sql .= " AND rc.fk_user = ".((int) $user->id);
+			}
+			if ($filter) {
+				$sql .= " AND (".$filter.")";
+			}
+			if ($maxvalue) {
+				$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
+			}
+		} else {
+			$sql = $hookmanager->resArray['sql'];
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			//while ($obj)
+			//{
+			//print 'zz'.$obj->amount;
+			//$obj = $this->db->fetch_object($resql);
+			//}
+			if ($multicurrency) {
+				return $obj->multicurrency_amount;
+			}
+
+			return $obj->amount;
+		}
+		return -1;
+	}
+
+	/**
+	 *  Return amount (with tax) of all deposits invoices used by invoice as a payment.
+	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS or FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *
+	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
+	 *  @param 		int<-1,1>	    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@return		int<-1,-1>|float     			Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	public function getSumDepositsUsed($invoice, $multicurrency = 0)
+	{
+		dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
+
+		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture as f";
+			$sql .= " WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = ".((int) $invoice->id);
+			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
+		} elseif ($invoice->element == 'invoice_supplier') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture_fourn as f";
+			$sql .= " WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = ".((int) $invoice->id);
+			$sql .= " AND f.type = ". (int) $invoice::TYPE_DEPOSIT;
+		} else {
+			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
+			dol_print_error($this->db, $this->error);
+			return -1;
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($multicurrency == 1) {
+				return $obj->multicurrency_amount;
+			} else {
+				return $obj->amount;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
+	 *
+	 *	@param      CommonInvoice	  $invoice	    	Object invoice
+	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
+	 */
+	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
+	{
+		dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+
+		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture as f";
+			$sql .= " WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = ".((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE.", ".$invoice::TYPE_SITUATION).")"; // Find discount coming from credit note or excess received
+		} elseif ($invoice->element == 'invoice_supplier') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture_fourn as f";
+			$sql .= " WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = ".((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).")"; // Find discount coming from credit note or excess paid
+		} else {
+			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
+			dol_print_error($this->db, $this->error);
+			return 'ErrorBadElementType';
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($multicurrency == 1) {
+				return $obj->multicurrency_amount;
+			} else {
+				return $obj->amount;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return 'ErrorBadSQLquery';
+		}
+	}
+	/**
+	 *    	Return amount (with tax) of all converted amount for this credit note
+	 *
+	 *	@param		CommonInvoice	  $invoice	    	Object invoice
+	 *	@param		int<-1,1>	      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
+	 *	@return		int					        		Return integer <0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
+	{
+		dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+
+		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = ".((int) $invoice->id);
+		} elseif ($invoice->element == 'invoice_supplier') {
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = ".((int) $invoice->id);
+		} else {
+			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
+			dol_print_error($this->db, $this->error);
+			return -1;
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($multicurrency) {
+				return $obj->multicurrency_amount;
+			} else {
+				return $obj->amount;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Return clickable ref of object (with picto or not)
+	 *
+	 *  @param	int<0,1>	$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
+	 *  @param	string		$option			Where to link to ('invoice' or 'discount')
+	 *  @return	string						String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $option = 'invoice')
+	{
+		global $langs;
+
+		$result = '';
+		$link = '';
+		$linkend = '';
+		$label = '';
+		$picto = '';
+		$ref = '';
+
+		if ($option == 'invoice') {
+			$facid = !empty($this->discount_type) ? $this->fk_invoice_supplier_source : $this->fk_facture_source;
+			$link = !empty($this->discount_type) ? '/fourn/facture/card.php' : '/compta/facture/card.php';
+			$label = $langs->trans("ShowSourceInvoice").': '.$this->ref_facture_source;
+			$link = '<a href="'.DOL_URL_ROOT.$link.'?facid='.$facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend = '</a>';
+			$ref = !empty($this->discount_type) ? $this->ref_invoice_supplier_source : $this->ref_facture_source;
+			$picto = 'bill';
+		}
+		if ($option == 'discount') {
+			$label = $langs->trans("Discount");
+			$link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend = '</a>';
+			$ref = $langs->trans("Discount");
+			$picto = 'generic';
+		}
+
+
+		if ($withpicto) {
+			$result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		}
+		if ($withpicto && $withpicto != 2) {
+			$result .= ' ';
+		}
+		$result .= $link.$ref.$linkend;
+		return $result;
+	}
+
+
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	int<0,1>
+	 */
+	public function initAsSpecimen()
+	{
+		$this->socid          = 1;
+		$this->amount_ht      = 10;
+		$this->amount_tva     = 1.96;
+		$this->amount_ttc     = 11.96;
+		$this->tva_tx         = 19.6;
+		$this->description    = 'Specimen discount';
+
+		return 1;
+	}
+
+	/**
+	 * Helper method to create a discount from an amount.
+	 * Used by Service.class:set_remise_except()
+	 * @param float		$amount 			Currency amount to process
+	 * @param int<0,1> 	$amount_type		0 = Amount includes no taxes, 1 = Amount includes all the taxes
+	 * @param float 	$tva_tx 			TVA (main tax) percentage (>1)
+	 * @param float 	$localtax1_tx 		localtax1 percentage (>1)
+	 * @param float 	$localtax2_tx 		localtax2 percentage (>1)
+	 * @param int<0,1> 	$localtax1_type 	localtax1 type
+	 * @param int<0,1> 	$localtax2_type 	localtax2 type
+	 * @return int 	OK = >= 0, KO = < 0
+	 */
+	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type = 1, $localtax2_type = 1)
+	{
+		$localtax1_tx_pct = (float) ($localtax1_tx / 100);
+		$localtax2_tx_pct = (float) ($localtax2_tx / 100);
+		$tva_tx_pct = (float) ($tva_tx / 100);
+		$err = 0;
+
+		// Test if localtax type is 2, 4 or 6 (compond tax calculation)
+		$localtax1_type2 = ((int) $localtax1_type > 0 && (int) $localtax1_type % 2 == 0 ? 1 : 0);
+		$localtax2_type2 = ((int) $localtax2_type > 0 && (int) $localtax2_type % 2 == 0 ? 1 : 0);
+
+		if ($amount_type == 1) {
+			// TTC
+
+			$this->amount_ttc = price2num($amount, 'MT');
+
+			if (!$localtax1_type2 && !$localtax2_type2) {
+				$diviseur = 1 + $tva_tx_pct + $localtax1_tx_pct + $localtax2_tx_pct;
+				$this->amount_ht = price2num((float) $amount / $diviseur, 'MT');
+				$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct, 'MT');
+			} else {
+				$diviseur = 1 + $tva_tx_pct * ($localtax1_tx_pct > 0 ? $localtax1_tx_pct : 1) * ($localtax2_tx_pct > 0 ? $localtax2_tx_pct : 1);
+				$lt1 = 0; $lt2 = 0; $ttc = (float) $this->amount_ttc;
+				if ($localtax2_tx_pct > 0) {
+					$lt2 = $ttc - $ttc / (1 + $localtax2_tx_pct);
+				}
+				if ($localtax1_tx_pct > 0) {
+					$lt1 = $ttc - $lt2 - ($ttc - $lt2)/ (1 + $localtax1_tx_pct);
+				}
+				$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
+				$this->amount_tva = price2num($tva, 'MT');
+				$this->total_localtax1 = $lt1;
+				$this->total_localtax2 = $lt2;
+				$this->amount_ht = price2num((float) $this->amount_ttc- $this->total_localtax1 - $this->total_localtax2 - (float) $this->amount_tva, 'MT');
+			}
+
+			$this->multicurrency_amount_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_ht = $this->amount_ht;
+			$this->multicurrency_amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct * (float) $this->multicurrency_tx, 'MT');
+		} elseif ($amount_type == 0) {
+			// HT
+			$this->amount_ht = price2num($amount, 'MT');
+			$this->amount_tva = price2num((float) $this->amount_ht * $tva_tx_pct, 'MT');
+
+			$this->multicurrency_amount_ht = price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_amount_tva = price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+		}
+
+		$this->tva_tx = $tva_tx;
+		$this->localtax1_tx = $localtax1_tx;
+		$this->localtax1_type = $localtax1_type;
+		$this->localtax2_tx = $localtax2_tx;
+		$this->localtax2_type = $localtax2_type;
+
+		if ($localtax1_type2 == 0) {
+			$this->total_localtax1 = (float) $this->amount_ht * $localtax1_tx_pct;
+		} elseif ($localtax1_type2 == 1) {
+			$this->total_localtax1 = ((float) $this->amount_ht + (float) $this->amount_tva) * $localtax1_tx_pct;
+		}
+
+		if ($localtax2_type2 == 0) {
+			$this->total_localtax2 = (float) $this->amount_ht * $localtax2_tx_pct;
+		} elseif ($localtax2_type2 == 1) {
+			$this->total_localtax2 = ((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1) * $localtax2_tx_pct;
+		}
+
+		if (empty($this->amount_ttc)) {
+			// If the total amount comes from a split discount, we take it as-is
+			// because recalculating the total amount from the net amount creates precision errors.
+			$this->amount_ttc = price2num((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
+			$this->multicurrency_amount_ttc = price2num(((float) $this->amount_ht + (float) $this->amount_tva + $this->total_localtax1 + $this->total_localtax2)  * (float) $this->multicurrency_tx, 'MT');
+		}
+
+		return $err;
+	}
+
+	/**
+	 * Helper method to create two new discounts from split amount.
+	 *
+	 * @param float		$amount_ttc1 		Currency amount 1
+	 * @param float 	$amount_ttc2		Currency amount 2
+	 * @return array<DiscountAbsolute> 	Array of 2 DiscountAbsolute, representing the splits
+	 */
+	public function splitAmount($amount_ttc1, $amount_ttc2)
+	{
+		// Moved from remx.php :: domain-related operations within action confirm_split
+		$newdiscount1 = new DiscountAbsolute($this->db);
+		$newdiscount2 = new DiscountAbsolute($this->db);
+		$newdiscount1->fk_facture_source = $this->fk_facture_source;
+		$newdiscount2->fk_facture_source = $this->fk_facture_source;
+		$newdiscount1->fk_facture = $this->fk_facture;
+		$newdiscount2->fk_facture = $this->fk_facture;
+		$newdiscount1->fk_facture_line = $this->fk_facture_line;
+		$newdiscount2->fk_facture_line = $this->fk_facture_line;
+		$newdiscount1->fk_invoice_supplier_source = $this->fk_invoice_supplier_source;
+		$newdiscount2->fk_invoice_supplier_source = $this->fk_invoice_supplier_source;
+		$newdiscount1->fk_invoice_supplier = $this->fk_invoice_supplier;
+		$newdiscount2->fk_invoice_supplier = $this->fk_invoice_supplier;
+		$newdiscount1->fk_invoice_supplier_line = $this->fk_invoice_supplier_line;
+		$newdiscount2->fk_invoice_supplier_line = $this->fk_invoice_supplier_line;
+		if ($this->description == '(CREDIT_NOTE)' || $this->description == '(DEPOSIT)') {
+			$newdiscount1->description = $this->description;
+			$newdiscount2->description = $this->description;
+		} else {
+			$newdiscount1->description = $this->description.' (1)';
+			$newdiscount2->description = $this->description.' (2)';
+		}
+		$newdiscount1->fk_user = $this->fk_user;
+		$newdiscount2->fk_user = $this->fk_user;
+		$newdiscount1->fk_soc = $this->fk_soc;
+		$newdiscount1->socid = $this->socid;
+		$newdiscount2->fk_soc = $this->fk_soc;
+		$newdiscount2->socid = $this->socid;
+		$newdiscount1->discount_type = $this->discount_type;
+		$newdiscount2->discount_type = $this->discount_type;
+		$newdiscount1->datec = $this->datec;
+		$newdiscount2->datec = $this->datec;
+		$newdiscount1->tva_tx = $this->tva_tx;
+		$newdiscount2->tva_tx = $this->tva_tx;
+		$newdiscount1->localtax1_tx = $this->localtax1_tx;
+		$newdiscount2->localtax1_tx = $this->localtax1_tx;
+		$newdiscount1->localtax2_tx = $this->localtax2_tx;
+		$newdiscount2->localtax2_tx = $this->localtax2_tx;
+		$newdiscount1->vat_src_code = $this->vat_src_code;
+		$newdiscount2->vat_src_code = $this->vat_src_code;
+
+		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
+		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
+
+		return array($newdiscount1, $newdiscount2);
+	}
+}

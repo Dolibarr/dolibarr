@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=İş axını modulunun qurulması
+WorkflowDesc=Bu modul bəzi avtomatik hərəkətləri təmin edir. Varsayılan olaraq, iş axını açıqdır (istədiyiniz ardıcıllıqla işlər görə bilərsiniz), lakin burada bəzi avtomatik hərəkətləri aktivləşdirə bilərsiniz.
+ThereIsNoWorkflowToModify=Aktivləşdirilmiş modullarla heç bir iş axını modifikasiyası mövcud deyil.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Kommersiya təklifi imzalandıqdan sonra avtomatik olaraq satış sifarişi yaradın (yeni sifariş təkliflə eyni məbləğdə olacaq)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Kommersiya təklifi imzalandıqdan sonra avtomatik olaraq müştəri hesab-fakturası yaradın (yeni faktura təkliflə eyni məbləğdə olacaq)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Müqavilə təsdiq edildikdən sonra avtomatik olaraq müştəri hesab-fakturası yaradın
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Satış sifarişi bağlandıqdan sonra avtomatik olaraq müştəri hesab-fakturası yaradın (yeni fakturada sifarişlə eyni məbləğ olacaq)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Biletin yaradılması zamanı avtomatik müdaxilə yaradın.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Satış sifarişi hesablanmağa təyin edildikdə, əlaqəli mənbə təkliflərini hesablanmış kimi təsnif edin (və əgər sifarişin məbləği imzalanmış əlaqəli təkliflərin ümumi məbləği ilə eynidirsə)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müştəri hesab-fakturası təsdiq edildikdə, əlaqəli mənbə təkliflərini hesablanmış kimi təsnif edin (və fakturanın məbləği imzalanmış əlaqəli təkliflərin ümumi məbləği ilə eynidirsə)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Müştəri hesab-fakturası ödənilməyə təyin edildikdə, əlaqəli mənbə satış sifarişlərini hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli satış sifarişlərinin ümumi məbləği ilə eynidirsə). Əgər siz n sifariş üçün 1 faktura yaratsanız, bu, bütün sifarişləri də fakturalı olaraq təyin edə bilər.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müştəri hesab-fakturası təsdiq edildikdə, bütün əlaqəli mənbə satış sifarişlərini hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli mənbə satış sifarişlərinin ümumi məbləği ilə eynidirsə). Əgər siz n sifariş üçün 1 ümumi faktura yaratsanız, bu, bütün mənbə sifarişlərini faturalandırılmış kimi təyin edə bilər.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Müştəri hesab-fakturası təsdiq edildikdə, əlaqəli satış sifarişinin ümumi məbləği ondan verilən bütün fakturaların ümumi məbləğinə bərabərdirsə, əlaqəli satış sifarişini (yalnız bir varsa) hesablanmış kimi təsnif edin. 1 sifariş üçün n faktura yaratsanız, bu, bütün hesab-fakturalar təsdiqlənən kimi sifarişi fakturaya təyin etməyə imkan verir.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Göndərmə təsdiq edildikdə, əlaqəli mənbə satış sifarişlərini göndərilmiş kimi təsnif edin (və bütün göndərişlər tərəfindən göndərilən miqdar yeniləmə üçün sifarişdəki kimidirsə)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Göndərmə bağlandıqda, əlaqəli mənbə satış sifarişini göndərilmiş kimi təsnif edin (və bütün göndərişlər tərəfindən göndərilən miqdar yeniləmə sifarişindəki kimidirsə)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Satıcı hesab-fakturası təsdiq edildikdə, əlaqəli mənbə satıcı təklifini hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli təkliflərin ümumi məbləği ilə eynidirsə)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Satıcı hesab-fakturası təsdiq edildikdə, əlaqəli mənbə satınalma sifarişini hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli sifarişlərin ümumi məbləği ilə eynidirsə)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Qəbul təsdiq edildikdə, əlaqəli mənbə satınalma sifarişini qəbul edilmiş kimi təsnif edin (və bütün qəbullar tərəfindən alınan miqdar yeniləmə üçün satınalma sifarişindəki kimidirsə)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Qəbul bağlandıqda, əlaqəli mənbəli satınalma sifarişlərini qəbul edilmiş kimi təsnif edin (və satınalma sifarişindən verilən bütün qəbullar tərəfindən alınan miqdar yeniləmək üçün satınalma sifarişindəki kimidirsə)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Müştəri hesab-fakturası təsdiq edildikdə, əlaqəli mənbə daşınmasını qapalı kimi təsnif edin (və fakturanın məbləği əlaqəli göndərişlərin ümumi məbləği ilə eynidirsə)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Müştəri hesab-fakturası təsdiq edildikdə, əlaqəli mənbə göndərişini hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli göndərişlərin ümumi məbləği ilə eynidirsə)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Satınalma fakturası təsdiq edildikdə, əlaqəli mənbə qəbullarını qapalı kimi təsnif edin (və fakturanın məbləği əlaqəli qəbulların ümumi məbləği ilə eynidirsə)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Satınalma fakturası təsdiq edildikdə, əlaqəli mənbə qəbullarını hesablanmış kimi təsnif edin (və fakturanın məbləği əlaqəli qəbulların ümumi məbləği ilə eynidirsə)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Bilet yaradıldıqda, onu biletlə eyni üçüncü tərəfə uyğun gələn mövcud müqavilələrlə əlaqələndirin
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Bileti avtomatik olaraq müqavilələrlə əlaqələndirərkən, ana şirkətlərin müqavilələrini axtarın
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Bilet bağlandıqda biletlə əlaqəli bütün müdaxilələri bağlayın
+AutomaticCreation=Avtomatik yaradılması
+AutomaticClassification=Avtomatik təsnifat
+AutomaticClosing=Avtomatik bağlanma
+AutomaticLinking=Avtomatik əlaqə

@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=A senha para usuário <b>%s</b> no domínio <b>%s</b> deve ser alterada.
+UserMustChangePassNextLogon=O usuário deve alterar de senha na próxima login
+LDAPInformationsForThisContact=Informações do banco de dados LDAP para este contato
+LDAPInformationsForThisUser=Informações do banco de dados LDAP para este usuário
+LDAPInformationsForThisGroup=Informações do banco de dados LDAP para este grupo
+LDAPInformationsForThisMember=Informações do banco de dados LDAP para este membro
+LDAPInformationsForThisMemberType=Informação do banco de dados LDAP para esse tipo de membro
+LDAPRecordNotFound=Registo não encontrado no banco de dados LDAP
+LDAPUsers=Usuário no banco de dados LDAP
+LDAPFieldFirstSubscriptionDate=Primeira data de adesão
+LDAPFieldFirstSubscriptionAmount=Valor da primeira adesão
+LDAPFieldLastSubscriptionDate=Data da última adesão
+LDAPFieldLastSubscriptionAmount=Valor da última adesão
+LDAPFieldSkypeExample=Exemplo: skypeName
+UserSynchronized=Usuário Sincronizado
+ErrorFailedToReadLDAP=Falha ao ler LDAP banco de dados. Configuração de verificar LDAP módulo e acessibilidade de banco de dados.
+PasswordOfUserInLDAP=Senha do usuário no LDAP
+SupportedForLDAPExportScriptOnly=Suportado apenas por um script de exportação LDAP
+LDAPUserAccountControl =userAccountControl na criação (diretório ativo)
+LDAPUserAccountControlExample =512 Conta Normal / 546 Conta Normal + Sem Senha + Desativado (veja: https://pt.wikipedia.org/wiki/Active_Directory)

@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = อ่านงานที่กำหนดเวลาไว้
+Permission23102 = สร้าง / การปรับปรุงกำหนดเวลางาน
+Permission23103 = ลบงานที่กำหนด
+Permission23104 = การดำเนินงานที่กำหนด
+# Admin
+CronSetup=กำหนดเวลาการตั้งค่าการจัดการงาน
+URLToLaunchCronJobs=URL เพื่อตรวจสอบและเปิดใช้งานงาน cron ที่ผ่านการรับรองจากเบราว์เซอร์
+OrToLaunchASpecificJob=หรือเพื่อตรวจสอบและเปิดงานเฉพาะจากเบราว์เซอร์
+KeyForCronAccess=กุญแจสำคัญในการรักษาความปลอดภัยสำหรับ URL ที่จะเปิดตัวงาน cron
+FileToLaunchCronJobs=บรรทัดคำสั่งเพื่อตรวจสอบและเปิดใช้งานงาน cron ที่ผ่านการรับรอง
+CronExplainHowToRunUnix=ในสภาพแวดล้อมระบบปฏิบัติการยูนิกซ์ที่คุณควรใช้ crontab รายการต่อไปนี้เพื่อเรียกใช้บรรทัดคำสั่งแต่ละ 5 นาที
+CronExplainHowToRunWin=บนสภาพแวดล้อม Microsoft(tm) Windows คุณสามารถใช้เครื่องมือ Scheduled Task เพื่อรันบรรทัดคำสั่งทุกๆ 5 นาที
+CronMethodDoesNotExists=คลาส %s ไม่มีเมธอดใด ๆ %s
+CronMethodNotAllowed=เมธอด %s ของคลาส %s อยู่ในรายการบล็อกของเมธอดที่ไม่ได้รับอนุญาต
+CronJobDefDesc=โปรไฟล์งาน Cron ถูกกำหนดไว้ในไฟล์ตัวอธิบายโมดูล เมื่อเปิดใช้งานโมดูล โมดูลเหล่านั้นจะถูกโหลดและพร้อมใช้งาน เพื่อให้คุณสามารถจัดการงานได้จากเมนูเครื่องมือผู้ดูแลระบบ %s
+CronJobProfiles=รายการโปรไฟล์งาน cron ที่กำหนดไว้ล่วงหน้า
+# Menu
+EnabledAndDisabled=เปิดใช้งานและปิดใช้งาน
+# Page list
+CronLastOutput=รันเอาท์พุตล่าสุด
+CronLastResult=รหัสผลลัพธ์ล่าสุด
+CronCommand=คำสั่ง
+CronList=งานที่กำหนดเวลาไว้
+CronDelete=ลบงานที่กำหนดไว้
+CronConfirmDelete=คุณแน่ใจหรือไม่ว่าต้องการลบงานที่กำหนดเวลาไว้เหล่านี้
+CronExecute=เปิดตัวเลย
+CronConfirmExecute=คุณแน่ใจหรือไม่ว่าต้องการดำเนินการงานที่กำหนดเวลาไว้เหล่านี้ทันที
+CronInfo=โมดูลงานที่กำหนดเวลาไว้ช่วยให้สามารถกำหนดเวลางานเพื่อดำเนินการได้โดยอัตโนมัติ งานสามารถเริ่มต้นได้ด้วยตนเอง
+CronTask=งาน
+CronNone=การรันงานตามกำหนดเวลาครั้งต่อไป
+CronNotYetRan=ไม่เคยดำเนินการ
+CronDtStart=ไม่ก่อน
+CronDtEnd=ไม่หลังจากนั้น
+CronDtNextLaunch=การดำเนินการต่อไป
+CronDtLastLaunch=วันที่เริ่มต้นของการดำเนินการครั้งล่าสุด
+CronDtLastResult=วันที่สิ้นสุดของการดำเนินการครั้งล่าสุด
+CronFrequency=ความถี่
+CronClass=ชั้น
+CronMethod=วิธี
+CronModule=โมดูล
+CronNoJobs=ไม่มีงานที่ลงทะเบียน
+CronPriority=ลำดับความสำคัญ
+CronLabel=ฉลาก
+CronNbRun=จำนวนการเปิดตัว
+CronMaxRun=จำนวนการเปิดตัวสูงสุด
+CronEach=ทุกๆ
+JobFinished=งานเปิดตัวและจบ
+Scheduled=กำหนดเวลาแล้ว
+#Page card
+CronAdd=เพิ่มงาน
+CronEvery=รันงานทุกๆ
+CronObject=อินสแตนซ์ / วัตถุที่จะสร้าง
+CronArgs=พารามิเตอร์
+CronSaveSucess=บันทึกสำเร็จ
+CronNote=ความเห็น
+CronFieldMandatory=ทุ่ง %s มีผลบังคับใช้
+CronErrEndDateStartDt=วันที่สิ้นสุดไม่สามารถก่อนวันเริ่มต้น
+StatusAtInstall=สถานะในการติดตั้งโมดูล
+CronStatusActiveBtn=เปิดใช้งานการกำหนดเวลา
+CronStatusInactiveBtn=ปิดการใช้งาน
+CronTaskInactive=งานนี้ถูกปิดใช้งาน (ไม่ได้กำหนดเวลาไว้)
+CronId=Id
+CronClassFile=ชื่อไฟล์กับคลาส
+CronModuleHelp=ชื่อของไดเร็กทอรีโมดูล Dolibarr (ใช้ได้กับโมดูล Dolibarr ภายนอกด้วย) <BR> ตัวอย่างเช่นในการเรียกวิธีการดึงข้อมูลของวัตถุ Dolibarr Product /htdocs/<u>product</u> /class/product.class.php ค่าสำหรับโมดูลคือ<br><i>product</i>
+CronClassFileHelp=เส้นทางสัมพัทธ์และชื่อไฟล์ที่จะโหลด (เส้นทางสัมพันธ์กับไดเร็กทอรีรากของเว็บเซิร์ฟเวอร์) <BR> ตัวอย่างเช่นในการเรียกวิธีการดึงข้อมูลของวัตถุ Dolibarr Product htdocs/product/class/<u>product.class.php</u> ค่าสำหรับชื่อไฟล์คลาสคือ<br><i>product/class/product .class.php</i>
+CronObjectHelp=ชื่อวัตถุที่จะโหลด <BR> ตัวอย่างเช่น หากต้องการเรียกวิธีการดึงข้อมูลของวัตถุ Dolibarr Product /htdocs/product/class/product.class.php ค่าของชื่อไฟล์คลาสคือ<br><i>ผลิตภัณฑ์</i>
+CronMethodHelp=วิธีการวัตถุที่จะเปิดตัว <BR> ตัวอย่างเช่น หากต้องการเรียกวิธีการดึงข้อมูลของวัตถุ Dolibarr Product /htdocs/product/class/product.class.php ค่าของวิธีการคือ <br><i>ดึงข้อมูล</i>
+CronArgsHelp=อาร์กิวเมนต์วิธีการ <BR> ตัวอย่างเช่น หากต้องการเรียกวิธีการดึงข้อมูลของวัตถุ Dolibarr Product /htdocs/product/class/product.class.php ค่าสำหรับพารามิเตอร์อาจเป็น<br><i>0, ProductRef</i>
+CronCommandHelp=บรรทัดคำสั่งระบบที่จะดำเนินการ
+CronCreateJob=สร้างงานใหม่กำหนด
+CronFrom=จาก
+# Info
+# Common
+CronType=หมวดงาน
+CronType_method=วิธีการเรียกคลาส PHP
+CronType_command=คำสั่งเชลล์
+CronCannotLoadClass=ไม่สามารถโหลดไฟล์คลาส %s (เพื่อใช้คลาส %s)
+CronModuleNotEnabledInThisEntity=โมดูล Cron ไม่ได้เปิดใช้งานในเอนทิตีนี้ (เพื่อใช้เมธอด %s ของอ็อบเจ็กต์ %s)
+CronCannotLoadObject=โหลดไฟล์คลาส %s แล้ว แต่ไม่พบวัตถุ %s เข้าไป
+UseMenuModuleToolsToAddCronJobs=ไปที่เมนู "<a href="%s">หน้าแรก - เครื่องมือผู้ดูแลระบบ - งานที่กำหนดเวลาไว้</a>" เพื่อดูและแก้ไขงานที่กำหนดเวลาไว้
+JobDisabled=ปิดการใช้งาน
+MakeLocalDatabaseDumpShort=การสำรองฐานข้อมูลท้องถิ่น
+MakeLocalDatabaseDump=สร้างดัมพ์ฐานข้อมูลท้องถิ่น พารามิเตอร์ได้แก่: การบีบอัด ('gz' หรือ 'bz' หรือ 'none'), ประเภทการสำรองข้อมูล ('mysql', 'pgsql', 'auto'), 1, 'auto' หรือชื่อไฟล์ที่จะสร้าง, จำนวนไฟล์สำรองที่จะเก็บไว้
+MakeSendLocalDatabaseDumpShort=ส่งการสำรองฐานข้อมูลท้องถิ่น
+MakeSendLocalDatabaseDump=ส่งการสำรองฐานข้อมูลท้องถิ่นทางอีเมล พารามิเตอร์ได้แก่ ถึง, จาก, เรื่อง, ข้อความ, ชื่อไฟล์ (ชื่อไฟล์ที่ส่ง), ตัวกรอง ('sql' สำหรับการสำรองฐานข้อมูลเท่านั้น)
+BackupIsTooLargeSend=ขออภัย ไฟล์สำรองล่าสุดมีขนาดใหญ่เกินกว่าจะส่งทางอีเมล
+CleanUnfinishedCronjobShort=ทำความสะอาด cronjob ที่ยังไม่เสร็จ
+CleanUnfinishedCronjob=ทำความสะอาด cronjob ที่ค้างอยู่ในการประมวลผลเมื่อกระบวนการไม่ทำงานอีกต่อไป
+WarningCronDelayed=โปรดทราบ เพื่อวัตถุประสงค์ด้านประสิทธิภาพ ไม่ว่าจะเป็นวันที่ถัดไปของการดำเนินการงานที่เปิดใช้งาน งานของคุณอาจมีความล่าช้าสูงสุด %s ชั่วโมงก่อนที่จะรัน
+DATAPOLICYJob=เครื่องมือทำความสะอาดข้อมูลและไม่ระบุชื่อ
+JobXMustBeEnabled=ต้องเปิดใช้งานงาน %s
+EmailIfError=อีเมลแจ้งเตือนข้อผิดพลาด
+JobNotFound=ไม่พบงาน %s ในรายการงาน (ลองปิดการใช้งาน/เปิดใช้งานโมดูล)
+ErrorInBatch=เกิดข้อผิดพลาดขณะรันงาน %s
+
+# Cron Boxes
+LastExecutedScheduledJob=งานที่กำหนดเวลาไว้ล่าสุดที่ดำเนินการ
+NextScheduledJobExecute=งานที่กำหนดเวลาไว้ถัดไปที่จะดำเนินการ
+NumberScheduledJobError=จำนวนงานที่จัดกำหนดการไว้มีข้อผิดพลาด
+NumberScheduledJobNeverFinished=จำนวนงานที่กำหนดเวลาไว้ไม่เคยเสร็จสิ้น

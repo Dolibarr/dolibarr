@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Prestito
+Loans=Prestiti
+NewLoan=Nuovo prestito
+ShowLoan=Mostra prestito
+PaymentLoan=Pagamento prestito
+LoanPayment=Pagamento del prestito
+ShowLoanPayment=Mostra pagamento prestito
+LoanCapital=Capitale
+Insurance=Assicurazione
+Interest=Interesse
+Nbterms=Numero di rate
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Conferma l'eliminazione di questo prestito
+LoanDeleted=Prestito eliminato correttamente
+ConfirmPayLoan=Conferma questo prestito come ripagato
+LoanPaid=Prestito ripagato
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Interesse
+CapitalRemain=Capital remain
+TermPaidAllreadyPaid = Questo termine è già Pagato
+CantUseScheduleWithLoanStartedToPaid = Impossibile generare una sequenza temporale per un prestito con un pagamento avviato
+CantModifyInterestIfScheduleIsUsed = Non è possibile modificare l'interesse se si utilizza la pianificazione
+# Admin
+ConfigLoan=Configurazione del modulo prestiti
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=conto (dalla tabella di conto) da utilizzare da default per capitale (prestito modulo)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=conto (dalla tabella di conto) da utilizzare da default per interesse (prestito modulo)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=conto (dalla tabella di conto) da utilizzare da default per assicurazione (prestito modulo)
+CreateCalcSchedule=Edit financial commitment

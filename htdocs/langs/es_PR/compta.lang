@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - compta
+VATToPay=IVU ventas
+VATReceived=IVU repercutido
+VATToCollect=IVU compras
+VATSummary=Balance de IVU
+VATPaid=IVU Pagado
+VATCollected=IVU recuperado
+PaymentVat=Pago IVU
+VATPayment=Pago IVU
+VATPayments=Pagos IVU
+ShowVatPayment=Ver pagos IVU
+RulesResultDue=- Los importes mostrados son importes totales<br>- Incluye las facturas, cargas e IVU debidos, que estén pagadas o no.<br>- Se basa en la fecha de validación para las facturas y el IVU y en la fecha de vencimiento para las cargas.<br>
+RulesResultInOut=- Los importes mostrados son importes totales<br>- Incluye los pagos realizados para las facturas, cargas e IVU.<br>- Se basa en la fecha de pago de las mismas.<br>
+VATReportByCustomersInInputOutputMode=Informe por cliente del IVU repercutido y pagado (IVU pagado)
+VATReportByQuartersInInputOutputMode=Informe por tasa del IVU repercutido y pagado (IVU pagado)
+SeeVATReportInInputOutputMode=Ver el informe <b>%sIVU pagado%s</b> para un modo de cálculo estandard
+SeeVATReportInDueDebtMode=Ver el informe <b>%sIVU debido%s</b> para un modo de cálculo con la opción sobre lo debido

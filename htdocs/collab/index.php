@@ -1,0 +1,133 @@
+<?php
+/* Copyright (C) 2016-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *   	\file       htdocs/collab/index.php
+ *		\ingroup    collab
+ *		\brief      Page to work on a shared document (PAD)
+ */
+
+define('NOSCANPOSTFORINJECTION', 1);
+define('NOSTYLECHECK', 1);
+
+// Load Dolibarr environment
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Website $object
+ * @var WebsitePage $objectpage
+ */
+
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "website"));
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
+'
+@phan-var-force Website $object
+@phan-var-force WebsitePage $objectpage
+';
+
+$conf->dol_hide_leftmenu = 1; // Force hide of left menu.
+
+$error = 0;
+$website = GETPOST('website', 'alpha');
+$page = GETPOST('page', 'alpha');
+$pageid = GETPOSTINT('pageid');
+$action = GETPOST('action', 'aZ09');
+
+if (GETPOST('delete')) {
+	$action = 'delete';
+}
+if (GETPOST('preview')) {
+	$action = 'preview';
+}
+if (GETPOST('create')) {
+	$action = 'create';
+}
+if (GETPOST('editmedia')) {
+	$action = 'editmedia';
+}
+if (GETPOST('editcss')) {
+	$action = 'editcss';
+}
+if (GETPOST('editmenu')) {
+	$action = 'editmenu';
+}
+if (GETPOST('setashome')) {
+	$action = 'setashome';
+}
+if (GETPOST('editmeta')) {
+	$action = 'editmeta';
+}
+if (GETPOST('editcontent')) {
+	$action = 'editcontent';
+}
+
+if (empty($action)) {
+	$action = 'preview';
+}
+
+//$permissiontoadd = $user->hasRight('collab', 'read');
+//$permissiontodelete = $user->hasRight('collab', 'delete');
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+$help_url = '';
+
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+if ($action == 'create') {
+	print '<input type="hidden" name="action" value="add">';
+}
+
+
+print '<div class="centpercent websitebar">';
+
+
+
+
+print "</div>\n</form>\n";
+
+// End of page
+llxFooter();
+$db->close();

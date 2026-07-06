@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - assets
+AccountancyCodeAsset=Código de cuenta (activo)
+AccountancyCodeDepreciationAsset=Código de cuenta (informe de depreciación de activo)
+AssetsLines=Capital
+ModuleAssetsName=Capital
+ModuleAssetsDesc=Descripción de activo
+MenuAssets=Capital
+MenuNewAsset=Nuevo activo
+MenuListAssets=Lista
+MenuListAssetModels=Lista
+Assets=Capital

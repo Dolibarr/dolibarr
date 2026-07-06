@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Заем
+Loans=Займы
+NewLoan=Новый заем
+ShowLoan=Показать заем
+PaymentLoan=Платеж по займу
+LoanPayment=Платеж по займу
+ShowLoanPayment=Показать выплату по займу
+LoanCapital=Капитал
+Insurance=Страховка
+Interest=Доля капитала
+Nbterms=Количество условий
+Term=Срок
+LoanAccountancyCapitalCode=Бухгалтерский учет капитала
+LoanAccountancyInsuranceCode=Страхование бухгалтерского счета
+LoanAccountancyInterestCode=Бухгалтерский счет процентов
+ConfirmDeleteLoan=Подтвердите удаление этого займа
+LoanDeleted=Заем успешно удален
+ConfirmPayLoan=Подтвердите, что этот заем оплачена
+LoanPaid=Заем оплачен
+ListLoanAssociatedProject=Перечень займов, связанных с проектом
+AddLoan=Создать заем
+FinancialCommitment=Финансовые обязательства
+InterestAmount=Доля капитала
+CapitalRemain=Остается капитал
+TermPaidAllreadyPaid = Этот термин уже Оплачен
+CantUseScheduleWithLoanStartedToPaid = Не удается сгенерировать временную шкалу для кредита с начатым платежом
+CantModifyInterestIfScheduleIsUsed = Вы не можете изменить интерес, если используете расписание
+# Admin
+ConfigLoan=Настройка модуля займов
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Счет (из плана счетов), который будет использоваться по умолчанию для капитала (модуль ссуды)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Счет (из Плана счетов), используемый по умолчанию для начисления процентов (Модуль ссуды)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Счет (из Плана счетов), который будет использоваться по умолчанию для страхования (модуль Кредит)
+CreateCalcSchedule=Изменить финансовое обязательство

@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - admin
+Foundation=Fondation
+VersionExperimental=Expérimentale
+VersionRecommanded=Recommandée
+SessionId=ID de session
+SessionSaveHandler=Gestionnaire de sessions
+PurgeSessions=Nettoyage des sessions
+LockNewSessions=Bloquer les nouvelles connexions
+UnlockNewSessions=Éliminer le blocage des connexions
+WebUserGroup=Utilisateur/groupe du serveur web
+DBStoringCharset=Codification de caractères de base de données pour stocker les données
+DBSortingCharset=Codification de caractères de base de données pour trier les données
+WarningModuleNotActive=Le module <b>%s</b> doit être activé
+FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
+IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
+Boolean=Booléen (case à cocher unique)
+Module20Name=Propales
+Module30Name=Factures
+Target=Objectif
+Targets=Objectifs
+Recommended=Recommandée

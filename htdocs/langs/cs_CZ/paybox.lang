@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Nastavení modulu PayBox
+PayBoxDesc=Tento modul nabízí stránky, které umožňují platbu zákazníky na <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>. Tuto platbu lze použít pro bezplatnou platbu nebo pro platbu za konkrétní objekt Dolibarr (faktura, objednávka atd.).
+PayBoxDoPayment=Plaťte pomocí Payboxu
+YouWillBeRedirectedOnPayBox=Budete přesměrováni na zabezpečené stránky Paybox pro vstupní informace o kreditní kartě
+SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte svůj Paybox pomocí url <b> %s </b> aby se platba automaticky vytvořila při ověření Payboxu.
+YourPaymentHasBeenRecorded=Tato stránka potvrzuje, že platba byla zaznamenána. Děkuju.
+YourPaymentHasNotBeenRecorded=Platba nebyla zaznamenána a transakce byla zrušena. Děkuji.
+PAYBOX_CGI_URL_V2=URL Paybox modulu CGI pro platbu
+NewPayboxPaymentReceived=Nový Paybox přijaté platby
+NewPayboxPaymentFailed=Nový Paybox platba zadána, ale neprošla
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail pro upozornění po platbě (úspěch nebo selhání)
+PAYBOX_PBX_SITE=Hodnota PBX SITE
+PAYBOX_PBX_RANG=Hodnota pro PBX rozsah
+PAYBOX_PBX_IDENTIFIANT=Hodnota pro PBX ID
+PAYBOX_HMAC_KEY=Klíč HMAC

@@ -1,0 +1,29 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuration du module PayPal
+PaypalDesc=Ce module permet le paiement des clients via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Cela peut être utilisé pour un paiement ponctuel ou pour un paiement lié à un objet Dolibarr (facture, commande, ...)
+PaypalOrCBDoPayment=Payer avec PayPal (Carte ou PayPal)
+PaypalDoPayment=Payer avec PayPal
+PAYPAL_API_SANDBOX=Mode test / sandbox
+PAYPAL_API_USER=Nom d'utilisateur de l'API
+PAYPAL_API_PASSWORD=Mot de passe de l'API
+PAYPAL_API_SIGNATURE=Signature de l'API
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposer le paiement « intégral » (Carte de crédit + PayPal) ou « PayPal » uniquement
+PaypalModeOnlyPaypal=PayPal uniquement
+ONLINE_PAYMENT_CSS_URL=URL facultative de la feuille de style CSS sur la page de paiement en ligne
+ThisIsTransactionId=Ceci est un identifiant de transaction: <b> %s</b>
+PAYPAL_ADD_PAYMENT_URL=Inclure l'URL de paiement PayPal lorsque vous envoyez un document par e-mail
+NewOnlinePaymentFailed=Nouveau paiement en ligne essayé mais échoué
+ONLINE_PAYMENT_SENDEMAIL=Adresse e-mail pour les notifications après chaque tentative de paiement (pour succès et échec)
+ReturnURLAfterPayment=Retourner l'URL après le paiement
+ValidationOfOnlinePaymentFailed=La validation du paiement en ligne a échoué
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La page de confirmation de paiement a été appelée par système de paiement renvoyé une erreur
+SetExpressCheckoutAPICallFailed=L'appel de l'API SetExpressCheckout a échoué.
+DoExpressCheckoutPaymentAPICallFailed=L'appel de l'API DoExpressCheckoutPayment a échoué.
+ErrorCode=Code d'erreur
+ErrorSeverityCode=Code de gravité des erreurs
+PaypalLiveEnabled=Mode PayPal « live » activé (sinon mode test/sandbox)
+PaypalImportPayment=Importer des paiements PayPal
+PostActionAfterPayment=Publier des actions après les paiements
+ARollbackWasPerformedOnPostActions=Une restauration a été effectuée sur toutes les actions de publication. Vous devez effectuer les actions de publication manuellement si elles sont nécessaires.
+CardOwner=Porte-cartes
+OnlineSubscriptionPaymentLine=Abonnement en ligne enregistré sur %s<br>Payé via %s<br>Adresse IP d'origine : %s<br>ID de transaction : %s

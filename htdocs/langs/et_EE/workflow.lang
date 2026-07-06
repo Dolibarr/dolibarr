@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Töövoo mooduli seaded
+WorkflowDesc=See moodul pakub mõningaid automaatseid toiminguid. Vaikimisi on töövoog avatud (saate asju teha soovitud järjekorras), kuid siin saate aktiveerida mõned automaatsed toimingud.
+ThereIsNoWorkflowToModify=Aktiveeritud moodulitega pole töövoo muutmine saadaval.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Looge müügitellimus automaatselt pärast pakkumise allkirjastamist (uuel tellimusel on sama summa kui pakkumisel)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Kliendi arve automaatne koostamine pärast pakkumise allkirjastamist (uuel arvel on sama summa kui pakkumisel)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Loo automaatselt kliendi arve pärast lepingu kinnitamist
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Loo automaatselt kliendi arve pärast müügi tellimuse sulgemist (uus arve on samas summas kui tellimus).
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Pileti loomisel luuakse sekkumine automaatselt.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kui müügitellimus on määratud arveldatuks, liigita lingitud allikapakkumised arveldatuks (ja kui tellimuse summa on sama, mis allkirjastatud lingitud pakkumiste kogusumma).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kui kliendiarve on valideeritud, liigita lingitud allikapakkumised arveldatuks (ja kui arve summa on sama kui allkirjastatud lingitud pakkumiste kogusumma).
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kui kliendiarve on määratud tasutuks, liigita seotud müügitellimused arveldatuks (ja kui arve summa on sama, mis seotud müügitellimuste kogusumma). Kui genereerid n tellimuse jaoks ühe arve, võib see määrata ka kõik tellimused arveldatuks.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kui kliendiarve on valideeritud, liigita kõik lingitud müügitellimused arveldatuks (ja kui arve summa on sama kui lingitud müügitellimuste kogusumma). Kui genereerid n tellimuse jaoks ühe ühise arve, võib see määrata kõik müügitellimused arveldatuks.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Kui kliendiarve on valideeritud, liigita seotud müügitellimus (kui neid on ainult üks) arveldatuks, kui seotud müügitellimuse kogusumma on võrdne kõigi sellest väljastatud arvete kogusummaga. Kui genereerite ühe tellimuse kohta n arvet, võimaldab see tellimuse arveldatuks määrata kohe, kui kõik arved on valideeritud.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kui saadetis on valideeritud, liigitage seotud allika müügitellimused saadetuks (ja kui kõigi saadetiste saadetud kogus on sama, mis tellimuses, värskendage)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Kui saadetis on suletud, liigita seotud allika müügitellimus saadetuks (ja kui kõigi saadetiste saadetud kogus on sama, mis tellimuses uuendada)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Kui tarnija arve on valideeritud, liigita lingitud allika tarnija pakkumine arveldatuks (ja kui arve summa on sama kui lingitud pakkumiste kogusumma)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kui tarnija arve on valideeritud, liigita lingitud allika ostutellimus arveldatuks (ja kui arve summa on sama, mis lingitud tellimuste kogusumma)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Kui vastuvõtt on valideeritud, liigita lingitud allika ostutellimus vastuvõetuks (ja kui kõigi vastuvõttude poolt vastuvõetud kogus on sama, mis ostutellimuses, uuenda see)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Kui vastuvõtt on suletud, liigitage seotud allika ostutellimused vastuvõetuks (ja kui ostutellimusest väljastatud kõigi vastuvõttude poolt vastuvõetud kogus on sama, mis ostutellimuses, värskendage)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Kui kliendiarve on valideeritud, liigitage seotud allikasaadetis suletuks (ja kui arve summa on sama kui seotud saadetiste kogusumma).
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Kui kliendiarve on valideeritud, liigitage seotud allikasaadetis arveldatuks (ja kui arve summa on sama, mis seotud saadetiste kogusumma)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Kui ostuarve on valideeritud, liigita seotud allikavastuvõtud suletuks (ja kui arve summa on sama kui seotud vastuvõttude kogusumma).
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Kui ostuarve on valideeritud, liigita seotud allikavastuvõtud arveldatuks (ja kui arve summa on sama kui seotud vastuvõttude kogusumma).
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Kui pilet luuakse, linkige see saadaolevate lepingutega, mis vastavad samale kolmandale osapoolele kui pilet.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Pileti automaatsel lepingutega sidumisel otsi lepinguid emaettevõtte lepingute hulgast
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sulge kõik piletiga seotud sekkumised, kui pilet on suletud
+AutomaticCreation=Automaatne loomine
+AutomaticClassification=Automaatne klassifitseerimine
+AutomaticClosing=Automaatne sulgemine
+AutomaticLinking=Automaatne linkimine

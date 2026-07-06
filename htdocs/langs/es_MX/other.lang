@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - other
+Notify_COMPANY_CREATE=Tercero creado
+SeeModuleSetup=Ver configuración del módulo %s
+ExternalSiteSetup=Configurar vínculo a un sitio web externo
+ExternalSiteModuleNotComplete=El módulo ExternalSite no estaba configurado correctamente.
+ExampleMyMenuEntry=Mi entrada en el menú
+FTPFailedToRemoveFile=Error al eliminar el archivo <b> %s </b>.
+FTPFailedToRemoveDir=Error al eliminar el directorio <b> %s </b>: verifique los permisos y que el directorio esté vacío.
+FailedToGetFile=Error al obtener archivos %s
+BookmarksManagement =Gestor de marcadores
+BookmarksMenuShortCut =Ctrl + Mayús + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark =Elija si la página vinculada debe abrirse en la pestaña actual o en una pestaña nueva
+ListOfBookmarks =Lista de marcadores
+ReplaceWindow =Reemplazar pestaña actual
+SetHereATitleForLink =Asignar nombre para el marcador
+ShowBookmark =Ver marcador

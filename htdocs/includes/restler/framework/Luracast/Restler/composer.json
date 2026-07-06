@@ -1,0 +1,48 @@
+{
+    "name":"restler/framework",
+    "description":"Just the Restler Framework without the tests and examples",
+    "type":"library",
+    "keywords":["server","api","framework","REST"],
+    "homepage":"http://luracast.com/products/restler/",
+    "license":"LGPL-2.1",
+    "authors":[
+        {
+            "name":"Luracast",
+            "email":"arul@luracast.com"
+        }
+    ],
+    "extra":{
+        "branch-alias":{
+            "master":"v3.0.x-dev"
+        }
+    },
+    "suggest":{
+        "rodneyrehm/plist":"If you need Apple plist binary/xml format",
+        "zendframework/zendamf":"If you need AMF format",
+        "symfony/yaml":"If you need YAML format",
+        "twig/twig":"If you want to use twig templates with Html format",
+        "mustache/mustache":"If you want to use mustache/handlebar templates with Html format",
+        "illuminate/view":"If you want to use laravel blade templates with Html format",
+        "bshaffer/oauth2-server-php":"If you want to use OAuth2 for authentication"
+    },
+    "require":{
+        "php":">=5.3.0"
+    },
+    "require-dev":{
+    },
+    "repositories":[
+        {
+            "type":"vcs",
+            "url":"https://github.com/zendframework/ZendAmf.git"
+        }
+    ],
+    "autoload":{
+        "psr-0":{
+            "Luracast\\Restler":""
+        }
+    },
+    "target-dir": "Luracast/Restler",
+    "replace": {
+        "luracast/restler":"3.*"
+    }
+}

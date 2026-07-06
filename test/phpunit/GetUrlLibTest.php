@@ -1,0 +1,273 @@
+<?php
+/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
+/**
+ *      \file       test/phpunit/GetUrlLibTest.php
+ *		\ingroup    test
+ *      \brief      PHPUnit test
+ *		\remarks	To run this script as CLI:  phpunit filename.php
+ */
+
+global $conf,$user,$langs,$db;
+//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->loadRights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+
+/**
+ * Class for PHPUnit tests
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ */
+class GetUrlLibTest extends CommonClassTest
+{
+	/**
+	 * testResolveDNS
+	 *
+	 * @return	int
+	 */
+	public function testResolveDNS()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$modes = array('default', 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION');
+
+		foreach ($modes as $mode) {
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION = 1;
+			} else {	// default
+				unset($conf->global->MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION);
+			}
+
+			$result = resolveDns('192.16.0.1');
+			print __METHOD__." 192.16.0.1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('192.16.0.1', $result, 'Test resolveDNS 1 mode '.$mode);
+
+			$result = resolveDns('::1');
+			print __METHOD__." ::1 mode ".$mode." result=".$result."\n";
+			$this->assertEquals('::1', $result, 'Test resolveDNS 2 mode '.$mode);
+
+			$result = resolveDns('anamethatdoesnotexist123really');
+			print __METHOD__." anamethatdoesnotexist123really mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('anamethatdoesnotexist123really')), 'Test resolveDNS 4 mode '.$mode);
+
+			// name if ip that resolve both on ipv4and ipv6
+
+			$result = resolveDns('www.dolimed.com');
+			print __METHOD__." www.dolimed.com mode ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('104.21.7.66', '172.67.187.137')), 'Test resolveDNS 3 mode '.$mode);
+
+			// name if ipv4 resolution only
+
+			$result = resolveDns('ipv4.dolicloud.com');
+			print __METHOD__." ipv4.dolicloud.com ".$mode." result=".$result."\n";
+			$this->assertTrue(in_array($result, array('147.135.135.36')), 'Test resolveDNS 5 mode '.$mode);
+
+			// name if ipv6 resolution only
+
+			$result = resolveDns('ipv6.dolicloud.com');
+			print __METHOD__." ipv6.dolicloud.com ".$mode." result=".$result."\n";
+			if ($mode == 'MAIN_DISABLE_DNS_GET_RECORD_FOR_IP_RESOLUTION') {
+				$this->assertTrue(in_array($result, array('ipv6.dolicloud.com')), 'Test resolveDNS 6 mode '.$mode);
+			} else {
+				$this->assertTrue(in_array($result, array('2001:41d0:302:1000::4:1437')), 'Test resolveDNS 6 mode '.$mode);
+			}
+		}
+	}
+
+
+	/**
+	 * testGetRootURLFromURL
+	 *
+	 * @depends	testResolveDNS
+	 * @return	int
+	 */
+	public function testGetRootURLFromURL()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result, 'Test 1');
+
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result, 'Test 2');
+
+		$result = getRootURLFromURL('http://www.dolimed.com/screenshots');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
+
+		$result = getRootURLFromURL('https://www.dolimed.com/screenshots');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
+
+		$result = getRootURLFromURL('http://www.dolimed.com/');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
+
+		$result = getRootURLFromURL('https://www.dolimed.com/');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
+
+		$result = getRootURLFromURL('http://www.dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('http://www.dolimed.com', $result);
+
+		$result = getRootURLFromURL('https://www.dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('https://www.dolimed.com', $result);
+
+		return 1;
+	}
+
+	/**
+	 * testGetDomainFromURL
+	 *
+	 * @depends	testGetRootURLFromURL
+	 * @return	int
+	 */
+	public function testGetDomainFromURL()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Tests with param 0
+
+		$result = getDomainFromURL('http://localhost');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('localhost', $result, 'Test localhost 0');
+
+		$result = getDomainFromURL('http://localhost', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('localhost', $result, 'Test localhost 1');
+
+		$result = getDomainFromURL('https://dolimed.com');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com 0');
+
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com/... 0');
+
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test ...dolimed.com/ 0');
+
+		// Tests with param 1
+
+		$result = getDomainFromURL('https://dolimed.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com 1');
+
+		$result = getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test dolimed.com/... 1');
+
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com', $result, 'Test .../dolimed.com 1');
+
+		// Tests with param 2
+
+		$result = getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com', $result, 'Test .../dolimed.com 2');
+
+		// For domains with top domain on 2 levels
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed', $result, 'Test dolimed.com.mx 0');
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('dolimed.com.mx', $result, 'Test dolimed.com.mx 1');
+
+		$result = getDomainFromURL('https://www.with.dolimed.com.mx', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('with.dolimed.com.mx', $result, 'Test dolimed.com.mx 2');
+
+
+		// Test with url with login/pass
+
+		$result = getDomainFromURL('https://mylogin:mypass@aaa.abc.mydomain.com', 2);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc.mydomain.com', $result, 'Test https://mylogin:mypass@mydomain.com');
+
+
+		// Test with email
+
+		$result = getDomainFromURL('myemail@mydomain.com', 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('mydomain.com', $result, 'Test myemail@mydomain.com');
+
+
+		return 1;
+	}
+
+	/**
+	 * testRemoveHtmlComment
+	 *
+	 * @depends	testGetDomainFromURL
+	 * @return	int
+	 */
+	public function testRemoveHtmlComment()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aaaa<![endif]-->def');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcdef', $result, 'Test 1');
+
+		$result = removeHtmlComment('abc<!--[if lt IE 8]>aa-->bb<!--aa<![endif]-->def');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcbbdef', $result, 'Test 1');
+
+		return 1;
+	}
+}

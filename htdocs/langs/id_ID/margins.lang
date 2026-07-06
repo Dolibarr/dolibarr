@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Batas
+Margins=Margin
+TotalMargin=Total Margin
+MarginOnProducts=Margin / Produk
+MarginOnServices=Margin / Layanan
+MarginRate=Tingkat margin
+ModifyMarginRates=Ubah tingkat margin
+MarkRate=Nilai tanda
+DisplayMarginRates=Tingkat tampilan margin
+DisplayMarkRates=Tingkat tanda tampilan
+InputPrice=Harga input
+margin=Manajemen margin keuntungan
+margesSetup=Pengaturan manajemen margin keuntungan
+MarginDetails=Detail margin
+ProductMargins=Margin produk
+CustomerMargins=Margin pelanggan
+SalesRepresentativeMargins=Margin perwakilan penjualan
+ContactOfInvoice=Kontak faktur
+UserMargins=Margin pengguna
+ProductService=Produk atau Layanan
+AllProducts=Semua produk dan layanan
+ChooseProduct/Service=Pilih produk atau layanan
+ForceBuyingPriceIfNull=Harga beli / biaya paksa untuk harga jual jika tidak ditentukan
+ForceBuyingPriceIfNullDetails=Jika harga beli/biaya tidak diberikan saat kami menambahkan baris baru, dan opsi ini "ON", marginnya akan menjadi 0%% pada baris baru (harga beli/biaya = harga penjualan). Jika opsi ini "OFF" (disarankan), margin akan sama dengan nilai yang disarankan secara default (dan mungkin 100%% jika tidak ada nilai default yang ditemukan).
+MARGIN_METHODE_FOR_DISCOUNT=Metode margin untuk diskon global
+UseDiscountAsProduct=Sebagai produk
+UseDiscountAsService=Sebagai layanan
+UseDiscountOnTotal=Pada subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Menentukan apakah diskon global diperlakukan sebagai produk, layanan, atau hanya pada subtotal untuk perhitungan margin.
+MARGIN_TYPE=Harga Beli / Biaya disarankan secara default untuk perhitungan margin
+MargeType1=Marjin pada harga vendor terbaik
+MargeType2=Marjin Harga Rata-Rata Tertimbang (WAP)
+MargeType3=Margin pada Harga Biaya
+MarginTypeDesc=* Margin pada harga beli terbaik = Harga jual - Harga vendor terbaik yang ditentukan pada kartu produk<br>* Margin untuk Harga Rata-rata Tertimbang (WAP) = Harga jual - Harga Rata-Rata Tertimbang Produk (WAP) atau harga vendor terbaik jika WAP belum didefinisikan<br>* Margin pada Harga biaya = Harga jual - Harga biaya ditentukan pada kartu produk atau WAP jika harga biaya tidak ditentukan, atau harga vendor terbaik jika WAP belum ditetapkan
+CostPrice=Harga biaya
+UnitCharges=Biaya unit
+Charges=Biaya
+AgentContactType=Jenis kontak agen komersial
+AgentContactTypeDetails=Tentukan jenis kontak apa (tertaut pada faktur) yang akan digunakan untuk laporan margin per kontak/alamat. Perhatikan bahwa membaca statistik pada kontak tidak dapat diandalkan karena dalam banyak kasus, kontak tersebut mungkin tidak ditentukan secara eksplisit pada faktur.
+rateMustBeNumeric=Nilai harus berupa nilai numerik
+markRateShouldBeLesserThan100=Nilai tanda harus lebih rendah dari 100
+ShowMarginInfos=Tampilkan info margin
+CheckMargins=Detail margin
+MarginPerSaleRepresentativeWarning=Laporan margin per pengguna menggunakan tautan antara pihak ketiga dan perwakilan penjualan untuk menghitung margin masing-masing perwakilan penjualan. Karena beberapa pihak ketiga mungkin tidak memiliki perwakilan penjualan khusus dan beberapa pihak ketiga mungkin terkait dengan beberapa, beberapa jumlah mungkin tidak dimasukkan ke dalam laporan ini (jika tidak ada perwakilan penjualan) dan beberapa mungkin muncul di jalur yang berbeda (untuk setiap perwakilan penjualan) .

@@ -1,0 +1,84 @@
+# Dolibarr language file - Source file is en_US - agenda
+EventReports=Comptes rendus d'événements
+ToUserOfGroup=Événement attribué à n'importe quel utilisateur du groupe
+AgendaAutoActionDesc=Ici vous pouvez définir les événements que vous souhaitez que Dolibarr crée automatiquement dans l'Agenda. Si rien n'est coché, seules les actions manuelles seront incluses dans les journaux et affichées dans l'Agenda. Le suivi automatique des actions métiers effectuées sur les objets (validation, changement de statut) ne sera pas sauvegardé.
+AgendaSetupOtherDesc=Cette page fournit des options permettant d'exporter vos événements Dolibarr vers un calendrier externe (Thunderbird, Google Calendar etc...)
+EventRemindersByEmailNotEnabled=Les rappels d'événements par e-mail n'ont pas été activés dans la configuration du module %s.
+NewCompanyToDolibarr=Le tiers %s a été créé
+COMPANY_MODIFYInDolibarr=Tierce partie %s modifiée
+COMPANY_DELETEInDolibarr=Tierce partie %s supprimée
+PropalBackToDraftInDolibarr=La proposition %s revient au statut de brouillon
+InvoicePaidInDolibarr=La facture %s a changé en payé
+MemberValidatedInDolibarr=Membre %s validé
+MemberModifiedInDolibarr=Membre %s modifié
+MemberResiliatedInDolibarr=Membre %s terminé
+MemberDeletedInDolibarr=Membre %s supprimé
+MemberExcludedInDolibarr=Membre %s exclu
+MemberSubscriptionAddedInDolibarr=Abonnement %s pour le membre %s ajouté
+MemberSubscriptionModifiedInDolibarr=Abonnement %s pour le membre %s modifié
+MemberSubscriptionDeletedInDolibarr=Abonnement %s pour le membre %s supprimé
+ShipmentUnClassifyCloseddInDolibarr=Expédition %s classée réouverture
+ShipmentBackToDraftInDolibarr=L'expédition %s revient au statut de brouillon
+ShipmentDeletedInDolibarr=Envoi %s supprimé
+OrderCreatedInDolibarr=L'ordre %s a été créé
+OrderDeliveredInDolibarr=Commande %s classée Délivrée
+ContractSentByEMail=Contrat %s envoyé par email
+OrderSentByEMail=Commande client %s envoyée par e-mail
+InvoiceSentByEMail=Facture client %s envoyée par e-mail
+SupplierOrderSentByEMail=Bon de commande %s envoyé par email
+ORDER_SUPPLIER_DELETEInDolibarr=Bon de commande %s supprimé
+SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par e-mail
+ShippingSentByEMail=Expédition %s envoyée par email
+InterventionSentByEMail=Intervention %s envoyée par email
+ProposalDeleted=Proposition supprimée
+DraftInvoiceDeleted=Projet de facture supprimé
+CONTACT_CREATEInDolibarr=Contact %s créé
+CONTACT_MODIFYInDolibarr=Contacter %s modifié
+CONTACT_DELETEInDolibarr=Contact %s supprimé
+PRODUCT_DELETEInDolibarr=Produit %s supprimé
+EXPENSE_REPORT_CREATEInDolibarr=Rapport de dépenses %s créé
+EXPENSE_REPORT_APPROVEInDolibarr=Rapport de dépenses %s approuvé
+EXPENSE_REPORT_DELETEInDolibarr=Rapport de dépenses %s supprimé
+EXPENSE_REPORT_REFUSEDInDolibarr=Rapport de dépenses %s refusé
+TICKET_MODIFYInDolibarr=Billet %s modifié
+TICKET_ASSIGNEDInDolibarr=Ticket %s attribué
+TICKET_DELETEInDolibarr=Billet %s supprimé
+BOM_VALIDATEInDolibarr=BOM validé
+BOM_UNVALIDATEInDolibarr=BOM non validé
+BOM_CLOSEInDolibarr=BOM désactivé
+BOM_REOPENInDolibarr=Réouverture du BOM
+BOM_DELETEInDolibarr=Nomenclature supprimée
+MRP_MO_VALIDATEInDolibarr=MO validé
+MRP_MO_UNVALIDATEInDolibarr=MO passe au statut de projet
+MRP_MO_PRODUCEDInDolibarr=MO produit
+MRP_MO_DELETEInDolibarr=MO supprimé
+MRP_MO_CANCELInDolibarr=MO annulé
+AgendaModelModule=Modèles de document pour l'événement
+AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
+AgendaUrlOptions3=<b>logina=%s</b> pour restreindre la sortie aux actions appartenant à un utilisateur <b>%s</b> (utilisez <b>logina=!%s</b> pour les événements qui n'appartiennent pas à l'utilisateur).
+AgendaUrlOptions4=<b>logint=%s</b> pour restreindre la sortie aux actions attribuées à l'utilisateur <b>%s</b> (propriétaire et autres).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre la sortie aux actions liées au projet <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> pour obtenir des événements automatiques ou manuels
+AgendaUrlOptionsCode=<b>actioncode=%s</b> pour obtenir uniquement les événements avec un code donné
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de vacances.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> pour limiter aux événements des %s derniers jours (la valeur par défaut est %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> pour limiter aux 50 derniers événements (la valeur par défaut et le maximum sont %s).
+AgendaHideBirthdayEvents=Cacher les dates d'anniversaire des contacts
+ExportDataset_event1=Liste évênements de l'agenda
+ExtSitesEnableThisTool=Afficher les calendriers externes (définis dans la configuration globale) dans Agenda. N'affecte pas les calendriers externes définis par les utilisateurs.
+AgendaExtNb=Calendrier n° %s
+VisibleTimeRange=Plage d'heures visibles
+VisibleDaysRange=Plage de jours visibles
+ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner l'événement <b>%s</b>?
+RepeatEvent=Répéter événement
+EveryDay=Tous les jours
+DateStartPlusOne=Date de début +1 heure
+SetAllEventsToTodo=Définir tous les événements sur todo
+SetAllEventsToInProgress=Définir tous les événements comme en cours
+SetAllEventsToFinished=Définir tous les événements comme terminés
+BrowserPush=Notification contextuelle du navigateur
+AgendaShowBookcalCalendar=Calendrier de réservation : %s
+BookcalLabelAvailabilityHelp=Libellé de la plage de disponibilité. Par exemple :<br>Disponibilité générale<br>Disponibilité pendant les vacances de Noël
+AppointmentDuration =Durée du rendez-vous : %s
+BookingReservationHourAfter=Nous confirmons la réservation de notre rendez-vous à la date %s
+ReadMore =En savoir plus

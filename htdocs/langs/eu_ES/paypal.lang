@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal moduluaren konfigurazioa
+PaypalDesc=Modulu honek bezeroek <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> bidez ordaintzea ahalbidetzen du. Hau ordainketa berezi baterako edo Dolibarr objektu bati lotutako ordainketa baterako erabil daiteke (faktura, eskaera, ...).
+PaypalOrCBDoPayment=Ordaindu PayPal-ekin (Txartela edo PayPal)
+PaypalDoPayment=Ordaindu PayPal-ekin
+PAYPAL_API_SANDBOX=Modu proba/sandbox
+PAYPAL_API_USER=API erabiltzaile-izena
+PAYPAL_API_PASSWORD=API pasahitza
+PAYPAL_API_SIGNATURE=API sinadura
+PAYPAL_SSLVERSION=Curl SSL bertsioa
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Eskaini ordainketa "integrala" (Kreditu txartela + PayPal) edo "PayPal" soilik
+PaypalModeIntegral=Integrala
+PaypalModeOnlyPaypal=PayPal bakarrik
+ONLINE_PAYMENT_CSS_URL=Lineako ordainketa-orrialdeko CSS estilo-orriaren URL aukerakoa
+ThisIsTransactionId=Hau da transakzioaren IDa: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Sartu PayPal ordainketa URLa dokumentu bat posta elektronikoz bidaltzean
+NewOnlinePaymentReceived=Ordainketa berria jaso da online
+NewOnlinePaymentFailed=Ordainketa berri bat online saiatu naiz, baina huts egin dut
+ONLINE_PAYMENT_SENDEMAIL=Ordainketa-saiakera bakoitzaren ondoren jakinarazpenak jasotzeko helbide elektronikoa (arrakasta eta porrotaren kasuan)
+ReturnURLAfterPayment=Ordainketaren ondoren itzuli URLa
+ValidationOfOnlinePaymentFailed=Lineako ordainketaren baliozkotzea huts egin du
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Ordainketa-sistemak ordainketaren baieztapen-orria deitu du eta errore bat itzuli du.
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API deiak huts egin du.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API deiak huts egin du.
+DetailedErrorMessage=Errore-mezu zehatza
+ShortErrorMessage=Errore-mezu laburra
+ErrorCode=Errore kodea
+ErrorSeverityCode=Errorearen larritasun-kodea
+OnlinePaymentSystem=Online ordainketa sistema
+PaypalLiveEnabled=PayPal "zuzeneko" modua gaituta (bestela proba/sandbox modua)
+PaypalImportPayment=Inportatu PayPal ordainketak
+PostActionAfterPayment=Ordainketen ondoren argitaratu ekintzak
+ARollbackWasPerformedOnPostActions=Argitalpen-ekintza guztietan atzera egin da. Beharrezkoak badira, eskuz burutu behar dituzu argitalpen-ekintzak.
+ValidationOfPaymentFailed=Ordainketaren baliozkotzeak huts egin du
+CardOwner=Txartelaren titularra
+PayPalBalance=Paypal kreditua
+OnlineSubscriptionPaymentLine=Online harpidetza erregistratua %s<br> helbidean. Ordaindua %s<br> bidez. Jatorrizko IP helbidea: %s<br>. Transakzioaren IDa: %s.

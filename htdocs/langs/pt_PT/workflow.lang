@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configurar módulo de fluxo de frabalho
+WorkflowDesc=Este módulo fornece algumas ações automáticas. Por padrão, o fluxo de trabalho é aberto (você pode fazer as coisas na ordem desejada), mas aqui você pode ativar algumas ações automáticas.
+ThereIsNoWorkflowToModify=Não há modificações de fluxo de trabalho disponíveis para os módulos ativados.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=automaticamente crie um encomenda de vendas depois que um Orçamento for assinado (o novo encomenda terá o mesmo valor que orçamento)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar automaticamente uma fatura do cliente depois que uma proposta comercial for assinada (a nova fatura terá o mesmo valor da proposta)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura a cliente após a validação de um contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=automaticamente crie um fatura de clientes depois que uma venda encomenda for fechada (o novo fatura terá o mesmo valor que encomenda)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Na criação do ticket, automaticamente crie um intervensão.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Quando uma venda encomenda é definida como faturado, classifique a fonte vinculada orçamentos como faturado (e se o valor do encomenda for igual ao valor total do orçamentos)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Quando um fatura de clientes for validado, classifique a origem vinculada orçamentos como faturado (e se a quantidade de fatura for igual à quantidade total do orçamentos vinculado e assinado)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes é definido como pago, classifique os pedidos de venda de origem vinculados como faturado (e se o valor do fatura for igual ao valor total dos pedidos de venda vinculados). Se você gerar 1 fatura para n pedidos, isso poderá definir todos os pedidos como faturado também.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes for validado, classifique todos os pedidos de venda de origem vinculados como faturado (e se o valor do fatura for o mesmo que o valor total dos pedidos de venda de origem vinculados). Se você gerar 1 fatura comum para n pedidos, isso poderá definir todos os pedidos de origem como faturado.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Quando um fatura de clientes for validado, classifique as vendas vinculadas encomenda (se houver apenas uma) como faturado, se o valor total da venda vinculada encomenda for igual ao valor total de todas as faturas emitidas a partir dela. Se você gerar n faturas para 1 encomenda, isso permitirá definir o encomenda como faturado assim que todas as faturas forem validadas.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Quando um Expedição for validado, classifique os pedidos de vendas de origem vinculada como enviados (e se a quantidade enviada por todas as remessas for a mesma que no encomenda a ser atualizado)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Quando um Expedição é fechado, classifique as vendas de origem vinculadas encomenda como enviadas (e se a quantidade enviada por todas as remessas for a mesma que no encomenda a ser atualizado)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Quando um Fornecedor, Vendedor fatura é validado, classifique a fonte vinculada Fornecedor, Vendedor orçamento como faturado (e se a quantidade de fatura for o mesmo que o valor total do orçamentos vinculado)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Quando um Fornecedor, Vendedor fatura for validado, classifique a compra de origem vinculada encomenda como faturado (e se o valor do fatura for igual ao valor total dos pedidos vinculados)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Quando um receção for validado, classifique a compra de origem vinculada encomenda como recebida (e se a quantidade recebida por todas as recepções for a mesma da compra encomenda a ser atualizada)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Quando um receção for fechado, classifique os pedidos de compra de origem vinculada como recebidos (e se a quantidade recebida por todas as recepções emitidas da compra encomenda for a mesma da compra encomenda a ser atualizada)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Quando um fatura de clientes for validado, classifique a origem vinculada Expedição como fechada (e se o valor do fatura for igual ao valor total das remessas vinculadas)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Quando um fatura de clientes for validado, classifique a origem vinculada Expedição como faturado (e se o valor do fatura for igual ao valor total das remessas vinculadas)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Quando uma compra fatura for validada, classifique os recebimentos de origem vinculados como fechados (e se o valor do fatura for igual ao valor total dos recebimentos vinculados)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Quando uma compra fatura for validada, classifique as recepções de origem vinculadas como faturado (e se o valor do fatura for igual ao valor total das recepções vinculadas)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Quando um tíquete é criado, hiperligação, conexão ele com os contratos disponíveis, correspondendo ao mesmo terceiro que o tíquete
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Ao vincular automaticamente um tíquete com contratos, pesquise contratos entre aqueles das empresas-mãe
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fechar todas as intervenções vinculadas ao ticket quando um ticket for fechado
+AutomaticCreation=Criação automática
+AutomaticClassification=Classificação automática
+AutomaticClosing=Fechamento automático
+AutomaticLinking=Vinculação automática

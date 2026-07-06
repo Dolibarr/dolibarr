@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Рекрутинг
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Управляйте кампаниями по найму на новые рабочие места и следите за ними
+# Admin page
+RecruitmentSetup = Настройка набора
+RecruitmentSetupPage = Введите здесь настройки основных опций модуля найма
+RecruitmentArea=Рекрутинговая зона
+PublicInterfaceRecruitmentDesc=Публичные страницы вакансий - это общедоступные URL-адреса для отображения открытых вакансий и ответа на них. Для каждой открытой вакансии есть одна отдельная ссылка, которая находится в каждой записи о вакансии.
+EnablePublicRecruitmentPages=Включить публичные страницы открытых вакансий
+
+NbOfEmployeesExpected=Ожидаемое количество сотрудников
+JobLabel=Ярлык должности
+WorkPlace=Рабочее место
+DateExpected=Ожидаемая дата
+FutureManager=Будущий менеджер
+ResponsibleOfRecruitement=Ответственный за набор
+IfJobIsLocatedAtAPartner=Если работа находится у партнера
+PositionToBeFilled=Должность
+PositionsToBeFilled=Вакансии
+ListOfPositionsToBeFilled=Список вакансий
+NewPositionToBeFilled=Новые рабочие места
+JobOfferToBeFilled=Должность быть заполнена
+ThisIsInformationOnJobPosition=Информация о вакансии, которую необходимо заполнить
+ContactForRecruitment=Контакт для набора
+EmailRecruiter=Написать рекрутеру
+ToUseAGenericEmail=Чтобы использовать общий адрес электронной почты. Если не определено, будет использоваться адрес электронной почты ответственного за набор персонала.
+NewCandidature=Новое приложение
+ListOfCandidatures=Список приложений
+Remuneration=Зарплата
+RequestedRemuneration=Запрашиваемая зарплата
+ProposedRemuneration=Предлагаемая зарплата
+ContractProposed=Предлагаемый контракт
+ContractSigned=Контракт подписан
+ContractRefused=Контракт отклонен
+RecruitmentCandidature=Заявление
+JobPositions=Вакансии
+RecruitmentCandidatures=Приложения
+InterviewToDo=Контакты для подписки
+AnswerCandidature=Ответ приложения
+YourCandidature=Ваше приложение
+YourCandidatureAnswerMessage=Спасибо за заявку.<br> ...
+JobClosedTextCandidateFound=Вакансия закрыта. Вакансия заполнена.
+JobClosedTextCanceled=Вакансия закрыта.
+ExtrafieldsJobPosition=Дополнительные атрибуты (должности)
+ExtrafieldsApplication=Дополнительные атрибуты (заявления о приеме на работу)
+MakeOffer=Сделай предложение
+WeAreRecruiting=Мы набираем. Это список вакансий, которые необходимо заполнить...
+NoPositionOpen=На данный момент открытых позиций нет
+ConfirmClose=Подтвердить отмену
+ConfirmCloseAsk=Вы действительно хотите — отменить этой кандидатуре найма
+Recruitment=Рекрутинг
+ApplyJobCandidature=Подать заявку на эту работу
+ErrorRecruitmmentCandidatureAlreadyExists= Кандидатура для набора уже существует с адресом электронной почты %s
+RecruitmentCandidatureSaved=Кандидатура для набора успешно сохранена
+NoOpenJobOffer=На данный момент нет предложений работы открыть

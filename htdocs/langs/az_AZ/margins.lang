@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marja
+Margins=Haşiyələr
+TotalMargin=Ümumi marja
+MarginOnProducts=Marja / Məhsullar
+MarginOnServices=Marja / Xidmətlər
+MarginRate=Marja dərəcəsi
+ModifyMarginRates=Marja dərəcələrini dəyişdirin
+MarkRate=Mark dərəcəsi
+DisplayMarginRates=Marja dərəcələrini göstərin
+DisplayMarkRates=İşarə dərəcələrini göstərin
+InputPrice=Giriş qiyməti
+margin=Mənfəət marjalarının idarə edilməsi
+margesSetup=Mənfəət marjalarının idarə edilməsinin qurulması
+MarginDetails=Marja detalları
+ProductMargins=Məhsul marjaları
+CustomerMargins=Müştəri marjaları
+SalesRepresentativeMargins=Satış nümayəndəsi marjaları
+ContactOfInvoice=Faktura ilə əlaqə
+UserMargins=İstifadəçi kənarları
+ProductService=Məhsul və ya Xidmət
+AllProducts=Bütün məhsullar və xidmətlər
+ChooseProduct/Service=Məhsul və ya xidmət seçin
+ForceBuyingPriceIfNull=Müəyyən edilmədikdə alış/maya dəyərini satış qiymətinə məcbur edin
+ForceBuyingPriceIfNullDetails=Yeni sətir əlavə edərkən alış/maya dəyəri göstərilmirsə və bu seçim "ON" olarsa, marja yeni sətirdə 0%% olacaq (alış/maya dəyəri = satış qiyməti). Bu seçim "OFF" olarsa (tövsiyə olunur), marja defolt olaraq təklif olunan dəyərə bərabər olacaq (və heç bir defolt dəyər tapılmadıqda 100%% ola bilər).
+MARGIN_METHODE_FOR_DISCOUNT=Qlobal endirimlər üçün marja metodu
+UseDiscountAsProduct=Məhsul kimi
+UseDiscountAsService=Xidmət olaraq
+UseDiscountOnTotal=Ara cəmi üzrə
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Qlobal endirimin məhsul, xidmət kimi və ya marja hesablanması üçün yalnız ara cəmi kimi qəbul edildiyini müəyyən edir.
+MARGIN_TYPE=Marjanın hesablanması üçün defolt olaraq təklif olunan alış/qiymət qiyməti
+MargeType1=Ən yaxşı satıcı qiymətində marja
+MargeType2=Çəkili Orta Qiymət üzrə Marja (WAP)
+MargeType3=Xərc qiymətində marja
+MarginTypeDesc=* Ən yaxşı alış qiyməti üzrə marja = Satış qiyməti - Məhsul kartında müəyyən edilmiş ən yaxşı satıcı qiyməti<br>* Çəkili Orta Qiymət üzrə Marja (WAP) = Satış qiyməti - Məhsulun Çəkili Orta Qiyməti (WAP) və ya WAP hələ müəyyən edilməyibsə ən yaxşı satıcı qiyməti<br>* Xərc qiyməti üzrə marja = Satış qiyməti - Məhsul kartında və ya maya dəyəri müəyyən edilmədikdə WAP-da müəyyən edilmiş maya dəyəri və ya ən yaxşı satıcı qiyməti WAP hələ müəyyən edilməmişdir
+CostPrice=Xərc qiyməti
+UnitCharges=Vahid ödənişləri
+Charges=Ödənişlər
+AgentContactType=Kommersiya agenti ilə əlaqə növü
+AgentContactTypeDetails=Kontakt/ünvan üzrə marja hesabatı üçün hansı əlaqə növünün (qaimə-fakturalarda əlaqələndirilmiş) istifadə ediləcəyini müəyyənləşdirin. Qeyd edək ki, kontakt üzrə statistikanın oxunması etibarlı deyil, çünki əksər hallarda əlaqə fakturalarda açıq şəkildə müəyyən olunmaya bilər.
+rateMustBeNumeric=Dərəcə rəqəmsal dəyər olmalıdır
+markRateShouldBeLesserThan100=Mark dərəcəsi 100-dən aşağı olmalıdır
+ShowMarginInfos=Haşiyə məlumatlarını göstərin
+CheckMargins=Kenar detalları
+MarginPerSaleRepresentativeWarning=İstifadəçiyə düşən marja hesabatı hər bir satış nümayəndəsinin marjasını hesablamaq üçün üçüncü tərəflər və satış nümayəndələri arasındakı əlaqədən istifadə edir. Bəzi üçüncü tərəflərin xüsusi satış nümayəndəsi olmaya və bəzi üçüncü tərəflər bir neçə şəxslə əlaqələndirilə bildiyinə görə, bəzi məbləğlər bu hesabata daxil edilməyə bilər (satış nümayəndəsi yoxdursa) və bəziləri müxtəlif sətirlərdə görünə bilər (hər satış nümayəndəsi üçün) .

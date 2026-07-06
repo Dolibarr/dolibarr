@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - accountancy
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
+BookkeepingNumRefModelDesc =Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.

@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - assets
+NewAsset=Neuer Vermögenswert
+AccountancyCodeAsset=Buchungskonto (Vermögenswert)
+AccountancyCodeDepreciationAsset=Abschreibungskonto (Sachwert)
+AccountancyCodeDepreciationExpense=Abschreibungskonto (Aufwand)
+AssetsLines=Vermögen
+ModuleAssetsName=Vermögen
+ModuleAssetsDesc=Beschreibung Vermögenswerte
+AssetSetup=Einstellungen Vermögenswerte
+AssetSetupPage=Einstellungen Vermögenswerte
+MenuAssets=Vermögen
+MenuNewAsset=Neuer Vermögenswert
+Assets=Vermögen
+AssetTypeInProgress=In Bearbeitung
+AssetInProgress=In Bearbeitung

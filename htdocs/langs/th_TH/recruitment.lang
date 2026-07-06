@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = รับสมัคร
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = จัดการและติดตามการรณรงค์จัดหางานในตำแหน่งงานใหม่
+# Admin page
+RecruitmentSetup = การตั้งค่าการสรรหาบุคลากร
+RecruitmentSetupPage = ป้อนการตั้งค่าตัวเลือกหลักสำหรับโมดูลการสรรหาบุคลากรที่นี่
+RecruitmentArea=พื้นที่รับสมัคร
+PublicInterfaceRecruitmentDesc=หน้าสาธารณะของงานคือ URL สาธารณะที่จะแสดงและตอบงานที่เปิดอยู่ มีลิงค์ที่แตกต่างกันหนึ่งลิงค์สำหรับงานที่เปิดอยู่แต่ละงาน ซึ่งพบได้ในแต่ละเรกคอร์ดงาน
+EnablePublicRecruitmentPages=เปิดใช้งานหน้าสาธารณะของงานที่เปิดอยู่
+
+NbOfEmployeesExpected=คาดว่าจะมีพนักงานจำนวนไม่มาก
+JobLabel=ป้ายตำแหน่งงาน
+WorkPlace=สถานที่ทำงาน
+DateExpected=วันที่คาดหวัง
+FutureManager=ผู้จัดการในอนาคต
+ResponsibleOfRecruitement=รับผิดชอบในการสรรหา
+IfJobIsLocatedAtAPartner=หากงานอยู่ที่สถานที่คู่สัญญา
+PositionToBeFilled=ตำแหน่ง
+PositionsToBeFilled=ตำแหน่งงาน
+ListOfPositionsToBeFilled=รายชื่อตำแหน่งงาน
+NewPositionToBeFilled=ตำแหน่งงานใหม่
+JobOfferToBeFilled=ตำแหน่งงานที่ต้องการเติมเต็ม
+ThisIsInformationOnJobPosition=ข้อมูลตำแหน่งงานที่ต้องการกรอก
+ContactForRecruitment=ติดต่อสมัครงาน
+EmailRecruiter=รับสมัครอีเมล์
+ToUseAGenericEmail=หากต้องการใช้อีเมลทั่วไป หากไม่ได้กำหนดไว้ ระบบจะใช้อีเมลของผู้รับผิดชอบในการสรรหาบุคลากร
+NewCandidature=แอปพลิเคชั่นใหม่
+ListOfCandidatures=รายการแอปพลิเคชัน
+Remuneration=เงินเดือน
+RequestedRemuneration=เงินเดือนที่ขอ
+ProposedRemuneration=เงินเดือนที่เสนอ
+ContractProposed=สัญญาที่เสนอ
+ContractSigned=เซ็นสัญญาแล้ว
+ContractRefused=สัญญาถูกปฏิเสธ
+RecruitmentCandidature=แอปพลิเคชัน
+JobPositions=ตำแหน่งงาน
+RecruitmentCandidatures=การใช้งาน
+InterviewToDo=ช่องทางการติดต่อติดตาม
+AnswerCandidature=คำตอบการสมัคร
+YourCandidature=ใบสมัครของคุณ
+YourCandidatureAnswerMessage=ขอบคุณสำหรับการสมัคร<br>...
+JobClosedTextCandidateFound=ตำแหน่งงานถูกปิด ตำแหน่งถูกเติมเต็มแล้ว
+JobClosedTextCanceled=ตำแหน่งงานถูกปิด
+ExtrafieldsJobPosition=คุณสมบัติเสริม (ตำแหน่งงาน)
+ExtrafieldsApplication=คุณสมบัติเสริม (การสมัครงาน)
+MakeOffer=ทำข้อเสนอ
+WeAreRecruiting=เรากำลังรับสมัครงาน. นี่คือรายการตำแหน่งงานที่เปิดรับ...
+NoPositionOpen=ไม่มีตำแหน่งที่เปิดอยู่ในขณะนี้
+ConfirmClose=ยืนยันการยกเลิก
+ConfirmCloseAsk=คุณแน่ใจหรือไม่ว่าต้องการยกเลิกผู้สมัครรับสมัครงานรายนี้
+Recruitment=การรับสมัคร
+ApplyJobCandidature=สมัครงานนี้
+ErrorRecruitmmentCandidatureAlreadyExists= มีผู้สมัครเข้ารับบริการแล้วโดยใช้อีเมล %s
+RecruitmentCandidatureSaved=บันทึกข้อมูลการรับสมัครเรียบร้อยแล้ว
+NoOpenJobOffer=ยังไม่มีตำแหน่งงานว่างในขณะนี้

@@ -1,0 +1,39 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Postavke workflow modula
+WorkflowDesc=Ovaj modul pruža neke automatske radnje. Po defaultu, tok posla je otvoren (možete raditi stvari onim redoslijedom koji želite), ali ovdje možete aktivirati neke automatske radnje.
+ThereIsNoWorkflowToModify=Nema dostupnih modifikacija toka posla sa aktiviranim modulima.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatski kreirajte prodajni nalog nakon što je komercijalni prijedlog potpisan (nova narudžba će imati isti iznos kao i ponuda)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatski kreirajte fakturu kupca nakon potpisivanja komercijalne ponude (nova faktura će imati isti iznos kao i ponuda)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatski kreirajte fakturu kupca nakon što se ugovor potvrdi
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatski kreirajte fakturu kupca nakon što se prodajni nalog zatvori (nova faktura će imati isti iznos kao narudžba)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Prilikom kreiranja ulaznice, automatski kreirajte intervenciju.
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Kada je prodajna narudžba postavljena na fakturiranje, klasificiraj povezane izvorne prijedloge kao fakturirane (i ako je iznos narudžbe isti kao i ukupan iznos potpisanih povezanih prijedloga)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Kada se faktura kupca potvrdi, klasificiraj povezane izvorne prijedloge kao fakturirane (i ako je iznos fakture isti kao i ukupan iznos potpisanih povezanih prijedloga)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kada je faktura kupca postavljena na plaćeno, klasificirajte povezane izvorne prodajne narudžbe kao fakturirane (i ako je iznos fakture isti kao i ukupni iznos povezanih prodajnih narudžbi). Ako generirate 1 fakturu za n narudžbi, ovo može postaviti sve narudžbe kao fakturirane.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kada se faktura kupca potvrdi, klasificirajte sve povezane izvorne prodajne narudžbe kao fakturirane (i ako je iznos fakture isti kao i ukupni iznos povezanih izvornih prodajnih narudžbi). Ako generirate 1 zajedničku fakturu za n narudžbi, ovo može postaviti sve izvorne narudžbe kao fakturirane.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Kada se faktura kupca potvrdi, povezana narudžba prodaje (ako postoji samo jedna) se klasifikuje kao fakturisana, ako je ukupan iznos povezane narudžbe prodaje jednak ukupnom iznosu svih faktura izdatih iz nje. Ako generišete n faktura za 1 narudžbu, ovo omogućava da se narudžba postavi kao fakturisana čim se sve fakture potvrde.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kada je pošiljka validirana, klasificirajte povezane izvorne prodajne narudžbe kao otpremljene (i ako je količina otpremljena svim pošiljkama ista kao u narudžbi koju treba ažurirati)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Kada je pošiljka zatvorena, klasificirajte povezanu izvornu prodajnu narudžbu kao otpremljenu (i ako je količina otpremljena svim pošiljkama ista kao u narudžbi koju treba ažurirati)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Kada se faktura dobavljača potvrdi, klasificiraj povezani izvorni prijedlog dobavljača kao fakturisan (i ako je iznos fakture isti kao i ukupan iznos povezanih prijedloga)
+# Autoclassify purchase order
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kada se faktura dobavljača potvrdi, klasificiraj narudžbenicu povezanog izvora kao fakturiranu (i ako je iznos fakture isti kao i ukupan iznos povezanih narudžbi)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Kada je prijem potvrđen, klasificirajte narudžbenicu povezanog izvora kao primljenu (i ako je količina primljena od strane svih prijema ista kao u narudžbenici za ažuriranje)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Kada je prijem zatvoren, klasificirajte povezane izvorne narudžbenice kao primljene (i ako je količina primljena od strane svih prijema izdanih iz narudžbenice ista kao u narudžbenici koju treba ažurirati)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Kada se faktura kupca potvrdi, klasificirajte povezanu izvornu pošiljku kao zatvorenu (i ako je iznos fakture isti kao i ukupan iznos povezanih pošiljki)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Kada se faktura kupca potvrdi, klasificirajte povezanu izvornu pošiljku kao fakturiranu (i ako je iznos fakture isti kao i ukupan iznos povezanih pošiljki)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Kada se faktura za kupovinu potvrdi, klasificiraj povezane izvorne prijeme kao zatvorene (i ako je iznos fakture isti kao i ukupan iznos povezanih prijema)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Kada se faktura za kupovinu potvrdi, klasificirajte povezane izvorne prijeme kao fakturirane (i ako je iznos fakture isti kao i ukupan iznos povezanih prijema)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Kada se kreira tiket, povežite ga sa dostupnim ugovorima, koji odgovaraju istoj trećoj strani kao i tiket.
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Prilikom automatskog povezivanja tiketa sa ugovorima, pretražite ugovore među onima matičnih kompanija
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Zatvorite sve intervencije vezane za kartu kada se karta zatvori
+AutomaticCreation=Automatsko kreiranje
+AutomaticClassification=Automatska klasifikacija
+AutomaticClosing=Automatsko zatvaranje
+AutomaticLinking=Automatsko povezivanje

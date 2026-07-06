@@ -1,0 +1,4 @@
+README (english)
+--------------------------------
+This directory contains some sample files to test ldap command on command line.
+They are used to help developmement and debugging of Dolibarr LDAP features.

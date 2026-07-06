@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Mailegua
+Loans=Maileguak
+NewLoan=Mailegu berria
+ShowLoan=Erakutsi mailegua
+PaymentLoan=Maileguaren ordainketa
+LoanPayment=Maileguaren ordainketa
+ShowLoanPayment=Erakutsi maileguaren ordainketa
+LoanCapital=Hiriburua
+Insurance=Asegurua
+Interest=Interesa
+Nbterms=Termino kopurua
+Term=Terminoa
+LoanAccountancyCapitalCode=Kontabilitate kontuaren kapitala
+LoanAccountancyInsuranceCode=Kontabilitate kontu asegurua
+LoanAccountancyInterestCode=Kontabilitate kontuaren interesa
+ConfirmDeleteLoan=Berretsi mailegu hau ezabatzen
+LoanDeleted=Mailegua behar bezala ezabatu da
+ConfirmPayLoan=Berretsi mailegu hau ordainduta sailkatuta
+LoanPaid=Mailegua ordainduta
+ListLoanAssociatedProject=Proiektuarekin lotutako maileguen zerrenda
+AddLoan=Mailegua sortu
+FinancialCommitment=Konpromiso ekonomikoa
+InterestAmount=Interesa
+CapitalRemain=Kapitala geratzen da
+TermPaidAllreadyPaid = Epe hau dagoeneko ordainduta dago
+CantUseScheduleWithLoanStartedToPaid = Ezin da ordainketa hasita duen mailegu baten kronograma sortu
+CantModifyInterestIfScheduleIsUsed = Ezin duzu interesa aldatu ordutegia erabiltzen baduzu
+# Admin
+ConfigLoan=Modulu maileguaren konfigurazioa
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Kapitalerako lehenespenez erabiliko den kontua (Kontuen Planetik) (Mailegu modulua)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interesetarako lehenespenez erabiliko den kontua (Kontuen Planetik) (Mailegu modulua)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Aseguruetarako lehenespenez erabiliko den kontua (Kontuen Planetik) (Mailegu modulua)
+CreateCalcSchedule=Editatu finantza-konpromisoa

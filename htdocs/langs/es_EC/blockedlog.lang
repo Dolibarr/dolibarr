@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos en esta línea no se modificaron y la entrada sigue a la anterior.
+AddedByAuthority=Almacenado en sitio remoto
+NotAddedByAuthorityYet=Aún no almacenado en sitio remoto
+ListOfTrackedEvents=Lista de eventos de seguimiento
+TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.
+BLOCKEDLOG_REGISTRATION_NAME=Nombre de empresa
+logBILL_SENTBYMAIL=Factura del cliente enviar por correo
+logBILL_UNPAYED=Factura del cliente sin pagar
+logBILL_VALIDATE=Factura del cliente validada
+logDONATION_PAYMENT_DELETE=Eliminación lógica del pago de donaciones.
+logDON_DELETE=Eliminación lógica de la donación.
+logMEMBER_SUBSCRIPTION_DELETE=Suscripción de miembro eliminación lógica
+logPAYMENT_ADD_TO_BANK=Pago agregado al banco
+logPAYMENT_VARIOUS_CREATE=Pago (no asignado a una factura) creado
+logPAYMENT_VARIOUS_DELETE=Pago (no asignado a una factura) eliminación lógica
+logPAYMENT_VARIOUS_MODIFY=Pago (no asignado a una factura) modificado

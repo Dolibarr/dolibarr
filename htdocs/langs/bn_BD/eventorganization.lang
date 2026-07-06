@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = ইভেন্ট অর্গানাইজেশন
+EventOrganizationDescription = মডিউল প্রকল্পের মাধ্যমে ইভেন্ট সংগঠন
+EventOrganizationDescriptionLong= একটি ইভেন্টের সংগঠন পরিচালনা করুন (শো, সম্মেলন, অংশগ্রহণকারী বা বক্তা, পরামর্শ, ভোট বা নিবন্ধনের জন্য সর্বজনীন পৃষ্ঠা সহ)
+EventOrganizationMenuLeft = সংগঠিত অনুষ্ঠান
+EventOrganizationConferenceOrBoothMenuLeft = সম্মেলন বা বুথ
+PaymentEvent=ইভেন্ট পেমেন্ট
+EventFee=ইভেন্ট ফি
+# Admin page
+NewRegistration=নিবন্ধন
+EventOrganizationSetup=ইভেন্ট অর্গানাইজেশন সেটআপ
+EventOrganization=ইভেন্ট সংগঠন
+EventOrganizationSetupPage = ইভেন্ট সংস্থা সেটআপ পৃষ্ঠা
+EVENTORGANIZATION_TASK_LABEL = প্রোজেক্ট যাচাই করা হলে স্বয়ংক্রিয়ভাবে তৈরি করা কাজের লেবেল
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=আপনার যদি স্বয়ংক্রিয়ভাবে কাজ তৈরি করার প্রয়োজন না হয় তবে খালি রাখুন।
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = তৃতীয় পক্ষের সাথে যুক্ত করার জন্য বিভাগ স্বয়ংক্রিয়ভাবে তৈরি হয় যখন কেউ একটি সম্মেলনের পরামর্শ দেয়
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = তৃতীয় পক্ষের সাথে যুক্ত করার জন্য বিভাগ স্বয়ংক্রিয়ভাবে তৈরি হয় যখন তারা একটি বুথের পরামর্শ দেয়
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = একটি সম্মেলনের পরামর্শ পাওয়ার পরে পাঠানোর জন্য ইমেলের টেমপ্লেট।
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = একটি বুথের পরামর্শ পাওয়ার পর পাঠানোর জন্য ইমেলের টেমপ্লেট।
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = একটি বুথে নিবন্ধনের পরে পাঠানোর জন্য ইমেলের টেমপ্লেট প্রদান করা হয়েছে।
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = একটি ইভেন্টে নিবন্ধন করার পরে পাঠানোর জন্য ইমেলের টেমপ্লেট প্রদান করা হয়েছে।
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = স্পিকারের কাছে "ইমেল পাঠান" ম্যাসাকশন থেকে ইমেল পাঠানোর সময় ব্যবহার করার জন্য ইমেলের টেমপ্লেট
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = অংশগ্রহণকারীদের তালিকায় ম্যাসাকশন "ইমেল পাঠান" থেকে ইমেল পাঠানোর সময় ব্যবহার করার জন্য ইমেলের টেমপ্লেট
+EVENTORGANIZATION_FILTERATTENDEES_CAT = একজন অংশগ্রহণকারী তৈরি/যোগ করার ফর্মে, তৃতীয় পক্ষের তালিকাকে তৃতীয় পক্ষের বিভাগে সীমাবদ্ধ করে
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = একজন অংশগ্রহণকারী তৈরি/যোগ করার ফর্মে, প্রকৃতির সাথে তৃতীয় পক্ষের তালিকাকে তৃতীয় পক্ষের কাছে সীমাবদ্ধ করে
+# Object
+OrganizedEvent=সংগঠিত অনুষ্ঠান
+EventOrganizationConfOrBooth= সম্মেলন বা বুথ
+EventOrganizationConfOrBoothes=সম্মেলন বা বুথ
+ManageOrganizeEvent = একটি ইভেন্টের সংগঠন পরিচালনা করুন
+ConferenceOrBooth = সম্মেলন বা বুথ
+ConferenceOrBoothTab = সম্মেলন বা বুথ
+AmountPaid = পরিমাণ অর্থ প্রদান করা
+DateOfRegistration = নিবন্ধনের তারিখ
+ConferenceOrBoothAttendee = সম্মেলন বা বুথ অংশগ্রহণকারী
+ApplicantOrVisitor=আবেদনকারী বা দর্শনার্থী
+Speaker=স্পিকার
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = সম্মেলনের জন্য আপনার অনুরোধ গৃহীত হয়েছে
+YourOrganizationEventBoothRequestWasReceived = বুথ জন্য আপনার অনুরোধ গৃহীত হয়েছে
+EventOrganizationEmailAskConf = সম্মেলনের জন্য অনুরোধ
+EventOrganizationEmailAskBooth = বুথের জন্য অনুরোধ
+EventOrganizationEmailBoothPayment = আপনার বুথ পেমেন্ট
+EventOrganizationEmailRegistrationPayment = একটি ইভেন্টের জন্য নিবন্ধন
+EventOrganizationMassEmailAttendees = অংশগ্রহণকারীদের সাথে যোগাযোগ
+EventOrganizationMassEmailSpeakers = বক্তাদের সাথে যোগাযোগ
+ToSpeakers=বক্তাদের কাছে
+# Event
+AllowUnknownPeopleSuggestConf=লোকেদের সম্মেলন প্রস্তাব করার অনুমতি দিন
+AllowUnknownPeopleSuggestConfHelp=অজানা লোকেদেরকে তারা করতে চান এমন একটি সম্মেলন প্রস্তাব করার অনুমতি দিন
+AllowUnknownPeopleSuggestBooth=লোকেদের একটি বুথের জন্য আবেদন করার অনুমতি দিন
+AllowUnknownPeopleSuggestBoothHelp=অজানা লোকদের একটি বুথের জন্য আবেদন করার অনুমতি দিন
+PriceOfRegistration=নিবন্ধনের মূল্য
+PriceOfRegistrationHelp=ইভেন্টে নিবন্ধন বা অংশগ্রহণের জন্য মূল্য দিতে হবে
+PriceOfBooth=সাবস্ক্রিপশন মূল্য একটি বুথ দাঁড়ানো
+PriceOfBoothHelp=সাবস্ক্রিপশন মূল্য একটি বুথ দাঁড়ানো
+EventOrganizationICSLinkProject=ইভেন্টের জন্য ICS লিঙ্ক করুন
+EventOrganizationICSLink=সম্মেলনের জন্য আইসিএস লিঙ্ক করুন
+ConferenceOrBoothInformation=সম্মেলন বা বুথ তথ্য
+ConferenceOrBoothFormat=কনফারেন্স বা বুথ মোড
+ConferenceOrBoothFormatID=কনফারেন্স বা বুথ মোডের আইডি
+ConferenceOrBoothFormatCode=সম্মেলন বা বুথ মোডের কোড
+ConferenceOrBoothFormatLabel=সম্মেলন বা বুথ মোডের লেবেল
+Attendees=উপস্থিতরা
+ListOfAttendeesOfEvent=ইভেন্ট প্রকল্পের অংশগ্রহণকারীদের তালিকা
+ListOfConfOrBoothOfEvent=ইভেন্ট প্রকল্পের সম্মেলন বা বুথের তালিকা
+DownloadICSLink=ICS ফাইল ডাউনলোড করুন
+EVENTORGANIZATION_SECUREKEY=একটি কনফারেন্সের পরামর্শ দেওয়ার জন্য পাবলিক রেজিস্ট্রেশন পৃষ্ঠার কী সুরক্ষিত করার জন্য বীজ
+SERVICE_BOOTH_LOCATION=একটি বুথ অবস্থান সম্পর্কে চালান সারির জন্য ব্যবহৃত পরিষেবা
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=একটি ইভেন্টে অংশগ্রহণকারী সদস্যতা সম্পর্কে চালান সারির জন্য ব্যবহৃত পরিষেবা
+NbVotes=ভোটের সংখ্যা
+# Status
+EvntOrgDraft = Draft
+EvntOrgSuggested = প্রস্তাবিত
+EvntOrgConfirmed = নিশ্চিত করা হয়েছে
+EvntOrgNotQualified = অনুত্তীর্ন
+EvntOrgDone = সম্পন্ন
+EvntOrgCancelled = বাতিল
+# Other
+SuggestForm = সাজেশন পেজ
+SuggestOrVoteForConfOrBooth = পরামর্শ বা ভোটের জন্য পৃষ্ঠা
+EvntOrgRegistrationHelpMessage = এখানে, আপনি একটি সম্মেলনের জন্য ভোট দিতে পারেন বা ইভেন্টের জন্য একটি নতুন প্রস্তাব দিতে পারেন৷ আপনি ইভেন্ট চলাকালীন একটি বুথ থাকার জন্য আবেদন করতে পারেন।
+EvntOrgRegistrationConfHelpMessage = এখানে, আপনি ইভেন্ট চলাকালীন অ্যানিমেট করার জন্য একটি নতুন সম্মেলনের পরামর্শ দিতে পারেন।
+EvntOrgRegistrationBoothHelpMessage = এখানে, আপনি ইভেন্ট চলাকালীন একটি বুথ থাকার জন্য আবেদন করতে পারেন।
+ListOfSuggestedConferences = প্রস্তাবিত সম্মেলনের তালিকা
+ListOfSuggestedBooths=প্রস্তাবিত বুথ
+ListOfConferencesOrBooths=ইভেন্ট প্রকল্পের সম্মেলন বা বুথ
+SuggestConference = একটি নতুন সম্মেলন প্রস্তাব করুন
+SuggestBooth = একটি বুথ প্রস্তাব
+ViewAndVote = প্রস্তাবিত ইভেন্টগুলির জন্য দেখুন এবং ভোট দিন
+PublicAttendeeSubscriptionGlobalPage = ইভেন্টে নিবন্ধনের জন্য পাবলিক লিঙ্ক
+PublicAttendeeSubscriptionPage = শুধুমাত্র এই ইভেন্টে নিবন্ধনের জন্য পাবলিক লিঙ্ক
+MissingOrBadSecureKey = নিরাপত্তা কীটি অবৈধ বা অনুপস্থিত৷
+EvntOrgWelcomeMessage = এই ফর্মটি আপনাকে ইভেন্টে নতুন অংশগ্রহণকারী হিসাবে নিবন্ধন করতে দেয়
+EvntOrgDuration = এই সম্মেলন শুরু হয় %s এবং শেষ হয় %s তারিখে।
+ConferenceAttendeeFee = ইভেন্টের জন্য সম্মেলনে অংশগ্রহণকারীর ফি : '%s' %s থেকে %s >
+BoothLocationFee = ইভেন্টের জন্য বুথের অবস্থান: '%s' %s থেকে %s
+EventType = ইভেন্টের ধরণ
+LabelOfBooth=বুথ লেবেল
+LabelOfconference=সম্মেলন লেবেল
+ConferenceIsNotConfirmed=নিবন্ধন উপলব্ধ নেই, সম্মেলন এখনও নিশ্চিত করা হয়নি
+EventRegistrationAreClosed=ইভেন্ট রেজিস্ট্রেশন বন্ধ আছে।
+DateMustBeBeforeThan=%s অবশ্যই %s আগে হতে হবে
+DateMustBeAfterThan=%s অবশ্যই %s এর পরে হতে হবে
+MaxNbOfAttendeesReached=অংশগ্রহণকারীদের সর্বোচ্চ সংখ্যা পৌঁছেছে
+NewSubscription=নিবন্ধন
+OrganizationEventConfRequestWasReceived=একটি সম্মেলনের জন্য আপনার পরামর্শ গৃহীত হয়েছে
+OrganizationEventBoothRequestWasReceived=একটি বুথ জন্য আপনার অনুরোধ গৃহীত হয়েছে
+OrganizationEventPaymentOfBoothWasReceived=আপনার বুথের জন্য আপনার পেমেন্ট রেকর্ড করা হয়েছে
+OrganizationEventPaymentOfRegistrationWasReceived=আপনার ইভেন্ট রেজিস্ট্রেশনের জন্য আপনার পেমেন্ট রেকর্ড করা হয়েছে
+OrganizationEventBulkMailToAttendees=এটি একজন অংশগ্রহণকারী হিসাবে ইভেন্টে আপনার অংশগ্রহণ সম্পর্কে একটি অনুস্মারক
+OrganizationEventBulkMailToSpeakers=এটি একটি স্পিকার হিসাবে ইভেন্টে আপনার অংশগ্রহণের একটি অনুস্মারক
+OrganizationEventLinkToThirdParty=তৃতীয় পক্ষের সাথে লিঙ্ক (গ্রাহক, সরবরাহকারী বা অংশীদার)
+OrganizationEvenLabelName=সম্মেলন বা বুথের পাবলিক নাম
+NewSuggestionOfBooth=একটি বুথ জন্য আবেদন
+NewSuggestionOfConference=একটি সম্মেলন অনুষ্ঠিত করার জন্য আবেদন
+EvntOrgRegistrationWelcomeMessage = সম্মেলন বা বুথ পরামর্শ পৃষ্ঠায় স্বাগতম।
+EvntOrgRegistrationConfWelcomeMessage = সম্মেলনের পরামর্শ পৃষ্ঠায় স্বাগতম।
+EvntOrgRegistrationBoothWelcomeMessage = বুথ সাজেশন পেজে স্বাগতম।
+EvntOrgVoteHelpMessage = এখানে, আপনি প্রকল্পের জন্য প্রস্তাবিত ইভেন্টগুলি দেখতে এবং ভোট দিতে পারেন৷
+VoteOk = আপনার ভোট গ্রহণ করা হয়েছে.
+AlreadyVoted = আপনি ইতিমধ্যেই এই ইভেন্টের জন্য ভোট দিয়েছেন৷
+VoteError = ভোটের সময় একটি ত্রুটি ঘটেছে, অনুগ্রহ করে আবার চেষ্টা করুন৷
+SubscriptionOk=আপনার নিবন্ধন রেকর্ড করা হয়েছে
+AmountOfRegistrationPaid=প্রদত্ত নিবন্ধনের পরিমাণ
+ConfAttendeeSubscriptionConfirmation = একটি ইভেন্টে আপনার সদস্যতার নিশ্চিতকরণ
+Attendee = অংশগ্রহণকারী
+PaymentConferenceAttendee = সম্মেলনে অংশগ্রহণকারীদের অর্থ প্রদান
+PaymentBoothLocation = বুথ অবস্থান পেমেন্ট
+DeleteConferenceOrBoothAttendee=অংশগ্রহণকারীকে সরান
+RegistrationAndPaymentWereAlreadyRecorder=<b>%s</b> ইমেলের জন্য একটি নিবন্ধন এবং একটি অর্থপ্রদান ইতিমধ্যেই রেকর্ড করা হয়েছে
+EmailAttendee=অংশগ্রহণকারী ইমেল
+EmailCompany=কোম্পানির ইমেইল
+EmailCompanyForInvoice=কোম্পানির ইমেল (চালানের জন্য, যদি অংশগ্রহণকারীর ইমেল থেকে আলাদা হয়)
+ErrorSeveralCompaniesWithEmailContactUs=এই ইমেল সহ বেশ কয়েকটি কোম্পানি পাওয়া গেছে তাই আমরা স্বয়ংক্রিয়ভাবে আপনার নিবন্ধন যাচাই করতে পারছি না। ম্যানুয়াল যাচাইকরণের জন্য অনুগ্রহ করে আমাদের সাথে %s এ যোগাযোগ করুন
+ErrorSeveralCompaniesWithNameContactUs=এই নামের বেশ কিছু কোম্পানি পাওয়া গেছে তাই আমরা আপনার নিবন্ধন স্বয়ংক্রিয়ভাবে যাচাই করতে পারছি না। ম্যানুয়াল যাচাইকরণের জন্য অনুগ্রহ করে আমাদের সাথে %s এ যোগাযোগ করুন
+NoPublicActionsAllowedForThisEvent=এই ইভেন্টের জন্য জনসাধারণের জন্য কোনো পাবলিক অ্যাকশন খোলা নেই
+MaxNbOfAttendees=অংশগ্রহণকারীদের সর্বাধিক সংখ্যা
+DateStartEvent=ইভেন্ট শুরুর তারিখ
+DateEndEvent=ইভেন্ট শেষ তারিখ
+ModifyStatus=স্থিতি পরিবর্তন করুন
+ConfirmModifyStatus=স্থিতি পরিবর্তন নিশ্চিত করুন
+ConfirmModifyStatusQuestion=আপনি কি %s নির্বাচিত রেকর্ড(গুলি) সংশোধন করার বিষয়ে নিশ্চিত?
+RecordsUpdated=%s রেকর্ড আপডেট করা হয়েছে
+RecordUpdated=রেকর্ড আপডেট করা হয়েছে
+NoRecordUpdated=কোনো রেকর্ড আপডেট করা হয়নি
+ProfitPerValidatedAttendee=অংশগ্রহণকারী প্রতি লাভ
+Confirmed=নিশ্চিত করা হয়েছে
+NotSelected=নির্বাচিত নয়
+TheLinkIsAvailableOnTheProjectEventCard=কোনও সম্মেলনের জন্য পরামর্শ দেওয়ার বা ভোট দেওয়ার বা বুথের জন্য আবেদন করার লিঙ্কগুলি প্রকল্প/ইভেন্টের পৃষ্ঠায় দেওয়া আছে।
+ShowedUp=হাজির।

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - agenda
+Actions=Termine
+EventsNb=Anzahl der Termine
+ListOfActions=Terminliste
+ExportDataset_event1=Liste der Termine
+DefaultWorkingDays=Standard-Arbeitstage (z.B.: 1-5 (Mo-Fr))
+DefaultWorkingHours=Reguläre Arbeitszeit (z.B.: 9-18)
+ExportCal=exportiere Kalender
+ExtSites=importiere externe Kalender
+ExtSiteUrlAgenda=URL für .lcal
+VisibleTimeRange=sichtbare Zeitspanne
+VisibleDaysRange=sichtbare Tagesspanne
+AddEvent=erstelle Termin
+RepeatEvent=Termin wiederholen
+EveryWeek=jede Woche
+EveryMonth=jedes Monat
+DayOfMonth=Tag
+DayOfWeek=Wochentag
+DateStartPlusOne=Terminstart + 1 Stunde
+Calendars=Kalender

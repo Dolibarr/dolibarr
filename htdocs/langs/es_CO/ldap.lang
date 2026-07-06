@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=La contraseña para el usuario <b> %s </b> en el dominio <b> %s </b> debe cambiarse.
+UserMustChangePassNextLogon=El usuario debe cambiar la contraseña en el dominio %s
+LDAPInformationsForThisContact=Información en la base de datos LDAP para este contacto
+LDAPInformationsForThisUser=Información en la base de datos LDAP para este usuario
+LDAPInformationsForThisGroup=Información en la base de datos LDAP para este grupo
+LDAPInformationsForThisMember=Información en la base de datos LDAP para este miembro
+LDAPCard=Tarjeta LDAP
+LDAPFieldStatus=Estado
+LDAPFieldFirstSubscriptionDate=Primera fecha de suscripción
+LDAPFieldFirstSubscriptionAmount=Importe de la primera suscripción
+LDAPFieldLastSubscriptionDate=Última fecha de suscripción
+LDAPFieldLastSubscriptionAmount=Último monto de suscripción
+LDAPFieldSkype=Cuenta de Skype
+LDAPFieldSkypeExample=Ejemplo: skypeName
+ErrorFailedToReadLDAP=No se pudo leer la base de datos LDAP. Verifique la configuración del módulo LDAP y la accesibilidad a la base de datos.
+PasswordOfUserInLDAP=Contraseña de usuario en LDAP
+LDAPUserAccountControl =userAccountControl al crearse (directorio activo)
+LDAPUserAccountControlExample =512 Cuenta normal / 546 Cuenta normal + Sin contraseña + Deshabilitada (ver: https://fr.wikipedia.org/wiki/Active_Directory)

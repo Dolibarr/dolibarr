@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - orders
+OrderLine=Bestellposition
+OrderToProcess=Zu bearbeitende Bestellung
+StatusOrderValidatedShort=Bestätigt
+StatusOrderValidated=Bestätigt
+StatusOrderOnProcess=In Arbeit
+AddPurchaseOrder=Bestellung anlegen
+RefOrder=Bestellung Nr.
+AuthorRequest=Authorenrechte beantragen
+PaymentOrderRef=Zahlung zu Bestellung %s
+TypeContact_commande_external_BILLING=Debitorenrechnung Kontakt
+TypeContact_commande_external_SHIPPING=Customer Versand Kontakt
+TypeContact_commande_external_CUSTOMER=Bestellungs-Nachverfolgung durch Kundenkontakt
+StatusSupplierOrderValidatedShort=Bestätigt
+StatusSupplierOrderValidated=Bestätigt
+StatusSupplierOrderOnProcess=In Arbeit

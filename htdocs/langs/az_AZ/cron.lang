@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Planlaşdırılmış işi oxuyun
+Permission23102 = Planlaşdırılmış işi yaradın/yeniləyin
+Permission23103 = Planlaşdırılmış işi silin
+Permission23104 = Planlaşdırılmış işi yerinə yetirin
+# Admin
+CronSetup=Planlaşdırılmış işin idarə edilməsinin qurulması
+URLToLaunchCronJobs=Brauzerdən ixtisaslı cron işlərini yoxlamaq və işə salmaq üçün URL
+OrToLaunchASpecificJob=Və ya brauzerdən müəyyən bir işi yoxlamaq və işə salmaq üçün
+KeyForCronAccess=Cron işlərini işə salmaq üçün URL üçün təhlükəsizlik açarı
+FileToLaunchCronJobs=Keyfiyyətli cron işlərini yoxlamaq və işə salmaq üçün komanda xətti
+CronExplainHowToRunUnix=Unix mühitində hər 5 dəqiqədən bir komanda xəttini işə salmaq üçün aşağıdakı crontab girişindən istifadə etməlisiniz
+CronExplainHowToRunWin=Microsoft(tm) Windows mühitində hər 5 dəqiqədən bir əmr xəttini işə salmaq üçün Planlaşdırılmış Tapşırıq alətlərindən istifadə edə bilərsiniz
+CronMethodDoesNotExists=%s sinfində heç bir metod yoxdur %s
+CronMethodNotAllowed=%s sinfinin %s metodu qadağan olunmuş metodların blok siyahısındadır
+CronJobDefDesc=Cron iş profilləri modul deskriptor faylında müəyyən edilir. Modul aktivləşdirildikdə, onlar yüklənir və əlçatan olur ki, siz %s admin alətləri menyusundan işləri idarə edə bilərsiniz.
+CronJobProfiles=Əvvəlcədən təyin edilmiş cron iş profillərinin siyahısı
+# Menu
+EnabledAndDisabled=Aktiv və qeyri-aktiv
+# Page list
+CronLastOutput=Ən son çıxış çıxışı
+CronLastResult=Ən son nəticə kodu
+CronCommand=Əmr
+CronList=Planlaşdırılmış işlər
+CronDelete=Planlaşdırılmış işləri silin
+CronConfirmDelete=Bu planlaşdırılan işləri silmək istədiyinizə əminsiniz?
+CronExecute=İndi işə salın
+CronConfirmExecute=Bu planlaşdırılan işləri indi yerinə yetirmək istədiyinizə əminsiniz?
+CronInfo=Planlaşdırılmış iş modulu işlərin avtomatik yerinə yetirilməsini planlaşdırmağa imkan verir. İşlərə əl ilə də başlamaq olar.
+CronTask=İş
+CronNone=Planlaşdırılmış tapşırığın növbəti icrası
+CronNotYetRan=Heç vaxt edam edilməyib
+CronDtStart=Əvvəl yox
+CronDtEnd=Sonra yox
+CronDtNextLaunch=Növbəti icra
+CronDtLastLaunch=Ən son icranın başlama tarixi
+CronDtLastResult=Ən son icranın bitmə tarixi
+CronFrequency=Tezlik
+CronClass=Sinif
+CronMethod=Metod
+CronModule=Modul
+CronNoJobs=Heç bir iş qeydə alınmayıb
+CronPriority=Prioritet
+CronLabel=Etiket
+CronNbRun=Başlama sayı
+CronMaxRun=Maksimum buraxılış sayı
+CronEach=Hər
+JobFinished=İş başladı və bitdi
+Scheduled=Planlaşdırılıb
+#Page card
+CronAdd=İş əlavə edin
+CronEvery=Hər dəfə işlə məşğul olun
+CronObject=Yaratmaq üçün Nümunə/Obyekt
+CronArgs=Parametrlər
+CronSaveSucess=Uğurla yadda saxlayın
+CronNote=Şərh
+CronFieldMandatory=%s sahələri məcburidir
+CronErrEndDateStartDt=Bitmə tarixi başlanğıc tarixindən əvvəl ola bilməz
+StatusAtInstall=Modulun quraşdırılmasında vəziyyət
+CronStatusActiveBtn=Planlaşdırmanı aktivləşdirin
+CronStatusInactiveBtn=Deaktiv edin
+CronTaskInactive=Bu iş deaktiv edilib (planlaşdırılmayıb)
+CronId=İd
+CronClassFile=Sinif ilə fayl adı
+CronModuleHelp=Dolibarr modul kataloqunun adı (həmçinin xarici Dolibarr modulu ilə işləyir). <BR> Məsələn, Dolibarr Məhsul obyektinin /htdocs/<u>məhsulunun gətirmə metoduna zəng etmək üçünb0aacaa80d /class/product.class.php, modul üçün dəyər<br><i>məhsul</i>
+CronClassFileHelp=Yüklənəcək nisbi yol və fayl adı (yol veb serverin kök kataloquna nisbətəndir). <BR> Məsələn, Dolibarr Məhsul obyektinin gətirmə metoduna zəng etmək üçün htdocs/product/class/<u>product.class.php</u>, sinif fayl adı üçün dəyər<br><i>product/class/product/class .class.php</i>
+CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=Başlamaq üçün obyekt metodu. <BR> Məsələn, Dolibarr Məhsul obyektinin /htdocs/product/class/product.class.php gətirmə metoduna zəng etmək üçün, metodun dəyəridir. <br><i>getch</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=İcra etmək üçün sistem əmr xətti.
+CronCreateJob=Yeni Planlaşdırılmış İş yaradın
+CronFrom=From
+# Info
+# Common
+CronType=İş Tipi
+CronType_method=PHP Sinifinin çağırış metodu
+CronType_command=Shell əmri
+CronCannotLoadClass=%s sinif faylını yükləmək mümkün deyil (%s sinfindən istifadə etmək üçün)
+CronModuleNotEnabledInThisEntity=Cron modulu bu qurumda aktiv deyil (%s obyektinin %s metodundan istifadə etmək üçün)
+CronCannotLoadObject=%s sinif faylı yükləndi, lakin %s obyekti onda tapılmadı
+UseMenuModuleToolsToAddCronJobs=Planlaşdırılmış işlərə baxmaq və redaktə etmək üçün "<a href="%s">Ev - Admin alətləri - Planlaşdırılmış işlər</a>" menyusuna daxil olun.
+JobDisabled=İş əlil
+MakeLocalDatabaseDumpShort=Yerli verilənlər bazası ehtiyat nüsxəsi
+MakeLocalDatabaseDump=Yerli verilənlər bazası zibilini yaradın. Parametrlər bunlardır: sıxılma ('gz' və ya 'bz' və ya 'yox'), ehtiyat nüsxə növü ('mysql', 'pgsql', 'auto'), 1, 'auto' və ya qurmaq üçün fayl adı, saxlanılacaq ehtiyat fayllarının sayı
+MakeSendLocalDatabaseDumpShort=Yerli verilənlər bazası ehtiyat nüsxəsini göndərin
+MakeSendLocalDatabaseDump=Yerli verilənlər bazası ehtiyat nüsxəsini e-poçtla göndərin. Parametrlər bunlardır: kimdən, mövzu, mesaj, fayl adı (göndərilən faylın adı), filtr (yalnız verilənlər bazasının ehtiyat nüsxəsi üçün "sql")
+BackupIsTooLargeSend=Üzr istəyirik, son ehtiyat faylı e-poçtla göndərmək üçün çox böyükdür
+CleanUnfinishedCronjobShort=Təmiz yarımçıq cronjob
+CleanUnfinishedCronjob=Proses artıq işləməyəndə təmiz cronjob emalda qalıb
+WarningCronDelayed=Diqqət, performans məqsədi ilə, aktivləşdirilən işlərin növbəti icra tarixi nə olursa olsun, işləriniz işə salınmazdan əvvəl maksimum %s saat gecikə bilər.
+DATAPOLICYJob=Məlumat təmizləyicisi və anonimator
+JobXMustBeEnabled=%s işi aktiv edilməlidir
+EmailIfError=Səhv barədə xəbərdarlıq üçün e-poçt
+JobNotFound=%s işi iş siyahısında tapılmadı (modulu deaktiv etməyə/aktiv etməyə çalışın)
+ErrorInBatch=%s işi icra edərkən xəta
+
+# Cron Boxes
+LastExecutedScheduledJob=Son icra olunan planlaşdırılmış iş
+NextScheduledJobExecute=İcra etmək üçün növbəti planlaşdırılmış iş
+NumberScheduledJobError=Səhvlə planlaşdırılan işlərin sayı
+NumberScheduledJobNeverFinished=Planlaşdırılmış işlərin sayı heç vaxt tamamlanmayıb

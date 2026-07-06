@@ -1,0 +1,101 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = திட்டமிடப்பட்ட வேலையைப் படியுங்கள்
+Permission23102 = திட்டமிடப்பட்ட வேலையை உருவாக்கவும்/புதுப்பிக்கவும்
+Permission23103 = திட்டமிடப்பட்ட வேலையை நீக்கு
+Permission23104 = திட்டமிடப்பட்ட வேலையைச் செய்யுங்கள்
+# Admin
+CronSetup=திட்டமிடப்பட்ட வேலை மேலாண்மை அமைப்பு
+URLToLaunchCronJobs=உலாவியில் இருந்து தகுதிவாய்ந்த கிரான் வேலைகளைச் சரிபார்த்து தொடங்குவதற்கான URL
+OrToLaunchASpecificJob=அல்லது உலாவியில் இருந்து குறிப்பிட்ட வேலையைச் சரிபார்த்து தொடங்கவும்
+KeyForCronAccess=கிரான் வேலைகளைத் தொடங்க URLக்கான பாதுகாப்பு விசை
+FileToLaunchCronJobs=தகுதிவாய்ந்த கிரான் வேலைகளைச் சரிபார்த்து தொடங்குவதற்கான கட்டளை வரி
+CronExplainHowToRunUnix=யுனிக்ஸ் சூழலில் ஒவ்வொரு 5 நிமிடங்களுக்கும் கட்டளை வரியை இயக்க பின்வரும் க்ரான்டாப் உள்ளீட்டைப் பயன்படுத்த வேண்டும்
+CronExplainHowToRunWin=Microsoft(tm) Windows சூழலில் ஒவ்வொரு 5 நிமிடங்களுக்கும் கட்டளை வரியை இயக்க திட்டமிடப்பட்ட பணிக் கருவிகளைப் பயன்படுத்தலாம்
+CronMethodDoesNotExists=Class %s does not contain any method %s
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
+CronJobDefDesc=கிரான் வேலை விவரங்கள் தொகுதி விளக்கக் கோப்பில் வரையறுக்கப்பட்டுள்ளன. தொகுதி செயல்படுத்தப்படும் போது, அவை ஏற்றப்பட்டு கிடைக்கும், எனவே நீங்கள் நிர்வாக கருவிகள் மெனு %s மூலம் வேலைகளை நிர்வகிக்கலாம்.
+CronJobProfiles=முன் வரையறுக்கப்பட்ட கிரான் வேலை சுயவிவரங்களின் பட்டியல்
+# Menu
+EnabledAndDisabled=இயக்கப்பட்டது மற்றும் முடக்கப்பட்டது
+# Page list
+CronLastOutput=சமீபத்திய ரன் அவுட்புட்
+CronLastResult=சமீபத்திய முடிவு குறியீடு
+CronCommand=கட்டளை
+CronList=திட்டமிடப்பட்ட வேலைகள்
+CronDelete=திட்டமிடப்பட்ட வேலைகளை நீக்கவும்
+CronConfirmDelete=இந்த திட்டமிடப்பட்ட வேலைகளை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
+CronExecute=Launch now
+CronConfirmExecute=இந்த திட்டமிடப்பட்ட வேலைகளை இப்போது நிச்சயமாகச் செய்ய விரும்புகிறீர்களா?
+CronInfo=திட்டமிடப்பட்ட வேலை தொகுதி தானாக செயல்படுத்த வேலைகளை திட்டமிட அனுமதிக்கிறது. வேலைகளை கைமுறையாகவும் தொடங்கலாம்.
+CronTask=வேலை
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
+CronDtStart=இதற்கு முன்பு இல்லை
+CronDtEnd=பிறகு இல்லை
+CronDtNextLaunch=அடுத்த மரணதண்டனை
+CronDtLastLaunch=சமீபத்திய செயல்பாட்டின் தொடக்க தேதி
+CronDtLastResult=சமீபத்திய செயல்பாட்டின் முடிவு தேதி
+CronFrequency=அதிர்வெண்
+CronClass=வர்க்கம்
+CronMethod=முறை
+CronModule=தொகுதி
+CronNoJobs=வேலைகள் எதுவும் பதிவு செய்யப்படவில்லை
+CronPriority=முன்னுரிமை
+CronLabel=லேபிள்
+CronNbRun=ஏவுதல்களின் எண்ணிக்கை
+CronMaxRun=ஏவுதல்களின் அதிகபட்ச எண்ணிக்கை
+CronEach=ஒவ்வொரு
+JobFinished=வேலை தொடங்கப்பட்டு முடிந்தது
+Scheduled=திட்டமிடப்பட்ட
+#Page card
+CronAdd=வேலைகளைச் சேர்க்கவும்
+CronEvery=Run job every
+CronObject=உதாரணம்/உருவாக்கும் பொருள்
+CronArgs=அளவுருக்கள்
+CronSaveSucess=வெற்றிகரமாக சேமிக்கவும்
+CronNote=கருத்து
+CronFieldMandatory=புலங்கள் %s கட்டாயம்
+CronErrEndDateStartDt=இறுதித் தேதி தொடக்கத் தேதிக்கு முன் இருக்கக்கூடாது
+StatusAtInstall=தொகுதி நிறுவலின் நிலை
+CronStatusActiveBtn=Enable scheduling
+CronStatusInactiveBtn=முடக்கு
+CronTaskInactive=இந்த வேலை முடக்கப்பட்டுள்ளது (திட்டமிடப்படவில்லை)
+CronId=ஐடி
+CronClassFile=வகுப்போடு கோப்புப்பெயர்
+CronModuleHelp=Dolibarr தொகுதி கோப்பகத்தின் பெயர் (வெளிப்புற Dolibarr தொகுதியுடன் வேலை செய்யவும்). <BR> எடுத்துக்காட்டாக, Dolibarr Product object /htdocs/ <u> தயாரிப்பு </u> /class/product.class.php இன் பெறுதல் முறையை அழைக்க, தொகுதிக்கான மதிப்பு a03492fz8cf72018000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+CronClassFileHelp=ஏற்றுவதற்கான தொடர்புடைய பாதை மற்றும் கோப்பு பெயர் (பாதை வலை சேவையக ரூட் கோப்பகத்துடன் தொடர்புடையது). <BR> உதாரணமாக Dolibarr தயாரிப்பு பொருள் htdocs / தயாரிப்பு / வர்க்கம் / <u> product.class.php </u> பிணைப்பை முறை அழைக்க, கிளாஸ் கோப்பு பெயர் மதிப்பு <br> <i> தயாரிப்பு / வர்க்கம் / product.class.php </i> உள்ளது
+CronObjectHelp=ஏற்ற வேண்டிய பொருளின் பெயர். <BR> எடுத்துக்காட்டாக, Dolibarr Product object /htdocs/product/class/product.class.php இன் பெறுதல் முறையை அழைக்க, வகுப்பு கோப்பு பெயருக்கான மதிப்பு <br> a049271e8181fcz638bacz0 தயாரிப்பு a
+CronMethodHelp=தொடங்குவதற்கான பொருள் முறை. <BR> எடுத்துக்காட்டாக, Dolibarr Product object /htdocs/product/class/product.class.php இன் பெறுதல் முறையை அழைக்க, முறைக்கான மதிப்பு <br> <i> fetch a634z58bac3z50
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=இயக்க வேண்டிய கணினி கட்டளை வரி.
+CronCreateJob=புதிய திட்டமிடப்பட்ட வேலையை உருவாக்கவும்
+CronFrom=இருந்து
+# Info
+# Common
+CronType=வேலை வகை
+CronType_method=PHP வகுப்பின் அழைப்பு முறை
+CronType_command=ஷெல் கட்டளை
+CronCannotLoadClass=%s வகுப்பு கோப்பை ஏற்ற முடியவில்லை (வகுப்பை %s பயன்படுத்த)
+CronCannotLoadObject=வகுப்பு கோப்பு %s ஏற்றப்பட்டது, ஆனால் ஆப்ஜெக்ட் %s அதில் காணப்படவில்லை
+UseMenuModuleToolsToAddCronJobs=திட்டமிடப்பட்ட வேலைகளைப் பார்க்கவும் திருத்தவும் " <a href="%s"> முகப்பு - நிர்வாகக் கருவிகள் - திட்டமிடப்பட்ட வேலைகள் </a> " என்ற மெனுவிற்குச் செல்லவும்.
+JobDisabled=வேலை முடக்கப்பட்டது
+MakeLocalDatabaseDumpShort=உள்ளூர் தரவுத்தள காப்புப்பிரதி
+MakeLocalDatabaseDump=உள்ளூர் தரவுத்தள டம்ப்பை உருவாக்கவும். அளவுருக்கள்: சுருக்கம் ('gz' அல்லது 'bz' அல்லது 'இல்லை'), காப்புப் பிரதி வகை ('mysql', 'pgsql', 'auto'), 1, 'தானியங்கு' அல்லது உருவாக்க வேண்டிய கோப்பு பெயர், வைத்திருக்க வேண்டிய காப்பு கோப்புகளின் எண்ணிக்கை
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+WarningCronDelayed=கவனம், செயல்திறன் நோக்கத்திற்காக, செயல்படுத்தப்பட்ட வேலைகளை நிறைவேற்றுவதற்கான அடுத்த தேதி எதுவாக இருந்தாலும், உங்கள் வேலைகள் இயக்கப்படுவதற்கு முன், அதிகபட்சம் %s மணிநேரம் வரை தாமதமாகலாம்.
+DATAPOLICYJob=டேட்டா கிளீனர் மற்றும் அநாமதேயர்
+JobXMustBeEnabled=வேலை %s இயக்கப்பட்டிருக்க வேண்டும்
+EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
+ErrorInBatch=Error when running the job %s
+
+# Cron Boxes
+LastExecutedScheduledJob=கடைசியாக செயல்படுத்தப்பட்ட திட்டமிடப்பட்ட வேலை
+NextScheduledJobExecute=அடுத்த திட்டமிடப்பட்ட வேலை
+NumberScheduledJobError=திட்டமிடப்பட்ட வேலைகளின் எண்ணிக்கை பிழை
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

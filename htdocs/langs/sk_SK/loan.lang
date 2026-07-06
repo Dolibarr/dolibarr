@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Pôžička
+Loans=Pôžičky
+NewLoan=Nová pôžička
+ShowLoan=Zobraziť pôžičku
+PaymentLoan=Splácanie pôžičky
+LoanPayment=Splácanie pôžičky
+ShowLoanPayment=Zobraziť platbu pôžičky
+LoanCapital=Kapitál
+Insurance=Poistenie
+Interest=Záujem
+Nbterms=Počet termínov
+Term=Termín
+LoanAccountancyCapitalCode=Kapitál účtovného účtu
+LoanAccountancyInsuranceCode=Poistenie účtovného účtu
+LoanAccountancyInterestCode=Úrok z účtovného účtu
+ConfirmDeleteLoan=Potvrďte vymazanie tejto pôžičky
+LoanDeleted=Pôžička bola úspešne vymazaná
+ConfirmPayLoan=Potvrďte klasifikáciu zaplatenej pôžičky
+LoanPaid=Pôžička splatená
+ListLoanAssociatedProject=Zoznam pôžičiek spojených s projektom
+AddLoan=Vytvorte pôžičku
+FinancialCommitment=Finančný záväzok
+InterestAmount=Záujem
+CapitalRemain=Kapitál zostáva
+TermPaidAllreadyPaid = Tento termín je už zaplatený
+CantUseScheduleWithLoanStartedToPaid = Nie je možné vygenerovať časovú os pre pôžičku so začatou platbou
+CantModifyInterestIfScheduleIsUsed = Ak používate plán, nemôžete zmeniť záujem
+# Admin
+ConfigLoan=Konfigurácia zapožičania modulu
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Účet (z účtovnej osnovy), ktorý sa má štandardne používať pre kapitál (modul pôžičky)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Účet (z Účtovej osnovy), ktorý sa má štandardne používať na úročenie (modul pôžičky)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Účet (z Účtovnej osnovy), ktorý sa má štandardne používať na poistenie (modul Úver)
+CreateCalcSchedule=Upraviť finančný záväzok

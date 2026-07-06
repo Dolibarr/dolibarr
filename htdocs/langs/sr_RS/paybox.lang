@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Podešavanja modula PayBox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=Bićete redrektovani na sigurnu Paybox stranu kako biste uneli informacije Vaše kreditne kartice
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Ova strana potvrđuje da je Vaša uplata registrovana. Hvala.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url ili Paybox CGI modul za plaćanje
+NewPayboxPaymentReceived=Nova Paybox uplata je primljena
+NewPayboxPaymentFailed=Pokušak nove Paybox uplate nije uspeo
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Vrednost PBX SITE
+PAYBOX_PBX_RANG=Vrednost PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Vrednost PBX ID
+PAYBOX_HMAC_KEY=HMAC key

@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = የክስተት ድርጅት
+EventOrganizationDescription = በሞጁል ፕሮጀክት በኩል የክስተት ድርጅት
+EventOrganizationDescriptionLong= የአንድ ክስተት አደረጃጀት (ትዕይንት፣ ኮንፈረንስ፣ ተሰብሳቢዎች ወይም ተናጋሪዎች፣ በአስተያየት፣ ድምጽ ወይም ምዝገባ) በሕዝብ ገፆች አስተዳድር
+EventOrganizationMenuLeft = የተደራጁ ዝግጅቶች
+EventOrganizationConferenceOrBoothMenuLeft = ኮንፈረንስ ወይም ቡዝ
+PaymentEvent=የክስተቱ ክፍያ
+EventFee=Event fee
+# Admin page
+NewRegistration=ምዝገባ
+EventOrganizationSetup=የክስተት ድርጅት ማዋቀር
+EventOrganization=የክስተት ድርጅት
+EventOrganizationSetupPage = የክስተት ድርጅት ማዋቀር ገጽ
+EVENTORGANIZATION_TASK_LABEL = ፕሮጀክቱ ሲረጋገጥ በራስ ሰር የሚፈጠሩ የተግባር መለያዎች
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=ስራዎችን በራስ-ሰር መፍጠር ካላስፈለገዎት ባዶ ያስቀምጡ።
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = የሆነ ሰው ጉባኤን ሲጠቁም ወደ ሶስተኛ ወገኖች የሚታከል ምድብ
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ዳስ ሲጠቁሙ ወደ ሶስተኛ ወገኖች የሚታከሉ ምድብ
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = የአንድ ኮንፈረንስ አስተያየት ከተቀበለ በኋላ የሚላክ የኢሜይል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = የዳስ አስተያየት ከተቀበለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = ወደ ዳስ ምዝገባ ከተከፈለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = ለአንድ ክስተት ምዝገባ ከተከፈለ በኋላ የሚላክ የኢሜል አብነት።
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ኢሜይሎችን ከጅምላ "ኢሜይሎችን ላክ" ወደ ድምጽ ማጉያዎች ሲልኩ ለመጠቀም የኢሜይል አብነት
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ከተመልካቾች ዝርዝር ውስጥ "ኢሜይሎችን ላክ" ከሚለው የጅምላ ኢሜይሎችን ሲልኩ ለመጠቀም የኢሜይል አብነት
+EVENTORGANIZATION_FILTERATTENDEES_CAT = ተሳታፊን ለመፍጠር/ለማከል በቅጹ ላይ የሶስተኛ ወገኖችን ዝርዝር በምድብ ውስጥ ላሉ የሶስተኛ ወገኖች ይገድባል
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = ተሳታፊን ለመፍጠር/ለመጨመር በቅጹ የሶስተኛ ወገኖችን ዝርዝር ከተፈጥሮ ጋር ለሶስተኛ ወገኖች ይገድባል
+# Object
+OrganizedEvent=የተደራጀ ክስተት
+EventOrganizationConfOrBooth= ኮንፈረንስ ወይም ቡዝ
+EventOrganizationConfOrBoothes=Conferences or Booths
+ManageOrganizeEvent = የክስተቱን አደረጃጀት አስተዳድር
+ConferenceOrBooth = ኮንፈረንስ ወይም ቡዝ
+ConferenceOrBoothTab = ኮንፈረንስ ወይም ቡዝ
+AmountPaid = የተከፈለው መጠን
+DateOfRegistration = የምዝገባ ቀን
+ConferenceOrBoothAttendee = የኮንፈረንስ ወይም ቡዝ ታዳሚ
+ApplicantOrVisitor=አመልካች ወይም ጎብኝ
+Speaker=ተናጋሪ
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = የኮንፈረንስ ጥያቄዎ ተቀብሏል።
+YourOrganizationEventBoothRequestWasReceived = የዳስ ጥያቄህ ደረሰ
+EventOrganizationEmailAskConf = የኮንፈረንስ ጥያቄ
+EventOrganizationEmailAskBooth = የዳስ ጥያቄ
+EventOrganizationEmailBoothPayment = የዳስዎ ክፍያ
+EventOrganizationEmailRegistrationPayment = ለአንድ ክስተት ምዝገባ
+EventOrganizationMassEmailAttendees = ከተሳታፊዎች ጋር መግባባት
+EventOrganizationMassEmailSpeakers = ወደ ተናጋሪዎች መግባባት
+ToSpeakers=ወደ ተናጋሪዎች
+# Event
+AllowUnknownPeopleSuggestConf=ሰዎች ጉባኤዎችን እንዲጠቁሙ ፍቀድላቸው
+AllowUnknownPeopleSuggestConfHelp=ያልታወቁ ሰዎች ማድረግ የሚፈልጉትን ጉባኤ እንዲጠቁሙ ፍቀድላቸው
+AllowUnknownPeopleSuggestBooth=ሰዎች ለዳስ እንዲያመለክቱ ፍቀድ
+AllowUnknownPeopleSuggestBoothHelp=ያልታወቁ ሰዎች ለዳስ እንዲያመለክቱ ፍቀድ
+PriceOfRegistration=የምዝገባ ዋጋ
+PriceOfRegistrationHelp=በክስተቱ ላይ ለመመዝገብ ወይም ለመሳተፍ የሚከፈል ዋጋ
+PriceOfBooth=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
+PriceOfBoothHelp=ዳስ ለመቆም የደንበኝነት ምዝገባ ዋጋ
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=ለኮንፈረንስ ICS አገናኝ
+ConferenceOrBoothInformation=የኮንፈረንስ ወይም የቡዝ መረጃ
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
+Attendees=ተሳታፊዎች
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=ኮንፈረንስን ለመጠቆም ለሕዝብ መመዝገቢያ ገጽ ቁልፉን ለመጠበቅ ዘር
+SERVICE_BOOTH_LOCATION=ስለ ዳስ አካባቢ ለክፍያ መጠየቂያ ረድፉ የሚያገለግል አገልግሎት
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=የአንድ ክስተት ተካፋይ ስለመመዝገብ ለክፍያ መጠየቂያው አገልግሎት
+NbVotes=የድምፅ ብዛት
+# Status
+EvntOrgDraft = ረቂቅ
+EvntOrgSuggested = የተጠቆመ
+EvntOrgConfirmed = ተረጋግጧል
+EvntOrgNotQualified = ብቁ አይደለም
+EvntOrgDone = ተከናውኗል
+EvntOrgCancelled = ተሰርዟል።
+# Other
+SuggestForm = የአስተያየት ገፅ
+SuggestOrVoteForConfOrBooth = የአስተያየት ወይም ድምጽ ለማግኘት ገጽ
+EvntOrgRegistrationHelpMessage = እዚህ፣ ለጉባኤ ድምጽ መስጠት ወይም ለዝግጅቱ አዲስ ሀሳብ መስጠት ይችላሉ። በዝግጅቱ ወቅት ዳስ እንዲኖርዎት ማመልከት ይችላሉ.
+EvntOrgRegistrationConfHelpMessage = እዚህ፣ በክስተቱ ወቅት የሚነም አዲስ ኮንፈረንስ መጠቆም ይችላሉ።
+EvntOrgRegistrationBoothHelpMessage = እዚህ በዝግጅቱ ወቅት ዳስ እንዲኖርዎት ማመልከት ይችላሉ።
+ListOfSuggestedConferences = የተጠቆሙ ጉባኤዎች ዝርዝር
+ListOfSuggestedBooths=የተጠቆሙ ዳስ
+ListOfConferencesOrBooths=የክስተት ፕሮጀክት ኮንፈረንስ ወይም ዳስ
+SuggestConference = አዲስ ጉባኤ ይጠቁሙ
+SuggestBooth = ዳስ ይጠቁሙ
+ViewAndVote = ለተጠቆሙ ክስተቶች ይመልከቱ እና ድምጽ ይስጡ
+PublicAttendeeSubscriptionGlobalPage = ለዝግጅቱ የህዝብ ግንኙነት
+PublicAttendeeSubscriptionPage = ለዚህ ክስተት ብቻ የህዝብ ግንኙነት
+MissingOrBadSecureKey = የደህንነት ቁልፉ ልክ ያልሆነ ወይም ጠፍቷል
+EvntOrgWelcomeMessage = ይህ ቅጽ ለዝግጅቱ እንደ አዲስ ተሳታፊ እንዲመዘገቡ ያስችልዎታል
+EvntOrgDuration = ይህ ኮንፈረንስ በ%s ይጀምር እና በ%s ላይ ያበቃል።
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = የዝግጅቱ ቦታ፡ '%s ከ%s እስከ b0ecb2ec87fe49fez0 የሚከሰት
+EventType = የክስተት አይነት
+LabelOfBooth=የዳስ መለያ
+LabelOfconference=የስብሰባ መለያ
+ConferenceIsNotConfirmed=ምዝገባ የለም፣ ኮንፈረንስ እስካሁን አልተረጋገጠም።
+EventRegistrationAreClosed=Event registrations are closed
+DateMustBeBeforeThan=%s ከ%s በፊት መሆን አለበት።
+DateMustBeAfterThan=%s ከ%s በኋላ መሆን አለበት።
+MaxNbOfAttendeesReached=ከፍተኛው የተሳታፊዎች ቁጥር ላይ ደርሷል
+NewSubscription=ምዝገባ
+OrganizationEventConfRequestWasReceived=ለጉባኤ ያቀረቡት ሀሳብ ተቀብሏል።
+OrganizationEventBoothRequestWasReceived=የዳስ ጥያቄዎ ደርሷል
+OrganizationEventPaymentOfBoothWasReceived=ለዳስዎ ክፍያዎ ተመዝግቧል
+OrganizationEventPaymentOfRegistrationWasReceived=የክስተት ምዝገባዎ ክፍያ ተመዝግቧል
+OrganizationEventBulkMailToAttendees=ይህ በዝግጅቱ ላይ እንደ ተሳታፊዎ ተሳትፎዎ ማስታወሻ ነው።
+OrganizationEventBulkMailToSpeakers=ይህ በዝግጅቱ ላይ እንደ ተናጋሪነት ተሳትፎዎ ማስታወሻ ነው።
+OrganizationEventLinkToThirdParty=የሶስተኛ ወገን ግንኙነት (ደንበኛ፣ አቅራቢ ወይም አጋር)
+OrganizationEvenLabelName=የኮንፈረንስ ወይም የዳስ የህዝብ ስም
+NewSuggestionOfBooth=ለዳስ ማመልከቻ
+NewSuggestionOfConference=ጉባኤ ለማካሄድ ማመልከቻ
+EvntOrgRegistrationWelcomeMessage = እንኳን በደህና መጡ በኮንፈረንስ ወይም በዳስ አስተያየት ገፅ ላይ።
+EvntOrgRegistrationConfWelcomeMessage = እንኳን በደህና መጡ በኮንፈረንስ አስተያየት ገፅ ላይ።
+EvntOrgRegistrationBoothWelcomeMessage = እንኳን በደህና መጡ ወደ የዳስ ጥቆማ ገጽ።
+EvntOrgVoteHelpMessage = እዚህ, ለፕሮጀክቱ የተጠቆሙትን ክስተቶች ማየት እና ድምጽ መስጠት ይችላሉ
+VoteOk = ድምጽህ ተቀባይነት አግኝቷል።
+AlreadyVoted = ለዚህ ክስተት አስቀድመው ድምጽ ሰጥተዋል።
+VoteError = በድምጽ መስጫው ጊዜ ስህተት ተከስቷል፣ እባክዎ እንደገና ይሞክሩ።
+SubscriptionOk=የእርስዎ ምዝገባ ተመዝግቧል
+AmountOfRegistrationPaid=የተከፈለበት የምዝገባ መጠን
+ConfAttendeeSubscriptionConfirmation = ለአንድ ክስተት የደንበኝነት ምዝገባዎ ማረጋገጫ
+Attendee = ተሳታፊ
+PaymentConferenceAttendee = የኮንፈረንስ ተሳታፊዎች ክፍያ
+PaymentBoothLocation = ቡዝ አካባቢ ክፍያ
+DeleteConferenceOrBoothAttendee=ተሰብሳቢውን ያስወግዱ
+RegistrationAndPaymentWereAlreadyRecorder=ለኢሜል <b>%s</b>s</b>sየኢሜል ምዝገባ እና ክፍያ አስቀድሞ ተመዝግቧል።
+EmailAttendee=የተሳታፊ ኢሜል
+EmailCompany=የኩባንያ ኢሜይል
+EmailCompanyForInvoice=የኩባንያ ኢሜይል (ለክፍያ መጠየቂያ፣ ከተሳታፊ ኢሜይል የተለየ ከሆነ)
+ErrorSeveralCompaniesWithEmailContactUs=ይህ ኢሜይል ያላቸው በርካታ ኩባንያዎች ተገኝተዋል ስለዚህም ምዝገባዎን በራስ ሰር ማረጋገጥ አንችልም። በእጅ ማረጋገጫ ለማግኘት እባክዎ በ%s ላይ ያግኙን
+ErrorSeveralCompaniesWithNameContactUs=የእርስዎን ምዝገባ በራስ ሰር ማረጋገጥ አንችልም ስለዚህ ስም ያላቸው በርካታ ኩባንያዎች ተገኝተዋል። በእጅ ማረጋገጫ ለማግኘት እባክዎ በ%s ላይ ያግኙን
+NoPublicActionsAllowedForThisEvent=ለዚህ ክስተት ምንም ህዝባዊ ድርጊቶች ለህዝብ ክፍት አይደሉም
+MaxNbOfAttendees=ከፍተኛው የተሰብሳቢዎች ብዛት
+DateStartEvent=የክስተት መጀመሪያ ቀን
+DateEndEvent=የክስተት ማብቂያ ቀን
+ModifyStatus=ሁኔታን ቀይር
+ConfirmModifyStatus=የሁኔታ ማሻሻያ ያረጋግጡ
+ConfirmModifyStatusQuestion=እርግጠኛ ነዎት የ%s የተመረጡ ሪኮርዶችን ማሻሻል ይፈልጋሉ?
+RecordsUpdated=%s መዝገቦች ተዘምነዋል
+RecordUpdated=መዝገብ ተዘምኗል
+NoRecordUpdated=ምንም መዝገብ አልተዘመነም።
+ProfitPerValidatedAttendee=Profit per attendee
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

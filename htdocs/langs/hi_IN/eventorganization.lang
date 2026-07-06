@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = इवेंट व्यवस्थापन
+EventOrganizationDescription = मॉड्यूल परियोजना के माध्यम से कार्यक्रम आयोजन
+EventOrganizationDescriptionLong= किसी कार्यक्रम (शो, सम्मेलन, उपस्थितगण या वक्ता, सुझाव, वोट या पंजीकरण के लिए सार्वजनिक पृष्ठों के साथ) के आयोजन का प्रबंधन करना
+EventOrganizationMenuLeft = संगठित कार्यक्रम
+EventOrganizationConferenceOrBoothMenuLeft = सम्मेलन या बूथ
+PaymentEvent=इवेंट का भुगतान
+EventFee=इवेंट शुल्क
+# Admin page
+NewRegistration=पंजीकरण
+EventOrganizationSetup=इवेंट संगठन सेटअप
+EventOrganization=इवेंट व्यवस्थापन
+EventOrganizationSetupPage = इवेंट संगठन सेटअप पृष्ठ
+EVENTORGANIZATION_TASK_LABEL = प्रोजेक्ट के मान्य होने पर स्वचालित रूप से बनाए जाने वाले कार्यों का लेबल
+EVENTORGANIZATION_TASK_LABELTooltip = जब आप किसी आयोजन को आयोजित करने के लिए मान्य करते हैं, तो प्रोजेक्ट में कुछ कार्य स्वचालित रूप से बनाए जा सकते हैं<br><br>उदाहरण के लिए: <br>सम्मेलन के लिए कॉल भेजें<br>बूथ के लिए कॉल भेजें<br>सम्मेलन के सुझावों को मान्य करें<br>बूथ के लिए आवेदन को मान्य करें<br>उपस्थित लोगों के लिए इवेंट की सदस्यता खोलें<br>वक्ताओं को इवेंट की याद दिलाएँ<br>बूथ होस्टर्स को इवेंट की याद दिलाएँ<br>उपस्थित लोगों को इवेंट की याद दिलाएँ
+EVENTORGANIZATION_TASK_LABELTooltip2=यदि आपको स्वचालित रूप से कार्य बनाने की आवश्यकता नहीं है तो इसे खाली रखें.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = जब कोई व्यक्ति कॉन्फ़्रेंस का सुझाव देता है तो तृतीय-पक्ष में जोड़ने के लिए स्वचालित रूप से श्रेणी बनाई जाती है
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = जब कोई तृतीय पक्ष बूथ का सुझाव देता है तो उसमें जोड़ने के लिए स्वचालित रूप से श्रेणी बनाई जाती है
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = किसी सम्मेलन का सुझाव प्राप्त होने के बाद भेजे जाने वाले ईमेल का टेम्पलेट।
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = किसी बूथ का सुझाव प्राप्त करने के बाद भेजे जाने वाले ईमेल का टेम्प्लेट।
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = किसी बूथ पर पंजीकरण के बाद भुगतान के लिए भेजे जाने वाले ईमेल का टेम्पलेट।
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = किसी इवेंट के पंजीकरण के बाद भुगतान के लिए भेजे जाने वाले ईमेल का टेम्पलेट।
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = "ईमेल भेजें" समूह से स्पीकर को ईमेल भेजते समय उपयोग करने के लिए ईमेल टेम्पलेट
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = सहभागी सूची पर "ईमेल भेजें" समूह से ईमेल भेजते समय उपयोग करने के लिए ईमेल टेम्पलेट
+EVENTORGANIZATION_FILTERATTENDEES_CAT = सहभागी बनाने/जोड़ने के लिए फ़ॉर्म में, तृतीय पक्षों की सूची को श्रेणी में तृतीय पक्षों तक सीमित कर दिया जाता है
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = सहभागी बनाने/जोड़ने के लिए फॉर्म में, तृतीय पक्षों की सूची को प्रकृति वाले तृतीय पक्षों तक सीमित कर दिया जाता है
+# Object
+OrganizedEvent=आयोजित कार्यक्रम
+EventOrganizationConfOrBooth= सम्मेलन या बूथ
+EventOrganizationConfOrBoothes=सम्मेलन या बूथ
+ManageOrganizeEvent = किसी इवेंट के आयोजन का प्रबंधन करें
+ConferenceOrBooth = सम्मेलन या बूथ
+ConferenceOrBoothTab = सम्मेलन या बूथ
+AmountPaid = राशि का भुगतान
+DateOfRegistration = पंजीकरण की तिथि
+ConferenceOrBoothAttendee = सम्मेलन या बूथ सहभागी
+ApplicantOrVisitor=आवेदक या आगंतुक
+Speaker=वक्ता
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = सम्मेलन के लिए आपका अनुरोध प्राप्त हुआ
+YourOrganizationEventBoothRequestWasReceived = बूथ के लिए आपका अनुरोध प्राप्त हुआ
+EventOrganizationEmailAskConf = सम्मेलन के लिए अनुरोध
+EventOrganizationEmailAskBooth = बूथ के लिए अनुरोध
+EventOrganizationEmailBoothPayment = आपके बूथ का भुगतान
+EventOrganizationEmailRegistrationPayment = किसी कार्यक्रम के लिए पंजीकरण
+EventOrganizationMassEmailAttendees = उपस्थित लोगों से संवाद
+EventOrganizationMassEmailSpeakers = वक्ताओं से संवाद
+ToSpeakers=वक्ताओं के लिए
+# Event
+AllowUnknownPeopleSuggestConf=लोगों को सम्मेलनों का सुझाव देने की अनुमति दें
+AllowUnknownPeopleSuggestConfHelp=अज्ञात लोगों को वह सम्मेलन सुझाने की अनुमति दें जो वे करना चाहते हैं
+AllowUnknownPeopleSuggestBooth=लोगों को बूथ के लिए आवेदन करने की अनुमति दें
+AllowUnknownPeopleSuggestBoothHelp=अज्ञात लोगों को बूथ के लिए आवेदन करने की अनुमति दें
+PriceOfRegistration=पंजीकरण की कीमत
+PriceOfRegistrationHelp=कार्यक्रम में पंजीकरण या भाग लेने के लिए भुगतान की जाने वाली कीमत
+PriceOfBooth=एक बूथ पर खड़े होने के लिए सदस्यता मूल्य
+PriceOfBoothHelp=एक बूथ पर खड़े होने के लिए सदस्यता मूल्य
+EventOrganizationICSLinkProject=इवेंट के लिए आईसीएस लिंक
+EventOrganizationICSLink=सम्मेलनों के लिए आईसीएस लिंक करें
+ConferenceOrBoothInformation=सम्मेलन या बूथ जानकारी
+ConferenceOrBoothFormat=सम्मेलन या बूथ मोड
+ConferenceOrBoothFormatID=सम्मेलन या बूथ मोड की आईडी
+ConferenceOrBoothFormatCode=सम्मेलन या बूथ मोड का कोड
+ConferenceOrBoothFormatLabel=सम्मेलन या बूथ मोड का लेबल
+Attendees=सहभागी
+ListOfAttendeesOfEvent=कार्यक्रम परियोजनाओं में उपस्थित लोगों की सूची
+ListOfConfOrBoothOfEvent=सम्मेलनों या आयोजन परियोजनाओं के बूथों की सूची
+DownloadICSLink=ICS फ़ाइल डाउनलोड करें
+EVENTORGANIZATION_SECUREKEY=किसी सम्मेलन का सुझाव देने के लिए सार्वजनिक पंजीकरण पृष्ठ की कुंजी सुरक्षित करने के लिए सीड
+SERVICE_BOOTH_LOCATION=बूथ स्थान के बारे में चालान पंक्ति के लिए उपयोग की जाने वाली सेवा
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=किसी इवेंट में सहभागी की सदस्यता के बारे में चालान पंक्ति के लिए उपयोग की जाने वाली सेवा
+NbVotes=वोटों की संख्या
+# Status
+EvntOrgDraft = मसौदा
+EvntOrgSuggested = सुझाव दिया
+EvntOrgConfirmed = की पुष्टि
+EvntOrgNotQualified = योग्य नहीं
+EvntOrgDone = हो गया
+EvntOrgCancelled = रद्द
+# Other
+SuggestForm = सुझाव पृष्ठ
+SuggestOrVoteForConfOrBooth = सुझाव या वोट के लिए पेज
+EvntOrgRegistrationHelpMessage = यहां, आप किसी सम्मेलन के लिए वोट कर सकते हैं या कार्यक्रम के लिए कोई नया सम्मेलन सुझा सकते हैं। आप कार्यक्रम के दौरान बूथ रखने के लिए भी आवेदन कर सकते हैं।
+EvntOrgRegistrationConfHelpMessage = यहां, आप इवेंट के दौरान एनिमेट करने के लिए एक नया सम्मेलन सुझा सकते हैं।
+EvntOrgRegistrationBoothHelpMessage = यहां, आप कार्यक्रम के दौरान बूथ लगाने के लिए आवेदन कर सकते हैं।
+ListOfSuggestedConferences = सुझाए गए सम्मेलनों की सूची
+ListOfSuggestedBooths=सुझाए गए बूथ
+ListOfConferencesOrBooths=सम्मेलन या घटना परियोजना के बूथ
+SuggestConference = एक नया सम्मेलन सुझाएँ
+SuggestBooth = बूथ का सुझाव दें
+ViewAndVote = सुझाए गए इवेंट देखें और वोट करें
+PublicAttendeeSubscriptionGlobalPage = कार्यक्रम में पंजीकरण के लिए सार्वजनिक लिंक
+PublicAttendeeSubscriptionPage = केवल इस कार्यक्रम के पंजीकरण के लिए सार्वजनिक लिंक
+MissingOrBadSecureKey = सुरक्षा कुंजी अमान्य है या गायब है
+EvntOrgWelcomeMessage = यह फॉर्म आपको कार्यक्रम में नए प्रतिभागी के रूप में पंजीकरण करने की अनुमति देता है
+EvntOrgDuration = यह सम्मेलन %s को शुरू होगा और %s को समाप्त होगा।
+ConferenceAttendeeFee = कार्यक्रम के लिए सम्मेलन सहभागी शुल्क: '%s' %s से %s तक।
+BoothLocationFee = कार्यक्रम के लिए बूथ स्थान : '%s' %s से %s तक
+EventType = इवेंट का प्रकार
+LabelOfBooth=बूथ लेबल
+LabelOfconference=सम्मेलन लेबल
+ConferenceIsNotConfirmed=पंजीकरण उपलब्ध नहीं है, सम्मेलन अभी तक निश्चित नहीं हुआ है
+EventRegistrationAreClosed=इवेंट पंजीकरण बंद हैं
+DateMustBeBeforeThan=%s को %s से पहले होना चाहिए
+DateMustBeAfterThan=%s को %s के बाद होना चाहिए
+MaxNbOfAttendeesReached=प्रतिभागियों की अधिकतम संख्या पहुँच गई है
+NewSubscription=पंजीकरण
+OrganizationEventConfRequestWasReceived=सम्मेलन के लिए आपका सुझाव प्राप्त हो गया है
+OrganizationEventBoothRequestWasReceived=बूथ के लिए आपका अनुरोध प्राप्त हो गया है
+OrganizationEventPaymentOfBoothWasReceived=आपके बूथ के लिए आपका भुगतान दर्ज कर लिया गया है
+OrganizationEventPaymentOfRegistrationWasReceived=आपके इवेंट पंजीकरण के लिए आपका भुगतान दर्ज कर लिया गया है
+OrganizationEventBulkMailToAttendees=यह एक सहभागी के रूप में कार्यक्रम में आपकी भागीदारी के बारे में एक अनुस्मारक है
+OrganizationEventBulkMailToSpeakers=यह कार्यक्रम में वक्ता के रूप में आपकी भागीदारी की याद दिलाता है
+OrganizationEventLinkToThirdParty=तीसरे पक्ष (ग्राहक, आपूर्तिकर्ता या भागीदार) से लिंक करें
+OrganizationEvenLabelName=सम्मेलन या बूथ का सार्वजनिक नाम
+NewSuggestionOfBooth=बूथ के लिए आवेदन
+NewSuggestionOfConference=सम्मेलन आयोजित करने के लिए आवेदन
+EvntOrgRegistrationWelcomeMessage = सम्मेलन या बूथ सुझाव पृष्ठ पर आपका स्वागत है।
+EvntOrgRegistrationConfWelcomeMessage = सम्मेलन सुझाव पृष्ठ पर आपका स्वागत है।
+EvntOrgRegistrationBoothWelcomeMessage = बूथ सुझाव पृष्ठ पर आपका स्वागत है।
+EvntOrgVoteHelpMessage = यहां, आप परियोजना के लिए सुझाए गए इवेंट देख सकते हैं और वोट कर सकते हैं
+VoteOk = आपका वोट स्वीकार कर लिया गया है.
+AlreadyVoted = आपने इस इवेंट के लिए पहले ही वोट कर दिया है।
+VoteError = मतदान के दौरान एक त्रुटि हुई है, कृपया पुनः प्रयास करें।
+SubscriptionOk=आपका पंजीकरण दर्ज कर लिया गया है
+AmountOfRegistrationPaid=पंजीकरण हेतु भुगतान की गई राशि
+ConfAttendeeSubscriptionConfirmation = किसी इवेंट के लिए आपकी सदस्यता की पुष्टि
+Attendee = प्रतिभागी
+PaymentConferenceAttendee = सम्मेलन में भाग लेने वाले को भुगतान
+PaymentBoothLocation = बूथ स्थान भुगतान
+DeleteConferenceOrBoothAttendee=सहभागी को हटाएँ
+RegistrationAndPaymentWereAlreadyRecorder=ईमेल के लिए पंजीकरण और भुगतान पहले से ही दर्ज किया गया था <b>%s</b>
+EmailAttendee=सहभागी ईमेल
+EmailCompany=कंपनी ईमेल
+EmailCompanyForInvoice=कंपनी ईमेल (चालान के लिए, यदि सहभागी ईमेल से भिन्न हो)
+ErrorSeveralCompaniesWithEmailContactUs=इस ईमेल वाली कई कंपनियाँ पाई गई हैं, इसलिए हम आपके पंजीकरण को स्वचालित रूप से सत्यापित नहीं कर सकते। मैन्युअल सत्यापन के लिए कृपया हमसे %s पर संपर्क करें
+ErrorSeveralCompaniesWithNameContactUs=इस नाम वाली कई कंपनियाँ पाई गई हैं, इसलिए हम आपके पंजीकरण को स्वचालित रूप से सत्यापित नहीं कर सकते। मैन्युअल सत्यापन के लिए कृपया हमसे %s पर संपर्क करें
+NoPublicActionsAllowedForThisEvent=इस आयोजन के लिए कोई भी सार्वजनिक गतिविधि जनता के लिए खुली नहीं है
+MaxNbOfAttendees=उपस्थित लोगों की अधिकतम संख्या
+DateStartEvent=इवेंट प्रारंभ तिथि
+DateEndEvent=इवेंट समाप्ति तिथि
+ModifyStatus=स्थिति संशोधित करें
+ConfirmModifyStatus=स्थिति संशोधन की पुष्टि करें
+ConfirmModifyStatusQuestion=क्या आप वाकई %s चयनित रिकॉर्ड(रिकॉर्ड) को संशोधित करना चाहते हैं?
+RecordsUpdated=%s रिकॉर्ड अपडेट किए गए
+RecordUpdated=रिकॉर्ड अपडेट किया गया
+NoRecordUpdated=कोई रिकॉर्ड अपडेट नहीं किया गया
+ProfitPerValidatedAttendee=प्रति सहभागी लाभ
+Confirmed=की पुष्टि
+NotSelected=चयनित नहीं
+TheLinkIsAvailableOnTheProjectEventCard=किसी सम्मेलन के लिए सुझाव देने या वोट देने या बूथ के लिए आवेदन करने के लिए लिंक परियोजना/कार्यक्रम के पृष्ठ में दिए गए हैं
+ShowedUp=दिखाया

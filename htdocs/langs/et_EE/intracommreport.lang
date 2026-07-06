@@ -1,0 +1,38 @@
+IntraCommReport=Sisekommunikatsiooni aruanne
+IntraCommReports=Sisekommunikatsiooni aruanded
+
+Module68000Name = Sisekommunikatsiooni aruanne
+Module68000Desc = Intracomm aruannete haldus (Prantsuse DEB/DES-vormingu tugi)
+IntracommReportSetup = Sisemise kommunikatsiooni mooduli seadistamine
+IntracommReportAbout = Teave intracommreporti kohta
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (delivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Tegevjuht
+INTRACOMMREPORT_ROLE_ACTEUR=Näitleja roll
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les tutvustused
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Teenuste kategooria "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Deklarandi number
+# Menu
+MenuIntracommReport=Sisekommunikatsiooni aruanne
+MenuIntracommReportNew=Uus deklaratsioon
+MenuIntracommReportList=Loend
+# View
+NewDeclaration=Uus deklaratsioon
+Declaration=Deklaratsioon
+AnalysisPeriod=Analüüsiperiood
+TypeOfDeclaration=Deklaratsiooni tüüp
+DEB=Kaubavahetusdeklaratsioon (DEB)
+DES=Teenusevahetuse deklaratsioon (DES)
+# Export page
+IntracommReportTitle=XML-faili ettevalmistamine ProDouane'i vormingus
+# List
+IntracommReportList=Genereeritud deklaratsioonide loend
+IntracommReportNumber=Deklaratsiooni number
+IntracommReportPeriod=Analüüsiperiood
+IntracommReportTypeDeclaration=Deklaratsiooni tüüp
+IntracommReportDownload=Laadige alla XML-fail
+# Invoice
+IntracommReportTransportMode=Transpordiliik
+DeleteIntraCommReport=Kustuta IntraCommi aruanne

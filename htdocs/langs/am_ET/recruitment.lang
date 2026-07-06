@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = ምልመላ
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = ለአዲስ የስራ መደቦች የቅጥር ዘመቻዎችን ያቀናብሩ እና ይከተሉ
+# Admin page
+RecruitmentSetup = የምልመላ ማዋቀር
+RecruitmentSetupPage = ለቅጥር ሞጁል ዋና አማራጮችን ማዋቀር እዚህ ያስገቡ
+RecruitmentArea=የምልመላ ቦታ
+PublicInterfaceRecruitmentDesc=የስራዎች ይፋዊ ገፆች ለማሳየት እና ክፍት ስራዎችን ለመመለስ የህዝብ ዩአርኤሎች ናቸው። በእያንዳንዱ የሥራ መዝገብ ላይ ለእያንዳንዱ ክፍት ሥራ አንድ የተለየ አገናኝ አለ.
+EnablePublicRecruitmentPages=ክፍት ስራዎችን ይፋዊ ገጾችን አንቃ
+
+NbOfEmployeesExpected=የሚጠበቀው የሰራተኞች nb
+JobLabel=የሥራ ቦታ መለያ
+WorkPlace=የስራ ቦታ
+DateExpected=የሚጠበቀው ቀን
+FutureManager=የወደፊት አስተዳዳሪ
+ResponsibleOfRecruitement=የምልመላ ኃላፊነት ያለው
+IfJobIsLocatedAtAPartner=ሥራ በአጋር ቦታ ላይ የሚገኝ ከሆነ
+PositionToBeFilled=የሥራ ቦታ
+PositionsToBeFilled=የሥራ ቦታዎች
+ListOfPositionsToBeFilled=የሥራ ቦታዎች ዝርዝር
+NewPositionToBeFilled=አዲስ የሥራ ቦታዎች
+JobOfferToBeFilled=የሚሞላ የስራ ቦታ
+ThisIsInformationOnJobPosition=የሚሞላው የሥራ ቦታ መረጃ
+ContactForRecruitment=ለቅጥር ያነጋግሩ
+EmailRecruiter=ኢሜል ቀጣሪ
+ToUseAGenericEmail=አጠቃላይ ኢሜይል ለመጠቀም። ካልተገለጸ፣ የመቅጠር ኃላፊነት ያለው ኢሜል ጥቅም ላይ ይውላል
+NewCandidature=አዲስ መተግበሪያ
+ListOfCandidatures=የመተግበሪያዎች ዝርዝር
+Remuneration=ደሞዝ
+RequestedRemuneration=የተጠየቀ ደሞዝ
+ProposedRemuneration=የታቀደ ደመወዝ
+ContractProposed=ውል ቀርቧል
+ContractSigned=ውል ተፈራርሟል
+ContractRefused=ውል ውድቅ አደረገ
+RecruitmentCandidature=መተግበሪያ
+JobPositions=የሥራ ቦታዎች
+RecruitmentCandidatures=መተግበሪያዎች
+InterviewToDo=የሚከተሏቸው እውቂያዎች
+AnswerCandidature=የመተግበሪያ መልስ
+YourCandidature=ማመልከቻዎ
+YourCandidatureAnswerMessage=ስለ ማመልከቻህ እናመሰግናለን።<br>...
+JobClosedTextCandidateFound=የሥራ ቦታው ተዘግቷል. ቦታው ተሞልቷል.
+JobClosedTextCanceled=የሥራ ቦታው ተዘግቷል.
+ExtrafieldsJobPosition=ተጨማሪ ባህሪያት (የስራ ቦታዎች)
+ExtrafieldsApplication=ተጨማሪ ባህሪያት (የስራ ማመልከቻዎች)
+MakeOffer=ቅናሽ ያድርጉ
+WeAreRecruiting=እየቀጠርን ነው። ይህ የሚሞሉ ክፍት የስራ መደቦች ዝርዝር ነው...
+NoPositionOpen=በአሁኑ ጊዜ ምንም ክፍት ቦታዎች የሉም
+ConfirmClose=መሰረዙን ያረጋግጡ
+ConfirmCloseAsk=እርግጠኛ ነዎት ይህን የምልመላ እጩ መሰረዝ ይፈልጋሉ
+Recruitment=Recruitment
+ApplyJobCandidature=Apply for this job
+ErrorRecruitmmentCandidatureAlreadyExists= Recruitment candidature already exists with email %s
+RecruitmentCandidatureSaved=Recruitement candidature successfully saved
+NoOpenJobOffer=No open job offers at the moment

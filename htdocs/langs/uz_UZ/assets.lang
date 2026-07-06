@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Yangi aktiv
+AccountancyCodeAsset=Buxgalteriya kodi (aktiv)
+AccountancyCodeDepreciationAsset=Buxgalteriya kodi (amortizatsiya aktivlari hisobi)
+AccountancyCodeDepreciationExpense=Buxgalteriya kodi (amortizatsiya xarajatlari hisobi)
+AssetsLines=Aktivlar
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
+DeleteType=O'chirish
+DeleteAnAssetType=Obyekt modelini o‘chirish
+ConfirmDeleteAssetType=Haqiqatan ham ushbu obyekt modelini o‘chirib tashlamoqchimisiz?
+ShowTypeCard=“%s” modelini ko‘rsatish
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Aktivlar
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Aktivlarning tavsifi
+# Admin page
+AssetSetup=Aktivlarni sozlash
+AssetSetupPage=Aktivlarni sozlash sahifasi
+ExtraFieldsAssetModel=Qo'shimcha atributlar (Aktiv modeli)
+AssetsType=Aktiv modeli
+AssetsTypeId=Obyekt modeli identifikatori
+AssetsTypeLabel=Obyekt modeli yorlig‘i
+AssetsTypes=Aktivlar modellari
+ASSET_ACCOUNTANCY_CATEGORY=Asosiy vositalarni hisobga olish guruhi
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Bir yildan ortiq amortizatsiyani hisoblash uchun kunlardagi mutanosib davr
+# Menu
+MenuAssets=Aktivlar
+MenuNewAsset=Yangi aktiv
+MenuAssetModels=Model aktivlari
+MenuListAssets=Ro'yxat
+MenuNewAssetModel=Yangi aktiv modeli
+MenuListAssetModels=Roʻyxat
+# Module
+ConfirmDeleteAsset=Haqiqatan ham bu obyektni olib tashlamoqchimisiz?
+# Tab
+AssetDepreciationOptions=Amortizatsiya variantlari
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Amortizatsiya
+# Asset
+Asset=Aktiv
+Assets=Aktivlar
+AssetReversalAmountHT=Orqaga qaytarish summasi (soliqlarsiz)
+AssetAcquisitionValueHT=Sotib olish summasi (soliqlarsiz)
+AssetRecoveredVAT=Qaytarilgan QQS
+AssetReversalDate=Qayta tiklash sanasi
+AssetDateAcquisition=Sotib olish sanasi
+AssetDateStart=Ishga tushirish sanasi
+AssetAcquisitionType=Qabul qilish turi
+AssetAcquisitionTypeNew=Yangi
+AssetAcquisitionTypeOccasion=Ishlatilgan
+AssetType=Aktiv turi
+AssetTypeIntangible=Nomoddiy
+AssetTypeTangible=Moddiy
+AssetTypeInProgress=Jarayonda
+AssetTypeFinancial=Moliyaviy
+AssetNotDepreciated=Amortizatsiyalanmagan
+AssetDisposal=Utilizatsiya qilish
+AssetConfirmDisposalAsk=Haqiqatan ham <b> %s </b> aktivini utilizatsiya qilmoqchimisiz?
+AssetConfirmReOpenAsk=Haqiqatan ham <b> %s </b> aktivini qayta ochmoqchimisiz?
+# Asset status
+AssetInDraft=Qoralama
+AssetInProgress=Jarayonda
+AssetDisposed=Utilizatsiya qilingan
+AssetRecorded=Hisoblangan
+# Asset disposal
+AssetDisposalDate=Utilizatsiya qilingan sana
+AssetDisposalAmount=Yo'q qilish qiymati
+AssetDisposalType=Yo'q qilish turi
+AssetDisposalDepreciated=O'tkazma yilini amortizatsiya qiling
+AssetDisposalSubjectToVat=Utilizatsiya QQS evaziga
+# Asset model
+AssetModel=Aktiv modeli
+AssetModels=Aktiv modellari
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Iqtisodiy amortizatsiya
+AssetDepreciationOptionAcceleratedDepreciation=Tezlashtirilgan amortizatsiya (soliq)
+AssetDepreciationOptionDepreciationType=Amortizatsiya turi
+AssetDepreciationOptionDepreciationTypeLinear=Chiziqli
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
+AssetDepreciationOptionDepreciationTypeExceptional=Istisno
+AssetDepreciationOptionDegressiveRate=Degressiv stavka
+AssetDepreciationOptionDuration=Davomiyligi
+AssetDepreciationOptionDurationType=Tur muddati
+AssetDepreciationOptionDurationTypeAnnual=Yillik
+AssetDepreciationOptionDurationTypeMonthly=Oylik
+AssetDepreciationOptionDurationTypeDaily=Kundalik
+AssetDepreciationOptionRate=Baho (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortizatsiya bazasi (QQSdan tashqari)
+AssetDepreciationOptionAmountBaseDeductibleHT=Chegiriladigan baza (QQSdan tashqari)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Oxirgi amortizatsiyaning umumiy summasi (QQSdan tashqari)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Iqtisodiy amortizatsiya
+AssetAccountancyCodeAsset=Aktiv
+AssetAccountancyCodeDepreciationAsset=Amortizatsiya
+AssetAccountancyCodeDepreciationExpense=Amortizatsiya xarajatlari
+AssetAccountancyCodeValueAssetSold=Chiqarilgan aktivning qiymati
+AssetAccountancyCodeReceivableOnAssignment=Chiqarilganda debitorlik
+AssetAccountancyCodeProceedsFromSales=Utilizatsiya qilishdan olingan daromadlar
+AssetAccountancyCodeVatCollected=Yig'ilgan QQS
+AssetAccountancyCodeVatDeductible=Aktivlar bo'yicha QQS undirilgan
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Tezlashtirilgan amortizatsiya (soliq)
+AssetAccountancyCodeAcceleratedDepreciation=Account
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortizatsiya xarajatlari
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Qayta egalik qilish/ta'minlash
+# Asset depreciation
+AssetBaseDepreciationHT=Amortizatsiya asosi (QQSdan tashqari)
+AssetDepreciationBeginDate=Amortizatsiyaning boshlanishi
+AssetDepreciationDuration=Davomiyligi
+AssetDepreciationRate=Baho (%%)
+AssetDepreciationDate=Amortizatsiya sanasi
+AssetDepreciationHT=Amortizatsiya (QQSdan tashqari)
+AssetCumulativeDepreciationHT=Jami amortizatsiya (QQSdan tashqari)
+AssetResidualHT=Qoldiq qiymat (QQSdan tashqari)
+AssetDispatchedInBookkeeping=Amortizatsiya qayd etilgan
+AssetFutureDepreciationLine=Kelajakdagi amortizatsiya
+AssetDepreciationReversal=Orqaga qaytish
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Obyekt identifikatori yoki topilgan model taqdim etilmagan
+AssetErrorFetchAccountancyCodesForMode="%s" amortizatsiya rejimi uchun buxgalteriya hisoblarini olishda xatolik yuz berdi
+AssetErrorDeleteAccountancyCodesForMode=Buxgalteriya hisoblarini "%s" amortizatsiya rejimidan o'chirishda xatolik yuz berdi
+AssetErrorInsertAccountancyCodesForMode="%s" amortizatsiya rejimining buxgalteriya hisoblarini kiritishda xatolik yuz berdi.
+AssetErrorFetchDepreciationOptionsForMode="%s" amortizatsiya rejimi parametrlarini olishda xatolik yuz berdi
+AssetErrorDeleteDepreciationOptionsForMode="%s" amortizatsiya rejimi parametrlarini oʻchirishda xatolik yuz berdi
+AssetErrorInsertDepreciationOptionsForMode="%s" amortizatsiya rejimi parametrlarini kiritishda xatolik yuz berdi
+AssetErrorFetchDepreciationLines=Ro'yxatga olingan amortizatsiya chiziqlarini olishda xato
+AssetErrorClearDepreciationLines=Yozilgan amortizatsiya liniyalarini tozalashda xatolik (qayta va kelajak)
+AssetErrorAddDepreciationLine=Amortizatsiya chizig'ini qo'shishda xato
+AssetErrorCalculationDepreciationLines=Amortizatsiya liniyalarini hisoblashda xatolik (tiklash va kelajak)
+AssetErrorReversalDateNotProvidedForMode="%s" amortizatsiya usuli uchun bekor qilish sanasi ko'rsatilmagan
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Qayta tiklash sanasi "%s" amortizatsiya usuli uchun joriy moliyaviy yil boshidan kattaroq yoki unga teng bo'lishi kerak.
+AssetErrorReversalAmountNotProvidedForMode=Orqaga qaytarish summasi "%s" amortizatsiya rejimi uchun taqdim etilmaydi.
+AssetErrorFetchCumulativeDepreciation=Amortizatsiya chizig'idan yig'ilgan amortizatsiya summasini olishda xatolik
+AssetErrorSetLastCumulativeDepreciation=Oxirgi yig'ilgan amortizatsiya summasini qayd etishda xatolik

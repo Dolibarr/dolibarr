@@ -1,0 +1,16 @@
+# Eclipse files
+.settings/*
+.project
+.buildpath
+
+# doxygen files
+doc/html
+doc/latex
+doc/doxygen_sqlite3.db
+
+# composer files
+vendor/
+
+# other build files
+build/*
+*.phar

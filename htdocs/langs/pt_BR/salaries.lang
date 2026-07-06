@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Conta (do Plano de Contas) usada por padrão para "usuários" em salários
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A conta dedicada definida no cartão do usuário será usada somente para contabilidade do Livro Subrazão. Esta será usada para o Razão Geral, mas também como o valor padrão da contabilidade do Subrazão se nenhuma conta de contabilidade de usuário dedicada for definida no usuário.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta da Contabilidade padrão para pagamentos de salário
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por padrão, deixe em branco a opção "Criar automaticamente um pagamento total" ao criar um Salário
+NewSalaryPayment=Nova ficha de salário
+SalaryID=ID do salário
+SalaryPayment=Pagamento de salário
+SalariesPayments=Pagamentos de salários
+THM=Taxa média horária
+TJM=Taxa média diária
+THMDescription=Este valor pode ser usado para calcular o custo de tempo consumido em um projeto entrado pelos usuários se o módulo projeto for usado
+TJMDescription=Este valor é usado apenas como informação e não será usado em nenhum cálculo
+ConfirmDeleteSalaryPayment=Você deseja excluir este pagamento de salário?
+FillFieldFirst=Preencha o campo do funcionário primeiro
+UserPaySlip=Contracheque

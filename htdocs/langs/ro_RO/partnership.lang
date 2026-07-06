@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Parteneriate
+PartnershipDescription=Modul Management parteneriate
+PartnershipDescriptionLong= Modul Management parteneriate
+Partnership=Parteneriat
+Partnerships=Parteneriate
+AddPartnership=Adăugare parteneriat
+CancelPartnershipForExpiredMembers=Parteneriat: Anulează parteneriatul membrilor cu adeziuni expirate
+PartnershipCheckBacklink=Parteneriat: Verificare backlink de referinţă
+# Menu
+NewPartnership=Parteneriat nou
+NewPartnershipbyWeb=Solicitarea ta de parteneriat a fost adăugată cu succes. Te vom contacta în curând...
+ListOfPartnerships=Listă parteneriate
+# Admin page
+PartnershipSetup=Setare parteneriat
+PartnershipAbout=Despre modulul Parteneriate
+PartnershipAboutPage=Pagină despre modulul Parteneriate
+partnershipforthirdpartyormember=Statusul partenerului trebuie să fie setat ca 'terț' sau ca 'membru'
+PARTNERSHIP_IS_MANAGED_FOR=Parteneriat gestionat pentru
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlink-uri de verificat
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Număr de zile înainte de anularea statutului unui parteneriat, când un abonament a expirat
+ReferingWebsiteCheck=Verificare referinţă website
+ReferingWebsiteCheckDesc=Poți activa o funcție pentru a verifica dacă partenerii tăi au adăugat un backlink către site-ul tău pe website-urile lor.\n 
+PublicFormRegistrationPartnerDesc=Sistemul vă poate oferi o adresă URL/un site web public pentru a permite vizitatorilor externi să solicite un parteneriat.
+# Object
+DeletePartnership=Şterge parteneriat
+PartnershipDedicatedToThisThirdParty=Parteneriat alocat acestui terț
+PartnershipDedicatedToThisMember=Parteneriat alocat acestui membru
+DatePartnershipStart=Dată începere
+DatePartnershipEnd=Dată încetare
+ReasonDecline=Motiv respingere
+ReasonDeclineOrCancel=Motiv pentru refuz sau anulare
+PartnershipAlreadyExist=Parteneriatul există deja
+ManagePartnership=Administrare parteneriat
+BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partenerului
+ConfirmClosePartnershipAsk=Sigur vrei să anulezi acest parteneriat?
+PartnershipType=Tip parteneriat
+PartnershipRefApproved=Parteneriatul %s a fost aprobat
+KeywordToCheckInWebsite=Dacă vrei să verifici dacă un anumit cuvânt cheie este prezent pe site-ul fiecărui partener, definește acest cuvânt cheie aici
+PartnershipDraft=Schiţă
+PartnershipAccepted=Acceptat
+PartnershipRefused=Refuzat
+PartnershipCanceled=Anulat
+PartnershipManagedFor=Partenerii sunt
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Parteneriatul va fi anulat în curând
+SendingEmailOnPartnershipRefused=Parteneriat refuzat
+SendingEmailOnPartnershipAccepted=Parteneriat acceptat
+SendingEmailOnPartnershipCanceled=Parteneriat anulat
+YourPartnershipWillSoonBeCanceledTopic=Parteneriatul va fi anulat în curând
+YourPartnershipRefusedTopic=Parteneriat refuzat
+YourPartnershipAcceptedTopic=Parteneriat acceptat
+YourPartnershipCanceledTopic=Parteneriat anulat
+YourPartnershipWillSoonBeCanceledContent=Dorim să te informăm că parteneriatul nostru va fi anulat în curând (nu am primit reînnoirea sau nu a fost îndeplinită o condiție prealabilă pentru parteneriat). Te rugăm să ne contactezi dacă ai primit acest lucru din cauza unei erori.
+YourPartnershipRefusedContent=Dorim să te informăm că solicitarea ta de parteneriat a fost refuzată. Cerințele preliminare nu au fost îndeplinite. Te rugăm să ne contactezi dacă ai nevoie de mai multe informații.
+YourPartnershipAcceptedContent=Dorim să te informăm că cererea ta de parteneriat a fost acceptată.
+YourPartnershipCanceledContent=Dorim să te informăm că parteneriatul nostru a fost anulat. Te rugăm să ne contactezi dacă ai nevoie de mai multe informații.
+CountLastUrlCheckError=Număr de erori pentru ultima verficare URL
+LastCheckBacklink=Data ultimei verificări URL
+NewPartnershipRequest=Solicitare nouă de parteneriat
+NewPartnershipRequestDesc=Acest formular îţi permite să soliciţi un parteneriat. Dacă ai nevoie de ajutor pentru a completa acest formular, contactează-ne pe email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Această pagină trebuie să conțină cel puțin un link către unul dintre următoarele domenii: %s
+IPOfApplicant=IP aplicant
+PartnershipToReopen=De re-deschis
+PartnershipConfirmReOpenAsk=Sigur vrei să re-deschizi acest parteneriat <b>%s</b>?

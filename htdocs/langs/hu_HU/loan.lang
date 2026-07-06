@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Hitel
+Loans=Hitelek
+NewLoan=Új hitel
+ShowLoan=Hitel megjelenítése
+PaymentLoan=Hitelfizetés
+LoanPayment=Hitelfizetés
+ShowLoanPayment=Hitelfizetés megjelenítése
+LoanCapital=Tőke
+Insurance=Biztosítás
+Interest=Kamat
+Nbterms=Kifejezések száma
+Term=Határidő
+LoanAccountancyCapitalCode=Számviteli számla tőke
+LoanAccountancyInsuranceCode=Számviteli számlabiztosítás
+LoanAccountancyInterestCode=Számviteli számla kamatai
+ConfirmDeleteLoan=Erősítse meg a hitel törlését
+LoanDeleted=A hitel sikeresen törölve
+ConfirmPayLoan=A hitel kifizetésének megerősítése
+LoanPaid=Hitel fizetve
+ListLoanAssociatedProject=A projekthez társított hitelek listája
+AddLoan=Hitel létrehozása
+FinancialCommitment=Pénzügyi kötelezettségvállalás
+InterestAmount=Kamat
+CapitalRemain=Tőke maradt
+TermPaidAllreadyPaid = Ez a futamidő már ki van fizetve
+CantUseScheduleWithLoanStartedToPaid = Nem lehet ütemtervet létrehozni egy hitelhez, ha a fizetés megkezdődött
+CantModifyInterestIfScheduleIsUsed = Nem módosíthatja az érdeklődést, ha ütemezést használ
+# Admin
+ConfigLoan=A hitel modul konfigurálása
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Számla (a Számlatervből) alapértelmezés szerint a tőkére használandó (Kölcsön modul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Számla (a Számlatervből) alapértelmezetten kamatfizetésre használandó (Kölcsön modul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Számla (a Számlatervből) alapértelmezés szerint a biztosításhoz használandó (Kölcsön modul)
+CreateCalcSchedule=Pénzügyi kötelezettségvállalás szerkesztése

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - intracommreport
+IntraCommReport=Relatório de comunicação interna
+IntraCommReports=Relatórios de comunicação interna
+Module68000Name =Relatório de comunicação interna
+Module68000Desc =Gerenciamento de relatórios intracomm (suporte para o formato francês DEB/DES)
+IntracommReportSetup =Configuração do módulo do relatório intracomm
+IntracommReportAbout =Sobre o intracommreport
+INTRACOMMREPORT_ROLE_ACTEUR=Papel do ator
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Nível de obrigação nas introduções
+INTRACOMMREPORT_NUM_DECLARATION=Número do declarante
+MenuIntracommReport=Relatório de comunicação interna
+IntracommReportTitle=Preparação de um arquivo XML no formato ProDouane
+IntracommReportDownload=baixar arquivo XML
+DeleteIntraCommReport=Excluir relatório IntraComm

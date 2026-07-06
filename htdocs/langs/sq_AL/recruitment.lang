@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Rekrutimi
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Menaxhoni dhe ndiqni fushatat e rekrutimit për pozicione të reja pune
+# Admin page
+RecruitmentSetup = Konfigurimi i rekrutimit
+RecruitmentSetupPage = Vendosni këtu konfigurimin e opsioneve kryesore për modulin e rekrutimit
+RecruitmentArea=Zona e rekrutimit
+PublicInterfaceRecruitmentDesc=Faqet publike të punëve janë URL publike për t'u shfaqur dhe për t'iu përgjigjur punëve të hapura. Ekziston një lidhje e ndryshme për çdo punë të hapur, që gjendet në çdo regjistrim pune.
+EnablePublicRecruitmentPages=Aktivizo faqet publike të punëve të hapura
+
+NbOfEmployeesExpected=Nb e pritur e punonjësve
+JobLabel=Etiketa e pozicionit të punës
+WorkPlace=Vendi i punës
+DateExpected=Data e pritshme
+FutureManager=Menaxher i ardhshëm
+ResponsibleOfRecruitement=Përgjegjës i rekrutimit
+IfJobIsLocatedAtAPartner=Nëse puna ndodhet në një vend partneri
+PositionToBeFilled=Pozicioni i punës
+PositionsToBeFilled=Pozicionet e punës
+ListOfPositionsToBeFilled=Lista e pozicioneve të punës
+NewPositionToBeFilled=Pozicione të reja pune
+JobOfferToBeFilled=Vendi i punës që duhet plotësuar
+ThisIsInformationOnJobPosition=Informacion për pozicionin e punës që do të plotësohet
+ContactForRecruitment=Kontaktoni për rekrutim
+EmailRecruiter=Rekrutuesi i postës elektronike
+ToUseAGenericEmail=Për të përdorur një email gjenerik. Nëse nuk përcaktohet, do të përdoret emaili i përgjegjësit të rekrutimit
+NewCandidature=Aplikim i ri
+ListOfCandidatures=Lista e aplikacioneve
+Remuneration=Rrogë
+RequestedRemuneration=Paga e kërkuar
+ProposedRemuneration=Paga e propozuar
+ContractProposed=Kontrata e propozuar
+ContractSigned=Kontrata e nënshkruar
+ContractRefused=Kontrata u refuzua
+RecruitmentCandidature=Aplikacion
+JobPositions=Pozicionet e punës
+RecruitmentCandidatures=Aplikacionet
+InterviewToDo=Kontaktet për t'u ndjekur
+AnswerCandidature=Përgjigja e aplikacionit
+YourCandidature=Aplikimi juaj
+YourCandidatureAnswerMessage=Faleminderit për aplikimin tuaj.<br>...
+JobClosedTextCandidateFound=Vendi i punës është i mbyllur. Pozicioni është plotësuar.
+JobClosedTextCanceled=Vendi i punës është i mbyllur.
+ExtrafieldsJobPosition=Atributet plotësuese (pozicionet e punës)
+ExtrafieldsApplication=Atributet plotësuese (aplikimet për punë)
+MakeOffer=Bëni një ofertë
+WeAreRecruiting=Ne jemi duke rekrutuar. Kjo është lista e pozicioneve të hapura për t'u plotësuar...
+NoPositionOpen=Asnjë pozicion i hapur për momentin
+ConfirmClose=Konfirmo anulimin
+ConfirmCloseAsk=Jeni i sigurt që dëshironi ta anuloni këtë kandidaturë rekrutimi
+Recruitment=Rekrutimi
+ApplyJobCandidature=Aplikoni për këtë punë
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidatura për rekrutim ekziston tashmë me email %s
+RecruitmentCandidatureSaved=Kandidatura për rekrutim u ruajt me sukses
+NoOpenJobOffer=Nuk ka oferta pune të hapura për momentin

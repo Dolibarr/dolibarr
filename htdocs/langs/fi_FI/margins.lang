@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Kate
+Margins=Katteet
+TotalMargin=Kate yhteensä
+MarginOnProducts=Kate / Tuotteet
+MarginOnServices=Kate / Palvelut
+MarginRate=Marginaaliprosentti
+ModifyMarginRates=Muokkaa marginaalihintoja
+MarkRate=Kateprosentti
+DisplayMarginRates=Näytä marginaalit
+DisplayMarkRates=Näytä arvosanat
+InputPrice=Syöttöhinta
+margin=Voittomarginaalien hallinta
+margesSetup=Voittomarginaalien hallinnan asetukset
+MarginDetails=Marginaalin tiedot
+ProductMargins=Tuotteiden marginaalit
+CustomerMargins=Asiakkaiden marginaalit
+SalesRepresentativeMargins=Myyntiedustajan marginaalit
+ContactOfInvoice=Laskun yhteyshenkilö
+UserMargins=Käyttäjämarginaalit
+ProductService=Tuote tai palvelu
+AllProducts=Kaikki tuotteet ja palvelut
+ChooseProduct/Service=Valitse tuote tai palvelu
+ForceBuyingPriceIfNull=Pakota osto-/kustannushinta myyntihinnaksi, jos sitä ei ole määritelty
+ForceBuyingPriceIfNullDetails=Jos osto-/kustannushintaa ei anneta, kun lisäämme uuden rivin, ja tämä vaihtoehto on PÄÄLLÄ, marginaali on 0%% span> uudella rivillä (osto-/kustannushinta = myyntihinta). Jos tämä vaihtoehto on OFF (suositus), marginaali on sama kuin oletus ehdottama arvo (ja voi olla 100 %%, jos oletus-arvoa ei löydy).
+MARGIN_METHODE_FOR_DISCOUNT=Marginaalimenetelmä maailmanlaajuisille alennuksille
+UseDiscountAsProduct=tuotteeksi
+UseDiscountAsService=palveluksi
+UseDiscountOnTotal=välisummasta
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määrittää, käsitelläänkö globaalia alennusta tuotteena, palveluna vai vain välisummana marginaalin laskennassa.
+MARGIN_TYPE=Osto-/kustannushinta, jota ehdotti oletus marginaalilaskennassa
+MargeType1=Marginaali parhaalla Toimittaja hinnalla
+MargeType2=Painotetun keskihinnan marginaali (WAP)
+MargeType3=Omakustannushinnan marginaali
+MarginTypeDesc=* Parhaan ostohinnan marginaali = myyntihinta - paras Toimittaja tuotekortissa määritetty hinta<br>* Painotetun keskihinnan marginaali (WAP) ) = Myyntihinta – tuotteen painotettu keskihinta (WAP) tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty<br>* Kustannusmarginaali hinta = myyntihinta – omakustannushinta määritetty tuotekortilla tai WAP:lla, jos omakustannushintaa ei ole määritetty, tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty
+CostPrice=Kustannushinta
+UnitCharges=Yksikkömaksut
+Charges=Maksut
+AgentContactType=Kaupallisen edustajan yhteystyyppi
+AgentContactTypeDetails=Määritä, mitä yhteystyyppiä (linkitetty laskuihin) käytetään marginaaliraportissa yhteyshenkilöä/osoitetta kohti. Huomaa, että yhteyshenkilön tilastojen lukeminen ei ole luotettavaa, koska useimmissa tapauksissa yhteyshenkilöä ei välttämättä ole erikseen määritelty laskuissa.
+rateMustBeNumeric=Koron on oltava numeerinen arvo
+markRateShouldBeLesserThan100=Arvosanan tulee olla alle 100
+ShowMarginInfos=Näytä marginaalitiedot
+CheckMargins=Marginaalien yksityiskohta
+MarginPerSaleRepresentativeWarning=Käyttäjäkohtaisen marginaalin raportissa käytetään kolmansien osapuolten ja myyntiedustajien välistä linkkiä kunkin myyntiedustajan marginaalin laskemiseen. Koska joillakin kolmansilla osapuolilla ei ehkä ole omaa myyntiedustajaa ja, jotkut kolmannet osapuolet voivat olla linkitettynä useisiin osapuoliin, joten joitain summia ei välttämättä sisällytetä tähän raporttiin (jos myyntiedustajaa ei ole) ja jotkut saattavat näkyä eri riveillä (jokaiselle myyntiedustajalle).

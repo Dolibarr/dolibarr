@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowDesc=Deze module bevat enkele automatische acties. Standaard, de workflow is vrij (u kan dingen doen in de volgorde die u wenst) maar hier kan u enkele automatische acties activeren
+ThereIsNoWorkflowToModify=Er is geen workflow wijziging beschikbaar met de geactiveerde modules.
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klantenfactuur na validatie van een contract
+AutomaticCreation=Automatische aanmaak
+AutomaticClassification=Automatische classificatie

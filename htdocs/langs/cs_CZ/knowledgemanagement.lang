@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Systém správy znalostí
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Spravovat znalostní systém (KM) nebo helpdesk
+# Admin page
+KnowledgeManagementSetup = Nastavení systému správy znalostí
+KnowledgeManagementSetupPage = Stránka nastavení systému správy znalostí
+# About page
+KnowledgeManagementAbout = O managementu znalostí
+KnowledgeManagementAboutPage = Správa znalostí o stránce
+KnowledgeManagementArea = Řízení znalostí
+MenuKnowledgeRecord = Znalostní báze
+MenuKnowledgeRecordShort = Znalostní báze
+ListKnowledgeRecord = Seznam článků
+NewKnowledgeRecord = Nový článek
+ValidateReply = Ověřit řešení
+KnowledgeRecords = Články
+KnowledgeRecord = Článek
+KnowledgeRecordExtraFields = Extrapole pro článek
+GroupOfTicket=Skupina vstupenek
+YouCanLinkArticleToATicketCategory=Článek můžete propojit se skupinou tiketů (takže článek bude zvýrazněn na všech tiketech v této skupině).
+SuggestedForTicketsInGroup=Doporučení pro tvorbu tiketů
+SetObsolete=Nastavit jako zastaralé
+ConfirmCloseKM=Potvrzujete uzavření tohoto článku jako zastaralého?
+ConfirmReopenKM=Chcete obnovit stav tohoto článku do stavu „Ověřeno“?
+BoxLastKnowledgerecordDescription=Poslední články %s
+BoxLastKnowledgerecord=Poslední články
+BoxLastKnowledgerecordContent=Poslední články
+BoxLastKnowledgerecordModifiedContent=Naposledy upravené články
+BoxLastModifiedKnowledgerecordDescription=Poslední úpravy článků %s
+BoxLastModifiedKnowledgerecord=Naposledy upravené články

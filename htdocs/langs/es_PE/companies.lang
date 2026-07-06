@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - companies
+Individual=Privado individual
+VATIsUsed=Sujeto a IGV
+VATReverseCharge=Cargo inverso de IGV
+VATReverseChargeByDefault=Cargo inverso de IGV por defecto
+VATReverseChargeByDefaultDesc=En la factura del proveedor, el cobro revertido del IGV se utiliza de forma predeterminada
+ProfId1ES=Registro Único de Contribuyente Id 1 (RUC)
+ProfId3DZ=RUC
+ProfId6GA=RUC
+VATIntra=RUC
+VATIntraShort=RUC
+VATPaymentFrequency=Frecuencia de pago de IGV
+TE_PRIVATE=Privado individual
+InActivity=Abrir

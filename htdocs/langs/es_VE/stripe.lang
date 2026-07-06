@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeChargeList=List of Stripe charges
+StripeTransactionList=List of Stripe transactions
+StripePayoutList=List of Stripe payouts

@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Zásady ochrany osobních údajů
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul pro správu ochrany osobních údajů (soulad s GDPR)
+# Administration page
+datapolicySetup = Nastavení zásad ochrany osobních údajů modulu
+DataDeletion=Smazání dat
+DataAnonymization=Anonymizace dat
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = V závislosti na zákonech vaší země (příklad <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">článek 5</a> GDPR) musí být osobní údaje uchovávány po dobu nepřesahující dobu, po kterou jsou údaje potřebné pro účel, pro který byly shromážděny, s výjimkou archivních účelů.<br>Tento modul automaticky provede anonymizaci po určité době bez událostí (doba, kterou uvedete níže) a pokud objekt nemá žádné existující podřízené obchodní objekty.
+NB_MONTHS = %s měsíců
+ONE_YEAR = 1 rok
+NB_YEARS = %s let
+DATAPOLICY_TIERS_CLIENT = Zákazník
+DATAPOLICY_TIERS_PROSPECT = Cíl
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potenciální zákazník/zákazník
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ani potenciální zákazník/ani zákazník
+DATAPOLICY_TIERS_FOURNISSEUR = Dodavatel
+DATAPOLICY_CONTACT_CLIENT = Zákazník
+DATAPOLICY_CONTACT_PROSPECT = Cíl
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potenciální zákazník/zákazník
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani potenciální zákazník/ani zákazník
+DATAPOLICY_CONTACT_FOURNISSEUR = Dodavatel
+DATAPOLICY_ADHERENT = Člen
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Všem relevantním kontaktům (které dosud neobdržely e-mail a u kterých jste nezaregistrovali nic ohledně jejich souhlasu s GDPR) můžete zaslat e-mail s GDPR. K tomu použijte následující tlačítko.
+SendAgreement = Odesílat e-maily
+AllAgreementSend = Všechny e-maily byly odeslány
+TXTLINKDATAPOLICYACCEPT = Text odkazu „smlouva“
+TXTLINKDATAPOLICYREFUSE = Text odkazu „nesouhlas“
+DelayForAnonymization=Zpoždění pro anonymizaci
+DelayForDeletion=Zpoždění pro smazání
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Zpracování osobních údajů
+DATAPOLICY_consentement = Získaný souhlas se zpracováním osobních údajů
+DATAPOLICY_opposition_traitement = Nesouhlasí se zpracováním svých osobních údajů
+DATAPOLICY_opposition_prospection = Nesouhlasí se zpracováním svých osobních údajů za účelem vyhledávání zákazníků
+# Notes added during an anonymization
+DATAPOLICY_date = Datum souhlasu/nesouhlasu GDPR
+DATAPOLICY_send = Datum odeslání e-mailu s dohodou
+MailSent = E-mail byl odeslán
+NUMBER_MONTH_BEFORE_DELETION = Počet měsíců před smazáním
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marzhi
+Margins=Margjinat
+TotalMargin=Marzhi total
+MarginOnProducts=Marzhi / Produktet
+MarginOnServices=Marzhi / Shërbimet
+MarginRate=Norma e marzhit
+ModifyMarginRates=Ndrysho normat e marzhit
+MarkRate=Shënoni normën
+DisplayMarginRates=Shfaq normat e marzhit
+DisplayMarkRates=Shfaq normat e markave
+InputPrice=Çmimi i hyrjes
+margin=Menaxhimi i marzheve të fitimit
+margesSetup=Konfigurimi i menaxhimit të marzheve të fitimit
+MarginDetails=Detajet e marzhit
+ProductMargins=Marzhet e produktit
+CustomerMargins=Marzhet e klientit
+SalesRepresentativeMargins=Marzhet e përfaqësuesit të shitjeve
+ContactOfInvoice=Kontakti i faturës
+UserMargins=Kufijtë e përdoruesit
+ProductService=Produkti ose Shërbimi
+AllProducts=Të gjitha produktet dhe shërbimet
+ChooseProduct/Service=Zgjidhni produktin ose shërbimin
+ForceBuyingPriceIfNull=Detyro blerjen/çmimin e kostos në çmimin e shitjes nëse nuk përcaktohet
+ForceBuyingPriceIfNullDetails=Nëse çmimi i blerjes/kostos nuk ofrohet kur shtojmë një linjë të re dhe ky opsion është "ON", marzhi do të jetë 0%% në linjën e re (blerja/çmimi i kostos = Çmimi i shitjes). Nëse ky opsion është "OFF" (rekomandohet), marzhi do të jetë i barabartë me vlerën e sugjeruar si parazgjedhje (dhe mund të jetë 100%% nëse nuk mund të gjendet asnjë vlerë e paracaktuar).
+MARGIN_METHODE_FOR_DISCOUNT=Metoda e marzhit për zbritjet globale
+UseDiscountAsProduct=Si produkt
+UseDiscountAsService=Si shërbim
+UseDiscountOnTotal=Në nëntotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Përcakton nëse një zbritje globale trajtohet si produkt, shërbim ose vetëm në nëntotalin për llogaritjen e marzhit.
+MARGIN_TYPE=Blerja/Çmimi i kostos sugjerohet si parazgjedhje për llogaritjen e marzhit
+MargeType1=Marzhi në çmimin më të mirë të shitësit
+MargeType2=Marzhi në çmimin mesatar të ponderuar (WAP)
+MargeType3=Marzhi në çmimin e kostos
+MarginTypeDesc=* Marzhi në çmimin më të mirë të blerjes = Çmimi i shitjes - Çmimi më i mirë i shitësit i përcaktuar në kartën e produktit<br>* Marzhi në çmimin mesatar të ponderuar (WAP) = Çmimi i shitjes - Çmimi mesatar i ponderuar i produktit (WAP) ose çmimi më i mirë i shitësit nëse WAP nuk është përcaktuar ende<br>* Marzhi në çmimin e kostos = çmimi i shitjes - Çmimi i kostos i përcaktuar në kartën e produktit ose WAP nëse çmimi i kostos nuk është përcaktuar, ose çmimi më i mirë i shitësit nëse WAP ende nuk është përcaktuar
+CostPrice=Çmimi i kostos
+UnitCharges=Tarifat për njësi
+Charges=Akuzat
+AgentContactType=Lloji i kontaktit të agjentit tregtar
+AgentContactTypeDetails=Përcaktoni se çfarë lloji kontakti (i lidhur në fatura) do të përdoret për raportin e marzhit për kontakt/adresë. Vini re se leximi i statistikave për një kontakt nuk është i besueshëm pasi në shumicën e rasteve kontakti mund të mos përcaktohet në mënyrë eksplicite në fatura.
+rateMustBeNumeric=Norma duhet të jetë një vlerë numerike
+markRateShouldBeLesserThan100=Norma e markës duhet të jetë më e ulët se 100
+ShowMarginInfos=Shfaq informacionet e margjinës
+CheckMargins=Detajet e marzheve
+MarginPerSaleRepresentativeWarning=Raporti i marzhit për përdorues përdor lidhjen midis palëve të treta dhe përfaqësuesve të shitjes për të llogaritur marzhin e secilit përfaqësues të shitjes. Për shkak se disa palë të treta mund të mos kenë ndonjë përfaqësues të dedikuar shitjeje dhe disa palë të treta mund të jenë të lidhura me disa, disa shuma mund të mos përfshihen në këtë raport (nëse nuk ka përfaqësues shitje) dhe disa mund të shfaqen në linja të ndryshme (për secilin përfaqësues shitje) .

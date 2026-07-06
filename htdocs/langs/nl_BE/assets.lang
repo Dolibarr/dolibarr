@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - assets
+AccountancyCodeAsset=Boekhoudcode (activum)
+AccountancyCodeDepreciationAsset=Boekhoudcode (afschrijvingsrekening)
+AccountancyCodeDepreciationExpense=Boekhoudcode (afschrijvingskostenrekening)
+AssetsLines=Middelen
+ModuleAssetsName=Middelen
+ModuleAssetsDesc=Activabeschrijving
+AssetSetup=Activa instellen
+AssetSetupPage=Activa-instellingenpagina
+MenuAssets=Middelen
+MenuListAssets=Lijst
+MenuListAssetModels=Lijst
+AssetAccountancyCodes=Accounts boekhouding
+Assets=Middelen
+AssetTypeInProgress=Bezig
+AssetInProgress=Bezig
+AssetAccountancyCodeAcceleratedDepreciation=Rekening

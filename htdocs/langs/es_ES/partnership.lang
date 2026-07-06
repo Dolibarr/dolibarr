@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Gestión de asociaciones
+PartnershipDescription=Módulo Gestión asociaciones
+PartnershipDescriptionLong= Gestión Módulo Partners
+Partnership=Socio
+Partnerships=Asociaciones
+AddPartnership=Agregar asociación
+CancelPartnershipForExpiredMembers=Asociación: cancelar la asociación de miembros con suscripciones caducadas
+PartnershipCheckBacklink=Asociación: compruebe el vínculo de retroceso de referencia
+# Menu
+NewPartnership=Nueva Asociación
+NewPartnershipbyWeb=Su solicitud de asociación se ha agregado con éxito. Es posible que nos comuniquemos con usted pronto...
+ListOfPartnerships=Listado de Asociaciones
+# Admin page
+PartnershipSetup=Configuración Asociaciones
+PartnershipAbout=About Partnership
+PartnershipAboutPage=Acerca de la página de Asociaciones
+partnershipforthirdpartyormember=El estado de socio debe establecerse en un 'tercero' o un 'miembro'
+PARTNERSHIP_IS_MANAGED_FOR=Asociación gestionada para
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks para comprobar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Número de días antes de cancelar el estado de una asociación cuando una suscripción ha expirado
+ReferingWebsiteCheck=Comprobación de la referencia al sitio
+ReferingWebsiteCheckDesc=Puede habilitar una función para verificar que sus socios hayan agregado un vínculo de retroceso a los dominios de su sitio web en su propio sitio web.
+PublicFormRegistrationPartnerDesc=Dolibarr puede proporcionarle una URL/sitio web público para permitir que los visitantes externos soliciten ser parte del programa de asociación.
+# Object
+DeletePartnership=Eliminar una asociación
+PartnershipDedicatedToThisThirdParty=Asociación dedicada a este tercero
+PartnershipDedicatedToThisMember=Asociación dedicada a este miembro
+DatePartnershipStart=Fecha de inicio
+DatePartnershipEnd=Fecha de fin
+ReasonDecline=Razón de rechazo
+ReasonDeclineOrCancel=Motivo del rechazo o cancelación
+PartnershipAlreadyExist=La asociación ya existe
+ManagePartnership=Gestionar la asociación
+BacklinkNotFoundOnPartnerWebsite=Vínculo de retroceso no encontrado en el sitio web del socio
+ConfirmClosePartnershipAsk=¿Está seguro de que desea cancelar esta asociación?
+PartnershipType=Tipo de asociación
+PartnershipRefApproved=Asociación %s aprobada
+KeywordToCheckInWebsite=Si desea verificar que una palabra clave determinada esté presente en el sitio web de cada socio, defina esta palabra clave aquí
+PartnershipDraft=Borrador
+PartnershipAccepted=Aceptado
+PartnershipRefused=Rechazado
+PartnershipCanceled=Anulado
+PartnershipManagedFor=Los Partners son
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=La asociación pronto se cancelará
+SendingEmailOnPartnershipRefused=Asociación rechazada
+SendingEmailOnPartnershipAccepted=Asociación aceptada
+SendingEmailOnPartnershipCanceled=Asociación cancelada
+YourPartnershipWillSoonBeCanceledTopic=La asociación pronto se cancelará
+YourPartnershipRefusedTopic=Asociación rechazada
+YourPartnershipAcceptedTopic=Asociación aceptada
+YourPartnershipCanceledTopic=Asociación cancelada
+YourPartnershipWillSoonBeCanceledContent=Nos gustaría informarle que nuestra asociación pronto se cancelará (no obtuvimos la renovación o no se cumplió un requisito previo para nuestra asociación). Comuníquese con nosotros si recibió esto debido a un error.
+YourPartnershipRefusedContent=Nos gustaría informarle que su solicitud de asociación ha sido rechazada. No se han cumplido los requisitos previos. Por favor contactenos si necesita mas informacion.
+YourPartnershipAcceptedContent=Nos gustaría informarle que su solicitud de asociación ha sido aceptada.
+YourPartnershipCanceledContent=Nos gustaría informarle que nuestra asociación ha sido cancelada. Por favor contactenos si necesita mas informacion.
+CountLastUrlCheckError=Número de errores para la última verificación de URL
+LastCheckBacklink=Fecha de la última verificación de URL
+NewPartnershipRequest=Nueva solicitud de asociación
+NewPartnershipRequestDesc=Este formulario le permite solicitar ser parte de uno de nuestros programas de asociación. Si necesita ayuda para completar este formulario, comuníquese por correo electrónico <b> %s </b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta página debe contener al menos un enlace a uno de los siguientes dominios: %s
+IPOfApplicant=IP del solicitante
+PartnershipToReopen=Para reabrir
+PartnershipConfirmReOpenAsk=¿Está seguro de que desea reabrir esta asociación <b> %s</b>?

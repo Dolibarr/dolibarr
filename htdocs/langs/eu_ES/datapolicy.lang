@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Datuen Pribatutasun Politika
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Datuen pribatutasuna kudeatzeko modulua (GDPRrekin bat etorriz)
+# Administration page
+datapolicySetup = Moduluko Datuen Pribatutasun Politikaren Konfigurazioa
+DataDeletion=Datuen ezabatzea
+DataAnonymization=Datuen anonimizazioa
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Zure herrialdeko legeen arabera (GDPRren <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">5. artikulua, </a> adibidea), datu pertsonalak bildu ziren helbururako beharrezkoak diren denbora baino gehiago ez den bitartean gorde behar dira, artxibatzeko helburuetarako izan ezik. <br>Modulu honek automatikoki anonimizazioa egingo du gertaerarik gabeko iraupen jakin baten ondoren (behean adieraziko duzun iraupena) eta objektuak ez badu negozio-objektu seme-alabarik.
+NB_MONTHS = %s hilabete
+ONE_YEAR = Urtebete
+NB_YEARS = %s urte
+DATAPOLICY_TIERS_CLIENT = Bezeroa
+DATAPOLICY_TIERS_PROSPECT = Perspektiba
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Bezero potentziala/bezeroa
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ez bezero potentziala/Ez bezero potentziala
+DATAPOLICY_TIERS_FOURNISSEUR = Hornitzailea
+DATAPOLICY_CONTACT_CLIENT = Bezeroa
+DATAPOLICY_CONTACT_PROSPECT = Perspektiba
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Bezero potentziala/bezeroa
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ez bezero potentziala/Ez bezero potentziala
+DATAPOLICY_CONTACT_FOURNISSEUR = Hornitzailea
+DATAPOLICY_ADHERENT = Kidea
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = GDPRri buruzko mezu elektroniko bat bidal diezaiekezu zure kontaktu garrantzitsu guztiei (oraindik mezu elektronikorik jaso ez dutenei eta haien GDPR akordioari buruz ezer erregistratu ez diezunei). Horretarako, erabili hurrengo botoia.
+SendAgreement = Bidali mezu elektronikoak
+AllAgreementSend = Mezu elektroniko guztiak bidali dira
+TXTLINKDATAPOLICYACCEPT = "Akordioa" estekaren testua
+TXTLINKDATAPOLICYREFUSE = "Desadostasuna" estekaren testua
+DelayForAnonymization=Anonimizaziorako atzerapena
+DelayForDeletion=Ezabatzeko atzerapena
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Datu pertsonalen tratamendua
+DATAPOLICY_consentement = Datu pertsonalak tratatzeko baimena lortuta
+DATAPOLICY_opposition_traitement = Bere datu pertsonalen tratamenduaren aurka dago
+DATAPOLICY_opposition_prospection = Prospekzio helburuetarako bere datu pertsonalak tratatzearen aurka egiten du
+# Notes added during an anonymization
+DATAPOLICY_date = GDPRren adostasunaren/desadostasunaren data
+DATAPOLICY_send = Akordioaren data bidalitako mezu elektronikoa
+MailSent = Mezu elektronikoa bidali da
+NUMBER_MONTH_BEFORE_DELETION = Ezabatu aurreko hilabete kopurua
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

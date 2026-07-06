@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=የ PayPal ሞጁል ማዋቀር
+PaypalDesc=ይህ ሞጁል በደንበኞች በ<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> በኩል ክፍያ ይፈቅዳል። ይህ ለማስታወቂያ-ሆክ ክፍያ ወይም ከዶሊባርር ነገር ጋር ለተዛመደ ክፍያ (ክፍያ መጠየቂያ፣ ትዕዛዝ፣ ...) ጥቅም ላይ ሊውል ይችላል።
+PaypalOrCBDoPayment=በ PayPal (ካርድ ወይም PayPal) ይክፈሉ
+PaypalDoPayment=በ PayPal ይክፈሉ።
+PAYPAL_API_SANDBOX=ሁነታ ሙከራ/ማጠሪያ
+PAYPAL_API_USER=የኤፒአይ ተጠቃሚ ስም
+PAYPAL_API_PASSWORD=የኤፒአይ ይለፍ ቃል
+PAYPAL_API_SIGNATURE=የኤፒአይ ፊርማ
+PAYPAL_SSLVERSION=Curl SSL ስሪት
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY="የተዋሃደ" ክፍያ (ክሬዲት ካርድ+PayPal) ወይም "PayPal" ብቻ ያቅርቡ
+PaypalModeIntegral=የተዋሃደ
+PaypalModeOnlyPaypal=PayPal ብቻ
+ONLINE_PAYMENT_CSS_URL=በመስመር ላይ የክፍያ ገጽ ላይ የሲኤስኤስ የቅጥ ሉህ አማራጭ ዩአርኤል
+ThisIsTransactionId=ይህ የግብይት መታወቂያ ነው፡ <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=ሰነድ በኢሜል ሲልኩ የ PayPal ክፍያ ዩአርኤልን ያካትቱ
+NewOnlinePaymentReceived=አዲስ የመስመር ላይ ክፍያ ደረሰ
+NewOnlinePaymentFailed=አዲስ የመስመር ላይ ክፍያ ሞክሮ አልተሳካም።
+ONLINE_PAYMENT_SENDEMAIL=ከእያንዳንዱ የክፍያ ሙከራ በኋላ ለማሳወቂያዎች የኢሜይል አድራሻ (ለስኬት እና ውድቀት)
+ReturnURLAfterPayment=ከተከፈለ በኋላ ዩአርኤልን ይመልሱ
+ValidationOfOnlinePaymentFailed=የመስመር ላይ ክፍያን ማረጋገጥ አልተሳካም።
+PaymentSystemConfirmPaymentPageWasCalledButFailed=የክፍያ ማረጋገጫ ገጽ በክፍያ ሥርዓት ተጠርቷል ስህተት መለሰ
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API ጥሪ አልተሳካም።
+DoExpressCheckoutPaymentAPICallFailed=የDoExpressCheckoutPayment API ጥሪ አልተሳካም።
+DetailedErrorMessage=ዝርዝር የስህተት መልእክት
+ShortErrorMessage=አጭር የስህተት መልእክት
+ErrorCode=የስህተት ኮድ
+ErrorSeverityCode=የክብደት ኮድ ስህተት
+OnlinePaymentSystem=የመስመር ላይ የክፍያ ስርዓት
+PaypalLiveEnabled=የ PayPal "ቀጥታ" ሁነታ ነቅቷል (አለበለዚያ የሙከራ/ማጠሪያ ሁነታ)
+PaypalImportPayment=የፔይፓል ክፍያዎችን ያስመጡ
+PostActionAfterPayment=ከክፍያ በኋላ እርምጃዎችን ይለጥፉ
+ARollbackWasPerformedOnPostActions=በሁሉም የልጥፍ ድርጊቶች ላይ የመልሶ ማቋቋም ስራ ተሰርቷል። አስፈላጊ ከሆነ ድርጊቶችን እራስዎ ማጠናቀቅ አለብዎት.
+ValidationOfPaymentFailed=ክፍያን ማረጋገጥ አልተሳካም።
+CardOwner=ካርድ ያዥ
+PayPalBalance=Paypal ክሬዲት
+OnlineSubscriptionPaymentLine=Online subscription recorded on %s<br>Paid via %s<br>Originating IP address: %s<br>Transaction ID: %s

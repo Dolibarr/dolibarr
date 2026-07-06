@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Pengaturan Mailman dan modul SPIP
+MailmanTitle=Sistem milis mailman
+TestSubscribe=Untuk menguji langganan daftar Mailman
+TestUnSubscribe=Untuk menguji berhenti berlangganan dari daftar Mailman
+MailmanCreationSuccess=Tes berlangganan berhasil dilaksanakan
+MailmanDeletionSuccess=Tes berhenti berlangganan berhasil dilaksanakan
+SynchroMailManEnabled=Pembaruan tukang pos akan dilakukan
+SynchroSpipEnabled=Pembaruan Spip akan dilakukan
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Kata sandi administrator tukang pos
+DescADHERENT_MAILMAN_URL=URL untuk langganan Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL untuk berhenti berlangganan Mailman
+DescADHERENT_MAILMAN_LISTS=Daftar untuk prasasti otomatis anggota baru (dipisahkan dengan koma)
+SPIPTitle=Sistem Manajemen Konten SPIP
+DescADHERENT_SPIP_SERVEUR=Server SPIP
+DescADHERENT_SPIP_DB=Nama database SPIP
+DescADHERENT_SPIP_USER=Login basis data SPIP
+DescADHERENT_SPIP_PASS=Kata sandi basis data SPIP
+AddIntoSpip=Tambahkan ke dalam SPIP
+AddIntoSpipConfirmation=Anda yakin ingin menambahkan anggota ini ke SPIP?
+AddIntoSpipError=Gagal menambahkan pengguna di SPIP
+DeleteIntoSpip=Hapus dari SPIP
+DeleteIntoSpipConfirmation=Apakah Anda yakin ingin menghapus anggota ini dari SPIP?
+DeleteIntoSpipError=Gagal menekan pengguna dari SPIP
+SPIPConnectionFailed=Gagal terhubung ke SPIP
+SuccessToAddToMailmanList=%s berhasil ditambahkan ke daftar tukang pos %s atau database SPIP
+SuccessToRemoveToMailmanList=%s berhasil dihapus dari daftar tukang pos %s atau database SPIP

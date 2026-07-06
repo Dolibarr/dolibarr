@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal mooduli seadistamine
+PaypalDesc=See moodul võimaldab klientidel maksta <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPali </a> kaudu. Seda saab kasutada ad hoc makseks või Dolibarri objektiga seotud makseks (arve, tellimus jne)
+PaypalOrCBDoPayment=Maksa PayPali kaudu (kaart või PayPal)
+PaypalDoPayment=Maksa PayPaliga
+PAYPAL_API_SANDBOX=Testimise/liivakasti režii
+PAYPAL_API_USER=API kasutajanimi
+PAYPAL_API_PASSWORD=API parool
+PAYPAL_API_SIGNATURE=API signatuur
+PAYPAL_SSLVERSION=Curl SSL-i versioon
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku "integraalset" makset (krediitkaart + PayPal) või ainult "PayPal"
+PaypalModeIntegral=Terviklik
+PaypalModeOnlyPaypal=Ainult PayPal
+ONLINE_PAYMENT_CSS_URL=CSS-stiililehe valikuline URL veebimaksete lehel
+ThisIsTransactionId=See on tehingu ID: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Dokumendi meili teel saatmisel lisage PayPali makse URL
+NewOnlinePaymentReceived=Uus internetimakse laekunud
+NewOnlinePaymentFailed=Uus internetimakse prooviti teha, aga see ebaõnnestus
+ONLINE_PAYMENT_SENDEMAIL=E-posti aadress teavituste jaoks pärast iga maksekatset (edu ja ebaõnnestumise korral)
+ReturnURLAfterPayment=Tagastus-URL pärast maksmist
+ValidationOfOnlinePaymentFailed=Veebimakse valideerimine ebaõnnestus
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Maksesüsteem kutsus makse kinnituslehele vea
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API kutse nurjus.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API kutse nurjus.
+DetailedErrorMessage=Üksikasjalik veateade
+ShortErrorMessage=Lühike veateade
+ErrorCode=Veakood
+ErrorSeverityCode=Vea raskusastme kood
+OnlinePaymentSystem=Veebipõhine maksesüsteem
+PaypalLiveEnabled=PayPali reaalajas režiim on lubatud (muidu test-/liivakastirežiim)
+PaypalImportPayment=PayPali maksete importimine
+PostActionAfterPayment=Postituse toimingud pärast makseid
+ARollbackWasPerformedOnPostActions=Kõikidele postitamistoimingutele rakendati tagasipööramine. Vajadusel peate postitamistoimingud käsitsi lõpule viima.
+ValidationOfPaymentFailed=Makse valideerimine ebaõnnestus
+CardOwner=Kaardihoidja
+PayPalBalance=PayPali krediit
+OnlineSubscriptionPaymentLine=Veebitellimus salvestatud %s<br>Maksetud %s<br>Algse IP-aadressi: %s<br>Tehingu ID: %s

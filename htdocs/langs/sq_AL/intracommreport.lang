@@ -1,0 +1,38 @@
+IntraCommReport=Raporti i Intracom
+IntraCommReports=Raportet e Intracomm
+
+Module68000Name = Raporti brendakomunës
+Module68000Desc = Menaxhimi i raportit Intracomm (Mbështetje për formatin francez DEB/DES)
+IntracommReportSetup = Konfigurimi i modulit të raportit Intracomm
+IntracommReportAbout = Rreth raportit intracomm
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Lloji d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les hyrje
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategoria e shërbimeve të llojit "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Numër i deklaruar
+# Menu
+MenuIntracommReport=Raporti brendakomunës
+MenuIntracommReportNew=Deklaratë e re
+MenuIntracommReportList=Listë
+# View
+NewDeclaration=Deklaratë e re
+Declaration=Deklarata
+AnalysisPeriod=Periudha e analizës
+TypeOfDeclaration=Lloji i deklaratës
+DEB=Deklarata e këmbimit të mallrave (DEB)
+DES=Deklarata e shkëmbimit të shërbimeve (DES)
+# Export page
+IntracommReportTitle=Përgatitja e një skedari XML në formatin ProDouane
+# List
+IntracommReportList=Lista e deklaratave të gjeneruara
+IntracommReportNumber=Numri i deklarimit
+IntracommReportPeriod=Periudha e analizës
+IntracommReportTypeDeclaration=Lloji i deklaratës
+IntracommReportDownload=shkarko skedarin XML
+# Invoice
+IntracommReportTransportMode=Mënyra e transportit
+DeleteIntraCommReport=Fshi raportin IntraComm

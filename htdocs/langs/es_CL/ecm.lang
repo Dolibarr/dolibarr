@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=Nº de documentos en el directorio.
+ECMAddSection=Agregar directorio
+ECMCreationDate=Fecha de creación
+ECMNbOfSubDir=Cantidad de subdirectorios
+ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
+ECMArea=Área de DMS / ECM
+ECMAreaDesc=El área DMS / ECM (Sistema de gestión de documentos / gestión de contenido electrónico) le permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
+ECMSectionWasRemoved=El directorio <b>%s</b> ha sido borrado.
+ECMSectionWasCreated=El directorio <b>%s</b> ha sido creado.
+ECMNoDirectoryYet=Sin directorio creado
+DeleteSection=Eliminar directorio
+ConfirmDeleteSection=¿Puedes confirmar que quieres borrar el directorio <b>%s</b>?
+CannotRemoveDirectoryContainsFilesOrDirs=La eliminación no es posible porque contiene algunos archivos o subdirectorios
+CannotRemoveDirectoryContainsFiles=La eliminación no es posible porque contiene algunos archivos
+ECMFileManager=Administrador de archivos
+ECMSelectASection=Seleccione un directorio en el árbol ...
+DirNotSynchronizedSyncFirst=Este directorio parece ser creado o modificado fuera del módulo ECM. Primero debe hacer clic en el botón "Resincronizar" para sincronizar el disco y la base de datos para obtener el contenido de este directorio.
+HashOfFileContent=Hash del contenido del archivo
+FileNotYetIndexedInDatabase=Archivo aún no indexado en la base de datos (intente volver a subirlo)

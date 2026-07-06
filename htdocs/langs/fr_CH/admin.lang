@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - admin
+VersionProgram=Version programme
+VersionLastUpgrade=Version de la dernière mise à jour
+VersionRecommanded=Recommandée
+FileCheckDesc=Cet outil vous permet to vérifier l'intégrité des fichiers et la configuration de votre application en comparant chaque fichier avec les fichiers officiels. La valeur de certaines constantes de configuration pourrait être vérifiée aussi. Vous pouvez utiliser cet outil pour déterminer si des fichiers ont été modifiés (ex: par un pirate informatique)
+FileCheckDolibarr=Vérifier l'intégrité des fichiers de l'application
+XmlNotFound=Fichier XML d'intégrité de Dolibarr non trouvé
+SessionId=ID de session
+LockNewSessions=Bloquer les nouvelles connexions
+Module310Name=Membres
+LDAPMembersSynchro=Membres
+LDAPMembersTypesSynchro=Types de membres
+MailToMember=Membres
+Recommended=Recommandée

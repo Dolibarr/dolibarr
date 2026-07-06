@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Управление партнерством
+PartnershipDescription=Модуль Управление партнерством
+PartnershipDescriptionLong= Модуль Управление партнерством
+Partnership=Партнерство
+Partnerships=Партнерские отношения
+AddPartnership=Добавить партнерство
+CancelPartnershipForExpiredMembers=Партнерство: отмените партнерство участников с истекшими подписками
+PartnershipCheckBacklink=Партнерство: проверьте ссылающуюся обратную ссылку
+# Menu
+NewPartnership=Новое партнерство
+NewPartnershipbyWeb=Ваш запрос на партнерство добавлен успешно. Возможно, мы скоро свяжемся с вами...
+ListOfPartnerships=Список партнерских отношений
+# Admin page
+PartnershipSetup=Настройка партнерства
+PartnershipAbout=О партнерстве
+PartnershipAboutPage=Партнерство о странице
+partnershipforthirdpartyormember=Партнер статус должен быть установлен как «третья сторона» или «член».
+PARTNERSHIP_IS_MANAGED_FOR=Партнерство удалось
+PARTNERSHIP_BACKLINKS_TO_CHECK=Обратные ссылки для проверки
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Количество дней до прекращения статус партнерства по истечении срока действия подписание
+ReferingWebsiteCheck=Проверка ссылки на сайт
+ReferingWebsiteCheckDesc=Вы можете включить функцию проверки того, что ваши партнеры добавили обратную ссылку на домены вашего веб-сайта на своем собственном веб-сайте.
+PublicFormRegistrationPartnerDesc=Dolibarr может предоставить вам общедоступный URL-адрес/веб-сайт, чтобы внешние посетители могли запросить участие в партнерской программе.
+# Object
+DeletePartnership=Удалить партнерство
+PartnershipDedicatedToThisThirdParty=Партнерство, посвященное этой третьей стороне
+PartnershipDedicatedToThisMember=Партнерство, посвященное этому участнику
+DatePartnershipStart=Дата начала
+DatePartnershipEnd=Дата окончания
+ReasonDecline=Причина отклонения
+ReasonDeclineOrCancel=Причина отказа или отмены
+PartnershipAlreadyExist=Партнерство уже существует
+ManagePartnership=Управление партнерством
+BacklinkNotFoundOnPartnerWebsite=Обратная ссылка не найдена на партнерском сайте
+ConfirmClosePartnershipAsk=Вы уверены, что хотите отменить это партнерство?
+PartnershipType=Тип партнерства
+PartnershipRefApproved=Партнерство %s одобрено
+KeywordToCheckInWebsite=Если вы хотите проверить, присутствует ли данное ключевое слово на веб-сайте каждого партнера, определите это ключевое слово здесь.
+PartnershipDraft=Проект
+PartnershipAccepted=Принято
+PartnershipRefused=Отклонено
+PartnershipCanceled=Отменена
+PartnershipManagedFor=Партнеры
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Партнерство скоро будет отменено
+SendingEmailOnPartnershipRefused=От партнерства отказано
+SendingEmailOnPartnershipAccepted=Партнерство принято
+SendingEmailOnPartnershipCanceled=Партнерство отменено
+YourPartnershipWillSoonBeCanceledTopic=Партнерство скоро будет отменено
+YourPartnershipRefusedTopic=От партнерства отказано
+YourPartnershipAcceptedTopic=Партнерство принято
+YourPartnershipCanceledTopic=Партнерство отменено
+YourPartnershipWillSoonBeCanceledContent=Мы хотели бы сообщить вам, что наше партнерство скоро будет прекращено (мы не получили продления или не были выполнены необходимые условия для нашего партнерства). Пожалуйста, свяжитесь с нами, если вы получили это сообщение по ошибке.
+YourPartnershipRefusedContent=Мы хотели бы сообщить вам, что ваш запрос на партнерство был отклонен. Предпосылки не выполнены. Пожалуйста, свяжитесь с нами, если вам нужна дополнительная информация.
+YourPartnershipAcceptedContent=Мы хотели бы сообщить вам, что ваш запрос на партнерство принят.
+YourPartnershipCanceledContent=Сообщаем Вам, что наше сотрудничество прекращено. Пожалуйста, свяжитесь с нами, если вам нужна дополнительная информация.
+CountLastUrlCheckError=Количество ошибок при последней проверке URL
+LastCheckBacklink=Дата последней проверки URL
+NewPartnershipRequest=Новый запрос на партнерство
+NewPartnershipRequestDesc=Эта форма позволяет вам подать заявку на участие в одной из наших партнерских программ. Если вам нужна помощь в заполнении этой формы, свяжитесь с нами по электронной почте <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
+IPOfApplicant=ИП заявителя
+PartnershipToReopen=Чтобы снова открыть
+PartnershipConfirmReOpenAsk=Вы действительно хотите для возобновления этого партнерства <b> %s</b>?

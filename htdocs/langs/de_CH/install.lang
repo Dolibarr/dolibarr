@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - install
+InstallEasy=Wir haben uns bemüht, die Installation von Dolibarr so einfach wie möglich zu gestalten. \nBefolgen Sie einfach die Schritte auf dem Bildschirm.
+PHPSupportPOSTGETOk=Ihre PHP unterstützt GET und POST Variablen.
+ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
+IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
+AdminLoginCreatedSuccessfuly=Das dolibarr-Administratorkonto '<b>%s</b>' wurde erfolgreich erstellt.
+GoToDolibarr=Zu dolibarr wechseln
+GoToUpgradePage=Noch einmal zur Aktualisierungsseite
+ChoosedMigrateScript=Migrationsskript auswählen
+ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
+Upgrade=Aktualisierung
+UpgradeDesc=Verwenden Sie diesen Modus zum Ersetzen Ihrer bisherigen Dateien durch eine neuere Version. Dieser Vorgang beinhaltet eine Aktualisierung Ihrer Datenbank und -daten.
+InstallChoiceSuggested=<b>Vom Installationsassistenten vorgeschlagene Wahl.</b>
+MigrationSuccessfullUpdate=Aktualisierung erfolgreich
+MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich

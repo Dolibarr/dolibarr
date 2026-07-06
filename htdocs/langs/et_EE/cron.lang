@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Read Scheduled job
+Permission23102 = Create/update Scheduled job
+Permission23103 = Delete Scheduled job
+Permission23104 = Execute Scheduled job
+# Admin
+CronSetup=Plaanitavata programmide haldamise seadistamine
+URLToLaunchCronJobs=URL kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks brauserist
+OrToLaunchASpecificJob=Või brauserist konkreetse töö kontrollimiseks ja käivitamiseks
+KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
+FileToLaunchCronJobs=Käsurida kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=Microsoft(tm) Windowsi keskkonnas saate ajastatud ülesannete tööriistu kasutada käsurea käivitamiseks iga 5 minuti järel.
+CronMethodDoesNotExists=Klass %s ei sisalda ühtegi meetodit %s
+CronMethodNotAllowed=Klassi %s meetod %s on keelatud meetodite mustas nimekirjas.
+CronJobDefDesc=Croni tööprofiilid on defineeritud mooduli deskriptorifailis. Kui moodul aktiveeritakse, laaditakse need ja need on saadaval, nii et saate töid hallata administraatori tööriistade menüüst %s.
+CronJobProfiles=Eelnevalt määratletud cron-tööprofiilide loend
+# Menu
+EnabledAndDisabled=Enabled and disabled
+# Page list
+CronLastOutput=Viimase käitamise väljund
+CronLastResult=Viimane tulemuse kood
+CronCommand=Käsk
+CronList=Plaanitud käivitused
+CronDelete=Delete scheduled jobs
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Käivita kohe
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Tegevus
+CronNone=Ajastatud ülesande järgmine käivitamine
+CronNotYetRan=Mitte kunagi hukatud
+CronDtStart=Not before
+CronDtEnd=Not after
+CronDtNextLaunch=Järgmine käivitus
+CronDtLastLaunch=Viimase täitmise alguskuupäev
+CronDtLastResult=Viimase täitmise lõppkuupäev
+CronFrequency=Sagedus
+CronClass=Class
+CronMethod=Meetod
+CronModule=Moodul
+CronNoJobs=Pole ühtki registreeritud programm
+CronPriority=Prioriteet
+CronLabel=Nimi
+CronNbRun=Käivituste arv
+CronMaxRun=Maksimaalne käivituste arv
+CronEach=Iga
+JobFinished=Tegevus käivitatud ja lõpetatud
+Scheduled=Planeeritud
+#Page card
+CronAdd=Lisa programme
+CronEvery=Käivita töö iga
+CronObject=Instants/objekt, mis luuakse
+CronArgs=Parameetrid
+CronSaveSucess=Save successfully
+CronNote=Kommentaar
+CronFieldMandatory=Välja %s täitmine on nõutud
+CronErrEndDateStartDt=Lõppkuupäev ei saa olla alguskuupäevast varasem
+StatusAtInstall=Mooduli paigaldamise olek
+CronStatusActiveBtn=Luba ajastamine
+CronStatusInactiveBtn=Lülita välja
+CronTaskInactive=See töö on keelatud (pole ajastatud)
+CronId=ID
+CronClassFile=Filename with class
+CronModuleHelp=Dolibarri mooduli kataloogi nimi (töötab ka välise Dolibarri mooduliga). <BR> Näiteks Dolibarri tooteobjekti /htdocs/<u>product</u>/class/product.class.php toomise meetodi kutsumiseks on mooduli väärtus<br><i>product</i>
+CronClassFileHelp=Laaditava faili suhteline tee ja nimi (tee on veebiserveri juurkataloogi suhtes). <BR> Näiteks Dolibarr Product objekti htdocs/product/class/<u>product.class.php</u> toomise meetodi kutsumiseks on klassi failinime väärtus<br><i>product/class/product.class.php</i>
+CronObjectHelp=Laaditava objekti nimi. <BR> Näiteks Dolibarr Producti objekti /htdocs/product/class/product.class.php fetch-meetodi kutsumiseks on klassi failinime väärtus<br><i>Product</i>
+CronMethodHelp=Käivitatav objektimeetod. <BR> Näiteks Dolibarr Producti objekti /htdocs/product/class/product.class.php meetodi fetch kutsumiseks on meetodi väärtus<br><i>fetch</i>
+CronArgsHelp=Meetodi argumendid. <BR> Näiteks Dolibarr Product objekti /htdocs/product/class/product.class.php meetodi fetch kutsumiseks võivad parameetrite väärtused olla<br><i>0, ProductRef</i>
+CronCommandHelp=Käivitatav süsteemi käsk.
+CronCreateJob=Create new Scheduled Job
+CronFrom=Kellelt
+# Info
+# Common
+CronType=Job type
+CronType_method=PHP klassi kutsumismeetod
+CronType_command=Käsurea käsk
+CronCannotLoadClass=Klassifaili %s laadimine ebaõnnestus (klassi %s kasutamiseks)
+CronModuleNotEnabledInThisEntity=Croni moodul pole selles üksuses lubatud (objekti %s meetodi %s kasutamiseks)
+CronCannotLoadObject=Klassifail %s laaditi, kuid objekti %s sellest ei leitud.
+UseMenuModuleToolsToAddCronJobs=Ajastatud tööde vaatamiseks ja muutmiseks minge menüüsse "<a href="%s">Avaleht - Administraatori tööriistad - Ajastatud tööd</a>".
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Loo lokaalse andmebaasi mälutõmmis. Parameetrid on: tihendus („gz”, „bz” või „none”), varundamise tüüp („mysql”, „pgsql”, „auto”), 1, „auto” või loodava faili nimi, säilitatavate varundusfailide arv.
+MakeSendLocalDatabaseDumpShort=Saada kohaliku andmebaasi varukoopia
+MakeSendLocalDatabaseDump=Saada kohaliku andmebaasi varukoopia e-posti teel. Parameetrid on: saaja, saatja, teema, sõnum, failinimi (saadetud faili nimi), filter ('sql' ainult andmebaasi varundamiseks)
+BackupIsTooLargeSend=Vabandust, viimane varukoopia on e-postiga saatmiseks liiga suur
+CleanUnfinishedCronjobShort=Puhas lõpetamata cronjob
+CleanUnfinishedCronjob=Puhas cronjob jääb töötlemises kinni, kui protsess enam ei tööta
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Andmete puhastaja ja anonüümija
+JobXMustBeEnabled=Töö %s peab olema lubatud
+EmailIfError=Veahoiatuse e-kiri
+JobNotFound=Tööülesannet %s ei leitud tööde loendist (proovige moodul keelata/lubada)
+ErrorInBatch=Viga töö %s käivitamisel
+
+# Cron Boxes
+LastExecutedScheduledJob=Viimati teostatud ajastatud töö
+NextScheduledJobExecute=Järgmine ajastatud töö, mida täita
+NumberScheduledJobError=Vigaste ajastatud tööde arv
+NumberScheduledJobNeverFinished=Lõpetamata jäänud ajastatud tööde arv

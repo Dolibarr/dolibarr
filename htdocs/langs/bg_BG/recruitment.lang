@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = подбор на персонал
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Управлявайте и следвайте кампании за набиране на нови работни места
+# Admin page
+RecruitmentSetup = Настройка за набиране на персонал
+RecruitmentSetupPage = Въведете тук настройката на основните опции за модула за набиране на персонал
+RecruitmentArea=Зона за набиране на персонал
+PublicInterfaceRecruitmentDesc=Публичните страници с работни места са публични URL адреси за показване и отговор на отворени работни места. Има една различна връзка за всяка отворена работа, намираща се във всеки запис на работа.
+EnablePublicRecruitmentPages=Активиране на публични страници с отворени работни места
+
+NbOfEmployeesExpected=Очакван брой служители
+JobLabel=Етикет на длъжността
+WorkPlace=Работно място
+DateExpected=Очаква се Дата
+FutureManager=Бъдещ мениджър
+ResponsibleOfRecruitement=Отговаря за набирането на персонал
+IfJobIsLocatedAtAPartner=Ако работата се намира на партньорско място
+PositionToBeFilled=Длъжност
+PositionsToBeFilled=Работни позиции
+ListOfPositionsToBeFilled=Списък на работните позиции
+NewPositionToBeFilled=Нови работни позиции
+JobOfferToBeFilled=Работна позиция за заемане
+ThisIsInformationOnJobPosition=Информация за длъжността, която трябва да бъде заета
+ContactForRecruitment=Контакт за набиране на персонал
+EmailRecruiter=Служба за наемане на имейли
+ToUseAGenericEmail=За да използвате общ имейл. Ако не е определен, ще се използва имейлът на отговорния за набирането на персонал
+NewCandidature=Ново приложение
+ListOfCandidatures=Списък с приложения
+Remuneration=Заплата
+RequestedRemuneration=Искана заплата
+ProposedRemuneration=Предложена заплата
+ContractProposed=Договор предложен
+ContractSigned=Договор подписано
+ContractRefused=Договор отказа
+RecruitmentCandidature=Приложение
+JobPositions=Работни позиции
+RecruitmentCandidatures=Приложения
+InterviewToDo=Контакти, които да следвате
+AnswerCandidature=Отговор на приложението
+YourCandidature=Вашето приложение
+YourCandidatureAnswerMessage=Благодарим ви за вашата кандидатура.<br>...
+JobClosedTextCandidateFound=Работната позиция е затворена. Позицията е заета.
+JobClosedTextCanceled=Работната позиция е затворена.
+ExtrafieldsJobPosition=Допълнителни атрибути (работни позиции)
+ExtrafieldsApplication=Допълнителни атрибути (приложения за работа)
+MakeOffer=Направете оферта
+WeAreRecruiting=Ние набираме персонал. Това е списък с отворени позиции за заемане...
+NoPositionOpen=В момента няма отворени позиции
+ConfirmClose=Потвърдете анулирането
+ConfirmCloseAsk=Сигурни ли сте, че искате, за да отмените тази кандидатура за набиране на персонал
+Recruitment=Набиране на персонал
+ApplyJobCandidature=Кандидатствайте за тази работа
+ErrorRecruitmmentCandidatureAlreadyExists= Вече съществува кандидатура за набиране на персонал с имейл %s
+RecruitmentCandidatureSaved=Кандидатурата за набиране на персонал е успешно запазена
+NoOpenJobOffer=В момента няма отворени предложения за работа

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Cho vay
+Loans=Cho vay
+NewLoan=Cho vay mới
+ShowLoan=Hiện khoản cho vay
+PaymentLoan=Phương thức trả nợ
+LoanPayment=Phương thức trả nợ
+ShowLoanPayment=Hiện thị phương thức trả nợ
+LoanCapital=Vốn
+Insurance=Bảo hiểm
+Interest=Lãi suất
+Nbterms=Số năm vay vốn
+Term=Kỳ hạn
+LoanAccountancyCapitalCode=Tài khoản kế toán vốn
+LoanAccountancyInsuranceCode=Tài khoản kế toán bảo hiểm
+LoanAccountancyInterestCode=Tải khoản kế toán lãi vay
+ConfirmDeleteLoan=Xác nhận xóa khoản vay này
+LoanDeleted=Khoản vay đã xóa thành công
+ConfirmPayLoan=Xác nhận phân loại trả khoản vay này
+LoanPaid=Khoản vay đã trả
+ListLoanAssociatedProject=Danh sách vay vốn gắn với dự án này
+AddLoan=Tạo khoản vay
+FinancialCommitment=Cam kết tài chính
+InterestAmount=Lãi suất
+CapitalRemain=Gốc còn lại
+TermPaidAllreadyPaid = Kỳ hạn này đã được thanh toán
+CantUseScheduleWithLoanStartedToPaid = Không thể tạo dòng thời gian cho khoản vay khi thanh toán đã bắt đầu
+CantModifyInterestIfScheduleIsUsed = Bạn không thể sửa đổi sở thích nếu bạn sử dụng lịch trình
+# Admin
+ConfigLoan=Cấu hình của mô-đun cho vay
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Tài khoản (từ Sơ đồ tài khoản) được sử dụng làm vốn theo mặc định (mô-đun khoản vay)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Tài khoản (từ Sơ đồ tài khoản) được sử dụng theo mặc định để lấy lãi (mô-đun Khoản vay)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Tài khoản (từ Sơ đồ tài khoản) được sử dụng mặc định cho bảo hiểm (mô-đun khoản vay)
+CreateCalcSchedule=Chỉnh sửa cam kết tài chính

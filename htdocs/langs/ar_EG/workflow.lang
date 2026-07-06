@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=إعداد وحدة سير العمل
+WorkflowDesc=توفر هذه الوحدة بعض الإجراءات التلقائية. بشكل افتراضي ، سير العمل مفتوح (يمكنك القيام بالأشياء بالترتيب الذي تريده) ولكن هنا يمكنك تنشيط بعض الإجراءات التلقائية.
+ThereIsNoWorkflowToModify=لا توجد تعديلات على سير العمل متاحة مع الوحدات المفعلة.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=إنشاء أمر مبيعات تلقائيًا بعد توقيع عرض تجاري (سيكون للطلب الجديد نفس مبلغ العرض)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=إنشاء فاتورة عملاء تلقائيًا بعد توقيع عرض تجاري (سيكون للفاتورة الجديدة نفس مبلغ الاقتراح)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيًا بعد التحقق من إعتماد العقد
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة عملاء تلقائيًا بعد إغلاق أمر المبيعات (سيكون للفاتورة الجديدة نفس مبلغ الأمر)
+AutomaticCreation=الإنشاء الأوتوماتيكي
+AutomaticClassification=التصنيف الأوتوماتيكي

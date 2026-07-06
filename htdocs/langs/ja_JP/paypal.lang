@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=ペイパルモジュールの設定
+PaypalDesc=このモジュールでは、<a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal</a>を介した顧客による支払が可能。これは、アドホック支払またはDolibarrオブジェクト（請求書、注文など）に関連する支払に使用できる。
+PaypalOrCBDoPayment=PayPalで支払う(カードまたはPayPal)
+PaypalDoPayment=PayPalで支払う
+PAYPAL_API_SANDBOX=モード試験/サンドボックス
+PAYPAL_API_USER=API名
+PAYPAL_API_PASSWORD=APIパスワード
+PAYPAL_API_SIGNATURE=APIの署名
+PAYPAL_SSLVERSION=カールSSLバージョン
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=「統合」支払(クレジットカード+ PayPal)または「PayPal」のみを提供
+PaypalModeIntegral=統合
+PaypalModeOnlyPaypal=PayPalのみ
+ONLINE_PAYMENT_CSS_URL=オンライン支払ページのCSSスタイルシートのオプションのURL
+ThisIsTransactionId=<b>%s：</b>これは、トランザクションのID。
+PAYPAL_ADD_PAYMENT_URL=メールでドキュメントを送信するときは、PayPalの支払URLを含めること
+NewOnlinePaymentReceived=受け取った新規オンライン支払
+NewOnlinePaymentFailed=新規オンライン支払が試行されたが失敗した
+ONLINE_PAYMENT_SENDEMAIL=各支払試行後の通知の電子メールアドレス(成功および失敗の場合)
+ReturnURLAfterPayment=支払後にURLを返す
+ValidationOfOnlinePaymentFailed=オンライン支払の検証に失敗した
+PaymentSystemConfirmPaymentPageWasCalledButFailed=支払システムによって支払確定ページが呼び出され、エラーが返された
+SetExpressCheckoutAPICallFailed=SetExpressCheckoutAPI呼び出しが失敗した。
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPaymentAPI呼び出しが失敗した。
+DetailedErrorMessage=詳細なエラーメッセージ
+ShortErrorMessage=短いエラーメッセージ
+ErrorCode=エラーコード
+ErrorSeverityCode=エラー重大度コード
+OnlinePaymentSystem=オンライン決済システム
+PaypalLiveEnabled=PayPalの「ライブ」モードが有効になっている(それ以外の場合はテスト/サンドボックスモード)
+PaypalImportPayment=PayPal支払をインポートする
+PostActionAfterPayment=支払後にアクションを投稿する
+ARollbackWasPerformedOnPostActions=全Postアクションでロールバックが実行された。必要に応じて、投稿アクションを手動で完了する必要がある。
+ValidationOfPaymentFailed=支払の検証に失敗した
+CardOwner=カードホルダー
+PayPalBalance=ペイパルクレジット
+OnlineSubscriptionPaymentLine=%s に記録されたオンライン サブスクリプションは、 <br> %s 経由で支払われた <br>送信元IPアドレス: %s<br>トランサクションID: %s

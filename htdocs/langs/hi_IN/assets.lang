@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=नई परिसंपत्ति
+AccountancyCodeAsset=लेखांकन कोड (परिसंपत्ति)
+AccountancyCodeDepreciationAsset=लेखांकन कोड (मूल्यह्रास परिसंपत्ति खाता)
+AccountancyCodeDepreciationExpense=लेखांकन कोड (मूल्यह्रास व्यय खाता)
+AssetsLines=संपत्ति
+ConfirmValidateAsset=क्या आप वाकई इस संपत्ति को संदर्भ <b>%s</b> के साथ सत्यापित करना चाहते हैं?
+DeleteType=मिटाना
+DeleteAnAssetType=परिसंपत्ति मॉडल हटाएं
+ConfirmDeleteAssetType=क्या आप वाकई इस परिसंपत्ति मॉडल को हटाना चाहते हैं?
+ShowTypeCard=मॉडल '%s' दिखाएँ
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=संपत्ति
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=संपत्ति विवरण
+# Admin page
+AssetSetup=संपत्ति सेटअप
+AssetSetupPage=संपत्ति सेटअप पृष्ठ
+ExtraFieldsAssetModel=पूरक विशेषताएँ (परिसंपत्ति का मॉडल)
+AssetsType=परिसंपत्ति मॉडल
+AssetsTypeId=एसेट मॉडल आईडी
+AssetsTypeLabel=एसेट मॉडल लेबल
+AssetsTypes=परिसंपत्ति मॉडल
+ASSET_ACCOUNTANCY_CATEGORY=अचल परिसंपत्ति लेखा समूह
+ASSET_DEPRECIATION_DURATION_PER_YEAR=एक वर्ष में परिशोधन की गणना के लिए दिनों में आनुपातिक अवधि
+# Menu
+MenuAssets=संपत्ति
+MenuNewAsset=नई परिसंपत्ति
+MenuAssetModels=मॉडल परिसंपत्तियाँ
+MenuListAssets=सूची
+MenuNewAssetModel=नई परिसंपत्ति का मॉडल
+MenuListAssetModels=सूची
+# Module
+ConfirmDeleteAsset=क्या आप सचमुच इस संपत्ति को हटाना चाहते हैं?
+# Tab
+AssetDepreciationOptions=मूल्यह्रास विकल्प
+AssetAccountancyCodes=लेखांकन खाते
+AssetDepreciation=मूल्यह्रास
+# Asset
+Asset=संपत्ति
+Assets=संपत्ति
+AssetReversalAmountHT=प्रतिवर्तन राशि (करों के बिना)
+AssetAcquisitionValueHT=अधिग्रहण राशि (करों के बिना)
+AssetRecoveredVAT=वसूला गया वैट
+AssetReversalDate=उलटने की तिथि
+AssetDateAcquisition=अधिग्रहण तिथि
+AssetDateStart=प्रारंभ की तिथि
+AssetAcquisitionType=अधिग्रहण का प्रकार
+AssetAcquisitionTypeNew=नया
+AssetAcquisitionTypeOccasion=इस्तेमाल किया गया
+AssetType=परिसंपत्ति का प्रकार
+AssetTypeIntangible=अमूर्त
+AssetTypeTangible=वास्तविक
+AssetTypeInProgress=प्रगति पर है
+AssetTypeFinancial=वित्तीय
+AssetNotDepreciated=मूल्यह्रास नहीं किया गया
+AssetDisposal=निपटान
+AssetConfirmDisposalAsk=क्या आप वाकई <b> %s</b> परिसंपत्ति का निपटान करना चाहते हैं?
+AssetConfirmReOpenAsk=क्या आप वाकई संपत्ति को पुनः खोलना चाहते हैं <b> %s</b>?
+# Asset status
+AssetInDraft=मसौदा
+AssetInProgress=प्रगति पर है
+AssetDisposed=उतारू
+AssetRecorded=जिम्मेदार
+# Asset disposal
+AssetDisposalDate=निपटान की तिथि
+AssetDisposalAmount=निपटान मूल्य
+AssetDisposalType=निपटान का प्रकार
+AssetDisposalDepreciated=हस्तांतरण के वर्ष का मूल्यह्रास करें
+AssetDisposalSubjectToVat=निपटान वैट के अधीन
+# Asset model
+AssetModel=परिसंपत्ति का मॉडल
+AssetModels=परिसंपत्ति के मॉडल
+# Asset depreciation options
+AssetDepreciationOptionEconomic=आर्थिक मूल्यह्रास
+AssetDepreciationOptionAcceleratedDepreciation=त्वरित मूल्यह्रास (कर)
+AssetDepreciationOptionDepreciationType=मूल्यह्रास का प्रकार
+AssetDepreciationOptionDepreciationTypeLinear=रेखीय
+AssetDepreciationOptionDepreciationTypeDegressive=अधोगामी
+AssetDepreciationOptionDepreciationTypeExceptional=असाधारण
+AssetDepreciationOptionDegressiveRate=ह्रासमान दर
+AssetDepreciationOptionDuration=अवधि
+AssetDepreciationOptionDurationType=प्रकार अवधि
+AssetDepreciationOptionDurationTypeAnnual=वार्षिक
+AssetDepreciationOptionDurationTypeMonthly=महीने के
+AssetDepreciationOptionDurationTypeDaily=दैनिक
+AssetDepreciationOptionRate=दर (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=मूल्यह्रास आधार (वैट को छोड़कर)
+AssetDepreciationOptionAmountBaseDeductibleHT=कटौती योग्य आधार (वैट को छोड़कर)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=कुल अंतिम मूल्यह्रास राशि (वैट को छोड़कर)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=आर्थिक मूल्यह्रास
+AssetAccountancyCodeAsset=संपत्ति
+AssetAccountancyCodeDepreciationAsset=मूल्यह्रास
+AssetAccountancyCodeDepreciationExpense=मूल्य ह्रास लागत
+AssetAccountancyCodeValueAssetSold=निपटाई गई परिसंपत्ति का मूल्य
+AssetAccountancyCodeReceivableOnAssignment=निपटान पर प्राप्य
+AssetAccountancyCodeProceedsFromSales=निपटान से प्राप्त आय
+AssetAccountancyCodeVatCollected=एकत्रित वैट
+AssetAccountancyCodeVatDeductible=परिसंपत्तियों पर वसूला गया वैट
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=त्वरित मूल्यह्रास (कर)
+AssetAccountancyCodeAcceleratedDepreciation=खाता
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=मूल्य ह्रास लागत
+AssetAccountancyCodeProvisionAcceleratedDepreciation=पुनः कब्ज़ा/प्रावधान
+# Asset depreciation
+AssetBaseDepreciationHT=मूल्यह्रास आधार (वैट को छोड़कर)
+AssetDepreciationBeginDate=मूल्यह्रास की शुरुआत
+AssetDepreciationDuration=अवधि
+AssetDepreciationRate=दर (%%)
+AssetDepreciationDate=मूल्यह्रास तिथि
+AssetDepreciationHT=मूल्यह्रास (वैट को छोड़कर)
+AssetCumulativeDepreciationHT=संचयी मूल्यह्रास (वैट को छोड़कर)
+AssetResidualHT=अवशिष्ट मूल्य (वैट को छोड़कर)
+AssetDispatchedInBookkeeping=मूल्यह्रास दर्ज किया गया
+AssetFutureDepreciationLine=भावी मूल्यह्रास
+AssetDepreciationReversal=उलटा
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=पाई गई परिसंपत्ति या मॉडल की आईडी प्रदान नहीं की गई है
+AssetErrorFetchAccountancyCodesForMode='%s' मूल्यह्रास मोड के लिए लेखांकन खाते प्राप्त करते समय त्रुटि
+AssetErrorDeleteAccountancyCodesForMode='%s' मूल्यह्रास मोड से लेखांकन खाते हटाते समय त्रुटि
+AssetErrorInsertAccountancyCodesForMode=मूल्यह्रास मोड '%s' के लेखांकन खाते डालते समय त्रुटि
+AssetErrorFetchDepreciationOptionsForMode='%s' मूल्यह्रास मोड के लिए विकल्प प्राप्त करते समय त्रुटि
+AssetErrorDeleteDepreciationOptionsForMode='%s' मूल्यह्रास मोड विकल्प हटाते समय त्रुटि
+AssetErrorInsertDepreciationOptionsForMode='%s' मूल्यह्रास मोड विकल्प सम्मिलित करते समय त्रुटि
+AssetErrorFetchDepreciationLines=दर्ज मूल्यह्रास रेखाएँ प्राप्त करते समय त्रुटि
+AssetErrorClearDepreciationLines=रिकॉर्ड किए गए मूल्यह्रास रेखाओं (प्रतिवर्ती और भावी) को शुद्ध करते समय त्रुटि
+AssetErrorAddDepreciationLine=मूल्यह्रास रेखा जोड़ते समय त्रुटि
+AssetErrorCalculationDepreciationLines=मूल्यह्रास रेखाएँ (वसूली और भविष्य) की गणना करते समय त्रुटि
+AssetErrorReversalDateNotProvidedForMode='%s' मूल्यह्रास विधि के लिए प्रत्यावर्तन तिथि प्रदान नहीं की गई है
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' मूल्यह्रास विधि के लिए प्रत्यावर्तन तिथि चालू वित्तीय वर्ष की शुरुआत से अधिक या उसके बराबर होनी चाहिए
+AssetErrorReversalAmountNotProvidedForMode=मूल्यह्रास मोड '%s' के लिए प्रतिवर्तन राशि प्रदान नहीं की गई है।
+AssetErrorFetchCumulativeDepreciation=मूल्यह्रास रेखा से संचित मूल्यह्रास राशि प्राप्त करते समय त्रुटि
+AssetErrorSetLastCumulativeDepreciation=अंतिम संचित मूल्यह्रास राशि रिकॉर्ड करते समय त्रुटि

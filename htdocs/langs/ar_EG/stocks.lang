@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - stocks
+AverageUnitPricePMPShort=متوسط السعر المرجح
+inventoryCreatePermission=إنشاء جرد جديد
+inventoryReadPermission=عرض الجرد
+inventoryValidatePermission=اعتماد الجرد
+inventoryDeletePermission=حذف الجرد
+inventoryTitle=الجرد
+inventoryValidate=معتمد
+inventoryOnDate=الجرد
+inventoryChangePMPPermission=السماح بتغيير قيمة متوسط السعر المرجح (PMP) لمنتج
+inventoryDeleteLine=حذف السطر

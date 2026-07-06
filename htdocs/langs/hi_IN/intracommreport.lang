@@ -1,0 +1,38 @@
+IntraCommReport=इंट्राकॉम रिपोर्ट
+IntraCommReports=इंट्राकॉम रिपोर्ट
+
+Module68000Name = इंट्राकॉम रिपोर्ट
+Module68000Desc = इंट्राकॉम रिपोर्ट प्रबंधन (फ्रेंच DEB/DES प्रारूप के लिए समर्थन)
+IntracommReportSetup = इंट्राकॉमरिपोर्ट मॉड्यूल सेटअप
+IntracommReportAbout = इंट्राकॉमरिपोर्ट के बारे में
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=न्यूमेरो डी'अग्रेमेंट (सीआईएसडी डे रैटैचमेंट पर वितरित)
+INTRACOMMREPORT_TYPE_ACTEUR=अभिनेता प्रकार
+INTRACOMMREPORT_ROLE_ACTEUR=अभिनेता द्वारा निभाई गई भूमिका
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=निवेउ डी'ऑब्लिगेशन सुर लेस इंट्रोडक्शन
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=अभियानों पर निवेउ डी'ऑब्लिगेशन
+INTRACOMMREPORT_CATEG_FRAISDEPORT="फ्रैइस डी पोर्ट" प्रकार की सेवाओं की श्रेणी
+INTRACOMMREPORT_NUM_DECLARATION=घोषणा संख्या
+# Menu
+MenuIntracommReport=इंट्राकॉम रिपोर्ट
+MenuIntracommReportNew=नई घोषणा
+MenuIntracommReportList=सूची
+# View
+NewDeclaration=नई घोषणा
+Declaration=घोषणा
+AnalysisPeriod=विश्लेषण अवधि
+TypeOfDeclaration=घोषणा का प्रकार
+DEB=माल विनिमय घोषणा (डीईबी)
+DES=सेवा विनिमय घोषणा (डीईएस)
+# Export page
+IntracommReportTitle=प्रोडूएन प्रारूप में XML फ़ाइल तैयार करना
+# List
+IntracommReportList=उत्पन्न घोषणाओं की सूची
+IntracommReportNumber=घोषणा की संख्या
+IntracommReportPeriod=विश्लेषण की अवधि
+IntracommReportTypeDeclaration=घोषणा का प्रकार
+IntracommReportDownload=XML फ़ाइल डाउनलोड करें
+# Invoice
+IntracommReportTransportMode=परिवहन साधन
+DeleteIntraCommReport=इंट्राकॉम रिपोर्ट हटाएँ

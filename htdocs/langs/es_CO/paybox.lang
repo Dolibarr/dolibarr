@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Configuración del módulo PayBox
+PayBoxDoPayment=Pagar con Paybox
+YouWillBeRedirectedOnPayBox=Será redirigido a la página segura de Paybox para ingresar la información de su tarjeta de crédito
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure su Paybox con la URL <b> %s </b> para que el pago se cree automáticamente cuando lo valide Paybox.
+YourPaymentHasBeenRecorded=Esta página confirma que su pago ha sido registrado. Gracias.
+YourPaymentHasNotBeenRecorded=Su pago NO ha sido registrado y la transacción ha sido cancelada. Gracias.
+PAYBOX_CGI_URL_V2=Url del módulo CGI de Paybox para pago
+NewPayboxPaymentReceived=Nuevo pago recibido de Paybox
+NewPayboxPaymentFailed=Nuevo pago de Paybox intentado pero fallido
+PAYBOX_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después del intento de pago (éxito o fracaso)
+PAYBOX_PBX_RANG=Valor para PBX Rang

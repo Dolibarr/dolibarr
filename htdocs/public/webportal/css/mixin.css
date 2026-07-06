@@ -1,0 +1,30 @@
+@charset "UTF-8";
+.nowraponall {
+    white-space: nowrap;
+}
+
+.no-bullets li {
+	list-style: none;
+}
+
+.paddingright {
+	padding-right: 5px;
+}
+
+.width150 {
+	width: 150px;
+}
+
+/* special style for drag to scroll behavior */
+.--drag-to-scroll{
+	cursor: grab;
+}
+.--drag-to-scroll-is-active {
+	user-select: none;
+	cursor: grabbing;
+}
+.--drag-to-scroll-is-active object,
+.--drag-to-scroll-is-active iframe,
+.--drag-to-scroll-is-active embed {
+	pointer-events: none;
+}

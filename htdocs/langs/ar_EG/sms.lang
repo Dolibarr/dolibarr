@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - sms
+SmsTitle=الوصف
+SmsStatusValidated=معتمد
+SmsStatusApproved=تمت الموافقة
+SmsStatusNotSent=لم يتم الإرسال

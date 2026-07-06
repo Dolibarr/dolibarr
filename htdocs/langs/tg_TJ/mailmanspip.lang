@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Насбкунии почтаи электронӣ ва SPIP
+MailmanTitle=Системаи почтаи почтаи электронӣ
+TestSubscribe=Барои санҷидани обуна ба рӯйхатҳои почтачиён
+TestUnSubscribe=Барои санҷидани обуна аз рӯйхатҳои почтачиён
+MailmanCreationSuccess=Санҷиши обуна бомуваффақият иҷро шуд
+MailmanDeletionSuccess=Санҷиши обунашавӣ бомуваффақият иҷро шуд
+SynchroMailManEnabled=Навсозии почтаи электронӣ иҷро карда мешавад
+SynchroSpipEnabled=Навсозии Spip иҷро карда мешавад
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Пароли мудири почта
+DescADHERENT_MAILMAN_URL=URL барои обунаҳои почта
+DescADHERENT_MAILMAN_UNSUB_URL=URL барои обунаҳои почтаи электронӣ
+DescADHERENT_MAILMAN_LISTS=Рӯйхатҳо барои сабти автоматии аъзоёни нав (бо вергул ҷудо карда шудаанд)
+SPIPTitle=Системаи идоракунии мундариҷаи SPIP
+DescADHERENT_SPIP_SERVEUR=Сервери SPIP
+DescADHERENT_SPIP_DB=Номи пойгоҳи додаҳои SPIP
+DescADHERENT_SPIP_USER=Вуруд ба пойгоҳи додаҳои SPIP
+DescADHERENT_SPIP_PASS=Пароли махзани SPIP
+AddIntoSpip=Ба SPIP илова кунед
+AddIntoSpipConfirmation=Шумо мутмаин ҳастед, ки мехоҳед ин узвро ба SPIP илова кунед?
+AddIntoSpipError=Истифодабаранда дар SPIP илова карда нашуд
+DeleteIntoSpip=Аз SPIP хориҷ кунед
+DeleteIntoSpipConfirmation=Шумо мутмаин ҳастед, ки мехоҳед ин узвро аз SPIP хориҷ кунед?
+DeleteIntoSpipError=Истифодабаранда аз SPIP пахш карда нашуд
+SPIPConnectionFailed=Ба SPIP пайваст шудан муяссар нашуд
+SuccessToAddToMailmanList=%s ба рӯйхати почтачиён бомуваффақият илова карда шуд %s ё базаи SPIP
+SuccessToRemoveToMailmanList=%s аз рӯйхати почтачиён бомуваффақият хориҷ карда шуд %s ё базаи SPIP

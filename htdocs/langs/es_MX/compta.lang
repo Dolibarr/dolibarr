@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - compta
+MenuFinancial=Facturación | Pago
+TaxModuleSetupToModifyRules=Vaya a la configuración del módulo de impuestos <a href="%s"> </a> para modificar las reglas de cálculo
+TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa </a> para modificar las reglas de cálculo
+OptionMode=Opción de contabilidad
+Param=Configuración
+AccountancyTreasuryArea=Área contable
+PaymentSocialContribution=Pago de impuesto social/fiscal
+Refund=Reembolso
+ByThirdParties=Por terceros
+CheckReceipt=Ficha de depósito
+CheckReceiptShort=Ficha de depósito

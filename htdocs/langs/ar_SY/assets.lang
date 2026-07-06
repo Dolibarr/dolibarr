@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=أصل جديد
+AccountancyCodeAsset=الرمز المحاسبي (الأصل)
+AccountancyCodeDepreciationAsset=الرمز المحاسبي لحساب (إهتلاك الأصل الملموس)
+AccountancyCodeDepreciationExpense=الرمز المحاسبي لمصروف الإهتلاك
+AssetsLines=سجلات الأصول
+ConfirmValidateAsset=هل أنت متأكد من اعتماد هذا الأصل ذو الرقم المرجعي <b>%s</b>؟
+DeleteType=حذف
+DeleteAnAssetType=حذف نموذج الأصل
+ConfirmDeleteAssetType=هل أنت متأكد من حذف نموذج الأصل هذا؟
+ShowTypeCard=عرض النموذج '%s'
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=الأصول
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=وصف الأصول
+# Admin page
+AssetSetup=إعدادات الأصول
+AssetSetupPage=صفحة إعدادات الأصول
+ExtraFieldsAssetModel=حقول إضافية (نموذج الأصل)
+AssetsType=نموذج الأصل
+AssetsTypeId=معرّف نموذج الأصل
+AssetsTypeLabel=تسمية نموذج الأصل
+AssetsTypes=نماذج الأصول
+ASSET_ACCOUNTANCY_CATEGORY=مجموعة محاسبة الأصول الثابتة
+ASSET_DEPRECIATION_DURATION_PER_YEAR=الفترة السنوية لحساب إهتلاك الأصل غير الملموس بالأيام
+# Menu
+MenuAssets=الأصول
+MenuNewAsset=أصل جديد
+MenuAssetModels=نماذج الأصول
+MenuListAssets=قائمة الأصول
+MenuNewAssetModel=نموذج أصل جديد
+MenuListAssetModels=قائمة نماذج الأصول
+# Module
+ConfirmDeleteAsset=هل تريد حقاً إزالة هذا الأصل؟
+# Tab
+AssetDepreciationOptions=خيارات الإهتلاك
+AssetAccountancyCodes=الحسابات المحاسبية
+AssetDepreciation=إهتلاك الأصول الملموسة
+# Asset
+Asset=أصل
+Assets=الأصول
+AssetReversalAmountHT=قيمة عكس انخفاض الأصل (بدون ضرائب)
+AssetAcquisitionValueHT=قيمة الاستحواذ (بدون ضرائب)
+AssetRecoveredVAT=ضريبة القيمة المضافة المستردة
+AssetReversalDate=تاريخ عكس الأصل
+AssetDateAcquisition=تاريخ الاستحواذ
+AssetDateStart=تاريخ بدء التشغيل
+AssetAcquisitionType=نوع الاستحواذ
+AssetAcquisitionTypeNew=جديد
+AssetAcquisitionTypeOccasion=مستعمل
+AssetType=نوع الأصل
+AssetTypeIntangible=غير ملموس
+AssetTypeTangible=ملموس
+AssetTypeInProgress=قيد التنفيذ
+AssetTypeFinancial=مالي
+AssetNotDepreciated=غير مُهتلك
+AssetDisposal=التصرف بالأصل
+AssetConfirmDisposalAsk=هل أنت متأكد من التصرف في الأصل <b>%s</b>؟
+AssetConfirmReOpenAsk=هل أنت متأكد من إعادة فتح الأصل <b>%s</b>؟
+# Asset status
+AssetInDraft=مسودة
+AssetInProgress=قيد التنفيذ
+AssetDisposed=تم التصرف فيه
+AssetRecorded=مسجل
+# Asset disposal
+AssetDisposalDate=تاريخ التصرف
+AssetDisposalAmount=قيمة التصرف
+AssetDisposalType=نوع التصرف
+AssetDisposalDepreciated=إهتلاك سنة التحويل
+AssetDisposalSubjectToVat=خاضع للضريبة
+# Asset model
+AssetModel=نموذج الأصل
+AssetModels=نماذج الأصول
+# Asset depreciation options
+AssetDepreciationOptionEconomic=الإهتلاك الاقتصادي
+AssetDepreciationOptionAcceleratedDepreciation=الإهتلاك المعجل (ضريبي)
+AssetDepreciationOptionDepreciationType=نوع الإهتلاك
+AssetDepreciationOptionDepreciationTypeLinear=خطي
+AssetDepreciationOptionDepreciationTypeDegressive=تنازلي
+AssetDepreciationOptionDepreciationTypeExceptional=استثنائي
+AssetDepreciationOptionDegressiveRate=النسبة التنازلية
+AssetDepreciationOptionDuration=المدة
+AssetDepreciationOptionDurationType=نوع المدة
+AssetDepreciationOptionDurationTypeAnnual=سنوي
+AssetDepreciationOptionDurationTypeMonthly=شهري
+AssetDepreciationOptionDurationTypeDaily=يومي
+AssetDepreciationOptionRate=النسبة (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=أساس الإهتلاك (بدون ضرائب)
+AssetDepreciationOptionAmountBaseDeductibleHT=الأساس القابل للخصم (بدون ضرائب)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=إجمالي آخر إهتلاك (بدون ضرائب)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=الإهتلاك الاقتصادي
+AssetAccountancyCodeAsset=الأصل
+AssetAccountancyCodeDepreciationAsset=إهتلاك الأصول الملموسة
+AssetAccountancyCodeDepreciationExpense=مصروف الإهتلاك
+AssetAccountancyCodeValueAssetSold=قيمة الأصل المتصرف فيه
+AssetAccountancyCodeReceivableOnAssignment=مستحقات التصرف
+AssetAccountancyCodeProceedsFromSales=عوائد التصرف
+AssetAccountancyCodeVatCollected=الضريبة المحصلة
+AssetAccountancyCodeVatDeductible=ضريبة القيمة المضافة المستردة على الأصول
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=الإهتلاك المعجل (ضريبي)
+AssetAccountancyCodeAcceleratedDepreciation=الحساب
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=مصروف الإهتلاك
+AssetAccountancyCodeProvisionAcceleratedDepreciation=استرجاع/مخصص
+# Asset depreciation
+AssetBaseDepreciationHT=أساس الإهتلاك (بدون ضرائب)
+AssetDepreciationBeginDate=تاريخ بدء الإهتلاك
+AssetDepreciationDuration=المدة
+AssetDepreciationRate=النسبة (%%)
+AssetDepreciationDate=تاريخ الإهتلاك
+AssetDepreciationHT=الإهتلاك (بدون ضرائب)
+AssetCumulativeDepreciationHT=إهتلاك تراكمي (بدون ضرائب)
+AssetResidualHT=القيمة المتبقية (بدون ضرائب)
+AssetDispatchedInBookkeeping=تم تسجيل الإهتلاك
+AssetFutureDepreciationLine=إهتلاك مستقبلي
+AssetDepreciationReversal=عكس الإهتلاك
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=لم يتم تزويد معرّف الأصل أو النموذج
+AssetErrorFetchAccountancyCodesForMode=خطأ عند استرجاع الحسابات المحاسبية لنمط الإهتلاك '%s'
+AssetErrorDeleteAccountancyCodesForMode=خطأ عند حذف الحسابات المحاسبية لنمط الإهتلاك '%s'
+AssetErrorInsertAccountancyCodesForMode=خطأ عند إضافة الحسابات المحاسبية لنمط الإهتلاك '%s'
+AssetErrorFetchDepreciationOptionsForMode=خطأ عند استرجاع خيارات نمط الإهتلاك '%s'
+AssetErrorDeleteDepreciationOptionsForMode=خطأ عند حذف خيارات نمط الإهتلاك '%s'
+AssetErrorInsertDepreciationOptionsForMode=خطأ عند إضافة خيارات نمط الإهتلاك '%s'
+AssetErrorFetchDepreciationLines=خطأ عند استرجاع سجلات الإهتلاك
+AssetErrorClearDepreciationLines=خطأ عند مسح سجلات الإهتلاك (العكس والمستقبل)
+AssetErrorAddDepreciationLine=خطأ عند إضافة سجل إهتلاك
+AssetErrorCalculationDepreciationLines=خطأ عند حساب سجلات الإهتلاك (المسترجع والمستقبلي)
+AssetErrorReversalDateNotProvidedForMode=لم يتم تزويد تاريخ العكس لنمط الإهتلاك '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=يجب أن يكون تاريخ العكس أكبر من أو يساوي بداية السنة المالية الحالية لنمط الإهتلاك '%s'
+AssetErrorReversalAmountNotProvidedForMode=لم يتم تزويد مبلغ العكس لنمط الإهتلاك '%s'
+AssetErrorFetchCumulativeDepreciation=خطأ عند استرجاع مبلغ الإهتلاك التراكمي
+AssetErrorSetLastCumulativeDepreciation=خطأ عند تسجيل آخر مبلغ إهتلاك تراكمي

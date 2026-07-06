@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modul nastavenia
+PaypalDesc=Tento modul umožňuje platbu zákazníkom prostredníctvom <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Dá sa použiť na ad-hoc platbu alebo na platbu súvisiacu s objektom Dolibarr (faktúra, objednávka, ...)
+PaypalOrCBDoPayment=Platba cez PayPal (karta alebo PayPal)
+PaypalDoPayment=Plaťte cez PayPal
+PAYPAL_API_SANDBOX=Režim test / pieskovisko
+PAYPAL_API_USER=API užívateľské meno
+PAYPAL_API_PASSWORD=API heslo
+PAYPAL_API_SIGNATURE=API podpis
+PAYPAL_SSLVERSION=Curl SSL verzia
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponúknite iba „integrálnu“ platbu (kreditná karta+PayPal) alebo „PayPal“.
+PaypalModeIntegral=Integrálne
+PaypalModeOnlyPaypal=PayPal iba
+ONLINE_PAYMENT_CSS_URL=Voliteľná adresa URL šablóny so štýlmi CSS na stránke online platieb
+ThisIsTransactionId=To je id transakcie: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Pri odosielaní dokumentu e-mailom uveďte adresu URL platby PayPal
+NewOnlinePaymentReceived=Prijatá nová online platba
+NewOnlinePaymentFailed=Vyskúšali ste novú online platbu, ale zlyhali
+ONLINE_PAYMENT_SENDEMAIL=E-mailová adresa pre upozornenia po každom pokuse o platbu (úspešný a neúspešný)
+ReturnURLAfterPayment=Späť URL po zaplatení
+ValidationOfOnlinePaymentFailed=Overenie online platby zlyhalo
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Stránka s potvrdením platby bola vyvolaná platobným systémom a vrátila sa chyba
+SetExpressCheckoutAPICallFailed=Volanie rozhrania API SetExpressCheckout zlyhalo.
+DoExpressCheckoutPaymentAPICallFailed=Volanie rozhrania API DoExpressCheckoutPayment zlyhalo.
+DetailedErrorMessage=Podrobné chybové hlásenie
+ShortErrorMessage=Krátke chybové hlásenie
+ErrorCode=Kód chyby
+ErrorSeverityCode=Kód závažnosti chyby
+OnlinePaymentSystem=Online platobný systém
+PaypalLiveEnabled=Aktivovaný „živý“ režim PayPal (inak test/režim karantény)
+PaypalImportPayment=Importujte platby PayPal
+PostActionAfterPayment=Zaúčtovať akcie po platbách
+ARollbackWasPerformedOnPostActions=Pri všetkých akciách Post sa vykonal návrat. Ak sú potrebné, musíte vykonať manuálne akcie.
+ValidationOfPaymentFailed=Overenie platby zlyhalo
+CardOwner=Držiteľ karty
+PayPalBalance=Paypal kredit
+OnlineSubscriptionPaymentLine=Online predplatné zaznamenané dňa %s<br>Platené prostredníctvom %s<br>Pôvodná IP adresa: %s<br>ID transakcie: b0transflaspante'0bzno

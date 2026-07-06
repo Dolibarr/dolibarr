@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredyt
+Loans=Kredyty
+NewLoan=Nowy kredyt
+ShowLoan=Pokaż kredyt
+PaymentLoan=Spłata kredytu
+LoanPayment=Spłata kredytu
+ShowLoanPayment=Pokaż spłatę kredytu
+LoanCapital=Kapitał
+Insurance=Ubezpieczenie
+Interest=Odsetki
+Nbterms=Liczba składników
+Term=Termin
+LoanAccountancyCapitalCode=Kapitał rachunku księgowego
+LoanAccountancyInsuranceCode=Ubezpieczenie konta księgowego
+LoanAccountancyInterestCode=Odsetki rachunku księgowego
+ConfirmDeleteLoan=Potwierdź usunięcie tego kredytu
+LoanDeleted=Pożyczka została usunięta
+ConfirmPayLoan=Potwierdź sklasyfikować wypłacane pożyczka
+LoanPaid=Pożyczka Płatny
+ListLoanAssociatedProject=Lista pożyczek związanych z projektem
+AddLoan=Utwórz pożyczkę
+FinancialCommitment=Zobowiązanie finansowe
+InterestAmount=Odsetki
+CapitalRemain=Pozostały kapitał
+TermPaidAllreadyPaid = Termin ten jest już opłacony
+CantUseScheduleWithLoanStartedToPaid = Nie można wygenerować harmonogramu pożyczki z rozpoczętą spłatą
+CantModifyInterestIfScheduleIsUsed = Nie możesz modyfikować odsetek, jeśli używasz harmonogramu
+# Admin
+ConfigLoan=Konfiguracja modułu kredytu
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (z Planu Kont) przeznaczone domyślnie na kapitał (moduł Pożyczki)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (z Planu Kont) przeznaczone domyślnie na odsetki (moduł Pożyczki)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (z Planu Kont) przeznaczone domyślnie do ubezpieczenia (moduł Kredyt)
+CreateCalcSchedule=Edytuj zobowiązanie finansowe

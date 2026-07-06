@@ -1,0 +1,47 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: dolibarr\n"
+"Report-Msgid-Bugs-To: dolibarr@packages.debian.org\n"
+"POT-Creation-Date: 2013-04-23 12:16+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: multiselect
+#. Description
+#: ../dolibarr.templates:1001
+msgid "Web server to reconfigure automatically:"
+msgstr ""
+
+#. Type: multiselect
+#. Description
+#: ../dolibarr.templates:1001
+msgid ""
+"Please choose the web server that should be automatically configured to run "
+"dolibarr."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../dolibarr.templates:2001
+msgid "Delete database and uploaded files ?"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../dolibarr.templates:2001
+msgid ""
+"Answer if you want to removed the Dolibarr MySQL database and all other "
+"datas (datas related to this question are the Dolibarr DBMS account, all "
+"Dolibarr tables, and all uploaded files)."
+msgstr ""

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox modul beállítás
+PayBoxDesc=Ez a modul oldalakat kínál, amelyek lehetővé teszik az ügyfelek számára, hogy a <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Payboxon</a> fizessenek. Ez felhasználható ingyenes fizetésre vagy egy adott Dolibarr objektum fizetésére (számla, rendelés, ...)
+PayBoxDoPayment=Fizetés Paybox segítségével
+YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
+SetupPayBoxToHavePaymentCreatedAutomatically=Állítsa be Paybox-ját a(z) <b>%s</b> URL-lel, hogy a fizetés automatikusan létrejöjjön, amikor a Paybox jóváhagyja.
+YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
+YourPaymentHasNotBeenRecorded=A fizetését NEM rögzítették, és a tranzakciót törölték. Köszönöm.
+PAYBOX_CGI_URL_V2=Url Paybox CGI modul fizetés
+NewPayboxPaymentReceived=Új Paybox fizetés érkezett
+NewPayboxPaymentFailed=Új Paybox fizetést próbált, de nem sikerült
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail értesítés fizetési kísérlet után (siker vagy sikertelen)
+PAYBOX_PBX_SITE=Érték erre: PBX SITE
+PAYBOX_PBX_RANG=Érték erre: PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Érték erre: PBX ID
+PAYBOX_HMAC_KEY=HMAC kulcs

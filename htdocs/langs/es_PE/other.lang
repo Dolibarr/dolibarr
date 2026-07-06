@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - other
+ExternalSiteSetup=Configurar enlace al sitio web externo
+ExternalSiteModuleNotComplete=El modulo Sitio Web Externo no esta configurado apropiadamente
+ExampleMyMenuEntry=Mi entrada al menú
+BehaviourOnClick =Comportamiento al hacer clic en la URL
+BookmarksManagement =Administrar marcadores
+ListOfBookmarks =Lista de marcadores
+NoBookmarkFound =Marcador no encontrado
+NoBookmarks =Marcador no definido
+OpenANewWindow =Abrir en una pestaña nueva
+ReplaceWindow =Reemplazar pestaña actual
+ShowBookmark =Mostrar marcador
+SubscribeToFoundation=Ayuda al proyecto Dolibarr, suscríbete a la fundación

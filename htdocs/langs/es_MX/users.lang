@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - users
+UserCard=Tarjeta de usuario
+GroupCard=Tarjeta de grupo
+Permission=Permiso
+EditPassword=Editar contraseña
+SendNewPassword=Regenerar y enviar contraseña
+ReinitPassword=Regenerar contraseña
+PasswordChangedTo=La contraseña ha cambiado a: %s
+UserRights=Permisos de usuario
+DisableAUser=Deshabilitar un usuario
+EnableAUser=Habilitar un usuario
+LastName=Apellido
+FirstName=Nombre(s)

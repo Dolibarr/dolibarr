@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=שולים
+Margins=שוליים
+TotalMargin=מרווח כולל
+MarginOnProducts=שוליים / מוצרים
+MarginOnServices=שוליים / שירותים
+MarginRate=שיעור מרווח
+ModifyMarginRates=שנה את שיעורי השוליים
+MarkRate=שיעור סימון
+DisplayMarginRates=הצגת שיעורי שולי
+DisplayMarkRates=הצגת שיעורי סימן
+InputPrice=מחיר קלט
+margin=ניהול שולי רווח
+margesSetup=הגדרת ניהול שולי רווח
+MarginDetails=פרטי השוליים
+ProductMargins=שולי מוצר
+CustomerMargins=שולי לקוחות
+SalesRepresentativeMargins=שולי נציגי מכירות
+ContactOfInvoice=יצירת קשר עם החשבונית
+UserMargins=שולי משתמש
+ProductService=מוצר או שירות
+AllProducts=כל המוצרים והשירותים
+ChooseProduct/Service=בחר מוצר או שירות
+ForceBuyingPriceIfNull=לאלץ את מחיר הקנייה/עלות למחיר המכירה אם לא מוגדר
+ForceBuyingPriceIfNullDetails=אם לא צוין מחיר קנייה/עלות כאשר אנו מוסיפים שורה חדשה, ואפשרות זו היא "ON", השוליים יהיו 0%% בשורה החדשה (מחיר קנייה/מחיר = מחיר המכירה). אם אפשרות זו היא "כבוי" (מומלץ), השוליים יהיו שווה לערך המוצע כברירת מחדל (ויכול להיות 100%% אם לא ניתן למצוא ערך ברירת מחדל).
+MARGIN_METHODE_FOR_DISCOUNT=שיטת מרווח להנחות גלובליות
+UseDiscountAsProduct=כמוצר
+UseDiscountAsService=בתור שירות
+UseDiscountOnTotal=על סכומי הביניים
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=מגדיר אם מתייחסים להנחה גלובלית כאל מוצר, שירות או רק על סכום ביניים לחישוב מרווח.
+MARGIN_TYPE=מחיר קנייה/עלות מוצע כברירת מחדל לחישוב המרווח
+MargeType1=מרווח במחיר הספק הטוב ביותר
+MargeType2=מרווח על מחיר ממוצע משוקלל (WAP)
+MargeType3=מרווח על מחיר עלות
+MarginTypeDesc=* מרווח על מחיר הקנייה הטוב ביותר = מחיר מכירה - מחיר הספק הטוב ביותר שהוגדר בכרטיס המוצר<br>* מרווח על מחיר ממוצע משוקלל (WAP) = מחיר מכירה - מחיר ממוצע משוקלל של מוצר (WAP) או מחיר הספק הטוב ביותר אם WAP עדיין לא הוגדר<br>* מרווח על מחיר עלות = מחיר מכירה - מחיר עלות מוגדר בכרטיס המוצר או WAP אם מחיר העלות לא הוגדר, או מחיר הספק הטוב ביותר אם WAP עדיין לא הוגדר
+CostPrice=מחיר עלות
+UnitCharges=חיובי יחידה
+Charges=חיובים
+AgentContactType=סוג איש קשר של סוכן מסחרי
+AgentContactTypeDetails=הגדר איזה סוג איש קשר (מקושר בחשבוניות) ישמש עבור דוח שוליים לכל איש קשר/כתובת. שים לב שקריאת סטטיסטיקה על איש קשר אינה אמינה שכן ברוב המקרים ייתכן שהקשר אינו מוגדר במפורש בחשבוניות.
+rateMustBeNumeric=התעריף חייב להיות ערך מספרי
+markRateShouldBeLesserThan100=שיעור הסימנים צריך להיות נמוך מ-100
+ShowMarginInfos=הצג מידע על השוליים
+CheckMargins=פירוט השוליים
+MarginPerSaleRepresentativeWarning=דוח המרווח למשתמש השתמש בקישור בין צדדים שלישיים ונציגי מכירות כדי לחשב את המרווח של כל נציג מכירות. מכיוון שייתכן שלחלק מהצדדים השלישיים אין נציג מכירות ייעודי וחלק מהצדדים השלישיים עשויים להיות מקושרים לכמה, ייתכן שחלק מהסכומים לא ייכללו בדוח זה (אם אין נציג מכירה) וחלקם עשויים להופיע בשורות שונות (עבור כל נציג מכירה) .

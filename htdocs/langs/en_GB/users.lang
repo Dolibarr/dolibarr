@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - users
+SubjectNewPassword=Password changed for %s
+CreateGroup=Create a group
+RemoveFromGroup=Remove from a group
+ConfirmPasswordReset=Confirm password change
+NonAffectedUsers=Non-assigned users
+UsePersonalValue=Use a personal choice
+PermissionInheritedFromAGroup=Permission granted through inherited rights from one of the user groups.
+UserWillBeInternalUser=Created user will be an internal user (because they are not linked to a particular third party)
+UserWillBeExternalUser=Created user will be an external user (because they are linked to a particular third party)
+NewUserPassword=Password changed for %s
+ColorUser=Colour for the user

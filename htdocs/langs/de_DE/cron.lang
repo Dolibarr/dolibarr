@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Geplante Jobs einsehen
+Permission23102 = Erstelle/aktualisiere geplanten Job
+Permission23103 = Lösche geplanten Job
+Permission23104 = Führe geplanten Job aus
+# Admin
+CronSetup=Jobverwaltungs-Konfiguration
+URLToLaunchCronJobs=URL zum Überprüfen und Starten qualifizierter Cron-Jobs über einen Browser
+OrToLaunchASpecificJob=Oder um einen bestimmten Job über einen Browser zu überprüfen und zu starten
+KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cron-Jobs
+FileToLaunchCronJobs=Befehlszeile zum Überprüfen und Starten von qualifizierten Cron-Jobs
+CronExplainHowToRunUnix=In Unix-Umgebung sollten Sie die folgenden crontab-Eintrag verwenden, um die Befehlszeile alle 5 Minuten ausführen
+CronExplainHowToRunWin=In Microsoft™ Windows Umgebungen können Sie die Aufgabenplanung benutzen, um die Kommandozeile alle 5 Minuten aufzurufen.
+CronMethodDoesNotExists=Die Klasse %s enthält keine Methode %s
+CronMethodNotAllowed=Die Methode %s der Klasse %s befindet sich in der Sperrliste der verbotenen Methoden
+CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü admin tools %s verwalten können.
+CronJobProfiles=Liste vordefinierter Cron-Job Profile
+# Menu
+EnabledAndDisabled=Aktiviert und deaktiviert
+# Page list
+CronLastOutput=Ausgabe der letzten Ausführung
+CronLastResult=Letzter Resultatcode
+CronCommand=Befehl
+CronList=Geplante Jobs
+CronDelete=Geplante Jobs löschen
+CronConfirmDelete=Sind Sie sicher, dass Sie diese geplanten Aufträge jetzt löschen möchten?
+CronExecute=Jetzt starten
+CronConfirmExecute=Sind Sie sicher, dass Sie diese geplante Aufträge jetzt ausführen möchten?
+CronInfo=Das Modul "Geplante Jobs" erlaubt es, Jobs (automatisierte Vorgänge) zu bestimmten Zeitpunkten auszuführen. Die Jobs können auch manuell gestartet werden.
+CronTask=Job
+CronNone=Nächster Lauf des geplanten Jobs
+CronNotYetRan=Niemals ausgeführt
+CronDtStart=Nicht vor
+CronDtEnd=Nicht nach
+CronDtNextLaunch=Nächste Ausführung
+CronDtLastLaunch=Startdatum der letzten Ausführung
+CronDtLastResult=Enddatum der letzten Ausführung
+CronFrequency=Frequenz
+CronClass=Klasse
+CronMethod=Methode
+CronModule=Modul
+CronNoJobs=Keine Jobs eingetragen
+CronPriority=Priorität
+CronLabel=Bezeichnung
+CronNbRun=Anzahl Starts
+CronMaxRun=Maximale Anzahl von Starts
+CronEach=Jede
+JobFinished=Job gestartet und beendet
+Scheduled=Geplant
+#Page card
+CronAdd=Jobs hinzufügen
+CronEvery=Ausführung des Jobs alle
+CronObject=Instanz/Objekt zu erstellen
+CronArgs=Parameter
+CronSaveSucess=Erfolgreich gespeichert
+CronNote=Kommentar
+CronFieldMandatory=Feld %s ist zwingend nötig
+CronErrEndDateStartDt=Enddatum kann nicht vor dem Startdatum liegen
+StatusAtInstall=Status bei der Modulinstallation
+CronStatusActiveBtn=Job aktivieren
+CronStatusInactiveBtn=Job deaktivieren
+CronTaskInactive=Dieser Job ist deaktiviert (keine Ausführung geplant)
+CronId=ID
+CronClassFile=Dateiname mit Klasse
+CronModuleHelp=Name des Dolibarr Modulverzeichnisses (auch für externe Dolibarr Module). <BR> Um zum Beispiel die Abrufmethode eines Dolibarr Produkt-Objektes aufzurufen /htdocs/<u>product</u>/class/product.class.php, ist der Wert für Modul<br><i>product</i>
+CronClassFileHelp=Der relative Pfad und Dateiname, der geladen werden soll (relativer Pfad zum Webserver-Stammverzeichnis). <BR> Um zum Beispiel die Fetch-Methode des Dolibarr-Produktobjekts aufzurufen htdocs/product/class/<u>product.class.php</u> , lautet der Wert für den Klassendateinamen<br><i>product/class/product.class.php</i>
+CronObjectHelp=Der zu ladende Objektname. <BR> Um zum Beispiel die Abrufmethode eines Dolibarr Produkt-Objektes aufzurufen /htdocs/product/class/product.class.php, ist als Name für die Klassen-Datei anzugeben<br><i>Product</i>
+CronMethodHelp=Die zu startende Objektmethode. <BR> Um zum Beispiel die Fetch-Methode des Dolibarr-Produktobjekts aufzurufen /htdocs/product/class/product.class.php, lautet der Wert für Methode<br><i>fetch</i>
+CronArgsHelp=Die Methodenargumente. <BR> Um beispielsweise die Abrufmethode des Dolibarr-Produktobjekts /htdocs/product/class/product.class.php aufzurufen, kann der Wert für paramters <br> <i> 0, ProductRef </i> sein
+CronCommandHelp=Die auszuführende System-Kommandozeile
+CronCreateJob=Erstelle neuen cronjob
+CronFrom=Von
+# Info
+# Common
+CronType=Job Typ
+CronType_method=Aufruf-Methode einer PHP-Klasse
+CronType_command=Shell-Befehl
+CronCannotLoadClass=Die Klassendatei %s kann nicht geladen werden (um die Klasse %s zu verwenden)
+CronModuleNotEnabledInThisEntity=Cron Modul ist in dieser Entität nicht aktiviert (um die Methode %s von %s Objekt zu verwenden)
+CronCannotLoadObject=Die Klassendatei %s wurde geladen, aber das Objekt %s wurde nicht gefunden
+UseMenuModuleToolsToAddCronJobs=Gehen Sie in das Menü "<a href="%s"> Home - Admin-Tools - Geplante Jobs </a>", um geplante Jobs anzuzeigen und zu bearbeiten.
+JobDisabled=Job deaktiviert
+MakeLocalDatabaseDumpShort=Lokales Datenbank-Backup
+MakeLocalDatabaseDump=Erstellen Sie einen lokalen Datenbankspeicherauszug. Parameter sind: Komprimierung ('gz' oder 'bz' oder 'none'), Sicherungstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' oder zu erstellender Dateiname, Anzahl der zu speichernden Sicherungsdateien
+MakeSendLocalDatabaseDumpShort=Lokale Datenbanksicherung senden
+MakeSendLocalDatabaseDump=Lokale Datenbanksicherung per E-Mail senden. Parameter sind: an, von, Betreff, Nachricht, Dateiname (Name der gesendeten Datei), Filter ('sql' nur für Backup der Datenbank).
+BackupIsTooLargeSend=Die letzte Sicherungsdatei ist zu groß, um per E-Mail gesendet zu werden
+CleanUnfinishedCronjobShort=Unbeendeten Cronjob bereinigen
+CleanUnfinishedCronjob=Bereinigen eines in der Verarbeitung hängengebliebenen Cronjob, wenn der Prozess nicht mehr ausgeführt wird
+WarningCronDelayed=Bitte beachten: Aus Leistungsgründen können Ihre Jobs um bis zu %s Stunden verzögert werden, unabhängig vom nächsten Ausführungstermin.
+DATAPOLICYJob=Datenbereiniger und Anonymisierer
+JobXMustBeEnabled=Job %s muss aktiviert sein
+EmailIfError=E-Mail zur Warnung bei Fehler
+JobNotFound=Job %s wurde in der Liste der Jobs nicht gefunden (versuchen Sie, das Modul zu deaktivieren/aktivieren)
+ErrorInBatch=Fehler beim Ausführen des Jobs %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Zuletzt ausgeführter geplanter Job
+NextScheduledJobExecute=Nächster geplanter Job, der ausgeführt werden soll
+NumberScheduledJobError=Anzahl der ausgeführten geplanten Jobs mit Fehlern
+NumberScheduledJobNeverFinished=Anzahl der geplanten Jobs, die nie beendet wurden

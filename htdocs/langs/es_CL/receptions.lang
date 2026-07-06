@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - receptions
+RefReception=Árbitro. recepción
+Reception=Recepción
+ReceptionsArea=Area de recepciones
+LastReceptions=Últimas recepciones de %s
+StatisticsOfReceptions=Estadisticas para recepciones.
+NumberOfReceptionsByMonth=Número de recepciones por mes.
+ReceptionCard=Tarjeta de recepcion
+NewReception=Nueva recepcion
+CreateReception=Crear recepcion
+QtyInOtherReceptions=Cantidad en otras recepciones
+OtherReceptionsForSameOrder=Otras recepciones para este pedido.
+ReceptionsAndReceivingForSameOrder=Recepciones y recibos por este pedido.
+ReceptionsToValidate=Recepciones para validar
+StatusReceptionCanceled=Cancelado
+StatusReceptionProcessed=Procesada
+StatusReceptionProcessedShort=Procesada
+ConfirmDeleteReception=¿Estás seguro de que deseas eliminar esta recepción?
+ConfirmCancelReception=¿Seguro que quieres cancelar esta recepción?
+SendReceptionByEMail=Enviar recepción por correo electrónico
+SendReceptionRef=Presentación de la recepción %s
+ActionsOnReception=Eventos en recepción
+ProductQtyInReceptionAlreadySent=Cantidad de producto de pedido abierto ya enviado
+ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidad de producto de pedido de proveedor abierto ya recibido
+ValidateOrderFirstBeforeReception=Primero debe validar el pedido antes de poder hacer recepciones.
+ReceptionsNumberingModules=Módulo de numeración para recepciones.
+ReceptionsReceiptModel=Plantillas de documentos para recepciones.

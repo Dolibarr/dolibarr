@@ -1,0 +1,70 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = भर्ती
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = नई नौकरियों के लिए भर्ती अभियान का प्रबंधन और अनुसरण करें
+# Admin page
+RecruitmentSetup = भर्ती सेटअप
+RecruitmentSetupPage = भर्ती मॉड्यूल के लिए मुख्य विकल्पों की व्यवस्था यहां दर्ज करें
+RecruitmentArea=भर्ती क्षेत्र
+PublicInterfaceRecruitmentDesc=नौकरियों के सार्वजनिक पृष्ठ खुली नौकरियों को दिखाने और उनका जवाब देने के लिए सार्वजनिक URL हैं। प्रत्येक खुली नौकरी के लिए एक अलग लिंक है, जो प्रत्येक नौकरी रिकॉर्ड पर पाया जाता है।
+EnablePublicRecruitmentPages=खुली नौकरियों के सार्वजनिक पृष्ठ सक्षम करें
+
+NbOfEmployeesExpected=अपेक्षित कर्मचारियों की संख्या
+JobLabel=नौकरी की स्थिति का लेबल
+WorkPlace=कार्य स्थल
+DateExpected=अपेक्षित तारीक
+FutureManager=भावी प्रबंधक
+ResponsibleOfRecruitement=भर्ती के लिए जिम्मेदार
+IfJobIsLocatedAtAPartner=यदि नौकरी साझेदार के स्थान पर स्थित है
+PositionToBeFilled=काम की स्थिति
+PositionsToBeFilled=नौकरी की स्थिति
+ListOfPositionsToBeFilled=नौकरी के पदों की सूची
+NewPositionToBeFilled=नई नौकरी की स्थिति
+JobOfferToBeFilled=भरी जाने वाली नौकरी की स्थिति
+ThisIsInformationOnJobPosition=भरे जाने वाले नौकरी पद की जानकारी
+ContactForRecruitment=भर्ती के लिए संपर्क करें
+EmailRecruiter=ईमेल भर्तीकर्ता
+ToUseAGenericEmail=सामान्य ईमेल का उपयोग करना। यदि परिभाषित नहीं किया गया है, तो भर्ती के लिए जिम्मेदार व्यक्ति का ईमेल उपयोग किया जाएगा
+NewCandidature=नए आवेदन
+ListOfCandidatures=आवेदनों की सूची
+Remuneration=वेतन
+RequestedRemuneration=अनुरोधित वेतन
+ProposedRemuneration=प्रस्तावित वेतन
+ContractProposed=प्रस्तावित अनुबंध
+ContractSigned=अनुबंध पर हस्ताक्षर
+ContractRefused=अनुबंध अस्वीकार कर दिया गया
+RecruitmentCandidature=आवेदन
+JobPositions=नौकरी की स्थिति
+RecruitmentCandidatures=अनुप्रयोग
+InterviewToDo=अनुसरण करने योग्य संपर्क
+AnswerCandidature=आवेदन उत्तर
+YourCandidature=आपकी एप्लिकेशन
+YourCandidatureAnswerMessage=आपके आवेदन के लिए धन्यवाद.<br>...
+JobClosedTextCandidateFound=नौकरी का पद बंद हो गया है। पद भर दिया गया है।
+JobClosedTextCanceled=नौकरी की स्थिति बंद हो गई है।
+ExtrafieldsJobPosition=पूरक विशेषताएँ (नौकरी की स्थिति)
+ExtrafieldsApplication=पूरक विशेषताएँ (नौकरी के लिए आवेदन)
+MakeOffer=एक प्रस्ताव
+WeAreRecruiting=हम भर्ती कर रहे हैं। यह रिक्त पदों की सूची है जिन्हें भरा जाना है...
+NoPositionOpen=इस समय कोई पद रिक्त नहीं है
+ConfirmClose=रद्दीकरण की पुष्टि करें
+ConfirmCloseAsk=क्या आप वाकई इस भर्ती की उम्मीदवारी रद्द करना चाहते हैं
+Recruitment=भर्ती
+ApplyJobCandidature=इस नौकरी के लिए आवेदन करें
+ErrorRecruitmmentCandidatureAlreadyExists= भर्ती उम्मीदवारी पहले से ही ईमेल %s के साथ मौजूद है
+RecruitmentCandidatureSaved=भर्ती उम्मीदवारी सफलतापूर्वक सहेजी गई
+NoOpenJobOffer=फिलहाल कोई खुली नौकरी की पेशकश नहीं है

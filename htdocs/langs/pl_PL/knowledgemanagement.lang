@@ -1,0 +1,45 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+# Generic
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = System Zarządzania Wiedzą
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Zarządzaj Zarządzaniem wiedzą lub Obsługą klienta
+# Admin page
+KnowledgeManagementSetup = Konfiguracja systemu Zarządzania wiedzą
+KnowledgeManagementSetupPage = Strona konfiguracji systemu Zarządzania wiedzą
+# About page
+KnowledgeManagementAbout = O Zarządzaniu wiedzą
+KnowledgeManagementAboutPage = Strona informacyjna Zarządzania wiedzą
+KnowledgeManagementArea = Zarządzanie wiedzą
+MenuKnowledgeRecord = Baza wiedzy
+MenuKnowledgeRecordShort = Baza wiedzy
+ListKnowledgeRecord = Lista artykułów
+NewKnowledgeRecord = Nowy artykuł
+ValidateReply = Sprawdź poprawność rozwiązania
+KnowledgeRecords = Artykuły
+KnowledgeRecord = Artykuł
+KnowledgeRecordExtraFields = Extrapola dla artykułu
+GroupOfTicket=Grupa biletów
+YouCanLinkArticleToATicketCategory=Możesz połączyć artykuł z grupą zgłoszeń (aby artykuł został wyróżniony na wszystkich zgłoszeniach w tej grupie)
+SuggestedForTicketsInGroup=Sugerowane przy tworzeniu biletów
+SetObsolete=Ustaw jako przestarzałe
+ConfirmCloseKM=Czy potwierdzasz zamknięcie tego artykułu jako przestarzałego?
+ConfirmReopenKM=Czy chcesz przywrócić temu artykułowi status „Zatwierdzony”?
+BoxLastKnowledgerecordDescription=Ostatnie %s artykuły
+BoxLastKnowledgerecord=Ostatnie artykuły
+BoxLastKnowledgerecordContent=Ostatnie artykuły
+BoxLastKnowledgerecordModifiedContent=Ostatnio zmodyfikowane artykuły
+BoxLastModifiedKnowledgerecordDescription=Ostatnio %s zmodyfikowane artykuły
+BoxLastModifiedKnowledgerecord=Ostatnio zmodyfikowane artykuły

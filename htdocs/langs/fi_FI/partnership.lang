@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Kumppanuuden hallinta
+PartnershipDescription=Moduuli Kumppanuuden hallinta
+PartnershipDescriptionLong= Moduuli Kumppanuuden hallinta
+Partnership=Kumppanuus
+Partnerships=Kumppanuudet
+AddPartnership=Lisää kumppanuus
+CancelPartnershipForExpiredMembers=Kumppanuus: Peruuta jäsenten kumppanuus, jonka tilaus on vanhentunut
+PartnershipCheckBacklink=Kumppanuus: Tarkista viittaava käänteinen linkki
+# Menu
+NewPartnership=Uusi kumppanuus
+NewPartnershipbyWeb=Kumppanuuspyyntösi on lisätty onnistuneesti. Saatamme pian ottaa sinuun yhteyttä...
+ListOfPartnerships=Kumppanuusluettelo
+# Admin page
+PartnershipSetup=Kumppanuuden perustaminen
+PartnershipAbout=Tietoja kumppanuudesta
+PartnershipAboutPage=Kumppanuus sivusta
+partnershipforthirdpartyormember=Kumppanin tilaksi on asetettava "kolmas osapuoli" tai "jäsen"
+PARTNERSHIP_IS_MANAGED_FOR=Kumppanuus hoidettu
+PARTNERSHIP_BACKLINKS_TO_CHECK=Käänteisiä linkkejä tarkistettavaksi
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Päivämäärä ennen kumppanuustilan peruuttamista, kun tilaus on vanhentunut
+ReferingWebsiteCheck=Tarkista viittaava verkkosivusto
+ReferingWebsiteCheckDesc=Voit ottaa käyttöön ominaisuuden, joka tarkistaa, että kumppanisi ovat lisänneet käänteisen linkin verkkosivustosi verkkotunnuksiin omalla verkkosivustollaan.
+PublicFormRegistrationPartnerDesc=Dolibarr voi tarjota sinulle julkisen URL-osoitteen/verkkosivuston, jonka avulla ulkoiset vierailijat voivat pyytää saada osallistua kumppanuusohjelmaan.
+# Object
+DeletePartnership=Poista kumppanuus
+PartnershipDedicatedToThisThirdParty=Tälle kolmannelle osapuolelle omistettu kumppanuus
+PartnershipDedicatedToThisMember=Tälle jäsenelle omistettu kumppanuus
+DatePartnershipStart=Aloituspäivämäärä
+DatePartnershipEnd=Lopetuspäivä
+ReasonDecline=Hylkäämisen syy
+ReasonDeclineOrCancel=Hylkäämisen tai peruutuksen syy
+PartnershipAlreadyExist=Kumppanuus on jo olemassa
+ManagePartnership=Hallitse kumppanuutta
+BacklinkNotFoundOnPartnerWebsite=Käänteistä linkkiä ei löydy kumppanin verkkosivuilta
+ConfirmClosePartnershipAsk=Haluatko varmasti peruuttaa tämän kumppanuuden?
+PartnershipType=Kumppanuuden tyyppi
+PartnershipRefApproved=Kumppanuus %s hyväksytty
+KeywordToCheckInWebsite=Jos haluat tarkistaa, että tietty avainsana on läsnä kunkin kumppanin verkkosivuilla, määritä tämä avainsana tähän
+PartnershipDraft=Luonnos
+PartnershipAccepted=Hyväksytty
+PartnershipRefused=Hylätty
+PartnershipCanceled=Peruttu
+PartnershipManagedFor=Yhteistyökumppanit ovat
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Yhteistyö puretaan pian
+SendingEmailOnPartnershipRefused=Yhteistyö kieltäytyi
+SendingEmailOnPartnershipAccepted=Yhteistyö hyväksytty
+SendingEmailOnPartnershipCanceled=Kumppanuus peruttu
+YourPartnershipWillSoonBeCanceledTopic=Yhteistyö puretaan pian
+YourPartnershipRefusedTopic=Yhteistyö kieltäytyi
+YourPartnershipAcceptedTopic=Yhteistyö hyväksytty
+YourPartnershipCanceledTopic=Kumppanuus peruttu
+YourPartnershipWillSoonBeCanceledContent=Haluamme ilmoittaa, että kumppanuus peruutetaan pian (emme saaneet uusintaa tai kumppanuusehtomme eivät ole täyttyneet). Ota yhteyttä, jos sait tämän virheen vuoksi.
+YourPartnershipRefusedContent=Haluamme ilmoittaa, että kumppanuuspyyntösi on hylätty. Edellytykset eivät ole täyttyneet. Ota yhteyttä, jos tarvitset lisätietoja.
+YourPartnershipAcceptedContent=Haluamme ilmoittaa, että kumppanuuspyyntösi on hyväksytty.
+YourPartnershipCanceledContent=Haluamme ilmoittaa, että yhteistyömme on peruttu. Ota meihin yhteyttä, jos tarvitset lisätietoja.
+CountLastUrlCheckError=Viimeisimmän URL-osoitteen tarkistuksen virheiden määrä
+LastCheckBacklink=päiväys viimeisestä URL-osoitteen tarkistuksesta
+NewPartnershipRequest=Uusi kumppanuuspyyntö
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Tällä sivulla on oltava vähintään yksi linkki johonkin seuraavista verkkotunnuksista: %s
+IPOfApplicant=Hakijan IP
+PartnershipToReopen=Avatakse uudelleen
+PartnershipConfirmReOpenAsk=Haluatko varmasti avata uudelleen tämän kumppanuuden <b> %s</b>?

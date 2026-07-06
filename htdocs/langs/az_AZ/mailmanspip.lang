@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman və SPIP modulunun qurulması
+MailmanTitle=Mailman poçt siyahısı sistemi
+TestSubscribe=Mailman siyahılarına abunəliyi sınamaq üçün
+TestUnSubscribe=Test etmək üçün Mailman siyahılarına abunəlikdən çıxın
+MailmanCreationSuccess=Abunə sınağı uğurla həyata keçirildi
+MailmanDeletionSuccess=Abunəlikdən çıxma testi uğurla həyata keçirildi
+SynchroMailManEnabled=Mailman yeniləməsi həyata keçiriləcək
+SynchroSpipEnabled=Spip yeniləməsi həyata keçiriləcək
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Poçt işçisi administrator parolu
+DescADHERENT_MAILMAN_URL=Mailman abunəlikləri üçün URL
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman abunəlikləri üçün URL
+DescADHERENT_MAILMAN_LISTS=Yeni üzvlərin avtomatik yazılması üçün siyahı(lar) (vergüllə ayrılmış)
+SPIPTitle=SPIP Məzmun İdarəetmə Sistemi
+DescADHERENT_SPIP_SERVEUR=SPIP Server
+DescADHERENT_SPIP_DB=SPIP verilənlər bazası adı
+DescADHERENT_SPIP_USER=SPIP verilənlər bazasına giriş
+DescADHERENT_SPIP_PASS=SPIP verilənlər bazası parolu
+AddIntoSpip=SPIP-ə əlavə edin
+AddIntoSpipConfirmation=Bu üzvü SPIP-ə əlavə etmək istədiyinizə əminsiniz?
+AddIntoSpipError=İstifadəçini SPIP-ə əlavə etmək alınmadı
+DeleteIntoSpip=SPIP-dən çıxarın
+DeleteIntoSpipConfirmation=Bu üzvü SPIP-dən silmək istədiyinizə əminsiniz?
+DeleteIntoSpipError=İstifadəçini SPIP-dən sıxışdırmaq alınmadı
+SPIPConnectionFailed=SPIP-ə qoşulmaq alınmadı
+SuccessToAddToMailmanList=%s poçtalyon siyahısına %s və ya SPIP verilənlər bazasına uğurla əlavə edildi
+SuccessToRemoveToMailmanList=%s poçtalyon siyahısından %s və ya SPIP verilənlər bazasından uğurla silindi

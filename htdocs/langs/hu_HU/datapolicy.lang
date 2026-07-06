@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Adatvédelmi szabályzat
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Adatvédelmi modul (a GDPR-nak megfelelő)
+# Administration page
+datapolicySetup = A modul adatvédelmi szabályzatának beállítása
+DataDeletion=Adatok törlése
+DataAnonymization=Az adatok anonimizálása
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Az Ön országának törvényeitől függően (például a GDPR 5. cikkének <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">5. cikke</a> értelmében) a személyes adatokat legfeljebb addig kell megőrizni, ameddig az adatokra szükség van a gyűjtésük céljához, kivéve archiválási célokat.<br>Ez a modul egy bizonyos időtartam elteltével (az alábbiakban megadott időtartam) automatikusan anonimizálja az adatokat, ha az objektumnak nincsenek meglévő üzleti objektum alárendeltjei.
+NB_MONTHS = %s hónap
+ONE_YEAR = 1 év
+NB_YEARS = %s év
+DATAPOLICY_TIERS_CLIENT = Vevő
+DATAPOLICY_TIERS_PROSPECT = Leendő
+DATAPOLICY_TIERS_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
+DATAPOLICY_TIERS_FOURNISSEUR = Beszállító
+DATAPOLICY_CONTACT_CLIENT = Vevő
+DATAPOLICY_CONTACT_PROSPECT = Leendő
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
+DATAPOLICY_CONTACT_FOURNISSEUR = Beszállító
+DATAPOLICY_ADHERENT = Tag
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Jelentkezés
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Küldhet GDPR e-mailt minden érintett kapcsolattartójának (akik még nem kaptak e-mailt, és akikhez még nem regisztrált semmit a GDPR-megállapodásukkal kapcsolatban). Ehhez használja a következő gombot.
+SendAgreement = Emaileket küld
+AllAgreementSend = Minden e-mailt elküldtünk
+TXTLINKDATAPOLICYACCEPT = Szöveg a linkhez "megállapodás"
+TXTLINKDATAPOLICYREFUSE = Szöveg a "nézeteltérés" linkhez
+DelayForAnonymization=Anonimizálás késleltetése
+DelayForDeletion=Törlés késleltetése
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Személyes adatok feldolgozása
+DATAPOLICY_consentement = A személyes adatok feldolgozásához kapott hozzájárulás
+DATAPOLICY_opposition_traitement = Ellenzi személyes adatainak kezelését
+DATAPOLICY_opposition_prospection = Ellenzi személyes adatainak kutatási célú feldolgozását
+# Notes added during an anonymization
+DATAPOLICY_date = Megállapodás/nézeteltérés dátuma GDPR
+DATAPOLICY_send = Az e-mail elküldésének dátuma
+MailSent = Az e-mail el lett küldve
+NUMBER_MONTH_BEFORE_DELETION = A törlés előtti hónapok száma
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

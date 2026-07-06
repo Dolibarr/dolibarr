@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - trips
+AUTHORPAIEMENT=دُفع بواسطة
+DATE_SAVE=تاريخ الاعتماد
+expenseReportOffset=إزاحة
+MOTIF_CANCEL=السبب
+MOTIF_REFUS=السبب
+Trips=تقارير النفقات
+TripsAndExpenses=تقارير النفقات
+VALIDOR=تمت الموافقة بواسطة

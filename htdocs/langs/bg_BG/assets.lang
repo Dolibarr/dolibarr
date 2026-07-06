@@ -1,0 +1,146 @@
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+NewAsset=Нов актив
+AccountancyCodeAsset=Счетоводен код (актив)
+AccountancyCodeDepreciationAsset=Счетоводен код (сметка за амортизационни активи)
+AccountancyCodeDepreciationExpense=Счетоводен код (сметка за амортизационни разходи)
+AssetsLines=Активи
+ConfirmValidateAsset=Сигурни ли сте, че искате към Потвърждавам този актив с препратка <b>%s</b>?
+DeleteType=Изтриване
+DeleteAnAssetType=Изтриване на модел актив
+ConfirmDeleteAssetType=Сигурни ли сте, че искате да изтриете този актив модел?
+ShowTypeCard=Показване на модела „%s“
+# Module label 'ModuleAssetsName'
+ModuleAssetsName=Активи
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc=Описание на активи
+# Admin page
+AssetSetup=Настройка на активи
+AssetSetupPage=Страница за настройка на активите
+ExtraFieldsAssetModel=Допълнителни атрибути (модел на актив)
+AssetsType=актив модел
+AssetsTypeId=актив идентификатор на модела
+AssetsTypeLabel=актив етикет на модела
+AssetsTypes=активи модели
+ASSET_ACCOUNTANCY_CATEGORY=Коригирана група актив Счетоводство
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Пропорционален период в дни за изчисляване на амортизацията за една година
+# Menu
+MenuAssets=Активи
+MenuNewAsset=Нов актив
+MenuAssetModels=Модел активи
+MenuListAssets=Списък
+MenuNewAssetModel=Нов модел на актив
+MenuListAssetModels=Списък
+# Module
+ConfirmDeleteAsset=Наистина ли искате да премахнете този актив?
+# Tab
+AssetDepreciationOptions=Опции за амортизация
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Амортизация
+# Asset
+Asset=актив
+Assets=Активи
+AssetReversalAmountHT=Сторнирана сума (без данъци)
+AssetAcquisitionValueHT=Сума на придобиване (без данъци)
+AssetRecoveredVAT=Възстановено ДДС
+AssetReversalDate=Сторниране Дата
+AssetDateAcquisition=Придобиване Дата
+AssetDateStart=Дата на стартиране
+AssetAcquisitionType=Вид на придобиването
+AssetAcquisitionTypeNew=Нов
+AssetAcquisitionTypeOccasion=Използвани
+AssetType=Тип на актив
+AssetTypeIntangible=Нематериален
+AssetTypeTangible=Осезаемо
+AssetTypeInProgress=В изпълнение
+AssetTypeFinancial=Финансови
+AssetNotDepreciated=Не се амортизира
+AssetDisposal=Изхвърляне
+AssetConfirmDisposalAsk=Сигурни ли сте, че искате за изхвърляне на актив <b> %s</b>?
+AssetConfirmReOpenAsk=Сигурни ли сте, че искате, за да отворите отново актив <b>  %s</b>?
+# Asset status
+AssetInDraft=Чернова
+AssetInProgress=В изпълнение
+AssetDisposed=Изхвърлен
+AssetRecorded=Осчетоводени
+# Asset disposal
+AssetDisposalDate=Дата на изхвърляне
+AssetDisposalAmount=Стойност на изхвърляне
+AssetDisposalType=Вид изхвърляне
+AssetDisposalDepreciated=Амортизирайте годината на прехвърляне
+AssetDisposalSubjectToVat=Изхвърлянето се облага с ДДС
+# Asset model
+AssetModel=модел на актив
+AssetModels=Моделите на актив
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Икономическа амортизация
+AssetDepreciationOptionAcceleratedDepreciation=Ускорена амортизация (данък)
+AssetDepreciationOptionDepreciationType=Вид амортизация
+AssetDepreciationOptionDepreciationTypeLinear=Линеен
+AssetDepreciationOptionDepreciationTypeDegressive=Дегресивен
+AssetDepreciationOptionDepreciationTypeExceptional=Изключителен
+AssetDepreciationOptionDegressiveRate=Дегресивна скорост
+AssetDepreciationOptionDuration=Продължителност
+AssetDepreciationOptionDurationType=Тип продължителност
+AssetDepreciationOptionDurationTypeAnnual=Годишно
+AssetDepreciationOptionDurationTypeMonthly=Месечно
+AssetDepreciationOptionDurationTypeDaily=Ежедневно
+AssetDepreciationOptionRate=Оценка (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Амортизационна база (без ДДС)
+AssetDepreciationOptionAmountBaseDeductibleHT=Основа за приспадане (без ДДС)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Обща сума на последната амортизация (без ДДС)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Икономическа амортизация
+AssetAccountancyCodeAsset=актив
+AssetAccountancyCodeDepreciationAsset=Амортизация
+AssetAccountancyCodeDepreciationExpense=Разходи за амортизация
+AssetAccountancyCodeValueAssetSold=Изхвърлена стойност на актив
+AssetAccountancyCodeReceivableOnAssignment=Вземане при разпореждане
+AssetAccountancyCodeProceedsFromSales=Постъпления от разпореждане
+AssetAccountancyCodeVatCollected=Събрано ДДС
+AssetAccountancyCodeVatDeductible=Възстановен ДДС на активи
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Ускорена амортизация (данък)
+AssetAccountancyCodeAcceleratedDepreciation=Сметка
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Разходи за амортизация
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Връщане на собственост/Предоставяне
+# Asset depreciation
+AssetBaseDepreciationHT=Амортизационна база (без ДДС)
+AssetDepreciationBeginDate=Начало на амортизацията на
+AssetDepreciationDuration=Продължителност
+AssetDepreciationRate=Оценка (%%)
+AssetDepreciationDate=Амортизация Дата
+AssetDepreciationHT=Амортизация (без ДДС)
+AssetCumulativeDepreciationHT=Кумулативна амортизация (без ДДС)
+AssetResidualHT=Остатъчна стойност (без ДДС)
+AssetDispatchedInBookkeeping=Записана амортизация
+AssetFutureDepreciationLine=Бъдеща амортизация
+AssetDepreciationReversal=Обръщане
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Идентификационният номер на актив или намереният модел не е предоставен
+AssetErrorFetchAccountancyCodesForMode=Грешка при извличане на сметките Счетоводство за режима на амортизация „%s“
+AssetErrorDeleteAccountancyCodesForMode=Грешка при изтриване на Счетоводство сметки от режима на амортизация „%s“
+AssetErrorInsertAccountancyCodesForMode=Грешка при вмъкване на Счетоводство сметките на режима на амортизация „%s“
+AssetErrorFetchDepreciationOptionsForMode=Грешка при извличане на опции за режима на амортизация „%s“
+AssetErrorDeleteDepreciationOptionsForMode=Грешка при изтриване на опциите за режим на амортизация „%s“
+AssetErrorInsertDepreciationOptionsForMode=Грешка при вмъкване на опциите за режим на амортизация „%s“
+AssetErrorFetchDepreciationLines=Грешка при извличане на записани амортизационни редове
+AssetErrorClearDepreciationLines=Грешка при изчистване на записани амортизационни редове (сторниране и бъдеще)
+AssetErrorAddDepreciationLine=Грешка при въвеждането на амортицазионен ред
+AssetErrorCalculationDepreciationLines=Грешка при изчисляване на амортизационните редове (възстановяване и бъдеще)
+AssetErrorReversalDateNotProvidedForMode=Сторнирането Дата не е предоставено за метода на амортизация „%s“
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Сторнирането Дата трябва да бъде по-голямо или равно на началото на текущата фискална година за метода на амортизация „%s“
+AssetErrorReversalAmountNotProvidedForMode=Сумата за сторниране не е предоставена за режима на амортизация „%s“.
+AssetErrorFetchCumulativeDepreciation=Грешка при извличане на натрупаната амортизационна сума от реда за амортизация
+AssetErrorSetLastCumulativeDepreciation=Грешка при записване на последната натрупана амортизационна сума

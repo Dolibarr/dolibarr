@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+Fingerprints=Eventos e impressoes digitais arquivados
+CompanyInitialKey=Chave inicial da empresa (hash do bloco genesis)
+OkCheckFingerprintValidity=O registro de log arquivado é válido. Os dados nesta linha não foram modificados e a entrada segue a anterior.
+OkCheckFingerprintValidityButChainIsKo=O log arquivado parece válido em comparação com o anterior, mas a cadeia foi previamente corrompida.
+AddedByAuthority=Salvo na autoridade remota
+OnlyNonValid=Nao valido
+RestrictYearToExport=Limitar mes / ano a se exportar
+BLOCKEDLOG_REGISTRATION_EMAIL=E-mail da empresa
+logBILL_SENTBYMAIL=Fatura do cliente enviada por email
+logBILL_VALIDATE=Fatura de cliente confirmada
+logPAYMENT_VARIOUS_DELETE=Pagamento (não atribuído a uma fatura) exclusão lógica

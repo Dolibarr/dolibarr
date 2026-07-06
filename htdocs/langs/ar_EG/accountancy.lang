@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - accountancy
+Accounting=محاسبة
+AccountingAccount=الحساب المحاسبي
+Selectformat=حدد حجم الملف
+ACCOUNTING_EXPORT_FORMAT=حدد حجم الملف
+BackToChartofaccounts=مخطط إرجاع الحسابات
+OtherInfo=معلومات أخرى
+CountriesNotInEEC=بلدان غير أعضاء في المجموعة اﻹقتصادية أﻷوروبية
+AccountAccounting=الحساب المحاسبي
+AccountingJournals=دفاتر اليومية المحاسبية
+AccountingJournalType2=المبيعات
+AccountingJournalType3=المشتريات
+AccountingJournalType5=تقارير النفقات
+AccountancyGroupTHIRDPARTY =الجهات الخارجية
+AccountancyGroupCAPIT =رأس المال
+ConfirmMassDeleteBookkeepingWriting=تأكيد الحذف الجماعي

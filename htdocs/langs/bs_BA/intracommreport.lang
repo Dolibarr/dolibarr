@@ -1,0 +1,38 @@
+IntraCommReport=Izvještaj Intracomma
+IntraCommReports=Izvještaji Intracomma
+
+Module68000Name = Intracomm izvještaj
+Module68000Desc = Intracomm upravljanje izvještajima (podrška za francuski DEB/DES format)
+IntracommReportSetup = Podešavanje modula Intracommreport
+IntracommReportAbout = O intracommreportu
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategorija usluga tipa "Frais de port"
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+# Menu
+MenuIntracommReport=Intracomm izvještaj
+MenuIntracommReportNew=Nova deklaracija
+MenuIntracommReportList=Spisak
+# View
+NewDeclaration=Nova deklaracija
+Declaration=Deklaracija
+AnalysisPeriod=Period analize
+TypeOfDeclaration=Vrsta deklaracije
+DEB=Deklaracija o razmjeni robe (DEB)
+DES=Izjava o razmjeni usluga (DES)
+# Export page
+IntracommReportTitle=Priprema XML datoteke u ProDouane formatu
+# List
+IntracommReportList=Lista generiranih deklaracija
+IntracommReportNumber=Broj deklaracije
+IntracommReportPeriod=Period analize
+IntracommReportTypeDeclaration=Vrsta deklaracije
+IntracommReportDownload=preuzmite XML fajl
+# Invoice
+IntracommReportTransportMode=Način transporta
+DeleteIntraCommReport=Izbriši IntraComm izvještaj

@@ -1,0 +1,25 @@
+{
+	"table_rowid" : "id",
+	"id" : 6764,
+	"type_id" : "5",
+	"type_code" : "AC_RDV",
+	"label" : "azerty",
+	"datep" : 1555365600,
+	"datef" : 1555538399,
+	"durationp" : 172799,
+	"fulldayevent" : 1,
+	"punctual" : 1,
+	"percentage" : "-1",
+	"transparency" : 1,
+	"priority" : 0,
+	"userassigned" : {
+		"1" : {
+			"id" : "1",
+			"transparency" : 1
+		}
+	},
+	"userownerid" : "1",
+	"fk_project" : 0,
+	"note" : "wxcvbn",
+	"duree" : 0
+}

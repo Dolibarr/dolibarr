@@ -1,0 +1,59 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Politique de confidentialité des données
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Module de gestion de la confidentialité des données (conformité avec le RGPD)
+# Administration page
+datapolicySetup = Configuration de la politique de confidentialité des données du module
+DataDeletion=Suppression de données
+DataAnonymization=Anonymisation des données
+DataAnonymizationOrDeletion=Anonymisation ou suppression des données
+datapolicySetupPage = Selon les lois de votre pays (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> du RGPD), les données personnelles doivent être conservées pendant une durée n'excédant pas la durée pendant laquelle les données sont nécessaires à la finalité pour laquelle elles ont été collectées, sauf à des fins d'archivage.<br>Ce module effectuera une anonymisation automatiquement après une certaine durée sans événements (durée que vous aurez indiquée ci-dessous) et si l'objet n'a pas d'objet métier enfant existant.
+NB_MONTHS = %s mois
+ONE_YEAR = 1 an
+NB_YEARS = %s ans
+DATAPOLICY_TIERS_CLIENT = Client
+DATAPOLICY_TIERS_PROSPECT = Prospect
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Client
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ni prospect/Ni client
+DATAPOLICY_TIERS_FOURNISSEUR = Fournisseur
+DATAPOLICY_CONTACT_CLIENT = Client
+DATAPOLICY_CONTACT_PROSPECT = Prospect
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospect/Ni client
+DATAPOLICY_CONTACT_FOURNISSEUR = Fournisseur
+DATAPOLICY_ADHERENT = Adhérent
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Candidature
+DATAPOLICY_Tooltip_SETUP=L'anonymisation est effectuée par la tâche planifiée "%s" exécutée par le module "%s", ce module doit donc être activé et pour fonctionner correctement.
+SendAgreementText = Vous pouvez envoyer un e-mail RGPD à tous vos contacts concernés (qui n'ont pas encore reçu d'e-mail et pour lesquels vous n'avez rien enregistré concernant leur accord RGPD). Pour ce faire, utilisez le bouton suivant.
+SendAgreement = Envoyer des emails
+AllAgreementSend = Tous les e-mails ont été envoyés
+TXTLINKDATAPOLICYACCEPT = Texte pour le lien "accord"
+TXTLINKDATAPOLICYREFUSE = Texte pour le lien "désaccord"
+DelayForAnonymization=Délai pour l'anonymisation
+DelayForDeletion=Délai de suppression
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = RGPD : Traitement des données personnelles
+DATAPOLICY_consentement = Consentement obtenu pour le traitement des données personnelles
+DATAPOLICY_opposition_traitement = S'oppose au traitement de ses données personnelles
+DATAPOLICY_opposition_prospection = S'oppose au traitement de ses données personnelles à des fins de prospection
+# Notes added during an anonymization
+DATAPOLICY_date = Date d'accord/désaccord RGPD
+DATAPOLICY_send = Date d'envoi de l'e-mail d'accord
+MailSent = L'email a été envoyé
+NUMBER_MONTH_BEFORE_DELETION = Nombre de mois avant la suppression
+TheFollowingFieldsAreReplaceWith=Certains champs seront remplacés par une valeur unique :
+OtherFieldsAreReplaceWithStaticValues=Certains autres champs sont remplacés par une valeur statique :
+QualifiedNumber=Nombre d'enregistrements qualifiés

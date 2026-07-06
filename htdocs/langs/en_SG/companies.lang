@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - companies
+VATReverseCharge=GST reverse-charge
+VATReverseChargeByDefault=GST reverse-charge by default
+VATReverseChargeByDefaultDesc=On supplier invoice, GST reverse-charge is used by default
+OverAllOrders=Sales Orders
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId2ShortCM=Taxpayer No.
+VATIntra=GST Reg No
+VATIntraShort=GST No

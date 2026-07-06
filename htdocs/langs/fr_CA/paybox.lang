@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Configuration du module PayBox
+PayBoxDesc=Ce module propose des pages permettant le paiement sur <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> par les clients. Cela peut être utilisé pour un paiement gratuit ou pour un paiement sur un objet Dolibarr particulier (facture, commande, ...)
+PayBoxDoPayment=Payer avec Paybox
+YouWillBeRedirectedOnPayBox=Vous serez redirigé sur la page Paybox sécurisée pour vous inscrire les informations de votre carte de crédit
+SetupPayBoxToHavePaymentCreatedAutomatically=Configurez votre Paybox avec l'url <b>%s</b> pour que le paiement soit créé automatiquement lors de sa validation par Paybox.
+YourPaymentHasBeenRecorded=Cette page confirme que votre paiement a été enregistré. Je vous remercie.
+PAYBOX_CGI_URL_V2=Url de Paybox CGI module de paiement
+NewPayboxPaymentFailed=Le nouveau paiement Paybox a échoué
+PAYBOX_PAYONLINE_SENDEMAIL=Notification par e-mail après une tentative de paiement (succès ou échec)
+PAYBOX_PBX_SITE=Valeur pour PBX SITE
+PAYBOX_PBX_RANG=Valeur pour PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valeur pour ID de PBX

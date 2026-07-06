@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Hinnalisand
+Margins=Hinnalisandid
+TotalMargin=Hinnalisand kokku
+MarginOnProducts=Hinnalisand / Tooted
+MarginOnServices=Hinnalisand / Teenused
+MarginRate=Hinnalisandi määr
+ModifyMarginRates=Muuda hinnalisandi määrasid
+MarkRate=Juurdehindluse määr
+DisplayMarginRates=Kuva hinnalisandi määrad
+DisplayMarkRates=Kuva juurdehindluse määrad
+InputPrice=Sisendhind
+margin=Kasumimarginaalide haldamine
+margesSetup=Kasumimarginaalide haldamise seadistamine
+MarginDetails=Hinnalisandi info
+ProductMargins=Toodete hinnalisanid
+CustomerMargins=Klientide hinnalisandid
+SalesRepresentativeMargins=Müügiesindajate hinnalisandid
+ContactOfInvoice=Arve kontaktisik
+UserMargins=Kasutaja hinnalisandid
+ProductService=Toode või teenus
+AllProducts=Kõik tooted ja teenused
+ChooseProduct/Service=Vali toode või teenus
+ForceBuyingPriceIfNull=Kui ei ole määratud, siis kehtesta müügihinnaks jõuga ostu/kulu hind
+ForceBuyingPriceIfNullDetails=Kui uue rea lisamisel ei ole antud ostu/kulu hinda ja see valik on "SEES", siis hinnalisand saab uuel real olema 0%% (ostu/kuluhind = müügihind). Kui see valik on "VÄLJAS" (soovituslikult), siis hinnalisand saab olema võrdne vaikimisi soovitatuga (ja võib olla 100%% kui vaikeväärtust ei leita).
+MARGIN_METHODE_FOR_DISCOUNT=Üldiste allahindluste hinnalisandi meetod
+UseDiscountAsProduct=Tootena
+UseDiscountAsService=Teenusena
+UseDiscountOnTotal=Vahesumma peal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määratleb, kas üldist allahindlust käsitletakse tootena, teenusena või ainult vahesummana hinnalisandi arvutamisel.
+MARGIN_TYPE=Hinnalisandi arvutamiseks on vaikimisi soovitatud ostu/kulu hind
+MargeType1=Hinnalisand tarnija parimal hinnal
+MargeType2=Hinnalisand Kaalutud Keskmisel Hinnal (WAP)
+MargeType3=Hinnalisand omahinnal
+MarginTypeDesc=* Parima ostuhinna hinnalisand = Müügihind - tootekaardil määratud Parim tarnija hind <br>* Kaalutud Keskmise Hinna (KKH) hinnalisand = Müügihind - Toote Kaalutud Keskmine Hind (KKH) või kui KKH ei ole määratud, siis Parim Tarnija Hind <br>* Omahinna hinnalisand = Müügihind - Tootekaardil määratud Omahind või KKH kui omahind ei ole määratud või siis Parim Tarnija hind kui KKH ei ole veel määratud
+CostPrice=Omahind
+UnitCharges=Ühiku kulud
+Charges=Kulud
+AgentContactType=Äriagendi kontakti liik
+AgentContactTypeDetails=Määrake, millist kontakti tüüpi (arvetel lingitud) kasutatakse kontakti/aadressi kohta marginaaliaruande jaoks. Pange tähele, et kontakti statistika lugemine ei ole usaldusväärne, kuna enamasti ei pruugi kontakt arvetel otseselt määratletud olla.
+rateMustBeNumeric=Määr peab olema arvväärtus
+markRateShouldBeLesserThan100=Juurdehindluse määr peab olema väiksem kui 100
+ShowMarginInfos=Näita hinnalisandi infot
+CheckMargins=Hinnalisandi andmed
+MarginPerSaleRepresentativeWarning=Hinnalisandi aruandel iga kasutaja kaupa kasuta seost kolmandate isikute ja müügiesindaja vahel, arvutamaks iga müügiesindaja hinnalisandit. Kuna mõnel kolmandal isikul ei pruugi olla eraldi müügiesindajat ning mõni kolmas isik võib olla seotud mitme müügiesindajaga, siis mõningaid summasid ei pruugi selles aruandes olla kajastatud (juhul kui on mitu müügiesindajat) ja teised summad võivad olla nähtaval erinevatel ridadel (iga müügiesindaja jaoks).

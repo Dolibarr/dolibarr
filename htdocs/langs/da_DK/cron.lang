@@ -1,0 +1,102 @@
+# Dolibarr language file - Source file is en_US - cron
+# Permissions
+Permission23101 = Read Scheduled job
+Permission23102 = Create/update Scheduled job
+Permission23103 = Delete Scheduled job
+Permission23104 = Execute Scheduled job
+# Admin
+CronSetup=Planlagt opsætning af jobstyring
+URLToLaunchCronJobs=URL til at kontrollere og starte kvalificerede cron-job fra en browser
+OrToLaunchASpecificJob=Eller for at kontrollere og starte et bestemt job fra en browser
+KeyForCronAccess=Security key for URL to launch cron jobs
+FileToLaunchCronJobs=Kommandolinje for at kontrollere og starte kvalificerede cron-job
+CronExplainHowToRunUnix=På Unix systemer skal du bruge den følgende crontab instilling for at afvikle kommandolinien hvert 5 minut
+CronExplainHowToRunWin=På Microsoft (tm) Windows-miljø kan du bruge Scheduled Task-værktøjer til at køre kommandolinjen hvert 5. minut
+CronMethodDoesNotExists=Klasse %s indeholder ikke nogen metode %s
+CronMethodNotAllowed=Metoden %s af klassen %s er på bloklisten over forbudte metoder
+CronJobDefDesc=Cron-jobprofiler er defineret i modulbeskrivelsesfilen. Når modulet er aktiveret, er de indlæst og tilgængeligt, så du kan administrere jobene fra adminværktøjsmenuen %s.
+CronJobProfiles=Liste over forud definerede cron jobprofiler
+# Menu
+EnabledAndDisabled=Enabled and disabled
+# Page list
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
+CronCommand=Command
+CronList=Scheduled jobs
+CronDelete=Delete scheduled jobs
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Start nu
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Job
+CronNone=Næste kørsel af planlagt opgave
+CronNotYetRan=Aldrig køre
+CronDtStart=Not before
+CronDtEnd=Not after
+CronDtNextLaunch=Next execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
+CronFrequency=Frekvens
+CronClass=Class
+CronMethod=Metode
+CronModule=Modul
+CronNoJobs=No jobs registered
+CronPriority=Prioritet
+CronLabel=Label
+CronNbRun=Antal lanceringer
+CronMaxRun=Maksimalt antal lanceringer
+CronEach=Every
+JobFinished=Job startet og gennemført
+Scheduled=Planlagt
+#Page card
+CronAdd=Add jobs
+CronEvery=Kør job hver
+CronObject=Instance/Object to create
+CronArgs=Parametre
+CronSaveSucess=Gemt med succes
+CronNote=Kommentar
+CronFieldMandatory=Fields %s is mandatory
+CronErrEndDateStartDt=End date cannot be before start date
+StatusAtInstall=Status ved modul installation
+CronStatusActiveBtn=Aktiver planlægning
+CronStatusInactiveBtn=Deaktiver
+CronTaskInactive=Dette job er deaktiveret (ikke planlagt)
+CronId=Id
+CronClassFile=Filename with class
+CronModuleHelp=Navn på Dolibarr modul bibliotek (også arbejde med ekstern Dolibarr modul). <BR> For eksempel for at kalde hentningsmetoden for Dolibarr Product-objektet /htdocs/<u>product</u>/class/product.class.php, er værdien for modulet <i> produkt </i>
+CronClassFileHelp=Den relative sti og filnavn, der skal indlæses (stien er i forhold til webserverens rodmappe). <BR> For eksempel for at kalde hentningsmetoden for Dolibarr Produktobjekt htdocs / product / class / <u> product.class.php </u> er værdien for klassefilenavnet <br> <i> produkt / klasse / product.class.php </i>
+CronObjectHelp=Objektnavnet, der skal indlæses. <BR> For at f.eks. Kalde hentningsmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er værdien for klassefilenavnet <br> <i> Produkt </ i>
+CronMethodHelp=Objektmetoden til at starte. <BR> For at f.eks. Kalde hentningsmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er værdien for metoden <i> hent </ i>
+CronArgsHelp=Metodens argumenter. <BR> For at kalde hentemetoden for Dolibarr-produktobjektet /htdocs/product/class/product.class.php kan værdien for parametre f.eks. være<br><i>0, ProductRef</i>
+CronCommandHelp=The system command line to execute.
+CronCreateJob=Create new Scheduled Job
+CronFrom=Fra
+# Info
+# Common
+CronType=Job type
+CronType_method=Opkaldsmetode for en PHP klasse
+CronType_command=Shell command
+CronCannotLoadClass=Kan ikke indlæse klassefilen %s (for at bruge klasse %s)
+CronModuleNotEnabledInThisEntity=Cron-modulet er ikke aktiveret i denne enhed (for at bruge %s-metoden fra %s-objektet)
+CronCannotLoadObject=Klasse fil %s blev indlæst, men objekt %s blev ikke fundet i det
+UseMenuModuleToolsToAddCronJobs=Gå til menuen "<a href="%s">Hjem - Administrationsværktøjer - Planlagte job</a>" for at se og redigere planlagte job.
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Opret en lokal database dump. Parametre er: komprimering ('gz' eller 'bz' eller 'ingen'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnavn til opbygning, antal backupfiler
+MakeSendLocalDatabaseDumpShort=Send backup af lokal database
+MakeSendLocalDatabaseDump=Send lokal database backup via e-mail. Parametre er: til, fra, emne, besked, filnavn (navn på fil sendt), filter ('sql' kun til backup af database)
+BackupIsTooLargeSend=Beklager, sidste backup-fil er for stor til at kunne sendes via e-mail
+CleanUnfinishedCronjobShort=Rens ufærdige cronjob
+CleanUnfinishedCronjob=Ren cronjob sidder fast i behandlingen, når processen ikke længere kører
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
+DATAPOLICYJob=Datarenser og anonymizer
+JobXMustBeEnabled=Job %s skal være aktiveret
+EmailIfError=E-mail for advarsel om fejl
+JobNotFound=Job %s ikke fundet på listen over job (prøv at deaktivere/aktivere modulet)
+ErrorInBatch=Fejl ved kørsel af jobbet %s
+
+# Cron Boxes
+LastExecutedScheduledJob=Sidste udførte planlagte job
+NextScheduledJobExecute=Næste planlagte job, der skal udføres
+NumberScheduledJobError=Antal planlagte job med fejl
+NumberScheduledJobNeverFinished=Antal planlagte job, der aldrig blev afsluttet

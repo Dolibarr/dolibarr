@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal-modul opsætning
+PaypalDesc=Dette modul tillader betaling fra kunder via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dette kan bruges til en ad-hoc betaling eller til en betaling relateret til et Dolibarr objekt (faktura, ordre, ...)
+PaypalOrCBDoPayment=Betal med PayPal (kort eller PayPal)
+PaypalDoPayment=Betal med PayPal
+PAYPAL_API_SANDBOX=Mode test / sandkasse
+PAYPAL_API_USER=API brugernavn
+PAYPAL_API_PASSWORD=API kodeord
+PAYPAL_API_SIGNATURE=API signatur
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilbyd kun "integreret" betaling (kreditkort + PayPal) eller kun "PayPal"
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Kun PayPal
+ONLINE_PAYMENT_CSS_URL=Valgfri URL til CSS stilark på online betalingsside
+ThisIsTransactionId=Dette er id af transaktionen: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Medtag PayPal betalings url'en, når du sender et dokument via e-mail
+NewOnlinePaymentReceived=Ny online betaling modtaget
+NewOnlinePaymentFailed=Ny online betaling forsøgt men mislykkedes
+ONLINE_PAYMENT_SENDEMAIL=E-mail-adresse til underretninger efter hvert betalingsforsøg (for succes og fiasko)
+ReturnURLAfterPayment=Returadresse efter betaling
+ValidationOfOnlinePaymentFailed=Bekræftelse af online betaling mislykkedes
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Betalingsbekræftelsessiden blev kaldt af betalings system returnerede en fejl
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API-opkald mislykkedes.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-opkald mislykkedes.
+DetailedErrorMessage=Detaljeret fejlmeddelelse
+ShortErrorMessage=Kort fejlmeddelelse
+ErrorCode=Fejlkode
+ErrorSeverityCode=Fejl Severity Code
+OnlinePaymentSystem=Online betalings system
+PaypalLiveEnabled=PayPal "live" -tilstand aktiveret (ellers test/sandkasse tilstand)
+PaypalImportPayment=Importer PayPal-betalinger
+PostActionAfterPayment=Indsend handlinger efter betalinger
+ARollbackWasPerformedOnPostActions=En tilbagekaldelse blev udført på alle posthandlinger. Du skal færdiggøre posthandlinger manuelt, hvis de er nødvendige.
+ValidationOfPaymentFailed=Bekræftelse af betaling er mislykket
+CardOwner=Kortholder
+PayPalBalance=Paypal kredit

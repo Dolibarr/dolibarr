@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Polityka prywatności danych
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Moduł do zarządzania Prywatnością Danych (Zgodność z RODO)
+# Administration page
+datapolicySetup = Konfiguracja polityki prywatności danych modułu
+DataDeletion=Usuwanie danych
+DataAnonymization=Anonimizacja danych
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = W zależności od przepisów obowiązujących w Twoim kraju (przykład <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artykuł 5</a> RODO) dane osobowe muszą być przechowywane przez okres nieprzekraczający czasu, w którym dane są potrzebne do celu, w jakim zostały zebrane, z wyjątkiem celów archiwalnych.<br>Ten moduł automatycznie przeprowadzi anonimizację po upływie określonego czasu bez zdarzeń (czasu wskazanego poniżej) i jeśli obiekt nie ma istniejących obiektów podrzędnych obiektu biznesowego.
+NB_MONTHS = %s miesięcy
+ONE_YEAR = 1 rok
+NB_YEARS = %s lat
+DATAPOLICY_TIERS_CLIENT = Klient
+DATAPOLICY_TIERS_PROSPECT = Potencjalny klient
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potencjalny klient/Klient
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ani potencjalny klient, ani klient
+DATAPOLICY_TIERS_FOURNISSEUR = Dostawca
+DATAPOLICY_CONTACT_CLIENT = Klient
+DATAPOLICY_CONTACT_PROSPECT = Potencjalny klient
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potencjalny klient/Klient
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani Potencjalny klient, ani klient
+DATAPOLICY_CONTACT_FOURNISSEUR = Dostawca
+DATAPOLICY_ADHERENT = Członek
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Podanie
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Możesz wysłać wiadomość e-mail dotyczącą RODO do wszystkich odpowiednich kontaktów (które nie otrzymały jeszcze wiadomości e-mail i dla których nie zarejestrowałeś niczego na temat ich umowy dotyczącej RODO). Aby to zrobić, użyj poniższego przycisku.
+SendAgreement = Wyślij wiadomość email
+AllAgreementSend = Wszystkie e-maile zostały wysłane
+TXTLINKDATAPOLICYACCEPT = Tekst linku „umowa”
+TXTLINKDATAPOLICYREFUSE = Tekst linku „niezgoda”
+DelayForAnonymization=Opóźnienie w anonimizacji
+DelayForDeletion=Opóźnienie usunięcia
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = RODO: Przetwarzanie danych osobowych
+DATAPOLICY_consentement = Uzyskana zgoda na przetwarzanie danych osobowych
+DATAPOLICY_opposition_traitement = Sprzeciwia się przetwarzaniu swoich danych osobowych
+DATAPOLICY_opposition_prospection = Sprzeciwia się przetwarzaniu jego danych osobowych w celu pozyskiwania klientów
+# Notes added during an anonymization
+DATAPOLICY_date = Data zgody/niezgody GDPR
+DATAPOLICY_send = Wysłano e-mail z potwierdzeniem daty
+MailSent = Email został wysłany
+NUMBER_MONTH_BEFORE_DELETION = Liczba miesięcy przed usunięciem
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

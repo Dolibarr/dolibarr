@@ -1,0 +1,78 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModulePartnershipName=Lankidetza kudeaketa
+PartnershipDescription=Lankidetza kudeaketa modulua
+PartnershipDescriptionLong= Lankidetza kudeaketa modulua
+Partnership=Lankidetza
+Partnerships=Lankidetzak
+AddPartnership=Gehitu bazkidetza
+CancelPartnershipForExpiredMembers=Lankidetza: Harpidetza iraungiak dituzten kideen lankidetza bertan behera utzi
+PartnershipCheckBacklink=Lankidetza: Egiaztatu erreferentziazko atzera-esteka
+# Menu
+NewPartnership=Lankidetza Berria
+NewPartnershipbyWeb=Zure bazkidetza eskaera behar bezala gehitu da. Laster jarriko gara zurekin harremanetan...
+ListOfPartnerships=Lankidetza zerrenda.
+# Admin page
+PartnershipSetup=Lankidetzaren konfigurazioa
+PartnershipAbout=Lankidetzari buruz
+PartnershipAboutPage=Lankidetzari buruzko orrialdea
+partnershipforthirdpartyormember=Bazkide egoera 'hirugarren' edo 'kide' gisa ezarri behar da
+PARTNERSHIP_IS_MANAGED_FOR=Lankidetza kudeatua
+PARTNERSHIP_BACKLINKS_TO_CHECK=Begiratu beharreko atzera-estekak
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Harpidetza iraungi denean bazkidetza baten egoera bertan behera utzi baino egun kopurua
+ReferingWebsiteCheck=Webgunearen erreferentzia egiaztatzea
+ReferingWebsiteCheckDesc=Zure bazkideek zure webguneko domeinuetarako atzera-esteka bat gehitu duten egiaztatzeko funtzio bat gai dezakezu beren webgunean.
+PublicFormRegistrationPartnerDesc=Dolibarrek URL/webgune publiko bat eman diezazuke kanpoko bisitariek lankidetza programan parte hartzeko eskaera egin dezaten.
+# Object
+DeletePartnership=Bazkidetza bat ezabatu
+PartnershipDedicatedToThisThirdParty=Hirugarren alderdi honi eskainitako lankidetza
+PartnershipDedicatedToThisMember=Kide honi eskainitako lankidetza
+DatePartnershipStart=Hasiera data
+DatePartnershipEnd=Amaiera data
+ReasonDecline=Ukatzeko arrazoia
+ReasonDeclineOrCancel=Ukatzeko edo ezeztatzeko arrazoia
+PartnershipAlreadyExist=Lankidetza dagoeneko existitzen da
+ManagePartnership=Kudeatu lankidetza
+BacklinkNotFoundOnPartnerWebsite=Ez da atzera-esteka aurkitu bazkidearen webgunean
+ConfirmClosePartnershipAsk=Ziur zaude bazkidetza hau bertan behera utzi nahi duzula?
+PartnershipType=Lankidetza mota
+PartnershipRefApproved=%s lankidetza onartuta
+KeywordToCheckInWebsite=Bazkide bakoitzaren webgunean gako-hitz jakin bat dagoela egiaztatu nahi baduzu, definitu gako-hitz hori hemen
+PartnershipDraft=Zirriborroa
+PartnershipAccepted=Onartuta
+PartnershipRefused=Ukatu egin du
+PartnershipCanceled=Ezeztatuta
+PartnershipManagedFor=Bazkideak dira
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Lankidetza laster bertan behera utziko da
+SendingEmailOnPartnershipRefused=Lankidetza ukatua
+SendingEmailOnPartnershipAccepted=Lankidetza onartua
+SendingEmailOnPartnershipCanceled=Lankidetza bertan behera utzi da
+YourPartnershipWillSoonBeCanceledTopic=Lankidetza laster bertan behera utziko da
+YourPartnershipRefusedTopic=Lankidetza ukatua
+YourPartnershipAcceptedTopic=Lankidetza onartua
+YourPartnershipCanceledTopic=Lankidetza bertan behera utzi da
+YourPartnershipWillSoonBeCanceledContent=Jakinarazi nahi dizuegu gure lankidetza laster bertan behera utziko dela (ez dugu berritzerik lortu edo gure lankidetzarako aurrebaldintza bat ez da bete). Jarri gurekin harremanetan errore baten ondorioz jaso baduzu.
+YourPartnershipRefusedContent=Zure bazkidetza eskaera ukatu egin dela jakinarazi nahi dizugu. Aurrebaldintzak ez dira bete. Jarri gurekin harremanetan informazio gehiago behar baduzu.
+YourPartnershipAcceptedContent=Zure lankidetza eskaera onartu dela jakinarazi nahi dizugu.
+YourPartnershipCanceledContent=Gure lankidetza bertan behera utzi dela jakinarazi nahi dizugu. Jarri gurekin harremanetan informazio gehiago behar baduzu.
+CountLastUrlCheckError=Azken URL egiaztapenaren errore kopurua
+LastCheckBacklink=Azken URL egiaztapenaren data
+NewPartnershipRequest=Lankidetza eskaera berria
+NewPartnershipRequestDesc=Inprimaki honek gure lankidetza-programetako batean parte hartzeko eskaera egiteko aukera ematen dizu. Inprimaki hau betetzeko laguntza behar baduzu, jarri harremanetan posta elektronikoz <b>%s</b> helbidean.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Orrialde honek gutxienez domeinu hauetako baterako esteka bat izan behar du: %s
+IPOfApplicant=Eskatzailearen IP
+PartnershipToReopen=Berriro irekitzeko
+PartnershipConfirmReOpenAsk=Ziur zaude bazkidetza hau berriro ireki nahi duzula <b> %s</b>?

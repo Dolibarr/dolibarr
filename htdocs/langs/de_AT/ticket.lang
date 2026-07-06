@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - ticket
+Permission56001=Tickets anzeigen
+Permission56002=Tickets bearbeiten
+Permission56004=Tickets verwalten
+TicketDictType=Ticket-Typen

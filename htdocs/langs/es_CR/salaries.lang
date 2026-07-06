@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pago de sueldos
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por defecto, deje vacía la opción "Crear automáticamente un pago total" al crear un salario.
+Salary=Sueldo
+AddSalaryPayment=Agregar pago de sueldo
+SalaryPayment=Pago de sueldo
+SalariesPayments=Pagos de sueldos
+ShowSalaryPayment=Mostrar pago de sueldo
+THM=Tarifa por hora promedio
+TJM=Valor promedio por día
+CurrentSalary=Sueldo actual
+THMDescription=Este valor puede usarse para calcular el costo de tiempo consumido en un proyecto ingresado por los usuarios si se usa el módulo proyecto
+TJMDescription=Este valor es sólo informativo y no será utilizado para cálculo alguno
+SalariesStatistics=Estadísticas de sueldos
+SalariesAndPayments=Sueldos y pagos

@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman ja SPIP mooduli seadistamine
+MailmanTitle=Mailman meililisti süsteem
+TestSubscribe=Mailman listide tellimise testimiseks
+TestUnSubscribe=Mailman listide tellimiste tühistamiseks
+MailmanCreationSuccess=Listitellimuse test täideti edukalt
+MailmanDeletionSuccess=Listitellimusest loobumise test täideti edukalt
+SynchroMailManEnabled=Mailmani uuendus käivitatakse
+SynchroSpipEnabled=SPIP uuendus käivitatakse
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailmani administraatori parool
+DescADHERENT_MAILMAN_URL=Mailmani tellimiste URL
+DescADHERENT_MAILMAN_UNSUB_URL=Mailmani tellimiste tühistamise URL
+DescADHERENT_MAILMAN_LISTS=List(id), kuhu uued liikmed automaatselt lisatakse (komaga eraldatult)
+SPIPTitle=SPIP sisuhaldussüsteem
+DescADHERENT_SPIP_SERVEUR=SPIP server
+DescADHERENT_SPIP_DB=SPIP andmebaasi nim
+DescADHERENT_SPIP_USER=SPIP andmebaasi kasutaja
+DescADHERENT_SPIP_PASS=SPIP andmebaasi parool
+AddIntoSpip=Lisa SPIPi
+AddIntoSpipConfirmation=Kas oled kindel, et soovid antud liikme SPIPi lisada?
+AddIntoSpipError=Kasutaja SPIPi lisamine ebaõnnestus
+DeleteIntoSpip=Eemalda SPIPist
+DeleteIntoSpipConfirmation=Kas oled kindel, et soovid antud kasutaja SPIPist eemaldada?
+DeleteIntoSpipError=Kasutajale SPIPi ligipääsu keelamine ebaõnnestus
+SPIPConnectionFailed=Ei suutnud saada ühendust SPIPiga
+SuccessToAddToMailmanList=%slisati edukalt mailman listi %s või SPIP andmebaasi
+SuccessToRemoveToMailmanList=%seemaldati edukalt mailman listist %s või SPIP andmebaasist

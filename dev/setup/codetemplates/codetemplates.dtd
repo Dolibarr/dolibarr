@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT templates (template+)>
+<!ELEMENT template (#PCDATA)>
+<!ATTLIST template autoinsert CDATA "">
+<!ATTLIST template context CDATA "">
+<!ATTLIST template deleted CDATA "">
+<!ATTLIST template description CDATA "">
+<!ATTLIST template enabled CDATA "">
+<!ATTLIST template id CDATA "">
+<!ATTLIST template name CDATA "">

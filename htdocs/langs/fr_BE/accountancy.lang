@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - accountancy
+Processing=Exécution
+Lineofinvoice=Lignes de facture
+Doctype=Type de document
+ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
+TotalMarge=Marge de ventes totale
+Modelcsv_normal=Export classique

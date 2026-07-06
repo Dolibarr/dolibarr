@@ -1,0 +1,38 @@
+IntraCommReport=Отчет Intracomm
+IntraCommReports=Отчеты Intracomm
+
+Module68000Name = Внутренний отчет
+Module68000Desc = Управление отчетами внутри компании (поддержка французского формата DEB/DES)
+IntracommReportSetup = Настройка модуля внутрикомпонентного отчета
+IntracommReportAbout = О внутреннем отчете
+
+# Setup
+INTRACOMMREPORT_NUM_AGREMENT=Номер разрешения (выдан CISD приложения)
+INTRACOMMREPORT_TYPE_ACTEUR=Тип актера
+INTRACOMMREPORT_ROLE_ACTEUR=Роль, сыгранная актером
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Уровень обязательств по ознакомлению
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Уровень обязательств по отгрузке
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Категория услуги типа «Почтовая оплата»
+INTRACOMMREPORT_NUM_DECLARATION=Номер декларанта
+# Menu
+MenuIntracommReport=Внутренний отчет
+MenuIntracommReportNew=Новое заявление
+MenuIntracommReportList=Список
+# View
+NewDeclaration=Новое заявление
+Declaration=Декларация
+AnalysisPeriod=Период анализа
+TypeOfDeclaration=Тип декларации
+DEB=Декларация обмена товаров (DEB)
+DES=Декларация об обмене услугами (DES)
+# Export page
+IntracommReportTitle=Подготовка файла XML в формате ProDouane
+# List
+IntracommReportList=Список сгенерированных объявлений
+IntracommReportNumber=Номер декларации
+IntracommReportPeriod=Период анализа
+IntracommReportTypeDeclaration=Тип декларации
+IntracommReportDownload=скачать файл XML
+# Invoice
+IntracommReportTransportMode=Транспортный режим
+DeleteIntraCommReport=удалить Отчет IntraComm

@@ -1,0 +1,46 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Biên lợi nhuận
+Margins=Biên lợi nhuận
+TotalMargin=Tổng biên
+MarginOnProducts=Tỷ suất biên lợi nhuận / Sản phẩm
+MarginOnServices=Tỷ suất biên lợi nhuận / Dịch vụ
+MarginRate=Tỷ lệ Biên lợi nhuận
+ModifyMarginRates=Sửa đổi tỷ lệ ký quỹ
+MarkRate=Đánh dấu tỷ lệ
+DisplayMarginRates=Tỷ lệ biên lợi nhuận hiển thị
+DisplayMarkRates=Giá đánh dấu hiển thị
+InputPrice=Giá đầu vào
+margin=Quản lý biên lợi nhuận
+margesSetup=Biên lợi nhuận thiết lập quản lý
+MarginDetails=Chi tiết Biên lợi nhuận
+ProductMargins=Biên lợi nhuận sản phẩm
+CustomerMargins=Biên lợi nhuận của khách hàng
+SalesRepresentativeMargins=Biên lợi nhuận đại diện bán hàng
+ContactOfInvoice=Liên hệ hóa đơn
+UserMargins=Lợi nhuận của người dùng
+ProductService=Sản phẩm hoặc dịch vụ
+AllProducts=Tất cả các sản phẩm và dịch vụ
+ChooseProduct/Service=Chọn sản phẩm hoặc dịch vụ
+ForceBuyingPriceIfNull=Ép buộc mua/giá thành giá bán nếu không được xác định
+ForceBuyingPriceIfNullDetails=Nếu giá mua/giá vốn không được cung cấp khi chúng tôi thêm một dòng mới và tùy chọn này là "BẬT", biên độ sẽ là 0%% trên dòng mới (giá mua/giá vốn = gia ban). Nếu tùy chọn này là "TẮT" (được khuyến nghị), lề sẽ bằng giá trị được đề xuất theo mặc định (và có thể là 100%% nếu không tìm thấy giá trị mặc định nào).
+MARGIN_METHODE_FOR_DISCOUNT=Phương pháp biên giảm giá toàn cầu
+UseDiscountAsProduct=Là một sản phẩm
+UseDiscountAsService=Là một dịch vụ
+UseDiscountOnTotal=Trên tổng phụ
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Xác định nếu giảm giá toàn cục được coi là một sản phẩm, dịch vụ hoặc chỉ trên tổng phụ để tính toán biên lợi nhuận.
+MARGIN_TYPE=Mua/Giá thành được đề xuất theo mặc định để tính toán biên lợi nhuận
+MargeType1=Biên lợi nhuận trên giá nhà cung cấp tốt nhất
+MargeType2=Biên lợi nhuân trên giá bình quân gia quyền (WAP)
+MargeType3=Biên lợi nhuận trên Giá thành
+MarginTypeDesc=* Biên lợi nhuận trên giá mua tốt nhất = Giá bán - Giá nhà cung cấp tốt nhất được xác định trên thẻ sản phẩm <br> * Lợi nhuận trên giá bình quân gia quyền (WAP) = Giá bán - Giá bình quân gia quyền sản phẩm (Wap) hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap <br> * Lợi nhuận trên giá vốn = Giá bán - Giá thành được xác định trên thẻ sản phẩm hoặc Wap nếu giá chưa xác định hoặc giá nhà cung cấp tốt nhất nếu chưa xác định được Wap
+CostPrice=Giá thành
+UnitCharges=Phí đơn vị
+Charges=Phí
+AgentContactType=Loại liên lạc là đại lý thương mại
+AgentContactTypeDetails=Xác định loại liên hệ nào (được liên kết trên hóa đơn) sẽ được sử dụng cho báo cáo lợi nhuận cho mỗi liên hệ/địa chỉ. Lưu ý rằng việc đọc số liệu thống kê về một người liên hệ là không đáng tin cậy vì trong hầu hết các trường hợp, người liên hệ đó có thể không được xác định rõ ràng trên hóa đơn.
+rateMustBeNumeric=Tỷ giá phải là một giá trị số
+markRateShouldBeLesserThan100=Đánh dấu suất phải thấp hơn 100
+ShowMarginInfos=Hiển thị thông tin lợi nhuận
+CheckMargins=Chi tiết lợi nhuận
+MarginPerSaleRepresentativeWarning=Báo cáo tỷ lệ lợi nhuận trên mỗi người dùng sử dụng liên kết giữa các bên thứ ba và đại diện bán hàng để tính toán mức lợi nhuận của mỗi đại diện bán hàng. Bởi vì một số bên thứ ba có thể không có bất kỳ đại diện bán hàng chuyên dụng nào và một số bên thứ ba có thể được liên kết với một số, một vài số tiền có thể không được đưa vào báo cáo này (nếu không có đại diện bán hàng) và một số có thể xuất hiện trên các dòng khác nhau (cho mỗi đại diện bán hàng) .

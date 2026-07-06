@@ -1,0 +1,58 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Andmete privaatsuspoliitika
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Andmekaitse haldamise moodul (vastavus isikuandmete kaitse üldmäärusele)
+# Administration page
+datapolicySetup = Mooduli andmete privaatsuspoliitika seadistamine
+DataDeletion=Andmete kustutamine
+DataAnonymization=Andmete anonüümimine
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = Sõltuvalt teie riigi seadustest (näide <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">artikkel 5</a> isikuandmeid tuleb säilitada mitte kauem kui see aeg, mil andmeid on vaja eesmärgi saavutamiseks, milleks need koguti, välja arvatud arhiveerimise eesmärgil.<br>See moodul anonümiseerib andmed automaatselt teatud sündmusteta aja möödudes (kestus, mille olete allpool märkinud) ja kui objektil pole olemasolevaid äriobjekti alamobjekte.
+NB_MONTHS = %s kuud
+ONE_YEAR = 1 aasta
+NB_YEARS = %s aastat
+DATAPOLICY_TIERS_CLIENT = Klient
+DATAPOLICY_TIERS_PROSPECT = Huviline
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Potentsiaalne klient/potentsiaalne klient
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ei potentsiaalne klient/Ei klient
+DATAPOLICY_TIERS_FOURNISSEUR = Hankija
+DATAPOLICY_CONTACT_CLIENT = Klient
+DATAPOLICY_CONTACT_PROSPECT = Huviline
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Potentsiaalne klient/potentsiaalne klient
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ei potentsiaalne klient/Ei klient
+DATAPOLICY_CONTACT_FOURNISSEUR = Hankija
+DATAPOLICY_ADHERENT = Liige
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = Saate saata GDPR-i meili kõigile oma asjakohastele kontaktidele (kes pole veel meili saanud ja kellele te pole nende GDPR-lepingu kohta midagi registreerinud). Selleks kasutage järgmist nuppu.
+SendAgreement = Saada e-kirju
+AllAgreementSend = Kõik meilid on saadetud
+TXTLINKDATAPOLICYACCEPT = Lingi "leping" tekst
+TXTLINKDATAPOLICYREFUSE = Lingi "lahkarvamus" tekst
+DelayForAnonymization=Anonüümseks muutmise viivitus
+DelayForDeletion=Kustutamise viivitus
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Isikuandmete töötlemine
+DATAPOLICY_consentement = Isikuandmete töötlemiseks saadud nõusolek
+DATAPOLICY_opposition_traitement = Vaidleb oma isikuandmete töötlemise vastu
+DATAPOLICY_opposition_prospection = On vastu oma isikuandmete töötlemisele geoloogilise uuringu eesmärgil
+# Notes added during an anonymization
+DATAPOLICY_date = Kokkuleppe/lahkarvamuse kuupäev GDPR
+DATAPOLICY_send = Lepingulise e-kirja saatmise kuupäev
+MailSent = E-kiri on saadetud
+NUMBER_MONTH_BEFORE_DELETION = Kuude arv enne kustutamist
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

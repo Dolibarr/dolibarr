@@ -1,0 +1,166 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Generic
+ModuleEventOrganizationName = Организација на настан
+EventOrganizationDescription = Организација на настан преку проект за модули
+EventOrganizationDescriptionLong= Управувајте со организацијата на настан (шоу, конференции, присутни или говорници, со јавни страници за предлози, гласање или регистрација)
+EventOrganizationMenuLeft = Организирани настани
+EventOrganizationConferenceOrBoothMenuLeft = Конференција или штанд
+PaymentEvent=Плаќање на настанот
+EventFee=Надомест за настан
+# Admin page
+NewRegistration=Регистрација
+EventOrganizationSetup=Поставување организација на настан
+EventOrganization=Организација на настан
+EventOrganizationSetupPage = Страница за поставување организација на настан
+EVENTORGANIZATION_TASK_LABEL = Ознака на задачи што треба да се креираат автоматски кога проектот е потврден
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Чувајте го празно ако не треба автоматски да креирате задачи.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категорија за додавање на трети лица автоматски креирана кога некој ќе предложи конференција
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категоријата за додавање на трети лица автоматски се создава кога тие предлагаат штанд
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон на е-пошта што треба да се испрати откако ќе добиете предлог за конференција.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон на е-пошта што треба да се испрати откако ќе добиете предлог за штанд.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Шаблон на е-пошта што треба да се испрати откако ќе се плати регистрацијата на штанд.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Шаблон на е-пошта што треба да се испрати откако ќе се плати регистрацијата на настан.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон за е-пошта што треба да се користи при испраќање е-пошта од масажата „Испрати е-пошта“ до звучниците
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон на е-пошта што треба да се користи при испраќање е-пошта од масажата „Испрати е-пошта“ на списокот на присутни
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Во формата за создавање/додавање учесник, ја ограничува листата на трети страни на трети лица во категоријата
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Во формата за креирање/додавање на учесник, се ограничува списокот на трети лица на трети лица со природата
+# Object
+OrganizedEvent=Организиран настан
+EventOrganizationConfOrBooth= Конференција или штанд
+EventOrganizationConfOrBoothes=Конференции или штандови
+ManageOrganizeEvent = Управувајте со организацијата на настанот
+ConferenceOrBooth = Конференција или штанд
+ConferenceOrBoothTab = Конференција или штанд
+AmountPaid = Износот платен
+DateOfRegistration = Датум на регистрација
+ConferenceOrBoothAttendee = Присутник на конференција или штанд
+ApplicantOrVisitor=Апликант или посетител
+Speaker=Говорник
+# Template Mail
+YourOrganizationEventConfRequestWasReceived = Вашето барање за конференција е примено
+YourOrganizationEventBoothRequestWasReceived = Вашето барање за штанд е примено
+EventOrganizationEmailAskConf = Барање за конференција
+EventOrganizationEmailAskBooth = Барање за штанд
+EventOrganizationEmailBoothPayment = Плаќање на вашиот штанд
+EventOrganizationEmailRegistrationPayment = Пријавување за настан
+EventOrganizationMassEmailAttendees = Комуникација до присутните
+EventOrganizationMassEmailSpeakers = Комуникација со звучници
+ToSpeakers=До звучниците
+# Event
+AllowUnknownPeopleSuggestConf=Дозволете им на луѓето да предлагаат конференции
+AllowUnknownPeopleSuggestConfHelp=Дозволете непознати луѓе да предложат конференција што сакаат да ја направат
+AllowUnknownPeopleSuggestBooth=Дозволете им на луѓето да аплицираат за штанд
+AllowUnknownPeopleSuggestBoothHelp=Дозволете непознати луѓе да се пријават за штанд
+PriceOfRegistration=Цена за регистрација
+PriceOfRegistrationHelp=Цена што треба да се плати за да се регистрирате или да учествувате на настанот
+PriceOfBooth=Цена на претплата да стои на штанд
+PriceOfBoothHelp=Цена на претплата да стои на штанд
+EventOrganizationICSLinkProject=Поврзете ICS за настанот
+EventOrganizationICSLink=Поврзете ICS за конференции
+ConferenceOrBoothInformation=Информации за конференција или штанд
+ConferenceOrBoothFormat=Режим на конференција или штанд
+ConferenceOrBoothFormatID=ID на режим на конференција или штанд
+ConferenceOrBoothFormatCode=Код на конференција или режим на штанд
+ConferenceOrBoothFormatLabel=Ознака на режим на конференција или штанд
+Attendees=Присутните
+ListOfAttendeesOfEvent=Список на присутни на проекти за настани
+ListOfConfOrBoothOfEvent=Список на конференции или штандови на проекти за настани
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=Seed за да го обезбедите клучот за страницата за јавна регистрација за да предложите конференција
+SERVICE_BOOTH_LOCATION=Услуга што се користи за редот на фактура за локација на штанд
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Услуга што се користи за редот со фактура за претплата на присутен на настан
+NbVotes=Број на гласови
+# Status
+EvntOrgDraft = Нацрт
+EvntOrgSuggested = Предложено
+EvntOrgConfirmed = Потврдено
+EvntOrgNotQualified = Не е квалификуван
+EvntOrgDone = Направено
+EvntOrgCancelled = Canceled
+# Other
+SuggestForm = Страница со предлози
+SuggestOrVoteForConfOrBooth = Страница за предлог или гласање
+EvntOrgRegistrationHelpMessage = Овде можете да гласате за конференција или да предложите нова за настанот. Можете исто така да аплицирате за да имате штанд за време на настанот.
+EvntOrgRegistrationConfHelpMessage = Овде, можете да предложите нова конференција за анимирање за време на настанот.
+EvntOrgRegistrationBoothHelpMessage = Овде, можете да аплицирате за да имате штанд за време на настанот.
+ListOfSuggestedConferences = Список на предложени конференции
+ListOfSuggestedBooths=Предлог штандови
+ListOfConferencesOrBooths=Конференции или штандови на проект за настани
+SuggestConference = Предложете нова конференција
+SuggestBooth = Предложете штанд
+ViewAndVote = Погледнете и гласајте за предложените настани
+PublicAttendeeSubscriptionGlobalPage = Јавен линк за регистрација на настанот
+PublicAttendeeSubscriptionPage = Јавен линк за регистрација само на овој настан
+MissingOrBadSecureKey = Безбедносниот клуч е неважечки или недостасува
+EvntOrgWelcomeMessage = Овој формулар ви овозможува да се регистрирате како нов учесник на настанот
+EvntOrgDuration = Оваа конференција започнува на %s и завршува на %s.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+EventType = Тип на настан
+LabelOfBooth=Ознака на штанд
+LabelOfconference=Ознака за конференција
+ConferenceIsNotConfirmed=Регистрацијата не е достапна, конференцијата сè уште не е потврдена
+EventRegistrationAreClosed=Регистрациите на настаните се затворени
+DateMustBeBeforeThan=%s мора да биде пред %s
+DateMustBeAfterThan=%s мора да биде по %s
+MaxNbOfAttendeesReached=Максималниот број на учесници е постигнат
+NewSubscription=Регистрација
+OrganizationEventConfRequestWasReceived=Вашиот предлог за конференција е примен
+OrganizationEventBoothRequestWasReceived=Вашето барање за штанд е примено
+OrganizationEventPaymentOfBoothWasReceived=Вашата уплата за вашиот штанд е снимена
+OrganizationEventPaymentOfRegistrationWasReceived=Вашата уплата за регистрација на вашиот настан е снимена
+OrganizationEventBulkMailToAttendees=Ова е потсетување за вашето учество на настанот како присутен
+OrganizationEventBulkMailToSpeakers=Ова е потсетник за вашето учество на настанот како говорник
+OrganizationEventLinkToThirdParty=Врска до трета страна (клиент, добавувач или партнер)
+OrganizationEvenLabelName=Јавно име на конференцијата или штандот
+NewSuggestionOfBooth=Пријава за штанд
+NewSuggestionOfConference=Апликација за одржување конференција
+EvntOrgRegistrationWelcomeMessage = Добредојдовте на страницата со предлози за конференција или штанд.
+EvntOrgRegistrationConfWelcomeMessage = Добредојдовте на страницата со предлози за конференција.
+EvntOrgRegistrationBoothWelcomeMessage = Добредојдовте на страницата со предлози за штанд.
+EvntOrgVoteHelpMessage = Овде можете да ги видите и гласате за предложените настани за проектот
+VoteOk = Вашиот глас е прифатен.
+AlreadyVoted = Веќе гласавте за овој настан.
+VoteError = Настана грешка при гласањето, обидете се повторно.
+SubscriptionOk=Вашата регистрација е снимена
+AmountOfRegistrationPaid=Платен износ на регистрација
+ConfAttendeeSubscriptionConfirmation = Потврда за вашата претплата на некој настан
+Attendee = Присутен
+PaymentConferenceAttendee = Плаќање на присутните на конференцијата
+PaymentBoothLocation = Плаќање за локација на штанд
+DeleteConferenceOrBoothAttendee=Отстранете го учесникот
+RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
+EmailAttendee=Е-пошта на присутните
+EmailCompany=Е-пошта на компанијата
+EmailCompanyForInvoice=Е-пошта на компанијата (за фактура, доколку е различна од е-поштата на присутните)
+ErrorSeveralCompaniesWithEmailContactUs=Пронајдени се неколку компании со оваа е-пошта, така што не можеме автоматски да ја потврдиме вашата регистрација. Ве молиме контактирајте со нас на %s за рачна валидација
+ErrorSeveralCompaniesWithNameContactUs=Пронајдени се неколку компании со ова име, така што не можеме автоматски да ја потврдиме вашата регистрација. Ве молиме контактирајте не на %s за рачна валидација
+NoPublicActionsAllowedForThisEvent=Нема јавни акции се отворени за јавноста за овој настан
+MaxNbOfAttendees=Максимален број на присутни
+DateStartEvent=Датум на почеток на настанот
+DateEndEvent=Датум на завршување на настанот
+ModifyStatus=Изменете го статусот
+ConfirmModifyStatus=Потврдете ја промената на статусот
+ConfirmModifyStatusQuestion=Дали сте сигурни дека сакате да ги измените избраните записи %s?
+RecordsUpdated=%s Записите се ажурирани
+RecordUpdated=Записот е ажуриран
+NoRecordUpdated=Нема ажурирано запис
+ProfitPerValidatedAttendee=Добивка по учесник
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

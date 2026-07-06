@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman és SPIP modul beállítása
+MailmanTitle=Mailman levelezőlista rendszer
+TestSubscribe=A Mailman listákra való feliratkozás tesztelése
+TestUnSubscribe=A Mailman listákról való leiratkozás tesztelése
+MailmanCreationSuccess=Az előfizetési teszt sikeresen végrehajtva
+MailmanDeletionSuccess=A leiratkozási teszt sikeresen végrehajtva
+SynchroMailManEnabled=A Mailman frissítés végrehajtásra kerül
+SynchroSpipEnabled=A SPIP frissítés végrehajtásra kerül
+DescADHERENT_MAILMAN_ADMIN_PASSWORD=Mailman rendszergazdai jelszó
+DescADHERENT_MAILMAN_URL=URL a Mailman-előfizetésekhez
+DescADHERENT_MAILMAN_UNSUB_URL=URL a Mailman leiratkozásokhoz
+DescADHERENT_MAILMAN_LISTS=Lista(k) az új tagok automatikus bejegyzéséhez (vesszővel elválasztva)
+SPIPTitle=SPIP Tartalomkezelő rendszer
+DescADHERENT_SPIP_SERVEUR=SPIP szerver
+DescADHERENT_SPIP_DB=SPIP adatbázis neve
+DescADHERENT_SPIP_USER=SPIP adatbázis bejelentkezés
+DescADHERENT_SPIP_PASS=SPIP adatbázis jelszava
+AddIntoSpip=Hozzáadás a SPIP-hez
+AddIntoSpipConfirmation=Biztosan felveszi ezt a tagot a SPIP-be?
+AddIntoSpipError=Nem sikerült hozzáadni a felhasználót a SPIP-hez
+DeleteIntoSpip=Eltávolítás a SPIP-ből
+DeleteIntoSpipConfirmation=Biztosan eltávolítja ezt a tagot a SPIP-ből?
+DeleteIntoSpipError=Nem sikerült letiltani a felhasználót a SPIP-ről
+SPIPConnectionFailed=Nem sikerült csatlakozni a SPIP-hez
+SuccessToAddToMailmanList=%s sikeresen hozzáadva a %s levelezőlistához vagy a SPIP adatbázishoz
+SuccessToRemoveToMailmanList=%s sikeresen eltávolítva a %s levelezőlistából vagy a SPIP adatbázisból

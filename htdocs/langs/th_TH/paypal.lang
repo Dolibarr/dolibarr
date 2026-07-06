@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal การติดตั้งโมดูล
+PaypalDesc=โมดูลนี้อนุญาตให้ลูกค้าชำระเงินผ่าน <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a> สามารถใช้สำหรับการชำระเงินเฉพาะกิจหรือการชำระเงินที่เกี่ยวข้องกับออบเจ็กต์ Dolibarr (ใบแจ้งหนี้ คำสั่งซื้อ ...)
+PaypalOrCBDoPayment=ชำระเงินด้วย PayPal (บัตรหรือ PayPal)
+PaypalDoPayment=ชำระเงินด้วยเพย์พาล
+PAYPAL_API_SANDBOX=การทดสอบ Mode / ทราย
+PAYPAL_API_USER=ชื่อผู้ใช้ API
+PAYPAL_API_PASSWORD=รหัสผ่าน API
+PAYPAL_API_SIGNATURE=ลายเซ็น API
+PAYPAL_SSLVERSION=เวอร์ชัน Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=เสนอการชำระเงินแบบ "รวม" (บัตรเครดิต + PayPal) หรือ "PayPal" เท่านั้น
+PaypalModeIntegral=สำคัญ
+PaypalModeOnlyPaypal=PayPal เท่านั้น
+ONLINE_PAYMENT_CSS_URL=URL ตัวเลือกของสไตล์ชีต CSS บนหน้าการชำระเงินออนไลน์
+ThisIsTransactionId=นี่คือรหัสธุรกรรม: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=รวม URL การชำระเงินของ PayPal เมื่อคุณส่งเอกสารทางอีเมล
+NewOnlinePaymentReceived=ได้รับการชำระเงินออนไลน์ใหม่แล้ว
+NewOnlinePaymentFailed=พยายามชำระเงินออนไลน์ใหม่แต่ล้มเหลว
+ONLINE_PAYMENT_SENDEMAIL=ที่อยู่อีเมลสำหรับการแจ้งเตือนหลังจากพยายามชำระเงินแต่ละครั้ง (เพื่อความสำเร็จและล้มเหลว)
+ReturnURLAfterPayment=URL ที่กลับมาหลังจากการชำระเงิน
+ValidationOfOnlinePaymentFailed=การตรวจสอบการชำระเงินออนไลน์ล้มเหลว
+PaymentSystemConfirmPaymentPageWasCalledButFailed=หน้ายืนยันการชำระเงินถูกเรียกโดยระบบการชำระเงินส่งคืนข้อผิดพลาด
+SetExpressCheckoutAPICallFailed=การเรียก SetExpressCheckout API ล้มเหลว
+DoExpressCheckoutPaymentAPICallFailed=การเรียก DoExpressCheckoutPayment API ล้มเหลว
+DetailedErrorMessage=ข้อความแสดงข้อผิดพลาดโดยละเอียด
+ShortErrorMessage=ข้อความแสดงข้อผิดพลาดสั้นๆ
+ErrorCode=รหัสข้อผิดพลาด
+ErrorSeverityCode=รหัสความรุนแรงของข้อผิดพลาด
+OnlinePaymentSystem=ระบบการชำระเงินออนไลน์
+PaypalLiveEnabled=เปิดใช้งานโหมด "สด" ของ PayPal (ไม่เช่นนั้นโหมดทดสอบ/แซนด์บ็อกซ์)
+PaypalImportPayment=นำเข้าการชำระเงิน PayPal
+PostActionAfterPayment=โพสต์การดำเนินการหลังการชำระเงิน
+ARollbackWasPerformedOnPostActions=มีการย้อนกลับกับการดำเนินการโพสต์ทั้งหมด คุณต้องดำเนินการโพสต์ด้วยตนเองหากจำเป็น
+ValidationOfPaymentFailed=การตรวจสอบการชำระเงินล้มเหลว
+CardOwner=ผู้ถือบัตร
+PayPalBalance=เครดิตเพย์พาล
+OnlineSubscriptionPaymentLine=การสมัครสมาชิกออนไลน์ที่บันทึกเมื่อ %s<br>ชำระเงินผ่าน %s<br>ที่อยู่ IP ต้นทาง: %s<br>รหัสธุรกรรม: %s

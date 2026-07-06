@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuració mòdul PayPal
+PaypalDesc=Aquest mòdul permet el pagament dels clients mitjançant <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Això es pot utilitzar per a un pagament ad hoc o per a un pagament relacionat amb un objecte Dolibarr (factura, comanda, ...)
+PaypalOrCBDoPayment=Paga amb PayPal (targeta de crèdit o PayPal)
+PaypalDoPayment=Paga amb PayPal
+PAYPAL_API_SANDBOX=Mode de proves(sandbox)
+PAYPAL_API_USER=Nom usuari API
+PAYPAL_API_PASSWORD=Contrasenya usuari API
+PAYPAL_API_SIGNATURE=Signatura API
+PAYPAL_SSLVERSION=Versió Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferir un pagament "integral" (Targeta de crèdit + PayPal) o "PayPal" només
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Només PayPal
+ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estils CSS a la pàgina de pagament en línia
+ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Incloeu l'adreça de pagament de PayPal quan envieu un document per correu electrònic
+NewOnlinePaymentReceived=S'ha rebut un pagament en línia nou
+NewOnlinePaymentFailed=S'ha intentat un pagament en línia nou, però ha fallat
+ONLINE_PAYMENT_SENDEMAIL=Adreça de correu electrònic per a les notificacions després de cada intent de pagament (per a l'èxit i el fracàs)
+ReturnURLAfterPayment=URL de retorn després del pagament
+ValidationOfOnlinePaymentFailed=La validació del pagament en línia ha fallat
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La pàgina de confirmació de pagament sol·licitada pel sistema de pagament ha retornat un error
+SetExpressCheckoutAPICallFailed=Ha fallat la crida a l'API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=Ha fallat la crida a l'API DoExpressCheckoutPayment.
+DetailedErrorMessage=Missatge d'error detallat
+ShortErrorMessage=Missatge d'error curt
+ErrorCode=Codi d'error
+ErrorSeverityCode=Codi sever d'error
+OnlinePaymentSystem=Sistema de pagament en línia
+PaypalLiveEnabled=Mode «en directe» de PayPal habilitat (en cas contrari, mode prova/sandbox)
+PaypalImportPayment=Importeu els pagaments de PayPal
+PostActionAfterPayment=Accions després dels pagaments
+ARollbackWasPerformedOnPostActions=S'ha produït una tornada endarrere en totes les accions "post". Heu de completar les accions "post" manualment si són necessàries.
+ValidationOfPaymentFailed=La validació del pagament ha fallat
+CardOwner=Titular de targeta
+PayPalBalance=Crèdit Paypal
+OnlineSubscriptionPaymentLine=Subscripció en línia registrada a %s <br> Pagat a través de %s <br> Adreça IP d'origen: %s <br> ID de transacció: %s
