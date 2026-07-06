@@ -88,7 +88,7 @@ if ($context->userIsLog()) {
 			'id' => 'document_list',
 			'rank' => 40,
 			'url' => $context->getControllerUrl('documentlist'),
-			'name' => $langs->trans('MyDocuments'), // CORRIGÉ : Clé de traduction correcte
+			'name' => $langs->trans('MyDocuments'),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
