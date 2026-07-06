@@ -94,7 +94,8 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
-- Language key names must be in English and PascalCase (e.g., `MyModuleLabel`, not `MonLibellé`)
+- All code comments and variables or functions names must be in English.
+- Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
 
 ---
@@ -103,12 +104,13 @@ Before writing any code, the agent **must**:
 
 Before any modification, verify:
 - Creation / edition / deletion workflows
-- User rights enforcement (`$user->rights->module->action`)
-- Multi-entity compatibility (`$conf->entity`)
+- User rights enforcement (`$user->hasRights("module", "permission")` or `$user->hasRights("module", "objectname", "permission")`)
+- Multi-entity compatibility (add ` AND entity IN ('.getDolEntity("tablename").')`)
 
 If possible:
-- Add a PHPUnit test file in `htdocs/modulebuilder/template/test/phpunit/`
-- Reference the `phpunit.xml` file at the root of the project to run the test suite
+- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
+- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
+
 
 ---
 
@@ -123,8 +125,9 @@ If possible:
 
 ## 🔒 Security
 
-- Always validate inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
-- Prevent SQL injection (use `db->escape()`) and XSS (use `dol_escape_htmltag()`)
+- Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
+- Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
+- Prevent XSS injection (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`, ...)
 - Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
 
 ---
