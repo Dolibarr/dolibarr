@@ -202,7 +202,33 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
-	 * Assert that at least one subtotal title/section line is present.
+	 * Whether the object supports subtotal lines (subtotals module enabled and object type wired).
+	 * Kept portable across versions: supplier objects gained subtotals only in later Dolibarr releases.
+	 *
+	 * @param	CommonObject	$object		Object to test
+	 * @return	bool
+	 */
+	private function subtotalsSupported($object)
+	{
+		return defined('SUBTOTALS_SPECIAL_CODE') && method_exists($object, 'addSubtotalLine');
+	}
+
+	/**
+	 * Add a subtotal title line when the object supports it (no-op otherwise, for portability).
+	 *
+	 * @param	CommonObject	$object		Object to add the title to
+	 * @param	Translate		$langs		Language object
+	 * @return	void
+	 */
+	private function addSubtotalTitle($object, $langs)
+	{
+		if ($this->subtotalsSupported($object)) {
+			$object->addSubtotalLine($langs, 'Section 1', 1);
+		}
+	}
+
+	/**
+	 * Assert that a subtotal title line is present, when the object supports subtotals.
 	 *
 	 * @param	CommonObject	$object		Reloaded object (lines loaded)
 	 * @param	string			$tag		Message prefix
@@ -210,8 +236,7 @@ class TtcRoundingTest extends CommonClassTest
 	 */
 	private function assertSubtotalLinePresent($object, $tag)
 	{
-		if (!defined('SUBTOTALS_SPECIAL_CODE')) {
-			$this->markTestSkipped('Module subtotals disabled');
+		if (!$this->subtotalsSupported($object)) {
 			return;
 		}
 		$found = false;
@@ -248,7 +273,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Customer proposal create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 'TTC', self::PU_TTC);
 		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 'TTC', self::PU_TTC);
 
@@ -303,7 +328,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Customer order create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 0, 0, 'TTC', self::PU_TTC);
 		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 0, 0, 'TTC', self::PU_TTC);
 
@@ -355,7 +380,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Customer invoice create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
 		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
 
@@ -458,7 +483,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Supplier proposal create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 'TTC', self::PU_TTC);
 		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 'TTC', self::PU_TTC);
 
@@ -510,7 +535,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Supplier order create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', 0, 'TTC', self::PU_TTC);
 		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', 0, 'TTC', self::PU_TTC);
 
@@ -564,7 +589,7 @@ class TtcRoundingTest extends CommonClassTest
 		$id = $object->create($user);
 		$this->assertGreaterThan(0, $id, 'Supplier invoice create');
 
-		$object->addSubtotalLine($langs, 'Section 1', 1);
+		$this->addSubtotalTitle($object, $langs);
 		$object->addline('Product TTC', self::PU_TTC, self::VAT, 0, 0, self::QTY, $pid, 0, 0, 0, 0, 0, 'TTC');
 		$object->addline('Free TTC', self::PU_TTC, self::VAT, 0, 0, self::QTY, 0, 0, 0, 0, 0, 0, 'TTC');
 
