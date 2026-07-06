@@ -53,7 +53,6 @@ Before writing any code, the agent **must**:
 - PHP >= 7.3 (minimum support); PHP 8.1+ recommended for new external modules
 - ⚠️ When writing a **bug fix**, always target the lowest compatible PHP version
   of the branch being patched — do not use PHP 8.x syntax on a fix targeting v19 or v20
-- Use `declare(strict_types=1)` when targeting PHP 8.1+
 - Respect PSR-12, but **indentations must use Tabs, not Spaces**
 - Write short, readable, and testable functions
 - Avoid side effects
@@ -156,7 +155,7 @@ If possible:
     - `develop` branch for both fixes and new features
 - ❌ Never commit directly to `main` or `develop` without a reviewed PR
 - Commit message format: `TYPE: #issueNumber Short description`
-    - Types: `NEW`, `FIX`, `CLOSE`
+    - Types: `NEW`, `FIX` or `CLOSE`
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Update the `ChangeLog` file with a summary of significant changes
 - When fixing a bug, apply the patch on the **oldest affected branch first**,
