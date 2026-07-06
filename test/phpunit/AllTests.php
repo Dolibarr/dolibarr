@@ -220,6 +220,8 @@ class AllTests
 		$suite->addTestSuite('FactureRecTest');
 		require_once dirname(__FILE__).'/FactureTestRounding.php';
 		$suite->addTestSuite('FactureTestRounding');
+		require_once dirname(__FILE__).'/TtcRoundingTest.php';
+		$suite->addTestSuite('TtcRoundingTest');
 		require_once dirname(__FILE__).'/FactureFournisseurTest.php';
 		$suite->addTestSuite('FactureFournisseurTest');
 
