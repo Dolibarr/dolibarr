@@ -4042,10 +4042,11 @@ class Form
 
 		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
-		$label = $objp->label;
+		$productlabel = $objp->label;
 		if (!empty($objp->label_translated)) {
-			$label = $objp->label_translated;
+			$productlabel = $objp->label_translated;
 		}
+		$label = $productlabel;
 		if (!empty($filterkey) && $filterkey != '') {
 			$label = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $label, 1);
 		}
@@ -4121,18 +4122,19 @@ class Form
 			}
 		}
 
-		// Set $labeltoshow
-		$labeltoshow = '';
-		$labeltoshow .= $objp->ref;
+		// Set full plain label for the native <option> text. Select2 uses this text
+		// as its search corpus, while data-html below keeps the visible label short.
+		$labeltosearch = '';
+		$labeltosearch .= $objp->ref;
 		if (!empty($objp->custref)) {
-			$labeltoshow .= ' (' . $objp->custref . ')';
+			$labeltosearch .= ' (' . $objp->custref . ')';
 		}
 		if ($outbarcode) {
-			$labeltoshow .= ' (' . $outbarcode . ')';
+			$labeltosearch .= ' (' . $outbarcode . ')';
 		}
-		$labeltoshow .= ' - ' . dol_trunc($label, $maxlengtharticle);
+		$labeltosearch .= ' - ' . $productlabel;
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshow .= ' (' . getCountry($outorigin, '1') . ')';
+			$labeltosearch .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Set $labltoshowhtml
@@ -4304,6 +4306,10 @@ class Form
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
 
+		$optiontext = $labeltosearch.$outvalUnits.$labeltoshowprice.$labeltoshowstock;
+		$optionhtml = $labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.$labeltoshowhtmlstock;
+		$optionhtmlforattribute = dol_escape_htmltag($optionhtml, 0, 0, '', 0, 1);
+
 		// Build options
 		$opt = '<option value="' . $objp->rowid . '"';
 		$opt .= ($objp->rowid == $selected) ? ' selected' : '';
@@ -4311,35 +4317,33 @@ class Form
 			$opt .= ' pbq="' . $objp->price_by_qty_rowid . '" data-pbq="' . $objp->price_by_qty_rowid . '" data-pbqup="' . $objp->price_by_qty_unitprice . '" data-pbqbase="' . $objp->price_by_qty_price_base_type . '" data-pbqqty="' . $objp->price_by_qty_quantity . '" data-pbqpercent="' . $objp->price_by_qty_remise_percent . '"';
 		}
 		if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-			$opt .= ' data-labeltrans="' . $outlabel_translated . '"';
+			$opt .= ' data-labeltrans="' . dol_escape_htmltag($outlabel_translated, 0, 0, '', 0, 1) . '"';
 			$opt .= ' data-desctrans="' . dol_escape_htmltag($outdesc_translated) . '"';
 		}
 
 		if ($stocktag == 1) {
-			$opt .= ' class="product_line_stock_ok" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_ok"';
 			//$opt .= ' class="product_line_stock_ok"';
 		}
 		if ($stocktag == -1) {
-			$opt .= ' class="product_line_stock_too_low" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_too_low"';
 			//$opt .= ' class="product_line_stock_too_low"';
 		}
+		$opt .= ' data-html="'.$optionhtmlforattribute.'" data-select-html="'.$optionhtmlforattribute.'"';
 
 		$opt .= '>';
 
 		// Ref, barcode, country
-		$opt .= $labeltoshow;
+		$opt .= dol_escape_htmltag($optiontext, 0, 0, '', 0, 1);
 		$outval .= $labeltoshowhtml;
 
 		// Units
-		$opt .= $outvalUnits;
 		$outval .= $outvalUnits;
 
 		// Price
-		$opt .= $labeltoshowprice;
 		$outval .= $labeltoshowhtmlprice;
 
 		// Stock
-		$opt .= $labeltoshowstock;
 		$outval .= $labeltoshowhtmlstock;
 
 
