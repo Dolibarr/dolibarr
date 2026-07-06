@@ -8555,6 +8555,48 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 
 
 /**
+ * Close the HTML tags left open in a string (for example after a truncation of HTML content),
+ * so the returned string is well formed HTML. Void elements and self closed tags are ignored,
+ * remaining open tags are closed in last in first out order. A non HTML string is returned as is.
+ *
+ * @param	string	$stringtoclean		String to close the still open tags of
+ * @return	string						String with the open tags closed
+ * @see	dolGetFirstLineOfText()
+ */
+function dolCloseUnclosedTags($stringtoclean)
+{
+	if (empty($stringtoclean) || !dol_textishtml($stringtoclean)) {
+		return $stringtoclean;
+	}
+	$voidtags = array('br', 'img', 'hr', 'input', 'meta', 'link', 'area', 'base', 'col', 'embed', 'param', 'source', 'track', 'wbr');
+	preg_match_all('/<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?(\/?)>/', $stringtoclean, $tagsfound, PREG_SET_ORDER);
+	$opentags = array();
+	foreach ($tagsfound as $tagfound) {
+		$tagname = strtolower($tagfound[2]);
+		if (in_array($tagname, $voidtags, true) || !empty($tagfound[3])) {
+			continue;	// void element or self closed tag, nothing to close
+		}
+		if (!empty($tagfound[1])) {	// closing tag, unstack the matching opening tag
+			for ($j = count($opentags) - 1; $j >= 0; $j--) {
+				// $opentags is non-empty here (for-loop guard), phan wrongly infers the initial empty shape.  @phan-suppress-next-line PhanTypeInvalidDimOffset
+				if ($opentags[$j] === $tagname) {
+					array_splice($opentags, $j);
+					break;
+				}
+			}
+		} else {	// opening tag
+			$opentags[] = $tagname;
+		}
+	}
+	// Close still open tags in last in first out order
+	for ($j = count($opentags) - 1; $j >= 0; $j--) {
+		$stringtoclean .= '</' . $opentags[$j] . '>';
+	}
+	return $stringtoclean;
+}
+
+
+/**
  * Replace CRLF in string with a HTML BR tag.
  * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have
  *          encoded the special chars of stringtoencode into HTML before with dol_htmlentitiesbr().
@@ -15057,7 +15099,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
-					$out .= 	dolPrintHTML($truncatedText);
+					$out .= 	dolPrintHTML(dolCloseUnclosedTags($truncatedText));
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
 					$out .= '	<div class="readmore-block__full-text" >';
