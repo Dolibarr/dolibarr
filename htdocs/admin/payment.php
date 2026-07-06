@@ -279,12 +279,14 @@ print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
 // Allow payments on different thirdparties bills but same parent company
+/*
 print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", getDolGlobalInt('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS'), 1);
 print '</td><td class="right">';
 print "</td></tr>\n";
+*/
 
 // Allow to group payments by mod in rapports
 print '<tr class="oddeven"><td>';

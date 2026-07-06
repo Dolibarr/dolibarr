@@ -208,7 +208,7 @@ class Link extends CommonObject
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", objectid = ".$this->objectid;
+		$sql .= ", objectid = ".((int) $this->objectid);
 		$sql .= ', share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
 		$sql .= ', share_pass = '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);

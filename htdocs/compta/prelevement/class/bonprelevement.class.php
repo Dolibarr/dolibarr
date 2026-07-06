@@ -690,7 +690,7 @@ class BonPrelevement extends CommonObject
 					$paiement->num_payment = $this->ref; // Set ref of direct debit note
 					$paiement->id_prelevement = $this->id;
 
-					$result = $paiement->create($user); // This use ->paiementid, that is ID of payment mode
+					$result = $paiement->create($user, 1); // This use ->paiementid, that is ID of payment mode. closepaidinvoices=1 to convert deposit invoice to available credit
 
 					if ($result < 0) {
 						$error++;
@@ -2187,8 +2187,8 @@ class BonPrelevement extends CommonObject
 
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
 
-		// 3 char + '-' + 12 + '-' + id + '-' + code 		Must be lower than 32.
-		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 13, 'right', 'UTF-8', 1);
+		// 3 char + '-' + 10 (yymmddHHMM) + '-' + id + '-' + code. Must be under 32 (SEPA char limit for MndtId is however 35).
+		return $pre . '-' . dol_print_date($row_datec, 'dayhourlogsmall') . '-' . dol_trunc($row_drum . ($row_code_client ? '-' . $row_code_client : ''), 17, 'right', 'UTF-8', 1);
 	}
 
 

@@ -25,13 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
-require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('other','admin'));
@@ -193,7 +192,9 @@ if (empty($reshook)) {
 		}
 
 		// TODO Replace this by a call of trigger...
-		$response = getURLContent($url, $method, $jsondata, 1, $headers, array('http', 'https'), 2, -1);
+		global $dolibarr_allow_localurl_for_webhooks;
+		$localurl = empty($dolibarr_allow_localurl_for_webhooks) ? 0 : 2;
+		$response = getURLContent($url, $method, $jsondata, 1, $headers, array('http', 'https'), $localurl, -1);
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {

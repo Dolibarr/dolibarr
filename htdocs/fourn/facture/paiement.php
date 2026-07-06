@@ -562,9 +562,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$sql .= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-				$sql .= " WHERE f.entity = ".((int) $conf->entity);
-				$sql .= ' AND f.fk_soc = '.((int) $object->socid);
-				$sql .= ' AND f.paye = 0';
+				$sql .= ' WHERE f.entity = '.((int) $conf->entity);
+				$sql .= ' AND (f.fk_soc = '.((int) $object->socid);
+				$aux = $object->fetch_thirdparty();
+				// Can pay invoices of all child of parent company
+				if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($object->thirdparty->parent)) {
+					$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $object->thirdparty->parent).')';
+				}
+				// Can pay invoices of all child of myself
+				if (getDolGlobalString('FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES')) {
+					$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $object->thirdparty->id).')';
+				}
+				$sql .= ') AND f.paye = 0';
 				$sql .= ' AND f.fk_statut = 1'; // Status=0 => unvalidated, Status=2 => canceled
 
 				if (!$displayAllInvoices) {

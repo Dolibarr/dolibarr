@@ -360,7 +360,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		if ($key == 'status') {
-			$sql .= natural_search('t.status', (string) $search[$key], 0);
+			$sql .= natural_search('t.status', (string) $search[$key], 1);
 			continue;
 		}
 

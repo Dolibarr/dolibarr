@@ -256,10 +256,13 @@ if (empty($reshook)) {
 		$object->origin_type = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');
-		$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
-		$object->sizeH = GETPOSTINT('sizeH') == '' ? "NULL" : GETPOSTINT('sizeH');
-		$object->sizeW = GETPOSTINT('sizeW') == '' ? "NULL" : GETPOSTINT('sizeW');
-		$object->sizeS = GETPOSTINT('sizeS') == '' ? "NULL" : GETPOSTINT('sizeS');
+		// Weight and box dimensions are physical measurements that frequently use
+		// decimals (1.6 kg, 0.25 m, ...), so they must be read as floats and not
+		// truncated to int (see issue #34069 for the shipping module).
+		$object->weight = GETPOST('weight', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('weight');
+		$object->sizeH = GETPOST('sizeH', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeH');
+		$object->sizeW = GETPOST('sizeW', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeW');
+		$object->sizeS = GETPOST('sizeS', 'alpha') == '' ? "NULL" : GETPOSTFLOAT('sizeS');
 		$object->size_units = GETPOSTINT('size_units');
 		$object->weight_units = GETPOSTINT('weight_units');
 
@@ -641,19 +644,20 @@ if (empty($reshook)) {
 		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
+
 		if ($action == 'settrueWeight') {		// Test on permission not required
-			$object->trueWeight = GETPOSTINT('trueWeight');
+			$object->trueWeight = GETPOSTFLOAT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
 		if ($action == 'settrueWidth') {		// Test on permission not required
-			$object->trueWidth = GETPOSTINT('trueWidth');
+			$object->trueWidth = GETPOSTFLOAT('trueWidth');
 		}
 		if ($action == 'settrueHeight') {		// Test on permission not required
-			$object->trueHeight = GETPOSTINT('trueHeight');
+			$object->trueHeight = GETPOSTFLOAT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
 		if ($action == 'settrueDepth') {		// Test on permission not required
-			$object->trueDepth = GETPOSTINT('trueDepth');
+			$object->trueDepth = GETPOSTFLOAT('trueDepth');
 		}
 		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
@@ -1144,7 +1148,7 @@ if ($action == 'create') {
 			print $langs->trans("Weight");
 			print '</td><td colspan="3">';
 			print img_picto('', 'fa-balance-scale', 'class="pictofixedwidth"');
-			print '<input name="weight" size="4" value="'.GETPOSTINT('weight').'"> ';
+			print '<input name="weight" size="4" value="'.dol_escape_htmltag(GETPOST('weight', 'alpha')).'"> ';
 			$text = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) GETPOSTINT('weight_units'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
@@ -1194,7 +1198,7 @@ if ($action == 'create') {
 			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (is_countable($list) && count($list) > 1) {
+			if (is_array($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
 				print img_picto('', 'pdf', 'class="pictofixedwidth"');
@@ -1449,8 +1453,8 @@ if ($action == 'create') {
 							// Quantity to send
 							print '<td class="center">';
 							if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
-								if (GETPOSTINT('qtyl'.$indiceAsked)) {
-									$deliverableQty = GETPOSTINT('qtyl'.$indiceAsked);
+								if (GETPOSTISSET('qtyl'.$indiceAsked) && GETPOST('qtyl'.$indiceAsked) !== '') {
+									$deliverableQty = GETPOSTFLOAT('qtyl'.$indiceAsked, 'MS');
 								}
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 								$qtylValue = $deliverableQty;
@@ -1549,13 +1553,13 @@ if ($action == 'create') {
 							$subj = 0;
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {
 									$nbofsuggested++;
 								}
 							}
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
+							if (is_object($product->stock_warehouse[$warehouse_id]) && !empty($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty; // To get a numeric
@@ -1797,7 +1801,7 @@ if ($action == 'create') {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									$nbofsuggested += count($stock_warehouse->detail_batch);
 								}
 							}
@@ -1810,7 +1814,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (!empty($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
 										$batchStock = + $dbatch->qty; // To get a numeric
 										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
@@ -3070,12 +3074,6 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
 					}
 				}
-			}
-
-			// This is just to generate a delivery receipt
-			//var_dump($object->linkedObjectsIds['delivery']);
-			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
-				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 
 			// Set Billed and Closed

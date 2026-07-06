@@ -446,3 +446,4 @@ ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 EmptyMessageNotAllowedError=Empty message is not allowed
 SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.
+ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.

@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/api_tickets.class.php';
 
 /**
  * API class for categories
@@ -839,6 +840,8 @@ class Categories extends DolibarrApi
 			$objects_api = new Contacts();
 		} elseif ($type == 'project') {
 			$objects_api = new Projects();
+		} elseif ($type == 'ticket') {
+			$objects_api = new Tickets();
 		}
 
 		if (is_object($objects_api)) {

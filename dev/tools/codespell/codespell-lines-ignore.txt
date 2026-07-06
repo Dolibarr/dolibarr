@@ -97,7 +97,7 @@
 	$sql .= " AND cs.periode >= '".$db->idate($search_date_limit_start)."'";
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
-	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
+	$sql .= " cs.rowid, cs.libelle as label, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
 	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
 	$sql.= " AND nd.fk_action = ad.rowid";
 	$sql.= " WHERE u.rowid = nd.fk_user";

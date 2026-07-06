@@ -72,6 +72,13 @@ if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
+/**
+ * @var ?string $php_session_save_handler
+ * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
+ */
 
 /**
  * @var Conf $conf
@@ -79,6 +86,11 @@ require_once 'filefunc.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var ?string $php_session_save_handler
+ * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_restrict_ip
+ * @var ?string $dolibarr_nocsrfcheck
+ * @var ?string $dolibarr_main_demo
  */
 
 // If there is a POST parameter to tell to save automatically some POST parameters into cookies, we do it.
@@ -422,31 +434,33 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
-// Disable modules (this must be after session_start and after conf has been loaded)
-if (GETPOSTISSET('disablemodules')) {
-	$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
-}
-if (!empty($_SESSION["disablemodules"])) {
-	$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
+if (!empty($dolibarr_main_demo)) {
+	// Disable modules (this must be after session_start and after conf has been loaded)
+	if (GETPOSTISSET('disablemodules')) {
+		$_SESSION["disablemodules"] = GETPOST('disablemodules', 'alpha');
+	}
+	if (!empty($_SESSION["disablemodules"])) {
+		$modulepartkeys = array('css', 'js', 'tabs', 'triggers', 'login', 'substitutions', 'menus', 'theme', 'sms', 'tpl', 'barcode', 'models', 'societe', 'hooks', 'dir', 'syslog', 'tpllinkable', 'contactelement', 'moduleforexternal', 'websitetemplates');
 
-	$disabled_modules = explode(',', $_SESSION["disablemodules"]);
-	foreach ($disabled_modules as $module) {
-		if ($module) {
-			if (empty($conf->$module)) {
-				$conf->$module = new stdClass(); 	// To avoid warnings
-			}
+		$disabled_modules = explode(',', $_SESSION["disablemodules"]);
+		foreach ($disabled_modules as $module) {
+			if ($module) {
+				if (empty($conf->$module)) {
+					$conf->$module = new stdClass(); 	// To avoid warnings
+				}
 
-			$conf->$module->enabled = false;		// Old usage
-			unset($conf->modules[$module]);
+				$conf->$module->enabled = false;		// Old usage
+				unset($conf->modules[$module]);
 
-			foreach ($modulepartkeys as $modulepartkey) {
-				unset($conf->modules_parts[$modulepartkey][$module]);
-			}
-			if ($module == 'fournisseur') {		// Special case
-				$conf->supplier_order->enabled = 0;		// Old usage
-				$conf->supplier_invoice->enabled = 0;	// Old usage
-				unset($conf->modules['supplier_order']);
-				unset($conf->modules['supplier_invoice']);
+				foreach ($modulepartkeys as $modulepartkey) {
+					unset($conf->modules_parts[$modulepartkey][$module]);
+				}
+				if ($module == 'fournisseur') {		// Special case
+					$conf->supplier_order->enabled = 0;		// Old usage
+					$conf->supplier_invoice->enabled = 0;	// Old usage
+					unset($conf->modules['supplier_order']);
+					unset($conf->modules['supplier_invoice']);
+				}
 			}
 		}
 	}
@@ -763,7 +777,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// End test login / passwords
-		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
+		if (!$login || (in_array('ldap', $authmode) && !in_array('openid_connect', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connection is a success.
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {

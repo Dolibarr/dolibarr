@@ -878,6 +878,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
+				/* disable this, moved into the create() method
 				// Check there is no PHP content into the imported file (must be only HTML + JS)
 				$phpcontent = dolKeepOnlyPhpCode($tmp['content']);
 				if ($phpcontent) {
@@ -885,6 +886,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					setEventMessages('Error getting '.$urltograb.': file that include PHP content is not allowed', null, 'errors');
 					$action = 'createcontainer';
 				}
+				*/
 			}
 
 			if (!$error) {
@@ -1168,7 +1170,8 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
-		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
+		$objectpage->pageurl = dol_sanitizeUrl(GETPOST('WEBSITE_PAGENAME', 'alpha'));
+		$objectpage->ref = $objectpage->pageurl;
 		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
@@ -1261,6 +1264,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 	$pageid = 0;
 	if (!$error) {
+		// Create page. This also check there is no PHP content if user has no pemrissions for that.
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -2169,7 +2173,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
-		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
+		$objectpage->pageurl = dol_sanitizeUrl(GETPOST('WEBSITE_PAGENAME', 'alpha'));
 		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
@@ -3377,6 +3381,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			$examplewithapache = "<VirtualHost *:80>\n";
 			$examplewithapache .= '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
+			//$examplewithapache .= '#php_admin_value disable_functions "exec,passthru,shell_exec,system,popen,proc_open"'."\n";	This is not effective if not in php.ini
 			$examplewithapache .= "\n";
 			$examplewithapache .= 'DocumentRoot "'.DOL_DOCUMENT_ROOT.'"'."\n";
 			$examplewithapache .= "\n";

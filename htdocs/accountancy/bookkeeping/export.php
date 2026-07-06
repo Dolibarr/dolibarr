@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
@@ -168,7 +168,7 @@ $hookmanager->initHooks(array('bookkeepingexport'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == 0 && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$sql = "SELECT date_start, date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
@@ -244,6 +244,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
+$permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 /*
  * Actions
@@ -493,9 +498,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
-	$permissiontoread = ($user->hasRight('societe', 'lire') == 1);
-	$permissiontodelete = ($user->hasRight('societe', 'supprimer') == 1);
-	$permissiontoadd = ($user->hasRight('societe', 'creer') == 1);
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -847,19 +849,39 @@ if ($action == 'export_file') {
 	}
 
 	// add documents in an archive for some accountancy export format
-	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS
-		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC
-		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC2
-	) {
-		$form_question['notifiedexportfull'] = array(
-			'name' => 'notifiedexportfull',
-			'type' => 'checkbox',
-			'label' => $langs->trans('NotifiedExportFull'),
-			'value' => 'false',
-		);
-	}
+	$exportTypesWithDocs = array(
+		AccountancyExport::$EXPORT_TYPE_QUADRATUS,
+		AccountancyExport::$EXPORT_TYPE_FEC,
+		AccountancyExport::$EXPORT_TYPE_FEC2
+	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 390, 700);
+	$form_question['notifiedexportfull'] = array(
+		'name' => 'notifiedexportfull',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportFull'),
+		'value' => 'false',
+	);
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 500, 700);
+
+	$formconfirm .= '<script>
+	jQuery(document).ready(function() {
+		const exportTypesWithDocs = ['.implode(',', $exportTypesWithDocs).'];
+		const $formatExport = jQuery("#formatexport");
+
+		function toggleExportFull() {
+			const $checkbox = jQuery("#notifiedexportfull");
+			const show = exportTypesWithDocs.indexOf(parseInt($formatExport.val())) !== -1;
+			$checkbox.closest(".tagtr").toggle(show);
+			if (!show) {
+				$checkbox.prop("checked", false); // remove checked if hidden
+			}
+		}
+
+		$formatExport.on("change", toggleExportFull);
+		toggleExportFull();
+	});
+	</script>';
 }
 
 // Print form confirm
@@ -914,7 +936,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $permissiontoexport);
 	}
 }
 

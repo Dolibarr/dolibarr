@@ -547,9 +547,9 @@ class Expedition extends CommonObject
 					if (empty($line->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						$line_id = 0;
 						if (!isset($kits_id_cached[$line->fk_product])) {
-							if (!isset($line->detail_batch) || isset($kits_list[$line->fk_product])) {    // no batch management or is kit
+							if (!isset($line->detail_batch) || (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE'))) {    // no batch management or is kit
 								$qty = isset($kits_list[$line->fk_product]) ? $kits_list[$line->fk_product]['total_qty'] : $line->qty;
-								$warehouse_id = isset($kits_list[$line->fk_product]) ? 0 : $line->entrepot_id;
+								$warehouse_id = (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) ? 0 : $line->entrepot_id;
 								$line_id = $this->create_line($warehouse_id, $line->origin_line_id, $qty, $line->rang, $line->array_options, 0, $line->fk_product);
 								if ($line_id <= 0) {
 									$error++;
@@ -565,7 +565,7 @@ class Expedition extends CommonObject
 						}
 
 						// virtual products
-						if (isset($kits_list[$line->fk_product])) {
+						if (isset($kits_list[$line->fk_product]) && !getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) {
 							$prods_arbo = $kits_list[$line->fk_product]['arbo'];
 							$total_qty = $kits_list[$line->fk_product]['total_qty'];
 
@@ -626,7 +626,7 @@ class Expedition extends CommonObject
 
 								// create line for a child of virtual product
 								if (!isset($sub_kits_id_cached[$product_child_id]) || $warehouse_id > 0) {
-									$line_id = $this->create_line($warehouse_id, 0, $product_child_qty, $line->rang, $line->array_options, $parent_line_id, $product_child_id);
+									$line_id = $this->create_line($warehouse_id, ($parent_line_id ? 0 : $line->origin_line_id), $product_child_qty, $line->rang, $line->array_options, $parent_line_id, $product_child_id);
 									if ($line_id <= 0) {
 										$error++;
 										dol_syslog(__METHOD__ . ' : ' . $this->errorsToString(), LOG_ERR);
@@ -1557,7 +1557,7 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && empty($obj->iskit) && !empty($obj->incdec)) {
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -1575,7 +1575,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (and sub-products)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', '', '', 0, '', 0, 1); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1585,7 +1585,7 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, 1); // Price is set to 0, because we don't want to see WAP changed
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1767,7 +1767,7 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && empty($obj->iskit) && !empty($obj->incdec)) {
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -1781,7 +1781,7 @@ class Expedition extends CommonObject
 							// no lot/serial
 							// We increment stock of product (disable for sub-products : already in shipment lines)
 							// We use warehouse selected for each line
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', '', '', 0, '', 0, 1); // Price is set to 0, because we don't want to see WAP changed
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), '', '', '', '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
 								$error++;
 								$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -1791,7 +1791,7 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
-								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, 1); // Price is set to 0, because we don't want to see WAP changed
+								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
 									$this->errors = array_merge($this->errors, $mouvS->errors);

@@ -94,9 +94,19 @@ $object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
 
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$object->id = $id;
+	}
+}
+
+
 /*
  * Actions
  */
+
 $error = 0;
 
 $parameters = array('socid' => $socid);
@@ -139,12 +149,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$result = $object->fetch($rowid);
-	if ($result <= 0) {
-		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
-		$object->id = $rowid;
-	}
-
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
 
@@ -256,7 +260,7 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 	if (!$error) {
 		$db->begin();
-		$object->fetch($rowid);
+
 		$oldNum_rel = $object->num_releve;
 		$id = $object->fk_account;
 

@@ -93,7 +93,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$error++;
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
 	}
-	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
+	if (!$error && price2num((float) $amount_ttc_1 + (float) $amount_ttc_2, 'MT') != $discount->amount_ttc) {
 		$error++;
 		setEventMessages($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), null, 'errors');
 	}
@@ -469,12 +469,12 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
@@ -505,21 +505,21 @@ if ($socid > 0) {
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("ExcessReceived"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -531,12 +531,12 @@ if ($socid > 0) {
 
 					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
 
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="tdoverflowmax100">';
@@ -562,7 +562,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (isModEnabled('multicompany')) {
+				if (isModEnabled('multicurrency')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
@@ -622,12 +622,12 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
@@ -656,21 +656,21 @@ if ($socid > 0) {
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -679,12 +679,12 @@ if ($socid > 0) {
 					}
 					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="tdoverflowmax100">';
@@ -709,7 +709,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (isModEnabled('multicompany')) {
+				if (isModEnabled('multicurrency')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
@@ -803,12 +803,12 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
@@ -857,21 +857,21 @@ if ($socid > 0) {
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS RECEIVED\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturestatic->id = $obj->fk_facture_source;
 						$facturestatic->ref = $obj->invoice_source_ref;
 						$facturestatic->type = $obj->type;
-						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).' '.$facturestatic->getNomURl(1);
+						print preg_replace('/\(EXCESS RECEIVED\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturestatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -884,12 +884,12 @@ if ($socid > 0) {
 					}
 					print '</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right nowraponall">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="tdoverflowmax100">';
@@ -902,7 +902,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (isModEnabled('multicompany')) {
+				if (isModEnabled('multicurrency')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
@@ -973,12 +973,12 @@ if ($socid > 0) {
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
@@ -1027,21 +1027,21 @@ if ($socid > 0) {
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(DEPOSIT\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(DEPOSIT\)/', $langs->trans("InvoiceDeposit"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} elseif (preg_match('/\(EXCESS PAID\)/', $obj->description)) {
 						print '<td class="tdoverflowmax100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
 						$facturefournstatic->ref = $obj->invoice_source_ref;
 						$facturefournstatic->type = $obj->type;
-						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).' '.$facturefournstatic->getNomURl(1);
+						print preg_replace('/\(EXCESS PAID\)/', $langs->trans("Invoice"), $obj->description).'<br>'.$facturefournstatic->getNomURl(1);
 						print '</td>';
 					} else {
 						print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->description).'">';
@@ -1054,12 +1054,12 @@ if ($socid > 0) {
 					}
 					print '</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ht).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
 					print '<td class="right nowraponall amount">'.price($obj->amount_ttc).'</td>';
-					if (isModEnabled('multicompany')) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right nowraponall amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="tdoverflowmax100">';
@@ -1073,7 +1073,7 @@ if ($socid > 0) {
 				}
 			} else {
 				$colspan = 8;
-				if (isModEnabled('multicompany')) {
+				if (isModEnabled('multicurrency')) {
 					$colspan += 2;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
