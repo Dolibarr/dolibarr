@@ -313,8 +313,8 @@ class TtcRoundingTest extends CommonClassTest
 	{
 		global $user,$langs,$db;
 		$this->restoreGlobals();
-		if (!isModEnabled('commande')) {
-			$this->markTestSkipped('Module commande disabled');
+		if (!isModEnabled('order')) {
+			$this->markTestSkipped('Module order disabled');
 			return;
 		}
 
@@ -365,8 +365,8 @@ class TtcRoundingTest extends CommonClassTest
 	{
 		global $user,$langs,$db;
 		$this->restoreGlobals();
-		if (!isModEnabled('facture')) {
-			$this->markTestSkipped('Module facture disabled');
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module invoice disabled');
 			return;
 		}
 
@@ -417,8 +417,8 @@ class TtcRoundingTest extends CommonClassTest
 	{
 		global $user,$db;
 		$this->restoreGlobals();
-		if (!isModEnabled('contrat')) {
-			$this->markTestSkipped('Module contrat disabled');
+		if (!isModEnabled('contract')) {
+			$this->markTestSkipped('Module contract disabled');
 			return;
 		}
 
