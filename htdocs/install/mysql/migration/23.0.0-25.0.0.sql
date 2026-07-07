@@ -577,9 +577,8 @@ ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 -- Add MAIN_MAX_DECIMALS_CURRENCY_RATE constant
 -- =============================================================================
 -- Currency exchange rates are ratios (not prices) and need 6-8 decimals for
--- weak currencies (e.g. 1 MXN = 0.050462 EUR). The DB column
--- llx_multicurrency_rate.rate is double(24,8), so the default of 8 matches
--- the column precision.
+-- weak currencies (e.g. 1 MXN = 0.050462 EUR).
+-- Default is 8 decimals to provide enough precision for most currency pairs.
 --
 -- This constant is read by price2num() when the 'CR' rounding mode is used,
 -- and by the form that lets the user edit the rate on an invoice.
