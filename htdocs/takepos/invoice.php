@@ -180,7 +180,10 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (in_array($action, array('addline', 'freezone', 'addnote', 'deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+// Enforce the "edit lines" permission on every action that modifies an existing line
+// (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
+// the "run" permission elsewhere and must stay available to a plain cashier (#38949).
+if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
 	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
 	$action = '';
 }
