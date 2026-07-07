@@ -15,6 +15,7 @@
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -661,7 +662,10 @@ if (empty($reshook)) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 				continue;
 			}
-			$result = $object->updateline($line->id, $line->subprice, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
+			// Preserve the original entry mode of the line so the total is not drifted by rounding.
+			$line_price_base_type = $line->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+			$line_pu = ($line_price_base_type === 'TTC') ? (float) $line->subprice_ttc : (float) $line->subprice;
+			$result = $object->updateline($line->id, $line_pu, $line->qty, (float) $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, $line_price_base_type, $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
@@ -1217,6 +1221,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('save') == $langs->trans("Save")) {
 		// Update a line within proposal
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1268,6 +1274,27 @@ if (empty($reshook)) {
 		$special_code = GETPOST('special_code');
 		if (!GETPOST('qty')) {
 			$special_code = 3;
+		}
+
+		// The form JS clears the other field when the user edits one of them: only the modified field is filled.
+		// When both fields are submitted, the user did not change the price - we must preserve the original
+		// storage mode of the line, otherwise a no-op save would shift the total by rounding.
+		$ht = $pu_ht;
+		$price_base_type = 'HT';
+		if (empty($pu_ht) && !empty($pu_ttc)) {
+			$ht = $pu_ttc;
+			$price_base_type = 'TTC';
+		} elseif (!empty($pu_ht) && !empty($pu_ttc)) {
+			foreach ($object->lines as $line_obj) {
+				if ($line_obj->id == GETPOSTINT('lineid')) {
+					// Line was originally entered in TTC mode (subprice_ttc filled by addline)
+					if ($line_obj->wasEnteredIncludingTax()) {
+						$ht = $pu_ttc;
+						$price_base_type = 'TTC';
+					}
+					break;
+				}
+			}
 		}
 
 		// Check minimum price

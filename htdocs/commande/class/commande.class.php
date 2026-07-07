@@ -16,6 +16,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1809,6 +1810,8 @@ class Commande extends CommonOrder
 			$this->line->fk_remise_except = $fk_remise_except;
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice = (float) $pu_ht;
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->rang = $ranktouse;
 			$this->line->info_bits = $info_bits;
 			$this->line->total_ht = (float) $total_ht;
@@ -3344,6 +3347,8 @@ class Commande extends CommonOrder
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = (float) $pu_ht;
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc   = ($price_base_type === 'TTC') ? (float) $pu_ttc : 0;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = (float) $total_ht;

@@ -34,10 +34,10 @@
  *          - after 10% discount: total_ht = 1708.50, total_tva = 341.70, total_ttc = 2050.20
  *          - the line always keeps subprice_ttc = 3.35 (the value typed by the user)
  *
- *      The principle is already in place for the customer proposal (reference) and for the supplier
- *      order/invoice: those run the whole workflow green. It must still be replicated on the customer
- *      order/invoice/contract: the subprice_ttc assertions are the expected red signal until then
- *      (contract lines have no subtotals; the contract test is skipped when the module is disabled).
+ *      All customer and supplier objects persist the TTC entry mode: customer proposal, order, invoice,
+ *      contract, supplier proposal, supplier order and supplier invoice. This test guards against a
+ *      regression of that behaviour. Contract lines have no subtotals; each per-object test is skipped
+ *      when its module is disabled.
  */
 
 global $conf,$user,$langs,$db;
@@ -49,6 +49,7 @@ require_once dirname(__FILE__).'/../../htdocs/comm/propal/class/propal.class.php
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contrat/class/contrat.class.php';
+require_once dirname(__FILE__).'/../../htdocs/contrat/class/contratligne.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
@@ -280,7 +281,9 @@ class TtcRoundingTest extends CommonClassTest
 		// Create state
 		$reloaded = new Propal($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Customer proposal');
 		$this->assertBothPricedLines($reloaded, 'Customer proposal create');
 
@@ -290,7 +293,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new Propal($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Customer proposal no-op update');
 
 		// Discount for all lines
@@ -299,7 +304,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new Propal($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Customer proposal discount', true);
 		print __METHOD__." id=".$id." total_ht=".$afterRemise->total_ht."\n";
 	}
@@ -334,7 +341,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new Commande($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Customer order');
 		$this->assertBothPricedLines($reloaded, 'Customer order create');
 
@@ -343,7 +352,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new Commande($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Customer order no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -351,7 +362,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new Commande($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Customer order discount', true);
 		print __METHOD__." id=".$id."\n";
 	}
@@ -386,7 +399,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new Facture($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Customer invoice');
 		$this->assertBothPricedLines($reloaded, 'Customer invoice create');
 
@@ -395,7 +410,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new Facture($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Customer invoice no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -403,7 +420,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new Facture($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Customer invoice discount', true);
 		print __METHOD__." id=".$id."\n";
 	}
@@ -437,7 +456,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new Contrat($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertBothPricedLines($reloaded, 'Customer contract create');
 
 		foreach ($this->pricedLines($reloaded) as $line) {
@@ -445,7 +466,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new Contrat($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Customer contract no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -453,8 +476,73 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new Contrat($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Customer contract discount', true);
+		print __METHOD__." id=".$id."\n";
+	}
+
+	/**
+	 * Customer contract - line edit through ContratLigne::update() (the HT-only UI edit path, distinct
+	 * from Contrat::updateline()). A no-op edit must keep the TTC total; changing the HT unit price
+	 * drops the TTC entry mode.
+	 *
+	 * @return void
+	 */
+	public function testCustomerContractLineUpdateTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('contract')) {
+			$this->markTestSkipped('Module contract disabled');
+			return;
+		}
+
+		$object = new Contrat($db);
+		$object->initAsSpecimen();
+		$object->socid = self::$socid;
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Contrat create');
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, self::$productid, 0, '', '', 'TTC', self::PU_TTC);
+
+		$reloaded = new Contrat($db);
+		$reloaded->fetch($id);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$lineid = $reloaded->lines[0]->id;
+
+		// No-op edit (price unchanged): TTC total must be preserved, no rounding drift.
+		$line = new ContratLigne($db);
+		$line->fetch($lineid);
+		$line->oldcopy = dol_clone($line, 2);
+		$line->tva_tx = self::VAT;
+		$line->update($user);
+
+		$afterNoop = new ContratLigne($db);
+		$afterNoop->fetch($lineid);
+		$this->assertEquals(self::PU_TTC, (float) $afterNoop->subprice_ttc, 'Contrat line no-op: subprice_ttc kept');
+		$this->assertEquals(self::LINE_HT, (float) $afterNoop->total_ht, 'Contrat line no-op: total_ht preserved (no drift)');
+
+		// Edit that actually changes the HT unit price: TTC entry mode dropped, HT-based total.
+		$newHt = 2.50;
+		$line2 = new ContratLigne($db);
+		$line2->fetch($lineid);
+		$line2->oldcopy = dol_clone($line2, 2);
+		$line2->subprice = $newHt;
+		// Mirror contrat/card.php: drop the TTC mode when the HT unit price actually changed.
+		if ((float) $line2->subprice != (float) $line2->oldcopy->subprice) {
+			$line2->subprice_ttc = 0;
+		}
+		$line2->tva_tx = self::VAT;
+		$line2->update($user);
+
+		$afterHt = new ContratLigne($db);
+		$afterHt->fetch($lineid);
+		$this->assertEquals(0, (float) $afterHt->subprice_ttc, 'Contrat line HT edit: subprice_ttc reset');
+		$this->assertEquals((float) price2num($newHt * self::QTY, 'MT'), (float) $afterHt->total_ht, 'Contrat line HT edit: HT-based total');
 		print __METHOD__." id=".$id."\n";
 	}
 
@@ -489,7 +577,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new SupplierProposal($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Supplier proposal');
 		$this->assertBothPricedLines($reloaded, 'Supplier proposal create');
 
@@ -498,7 +588,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new SupplierProposal($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Supplier proposal no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -506,7 +598,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new SupplierProposal($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Supplier proposal discount', true);
 		print __METHOD__." id=".$id."\n";
 	}
@@ -541,7 +635,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new CommandeFournisseur($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Supplier order');
 		$this->assertBothPricedLines($reloaded, 'Supplier order create');
 
@@ -550,7 +646,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new CommandeFournisseur($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Supplier order no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -558,7 +656,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new CommandeFournisseur($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Supplier order discount', true);
 		print __METHOD__." id=".$id."\n";
 	}
@@ -595,7 +695,9 @@ class TtcRoundingTest extends CommonClassTest
 
 		$reloaded = new FactureFournisseur($db);
 		$reloaded->fetch($id);
-		$reloaded->fetch_lines();
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
 		$this->assertSubtotalLinePresent($reloaded, 'Supplier invoice');
 		$this->assertBothPricedLines($reloaded, 'Supplier invoice create');
 
@@ -604,7 +706,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterUpdate = new FactureFournisseur($db);
 		$afterUpdate->fetch($id);
-		$afterUpdate->fetch_lines();
+		if (method_exists($afterUpdate, 'fetch_lines')) {
+			$afterUpdate->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterUpdate, 'Supplier invoice no-op update');
 
 		foreach ($this->pricedLines($afterUpdate) as $line) {
@@ -612,7 +716,9 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$afterRemise = new FactureFournisseur($db);
 		$afterRemise->fetch($id);
-		$afterRemise->fetch_lines();
+		if (method_exists($afterRemise, 'fetch_lines')) {
+			$afterRemise->fetch_lines();
+		}
 		$this->assertBothPricedLines($afterRemise, 'Supplier invoice discount', true);
 		print __METHOD__." id=".$id."\n";
 	}

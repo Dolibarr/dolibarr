@@ -3,6 +3,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024-2026  MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,5 +417,18 @@ abstract class CommonObjectLine extends CommonObject
 		}
 
 		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id; // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+	}
+
+	/**
+	 *	Return true if the unit price was originally entered including tax (TTC mode).
+	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
+	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
+	 *	which empty() treats as non-empty.
+	 *
+	 *	@return	bool
+	 */
+	public function wasEnteredIncludingTax()
+	{
+		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
 	}
 }

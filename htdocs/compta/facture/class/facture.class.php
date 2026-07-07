@@ -25,6 +25,7 @@
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2525,7 +2526,7 @@ class Facture extends CommonInvoice
 		}
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
-		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.ref_ext,';
+		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice, l.subprice_ttc, l.ref_ext,';
 		$sql .= ' l.situation_percent, l.fk_prev_id,';
 		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse,';
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
@@ -2590,6 +2591,7 @@ class Facture extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
+				$line->subprice_ttc     = $objp->subprice_ttc;
 				$line->ref_ext          = $objp->ref_ext; // line external ref
 
 				$line->vat_src_code = $objp->vat_src_code;
@@ -4433,6 +4435,8 @@ class Facture extends CommonInvoice
 
 			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
 			$this->line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Persist the original entry mode of the line so updateline() can preserve it later.
+			$this->line->subprice_ttc = ($price_base_type === 'TTC') ? ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 
 			$this->line->vat_src_code = $vat_src_code;
 			$this->line->tva_tx = $txtva;
@@ -4775,6 +4779,8 @@ class Facture extends CommonInvoice
 
 			$this->line->remise_percent		= $remise_percent;
 			$this->line->subprice			= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			// Persist the original entry mode of the line so a no-op edit can preserve it later.
+			$this->line->subprice_ttc		= ($price_base_type === 'TTC') ? ($apply_abs_price_on_credit_note ? -abs((float) $pu_ttc) : (float) $pu_ttc) : 0;
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
 			$this->line->total_ht			= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative

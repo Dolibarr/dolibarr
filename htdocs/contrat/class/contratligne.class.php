@@ -13,6 +13,7 @@
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -493,6 +494,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.remise_percent,";
 		$sql .= " t.fk_remise_except,";
 		$sql .= " t.subprice,";
+		$sql .= " t.subprice_ttc,";
 		$sql .= " t.total_ht,";
 		$sql .= " t.total_tva,";
 		$sql .= " t.total_localtax1,";
@@ -551,6 +553,7 @@ class ContratLigne extends CommonObjectLine
 				$this->remise_percent = $obj->remise_percent;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
+				$this->subprice_ttc = $obj->subprice_ttc;
 				$this->total_ht = $obj->total_ht;
 				$this->total_tva = $obj->total_tva;
 				$this->total_localtax1 = $obj->total_localtax1;
@@ -644,7 +647,11 @@ class ContratLigne extends CommonObjectLine
 		// and this is done at the line level, which has its own VAT rate
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
-		$tabprice = calcul_price_total($this->qty, $this->subprice, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
+		// Compute the total from the value the user actually entered, to avoid a rounding drift.
+		$line_price_base_type = $this->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+		$pu_for_calc = $this->wasEnteredIncludingTax() ? (float) $this->subprice_ttc : (float) $this->subprice;
+
+		$tabprice = calcul_price_total($this->qty, $pu_for_calc, $this->remise_percent, (float) $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, $line_price_base_type, 0, 1, $mysoc, $localtaxes_type);
 		$this->total_ht  = (float) $tabprice[0];
 		$this->total_tva = (float) $tabprice[1];
 		$this->total_ttc = (float) $tabprice[2];
@@ -693,6 +700,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " remise_percent = ".price2num($this->remise_percent).",";
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
+		$sql .= " subprice_ttc = ".($this->subprice_ttc != '' ? $this->subprice_ttc : "0").",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_tva = ".((float) $this->total_tva).",";
 		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
@@ -822,7 +830,7 @@ class ContratLigne extends CommonObjectLine
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
 		$sql .= " (fk_contrat, label, description, fk_product, qty, vat_src_code, tva_tx,";
-		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
+		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, subprice_ttc,";
 		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 		$sql .= " info_bits,";
 		$sql .= " rang,";
@@ -842,7 +850,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",";
+		$sql .= " ".price2num($this->remise_percent).",".price2num($this->subprice).",".price2num($this->subprice_ttc).",";
 		$sql .= " ".price2num($this->total_ht).",".price2num($this->total_tva).",".price2num($this->total_localtax1).",".price2num($this->total_localtax2).",".price2num($this->total_ttc).",";
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".(empty($this->rang) ? '0' : (int) $this->rang).",";

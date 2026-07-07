@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +207,7 @@ class OrderLine extends CommonOrderLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_parent_line, cd.fk_product, cd.product_type, cd.label as custom_label, cd.description, cd.price, cd.qty, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx,';
-		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.ref_ext,';
+		$sql .= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice, cd.subprice_ttc, cd.ref_ext,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht, cd.rang, cd.special_code,';
 		$sql .= ' cd.fk_unit,';
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
@@ -236,6 +237,7 @@ class OrderLine extends CommonOrderLine
 			$this->qty              = $objp->qty;
 			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
+			$this->subprice_ttc     = $objp->subprice_ttc;
 			$this->ref_ext          = $objp->ref_ext;
 			$this->vat_src_code     = $objp->vat_src_code;
 			$this->tva_tx           = $objp->tva_tx;
@@ -463,7 +465,7 @@ class OrderLine extends CommonOrderLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
+		$sql .= ' fk_product, product_type, remise_percent, subprice, subprice_ttc, price, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
 		$sql .= ' fk_unit,';
@@ -485,6 +487,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
+		$sql .= " ".price2num($this->subprice_ttc).",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
@@ -643,6 +646,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
 		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , subprice_ttc=".price2num($this->subprice_ttc);
 		$sql .= " , remise_percent=".price2num($this->remise_percent);
 		$sql .= " , price=".price2num($this->price); // TODO A virer
 		$sql .= " , remise=".price2num($this->remise); // TODO A virer
