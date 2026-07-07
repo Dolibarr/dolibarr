@@ -343,9 +343,13 @@ class Tickets extends DolibarrApi
 	/**
 	 * Create ticket object
 	 *
+	 * Optional key "contacts": an array of objects to link on creation, each:
+	 *   { "id": int (or "contactid"), "type": string (contact type code), "source": "external"|"internal" (default external) }
+	 * The whole creation is atomic: if any contact is invalid, the ticket is not created (rollback + error).
+	 *
 	 * @param array $request_data   Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return int  ID of ticket
 	 */
 	public function post($request_data = null)
@@ -371,6 +375,13 @@ class Tickets extends DolibarrApi
 			}
 		}
 
+		// Extract contacts to link after ticket creation (not a Ticket property to assign in the loop below)
+		$contacts = array();
+		if (isset($request_data['contacts']) && is_array($request_data['contacts'])) {
+			$contacts = $request_data['contacts'];
+		}
+		unset($request_data['contacts']);
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -387,9 +398,31 @@ class Tickets extends DolibarrApi
 			$this->ticket->track_id = generate_random_id(16);
 		}
 
+		// Pre-validate contacts (format + type) BEFORE creating the ticket, so a malformed payload
+		// does not create a ticket (and fire its creation triggers) only to roll it back afterwards.
+		$contactsToLink = array();
+		if (is_array($contacts) && !empty($contacts)) {
+			foreach ($contacts as $contact) {
+				$contactsToLink[] = $this->_normalizeAndValidateContact($contact);
+			}
+		}
+
+		$this->db->begin();
+
 		if ($this->ticket->create(DolibarrApiAccess::$user) < 0) {
+			$this->db->rollback();
 			throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
 		}
+
+		if (!empty($contactsToLink)) {
+			foreach ($contactsToLink as $contact) {
+				$result = $this->ticket->add_contact($contact['id'], $contact['type'], $contact['source']);
+				// Rolls back the transaction and throws a RestException on any failure
+				$this->_addContactResultOrThrow($result, $contact['id'], $contact['type'], $contact['source']);
+			}
+		}
+
+		$this->db->commit();
 
 		return $this->ticket->id;
 	}
@@ -668,6 +701,109 @@ class Tickets extends DolibarrApi
 			$ticket[$field] = $data[$field];
 		}
 		return $ticket;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Check that an active contact type (code + source) exists for the ticket element.
+	 *
+	 * @param	string	$type	Contact type code (c_type_contact.code)
+	 * @param	string	$source	'internal' or 'external'
+	 * @return	bool			True if the active type exists for element 'ticket'
+	 */
+	private function _ticketContactTypeExists(string $type, string $source): bool
+	{
+		// phpcs:enable
+		$sql = "SELECT tc.rowid";
+		$sql .= " FROM ".$this->db->prefix()."c_type_contact as tc";
+		$sql .= " WHERE tc.element = 'ticket'";
+		$sql .= " AND tc.source = '".$this->db->escape($source)."'";
+		$sql .= " AND tc.code = '".$this->db->escape($type)."'";
+		$sql .= " AND tc.active = 1";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		$exists = ($this->db->num_rows($resql) > 0);
+		$this->db->free($resql);
+
+		return $exists;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Validate and normalize one contact entry from the API payload.
+	 * Called before any DB write, so it throws without rolling back.
+	 *
+	 * @param	mixed	$contact	Associative array {id|contactid:int, type:string, source?:string}
+	 * @phan-param	array{id?:int,contactid?:int,type?:string,source?:string}|mixed	$contact
+	 * @return	array				Normalized contact array{id:int,type:string,source:string}
+	 * @phan-return	array{id:int,type:string,source:string}
+	 * @throws	RestException
+	 */
+	private function _normalizeAndValidateContact($contact): array
+	{
+		// phpcs:enable
+		if (!is_array($contact)) {
+			throw new RestException(400, 'Each element of "contacts" must be an object with id, type and optional source');
+		}
+
+		$contactid = 0;
+		if (isset($contact['id'])) {
+			$contactid = (int) $contact['id'];
+		} elseif (isset($contact['contactid'])) {
+			$contactid = (int) $contact['contactid'];
+		}
+		$type = isset($contact['type']) ? trim((string) $contact['type']) : '';
+		$source = isset($contact['source']) ? (string) $contact['source'] : 'external';
+
+		if ($contactid <= 0) {
+			throw new RestException(400, 'Contact "id" is required and must be a positive integer');
+		}
+		if ($type === '') {
+			throw new RestException(400, 'Contact "type" (contact type code) is required');
+		}
+		if ($source !== 'internal' && $source !== 'external') {
+			throw new RestException(400, 'Contact "source" must be "internal" or "external"');
+		}
+		// Validate the type upfront so add_contact()'s ambiguous "0" return can only mean "already linked"
+		if (!$this->_ticketContactTypeExists($type, $source)) {
+			throw new RestException(400, 'Contact type "'.$type.'" not found or inactive for source "'.$source.'"');
+		}
+
+		return array('id' => $contactid, 'type' => $type, 'source' => $source);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Map the return code of Ticket::add_contact() to an API response.
+	 * Assumes a DB transaction is open: rolls it back and throws on any failure.
+	 *
+	 * @param	int		$result		Return code of add_contact()
+	 * @param	int		$contactid	Contact id that was linked
+	 * @param	string	$type		Contact type code
+	 * @param	string	$source		'internal' or 'external'
+	 * @return	void
+	 * @throws	RestException
+	 */
+	private function _addContactResultOrThrow(int $result, int $contactid, string $type, string $source): void
+	{
+		// phpcs:enable
+		if ($result > 0) {
+			return;
+		}
+
+		$this->db->rollback();
+		if ($result == 0) {
+			// Type was validated upfront, so the only remaining 0 case is "already linked"
+			throw new RestException(409, 'Contact id='.$contactid.' is already linked to the ticket as source='.$source.' type='.$type);
+		} elseif ($result == -1) {
+			throw new RestException(404, 'Contact id='.$contactid.' not found');
+		} elseif ($result == -3 || $result == -4) {
+			throw new RestException(403, 'Not allowed to link contact id='.$contactid);
+		}
+		throw new RestException(500, 'Error linking contact id='.$contactid, array_merge(array($this->ticket->error), $this->ticket->errors));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
