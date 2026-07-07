@@ -115,6 +115,13 @@ if ($action == 'update' && !$cancel) {
 		$action = 'edit';
 	}
 
+	if ($valmainmaxdecimalscurrencyrate < 0) {
+		$valmainmaxdecimalscurrencyrate = 0;
+	}
+	if ($valmainmaxdecimalscurrencyrate > $MAXDEC) {
+		$valmainmaxdecimalscurrencyrate = $MAXDEC;
+	}
+
 	if (!$error) {
 		dolibarr_set_const($db, $mainmaxdecimalsunit, $valmainmaxdecimalsunit, 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, $mainmaxdecimalstot, $valmainmaxdecimalstot, 'chaine', 0, '', $conf->entity);

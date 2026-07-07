@@ -7936,7 +7936,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif ($rounding == 'CT') {
 			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
 		} elseif ($rounding == 'CR') {
-			$currencycode = (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') ? $conf->currency : '';
+			$currencycode = (string) getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY') ? getDolCurrency() : '';
 			$rounding_const = 'MAIN_MAX_DECIMALS_CURRENCY_RATE' . ($currencycode ? '_' . $currencycode : '');
 			$nbofdectoround = getDolGlobalInt($rounding_const, getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_RATE', 8));
 		} elseif (is_numeric($rounding)) {
