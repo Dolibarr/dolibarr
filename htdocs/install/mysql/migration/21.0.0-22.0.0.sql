@@ -332,4 +332,6 @@ ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);
 
 UPDATE llx_c_socialnetworks SET icon = 'fa-mastodon' WHERE icon = '' AND code = 'mastodon';
 
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
+
 -- end of migration

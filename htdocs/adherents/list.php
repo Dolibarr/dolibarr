@@ -1494,8 +1494,9 @@ while ($i < $imaxinloop) {
 		}
 		// EMail
 		if (!empty($arrayfields['d.email']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->email).'">';
-			print dol_print_email($obj->email, 0, 0, 1, 64, 1, 1);
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">';
+			$showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
+			print dol_print_email($obj->email, 0, 0, 1, 64, $showinvalidemail, 1);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

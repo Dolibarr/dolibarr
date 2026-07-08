@@ -1356,7 +1356,9 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 			<button type="button" class="calcbutton" onclick="Edit(0);">0</button>
 			<button type="button" class="calcbutton" onclick="Edit('.')">.</button>
 			<button type="button" class="calcbutton poscolorblue" onclick="Edit('c')">C</button>
+			<?php if ($user->hasRight('takepos', 'editlines')) { ?>
 			<button type="button" class="calcbutton2 poscolordelete" id="delete" onclick="deleteline()"><span class="fa fa-trash"></span></button>
+			<?php } ?>
 		</div>
 
 <?php

@@ -374,6 +374,7 @@ if (empty($reshook)) {
 
 						$fk_parent_line = 0;
 						$num = count($lines);
+						$rang = 0;
 
 						for ($i = 0; $i < $num; $i++) {
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
@@ -443,7 +444,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$array_options,
 									(int) $lines[$i]->fk_unit,
-									$num + 1
+									$rang++
 								);
 
 								if ($result < 0) {
