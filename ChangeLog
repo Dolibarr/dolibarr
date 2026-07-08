@@ -243,6 +243,7 @@ FIX: missing "blob:" in the assistant for CSP editor.
 FIX: option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE
 FIX: product price.php: preserve default_vat_code and tva_npr when auto-creating initial product_price row (#38034)
 FIX: propagate fk_warehouse from BOM/MO to production lines in createProduction() and processBOM() (#38147)
+FIX: #39068 Product search combo: ignore supplier price warning text when filtering
 FIX: selected default value ko on select_produits_fournisseurs_list()
 FIX: Set default warehouse on order create. (#37815)
 FIX: Site root missing in $backtopage. (#37804)
