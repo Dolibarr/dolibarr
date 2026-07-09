@@ -45,7 +45,7 @@ $langs->loadLangs(array("recruitment", "boxes"));
 $action = GETPOST('action', 'aZ09');
 
 $NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 $now = dol_now();
 
 $socid = GETPOSTINT('socid');

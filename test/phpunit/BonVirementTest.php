@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025       Thomas Negre            <tnegre@open-dsi.fr>
+/* Copyright (C) 2025       Thomas Negre            <tnegre@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +17,17 @@
  */
 
 /**
- *      \file       test/phpunit/BonPrelevementTest.php
+ *      \file       test/phpunit/BonVirementTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/prelevement/class/bonprelevement.class.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/companybankaccount.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
@@ -55,18 +50,19 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BonPrelevementTest extends CommonClassTest
+class BonVirementTest extends CommonClassTest
 {
 	// ---------------------------------------------------------------------------
 	// Test IBANs valid (mod97 check compliant).
-	// Used to identify which bank account (RIB) was selected in the SEPA file.
+	// Distinct from BonPrelevementTest IBANs to avoid collisions when both
+	// suites run against the same database instance.
 	// ---------------------------------------------------------------------------
-	const IBAN_A_DEFAULT  = 'FR7630001007941234567890185'; // default bank account of COMPANY_A
-	const IBAN_A_SPECIFIC = 'FR7630001007941234567890282'; // specific bank account of COMPANY_A
-	const IBAN_B_DEFAULT  = 'FR7630001007941234567890379'; // default bank account of COMPANY_B
-	const IBAN_B_SPECIFIC = 'FR7630001007941234567890476'; // specific bank account of COMPANY_B
+	const IBAN_A_DEFAULT  = 'FR7630001007941234567890670'; // default bank account of COMPANY_A
+	const IBAN_A_SPECIFIC = 'FR7630001007941234567890767'; // specific bank account of COMPANY_A
+	const IBAN_B_DEFAULT  = 'FR7630001007941234567890864'; // default bank account of COMPANY_B
+	const IBAN_B_SPECIFIC = 'FR7630001007941234567890961'; // specific bank account of COMPANY_B
 	const BIC             = 'BNPAFRPPXXX';
-	const XSD_PAIN_008    = __DIR__.'/../assets/xsd/pain.008.001.02.xsd';
+	const XSD_PAIN_001    = __DIR__.'/../assets/xsd/pain.001.001.03.xsd';
 
 	// ---------------------------------------------------------------------------
 	// Shared fixtures created once in setUpBeforeClass(),
@@ -86,16 +82,12 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $ribBSpecificId = 0;
 	/** @var int Row ID of the issuer bank account (llx_bank_account) */
 	protected static $fkBankAccount = 0;
-	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
-	protected static $setUpError = '';
-	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
-	protected static $savmysoc;
 
 	/**
 	 * setUpBeforeClass
 	 *
 	 * Creates shared fixtures for all tests in this class:
-	 *   - COMPANY_A and COMPANY_B (French customer third parties)
+	 *   - COMPANY_A and COMPANY_B (French supplier third parties)
 	 *   - Two bank accounts per company (one default, one specific)
 	 *   - One issuer bank account used for BonPrelevement generation
 	 *
@@ -106,34 +98,26 @@ class BonPrelevementTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		global $db, $user, $mysoc;
+		global $db, $user;
 		parent::setUpBeforeClass(); // Opens the parent transaction ($db->begin())
 
-		// BonPrelevement::generate() requires $mysoc to be in a SEPA country (global $mysoc,
-		// not restored between test classes by CommonClassTest). Some other test class run
-		// earlier in the same PHPUnit process (e.g. PricesTest) may have left it on a
-		// non-SEPA country, so force it here and restore it in tearDownAfterClass().
-		self::$savmysoc = clone $mysoc;
-		$mysoc->country_code = 'FR';
-		$mysoc->country_id = 1;
-
-		// Enable the prelevement module if not already active
-		if (!isModEnabled('prelevement')) {
-			activateModule('modPrelevement', 1, 1);
+		// Enable required modules if not already active
+		if (!isModEnabled('paymentbybanktransfer')) {
+			activateModule('modPaymentByBankTransfer', 1, 1);
+		}
+		if (!isModEnabled('fournisseur')) {
+			activateModule('modFournisseur', 1, 1);
 		}
 
 		// ------------------------------------------------------------------
-		// COMPANY_A: French customer third party
+		// COMPANY_A: French supplier third party
 		// ------------------------------------------------------------------
 		$socA = new Societe($db);
-		$socA->name = 'BonPrelevTest CompanyA';
-		$socA->client = 1;
+		$socA->name = 'BonVirementTest CompanyA';
+		$socA->fournisseur = 1;
 		$socA->country_id = 1; // France (rowid=1 in c_country)
-		$socA->code_client = -1; // -1 = auto-generate customer code
+		$socA->code_fournisseur = -1; // -1 = auto-generate supplier code
 		self::$socidA = (int) $socA->create($user);
-		if (self::$socidA <= 0) {
-			self::$setUpError .= 'Societe::create() (COMPANY_A) failed: '.$socA->errorsToString().' ';
-		}
 
 		// RIB_A_DEFAULT: first bank account for COMPANY_A, will be the default (default_rib=1)
 		$ribADef = new CompanyBankAccount($db);
@@ -141,12 +125,9 @@ class BonPrelevementTest extends CommonClassTest
 		$ribADef->type = 'ban';
 		$ribADef->iban = self::IBAN_A_DEFAULT;
 		$ribADef->bic = self::BIC;
-		$ribADef->rum = 'RUM-A-DEF-01';
-		$ribADef->date_rum = dol_now();
-		$ribADef->frstrecur = 'RCUR';
 		$ribADef->default_rib = 1;
-		self::$ribADefaultId = (int) $ribADef->create($user); // minimal INSERT
-		$ribADef->update($user); // persists iban, bic, rum, date_rum, default_rib
+		self::$ribADefaultId = (int) $ribADef->create($user);
+		$ribADef->update($user);
 
 		// RIB_A_SPECIFIC: second bank account for COMPANY_A, non-default
 		$ribASpec = new CompanyBankAccount($db);
@@ -154,9 +135,6 @@ class BonPrelevementTest extends CommonClassTest
 		$ribASpec->type = 'ban';
 		$ribASpec->iban = self::IBAN_A_SPECIFIC;
 		$ribASpec->bic = self::BIC;
-		$ribASpec->rum = 'RUM-A-SPEC-01';
-		$ribASpec->date_rum = dol_now();
-		$ribASpec->frstrecur = 'RCUR';
 		$ribASpec->default_rib = 0;
 		self::$ribASpecificId = (int) $ribASpec->create($user);
 		$ribASpec->update($user);
@@ -165,23 +143,17 @@ class BonPrelevementTest extends CommonClassTest
 		// COMPANY_B: same structure, distinct IBANs
 		// ------------------------------------------------------------------
 		$socB = new Societe($db);
-		$socB->name = 'BonPrelevTest CompanyB';
-		$socB->client = 1;
+		$socB->name = 'BonVirementTest CompanyB';
+		$socB->fournisseur = 1;
 		$socB->country_id = 1;
-		$socB->code_client = -1; // -1 = auto-generate customer code
+		$socB->code_fournisseur = -1;
 		self::$socidB = (int) $socB->create($user);
-		if (self::$socidB <= 0) {
-			self::$setUpError .= 'Societe::create() (COMPANY_B) failed: '.$socB->errorsToString().' ';
-		}
 
 		$ribBDef = new CompanyBankAccount($db);
 		$ribBDef->socid = self::$socidB;
 		$ribBDef->type = 'ban';
 		$ribBDef->iban = self::IBAN_B_DEFAULT;
 		$ribBDef->bic = self::BIC;
-		$ribBDef->rum = 'RUM-B-DEF-01';
-		$ribBDef->date_rum = dol_now();
-		$ribBDef->frstrecur = 'RCUR';
 		$ribBDef->default_rib = 1;
 		self::$ribBDefaultId = (int) $ribBDef->create($user);
 		$ribBDef->update($user);
@@ -191,9 +163,6 @@ class BonPrelevementTest extends CommonClassTest
 		$ribBSpec->type = 'ban';
 		$ribBSpec->iban = self::IBAN_B_SPECIFIC;
 		$ribBSpec->bic = self::BIC;
-		$ribBSpec->rum = 'RUM-B-SPEC-01';
-		$ribBSpec->date_rum = dol_now();
-		$ribBSpec->frstrecur = 'RCUR';
 		$ribBSpec->default_rib = 0;
 		self::$ribBSpecificId = (int) $ribBSpec->create($user);
 		$ribBSpec->update($user);
@@ -202,47 +171,44 @@ class BonPrelevementTest extends CommonClassTest
 		// Issuer bank account (llx_bank_account) passed as fk_bank_account
 		// ------------------------------------------------------------------
 		$account = new Account($db);
-		$account->ref = 'BONPRELTEST'; // max 12 chars (llx_bank_account.ref is varchar(12))
-		$account->label = 'BonPrelevTest Issuer';
+		$account->ref = 'BONVIR-TEST';
+		$account->label = 'BonVirementTest Issuer';
 		$account->country_id = 1; // France
 		$account->date_solde = dol_now();
-		$account->iban = 'FR7630001007941234567890573'; // valid IBAN, not used in assertions
+		$account->iban = 'FR7630001007941234567891058'; // valid IBAN, not used in assertions
 		$account->bic = self::BIC;
-		$account->ics = 'FR77ZZZ123456789'; // SEPA Creditor Identifier (ICS)
+		$account->ics = 'FR77ZZZ123456789'; // SEPA identifier (also used for bank-transfer)
+		$account->ics_transfer = 'FR77ZZZ123456789'; // used when SEPA_USE_IDS is enabled
 		$account->owner_name = 'TestCorp';
 		$account->currency_code = 'EUR';
 		self::$fkBankAccount = (int) $account->create($user);
-		if (self::$fkBankAccount <= 0) {
-			self::$setUpError .= 'Account::create() (issuer) failed: '.$account->errorsToString().' ';
-		}
 	}
 
 	/**
-	 * tearDownAfterClass
+	 * Constructor
+	 * We save global variables into local variables
 	 *
-	 * Restores the global $mysoc forced in setUpBeforeClass() before rolling back
-	 * the parent transaction, so this class does not leak state to test classes
-	 * that run after it in the same PHPUnit process.
-	 *
-	 * @return void
+	 * @param string       $name       Name
+	 * @param array<mixed> $data      Test data
+	 * @param string       $dataName   Test data name.
 	 */
-	public static function tearDownAfterClass(): void
+	public function __construct($name = null, array $data = array(), $dataName = '')
 	{
-		global $mysoc;
-		$mysoc = self::$savmysoc;
+		parent::__construct($name, $data, $dataName);
 
-		parent::tearDownAfterClass(); // Rolls back the parent transaction ($db->rollback())
+		// This const is tested in prelevement_check_config(), it SHOULD be set.
+		$this->savconf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT = self::$fkBankAccount;
 	}
 
 	/**
-	 * testBonPrelevementCreate
+	 * testBonVirementCreate
 	 *
 	 * Non-regression test: verifies that create() in simulation mode
 	 * with no pending payment requests returns 0 (no requests processed, no error).
 	 *
 	 * @return	int
 	 */
-	public function testBonPrelevementCreate()
+	public function testBonVirementCreate()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -250,37 +216,22 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		// TODO
-		// Create invoice
-
-
-		// Create payment with mode withdraw
-
-
-		// Ask withdraw request
-
-
-		// Create withdraw record and generate SEPA file
 		$localobject = new BonPrelevement($db);
-		//$localobject->date_solde=dol_now();
 		$result = $localobject->Create(0, 0, 'simu');
 
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 0);
 
-		// Test SEPA file
-
-
 		return $result;
 	}
 
 	/**
-	 * testTwoCompaniesSimpleRib
+	 * testTwoSuppliersSpecificRib
 	 *
-	 * Verifies that when two different companies each have one invoice with a
-	 * specific bank account forced in the direct debit request, the generated
+	 * Verifies that when two different suppliers each have one invoice with a
+	 * specific bank account forced in the bank transfer request, the generated
 	 * SEPA file contains the forced IBAN for each transaction (not the
-	 * company's default bank account.)
+	 * supplier's default bank account.)
 	 *
 	 * Scenario:
 	 *   INV_A (100) -> request with RIB_A_SPECIFIC -> expects IBAN_A_SPECIFIC
@@ -288,7 +239,7 @@ class BonPrelevementTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testTwoCompaniesSimpleRib()
+	public function testTwoSuppliersSpecificRib()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -296,22 +247,22 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
-		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facB = $this->createValidatedInvoice(self::$socidB, 300.0);
+		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facB = $this->createValidatedSupplierInvoice(self::$socidB, 300.0);
 
 		// Link each invoice to its specific bank account (not the default)
 		$demAId = $this->createPaymentRequest($facA, 100.0, self::$ribASpecificId);
 		$demBId = $this->createPaymentRequest($facB, 300.0, self::$ribBSpecificId);
 
-		// Generate the direct debit order with both requests
+		// Generate the bank transfer order with both requests
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demAId, $demBId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
@@ -330,11 +281,11 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
-	 * testTwoCompaniesDefaultRib
+	 * testTwoSuppliersDefaultRib
 	 *
-	 * Verifies that when two different companies each have one invoice with no
-	 * forced bank account in the direct debit request (fk_societe_rib IS NULL),
-	 * the generated SEPA file contains each company's default IBAN (default_rib=1).
+	 * Verifies that when two different suppliers each have one invoice with no
+	 * forced bank account in the bank transfer request (fk_societe_rib IS NULL),
+	 * the generated SEPA file contains each supplier's default IBAN (default_rib=1).
 	 *
 	 * Scenario:
 	 *   INV_A (100) -> request with no forced RIB -> expects IBAN_A_DEFAULT
@@ -342,7 +293,7 @@ class BonPrelevementTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testTwoCompaniesDefaultRib()
+	public function testTwoSuppliersDefaultRib()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -350,22 +301,22 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
 		// Create one invoice for COMPANY_A (100) and one for COMPANY_B (300)
-		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facB = $this->createValidatedInvoice(self::$socidB, 300.0);
+		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facB = $this->createValidatedSupplierInvoice(self::$socidB, 300.0);
 
 		// No forced bank account: fk_societe_rib will be NULL -> default RIB used
 		$demAId = $this->createPaymentRequest($facA, 100.0);
 		$demBId = $this->createPaymentRequest($facB, 300.0);
 
-		// Generate the direct debit order with both requests
+		// Generate the bank transfer order with both requests
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demAId, $demBId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		// Parse the SEPA file and extract IBAN -> amount pairs
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
@@ -389,7 +340,7 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
-	 * testTwoCompaniesDefaultRibFilteredToFirst
+	 * testTwoSuppliersDefaultRibFilteredToFirst
 	 *
 	 * Verifies that when $dids is limited to only the first payment request,
 	 * only COMPANY_A's invoice appears in the SEPA file (even though a second
@@ -401,7 +352,7 @@ class BonPrelevementTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testTwoCompaniesDefaultRibFilteredToFirst()
+	public function testTwoSuppliersDefaultRibFilteredToFirst()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -409,12 +360,12 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
-		// Create one invoice for each company
-		$facA = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facB = $this->createValidatedInvoice(self::$socidB, 300.0);
+		// Create one invoice for each supplier
+		$facA = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facB = $this->createValidatedSupplierInvoice(self::$socidB, 300.0);
 
 		// Create both payment requests (no forced bank account for either)
 		$demAId = $this->createPaymentRequest($facA, 100.0);
@@ -422,9 +373,9 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with ONLY the first request ($demAId)
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demAId), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -442,13 +393,13 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
-	 * testOneCompanyTwoRibs
+	 * testOneSupplierTwoRibs
 	 *
-	 * Verifies that for the same company with two invoices, the bank account
+	 * Verifies that for the same supplier with two invoices, the bank account
 	 * selection is correct based on whether a specific account is forced:
 	 *   - A request with a forced bank account uses that specific IBAN.
 	 *   - A request without a forced account (ribId=0) falls back to the
-	 *     company's default bank account (default_rib=1).
+	 *     supplier's default bank account (default_rib=1).
 	 * No IBAN from COMPANY_B should appear in the file.
 	 *
 	 * Scenario:
@@ -457,7 +408,7 @@ class BonPrelevementTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testOneCompanyTwoRibs()
+	public function testOneSupplierTwoRibs()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -465,12 +416,12 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
 		// Two invoices for COMPANY_A with different amounts
-		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facA2 = $this->createValidatedInvoice(self::$socidA, 200.0);
+		$facA1 = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facA2 = $this->createValidatedSupplierInvoice(self::$socidA, 200.0);
 
 		// First request: specific bank account forced (not the default)
 		$demA1Id = $this->createPaymentRequest($facA1, 100.0, self::$ribASpecificId);
@@ -479,9 +430,9 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with both COMPANY_A requests only
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demA1Id, $demA2Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -500,7 +451,7 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
-	 * testOneCompanyTwoRibsSpecificOnly
+	 * testOneSupplierTwoRibsSpecificOnly
 	 *
 	 * Verifies that when $dids contains only the request with the specific bank
 	 * account, only that invoice appears in the SEPA file (even though a second
@@ -512,7 +463,7 @@ class BonPrelevementTest extends CommonClassTest
 	 *
 	 * @return void
 	 */
-	public function testOneCompanyTwoRibsSpecificOnly()
+	public function testOneSupplierTwoRibsSpecificOnly()
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -520,12 +471,12 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
 		// Two invoices for COMPANY_A with different amounts
-		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facA2 = $this->createValidatedInvoice(self::$socidA, 200.0);
+		$facA1 = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facA2 = $this->createValidatedSupplierInvoice(self::$socidA, 200.0);
 
 		// First request: specific bank account forced
 		$demA1Id = $this->createPaymentRequest($facA1, 100.0, self::$ribASpecificId);
@@ -534,9 +485,9 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with ONLY the specific-RIB request ($demA1Id)
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demA1Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -556,9 +507,9 @@ class BonPrelevementTest extends CommonClassTest
 	/**
 	 * testMixedOrderFourInvoices
 	 *
-	 * Verifies that bank account assignment remains correct when direct debit
-	 * requests from two companies are interleaved (A1, B1, A2, B2).
-	 * The test guards against cross-contamination between companies or between
+	 * Verifies that bank account assignment remains correct when bank transfer
+	 * requests from two suppliers are interleaved (A1, B1, A2, B2).
+	 * The test guards against cross-contamination between suppliers or between
 	 * consecutive requests.
 	 *
 	 * Scenario (requests created in interleaved order):
@@ -577,14 +528,14 @@ class BonPrelevementTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA): '.self::$setUpError);
-		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account: '.self::$setUpError);
+		$this->assertGreaterThan(0, self::$socidA, 'setUpBeforeClass() did not create fixtures (socidA)');
+		$this->assertGreaterThan(0, self::$fkBankAccount, 'setUpBeforeClass() did not create issuer account');
 
 		// Interleaved invoices: A1, B1, A2, B2
-		$facA1 = $this->createValidatedInvoice(self::$socidA, 100.0);
-		$facB1 = $this->createValidatedInvoice(self::$socidB, 300.0);
-		$facA2 = $this->createValidatedInvoice(self::$socidA, 200.0);
-		$facB2 = $this->createValidatedInvoice(self::$socidB, 400.0);
+		$facA1 = $this->createValidatedSupplierInvoice(self::$socidA, 100.0);
+		$facB1 = $this->createValidatedSupplierInvoice(self::$socidB, 300.0);
+		$facA2 = $this->createValidatedSupplierInvoice(self::$socidA, 200.0);
+		$facB2 = $this->createValidatedSupplierInvoice(self::$socidB, 400.0);
 
 		// Interleaved requests: forced, no RIB, no RIB, forced
 		$demA1Id = $this->createPaymentRequest($facA1, 100.0, self::$ribASpecificId); // forced
@@ -594,9 +545,9 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Generate the order with all four requests in interleaved order
 		$bon = new BonPrelevement($db);
-		$result = $bon->create('', '', 'real', 'RCUR', 0, 0, 'direct-debit',
+		$result = $bon->create('', '', 'real', 'ALL', 0, 0, 'bank-transfer',
 							   array($demA1Id, $demB1Id, $demA2Id, $demB2Id), self::$fkBankAccount);
-		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'BonPrelevement::create() failed: '.$bon->error);
 
 		$ibanAmounts = $this->parseSepaIbanAmounts($bon->filename);
 
@@ -620,55 +571,57 @@ class BonPrelevementTest extends CommonClassTest
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Creates and validates a customer invoice for a given company and amount.
+	 * Creates and validates a supplier invoice for a given company and amount.
 	 * The invoice contains a single service line at 0% VAT.
 	 *
 	 * @param int   $socid  Row ID of the third party
 	 * @param float $amount Pre-tax amount of the line (= total incl. tax with 0% VAT)
-	 * @return Facture
+	 * @return FactureFournisseur
 	 */
-	private function createValidatedInvoice(int $socid, float $amount): Facture
+	private function createValidatedSupplierInvoice(int $socid, float $amount): FactureFournisseur
 	{
 		global $user, $db;
 
-		$fac = new Facture($db);
+		$fac = new FactureFournisseur($db);
 		$fac->socid = $socid;
 		$fac->date = dol_now();
 		$fac->cond_reglement_code = 'RECEP';
-		$fac->mode_reglement_code = 'PRE'; // direct debit payment mode
+		$fac->mode_reglement_code = 'VIR'; // bank transfer payment mode
+		$fac->ref_supplier = 'SUPP-TEST-'.$socid.'-'.$amount.'-'.uniqid();
 
 		$result = $fac->create($user);
-		$this->assertGreaterThan(0, $result, 'Facture::create() failed: '.$fac->errorsToString());
+		$this->assertGreaterThan(0, $result, 'FactureFournisseur::create() failed: '.$fac->error);
 
 		// Service line at 0% VAT so total_ttc = $amount
-		$fac->addline('Service test', $amount, 1, 0);
+		// Signature: addline(desc, pu, txtva, txlocaltax1, txlocaltax2, qty, ...)
+		$fac->addline('Service test', $amount, 0, 0, 0, 1);
 
 		$result = $fac->validate($user);
-		$this->assertGreaterThanOrEqual(0, $result, 'Facture::validate() failed: '.$fac->errorsToString());
+		$this->assertGreaterThanOrEqual(0, $result, 'FactureFournisseur::validate() failed: '.$fac->error);
 
 		return $fac;
 	}
 
 	/**
-	 * Creates a direct debit payment request (demande_prelevement) for a validated invoice.
+	 * Creates a bank transfer payment request (demande_prelevement) for a validated supplier invoice.
 	 * If $ribId is provided, the request stores that specific bank account in fk_societe_rib.
-	 * Otherwise (ribId=0), the company's default bank account will be used.
+	 * Otherwise (ribId=0), the supplier's default bank account will be used.
 	 *
-	 * @param Facture $fac    Validated invoice
-	 * @param float   $amount Requested amount
-	 * @param int     $ribId  Row ID of the bank account to force (0 = use default)
+	 * @param FactureFournisseur $fac    Validated supplier invoice
+	 * @param float              $amount Requested amount
+	 * @param int                $ribId  Row ID of the bank account to force (0 = use default)
 	 * @return int Row ID of the created entry in llx_prelevement_demande
 	 */
-	private function createPaymentRequest(Facture $fac, float $amount, int $ribId = 0): int
+	private function createPaymentRequest(FactureFournisseur $fac, float $amount, int $ribId = 0): int
 	{
 		global $user, $db;
 
-		// Insert a row in llx_prelevement_demande with fk_societe_rib = $ribId
-		$result = $fac->demande_prelevement($user, $amount, 'direct-debit', 'facture', 0, $ribId);
-		$this->assertEquals(1, $result, 'demande_prelevement() failed for invoice #'.$fac->id.': '.$fac->errorsToString());
+		// Insert a row in llx_prelevement_demande with fk_facture_fourn and fk_societe_rib = $ribId
+		$result = $fac->demande_prelevement($user, $amount, 'bank-transfer', 'supplier_invoice', 0, $ribId);
+		$this->assertEquals(1, $result, 'demande_prelevement() failed for invoice #'.$fac->id.': '.$fac->error);
 
 		// Retrieve the row ID of the freshly inserted request
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_facture = ".((int) $fac->id)." AND traite = 0 ORDER BY rowid DESC LIMIT 1";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_demande WHERE fk_facture_fourn = ".((int) $fac->id)." AND traite = 0 ORDER BY rowid DESC LIMIT 1";
 		$resql = $db->query($sql);
 		$obj = $db->fetch_object($resql);
 		$this->assertNotNull($obj, 'Payment request not found in DB for invoice #'.$fac->id);
@@ -677,7 +630,7 @@ class BonPrelevementTest extends CommonClassTest
 	}
 
 	/**
-	 * Asserts that a generated SEPA XML file validates against the pain.008.001.02 XSD schema.
+	 * Asserts that a generated SEPA XML file validates against the pain.001.001.03 XSD schema.
 	 *
 	 * @param string $filename Path to the SEPA XML file
 	 * @return void
@@ -685,14 +638,14 @@ class BonPrelevementTest extends CommonClassTest
 	private function assertSepaXmlValid(string $filename): void
 	{
 		$this->assertFileExists($filename, 'SEPA XML file does not exist: '.$filename);
-		$this->assertFileExists(self::XSD_PAIN_008, 'XSD schema file not found: '.self::XSD_PAIN_008);
+		$this->assertFileExists(self::XSD_PAIN_001, 'XSD schema file not found: '.self::XSD_PAIN_001);
 
 		$dom = new DOMDocument();
 		$loaded = $dom->load($filename);
 		$this->assertTrue($loaded, 'DOMDocument failed to load SEPA XML: '.$filename);
 
 		libxml_use_internal_errors(true);
-		$valid = $dom->schemaValidate(self::XSD_PAIN_008);
+		$valid = $dom->schemaValidate(self::XSD_PAIN_001);
 		$errors = libxml_get_errors();
 		libxml_clear_errors();
 		libxml_use_internal_errors(false);
@@ -701,12 +654,12 @@ class BonPrelevementTest extends CommonClassTest
 		foreach ($errors as $error) {
 			$messages[] = trim($error->message).' (line '.$error->line.')';
 		}
-		$this->assertTrue($valid, 'SEPA XML does not validate against pain.008.001.02 XSD: '.implode('; ', $messages));
+		$this->assertTrue($valid, 'SEPA XML does not validate against pain.001.001.03 XSD: '.implode('; ', $messages));
 	}
 
 	/**
-	 * Parses a generated SEPA pain.008 XML file and returns an associative
-	 * array of IBAN => amount for each DrctDbtTxInf transaction element.
+	 * Parses a generated SEPA pain.001 XML file and returns an associative
+	 * array of IBAN => amount for each CdtTrfTxInf transaction element.
 	 *
 	 * @param string $filename Path to the SEPA XML file
 	 * @return array<string,float> Array keyed by IBAN with transaction amount as value
@@ -718,17 +671,17 @@ class BonPrelevementTest extends CommonClassTest
 		$xml = simplexml_load_file($filename);
 		$this->assertNotFalse($xml, 'Failed to parse SEPA XML file: '.$filename);
 
-		// Register the SEPA direct-debit namespace (pain.008.001.02)
-		$ns = 'urn:iso:std:iso:20022:tech:xsd:pain.008.001.02';
+		// Register the SEPA credit-transfer namespace (pain.001.001.03)
+		$ns = 'urn:iso:std:iso:20022:tech:xsd:pain.001.001.03';
 		$xml->registerXPathNamespace('ns', $ns);
 
 		$result = array();
-		foreach ($xml->xpath('//ns:DrctDbtTxInf') as $txInf) {
+		foreach ($xml->xpath('//ns:CdtTrfTxInf') as $txInf) {
 			$txInf->registerXPathNamespace('ns', $ns);
-			// Debtor IBAN (the third party being debited)
-			$ibanNodes = $txInf->xpath('ns:DbtrAcct/ns:Id/ns:IBAN');
-			// Transaction amount
-			$amountNodes = $txInf->xpath('ns:InstdAmt');
+			// Creditor IBAN (the supplier being paid)
+			$ibanNodes = $txInf->xpath('ns:CdtrAcct/ns:Id/ns:IBAN');
+			// Transaction amount (nested under Amt element in pain.001)
+			$amountNodes = $txInf->xpath('ns:Amt/ns:InstdAmt');
 
 			if (!empty($ibanNodes) && !empty($amountNodes)) {
 				$iban   = (string) $ibanNodes[0];

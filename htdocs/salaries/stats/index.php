@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("salaries", "companies", "bills"));
@@ -66,6 +66,18 @@ $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
+$object = new Salary($db);
+
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write');
+$permissiontodelete = $user->hasRight('salaries', 'delete');
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -76,10 +88,32 @@ $form = new Form($db);
 
 llxHeader();
 
-$title = $langs->trans("SalariesStatistics");
+$title = $langs->trans("Salaries");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, '', 'salary');
+
+$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
+
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = -1;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+$mode = 'statistics';
+
+$newcardbutton  = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/salaries/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 

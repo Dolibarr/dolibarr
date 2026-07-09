@@ -582,7 +582,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus:not(.ia-input) {
+textarea:focus:not(.ia-input, .cke_source) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
@@ -4341,7 +4341,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
-	border-top: 2px solid #111 !important;
+	border-top: 2px solid #AAA !important;
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
@@ -6256,6 +6256,10 @@ table.dp {
 }
 .categtextblack {
 	color: #000 !important;
+}
+
+.cke_source {
+	margin: 5px !important;
 }
 
 

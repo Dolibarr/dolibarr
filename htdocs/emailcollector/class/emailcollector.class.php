@@ -1004,26 +1004,15 @@ class EmailCollector extends CommonObject
 
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
 							// Overwrite param $tmpproperty
-							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
-							if (strtolower($sourcefield) == 'header') {		// extract from HEADER
-								if (preg_match('/^options_/', $tmpproperty)) {
-									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+							$valueextracted = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : '';
+							$valuetoset = (strtolower($sourcefield) == 'body') ? $valueextracted : $this->decodeSMTPSubject($valueextracted);
+							if (preg_match('/^options_/', $tmpproperty)) {
+								$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetoset;
+							} else {
+								if (property_exists($object, $tmpproperty)) {
+									$object->$tmpproperty = $valuetoset;
 								} else {
-									if (property_exists($object, $tmpproperty)) {
-										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
-									} else {
-										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
-									}
-								}
-							} else {	// extract from BODY
-								if (preg_match('/^options_/', $tmpproperty)) {
-									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
-								} else {
-									if (property_exists($object, $tmpproperty)) {
-										$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
-									} else {
-										$tmp[$tmpproperty] = $this->decodeSMTPSubject($valueextracted);
-									}
+									$tmp[$tmpproperty] = $valuetoset;
 								}
 							}
 
@@ -3454,7 +3443,7 @@ class EmailCollector extends CommonObject
 								foreach ($dirs as $target) {
 									$prefix = $this->actions[$this->id]['actionparam'];
 									foreach ($data as $filename => $content) {
-										$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
+										$resr = $this->saveAttachment($target, $prefix . '_' . $filename, $content);
 										if ($resr == -1) {
 											$this->errors[] = 'Doc not saved';
 										}
@@ -4304,7 +4293,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * Decode a subject string according to RFC2047
 	 * Example: '=?Windows-1252?Q?RE=A0:_ABC?=' => 'RE : ABC...'
-	 * Example: '=?UTF-8?Q?A=C3=A9B?=' => 'AéB'
+	 * Example: '=?UTF-8?Q?A=C3=A9B?=' => 'A[e acute]B'
 	 * Example: '=?UTF-8?B?2KLYstmF2KfbjNi0?=' =>
 	 * Example: '=?utf-8?B?UkU6IG1vZHVsZSBkb2xpYmFyciBnZXN0aW9ubmFpcmUgZGUgZmljaGllcnMg?= =?utf-8?B?UsOpZsOpcmVuY2UgZGUgbGEgY29tbWFuZGUgVFVHRURJSklSIOKAkyBwYXNz?= =?utf-8?B?w6llIGxlIDIyLzA0LzIwMjA=?='
 	 *
@@ -4472,33 +4461,56 @@ class EmailCollector extends CommonObject
 	/**
 	 * saveAttachment
 	 *
-	 * @param  string $destdir	destination
-	 * @param  string $filename filename
-	 * @param  string $content  content
-	 * @return void
+	 * @param  string 		$destdir	destination
+	 * @param  string 		$filename 	filename
+	 * @param  string 		$content  	content
+	 * @return string|-1 				Return the path to the saved file, or -1 if error
 	 */
 	private function saveAttachment($destdir, $filename, $content)
 	{
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$tmparraysize = getDefaultImageSizes();
-		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
-		$maxheightsmall = $tmparraysize['maxheightsmall'];
-		$maxwidthmini = $tmparraysize['maxwidthmini'];
-		$maxheightmini = $tmparraysize['maxheightmini'];
-		$quality = $tmparraysize['quality'];
+		$destdir = dol_sanitizePathName($destdir);
+		$filename = dol_sanitizeFileName($filename);
 
-		file_put_contents($destdir.'/'.$filename, $content);
-		dolChmod($destdir.'/'.$filename);
+		if (!file_exists($destdir)) {
+			if (dol_mkdir($destdir) < 0) {
+				return -1;
+			}
+		}
+
+		$tmp = explode('.', $filename);
+		$ext = array_pop($tmp);
+		$filename = implode('.', $tmp);
+
+		$i = 1;
+		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '.' . $ext;
+
+		while (file_exists($filepath)) {
+			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ').' . $ext;
+			$i++;
+		}
+
+		file_put_contents($filepath, $content);
+		dolChmod($filepath);
 
 		if (image_format_supported($filename) == 1) {
+			$tmparraysize = getDefaultImageSizes();
+			$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+			$maxheightsmall = $tmparraysize['maxheightsmall'];
+			$maxwidthmini = $tmparraysize['maxwidthmini'];
+			$maxheightmini = $tmparraysize['maxheightmini'];
+			$quality = $tmparraysize['quality'];
+
 			// Create thumbs
-			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+			vignette($filepath, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 			// Create mini thumbs for image (Ratio is near 16/9)
-			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+			vignette($filepath, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 		}
 
 		addFileIntoDatabaseIndex($destdir, $filename);
+
+		return $filepath;
 	}
 
 	/**
