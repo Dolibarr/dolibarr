@@ -308,6 +308,59 @@ class VatPayments extends DolibarrApi
 	}
 
 	/**
+	 * List all VAT payments.
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 * @return  array			List of PaymentVAT objects
+	 * @phan-return PaymentVAT[]
+	 * @phpstan-return PaymentVAT[]
+	 *
+	 * @url     GET /payments
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 503 Error when retrieving list
+	 */
+	public function getAllPayments($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('tax', 'charges', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$list = array();
+
+		$sql = "SELECT t.rowid FROM ".MAIN_DB_PREFIX."payment_vat AS t, ".MAIN_DB_PREFIX."tva AS s";
+		$sql .= " WHERE t.fk_tva = s.rowid AND s.entity IN (".getEntity('tva').")";
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if (!$result) {
+			throw new RestException(503, 'Error when retrieving list of VAT payments: '.$this->db->lasterror());
+		}
+
+		$num = $this->db->num_rows($result);
+		$min = min($num, ($limit <= 0 ? $num : $limit));
+		for ($i = 0; $i < $min; $i++) {
+			$obj = $this->db->fetch_object($result);
+			$payment = new PaymentVAT($this->db);
+			if ($payment->fetch($obj->rowid) > 0) {
+				$list[] = $this->_cleanObjectDatas($payment);
+			}
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Get the list of payments of a given VAT declaration.
 	 *
 	 * @param	int		$id		ID of the VAT declaration
@@ -420,48 +473,6 @@ class VatPayments extends DolibarrApi
 		}
 
 		return $payment->id;
-	}
-
-	/**
-	 * Update a VAT payment.
-	 *
-	 * @param	int		$pid			ID of the payment
-	 * @param	array	$request_data	Request data
-	 * @phan-param ?array<string,string> $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  Object					Updated payment with cleaned properties
-	 *
-	 * @url     PUT payments/{pid}
-	 *
-	 * @throws RestException 403 Access denied
-	 * @throws RestException 404 Payment not found
-	 * @throws RestException 500 Error when updating the payment
-	 */
-	public function updatePayment($pid, $request_data = null)
-	{
-		if (!DolibarrApiAccess::$user->hasRight('tax', 'charges', 'creer')) {
-			throw new RestException(403);
-		}
-
-		$payment = new PaymentVAT($this->db);
-		$result = $payment->fetch($pid);
-		if ($result <= 0 || empty($payment->id)) {
-			throw new RestException(404, 'VAT payment not found');
-		}
-
-		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
-			$payment->$field = $this->_checkValForAPI($field, $value, $payment);
-		}
-
-		if ($payment->update(DolibarrApiAccess::$user) > 0) {
-			$payment->fetch($pid);
-			return $this->_cleanObjectDatas($payment);
-		} else {
-			throw new RestException(500, 'Error when updating VAT payment: '.$payment->error);
-		}
 	}
 
 	/**

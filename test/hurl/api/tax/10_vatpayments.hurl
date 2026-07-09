@@ -41,6 +41,10 @@ HTTP 404
 GET http://{{hostnport}}/api/index.php/vatpayments/0/payments
 HTTP 200
 
+# GET all payments (collection). Must not be mistaken for /{id} with id=payments.
+GET http://{{hostnport}}/api/index.php/vatpayments/payments
+HTTP 200
+
 # GET a single payment with ID 0 - which should not exist
 GET http://{{hostnport}}/api/index.php/vatpayments/payments/0
 HTTP 404
@@ -117,10 +121,6 @@ jsonpath "$.error.message" contains "Token not valid (may be a typo or a wrong e
 # vat_payment_id: jsonpath "$"
 #
 # GET http://{{hostnport}}/api/index.php/vatpayments/{{vat_id}}/payments
-# HTTP 200
-#
-# PUT http://{{hostnport}}/api/index.php/vatpayments/payments/{{vat_payment_id}}
-# { "num_payment": "VAT-CHQ1-upd" }
 # HTTP 200
 #
 # DELETE http://{{hostnport}}/api/index.php/vatpayments/payments/{{vat_payment_id}}
