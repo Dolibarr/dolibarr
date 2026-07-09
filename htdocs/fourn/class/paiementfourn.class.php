@@ -202,16 +202,31 @@ class PaiementFourn extends Paiement
 				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
-			if (empty($currencyofpayment)) {
-				$currencyofpayment = $this->multicurrency_code[$key];
+			// Fallback: read invoice multicurrency code/tx if caller did not fill the arrays
+			$invoice_multicurrency_code = $this->multicurrency_code[$key] ?? '';
+			$invoice_multicurrency_tx = $this->multicurrency_tx[$key] ?? '';
+			if (empty($invoice_multicurrency_code) || empty($invoice_multicurrency_tx)) {
+				$tmparray = MultiCurrency::getInvoiceRate($key, 'facture_fourn');
+				if ($tmparray !== false) {
+					if (empty($invoice_multicurrency_code)) {
+						$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
+					}
+					if (empty($invoice_multicurrency_tx)) {
+						$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
+					}
+				}
 			}
-			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $invoice_multicurrency_code;
+			}
+			if ($currencyofpayment != $invoice_multicurrency_code) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
 			}
 			if (empty($currencytxofpayment)) {
-				$currencytxofpayment = $this->multicurrency_tx[$key];
+				$currencytxofpayment = $invoice_multicurrency_tx;
 			}
 
 			$totalamount_converted += $value_converted;
