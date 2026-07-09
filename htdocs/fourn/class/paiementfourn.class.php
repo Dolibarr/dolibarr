@@ -9,6 +9,7 @@
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
+ * Copyright (C) 2026		Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,6 +301,8 @@ class PaiementFourn extends Paiement
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
+											$discount->multicurrency_code = $invoice->multicurrency_code;
+											$discount->multicurrency_tx = $invoice->multicurrency_tx;
 
 											// Loop on each vat rate
 											$i = 0;
@@ -319,9 +322,14 @@ class PaiementFourn extends Paiement
 												$discount->amount_ht = abs($amount_ht[$tva_tx]);
 												$discount->amount_tva = abs($amount_tva[$tva_tx]);
 												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												// multi-currency
+												$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
+												$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
+												$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												// keep compatibility
+												$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+												$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+												$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 												$discount->tva_tx = abs($tva_tx);
 
 												$result = $discount->create($user);
