@@ -130,6 +130,166 @@ require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
+/**
+ * Sanitize a relative document path received from request.
+ *
+ * @param	string	$original_file	Relative document path
+ * @return	string
+ */
+function dol_document_sanitize_original_file($original_file)
+{
+	// Preserve the historical document.php path normalization before running the native secure-access resolver.
+	$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
+	$original_file = str_replace('../', '/', $original_file);
+	$original_file = str_replace('..\\', '/', $original_file);
+
+	return $original_file;
+}
+
+/**
+ * Print a translated plain text document error and stop.
+ *
+ * @param	string	$message	Message to print
+ * @param	int		$status		HTTP status code
+ * @return	never
+ */
+function dol_document_print_plain_error($message, $status = 400)
+{
+	top_httphead('text/plain');
+	http_response_code($status);
+	print $message;
+	exit;
+}
+
+/**
+ * Send a Content-Disposition header with an RFC 5987 UTF-8 filename.
+ *
+ * @param	string	$disposition	Disposition, usually attachment or inline
+ * @param	string	$filename		Filename
+ * @return	void
+ */
+function dol_document_send_content_disposition($disposition, $filename)
+{
+	$filenamefallback = dol_sanitizeFileName($filename);
+	if ($filenamefallback === '') {
+		$filenamefallback = 'document';
+	}
+
+	// Send both a sanitized fallback filename and the UTF-8 filename so non-ASCII names survive modern browsers.
+	header('Content-Disposition: '.$disposition.'; filename="'.$filenamefallback.'"; filename*=UTF-8\'\''.rawurlencode($filename));
+}
+
+/**
+ * Resolve and validate access to a document using Dolibarr native security rules.
+ *
+ * @param	string	$modulepart		Module part
+ * @param	string	$original_file	Relative document path
+ * @param	int		$entity			Entity id
+ * @param	User	$fuser			User requesting the document
+ * @param	string	$hashp			Public hash, if any
+ * @return	array{original_file:string,accessallowed:int,sqlprotectagainstexternals:string,fullpath_original_file:string,fullpath_original_file_osencoded:string,filename:string,type:string}
+ */
+function dol_document_resolve_secure_file($modulepart, $original_file, $entity, $fuser, $hashp = '')
+{
+	global $db, $langs;
+
+	// The single-file and ZIP download paths must share the same sanitizing, entity and permission checks.
+	$original_file = dol_document_sanitize_original_file($original_file);
+
+	if (empty($modulepart)) {
+		accessforbidden('Bad value for parameter modulepart');
+	}
+
+	// Check security and set return info with full path of file.
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $fuser, '', 'read');
+	$accessallowed              = $check_access['accessallowed'];
+	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+	$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
+
+	if (!empty($hashp)) {
+		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
+		$sqlprotectagainstexternals = '';
+	} else {
+		// Keep the existing external-user SQL protection after the native resolver returns its extra check.
+		if ($fuser->socid > 0) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $db->fetch_object($resql);
+						if ($fuser->socid != $obj->fk_soc) {
+							$accessallowed = 0;
+							break;
+						}
+						$i++;
+					}
+				}
+			}
+		} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+			if ($sqlprotectagainstexternals) {
+				$resql = $db->query($sqlprotectagainstexternals);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					if ($num > 0) {
+						$accessallowed = 1;
+					}
+				}
+			}
+		}
+	}
+
+	// Security: Limit access if permissions are wrong.
+	if (!$accessallowed) {
+		accessforbidden();
+	}
+
+	// Security: We refuse directory transversal changes and shell-sensitive characters in resolved file names.
+	if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
+		dol_syslog("Refused to deliver file ".$fullpath_original_file);
+		print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
+		exit;
+	}
+
+	clearstatcache();
+
+	$filename = basename($fullpath_original_file);
+	$filename = preg_replace('/\.noexe$/i', '', $filename);
+	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
+
+	// This test if file exists should be useless. We keep it to find bug more easily.
+	if (!file_exists($fullpath_original_file_osencoded)) {
+		dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
+		print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
+		exit;
+	}
+
+	// Define mime type after access validation so rejected files do not leak filesystem details.
+	$type = 'application/octet-stream'; // By default
+	if (GETPOST('type', 'alpha')) {
+		$type = GETPOST('type', 'alpha');
+	} else {
+		$type = dol_mimetype($original_file);
+	}
+	// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
+	// We do not force if file is a javascript to be able to get js from website module with <script src="
+	// Note: Force whatever is $modulepart seems ok.
+	if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
+		$type = 'application/octet-stream';
+	}
+
+	return array(
+		'original_file' => $original_file,
+		'accessallowed' => $accessallowed,
+		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
+		'fullpath_original_file' => $fullpath_original_file,
+		'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded,
+		'filename' => $filename,
+		'type' => $type,
+	);
+}
+
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
@@ -142,7 +302,7 @@ $entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
 if (empty($modulepart) && empty($hashp)) {
 	httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
 }
-if (empty($original_file) && empty($hashp)) {
+if (empty($original_file) && empty($hashp) && $action != 'downloadselected') {
 	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
 if ($modulepart == 'fckeditor') {
@@ -166,7 +326,122 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
  * Actions
  */
 
-// None
+if ($action == 'downloadselected') {
+	// The batch action is POST-only so the CSRF token generated by the detached form is enforced by main.inc.php.
+	if (empty($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] != 'POST') {
+		httponly_accessforbidden('Bad request method for batch download', 405);
+	}
+
+	// The browser posts compact encoded selections, but every entry is treated as untrusted input below.
+	$selecteddocuments = GETPOST('selecteddocuments', 'array:restricthtml');
+	if (!is_array($selecteddocuments) || empty($selecteddocuments)) {
+		dol_document_print_plain_error($langs->trans('NoDocumentSelected'), 400);
+	}
+
+	// ZipArchive is a native PHP extension, not a Dolibarr dependency, so fail explicitly when the host lacks it.
+	if (!class_exists('ZipArchive')) {
+		dol_document_print_plain_error($langs->trans('ZipArchiveUnavailable'), 500);
+	}
+
+	// Store the archive in Dolibarr's private documents area and remove it immediately after streaming.
+	$ziptmpdir = DOL_DATA_ROOT.'/admin/temp';
+	if (!dol_is_dir($ziptmpdir)) {
+		dol_mkdir($ziptmpdir);
+	}
+	$ziptmpfile = tempnam($ziptmpdir, 'documentzip_');
+	if ($ziptmpfile === false) {
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	$zip = new ZipArchive();
+	$zipopenresult = $zip->open($ziptmpfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+	if ($zipopenresult !== true) {
+		dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	$zipnames = array();
+	$nbfilesinzippedarchive = 0;
+	foreach ($selecteddocuments as $selecteddocument) {
+		// Ignore malformed entries instead of trusting client-side checkboxes to be well formed.
+		if (!is_string($selecteddocument) || $selecteddocument === '') {
+			continue;
+		}
+
+		$decodedselection = base64_decode($selecteddocument, true);
+		if ($decodedselection === false) {
+			continue;
+		}
+		$documentselection = json_decode($decodedselection, true);
+		if (!is_array($documentselection)) {
+			continue;
+		}
+
+		$selectedmodulepart = empty($documentselection['modulepart']) ? $modulepart : (string) $documentselection['modulepart'];
+		$selectedfile = empty($documentselection['file']) ? '' : (string) $documentselection['file'];
+		$selectedentity = isset($documentselection['entity']) ? (int) $documentselection['entity'] : (int) $entity;
+
+		if ($selectedfile === '' || !preg_match('/^[a-zA-Z0-9_\-]+$/', $selectedmodulepart)) {
+			continue;
+		}
+
+		// Re-run the same secure document resolver used by individual downloads for each selected file.
+		$resolvedfile = dol_document_resolve_secure_file($selectedmodulepart, $selectedfile, $selectedentity, $user);
+		if (!is_file($resolvedfile['fullpath_original_file_osencoded'])) {
+			continue;
+		}
+
+		// ZIP entries are flat and unique, so duplicate basenames receive a numeric suffix.
+		$zipname = $resolvedfile['filename'];
+		$pathinfo = pathinfo($zipname);
+		$zipfilename = isset($pathinfo['filename']) ? $pathinfo['filename'] : $zipname;
+		$zipextension = empty($pathinfo['extension']) ? '' : '.'.$pathinfo['extension'];
+		$zipnamecandidate = $zipname;
+		$counter = 2;
+		while (isset($zipnames[$zipnamecandidate])) {
+			$zipnamecandidate = $zipfilename.'-'.$counter.$zipextension;
+			$counter++;
+		}
+		$zipnames[$zipnamecandidate] = 1;
+
+		if ($zip->addFile($resolvedfile['fullpath_original_file_osencoded'], $zipnamecandidate)) {
+			$nbfilesinzippedarchive++;
+		}
+	}
+
+	if ($nbfilesinzippedarchive == 0) {
+		// A selection may be syntactically present but resolve to zero authorized files after server-side checks.
+		$zip->close();
+		dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+		dol_document_print_plain_error($langs->trans('NoDocumentSelected'), 400);
+	}
+
+	if (!$zip->close()) {
+		dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+		dol_document_print_plain_error($langs->trans('UnableToCreateZipArchive'), 500);
+	}
+
+	// The archive is generated for immediate download and must never be indexed or kept as a business document.
+	$zipdownloadfilename = dol_sanitizeFileName($modulepart.'-documents-'.date('Ymd-His')).'.zip';
+
+	top_httphead('application/zip');
+	header('Content-Description: File Transfer');
+	// Attachment is forced for this explicit download action. Browser preferences may still save automatically without prompting.
+	dol_document_send_content_disposition('attachment', $zipdownloadfilename);
+	header('Cache-Control: Public, must-revalidate');
+	header('Pragma: public');
+	header('Content-Length: '.dol_filesize($ziptmpfile));
+
+	// Close the database connection before streaming a potentially large file to the client.
+	if (is_object($db)) {
+		$db->close();
+	}
+
+	readfileLowMemory($ziptmpfile);
+	// Remove the temporary archive only after readfileLowMemory has finished using it.
+	dol_delete_file($ziptmpfile, 1, 1, 1, null, false, 0, 1);
+	exit;
+}
 
 
 
@@ -235,6 +510,8 @@ if (!empty($hashp)) {
 }
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
+// Existing document links still honor MAIN_DISABLE_FORCE_SAVEAS; only the explicit forcedownload action bypasses it.
+$forceattachment = (GETPOSTINT('forcedownload') || $action == 'forcedownload');
 $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
@@ -242,105 +519,25 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = GETPOST("attachment", 'alpha') ? true : false;
 }
-if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS') && !$forceattachment) {
 	$attachment = false;
 }
-
-// Define mime type
-$type = 'application/octet-stream'; // By default
-if (GETPOST('type', 'alpha')) {
-	$type = GETPOST('type', 'alpha');
-} else {
-	$type = dol_mimetype($original_file);
-}
-// Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
-// We do not force if file is a javascript to be able to get js from website module with <script src="
-// Note: Force whatever is $modulepart seems ok.
-if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
-	$type = 'application/octet-stream';
+if ($forceattachment) {
+	$attachment = true;
 }
 
-// Security: Delete string ../ or ..\ into $original_file
-$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
-$original_file = str_replace('../', '/', $original_file);
-$original_file = str_replace('..\\', '/', $original_file);
-
-// Security check
-if (empty($modulepart)) {
-	accessforbidden('Bad value for parameter modulepart');
-}
-
-// Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
-$accessallowed              = $check_access['accessallowed'];
-$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
-
-if (!empty($hashp)) {
-	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
-	$sqlprotectagainstexternals = '';
-} else {
-	// Basic protection (against external users only)
-	if ($user->socid > 0) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					if ($user->socid != $obj->fk_soc) {
-						$accessallowed = 0;
-						break;
-					}
-					$i++;
-				}
-			}
-		}
-	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
-		if ($sqlprotectagainstexternals) {
-			$resql = $db->query($sqlprotectagainstexternals);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				if ($num > 0) {
-					$accessallowed = 1;
-				}
-			}
-		}
-	}
-}
-
-// Security:
-// Limit access if permissions are wrong
-if (!$accessallowed) {
-	accessforbidden();
-}
-
-// Security:
-// We refuse directory transversal change and pipes in file names
-if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
-	dol_syslog("Refused to deliver file ".$fullpath_original_file);
-	print "ErrorFileNameInvalid: ".dol_escape_htmltag($original_file);
-	exit;
-}
-
-
-clearstatcache();
-
-$filename = basename($fullpath_original_file);
-$filename = preg_replace('/\.noexe$/i', '', $filename);
+// Resolve access after deciding the requested disposition so both preview and forced-download links share the same file checks.
+$resolvedfile = dol_document_resolve_secure_file($modulepart, $original_file, (int) $entity, $user, $hashp);
+$original_file = $resolvedfile['original_file'];
+$accessallowed = $resolvedfile['accessallowed'];
+$sqlprotectagainstexternals = $resolvedfile['sqlprotectagainstexternals'];
+$fullpath_original_file = $resolvedfile['fullpath_original_file'];
+$fullpath_original_file_osencoded = $resolvedfile['fullpath_original_file_osencoded'];
+$filename = $resolvedfile['filename'];
+$type = $resolvedfile['type'];
 
 // Output file on browser
 dol_syslog("document.php download $fullpath_original_file filename=$filename content-type=$type");
-$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
-
-// This test if file exists should be useless. We keep it to find bug more easily
-if (!file_exists($fullpath_original_file_osencoded)) {
-	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
-	exit;
-}
 
 // Hooks
 $hookmanager->initHooks(array('document'));
@@ -438,9 +635,10 @@ if ($encoding) {
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 
 if ($attachment > 0) {
-	header('Content-Disposition: attachment; filename="'.$filename.'"');
+	// Attachment asks the browser to download the file; browser preferences may still save automatically without prompting.
+	dol_document_send_content_disposition('attachment', $filename);
 } elseif (empty($attachment)) {
-	header('Content-Disposition: inline; filename="'.$filename.'"');
+	dol_document_send_content_disposition('inline', $filename);
 }
 // Ajout directives pour resoudre bug IE
 header('Cache-Control: Public, must-revalidate');
