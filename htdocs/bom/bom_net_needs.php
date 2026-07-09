@@ -296,9 +296,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<tr class="oddeven">';
 						}
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if ($action == 'treeview') {
-							print '<td></td>';
-						}
+						print '<td></td>';
 						print '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
 						print '<td>';
 						print '</td>';
