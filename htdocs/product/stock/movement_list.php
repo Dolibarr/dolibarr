@@ -621,6 +621,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 // reverse movement of stock
 if (!$error && $action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
+	$error = 0;
 
 	$db->begin();
 
@@ -632,7 +633,6 @@ if (!$error && $action == 'confirm_reverse' && $confirm == "yes" && $permissiont
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$error =0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
