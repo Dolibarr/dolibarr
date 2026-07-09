@@ -79,12 +79,24 @@ class FormFile
 	private function getDocumentDownloadSelectionFormHtml($formid, $modulepart, $entity)
 	{
 		// Keep the batch-download form detached: document lists may already be rendered inside rename or generation forms.
-		return '<form id="'.dol_escape_htmltag($formid).'" class="hidden" action="'.DOL_URL_ROOT.'/document.php" method="POST">'
-			.'<input type="hidden" name="token" value="'.newToken().'">'
-			.'<input type="hidden" name="action" value="downloadselected">'
-			.'<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'">'
-			.'<input type="hidden" name="entity" value="'.((int) $entity).'">'
-			.'</form>';
+		return implode('', array(
+			'<form id="',
+			dol_escape_htmltag($formid),
+			'" class="hidden" action="',
+			DOL_URL_ROOT,
+			'/document.php" method="POST">',
+			'<input type="hidden" name="token" value="',
+			newToken(),
+			'">',
+			'<input type="hidden" name="action" value="downloadselected">',
+			'<input type="hidden" name="modulepart" value="',
+			dol_escape_htmltag($modulepart),
+			'">',
+			'<input type="hidden" name="entity" value="',
+			(int) $entity,
+			'">',
+			'</form>',
+		));
 	}
 
 	/**
