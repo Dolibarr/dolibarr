@@ -1291,8 +1291,6 @@ class FormFile
 					$tmpout .= '</td>';
 
 					if (is_object($hookmanager)) {
-						$addcolumforpicto = 1;
-						$colspan = 6;
 						$colspanmore = 0;
 						$parameters = array('tmpout' => &$tmpout, 'colspan' => ($colspan + $colspanmore), 'socid' => (isset($GLOBALS['socid']) ? $GLOBALS['socid'] : ''), 'id' => (isset($GLOBALS['id']) ? $GLOBALS['id'] : ''), 'modulepart' => $modulepart, 'relativepath' => $relativepath);
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions', $parameters, $file);
