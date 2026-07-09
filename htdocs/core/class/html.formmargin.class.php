@@ -117,7 +117,7 @@ class FormMargin
 					$prevPercent = $line->get_prev_progress($object->id);
 					$deltaPercent = $line->situation_percent - $prevPercent;
 					if ($line->situation_percent > 0) {
-						$pv = $pv * ($deltaPercent / $line->situation_percent);
+						$pv *= ($deltaPercent / $line->situation_percent);
 					}
 					$pa = $line->qty * $pa_ht * ($deltaPercent / 100);
 				} else {
