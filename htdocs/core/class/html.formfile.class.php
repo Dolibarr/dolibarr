@@ -1268,29 +1268,27 @@ class FormFile
 					$tmpout .= '</td>';
 
 					// Show picto download, delete, print...
-					if ($addcolumforpicto) {
-						$tmpout .= '<td class="right nowraponall">';
-						// This icon is independent from the preview link and always asks document.php for an attachment response.
-						$tmpout .= '<a class="reposition documentforcedownloadlink marginrightonly" href="'.$this->getDocumentForceDownloadUrl($modulepart, $relativepath, $downloadselectionentity).'" title="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'" aria-label="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'">'.img_picto($langs->trans("ForceDownloadDocument"), 'download', 'class="paddingrightonly"').'</a>';
-						if ($delallowed) {
-							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
-							$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
-							$tmpout .= ($param ? '&'.$param : '');
-							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
-							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-							$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
-						}
-						if ($printer) {
-							$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
-							$tmpout .= ($param ? '&'.$param : '');
-							$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
-						}
-						if ($morepicto) {
-							$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
-							$tmpout .= $morepicto;
-						}
-						$tmpout .= '</td>';
+					$tmpout .= '<td class="right nowraponall">';
+					// This icon is independent from the preview link and always asks document.php for an attachment response.
+					$tmpout .= '<a class="reposition documentforcedownloadlink marginrightonly" href="'.$this->getDocumentForceDownloadUrl($modulepart, $relativepath, $downloadselectionentity).'" title="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'" aria-label="'.dol_escape_htmltag($langs->trans("ForceDownloadDocument")).'">'.img_picto($langs->trans("ForceDownloadDocument"), 'download', 'class="paddingrightonly"').'</a>';
+					if ($delallowed) {
+						$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
+						$tmpout .= '<a class="maginleftonly marginrightonly reposition" href="'.$tmpurlsource.((strpos($tmpurlsource, '?') === false) ? '?' : '&').'action='.urlencode($removeaction).'&token='.newToken().'&file='.urlencode($relativepath);
+						$tmpout .= ($param ? '&'.$param : '');
+						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
+						$tmpout .= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 					}
+					if ($printer) {
+						$tmpout .= '<a class="maginleftonly marginleftonly reposition" href="'.$urlsource.(strpos($urlsource, '?') ? '&' : '?').'action=print_file&token='.newToken().'&printer='.urlencode($modulepart).'&file='.urlencode($relativepath);
+						$tmpout .= ($param ? '&'.$param : '');
+						$tmpout .= '">'.img_picto($langs->trans("PrintFile", $relativepath), 'printer').'</a>';
+					}
+					if ($morepicto) {
+						$morepicto = preg_replace('/__FILENAMEURLENCODED__/', urlencode($relativepath), $morepicto);
+						$tmpout .= $morepicto;
+					}
+					$tmpout .= '</td>';
 
 					if (is_object($hookmanager)) {
 						$addcolumforpicto = 1;
@@ -1331,9 +1329,7 @@ class FormFile
 					$out .= '</td>';
 					// for share link of files
 					$out .= '<td></td>';
-					if ($addcolumforpicto) {
-						$out .= '<td></td>';
-					}
+					$out .= '<td></td>';
 					$out .= '</tr>'."\n";
 				}
 				$this->numoffiles++;
