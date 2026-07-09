@@ -88,6 +88,8 @@ class BonPrelevementTest extends CommonClassTest
 	protected static $fkBankAccount = 0;
 	/** @var string Error message collected in setUpBeforeClass() if a fixture failed to be created */
 	protected static $setUpError = '';
+	/** @var ?Societe Global $mysoc as it was before this test class forced it into a SEPA country */
+	protected static $savmysoc;
 
 	/**
 	 * setUpBeforeClass
