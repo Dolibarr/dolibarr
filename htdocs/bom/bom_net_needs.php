@@ -269,18 +269,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					} else {
 						print '<tr class="oddeven">';
 					}
-					if ($action == 'treeview') {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-					} else {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
-					}
+					print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
-					if ($action == 'treeview') {
-						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
-					}
+					print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					print '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
 					print '<td>';
 					print '</td>';
