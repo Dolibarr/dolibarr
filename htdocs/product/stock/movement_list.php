@@ -250,6 +250,9 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
+		if ($action == 'confirm_reverse') {
+			$action = 'list'; // Protection to avoid the reverse if we force a new search during the reverse confirmation
+		}
 	}
 
 	// Mass actions
@@ -616,7 +619,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 }
 
 // reverse movement of stock
-if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
+if (!$error && $action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	$toselect = array_map('intval', $toselect);
 
 	$db->begin();
@@ -1146,7 +1149,7 @@ $modelmail = "movementstock";
 $objecttmp = new MouvementStock($db);
 $trackid = 'mov'.$warehouse->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-if ($massaction == 'prereverse') {
+if ($massaction == 'prereverse' && count($toselect) <= getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000)) {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReverse"), $langs->trans("ConfirmMassReverseQuestion", count($toselect)), "confirm_reverse", null, '', 0, 200, 500, 1, 'Yes');
 }
 
