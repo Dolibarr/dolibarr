@@ -160,16 +160,28 @@ $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABAND
 $sql = "SELECT";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.client,";
 $sql .= " u.rowid as agent, u.login, u.lastname, u.firstname,";
-$sql .= " sum(d.total_ht) as selling_price,";
-// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-
-$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+// Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$delta_pct = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN (d.situation_percent - COALESCE(prev_d.situation_percent, 0)) ELSE d.situation_percent END';
+	$delta_ht = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END';
+	$sql .= " sum($delta_ht) as selling_price,";
+	// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+	$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * d.qty * d.buy_price_ht * ($delta_pct / 100)", "d.qty * d.buy_price_ht * ($delta_pct / 100)").") as buying_price,";
+	$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * (abs($delta_ht) - (d.buy_price_ht * d.qty * ($delta_pct / 100)))", "$delta_ht - (d.buy_price_ht * d.qty * ($delta_pct / 100))").") as marge";
+} else {
+	$sql .= " sum(d.total_ht) as selling_price,";
+	// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+	$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+	$sql .= " sum(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+}
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(!getDolGlobalString('AGENT_CONTACT_TYPE') ? -1 : $conf->global->AGENT_CONTACT_TYPE);
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet prev_d ON prev_d.rowid = d.fk_prev_id";
+}
 $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= ", ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.fk_soc = s.rowid";

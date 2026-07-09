@@ -604,6 +604,9 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet prev_fd ON prev_fd.rowid = fd.fk_prev_id";
+	}
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
@@ -665,16 +668,16 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
 						"fd.total_ht < 0",
-						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-						"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+						" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+						"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 					).")",
 					'0'
 				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
-				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-				"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+				" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+				"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 			).") as total";
 		} else {
 			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
