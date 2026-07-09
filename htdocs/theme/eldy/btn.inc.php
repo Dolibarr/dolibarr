@@ -232,9 +232,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 */
 
 .butActionRefused {
-	pointer-events: none;
+	/* pointer-events: none; Removed as this break the use of title */
 	cursor: default;
-	opacity: 0.4;
+	opacity: 0.8;
 	box-shadow: none;
 
 	text-decoration: none !important;
