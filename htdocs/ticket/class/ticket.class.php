@@ -2787,6 +2787,79 @@ class Ticket extends CommonObject
 	}
 
 	/**
+	 * Return the configured sender profile email address.
+	 *
+	 * @param	int		$id			Email sender profile id
+	 * @return	string				Formatted email address, empty string if not found
+	 */
+	public function getEmailSenderProfileAddress($id)
+	{
+		global $user;
+
+		if (empty($id)) {
+			return '';
+		}
+
+		$sql = "SELECT label, email";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_email_senderprofile";
+		$sql .= " WHERE rowid = ".((int) $id);
+		$sql .= " AND active = 1";
+		$sql .= " AND (private = 0 OR private = ".((int) $user->id).")";
+		$sql .= " AND entity IN (".getEntity('c_email_senderprofile').")";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_syslog(__METHOD__.' '.$this->db->lasterror(), LOG_ERR);
+			return '';
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj || empty($obj->email)) {
+			return '';
+		}
+
+		$label = dol_string_nospecial($obj->label, ' ', array(','));
+		return ($label ? $label.' ' : '').'<'.$obj->email.'>';
+	}
+
+	/**
+	 * Return the From address to use for ticket notifications.
+	 *
+	 * @param	int		$profileid	Email sender profile id selected on the form
+	 * @return	string				Email address
+	 */
+	public function getNotificationEmailFrom($profileid = 0)
+	{
+		if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES') && !empty($profileid)) {
+			$from = $this->getEmailSenderProfileAddress($profileid);
+			if ($from) {
+				return $from;
+			}
+		}
+
+		return getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+	}
+
+	/**
+	 * Return the Reply-To address to use for ticket notifications.
+	 *
+	 * @param	int		$profileid	Email sender profile id selected on the form
+	 * @return	string				Email address
+	 */
+	public function getNotificationEmailReplyTo($profileid = 0)
+	{
+		if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES') && !empty($profileid)) {
+			$replyto = $this->getEmailSenderProfileAddress($profileid);
+			if ($replyto) {
+				return $replyto;
+			}
+		}
+
+		return getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+	}
+
+	/**
 	 * Add new message on a ticket (private/public area).
 	 * Can also send it by email if GETPOST('send_email', 'int') is set. For such email, header and footer is added.
 	 *
@@ -2965,9 +3038,10 @@ class Ticket extends CommonObject
 							$message .= '<br><br>';
 							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>';
 
-							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+							$from = $object->getNotificationEmailFrom(GETPOSTINT('mail_senderprofile_from'));
 
-							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+							$replyto = $object->getNotificationEmailReplyTo(GETPOSTINT('mail_senderprofile_replyto'));
+
 
 							// don't try to send email if no recipient
 							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $from, $replyto);
@@ -3054,9 +3128,9 @@ class Ticket extends CommonObject
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
-							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+							$from = $object->getNotificationEmailFrom(GETPOSTINT('mail_senderprofile_from'));
 
-							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+							$replyto = $object->getNotificationEmailReplyTo(GETPOSTINT('mail_senderprofile_replyto'));
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
@@ -3174,9 +3248,10 @@ class Ticket extends CommonObject
 
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+									$from = $object->getNotificationEmailFrom(GETPOSTINT('mail_senderprofile_from'));
 
-									$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+									$replyto = $object->getNotificationEmailReplyTo(GETPOSTINT('mail_senderprofile_replyto'));
+
 
 									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from, $replyto);
 									if ($result) {

@@ -89,6 +89,15 @@ if (GETPOSTISSET('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION')) {	// only for no
 	}
 }
 
+if (GETPOSTISSET('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES')) {	// only for no js case
+	$param_email_from_as_list = GETPOST('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES', $param_email_from_as_list, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+		setEventMessages($db->lasterror(), null, 'errors');
+	}
+}
+
 if ($action == 'updateMask') {
 	$maskconstticket = GETPOST('maskconstticket', 'aZ09');
 	$maskticket = GETPOST('maskticket', 'alpha');
@@ -683,6 +692,21 @@ if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print '<td class="center" width="40"></td>';
 	print "</tr>\n";
 }
+
+// Use email sender profiles for From and Reply-To fields
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationUseSenderProfiles").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES", $arrval, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_USE_SENDER_PROFILES'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationUseSenderProfilesHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // Email of sender allowed to send technical notifications
 print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
