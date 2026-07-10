@@ -190,7 +190,10 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
-<input type="hidden" name="action" value="buildnewpassword">
+<input type="hidden" name="action" value="setnewpassword">
+<input type="hidden" name="username" value="<?php echo dol_escape_htmltag($username); ?>">
+<input type="hidden" name="passworduidhash" value="<?php echo dol_escape_htmltag($passworduidhash); ?>">
+<input type="hidden" name="setnewpassword" value="1">
 
 
 <!-- Title with version -->
@@ -227,14 +230,14 @@ if (!empty($disablenofollow)) {
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
 </div>
 </div>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
+<input type="password" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
 </div>
 </div>
 
