@@ -202,10 +202,10 @@ if ($dolibarr_main_db_character_set != 'utf8mb4') {
 }
 
 $sections = [
-	'Standard' => [
+	'Miscellaneous' => [
 		[
 			'name' => 'standard',
-			'info' => ''
+			'info' => 'Miscellaneous fixes'
 		]
 	],
 	'Modules' => [
@@ -263,7 +263,7 @@ $sections = [
 			'info' => 'Repair link between dispatch lines and supplier order lines'
 		]
 	],
-	'Init data' => [
+	'Init empty data' => [
 		[
 			'name' => 'set_empty_time_spent_amount',
 			'info' => 'Init empty time spent amount'
@@ -282,14 +282,17 @@ $sections = [
 			'name' => 'force_collation_from_conf_on_tables',
 			'info' => 'Force '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' + row=dynamic, for mysql/mariadb only'
 		]
-	],
-	'Rebuild sequence' => [
+	]
+];
+
+if ($db->type == 'pgsql') {
+	$sections['Rebuild sequence'] = [
 		[
 			'name' => 'rebuild_sequences',
 			'info' => 'For postgresql only'
 		]
-	]
-];
+	];
+}
 
 $conf->use_javascript_ajax = 1;
 
