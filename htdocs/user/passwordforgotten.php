@@ -114,6 +114,8 @@ if (empty($reshook)) {
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
+		} elseif ($newpass1 === '' || $newpass2 === '') {
+			$message = '<div class="error">'.$langs->trans("NewPasswordEmpty").'</div>';
 		} elseif ($newpass1 !== $newpass2) {
 			$message = '<div class="error">'.$langs->trans("NewPasswordMismatch").'</div>';
 		} else {
