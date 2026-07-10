@@ -107,7 +107,11 @@ if (empty($reshook)) {
 	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
 	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = true;
+		// Only enforce the captcha code when a captcha was actually presented (the handler may be disabled by config)
+		if (array_key_exists($sessionkey, $_SESSION)) {
+			$ok = (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code')));
+		}
 
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
@@ -148,7 +152,11 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = true;
+		// Only enforce the captcha code when a captcha was actually presented (the handler may be disabled by config)
+		if (array_key_exists($sessionkey, $_SESSION)) {
+			$ok = (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code')));
+		}
 
 		// Verify code
 		if (!$ok) {
