@@ -3012,7 +3012,7 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	int 		$entity				Restrict onto entity (0=no restriction)
+ * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity.
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write'
@@ -3038,6 +3038,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} else {
 			$entity = 0;
 		}
+	} else {
+		// TODO Test that the user in session of conf->entity can see objects of the target $entity
+		// ...
 	}
 	// Fix modulepart for backward compatibility
 	if ($modulepart == 'facture') {
