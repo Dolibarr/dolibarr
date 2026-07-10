@@ -107,7 +107,7 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
 
@@ -177,21 +177,21 @@ if ($ok) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
 
-print '<div class="warning" style="padding-top: 10px">';
+print '<div class="info" style="padding-top: 10px">';
 print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
 print '</div>';
 print '<br>';
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste centpercent" style="border: 1px solid #ccc">';
 print '<tr>';
-print '<th>Option</th>';
-print '<th>Information</th>';
+print '<th></th>';
+print '<th></th>';
 print '<th>Launch test</th>';
 print '<th>Launch confirmed</th>';
 print '</tr>';
@@ -318,6 +318,7 @@ foreach ($sections as $section => $options) {
 	}
 }
 print '</table>';
+print '</div>';
 
 
 print '<br id="sectionresult">';
