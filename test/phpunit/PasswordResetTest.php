@@ -113,4 +113,24 @@ class PasswordResetTest extends CommonClassTest
 		$after->fetch($idcreated);
 		$this->assertEmpty($after->pass_temp, 'pass_temp cleared after confirm');
 	}
+
+	/**
+	 * The reset email body carries the link and never a cleartext password.
+	 */
+	public function testResetEmailBodyIsLinkOnly()
+	{
+		global $conf, $langs, $db;
+		$conf = $this->savconf;
+
+		$u = new User($db);
+		$u->id = 1;
+		$u->login = 'admin';
+
+		$link = 'https://portal.example.com/user/passwordforgotten.php?setnewpassword=1&username=admin&passworduidhash=DEADBEEF';
+		$body = $u->getPasswordResetEmailContent($langs, $link);
+
+		$this->assertStringContainsString($link, $body, 'body contains the reset link');
+		$this->assertStringContainsString('passworduidhash=DEADBEEF', $body, 'link hash present');
+		$this->assertStringNotContainsString('Password = ', $body, 'no cleartext password label');
+	}
 }
