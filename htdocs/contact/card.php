@@ -680,7 +680,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Name
 			print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus" required="required"></td>';
 			print '</tr>';
 
 			// Firstname
@@ -999,7 +999,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Lastname
 			print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname") : $object->lastname).'" autofocus="autofocus"></td>';
+			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname") : $object->lastname).'" autofocus="autofocus" required="required"></td>';
 			print '</tr>';
 			print '<tr>';
 			// Firstname
