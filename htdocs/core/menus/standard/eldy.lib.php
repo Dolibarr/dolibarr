@@ -2687,7 +2687,9 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 1, 'filter' => 'outofdate']), $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => 0]), $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => -2]), $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add(dolBuildUrl('/adherents/stats/geo.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/adherents/stats/geo.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			}
 
 			$newmenu->add(dolBuildUrl('/adherents/cartes/carte.php', ['leftmenu' => 'export']), $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
 
@@ -2699,7 +2701,9 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'members', 'mainmenu'=> 'members']), $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add(dolBuildUrl('/adherents/list.php', ['leftmenu' => 'members', 'statut' => '-1,1', 'mainmenu' => 'members']), $langs->trans("NewMembership"), 1, $user->hasRight('adherent', 'cotisation', 'write'));
 			$newmenu->add(dolBuildUrl('/adherents/subscription/list.php', ['leftmenu' => 'members']), $langs->trans("List"), 1, $user->hasRight('adherent', 'cotisation', 'read'));
-			$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			if (getDolGlobalString('MAIN_STATISTICS_IN_MENU')) {
+				$newmenu->add(dolBuildUrl('/adherents/stats/index.php', ['leftmenu' => 'members']), $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
+			}
 
 			// $newmenu->add(dolBuildUrl('/adherents/index.php', ['leftmenu' => 'export', 'mainmenu'=>'members']),$langs->trans("Tools"),0,$user->hasRight('adherent',  'export'), '', $mainmenu, 'export');
 			// if (isModEnabled('export') && ($usemenuhider || empty($leftmenu) || $leftmenu=="export")) $newmenu->add(dolBuildUrl('/exports/index.php', ['leftmenu' => 'export']),$langs->trans("Datas"),1,$user->hasRight('adherent',  'export'));
