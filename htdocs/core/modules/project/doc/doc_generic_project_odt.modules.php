@@ -44,17 +44,18 @@ if (isModEnabled("propal")) {
 }
 if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (isModEnabled("supplier_invoice")) {
+if (isModEnabled("supplier_proposal")) {
+	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+}
+if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if (isModEnabled("supplier_order")) {
+if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (isModEnabled('contract')) {
@@ -68,6 +69,21 @@ if (isModEnabled('agenda')) {
 }
 if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+}
+if (isModEnabled('expensereport')) {
+	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereportline.class.php';
+}
+if (isModEnabled('don')) {
+	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+}
+if (isModEnabled('loan')) {
+	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+}
+if (isModEnabled('tax')) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+}
+if (isModEnabled('stock')) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
 
 /**
@@ -160,7 +176,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$array_key.'_note_private' => (string) $object->note_private,
 			$array_key.'_note_public' => (string) $object->note_public,
 			$array_key.'_public' => (string) $object->public,
-			$array_key.'_statut' => $object->getLibStatut()
+			$array_key.'_statut' => method_exists($object, 'getLibStatut') ? $object->getLibStatut() : ''
 		);
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -673,9 +689,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Replace tags of lines for tasks
+				$foundtagfortasks = 1;
 				try {
 					$listlines = $odfHandler->setSegment('tasks');
-
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for tasks not present into template
+					$foundtagfortasks = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagfortasks) {
 					$taskstatic = new Task($this->db);
 
 					// Security check
@@ -711,36 +733,44 @@ class doc_generic_project_odt extends ModelePDFProjects
 							}
 						}
 						if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
-							$listlinestaskres = $listlines->__get('tasksressources');
+							$foundtagfortasksressources = 1;
+							try {
+								$listlinestaskres = $listlines->__get('tasksressources');
+							} catch (SegmentException $e) {
+								// We may arrive here if tags for tasksressources not present into template
+								$foundtagfortasksressources = 0;
+								dol_syslog($e->getMessage(), LOG_INFO);
+							}
+							if ($foundtagfortasksressources) {
+								foreach ($contact_arrray as $contact) {
+									if ($contact['source'] == 'internal') {
+										$objectdetail = new User($this->db);
+										$objectdetail->fetch($contact['id']);
+										$contact['socname'] = $mysoc->name;
+									} elseif ($contact['source'] == 'external') {
+										$objectdetail = new Contact($this->db);
+										$objectdetail->fetch($contact['id']);
 
-							foreach ($contact_arrray as $contact) {
-								if ($contact['source'] == 'internal') {
-									$objectdetail = new User($this->db);
-									$objectdetail->fetch($contact['id']);
-									$contact['socname'] = $mysoc->name;
-								} elseif ($contact['source'] == 'external') {
-									$objectdetail = new Contact($this->db);
-									$objectdetail->fetch($contact['id']);
-
-									$soc = new Societe($this->db);
-									$soc->fetch($contact['socid']);
-									$contact['socname'] = $soc->name;
-								} else {
-									dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_ERR);
-									continue;
-								}
-								$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
-
-								$tmparray = $this->get_substitutionarray_tasksressource($contact, $outputlangs);
-
-								foreach ($tmparray as $key => $val) {
-									try {
-										$listlinestaskres->setVars($key, $val, true, 'UTF-8');
-									} catch (SegmentException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
+										$soc = new Societe($this->db);
+										$soc->fetch($contact['socid']);
+										$contact['socname'] = $soc->name;
+									} else {
+										dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_ERR);
+										continue;
 									}
+									$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
+
+									$tmparray = $this->get_substitutionarray_tasksressource($contact, $outputlangs);
+
+									foreach ($tmparray as $key => $val) {
+										try {
+											$listlinestaskres->setVars($key, $val, true, 'UTF-8');
+										} catch (SegmentException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										}
+									}
+									$listlinestaskres->merge();
 								}
-								$listlinestaskres->merge();
 							}
 						}
 
@@ -760,92 +790,107 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$i = 0;
 							$tasks = array();
 							$row = array();
-							$listlinestasktime = $listlines->__get('taskstimes');
-							if (empty($num)) {
-								$row['rowid'] = 0;
-								$row['task_date'] = 0;
-								$row['task_duration'] = 0;
-								//$row['$tasktime'] = '';
-								$row['note'] = '';
-								$row['fk_user'] = 0;
-								$row['name'] = '';
-								$row['firstname'] = '';
-								$row['fullcivname'] = '';
-								$row['amountht'] = 0;
-								$row['amountttc'] = 0;
-								$row['thm'] = 0;
-								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
-								foreach ($tmparray as $key => $val) {
-									try {
-										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (SegmentException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
-									}
-								}
-								$listlinestasktime->merge();
+							$foundtagfortaskstimes = 1;
+							try {
+								$listlinestasktime = $listlines->__get('taskstimes');
+							} catch (SegmentException $e) {
+								// We may arrive here if tags for taskstimes not present into template
+								$foundtagfortaskstimes = 0;
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
-							while ($i < $num) {
-								$row = $this->db->fetch_array($resql);
-								if (!empty($row['fk_user'])) {
-									$objectdetail = new User($this->db);
-									$objectdetail->fetch($row['fk_user']);
-									$row['fullcivname'] = $objectdetail->getFullName($outputlangs, 1);
-								} else {
+							if ($foundtagfortaskstimes) {
+								if (empty($num)) {
+									$row['rowid'] = 0;
+									$row['task_date'] = 0;
+									$row['task_duration'] = 0;
+									//$row['$tasktime'] = '';
+									$row['note'] = '';
+									$row['fk_user'] = 0;
+									$row['name'] = '';
+									$row['firstname'] = '';
 									$row['fullcivname'] = '';
-								}
-
-								if (!empty($row['thm'])) {
-									$row['amountht'] = ($row['task_duration'] / 3600) * $row['thm'];
-									$defaultvat = get_default_tva($mysoc, $mysoc);
-									$row['amountttc'] = price2num($row['amountht'] * (1 + ($defaultvat / 100)), 'MT');
-								} else {
 									$row['amountht'] = 0;
 									$row['amountttc'] = 0;
 									$row['thm'] = 0;
-								}
-
-								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs); // @phpstan-ignore argument.type
-
-								foreach ($tmparray as $key => $val) {
-									try {
-										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (SegmentException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
+									$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
+									foreach ($tmparray as $key => $val) {
+										try {
+											$listlinestasktime->setVars($key, $val, true, 'UTF-8');
+										} catch (SegmentException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										}
 									}
+									$listlinestasktime->merge();
 								}
-								$listlinestasktime->merge();
-								$i++;
+								while ($i < $num) {
+									$row = $this->db->fetch_array($resql);
+									if (!empty($row['fk_user'])) {
+										$objectdetail = new User($this->db);
+										$objectdetail->fetch($row['fk_user']);
+										$row['fullcivname'] = $objectdetail->getFullName($outputlangs, 1);
+									} else {
+										$row['fullcivname'] = '';
+									}
+
+									if (!empty($row['thm'])) {
+										$row['amountht'] = ($row['task_duration'] / 3600) * $row['thm'];
+										$defaultvat = get_default_tva($mysoc, $mysoc);
+										$row['amountttc'] = price2num($row['amountht'] * (1 + ($defaultvat / 100)), 'MT');
+									} else {
+										$row['amountht'] = 0;
+										$row['amountttc'] = 0;
+										$row['thm'] = 0;
+									}
+
+									$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs); // @phpstan-ignore argument.type
+
+									foreach ($tmparray as $key => $val) {
+										try {
+											$listlinestasktime->setVars($key, $val, true, 'UTF-8');
+										} catch (SegmentException $e) {
+											dol_syslog($e->getMessage(), LOG_INFO);
+										}
+									}
+									$listlinestasktime->merge();
+									$i++;
+								}
 							}
 							$this->db->free($resql);
 						}
 
 
 						// Replace tags of project files
-						$listtasksfiles = $listlines->__get('tasksfiles');
+						$foundtagfortasksfiles = 1;
+						try {
+							$listtasksfiles = $listlines->__get('tasksfiles');
+						} catch (SegmentException $e) {
+							// We may arrive here if tags for tasksfiles not present into template
+							$foundtagfortasksfiles = 0;
+							dol_syslog($e->getMessage(), LOG_INFO);
+						}
+						if ($foundtagfortasksfiles) {
+							$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
+							$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
-						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
-						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
-
-						foreach ($filearray as $filedetail) {
-							$tmparray = $this->get_substitutionarray_task_file($filedetail, $outputlangs);
-							//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
+							foreach ($filearray as $filedetail) {
+								$tmparray = $this->get_substitutionarray_task_file($filedetail, $outputlangs);
+								//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
+								foreach ($tmparray as $key => $val) {
+									try {
+										$listtasksfiles->setVars($key, $val, true, 'UTF-8');
+									} catch (SegmentException $e) {
+										dol_syslog($e->getMessage(), LOG_INFO);
+									}
 								}
+								$listtasksfiles->merge();
 							}
-							$listtasksfiles->merge();
 						}
 						$listlines->merge();
 					}
-					$odfHandler->mergeSegment($listlines);
-				} catch (OdfException $e) {
-					$ExceptionTrace = $e->getTrace();
-					// no segment defined on ODT is not an error
-					if ($ExceptionTrace[0]['function'] != 'setSegment') {
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 						return -1;
@@ -853,9 +898,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Replace tags of project files
+				$foundtagforprojectfiles = 1;
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
-
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for projectfiles not present into template
+					$foundtagforprojectfiles = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforprojectfiles) {
 					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
@@ -872,11 +923,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$listlines->merge();
 					}
-					$odfHandler->mergeSegment($listlines);
-				} catch (OdfException $e) {
-					$ExceptionTrace = $e->getTrace();
-					// no segment defined on ODT is not an error
-					if ($ExceptionTrace[0]['function'] != 'setSegment') {
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 						return -1;
@@ -893,9 +942,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
+					$foundtagforprojectcontacts = 1;
 					try {
 						$listlines = $odfHandler->setSegment('projectcontacts');
-
+					} catch (OdfExceptionSegmentNotFound $e) {
+						// We may arrive here if tags for projectcontacts not present into template
+						$foundtagforprojectcontacts = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforprojectcontacts) {
 						foreach ($contact_arrray as $contact) {
 							$objectdetail = null;
 							if ($contact['source'] == 'internal') {
@@ -925,11 +980,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 							}
 							$listlines->merge();
 						}
-						$odfHandler->mergeSegment($listlines);
-					} catch (OdfException $e) {
-						$ExceptionTrace = $e->getTrace();
-						// no segment defined on ODT is not an error
-						if ($ExceptionTrace[0]['function'] != 'setSegment') {
+						try {
+							$odfHandler->mergeSegment($listlines);
+						} catch (OdfException $e) {
 							$this->error = $e->getMessage();
 							dol_syslog($this->error, LOG_WARNING);
 							return -1;
@@ -1099,7 +1152,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 										$ref_array['amountttc'] = '';
 									}
 
-									$ref_array['status'] = $element->getLibStatut(0);
+									$ref_array['status'] = method_exists($element, 'getLibStatut') ? $element->getLibStatut(0) : '';
 
 									$tmparray = $this->get_substitutionarray_project_reference($ref_array, $outputlangs);
 
