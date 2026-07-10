@@ -21,7 +21,7 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 // PaymentVAT::delete() instantiates AccountLine without requiring it; load it here
-// so deleting a bank-linked payment via the API does not fatal.
+// so deleting a bank-linked payment via the API does not throw a fatal error.
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 /**
