@@ -172,3 +172,5 @@ UserDoesNotHaveRightsToChangeHisPassword=This user doesn't have the rights to ch
 NotPossible=Not possible
 NoPasswordGenerationRuleConfigured=The engine or rule to generate password has not been set or is set to empty password in the setup page.
 OnlyAdminUsersCanDeleteAdminUsers=Only admin users can delete admin users
+NewPasswordMismatch=The two passwords do not match
+PasswordResetLinkExpired=This password reset link has expired. Please request a new one.

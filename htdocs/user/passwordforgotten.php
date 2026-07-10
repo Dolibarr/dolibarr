@@ -101,29 +101,46 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
-		$edituser = new User($db);
-		$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
-		if ($result < 0) {
-			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
+	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
+	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+
+		$newpass1 = GETPOST('newpass1', 'none');
+		$newpass2 = GETPOST('newpass2', 'none');
+
+		if (!$ok) {
+			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
+			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
+		} elseif ($newpass1 !== $newpass2) {
+			$message = '<div class="error">'.$langs->trans("NewPasswordMismatch").'</div>';
 		} else {
-			global $conf;
-
-			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
-			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
-				// Clear session
-				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
-
-				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
-				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
-
-				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
-				exit;
+			$edituser = new User($db);
+			$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
+			if ($result < 0) {
+				$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 			} else {
-				$langs->load("errors");
-				$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+				$resverify = dolVerifyPasswordResetHash($edituser->pass_temp, $edituser->id, $passworduidhash);
+				if ($resverify < 0) {
+					$langs->load("errors");
+					$message = '<div class="error">'.$langs->trans("PasswordResetLinkExpired").'</div>';
+				} elseif ($resverify == 0) {
+					$langs->load("errors");
+					$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+				} else {
+					$res = $edituser->setPassword($user, $newpass1, 0);	// validates against the active password policy
+					if (is_int($res) && $res < 0) {
+						$message = '<div class="error">'.dol_escape_htmltag($edituser->error ? $edituser->error : $langs->trans("ErrorFailedToChangePassword")).'</div>';
+					} else {
+						unset($_SESSION['dol_login']);
+						$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv("NewPasswordValidated");
+						dol_syslog("passwordforgotten.php new user-chosen password for user->id=".$edituser->id." set in database");
+						header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
+						exit;
+					}
+				}
 			}
 		}
 	}
@@ -174,13 +191,13 @@ if (empty($reshook)) {
 					usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 					$message .= $messagewarning;
 				} else {
-					$newpassword = $edituser->setPassword($user, '', 1);
-					if (is_int($newpassword) && $newpassword < 0) {
+					$armed = $edituser->requestPasswordReset();
+					if (is_int($armed) && $armed < 0) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success to set temporary password, send email
-						if ($edituser->send_password($user, $newpassword, 1) > 0) {
+						// Success to arm reset token, send link-only email
+						if ($edituser->send_password($user, $armed, 1) > 0) {
 							$message .= $messagewarning;
 							$username = '';
 						} else {
