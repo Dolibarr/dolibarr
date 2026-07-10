@@ -634,3 +634,50 @@ function showEyeForField($htmlname, $htmlnameofinput)
 	});
 </script>';
 }
+
+/**
+ * Build the possession hash for a password-reset link.
+ *
+ * The hash binds the secret stored in llx_user.pass_temp to the user id and to
+ * the instance unique id, so a link is valid only for one user on one instance.
+ *
+ * @param	string	$secret		Full value stored in pass_temp (see dolVerifyPasswordResetHash)
+ * @param	int		$userid		Target user rowid
+ * @return	string				Hash to put in the reset link (passworduidhash)
+ */
+function dolGetPasswordResetHash($secret, $userid)
+{
+	global $conf;
+	return dol_hash($secret.'-'.((int) $userid).'-'.$conf->file->instance_unique_id);
+}
+
+/**
+ * Verify a password-reset possession hash and its expiry.
+ *
+ * pass_temp value format for links armed by User::requestPasswordReset():
+ *   'r:<YYYYMMDDHHMMSS gmt>:<randomsecret>'.
+ * The hash is checked against the WHOLE value, so neither the secret nor the
+ * expiry can be altered. Legacy values without the 'r:' prefix have no expiry.
+ *
+ * @param	string	$secret			Full value read from pass_temp
+ * @param	int		$userid			Target user rowid
+ * @param	string	$hashtotest		Hash received from the reset link
+ * @return	int						1 if valid, 0 if bad possession, -1 if expired
+ */
+function dolVerifyPasswordResetHash($secret, $userid, $hashtotest)
+{
+	if ($secret === '' || $hashtotest === '') {
+		return 0;
+	}
+	if (!dol_verifyHash($secret.'-'.((int) $userid).'-'.$GLOBALS['conf']->file->instance_unique_id, $hashtotest)) {
+		return 0;
+	}
+	$reg = array();
+	if (preg_match('/^r:(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}):/', $secret, $reg)) {
+		$maxdate = dol_mktime((int) $reg[4], (int) $reg[5], (int) $reg[6], (int) $reg[2], (int) $reg[3], (int) $reg[1], 'gmt');
+		if ($maxdate && $maxdate < dol_now()) {
+			return -1;
+		}
+	}
+	return 1;
+}
