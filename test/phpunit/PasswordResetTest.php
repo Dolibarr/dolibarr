@@ -74,4 +74,43 @@ class PasswordResetTest extends CommonClassTest
 		$hash = dolGetPasswordResetHash($secret, 1);
 		$this->assertSame(1, dolVerifyPasswordResetHash($secret, 1, $hash));
 	}
+
+	/**
+	 * Full arm -> verify -> confirm cycle on a real user.
+	 */
+	public function testRequestPasswordResetCycle()
+	{
+		global $conf, $user, $db;
+		$conf = $this->savconf;
+
+		// Create a throwaway user (rolled back by CommonClassTest transaction)
+		$tmp = new User($db);
+		$tmp->login = 'phpunit_pwdreset_'.dol_print_date(dol_now(), 'dayhourlog');
+		$tmp->lastname = 'PwdResetTest';
+		$tmp->email = 'phpunit_pwdreset@example.com';
+		$idcreated = $tmp->create($user);
+		$this->assertGreaterThan(0, $idcreated, 'user created');
+
+		// Arm the reset
+		$armed = $tmp->requestPasswordReset(3600);
+		$this->assertIsString($armed);
+		$this->assertStringStartsWith('r:', $armed);
+
+		// Re-read pass_temp from DB
+		$reloaded = new User($db);
+		$reloaded->fetch($idcreated);
+		$this->assertSame($armed, $reloaded->pass_temp, 'pass_temp stored verbatim');
+
+		// Verify possession
+		$hash = dolGetPasswordResetHash($reloaded->pass_temp, $reloaded->id);
+		$this->assertSame(1, dolVerifyPasswordResetHash($reloaded->pass_temp, $reloaded->id, $hash));
+
+		// Confirm: set a chosen password, pass_temp must be cleared
+		$res = $reloaded->setPassword($user, 'Chosen-Passw0rd!2026', 0);
+		$this->assertFalse(is_int($res) && $res < 0, 'setPassword accepted the chosen password: '.$reloaded->error);
+
+		$after = new User($db);
+		$after->fetch($idcreated);
+		$this->assertEmpty($after->pass_temp, 'pass_temp cleared after confirm');
+	}
 }

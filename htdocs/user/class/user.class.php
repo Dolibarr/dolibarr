@@ -2774,6 +2774,41 @@ class User extends CommonObject
 		}
 	}
 
+	/**
+	 * Arm an expiring password-reset token in pass_temp.
+	 *
+	 * Stores 'r:<YYYYMMDDHHMMSS gmt>:<randomsecret>' in pass_temp and returns that
+	 * value so the caller can build the link hash with dolGetPasswordResetHash().
+	 * No password is set until the user confirms via setPassword($user, $chosen, 0).
+	 *
+	 * @param	int		$ttlseconds		Link validity in seconds (0 = USER_PASSWORD_RESET_LINK_VALIDITY, default 3600)
+	 * @return	string|int				Stored pass_temp value, or < 0 on error
+	 */
+	public function requestPasswordReset($ttlseconds = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+		if (empty($ttlseconds)) {
+			$ttlseconds = getDolGlobalInt('USER_PASSWORD_RESET_LINK_VALIDITY', 3600);
+		}
+
+		$secret = getRandomPassword(true);	// generic random, not bound to the user password policy
+		$expiry = dol_print_date(dol_now('gmt') + $ttlseconds, '%Y%m%d%H%M%S', 'gmt');
+		$value = 'r:'.$expiry.':'.$secret;
+
+		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql .= " SET pass_temp = '".$this->db->escape($value)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog(get_class($this)."::requestPasswordReset", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			$this->pass_temp = $value;
+			return $value;
+		}
+		$this->error = $this->db->lasterror();
+		return -1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send a new password (or instructions to reset it) by email
