@@ -180,7 +180,7 @@ $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(!getDolGlobalString('AGENT_CONTACT_TYPE') ? -1 : $conf->global->AGENT_CONTACT_TYPE);
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet prev_d ON prev_d.rowid = d.fk_prev_id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
 }
 $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= ", ".MAIN_DB_PREFIX."user as u";

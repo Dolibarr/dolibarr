@@ -605,7 +605,7 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet prev_fd ON prev_fd.rowid = fd.fk_prev_id";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_fd ON prev_fd.rowid = fd.fk_prev_id";
 	}
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";

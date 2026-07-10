@@ -247,7 +247,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet prev_d ON prev_d.rowid = d.fk_prev_id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
 }
 if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
