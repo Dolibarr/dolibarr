@@ -754,27 +754,29 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Change password with a new generated one
-	if ((($action == 'confirm_password' && $confirm == 'yes' && $permissiontoeditpasswordandsee)
-			|| ($action == 'confirm_passwordsend' && $confirm == 'yes' && $permissiontoeditpasswordandsend))
-	) {
+	// Send a password reset link (admin path that used to email a cleartext password)
+	if ($action == 'confirm_passwordsend' && $confirm == 'yes' && $permissiontoeditpasswordandsend) {
+		$object->fetch($id);
+
+		$armed = $object->requestPasswordReset();
+		if (is_int($armed) && $armed < 0) {
+			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
+		} elseif ($object->send_password($user, $armed) > 0) {
+			setEventMessages($langs->trans("PasswordResetLinkSentTo", $object->email), null, 'mesgs');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	// Change password with a new generated one, shown on screen to the admin (no email)
+	if ($action == 'confirm_password' && $confirm == 'yes' && $permissiontoeditpasswordandsee) {
 		$object->fetch($id);
 
 		$newpassword = $object->setPassword($user, '');	// This will generate a new password
 		if (is_int($newpassword) && $newpassword < 0) {
-			// Echec
 			setEventMessages($langs->trans("ErrorFailedToSetNewPassword"), null, 'errors');
 		} else {
-			// Success
-			if ($action == 'confirm_passwordsend') {	// Test on permission already done
-				if ($object->send_password($user, $newpassword) > 0) {
-					setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
-			} else {
-				setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'warnings');
-			}
+			setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'warnings');
 		}
 	}
 

@@ -538,20 +538,23 @@ class Users extends DolibarrApi
 			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
-		if (is_int($newpassword) && $newpassword < 0) {
-			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
-		} else {
-			// Success
-			if ($send_password) {
-				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
-					return 2;
-				} else {
-					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
-				}
-			} else {
-				return 1;
+		if ($send_password) {
+			// Do not set a password now: arm an expiring reset link and email it (no cleartext password sent)
+			$armed = $this->useraccount->requestPasswordReset();
+			if (is_int($armed) && $armed < 0) {
+				throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
 			}
+			if ($this->useraccount->send_password($this->useraccount, $armed) > 0) {
+				return 2;
+			} else {
+				throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
+			}
+		} else {
+			$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
+			if (is_int($newpassword) && $newpassword < 0) {
+				throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+			}
+			return 1;
 		}
 	}
 

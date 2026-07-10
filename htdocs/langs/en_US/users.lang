@@ -44,6 +44,7 @@ NewGroup=New group
 CreateGroup=Create group
 RemoveFromGroup=Remove from group
 PasswordChangedAndSentTo=Password changed and sent to <b>%s</b>.
+PasswordResetLinkSentTo=A password reset link has been sent to %s
 PasswordChangeRequest=Request to change password for <b>%s</b>
 PasswordChangeRequestSent=Request to change password for <b>%s</b> sent to <b>%s</b>.
 IfLoginExistPasswordRequestSent=If this login is a valid account (with a valid email), an email to reset password has been sent.
