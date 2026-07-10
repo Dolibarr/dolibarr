@@ -698,6 +698,7 @@ if (!defined('NOLOGIN')) {
 		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) {
 			$allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');	// Note a value of 2 is not compatible with some authentication methods that put username as GET parameter
 		}
+		// Here, we are not already logged
 		// TODO Remove use of $_COOKIE['login_dolibarr'] by replacing line with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername); ?
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
 		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
@@ -913,6 +914,13 @@ if (!defined('NOLOGIN')) {
 			// User is loaded, we may need to change language for him according to its choice
 			if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 				$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+			}
+
+			if ($entitytotest > 0 && $conf->entity != $entitytotest) {
+				// We asked to force login to $entitytotest that differs from default $conf->entity, and we succeed, so
+				// we must force conf->entity to the new value, so the rest of the code that load $user->loadRights() and
+				// set $_SESSION['dol_entity'] will be done in correct environment.
+				$conf->entity = $entitytotest;
 			}
 		}
 	} else {
@@ -1315,7 +1323,7 @@ if (!defined('NOLOGIN')) {
 		accessforbidden("ErrorLoginDisabled");
 	}
 
-	// Load permissions
+	// Load permissions for entity = $conf->entity
 	$user->loadRights();
 }
 
