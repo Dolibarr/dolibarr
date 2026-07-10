@@ -145,11 +145,15 @@ if ($setnewpassword && $username && $passworduidhash) {
 		global $conf;
 
 		//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
-		if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
+		$resverifytpl = dolVerifyPasswordResetHash($edituser->pass_temp, $edituser->id, $passworduidhash);
+		if ($resverifytpl == 1) {
 			// Clear session
 			unset($_SESSION['dol_login']);
 
 			// Parameters to reset the user are validated
+		} elseif ($resverifytpl == -1) {
+			$langs->load("errors");
+			$message = '<div class="error">'.$langs->trans("PasswordResetLinkExpired").'</div>';
 		} else {
 			$langs->load("errors");
 			$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';

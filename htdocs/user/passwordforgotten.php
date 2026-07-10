@@ -32,6 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
@@ -64,6 +65,8 @@ if (!$mode) {
 $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
+$newpass1 = GETPOST('newpass1', 'none');
+$newpass2 = GETPOST('newpass2', 'none');
 
 $conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
@@ -103,13 +106,8 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Set the user-chosen new password (posted from the passwordreset.tpl.php page)
 	if ($action == 'setnewpassword' && $username && $passworduidhash) {	// Security is managed by $passworduidhash
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
-
-		$newpass1 = GETPOST('newpass1', 'none');
-		$newpass2 = GETPOST('newpass2', 'none');
 
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
