@@ -57,6 +57,11 @@ class Import
 	public $array_import_module;
 
 	/**
+	 * @var array<string,string>
+	 */
+	public $array_import_types;
+
+	/**
 	 * @var int[]
 	 */
 	public $array_import_perms;
@@ -291,6 +296,8 @@ class Import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
 						$this->array_import_module[$i] = array('position_of_profile' => ($module->module_position.'-'.$module->import_code[$r]), 'module' => $module);
+						// Type
+						$this->array_import_types[$i] = (isset($module->import_TypeFields_array[$r]) ? $module->import_TypeFields_array[$r] : array());
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
