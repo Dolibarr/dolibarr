@@ -75,7 +75,7 @@ jobs:
       - run: python -m pip install pre-commit
 
       # Restore previous cache of precommit
-      - uses: actions/cache/restore@v5
+      - uses: actions/cache/restore@v6
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
@@ -163,7 +163,7 @@ jobs:
           in: ${{ env.RAW_LOG }}
 
       # Save the precommit cache
-      - uses: actions/cache/save@v5
+      - uses: actions/cache/save@v6
         if: ${{ ! cancelled() }}
         with:
           path: ~/.cache/pre-commit/

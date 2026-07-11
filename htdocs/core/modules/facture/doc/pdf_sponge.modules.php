@@ -813,7 +813,7 @@ class pdf_sponge extends ModelePDFFactures
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
-							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
+							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
 							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
@@ -1573,7 +1573,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			// Show if Option VAT debit option is on also if transmitter is french
 			// Decret n°2099-1299 2022-10-07
-			// French mention : "Option pour le paiement de la taxe d'après les débits"
+			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);

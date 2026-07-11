@@ -1099,7 +1099,7 @@ class BonPrelevement extends CommonObject
 		// phpcs:enable
 		global $conf, $langs, $user;
 
-		dol_syslog(__METHOD__ . " mode=".$mode." format=".$format." type=".$type." dids=".$dids." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
+		dol_syslog(__METHOD__ . " mode=".$mode." format=".$format." type=".$type." dids=".(is_array($dids) ? implode(',', $dids) : $dids)." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
 		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
@@ -1319,6 +1319,7 @@ class BonPrelevement extends CommonObject
 						$baninloop = $fac[11];
 
 						$verif = checkSwiftForAccount(null, $bicinloop);
+
 						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							dol_syslog(__METHOD__." now call checkIbanForAccount(null, ".$baninloop.")");
 							$verif = checkIbanForAccount(null, $baninloop);
@@ -1335,7 +1336,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/compta/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1343,7 +1344,7 @@ class BonPrelevement extends CommonObject
 								$tmpsoc->id = (int) $fac[2];
 								$tmpsoc->name = $fac[8];
 								$invoice_url = "<a href='" . DOL_URL_ROOT . '/fourn/facture/card.php?facid=' . $fac[0] . "'>" . $fac[9] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpsoc->id] = "Error on default bank number IBAN/BIC for invoice " . $invoice_url . " for thirdparty " . $tmpsoc->getNomUrl(0);
 								$error++;
 							}
@@ -1351,7 +1352,7 @@ class BonPrelevement extends CommonObject
 								$tmpuser->id = (int) $fac[2];
 								$tmpuser->firstname = $fac[8];
 								$salary_url = "<a href='" . DOL_URL_ROOT . '/salaries/card.php?id=' . $fac[0] . "'>" . $fac[0] . "</a>";
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
+								$this->invoice_in_error[$fac[0]] = "Error incomplete properties of the default bank number ".$baninloop." IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$this->thirdparty_in_error[$tmpuser->id] = "Error on default bank number IBAN/BIC for salary " . $salary_url . " for employee " . $tmpuser->getNomUrl(0);
 								$error++;
 							}
@@ -1420,7 +1421,7 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 
 					// Build the new ref
-					$ref = $prefixt . $ref . sprintf("%03d", (intval($row[0]) + 1));
+					$ref = $prefixt . $ref . sprintf("%03d", (intval($row[0] ?? 0) + 1));
 
 					// $conf->abc->dir_output may be:
 					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
@@ -1985,10 +1986,39 @@ class BonPrelevement extends CommonObject
 						}
 						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
 
+						// Get the default value
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$iban = dolDecrypt($obj->iban);
+						$bic = $obj->bic;
+						$drum = $obj->drum;
+						$rum = $obj->rum;
 
-						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $obj->bic, $daterum, (string) $obj->drum, $obj->rum, $type);
+						// But if a force bank account is defined, we use it instead
+						if (!empty($obj->fk_prelevement_demande)) {
+							$companybankaccountid = 0;
+
+							$sqltmp = "SELECT fk_societe_rib FROM ".MAIN_DB_PREFIX."prelevement_demande";
+							$sqltmp .= " WHERE rowid = ".((int) $obj->fk_prelevement_demande);
+
+							$resqltmp = $this->db->query($sqltmp);
+
+							$objtmp = $this->db->fetch_object($resqltmp);
+							if ($objtmp) {
+								$companybankaccountid = (int) $objtmp->fk_societe_rib;
+							}
+
+							$bankaccount = new CompanyBankAccount($this->db);
+							$bankaccount->fetch($companybankaccountid);
+							if ($bankaccount->id > 0) {
+								$daterum = $bankaccount->date_rum;
+								$iban = $bankaccount->iban;
+								$bic = $bankaccount->bic;
+								$drum = $bankaccount->id;
+								$rum = $bankaccount->rum;
+							}
+						}
+
+						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, '', '', '', $obj->somme, $obj->reffac, $obj->idfac, $iban, $bic, $daterum, (string) $drum, $rum, $type);
 
 						$this->total += $obj->somme;
 						$i++;

@@ -167,7 +167,7 @@ class CommandeFournisseur extends CommonOrder
 	public $date_approve2;
 
 	/**
-	 * @var int|'' Date of the purchase order ordering
+	 * @var int|''|null 	Date of the purchase order ordering
 	 */
 	public $date_commande;
 
@@ -1965,7 +1965,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
-		$this->date_commande      = 0;
+		$this->date_commande      = null;
 		$this->ref_supplier       = '';
 		$this->user_approve_id    = 0;
 		$this->user_approve_id2   = 0;
@@ -2714,7 +2714,7 @@ class CommandeFournisseur extends CommonOrder
 	public function Livraison($user, $date, $type, $comment)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$error = 0;
@@ -2759,7 +2759,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 				if (!$error && getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE') && ($type == 'tot')) {	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 					$dispatcheddenied = $this->getDispachedLines(2);
-					if (count($dispatchedlinearray) > 0) {
+					if (count($dispatcheddenied) > 0) {
 						$result = -1;
 						$error++;
 						$this->errors[] = 'ErrorCantSetReceptionToTotalDoneWithReceptionDenied';

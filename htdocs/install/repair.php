@@ -107,7 +107,7 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
 
@@ -177,21 +177,21 @@ if ($ok) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print '<br>';
 
 
-print '<div class="warning" style="padding-top: 10px">';
+print '<div class="info" style="padding-top: 10px">';
 print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
 print '</div>';
 print '<br>';
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="liste centpercent" style="border: 1px solid #ccc">';
 print '<tr>';
-print '<th>Option</th>';
-print '<th>Information</th>';
+print '<th></th>';
+print '<th></th>';
 print '<th>Launch test</th>';
 print '<th>Launch confirmed</th>';
 print '</tr>';
@@ -202,10 +202,10 @@ if ($dolibarr_main_db_character_set != 'utf8mb4') {
 }
 
 $sections = [
-	'Standard' => [
+	'Miscellaneous' => [
 		[
 			'name' => 'standard',
-			'info' => ''
+			'info' => 'Miscellaneous fixes'
 		]
 	],
 	'Modules' => [
@@ -263,7 +263,7 @@ $sections = [
 			'info' => 'Repair link between dispatch lines and supplier order lines'
 		]
 	],
-	'Init data' => [
+	'Init empty data' => [
 		[
 			'name' => 'set_empty_time_spent_amount',
 			'info' => 'Init empty time spent amount'
@@ -282,14 +282,17 @@ $sections = [
 			'name' => 'force_collation_from_conf_on_tables',
 			'info' => 'Force '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' + row=dynamic, for mysql/mariadb only'
 		]
-	],
-	'Rebuild sequence' => [
+	]
+];
+
+if ($db->type == 'pgsql') {
+	$sections['Rebuild sequence'] = [
 		[
 			'name' => 'rebuild_sequences',
 			'info' => 'For postgresql only'
 		]
-	]
-];
+	];
+}
 
 $conf->use_javascript_ajax = 1;
 
@@ -318,6 +321,7 @@ foreach ($sections as $section => $options) {
 	}
 }
 print '</table>';
+print '</div>';
 
 
 print '<br id="sectionresult">';
@@ -1421,7 +1425,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
-					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
+					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') { // If confirmed, proceed with deletion
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
@@ -1464,7 +1468,7 @@ if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->rowid > 0) {
 					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
-					$nbfile++;
+					$nbfile++; // Count of files analyzed
 					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
 						$nbfiletodelete++;
 						if ($nbfiletodelete <= $MAXTODELETE) {
@@ -2057,7 +2061,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
-					// Calcul de la somme des paiements reçus
+					// Calculate the sum of received payments
 					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
 					$totHt = ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);

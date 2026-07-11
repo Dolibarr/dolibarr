@@ -1354,7 +1354,7 @@ class Cronjob extends CommonObject
 
 			try {
 				// Ensure we are not trapped into a transaction left open by the job.
-				$dbs->rollback();
+				$dbs->rollback('cron register_shutdown_function');
 			} catch (Throwable $e) {
 				// Ignore
 			}

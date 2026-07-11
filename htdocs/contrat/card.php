@@ -375,15 +375,14 @@ if (empty($reshook)) {
 
 						$fk_parent_line = 0;
 						$num = count($lines);
+						$rang = 0;
 
 						for ($i = 0; $i < $num; $i++) {
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 							if ($product_type == 1 || (getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS') && in_array($product_type, array(0, 1)))) { 	// TODO Exclude also deee
-								// service prédéfini
+								// predefined service
 								if ($lines[$i]->fk_product > 0) {
-									$product_static = new Product($db);
-
 									// Define output language
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 										$prod = new Product($db);
@@ -444,7 +443,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$array_options,
 									(int) $lines[$i]->fk_unit,
-									$num + 1
+									$rang++
 								);
 
 								if ($result < 0) {
@@ -1372,7 +1371,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Create");
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	if (is_object($objectsrc)) {
 		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
