@@ -166,7 +166,7 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
-	 * @var array					Files array (like returned by dol_dir_list) attached to the origin object
+	 * @var array<array<string, int>>	Files array (like returned by dol_dir_list) attached to the origin object
 	 */
 	public $objfilearray;
 
@@ -315,6 +315,7 @@ class FormMail extends Form
 		$this->withbodyreadonly = 0;
 		$this->withdeliveryreceiptreadonly = 0;
 		$this->withfckeditor = -1; // -1 = Auto
+		$this->objfilearray = [];
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1022,19 +1023,17 @@ class FormMail extends Form
 						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 						// possibility to add files still attached to the object
 						unset($_SESSION['objfilearray'.$keytoavoidconflict]);
-						if (is_array($this->objfilearray) && count($this->objfilearray) > 0) {
+						if (count($this->objfilearray)) {
 							foreach ($this->objfilearray as $iof=>$ofile) {
 								if (in_array($ofile['fullname'], $listofpaths)) unset($this->objfilearray[$iof]);
 							}
-							if (count($this->objfilearray) > 0) {
+							if (count($this->objfilearray)) {
 								$out .= '<div class="addofilelist">';
 								$out .= '<span class="block valignmiddle print-barre-liste">'.$langs->trans("AttachedFiles").' : </span>';
 								$_SESSION['objfilearray'.$keytoavoidconflict] = $this->objfilearray;
 								foreach ($this->objfilearray as $iof=>$ofile) {
-									if (!in_array($ofile['fullname'], $listofpaths)) {
-										$out .= '<span class="block"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
-										$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].'</span>';
-									}
+									$out .= '<span class="block"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
+									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].'</span>';
 								}
 								$out .=	'</div>';
 							}
