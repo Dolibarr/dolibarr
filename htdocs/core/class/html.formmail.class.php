@@ -1020,7 +1020,7 @@ class FormMail extends Form
 						}
 						$out .= ' ';
 						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
-						// possibilty to add files still attached to the object
+						// possibility to add files still attached to the object
 						unset($_SESSION['objfilearray'.$keytoavoidconflict]);
 						if (is_array($this->objfilearray) && count($this->objfilearray) > 0) {
 							foreach ($this->objfilearray as $iof=>$ofile) {
