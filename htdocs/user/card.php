@@ -249,16 +249,22 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
-			$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
-
-			$result = $object->delete($user);
-			if ($result < 0) {
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
+			if ($object->admin && empty($user->admin)) {
+				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlyAdminUsersCanDeleteAdminUsers"), null, 'errors');
 			} else {
-				setEventMessages($langs->trans("RecordDeleted"), null);
-				header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
-				exit;
+				$object->oldcopy = clone $object; // @phan-suppress-current-line PhanTypeMismatchProperty
+
+				$result = $object->delete($user);
+				if ($result < 0) {
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("RecordDeleted"), null);
+					header("Location: ".DOL_URL_ROOT."/user/list.php?restore_lastsearch_values=1");
+					exit;
+				}
 			}
 		}
 	}
