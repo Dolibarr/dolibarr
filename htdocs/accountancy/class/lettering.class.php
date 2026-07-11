@@ -300,13 +300,15 @@ class Lettering extends BookKeeping
 		// Generate a string with n char A where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA', 'AAA', ...)
 		$lettre = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), "A");
 
-		$sql = "SELECT DISTINCT ab2.lettering_code";
-		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		$sql .=	" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
-		$sql .=	" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
-		$sql .=	" AND ab2.lettering_code != ''";
-		$sql .=	" ORDER BY ab2.lettering_code DESC";
-		$sql .=	" LIMIT 1 ";
+        $sql = "SELECT DISTINCT ab2.lettering_code";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ";
+        $sql .= " ON ab2.subledger_account = ab.subledger_account ";
+        $sql .= " OR (ab2.subledger_account is null AND ab.subledger_account is null AND ab.numero_compte IN ".getDolGlobalString('ACCOUNTING_LIST_TO_LETTER')." AND ab2.numero_compte=ab.numero_compte ) ";
+        $sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+        $sql .= " AND ab2.lettering_code != ''";
+        $sql .= " ORDER BY ab2.lettering_code DESC";
+        $sql .= " LIMIT 1 ";
 
 		$resqla = $this->db->query($sql);
 		if ($resqla) {
@@ -321,8 +323,9 @@ class Lettering extends BookKeeping
 			$error++;
 		}
 
-		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
+        $sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
+        $sql.= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND ";
+        $sql.= " (subledger_account != '' OR numero_compte IN ".getDolGlobalString('ACCOUNTING_LIST_TO_LETTER')." ) ;";
 		$resqlb = $this->db->query($sql);
 		if ($resqlb) {
 			$obj = $this->db->fetch_object($resqlb);
@@ -341,10 +344,11 @@ class Lettering extends BookKeeping
 		$affected_rows = 0;
 
 		if (!$error) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-			$sql .= " lettering_code='".$this->db->escape($lettre)."'";
-			$sql .= ", date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
-			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
+            $sql .= " lettering_code='".$this->db->escape($lettre)."'";
+            $sql .= ", date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
+            $sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND " ;
+            $sql .= " (subledger_account != '' OR numero_compte IN ".getDolGlobalString('ACCOUNTING_LIST_TO_LETTER')." ) ;";
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -382,7 +386,7 @@ class Lettering extends BookKeeping
 		$sql .= " lettering_code = NULL";
 		$sql .= ", date_lettering = NULL";
 		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
-		$sql .= " AND subledger_account != ''";
+        $sql.= " AND (subledger_account != '' OR numero_compte IN ".getDolGlobalString('ACCOUNTING_LIST_TO_LETTER')." ) ;";
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
