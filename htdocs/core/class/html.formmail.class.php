@@ -452,7 +452,6 @@ class FormMail extends Form
 				}
 			}
 		}
-//		print_r($listofnames);die();
 		return array('paths' => $listofpaths, 'names' => $listofnames, 'mimes' => $listofmimes);
 	}
 
