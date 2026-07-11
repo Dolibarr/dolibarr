@@ -4249,7 +4249,7 @@ if ($action == 'create') {
 		// Use prorata discount
 		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
 			// Get existing rate if any
-			$prorata_rate = GETPOST('prorata_rate', 'float');
+			$prorata_rate = GETPOSTFLOAT('prorata_rate');
 			if (empty($prorata_rate)) {
 				// On a situation, use previous situation value
 				if ($objectsrc instanceof Facture && !empty($objectsrc->prorata_rate)) {
