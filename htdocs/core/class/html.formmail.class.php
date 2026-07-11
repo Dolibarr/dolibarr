@@ -166,7 +166,7 @@ class FormMail extends Form
 	public $withfile;
 
 	/**
-	 * @var array<array<string, int|string>>	Files array (like returned by dol_dir_list) attached to the origin object
+	 * @var array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)>	Files array (like returned by dol_dir_list) attached to the origin object
 	 */
 	public $objfilearray;
 
