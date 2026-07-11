@@ -57,7 +57,7 @@ class Import
 	public $array_import_module;
 
 	/**
-	 * @var array<string,string>
+	 * @var array<int,array<string,string>>
 	 */
 	public $array_import_types;
 
