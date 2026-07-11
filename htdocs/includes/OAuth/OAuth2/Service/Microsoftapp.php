@@ -89,7 +89,7 @@ class Microsoftapp extends AbstractService
      */
     public function getAuthorizationMethod()
     {
-        return static::AUTHORIZATION_METHOD_QUERY_STRING;
+        return static::AUTHORIZATION_METHOD_HEADER_BEARER;
     }
 
     /**
@@ -169,6 +169,8 @@ class Microsoftapp extends AbstractService
             throw new TokenResponseException('Unable to parse response.');
         } elseif (isset($data['error'])) {
             throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . (isset($data['error_description']) ? ' - ' . $data['error_description'] : '') . '"');
+        } elseif (empty($data['access_token'])) {
+            throw new TokenResponseException('Error in retrieving token: access_token is missing from response.');
         }
 
         $token = new StdOAuth2Token();
