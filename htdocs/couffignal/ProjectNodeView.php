@@ -53,7 +53,7 @@ class ProjectNodeView
 	 * 
 	 * @return array List of Invoices (Facture)
 	 */
-	public static function getCycleSeeds(DoliDB $db, Project $project, array $properties, string $dates, string $datee): array
+	public static function getCycleSeeds(DoliDB $db, Project $project, array $properties, ?string $dates, ?string $datee): array
 	{
 		// Collect all invoices
 		$list_invoices = $project->get_element_list('invoice', $properties['table'], $properties['datefieldname'], $dates, $datee, 'fk_projet');
