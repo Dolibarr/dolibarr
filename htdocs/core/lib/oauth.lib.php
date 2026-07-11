@@ -164,6 +164,12 @@ function getAllOauth2Array()
 			'OAUTH_MICROSOFT3_DESC',
 		),
 		array(
+			'OAUTH_MICROSOFTAPP_NAME',
+			'OAUTH_MICROSOFTAPP_ID',
+			'OAUTH_MICROSOFTAPP_SECRET',
+			'OAUTH_MICROSOFTAPP_DESC',
+		),
+		array(
 			'OAUTH_NEST_NAME',
 			'OAUTH_NEST_ID',
 			'OAUTH_NEST_SECRET',
@@ -360,6 +366,22 @@ function getSupportedOauth2Array()
 		// Azure permissions required: Microsoft Graph > Delegated > SMTP.Send and IMAP.AccessAsUser.All
 		'availablescopes' => 'offline_access,https://outlook.office.com/SMTP.Send,https://outlook.office.com/IMAP.AccessAsUser.All',
 		'returnurl' => '/core/modules/oauth/microsoft3_oauthcallback.php'
+	);
+	$supportedoauth2array['OAUTH_MICROSOFTAPP_NAME'] = array(
+		'callbackfile' => 'microsoftapp',
+		'picto' => 'microsoft',
+		'urlforapp' => 'OAUTH_MICROSOFTAPP_DESC',
+		'name' => 'Microsoft Exchange Online App-only [SMTP/IMAP, client credentials]',
+		'urlforcredentials' => 'https://portal.azure.com/',
+		// App-only mode (client credentials grant flow): the token is requested with the application
+		// credentials only, without any user login/consent dance and without refresh token.
+		// The scope must be the ".default" scope of the Exchange Online resource.
+		// Azure permissions required: Office 365 Exchange Online > Application > IMAP.AccessAsApp (and/or
+		// POP.AccessAsApp, SMTP.SendAsApp) with admin consent, and the application service principal
+		// registered into Exchange Online with access granted on the mailboxes to poll
+		// (New-ServicePrincipal + Add-MailboxPermission).
+		'availablescopes' => 'https://outlook.office365.com/.default',
+		'returnurl' => '/core/modules/oauth/microsoftapp_oauthcallback.php'
 	);
 
 	// Add a generic Oauth token handler. Tested with Mastodon.
