@@ -8,6 +8,7 @@
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent Maury TimGroup	<vmaury@timgroup.fr>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -163,6 +164,11 @@ class FormMail extends Form
 	 * @var int<0,2>|string 		0=No attaches files, 1=Show attached files, 2=Can add new attached files, 'text'=Show attached files and the text
 	 */
 	public $withfile;
+
+	/**
+	 * @var array					Files array (like returned by dol_dir_list) attached to the origin object
+	 */
+	public $objfilearray;
 
 	/**
 	 * @var string					Use case string to a button "Fill with layout" for this use case. Example 'wesitepage', 'emailing', 'email', ...
@@ -437,6 +443,16 @@ class FormMail extends Form
 		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
 			$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		}
+		if (is_array($_SESSION['objfilearray'.$keytoavoidconflict]) && count($_SESSION['objfilearray'.$keytoavoidconflict]) > 0) {
+			foreach ($_SESSION['objfilearray'.$keytoavoidconflict] as $iof=>$ofile) {
+				if (GETPOSTINT('addofile_'.$iof)) {
+					$listofpaths[] = $ofile['fullname'];
+					$listofnames[] = $ofile['name'];
+					$listofmimes[] = dol_mimetype($ofile['name']);
+				}
+			}
+		}
+//		print_r($listofnames);die();
 		return array('paths' => $listofpaths, 'names' => $listofnames, 'mimes' => $listofmimes);
 	}
 
@@ -1005,6 +1021,25 @@ class FormMail extends Form
 						}
 						$out .= ' ';
 						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						// possibilty to add files still attached to the object
+						unset($_SESSION['objfilearray'.$keytoavoidconflict]);
+						if (is_array($this->objfilearray) && count($this->objfilearray) > 0) {
+							foreach ($this->objfilearray as $iof=>$ofile) {
+								if (in_array($ofile['fullname'], $listofpaths)) unset($this->objfilearray[$iof]);
+							}
+							if (count($this->objfilearray) > 0) {
+								$out .= '<div class="addofilelist">';
+								$out .= '<span class="block valignmiddle print-barre-liste">'.$langs->trans("AttachedFiles").' : </span>';
+								$_SESSION['objfilearray'.$keytoavoidconflict] = $this->objfilearray;
+								foreach ($this->objfilearray as $iof=>$ofile) {
+									if (!in_array($ofile['fullname'], $listofpaths)) {
+										$out .= '<span class="block"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
+										$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].'</span>';
+									}
+								}
+								$out .=	'</div>';
+							}
+						}
 					}
 				} else {
 					$out .= $this->withfile;
