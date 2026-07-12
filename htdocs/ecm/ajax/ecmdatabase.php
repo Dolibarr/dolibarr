@@ -49,6 +49,7 @@ $action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');
 
 $permissiontoread = $user->hasRight('ecm', 'read');
+$permissiontosetup = $user->hasRight('ecm', 'setup');
 
 $error = 0;
 
@@ -70,7 +71,7 @@ top_httphead();
 
 // Load original field value
 if (isset($action) && !empty($action)) {
-	if ($action == 'build' && !empty($element) && $permissiontoread) {
+	if ($action == 'build' && !empty($element) && $permissiontosetup && in_array($element, array('ecm', 'medias'))) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
