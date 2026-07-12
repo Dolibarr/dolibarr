@@ -742,6 +742,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'contrat';
 			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
+				throw new RestException(403);
+			}
+
 			$object = new Contrat($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -753,6 +757,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'ficheinter';
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+				throw new RestException(403);
+			}
+
 			$object = new Fichinter($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -763,6 +771,10 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 			$modulepart = 'project';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+				throw new RestException(403);
+			}
 
 			$object = new Project($this->db);
 			$result = $object->fetch($id, $ref);
@@ -795,6 +807,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
+				throw new RestException(403);
+			}
+
 			$object = new Mo($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -805,6 +821,10 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
 			$modulepart = 'contact';
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
+				throw new RestException(403);
+			}
 
 			$object = new Contact($this->db);
 			$result = $object->fetch($id?$id:$ref);
