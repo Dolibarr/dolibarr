@@ -3336,9 +3336,8 @@ class Setup extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
-			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Error API open to admin users only');
 		}
 
 		$modulesdir = dolGetModulesDirs();
