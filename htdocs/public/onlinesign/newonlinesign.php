@@ -155,6 +155,8 @@ if ($source == 'proposal') {
 	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($source == 'societe_rib') {
 	$securekeyseed = getDolGlobalString('SOCIETE_RIB_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+} else {
+	$securekeyseed = getDolGlobalString(dol_strtoupper($source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, 'hash')) {
 	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
