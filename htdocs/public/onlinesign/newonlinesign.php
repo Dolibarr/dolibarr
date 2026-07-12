@@ -96,7 +96,6 @@ $source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
-$mesg = '';
 
 if ($source == '') {
 	$source = 'proposal';
@@ -688,12 +687,8 @@ if ($source == 'proposal') {
 $parameters = array('source' => $source);
 $reshook = $hookmanager->executeHooks('addFormSign', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-if (!$found && !$mesg) {
-	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
-}
-
-if ($mesg) {
-	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+if (!$found) {
+	print '<tr><td class="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($langs->transnoentitiesnoconv("ErrorBadParameters")).'</div></td></tr>'."\n";
 }
 
 print '</table>'."\n";
