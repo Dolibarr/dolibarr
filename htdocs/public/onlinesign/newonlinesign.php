@@ -96,7 +96,7 @@ $source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
-
+$mesg = '';
 
 if ($source == '') {
 	$source = 'proposal';
