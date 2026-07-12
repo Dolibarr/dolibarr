@@ -228,10 +228,10 @@ if ($savehandler == 'files') {
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Remote IP
-		print '<td>'.dol_escape_htmltag($sessionentry['remote_ip']).'</td>';
+		print '<td>'.dol_escape_htmltag((string) $sessionentry['remote_ip']).'</td>';
 
 		// User Agent
-		print '<td class="nowrap left">'.dol_escape_htmltag($sessionentry['user_agent']).'</td>';
+		print '<td class="nowrap left">'.dol_escape_htmltag((string) $sessionentry['user_agent']).'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 		$i++;
