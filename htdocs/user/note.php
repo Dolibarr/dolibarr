@@ -59,7 +59,11 @@ if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 }
 
 // Permissions
-$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
+if ($object->id == $user->id) {
+	$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
+} else {
+	$permissionnote = $user->hasRight("user", "user", "write")); // Used by the include of actions_setnotes.inc.php
+}
 
 // Security check
 $socid = 0;
