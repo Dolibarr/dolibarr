@@ -179,6 +179,7 @@ If possible:
 - Change the global architecture of existing modules
 - Delete code without justification and a comment explaining why
 - Add external dependencies (Composer packages, JS libraries) without prior validation
+- Modify the `ChangeLog` file (this file will be updated by the maintainer during the release process)
 
 ---
 

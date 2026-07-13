@@ -159,7 +159,6 @@ NEW: Add mass action to cancel invoices using credit notes (#37852)
 NEW: Add personal_data flag in extrafields admin UI - next step of #8612 (#38133)
 NEW: Direct installation for community and free modules on DoliStore (#38357)
 NEW: Display thirdparty name with ref in supplier orders linked objects (#36952)
-NEW: Show bom net needs treeview by line position. (#37459)
 NEW: Show name_alias in parentheses in thirdparty dropdown lists (#37997)
 NEW: Thirdparty card +tab with events where thirdparty is attendee/booth (#37743)
 NEW: Update ticket read date when status changes (#37470)
@@ -168,6 +167,7 @@ NEW: Add delivery date in supplier order linked object block (#38351)
 NEW: A lot of look and feel enhancement in the immutable log pages.
 NEW: Enhance the tools to check file integrity.
 NEW: The OAuth login with Google stay on the requested page after the redirect instead of reaching the home page.
+FIX: Use generic online signature security token for unlisted source verifier.
 NEW: Add shipment online url to substitution array
 NEW: ModuleBuilder - selectable object tabs (+ fixes for multi-object generation)
 NEW: Add hook getTicketMessageEmailFrom to override sender in Ticket::sendTicketMessageByEmail
@@ -243,6 +243,7 @@ FIX: missing "blob:" in the assistant for CSP editor.
 FIX: option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE
 FIX: product price.php: preserve default_vat_code and tva_npr when auto-creating initial product_price row (#38034)
 FIX: propagate fk_warehouse from BOM/MO to production lines in createProduction() and processBOM() (#38147)
+FIX: #39068 Product search combo: ignore supplier price warning text when filtering
 FIX: selected default value ko on select_produits_fournisseurs_list()
 FIX: Set default warehouse on order create. (#37815)
 FIX: Site root missing in $backtopage. (#37804)
