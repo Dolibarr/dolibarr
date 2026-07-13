@@ -3443,7 +3443,7 @@ class EmailCollector extends CommonObject
 								foreach ($dirs as $target) {
 									$prefix = $this->actions[$this->id]['actionparam'];
 									foreach ($data as $filename => $content) {
-										$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
+										$resr = $this->saveAttachment($target, $prefix . '_' . $filename, $content);
 										if ($resr == -1) {
 											$this->errors[] = 'Doc not saved';
 										}
@@ -4461,33 +4461,56 @@ class EmailCollector extends CommonObject
 	/**
 	 * saveAttachment
 	 *
-	 * @param  string $destdir	destination
-	 * @param  string $filename filename
-	 * @param  string $content  content
-	 * @return void
+	 * @param  string 		$destdir	destination
+	 * @param  string 		$filename 	filename
+	 * @param  string 		$content  	content
+	 * @return string|-1 				Return the path to the saved file, or -1 if error
 	 */
 	private function saveAttachment($destdir, $filename, $content)
 	{
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
-		$tmparraysize = getDefaultImageSizes();
-		$maxwidthsmall = $tmparraysize['maxwidthsmall'];
-		$maxheightsmall = $tmparraysize['maxheightsmall'];
-		$maxwidthmini = $tmparraysize['maxwidthmini'];
-		$maxheightmini = $tmparraysize['maxheightmini'];
-		$quality = $tmparraysize['quality'];
+		$destdir = dol_sanitizePathName($destdir);
+		$filename = dol_sanitizeFileName($filename);
 
-		file_put_contents($destdir.'/'.$filename, $content);
-		dolChmod($destdir.'/'.$filename);
+		if (!file_exists($destdir)) {
+			if (dol_mkdir($destdir) < 0) {
+				return -1;
+			}
+		}
+
+		$tmp = explode('.', $filename);
+		$ext = array_pop($tmp);
+		$filename = implode('.', $tmp);
+
+		$i = 1;
+		$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '.' . $ext;
+
+		while (file_exists($filepath)) {
+			$filepath = $destdir . (preg_match('/\/$/', $destdir) ? '' : '/') . $filename . '(' . $i . ').' . $ext;
+			$i++;
+		}
+
+		file_put_contents($filepath, $content);
+		dolChmod($filepath);
 
 		if (image_format_supported($filename) == 1) {
+			$tmparraysize = getDefaultImageSizes();
+			$maxwidthsmall = $tmparraysize['maxwidthsmall'];
+			$maxheightsmall = $tmparraysize['maxheightsmall'];
+			$maxwidthmini = $tmparraysize['maxwidthmini'];
+			$maxheightmini = $tmparraysize['maxheightmini'];
+			$quality = $tmparraysize['quality'];
+
 			// Create thumbs
-			vignette($destdir.'/'.$filename, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+			vignette($filepath, $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
 			// Create mini thumbs for image (Ratio is near 16/9)
-			vignette($destdir.'/'.$filename, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+			vignette($filepath, $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
 		}
 
 		addFileIntoDatabaseIndex($destdir, $filename);
+
+		return $filepath;
 	}
 
 	/**

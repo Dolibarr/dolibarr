@@ -1910,7 +1910,7 @@ class Commande extends CommonOrder
 	 * 	@param  int|''  $date_end           End date of the line
 	 * 	@return void
 	 *
-	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
+	 *	TODO	Replace calls to this function by generation of the `Ligne` (line) object
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0.0, $date_start = '', $date_end = '')
 	{

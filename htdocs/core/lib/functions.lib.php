@@ -6862,9 +6862,10 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param	string		$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string		$picto				'' or 'warning'
  *  @param  string		$textonpictotooltip	Text to show in tooltip on picto
+ *  @param	string		$cssfordropdown		An additional css to avoid conflict to manage the dropdown if $textfordropdown is set
  *	@return	string							String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '', $textonpictotooltip = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '', $textonpictotooltip = '', $cssfordropdown = 'info_admin')
 {
 	global $conf, $langs;
 
@@ -6880,19 +6881,19 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
+		$result = ($nodiv ? '' : '<div class="wordbreak ' . $class . ($cssfordropdown ? ' ' . $cssfordropdown : '') . ($morecss ? ' ' . $morecss : '') . ($textfordropdown ? ' hidden' : '') . '">');
 		$result .= img_picto(((string) $admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).($textonpictotooltip ? ' : '.$textonpictotooltip : ''), $fa);
 		$result .= ' ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
 		if ($textfordropdown) {
-			$tmpresult = '<span class="' . $class . 'text opacitymedium cursorpointer">' . $langs->trans($textfordropdown) . ' ' . img_picto($langs->trans($textfordropdown), '1downarrow') . '</span>';
+			$tmpresult = '<span class="' . $class . ' '. $cssfordropdown.'text opacitymedium cursorpointer">' . $langs->trans($textfordropdown) . ' ' . img_picto($langs->trans($textfordropdown), '1downarrow') . '</span>';
 			$tmpresult .= '<script nonce="' . getNonce() . '" type="text/javascript">
 				jQuery(document).ready(function() {
-					jQuery(".' . $class . 'text").click(function() {
-						console.log("toggle text");
-						jQuery(".' . $class . '").toggle();
+					jQuery(".' . $cssfordropdown . 'text").click(function() {
+						console.log("toggle text of .'.$cssfordropdown.'");
+						jQuery(".' . $cssfordropdown . '").toggle().removeClass("hidden");
 					});
 				});
 				</script>';
