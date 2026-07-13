@@ -211,7 +211,7 @@ if ($reshook < 0) {
 // (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
 // the "run" permission elsewhere and must stay available to a plain cashier (#38949).
 if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
-	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), array(), 1);
 	$action = '';
 }
 
