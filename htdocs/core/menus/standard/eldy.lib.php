@@ -1063,7 +1063,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					if (!empty($menu_array[$i]['prefix'])) {
-						print $menu_array[$i]['prefix'];
+						$reg = array();
+						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
+							print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$menu_array[$i]['prefix'].' paddingright pictofixedwidth"></span>';
+						} else {
+							print $menu_array[$i]['prefix'];
+						}
 					}
 					print ucfirst($menu_array[$i]['titre']);
 					print '</span>';
