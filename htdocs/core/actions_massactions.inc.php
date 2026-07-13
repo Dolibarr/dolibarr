@@ -895,12 +895,11 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		}
 	}
 
-	// For invoices, a PDF document is often uploaded manually (the document sent by the
-	// supplier) and kept under its original filename, so it is not found by the ref-based
-	// filename search above. Complete the list using the ecm_files link (src_object_type,
-	// src_object_id), that Dolibarr sets on any file upload regardless of its name, for the
-	// selected records that found no file yet.
-	if (in_array($objecttmp->element, array('facture', 'invoice_supplier'))) {
+	// For invoices, a PDF document is often uploaded manually (the document sent by the supplier) and kept under its original filename, 
+	// so it is not found by the ref-based filename search above. Complete the list using the ecm_files link (src_object_type, src_object_id), that Dolibarr 
+	// sets on any file upload regardless of its name, for the selected records that found no file yet.
+	// Note that manually uploaded files may nt be mergeabled (protected, wrong format, ...), so this feature is not on by default.
+	if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && getDolGlobalString("INVOICE_MASS_ACTION_CAN_MERGE_MANUALY_UPLOADEd_FILES")) {
 		foreach ($listofobjectref as $objectid => $basename) {
 			if (!empty($listofobjectidfound[$objectid])) {
 				continue;
