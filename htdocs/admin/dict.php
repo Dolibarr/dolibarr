@@ -2346,6 +2346,10 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == 'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
+							} elseif ($value == 'libelle' && ($tabname[$id] == 'c_stcomm' || $tabname[$id] == 'c_stcommcontact')) {
+								$key = 'StatusProspect'.$obj->rowid;
+								$trans = $langs->trans($key);
+								$valuetoshow = ($trans != $key ? $trans : $obj->{$value});
 							} elseif ($value == 'label' && $tabname[$id] == 'c_units') {
 								$langs->load('other');
 								$key = $langs->trans($obj->label);
