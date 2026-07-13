@@ -1124,6 +1124,9 @@ class Documents extends DolibarrApi
 				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->ref);
 			}
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
+			if (empty($tmp['accessallowed'])) {
+				throw new RestException(403, 'Access not allowed to upload file into this directory');
+			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
@@ -1147,6 +1150,9 @@ class Documents extends DolibarrApi
 			if ($modulepart != 'ecm') {
 				$relativefile = $subdir;
 				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
+				if (empty($tmp['accessallowed'])) {
+					throw new RestException(403, 'Access not allowed to upload file into this directory');
+				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
