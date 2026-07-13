@@ -123,7 +123,7 @@ class EmailTemplates extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteByLAbel($label)
+	public function deleteByLabel($label)
 	{
 		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {

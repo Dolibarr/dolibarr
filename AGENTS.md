@@ -65,8 +65,7 @@ Before writing any code, the agent **must**:
 - Use Dolibarr database functions exclusively — never use PDO or MySQLi directly
     - In pages: use global `$db`
     - In classes: use `$this->db`
-- ✅ Always escape user inputs
-- ✅ SQL forged by PHP must escape fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
+- ✅ SQL forged by PHP must escaped fields with `db->escape()`, `db->sanitize()`, or by casting values to `(int)` or `(float)`
 - ✅ Always use `$db->query()` followed by `$db->fetch_object()` or `$db->fetch_array()` to retrieve results
 - ✅ SQL scripts for table and index creation must be placed in `htdocs/install/mysql/tables/` (see existing files for examples)
 - ❌ Never run SQL queries inside loops (avoid N+1 problem — use JOINs or batch queries instead)
@@ -126,7 +125,7 @@ If possible:
 
 - Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
 - Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
-- Prevent XSS injection (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`, ...)
+- Prevent XSS injection by escaping HTML output (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`)
 - Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
 
 ---
