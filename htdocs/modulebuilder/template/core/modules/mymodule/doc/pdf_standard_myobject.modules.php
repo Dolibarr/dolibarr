@@ -37,6 +37,7 @@
 dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
@@ -668,11 +669,11 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$sign = 1;
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && $object->lines instanceof CommonInvoiceLine && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+					if ($prev_progress > 0 && $object->lines[$i] instanceof CommonInvoiceLine && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent; // @phan-suppress-current-line PhanUndeclaredProperty
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent; // @phan-suppress-current-line PhanUndeclaredProperty
 						}
 					} else {
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -684,10 +685,11 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
+					// @phan-suppress-next-line PhanUndeclaredProperty
 					$localtax1_rate = $object->lines[$i]->localtax1_tx;
-					$localtax2_rate = $object->lines[$i]->localtax2_tx;
-					$localtax1_type = $object->lines[$i]->localtax1_type;
-					$localtax2_type = $object->lines[$i]->localtax2_type;
+					$localtax2_rate = $object->lines[$i]->localtax2_tx; // @phan-suppress-current-line PhanUndeclaredProperty
+					$localtax1_type = $object->lines[$i]->localtax1_type; // @phan-suppress-current-line PhanUndeclaredProperty
+					$localtax2_type = $object->lines[$i]->localtax2_type; // @phan-suppress-current-line PhanUndeclaredProperty
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -724,7 +726,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
-					$vatcode = $object->lines[$i]->vat_src_code;
+					$vatcode = $object->lines[$i]->vat_src_code; // @phan-suppress-current-line PhanUndeclaredProperty
 					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
 					}
@@ -761,7 +763,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						}
 					}
 
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) { // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == $pageposafter) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 						} else {

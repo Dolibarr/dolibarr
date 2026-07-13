@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,13 @@
  */
 
 /**
- * \file htdocs/ai/assistant/index.php
+ * \file 	htdocs/ai/assistant/index.php
  * \ingroup ai
- * \brief Main Chat Interface for MCP Server AI Assistant
+ * \brief 	Main Chat Interface for MCP Server AI Assistant
  */
 
+// Load Dolibarr environment
+require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -31,12 +34,15 @@
  * @var User $user
  */
 
-// Load Dolibarr environment
-require '../../main.inc.php';
-
 // Security check
-if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	accessforbidden('Module or feature not allowed');
+}
+// Per-user gate: the Assistant page is now governed by the standard
+// 'ai/assistant/use' right (granted by default to new users), so admins
+// can revoke access per user/group via the standard permission UI.
+if (!$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
 }
 
 global $langs;

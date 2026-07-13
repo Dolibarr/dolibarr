@@ -251,12 +251,10 @@ if (empty($reshook)) {
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
 
-	global $error;
-	/** @phan-var-force int $error */
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
-	if (!$error && $massaction == 'close' && $permissiontoadd) {
+	if (!$error && $massaction == 'close' && $permissiontoadd) {	// @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php
 		$objecttmp = new Ticket($db);
 		$db->begin();
 
@@ -906,7 +904,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayofstatus['openall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('OpenAll').'</b>', 'label' => '-- '.$langs->trans('OpenAll'));
 			foreach ($object->labelStatusShort as $key2 => $val2) {
 				if ($key2 == Ticket::STATUS_CLOSED) {
-					$arrayofstatus['closeall'] = array('id' => 'openall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
+					$arrayofstatus['closeall'] = array('id' => 'closeall', 'labelhtml' => '<b>-- '.$langs->trans('ClosedAll').'</b>', 'label' => '-- '.$langs->trans('ClosedAll'));
 				}
 				$arrayofstatus[$key2] = array('id' => $key2, 'labelhtml' => $val2, 'label' => $val2);
 			}

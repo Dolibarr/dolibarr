@@ -10,7 +10,6 @@ ActionsOnFicheInter=Aktionen zum Einsatz
 LastInterventions=Letzte %s Einsätze
 AllInterventions=Alle Einsätze
 CreateDraftIntervention=Einsatzentwurf erstellen
-InterventionContact=Einsatzkontakte / -adressen
 DeleteIntervention=Einsatz löschen
 ValidateIntervention=Einsatz freigeben
 ModifyIntervention=Ändere Einsatz

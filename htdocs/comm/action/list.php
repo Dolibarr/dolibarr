@@ -703,7 +703,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
 $newtitle = '<div class="nowrap clear inline-block minheight30 hideonsmartphone">';
-$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
+$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_local_text small"> '.$langs->trans("LocalAgenda").'</span></label> &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
 

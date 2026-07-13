@@ -70,7 +70,12 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="tdoverflowmax125" title="<?php echo dolPrintHTMLForAttribute($langs->trans("SupplierOrder")); ?>"><?php echo dolPrintHTML($langs->trans("SupplierOrder")); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
 		<td class="left linkedcol-ref tdoverflowmax125 nopaddingtopimp nopaddingbottomimp" title="<?php echo dolPrintHTMLForAttributeUrl($objectlink->ref_supplier); ?>"><?php echo $refSupplierWithThirdparty ?></td>
-		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
+		<td class="center"><?php
+		echo img_picto($langs->trans("Date"), 'generic', 'class="pictofixedwidth"').dol_print_date($objectlink->date, 'day');
+		if (!empty($objectlink->delivery_date)) {
+			echo '<br>'.img_picto($langs->trans("DateDeliveryPlanned"), 'reception', 'class="pictofixedwidth"').dol_print_date($objectlink->delivery_date, 'day');
+		}
+		?></td>
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
 			$total += $objectlink->total_ht;

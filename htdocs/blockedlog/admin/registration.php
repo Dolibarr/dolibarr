@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018 Laurent Destailleur <eldy@destailleur.fr>
- * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2017      	ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2026 	Laurent Destailleur <ldestailleur@dolicloud.com>
+ * Copyright (C) 2024-2026 	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
@@ -95,7 +96,36 @@ if ($action == 'update') {
 		$error++;
 	}
 	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1")) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("BLOCKEDLOG_REGISTRATION_IDPROF1")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId1", $mysoc->country_code)), null, 'errors');
+		$error++;
+	}
+	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId2", $mysoc->country_code)), null, 'errors');
+		$error++;
+	}
+
+	$country_code = GETPOST("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE");
+	$tmpthirdparty = new Societe($db);
+	$tmpthirdparty->country_code = $country_code;
+	$tmpthirdparty->country_id = getCountry($country_code, '3', $db, $langs, 0);
+	$tmpthirdparty->idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+	$tmpthirdparty->idprof2 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2");
+
+	// Check validity of email
+	if (!isValidEmail(GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL"))) {
+		setEventMessages($langs->trans("ErrorBadEMail", GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL")), null, 'errors');
+		$error++;
+	}
+
+	// Check validity of prof id
+	if ($tmpthirdparty->idprof1 && isValidProfIds(1, $tmpthirdparty) <= 0) {
+		$langs->loadLangs(array("errors", "companies"));
+		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof1, $langs->transcountry("ProfId1Short", $tmpthirdparty->country_code)), null, 'errors');
+		$error++;
+	}
+	if ($tmpthirdparty->idprof2 && isValidProfIds(2, $tmpthirdparty) <= 0) {
+		$langs->loadLangs(array("errors", "companies"));
+		setEventMessages($langs->trans("ErrorBadValueForParameter", $tmpthirdparty->idprof2, $langs->transcountry("ProfId2Short", $tmpthirdparty->country_code)), null, 'errors');
 		$error++;
 	}
 
@@ -103,6 +133,7 @@ if ($action == 'update') {
 	$company_email = GETPOST("BLOCKEDLOG_REGISTRATION_EMAIL");
 	$company_country_code = GETPOST("BLOCKEDLOG_REGISTRATION_COUNTRY_CODE");
 	$company_idprof1 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF1");
+	$company_idprof2 = GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2");
 	$company_address = GETPOST("BLOCKEDLOG_REGISTRATION_ADDRESS");
 	$company_state = GETPOST("BLOCKEDLOG_REGISTRATION_STATE");
 	$company_zip = GETPOST("BLOCKEDLOG_REGISTRATION_ZIP");
@@ -112,6 +143,7 @@ if ($action == 'update') {
 	$provider_email = GETPOST("MAIN_INFO_ITPROVIDER_MAIL");
 	$provider_country_id = GETPOST("MAIN_INFO_ITPROVIDER_COUNTRY");
 	$provider_idprof1 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF1");
+	$provider_idprof2 = GETPOST("MAIN_INFO_ITPROVIDER_IDPROF2");
 	$provider_address = GETPOST("MAIN_INFO_ITPROVIDER_ADDRESS");
 	$provider_state = GETPOST("MAIN_INFO_ITPROVIDER_STATE");
 	$provider_zip = GETPOST("MAIN_INFO_ITPROVIDER_ZIP");
@@ -132,6 +164,10 @@ if ($action == 'update') {
 			$error++;
 		}
 		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_IDPROF1", $company_idprof1, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+		$res = dolibarr_set_const($db, "BLOCKEDLOG_REGISTRATION_IDPROF2", $company_idprof2, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -166,6 +202,10 @@ if ($action == 'update') {
 			$error++;
 		}
 		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF1", $provider_idprof1, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+		$res = dolibarr_set_const($db, "MAIN_INFO_ITPROVIDER_IDPROF2", $provider_idprof1, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -303,7 +343,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		$htmltext = '';
 		// @phpstan-ignore-next-line  Country code is already FR because of in_array('FR') test above
 		if ($mysoc->country_code === 'FR') {
-			$htmltext .= $langs->trans("UnalterableLogTool1FR").'<br>';
+			$htmltext .= $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		}
 
 		print info_admin($htmltext, 0, 0, 'warning');
@@ -323,7 +363,7 @@ if (in_array($mysoc->country_code, array('FR'))) {
 		print info_admin($htmltext, 0, 0, 'info');
 
 		// Show remind on good practices related to archives
-		$htmltext = $langs->trans("UnalterableLogTool1FR").'<br>';
+		$htmltext = $langs->trans("UnalterableLogTool1FR", $langs->transnoentitiesnoconv("Archives")).'<br>';
 		print info_admin($htmltext, 0, 0, 'warning');
 	}
 }
@@ -343,6 +383,7 @@ if ($mode == "forceregistration") {
 		'company_name' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name),
 		'company_email' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email),
 		'company_idprof1' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1),
+		'company_idprof2' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2),
 		'company_address' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ADDRESS', $mysoc->address),
 		'company_state' => $company_state,
 		'company_zip' => getDolGlobalString('BLOCKEDLOG_REGISTRATION_ZIP', $mysoc->zip),
@@ -357,7 +398,8 @@ if ($mode == "forceregistration") {
 		'provider_zip' => getDolGlobalString('MAIN_INFO_ITPROVIDER_ZIP'),
 		'provider_town' => getDolGlobalString('MAIN_INFO_ITPROVIDER_TOWN'),
 		'provider_country' => getDolGlobalString('MAIN_INFO_ITPROVIDER_COUNTRY'),
-		'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1')
+		'provider_idprof1' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1'),
+		'provider_idprof2' => getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2')
 	);
 
 	// Output js code to register data.
@@ -405,15 +447,24 @@ if (empty($mode)) {
 
 	//Company email
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_EMAIL');
-	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
+	$item->defaultFieldValue = (GETPOSTISSET('BLOCKEDLOG_REGISTRATION_EMAIL') ? GETPOST('BLOCKEDLOG_REGISTRATION_EMAIL') : getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email));
 	$item->setAsEmail();
 	$item->fieldParams['isMandatory'] = 1;
 	$item->cssClass = "minwidth300 maxwidth500 widthcentpercentminusx";
 
 	//Company IDPROF1
 	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_IDPROF1');
-	$item->defaultFieldValue = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
+	$item->defaultFieldValue = (GETPOSTISSET('BLOCKEDLOG_REGISTRATION_IDPROF1') ? GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF1') : getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1));
+	$item->helpText = $langs->trans("Example").': 732 829 320';
 	$item->fieldParams['isMandatory'] = 1;
+	$item->nameText = $langs->transcountry("ProfId1", $mysoc->country_code);
+
+	//Company IDPROF2
+	$item = $formSetup->newItem('BLOCKEDLOG_REGISTRATION_IDPROF2');
+	$item->defaultFieldValue = (GETPOSTISSET('BLOCKEDLOG_REGISTRATION_IDPROF2') ? GETPOST('BLOCKEDLOG_REGISTRATION_IDPROF2') : getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2));
+	$item->helpText = $langs->trans("Example").': 732 829 320 00010';
+	$item->fieldParams['isMandatory'] = 1;
+	$item->nameText = $langs->transcountry("ProfId2", $mysoc->country_code);
 
 	//Company country code
 	$country_code = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
@@ -460,6 +511,10 @@ if (empty($mode)) {
 	//IT provider IDPROF1
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF1');
 	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF1');
+
+	//IT provider IDPROF1
+	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_IDPROF2');
+	$item->defaultFieldValue = getDolGlobalString('MAIN_INFO_ITPROVIDER_IDPROF2');
 
 	//IT provider country code
 	$item = $formSetup->newItem('MAIN_INFO_ITPROVIDER_COUNTRY');

@@ -266,7 +266,7 @@ class Members extends DolibarrApi
 	 * @param string    $typeid     		ID of the type of member
 	 * @param int		$category   		Use this param to filter list by category
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma.
-	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
+	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:>:'20160101') or (t.nature:is:NULL))"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array    					Array of member objects
@@ -612,6 +612,17 @@ class Members extends DolibarrApi
 			unset($object->total_localtax1);
 			unset($object->total_localtax2);
 			unset($object->total_ttc);
+		}
+
+		// Expose POST-friendly aliases on the Subscription GET response so the
+		// payload returned by GET /members/{id}/subscriptions matches the field
+		// names POST /members/{id}/subscriptions expects (see issue #38279).
+		// $dateh / $datef stay in the response for backward compatibility with
+		// existing consumers; date_start / date_end are the documented names
+		// used by the rest of the codebase (e.g. tasks, expenses, holidays).
+		if ($object instanceof Subscription) {
+			$object->date_start = $object->dateh;
+			$object->date_end = $object->datef;
 		}
 
 		return $object;
