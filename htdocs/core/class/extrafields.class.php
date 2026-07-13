@@ -2827,7 +2827,7 @@ class ExtraFields
 				} elseif ($key_type == 'select') {
 					// to detect if we are in search context
 					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
-						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:alphanohtml');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
 						$value_key = implode(',', $value_arr);
