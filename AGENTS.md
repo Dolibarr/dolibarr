@@ -53,7 +53,6 @@ Before writing any code, the agent **must**:
 - PHP >= 7.3 (minimum support); PHP 8.1+ recommended for new external modules
 - ⚠️ When writing a **bug fix**, always target the lowest compatible PHP version
   of the branch being patched — do not use PHP 8.x syntax on a fix targeting v19 or v20
-- Use `declare(strict_types=1)` when targeting PHP 8.1+
 - Respect PSR-12, but **indentations must use Tabs, not Spaces**
 - Write short, readable, and testable functions
 - Avoid side effects
@@ -94,7 +93,8 @@ Before writing any code, the agent **must**:
 
 - Never hardcode user-facing strings — always use `$langs->trans('Key')`
 - Language files must be placed in `mymodule/langs/en_US/` (and other locales as needed)
-- Language key names must be in English and PascalCase (e.g., `MyModuleLabel`, not `MonLibellé`)
+- All code comments and variables or functions names must be in English.
+- Language key names must use PascalCase (e.g., `MyModuleLabel`, not `monLibelléModule`)
 - Load the language file at the top of the page: `$langs->load('mymodule@mymodule')`
 
 ---
@@ -103,12 +103,13 @@ Before writing any code, the agent **must**:
 
 Before any modification, verify:
 - Creation / edition / deletion workflows
-- User rights enforcement (`$user->rights->module->action`)
-- Multi-entity compatibility (`$conf->entity`)
+- User rights enforcement (`$user->hasRights("module", "permission")` or `$user->hasRights("module", "objectname", "permission")`)
+- Multi-entity compatibility (add ` AND entity IN ('.getDolEntity("tablename").')`)
 
 If possible:
-- Add a PHPUnit test file in `htdocs/modulebuilder/template/test/phpunit/`
-- Reference the `phpunit.xml` file at the root of the project to run the test suite
+- If doing an external module, add a PHPUnit test file in `yourmoduledir/test/phpunit/`
+- If modifying the Dolibarr code project, add a PHPUnit test file into `test/phpunit/` and add the entry into file `test/phpunit/AllTests.php`.
+
 
 ---
 
@@ -123,8 +124,9 @@ If possible:
 
 ## 🔒 Security
 
-- Always validate inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
-- Prevent SQL injection (use `db->escape()`) and XSS (use `dol_escape_htmltag()`)
+- Always validate user inputs (`GET`, `POST`) via `GETPOST()` with a type parameter
+- Prevent SQL injection (use `db->escape()` or cast into `(int)` or `(float)`)
+- Prevent XSS injection (use `dolPrintHTML()`, `dolPrintHTMLForAttribute()`, ...)
 - Always include Dolibarr CSRF tokens in POST forms: `<input type="hidden" name="token" value="'.newToken().'">`
 
 ---
@@ -153,7 +155,7 @@ If possible:
     - `develop` branch for both fixes and new features
 - ❌ Never commit directly to `main` or `develop` without a reviewed PR
 - Commit message format: `TYPE: #issueNumber Short description`
-    - Types: `NEW`, `FIX`, `CLOSE`
+    - Types: `NEW`, `FIX` or `CLOSE`
     - Example: `FIX: #1234 Correct VAT calculation on credit notes`
 - Update the `ChangeLog` file with a summary of significant changes
 - When fixing a bug, apply the patch on the **oldest affected branch first**,
@@ -177,6 +179,7 @@ If possible:
 - Change the global architecture of existing modules
 - Delete code without justification and a comment explaining why
 - Add external dependencies (Composer packages, JS libraries) without prior validation
+- Modify the `ChangeLog` file (this file will be updated by the maintainer during the release process)
 
 ---
 

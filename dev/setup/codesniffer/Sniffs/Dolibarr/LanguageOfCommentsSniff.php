@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace codesniffer\Sniffs\Dolibarr;
 
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -108,7 +110,14 @@ class LanguageOfCommentsSniff implements Sniff
 			return;
 		}
 
-		if (strpos($content, 'Copyright') === false && preg_match('/[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]/u', $content)) {
+		// Avoid matching special characters directly preceded or followed with []'"
+		// Avoid matching special characters in a "word/identifier" like string with '_'.
+		// Implementation:
+		// - Start with word (\b);
+		// - Require that this word does not contain '_'
+		// - Match all word characters up to the accented character.
+		// - Require that the character is not preceded or following by specific delimieters
+		if (strpos($content, 'Copyright') === false && preg_match('/\b(?![\p{L}_]*_[\p{L}_]*\b)([\p{L}_]*)(?<![<>\/\'"\[])[àâäéèêëîïôùûüçœÀÂÄÉÈÊËÎÏÔÙÛÜÇŒ]+(?![\'"\[]\/)(?![<>\/\'"\[])/u', $content)) {
 			$error = "The comment appears to be in French (accent detected in: '%s'). Please write in English.";
 			$data  = [trim($content)];
 			$phpcsFile->addWarning($error, $stackPtr, 'FrenchDetected', $data);
