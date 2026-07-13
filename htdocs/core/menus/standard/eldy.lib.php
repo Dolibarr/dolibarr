@@ -883,7 +883,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			get_left_menu_members($mainmenu, $newmenu, $usemenuhider, $leftmenu, $type_user);
 		}
 
-		// Add personalized menus and modules menus
+		// Add personalized menus (from database setup) and modules menus
 		//var_dump($newmenu->liste);    //
 		$menuArbo = new Menubase($db, 'eldy');
 		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid) ? 0 : 1), 'eldy', $tabMenu);
@@ -908,7 +908,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	//var_dump($newmenu->liste);
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
-	//var_dump($menu_array_before);exit;
+
 	//var_dump($menu_array_after);exit;
 	$menu_array = $newmenu->liste;
 	if (is_array($menu_array_before)) {
