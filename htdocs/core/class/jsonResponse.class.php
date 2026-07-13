@@ -24,6 +24,14 @@ class JsonResponse
 {
 
 	/**
+	 * When enabled, send HTTP status code self::HTTP_BAD_REQUEST if the response indicates an error.
+	 *
+	 * @var bool $changeHeaderForErrors
+	 */
+	public $changeHeaderForErrors = false;
+
+
+	/**
 	 * Status indicating a successful operation.
 	 *
 	 * @var int
@@ -185,8 +193,8 @@ class JsonResponse
 	{
 		global $dolibarr_main_prod;
 
-		if (!$this->result && !headers_sent()) {
-			http_response_code(400);
+		if ($this->changeHeaderForErrors && !$this->result && $this->httpResponseCode === self::HTTP_OK) {
+			$this->httpResponseCode = self::HTTP_BAD_REQUEST;
 		}
 
 		$jsonResponse = new stdClass();
@@ -206,20 +214,26 @@ class JsonResponse
 	 * Set the current response as an error response.
 	 *
 	 * This method automatically:
-	 * - sets the result status to failed (0)
-	 * - defines the returned message
-	 * - updates the HTTP response code
+	 * - sets the response status to STATUS_ERROR
+	 * - sets the error message
+	 * - sets the HTTP response code
 	 *
-	 * @param string $msg Error message returned in JSON response.
-	 * @param int $httpCode HTTP response code.
+	 * @param string $msg Error message returned in the JSON response.
+	 * @param int $httpCode HTTP response code. Defaults to 200 for application errors,
+	 *                      as the JSON response already contains the error status
+	 *                      and message through the "result" and "msg" fields.
+	 *                      HTTP 4xx/5xx codes can be used when the error must also
+	 *                      be reported at the HTTP protocol level (for example REST
+	 *                      clients, authentication errors, invalid requests or
+	 *                      server failures).
 	 *
 	 * @return void
 	 */
-	public function setError($msg = '', $httpCode = 400)
+	public function setError($msg = '', $httpCode = 200)
 	{
 
 		if (!$this->isValidHttpErrorCode($httpCode)) {
-			$httpCode = 400;
+			$httpCode = 200;
 		}
 
 		$this->result = self::STATUS_ERROR;
