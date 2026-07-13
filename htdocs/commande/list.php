@@ -411,11 +411,7 @@ if (empty($reshook)) {
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
-		if (!$user->hasRight('facture', 'creer')) {
-			accessforbidden();
-		}
-
+	if ($massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // Create bills from orders.
 		$orders = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
