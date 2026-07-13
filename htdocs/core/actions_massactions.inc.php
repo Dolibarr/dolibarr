@@ -882,13 +882,42 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 	// build list of files with full path
 	$files = array();
+	$listofobjectidfound = array();
 
-	foreach ($listofobjectref as $basename) {
+	foreach ($listofobjectref as $objectid => $basename) {
 		$basename = dol_sanitizeFileName($basename);
 		foreach ($listoffiles as $filefound) {
 			if (strstr($filefound["name"], $basename)) {
 				$files[] = $filefound['fullname'];
+				$listofobjectidfound[$objectid] = 1;
 				break;
+			}
+		}
+	}
+
+	// For invoices, a PDF document is often uploaded manually (the document sent by the
+	// supplier) and kept under its original filename, so it is not found by the ref-based
+	// filename search above. Complete the list using the ecm_files link (src_object_type,
+	// src_object_id), that Dolibarr sets on any file upload regardless of its name, for the
+	// selected records that found no file yet.
+	if (in_array($objecttmp->element, array('facture', 'invoice_supplier'))) {
+		foreach ($listofobjectref as $objectid => $basename) {
+			if (!empty($listofobjectidfound[$objectid])) {
+				continue;
+			}
+			$sql = "SELECT filepath, filename FROM ".MAIN_DB_PREFIX."ecm_files";
+			$sql .= " WHERE src_object_type = '".$db->escape($objecttmp->table_element)."'";
+			$sql .= " AND src_object_id = ".((int) $objectid);
+			$sql .= " AND filename LIKE '%.pdf'";
+			$sql .= " ORDER BY rowid ASC";
+			$resqlecm = $db->query($sql);
+			if ($resqlecm) {
+				while ($objecm = $db->fetch_object($resqlecm)) {
+					$tmpfullname = DOL_DATA_ROOT.'/'.$objecm->filepath.'/'.$objecm->filename;
+					if (dol_is_file($tmpfullname) && !in_array($tmpfullname, $files)) {
+						$files[] = $tmpfullname;
+					}
+				}
 			}
 		}
 	}
