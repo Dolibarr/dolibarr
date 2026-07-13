@@ -126,6 +126,57 @@ function fail($message)
 	die($message);
 }
 
+/**
+ * Delete an invoice line and the TakePOS supplement lines attached to it.
+ *
+ * @param	Facture	$invoice	Invoice object
+ * @param	int		$lineid		Line id to delete
+ * @return	int					Return integer <0 if KO, >0 if OK
+ */
+function takeposDeleteLineWithChildren($invoice, $lineid)
+{
+	$lineid = (int) $lineid;
+	if ($lineid <= 0) {
+		return 0;
+	}
+
+	$childrenbyparent = array();
+	if (is_array($invoice->lines)) {
+		foreach ($invoice->lines as $line) {
+			$parentid = (int) $line->fk_parent_line;
+			if ($parentid > 0) {
+				$childrenbyparent[$parentid][] = (int) $line->id;
+			}
+		}
+	}
+
+	$linestodelete = array();
+	$stack = array($lineid);
+	while (!empty($stack)) {
+		$currentlineid = array_pop($stack);
+		if (in_array($currentlineid, $linestodelete, true)) {
+			continue;
+		}
+
+		$linestodelete[] = $currentlineid;
+		if (!empty($childrenbyparent[$currentlineid])) {
+			foreach ($childrenbyparent[$currentlineid] as $childlineid) {
+				$stack[] = $childlineid;
+			}
+		}
+	}
+
+	// Delete supplements before their parent line so no orphan line remains visible on receipts.
+	foreach (array_reverse($linestodelete) as $deletelineid) {
+		$result = $invoice->deleteLine($deletelineid);
+		if ($result < 0) {
+			return $result;
+		}
+	}
+
+	return 1;
+}
+
 
 
 $number = (float) GETPOST('number', 'alpha');
@@ -1016,7 +1067,10 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if ($idline > 0 && $placeid > 0) { 	// If invoice exists and a line is selected.
-			$invoice->deleteLine($idline);
+			$result = takeposDeleteLineWithChildren($invoice, $idline);
+			if ($result < 0) {
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			}
 			$invoice->fetch($placeid);
 		} elseif ($placeid > 0) {           // If invoice exists but no line selected (delete from another device or with no line selected), proceed to delete the last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
@@ -1024,7 +1078,10 @@ if (empty($reshook)) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$deletelineid = $obj->rowid;
-				$invoice->deleteLine($deletelineid);
+				$result = takeposDeleteLineWithChildren($invoice, $deletelineid);
+				if ($result < 0) {
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				}
 			}
 			$invoice->fetch($placeid);
 		}
