@@ -444,7 +444,7 @@ class FormMail extends Form
 		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
 			$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 		}
-		if (is_array($_SESSION['objfilearray'.$keytoavoidconflict]) && count($_SESSION['objfilearray'.$keytoavoidconflict]) > 0) {
+		if (!empty($_SESSION['objfilearray'.$keytoavoidconflict]) && is_array($_SESSION['objfilearray'.$keytoavoidconflict]) && count($_SESSION['objfilearray'.$keytoavoidconflict]) > 0) {
 			foreach ($_SESSION['objfilearray'.$keytoavoidconflict] as $iof=>$ofile) {
 				if (GETPOSTINT('addofile_'.$iof)) {
 					$listofpaths[] = $ofile['fullname'];
