@@ -621,7 +621,7 @@ class Facture extends CommonInvoice
 
 			// Use template extra fields as fallback only - form values (already set) take precedence
 			foreach ($_facrec->array_options as $key => $val) {
-				if (!isset($this->array_options[$key]) || $this->array_options[$key] === '' || $this->array_options[$key] === null) {
+				if (!isset($this->array_options[$key]) || $this->array_options[$key] === '') {
 					$this->array_options[$key] = $val;
 				}
 			}
