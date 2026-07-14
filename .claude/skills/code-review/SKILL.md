@@ -27,6 +27,7 @@ Use this skill whenever the user asks to review code to fix bad practices or to 
 
 - Use PSR-12 coding style except tabulation that must use TAB characters and not SPACES.
 - Remove all spaces at end of lines 
+- Rewrite all code that is not in english
 
 
 ## Output
