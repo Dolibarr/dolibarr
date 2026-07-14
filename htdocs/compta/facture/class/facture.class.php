@@ -619,12 +619,11 @@ class Facture extends CommonInvoice
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
-			// Keep POSTed extrafields if the caller already populated array_options
-			// (htdocs/compta/facture/card.php:1235 calls setOptionalsFromPost before
-			// create()). Falling back to the template values when nothing was POSTed
-			// preserves cron behavior for auto-generated recurring invoices (#37775).
-			if (empty($this->array_options)) {
-				$this->array_options = $_facrec->array_options;
+			// Use template extra fields as fallback only - form values (already set) take precedence
+			foreach ($_facrec->array_options as $key => $val) {
+				if (!isset($this->array_options[$key]) || $this->array_options[$key] === '' || $this->array_options[$key] === null) {
+					$this->array_options[$key] = $val;
+				}
 			}
 
 			if (!$this->mode_reglement_id) {
