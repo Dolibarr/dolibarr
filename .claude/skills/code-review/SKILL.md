@@ -36,7 +36,8 @@ The user request should contain, when available:
 
 - Use PSR-12 coding style except tabulation that must use TAB characters and not SPACES.
 - Remove all spaces at end of lines 
-- Rewrite all code that is not in english
+- Rewrite in english all code comments that are not in english
+- Scan files for security vulnerabilities
 
 
 ## Output
