@@ -9003,9 +9003,9 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		$temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 	}
 
-	// And double quotes
+	// And double spaces
 	if ($removedoublespaces) {
-		while (strpos($temp, "  ")) {
+		while (strpos($temp, "  ") !== false) {
 			$temp = str_replace("  ", " ", $temp);
 		}
 	}
