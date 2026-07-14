@@ -159,7 +159,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key])."</td>\n";
 		// Multicompany
 		if (isModEnabled('multicompany')) {
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax100">';
 			if (empty($extrafields->attributes[$elementtype]['entityid'][$key])) {
 				print $langs->trans("All");
 			} else {

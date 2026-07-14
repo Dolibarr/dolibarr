@@ -722,6 +722,7 @@ if (empty($reshook)) {
 					unset($_POST['date_end_fill']);
 					unset($_POST['situations']);
 					unset($_POST['progress']);
+					unset($_POST['fourn_ref']);
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -864,6 +865,7 @@ if (empty($reshook)) {
 				unset($_POST['date_endyear']);
 				unset($_POST['situations']);
 				unset($_POST['progress']);
+				unset($_POST['fourn_ref']);
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1189,7 +1191,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -1601,14 +1603,6 @@ if ($action == 'create') {
 		$object->fetch_lines();
 		// Show object lines
 		if (!empty($object->lines)) {
-			$canchangeproduct = 1;
-			// To set ref for getNomURL function
-			foreach ($object->lines as $line) {
-				$line->ref = $line->label;
-				$line->product_label = $line->label;
-				$line->subprice = $line->pu_ht;
-			}
-
 			global $canchangeproduct;
 			$canchangeproduct = 0;
 

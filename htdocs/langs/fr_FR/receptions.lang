@@ -56,3 +56,4 @@ RestoreWithCurrentQtySaved=Remplir les quantités avec les dernières valeurs en
 ReceptionsRecorded=Réceptions enregistrées
 ReceptionUpdated=Réception mise à jour avec succès
 ReceptionDistribution=Distribution de réception
+ReceptionMustBeInTheSameCurrencyThanOther=Cette Reception n'est pas dans la même devise que les autres

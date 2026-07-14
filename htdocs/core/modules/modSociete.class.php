@@ -94,14 +94,14 @@ class modSociete extends DolibarrModules
 
 		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
+		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Enter the month number of the first month of the fiscal year, e. g. 9 for September";
 		$this->const[$r][4] = 0;
 		$r++;
 
 		$this->const[$r][0] = "COMPANY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/thirdparties";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/thirdparties";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -402,7 +402,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => "Text", 's.code_compta_fournisseur' => "Text",
 			's.client' => "Numeric", 's.fournisseur' => "Numeric",
 			's.address' => "Text", 's.zip' => "Text", 's.town' => "Text", 's.phone' => "Text", 's.email' => "Text",
-			't.code' => "List:c_stcomm:libelle:code",
+			't.code' => "List:c_typent:libelle:code",
 			'c.entity' => 'List:entity:label:rowid',
 			's.entity' => 'List:entity:label:rowid',
 		);
@@ -947,7 +947,7 @@ class modSociete extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/thirdparties';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/thirdparties';
 		$dest = $dirodt.'/template_thirdparty.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

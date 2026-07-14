@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2022-2023	Laurent Destailleur 	<eldy@users.sourceforge.net>
+/* Copyright (C) 2022-2025	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2022	    Anthony Berton       	<bertonanthony@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
  * @param 	string	$ftp_password	FTP password
  * @param 	string	$section		Directory
  * @param	integer	$ftp_passive	Use a passive mode
- * @return	array					Result of connect
+ * @return	array{conn_id:false|null|resource,ok:int<0,1>,mesg:string,curdir:string,curdiriso:string}		Result of connect
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
 {
@@ -53,6 +53,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 
 	if ($ok) {
 		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
+		$tmp_conn_id = 0;
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');
 			$tmp_conn_id = ssh2_connect($ftp_server, (int) $ftp_port);
@@ -67,7 +68,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 			if ($ftp_user) {
 				if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 					dol_syslog('Try to authenticate with ssh2_auth_password');
-					if (ssh2_auth_password($tmp_conn_id, $ftp_user, $ftp_password)) {
+					if (!empty($tmp_conn_id) && ssh2_auth_password($tmp_conn_id, $ftp_user, $ftp_password)) {
 						// Turn on passive mode transfers (must be after a successful login
 						//if ($ftp_passive) ftp_pasv($connect_id, true);
 
@@ -88,7 +89,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 						$error++;
 					}
 				} else {
-					if (ftp_login($connect_id, $ftp_user, $ftp_password)) {
+					if (!empty($connect_id) && ftp_login($connect_id, $ftp_user, $ftp_password)) {
 						// Turn on passive mode transfers (must be after a successful login)
 						if ($ftp_passive) {
 							ftp_pasv($connect_id, true);
@@ -121,9 +122,9 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 /**
  * Tell if an entry is a FTP directory
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$dir			Directory
- * @return		int			1=directory, 0=not a directory
+ * @param 		resource|FTP\Connection		$connect_id		Connection handler
+ * @param 		string						$dir			Directory
+ * @return		int											1=directory, 0=not a directory
  */
 function ftp_isdir($connect_id, $dir)
 {
@@ -138,13 +139,11 @@ function ftp_isdir($connect_id, $dir)
 /**
  * Tell if an entry is a FTP directory
  *
- * @param 		resource	$connect_id		Connection handler
- * @return		boolean						Result of closing
+ * @param 		resource|FTP\Connection		$connect_id		Connection handler
+ * @return		boolean										Result of closing
  */
 function dol_ftp_close($connect_id)
 {
-	global $conf;
-
 	// Close FTP connection
 	if ($connect_id) {
 		if (!getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
@@ -157,21 +156,18 @@ function dol_ftp_close($connect_id)
 /**
  * Delete a FTP file
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$file			File
- * @param 		string		$newsection			$newsection
+ * @param 		resource|FTP\Connection	$connect_id		Connection handler
+ * @param 		string					$file			File
+ * @param 		string					$newsection		Directory
  * @return		bool
  */
 function dol_ftp_delete($connect_id, $file, $newsection)
 {
-	global $conf;
-
 	if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 	}
 
 	// Remote file
-	$filename = $file;
 	$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
 	$newremotefileiso = mb_convert_encoding($remotefile, 'ISO-8859-1');
 
@@ -187,22 +183,19 @@ function dol_ftp_delete($connect_id, $file, $newsection)
 /**
  * Download a FTP file
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$localfile		The local file path
- * @param 		string		$file					The remote file path
- * @param 		string		$newsection			$newsection
+ * @param 		resource|FTP\Connection		$connect_id		Connection handler
+ * @param 		string						$localfile		The local file path
+ * @param 		string						$file			The remote file path
+ * @param 		string						$newsection		Directory
  * @return		bool|resource
  */
 function dol_ftp_get($connect_id, $localfile, $file, $newsection)
 {
-	global $conf;
-
 	if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 	}
 
 	// Remote file
-	$filename = $file;
 	$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
 	$newremotefileiso = mb_convert_encoding($remotefile, 'ISO-8859-1');
 
@@ -216,22 +209,19 @@ function dol_ftp_get($connect_id, $localfile, $file, $newsection)
 /**
  * Upload a FTP file
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$file			File name
- * @param 		string		$localfile		The path to the local file
- * @param 		string		$newsection		$newsection
+ * @param 		resource|FTP\Connection	$connect_id		Connection handler
+ * @param 		string					$file			File name
+ * @param 		string					$localfile		The path to the local file
+ * @param 		string					$newsection		Directory
  * @return		bool
  */
 function dol_ftp_put($connect_id, $file, $localfile, $newsection)
 {
-	global $conf;
-
 	if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 	}
 
 	// Remote file
-	$filename = $file;
 	$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
 	$newremotefileiso = mb_convert_encoding($remotefile, 'ISO-8859-1');
 
@@ -245,21 +235,18 @@ function dol_ftp_put($connect_id, $file, $localfile, $newsection)
 /**
  * Remove FTP directory
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$file			File
- * @param 		string		$newsection			$newsection
+ * @param 		resource|FTP\Connection	$connect_id		Connection handler
+ * @param 		string					$file			File
+ * @param 		string					$newsection		Directory
  * @return		bool
  */
 function dol_ftp_rmdir($connect_id, $file, $newsection)
 {
-	global $conf;
-
 	if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 	}
 
 	// Remote file
-	$filename = $file;
 	$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
 	$newremotefileiso = mb_convert_encoding($remotefile, 'ISO-8859-1');
 
@@ -274,15 +261,13 @@ function dol_ftp_rmdir($connect_id, $file, $newsection)
 /**
  * Remove FTP directory
  *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$newdir			Dir create
- * @param 		string		$newsection		$newsection
+ * @param 		resource|FTP\Connection		$connect_id		Connection handler
+ * @param 		string						$newdir			Dir create
+ * @param 		string						$newsection		Directory
  * @return		bool|string
  */
 function dol_ftp_mkdir($connect_id, $newdir, $newsection)
 {
-	global $conf;
-
 	if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 	}

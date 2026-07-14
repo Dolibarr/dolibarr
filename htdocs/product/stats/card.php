@@ -150,6 +150,7 @@ if ($result && ($id > 0 || !empty($ref)) && empty($notab)) {
 	print dol_get_fiche_head($head, 'stats', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
@@ -222,6 +223,7 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	// Year
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
@@ -256,6 +258,9 @@ if ($result || !($id > 0)) {
 	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
+	}
+	if (!empty($search_categ)) {
+		$param .= '&search_categ='.((int) $search_categ);
 	}
 
 	// Choice of stats mode (byunit or bynumber)

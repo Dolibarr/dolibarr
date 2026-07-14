@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2023       Ferran Marcet           <fmarcet@2byte.es>
+/* Copyright (C) 2020		Maxime Kohlhaas			<maxime@atm-consulting.fr>
+ * Copyright (C) 2023		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,9 +57,23 @@ $socid = GETPOSTINT('socid');
 
 // Category
 $selected_cat = GETPOSTINT('search_categ');
+if ($selected_cat == -1) {
+	$selected_cat = 0;
+}
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
+}
+
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (isModEnabled('comptabilite')) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (isModEnabled('accounting')) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
 // Hook
@@ -148,12 +163,24 @@ $commonparams['sortorder'] = $sortorder;
 $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-$headerparams['date_startyear'] = $date_startyear;
-$headerparams['date_startmonth'] = $date_startmonth;
-$headerparams['date_startday'] = $date_startday;
-$headerparams['date_endyear'] = $date_endyear;
-$headerparams['date_endmonth'] = $date_endmonth;
-$headerparams['date_endday'] = $date_endday;
+if (!empty($date_startyear)) {
+	$headerparams['date_startyear'] = $date_startyear;
+}
+if (!empty($date_startmonth)) {
+	$headerparams['date_startmonth'] = $date_startmonth;
+}
+if (!empty($date_startday)) {
+	$headerparams['date_startday'] = $date_startday;
+}
+if (!empty($date_endyear)) {
+	$headerparams['date_endyear'] = $date_endyear;
+}
+if (!empty($date_endmonth)) {
+	$headerparams['date_endmonth'] = $date_endmonth;
+}
+if (!empty($date_endday)) {
+	$headerparams['date_endday'] = $date_endday;
+}
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -173,16 +200,7 @@ foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
 
-// Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-if (isModEnabled('comptabilite')) {
-	$result = restrictedArea($user, 'compta', '', '', 'resultat');
-}
-if (isModEnabled('accounting')) {
-	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
+
 
 
 /*
@@ -202,6 +220,9 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
+
+$namelink = '';
+$builddate = dol_now();
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -223,7 +244,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	// TODO
 }
 
-$builddate = dol_now();
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -235,7 +255,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 $exportlink = '';
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {

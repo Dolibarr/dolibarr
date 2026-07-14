@@ -139,7 +139,7 @@ class Task extends CommonObjectLine
 	public $timespent_old_duration;
 	public $timespent_date;
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
+	public $timespent_withhour; // 0 or 1 = we have entered also start hours for timesheet line
 	public $timespent_fk_user;
 	public $timespent_thm;
 	public $timespent_note;
@@ -1467,10 +1467,9 @@ class Task extends CommonObjectLine
 		$timespent->fk_user = $this->timespent_fk_user;
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
-		$timespent->datec = $this->db->idate($now);
+		$timespent->datec = $now;
 
 		$result = $timespent->create($user);
-
 		if ($result > 0) {
 			$ret = $result;
 			$this->timespent_id = $result;
@@ -1853,7 +1852,7 @@ class Task extends CommonObjectLine
 	}
 
 	/**
-	 *	Update time spent
+	 *	Update time spent line with id $this->timespent_id. New values are into ->timespent_xxx fields.
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -1868,10 +1867,6 @@ class Task extends CommonObjectLine
 		// Check parameters
 		if ($this->timespent_date == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
-			return -1;
-		}
-		if (!($this->timespent_fk_user > 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
 			return -1;
 		}
 
@@ -1898,11 +1893,14 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
 		$timespent->element_date_withhour = $this->timespent_withhour;
 		$timespent->element_duration = $this->timespent_duration;
-		$timespent->fk_user = $this->timespent_fk_user;
+		if ($this->timespent_fk_user > 0) {
+			$timespent->fk_user = $this->timespent_fk_user;
+		}
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;

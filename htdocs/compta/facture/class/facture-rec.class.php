@@ -145,6 +145,13 @@ class FactureRec extends CommonInvoice
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
 
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
 	public $suspended; // status
 
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice

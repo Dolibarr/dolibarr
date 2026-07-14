@@ -201,13 +201,13 @@ class modMyModule extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
-		// 'invoice_supplier' to add a tab in supplier invoice view
+		// 'supplier_invoice' to add a tab in supplier invoice view
 		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sale order view
-		// 'order_supplier'   to add a tab in supplier order view
+		// 'supplier_order'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
-		// 'payment_supplier' to add a tab in supplier payment view
+		// 'supplier_payment' to add a tab in supplier payment view
 		// 'product'          to add a tab in product view
 		// 'propal'           to add a tab in propal view
 		// 'project'          to add a tab in project view
@@ -385,7 +385,7 @@ class modMyModule extends DolibarrModules
 
 
 		// Exports profiles provided by this module
-		$r = 1;
+		$r = 0;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
@@ -416,7 +416,7 @@ class modMyModule extends DolibarrModules
 		/* END MODULEBUILDER EXPORT MYOBJECT */
 
 		// Imports profiles provided by this module
-		$r = 1;
+		$r = 0;
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
 		$langs->load("mymodule@mymodule");
@@ -496,7 +496,7 @@ class modMyModule extends DolibarrModules
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
+				$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_myobjects.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {

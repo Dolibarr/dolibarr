@@ -393,7 +393,7 @@ if ($id > 0 || $ref) {
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$prod->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")"; // use $prod instead $object
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -958,7 +958,7 @@ if ($id > 0 || $ref) {
 					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
 					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => 1, 'checked'=>1, 'position'=>50),
 					'pfp.price'=>array('label'=>$langs->trans("PriceQtyMinHT"), 'checked'=>1, 'position'=>60),
 					'pfp.multicurrency_price'=>array('label'=>$langs->trans("PriceQtyMinHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>1, 'position'=>70),
 

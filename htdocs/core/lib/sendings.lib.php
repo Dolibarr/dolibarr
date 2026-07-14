@@ -441,7 +441,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
+					$expedition->fetchObjectLinked($expedition->id, $expedition->element, null, 'delivery');
 					//var_dump($expedition->linkedObjects);
 
 					$receiving = '';

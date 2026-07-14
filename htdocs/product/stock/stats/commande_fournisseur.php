@@ -230,6 +230,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			$sql .= " WHERE cf.entity IN (".getEntity('product').")";
 			$sql .= " AND cfdi.batch = '".($db->escape($object->batch))."'";
+			$sql .= " AND cfdi.fk_product = " . (int) $object->fk_product;
 			if (!empty($search_month)) {
 				$sql .= ' AND MONTH(cf.date_commande) IN ('.$db->sanitize($search_month).')';
 			}

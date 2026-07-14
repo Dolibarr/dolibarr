@@ -398,6 +398,7 @@ class Products extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 

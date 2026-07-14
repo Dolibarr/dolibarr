@@ -348,6 +348,12 @@ class BankAccounts extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+				}
+				continue;
+			}
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 

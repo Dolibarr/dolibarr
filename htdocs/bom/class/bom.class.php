@@ -292,7 +292,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 1)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -546,7 +546,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 1)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -1430,16 +1430,20 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
-						if (empty($line->unit_cost)) {
+
+						$unit_cost = is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price;
+						if (is_null($unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
 								} else {
 									$line->unit_cost = $productFournisseur->fourn_unitprice;
 								}
+							} else {
+								$line->unit_cost = 0;
 							}
+						} else {
+							$line->unit_cost = (float) price2num($unit_cost);
 						}
 
 						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');

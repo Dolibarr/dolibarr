@@ -547,7 +547,7 @@ if ($action == 'new') {
 		if (count($lines[$bid])) {
 			foreach ($lines[$bid] as $lid => $value) {
 				print '<tr class="oddeven">';
-				print '<td>'.dol_print_date($value["date"], 'day').'</td>';
+				print '<td>'.dol_print_date($value["paymentdate"], 'day').'</td>';
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";

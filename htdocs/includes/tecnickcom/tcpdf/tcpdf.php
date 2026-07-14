@@ -19231,10 +19231,14 @@ class TCPDF
 					break;
 				}
 				$imgsrc = $tag['attribute']['src'];
+				$reg = array(); // @CHANGE DOL support 'data:' URLs (tcpdf backport https://github.com/tecnickcom/TCPDF/pull/552)
 				if ($imgsrc[0] === '@') {
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
 					$type = '';
+				} elseif (preg_match('@^data:image/([^;]*);base64,(.*)@', $imgsrc, $reg)) { // @CHANGE DOL support 'data:' URLs (tcpdf backport https://github.com/tecnickcom/TCPDF/pull/552)
+					$imgsrc = '@'.base64_decode($reg[2]); // @CHANGE DOL support 'data:' URLs (tcpdf backport https://github.com/tecnickcom/TCPDF/pull/552)
+					$type = $reg[1]; // @CHANGE DOL support 'data:' URLs (tcpdf backport https://github.com/tecnickcom/TCPDF/pull/552)
 				} else {
 					// @CHANGE LDR Add support for src="file://..." links
 					if (strpos($imgsrc, 'file://') === 0) {

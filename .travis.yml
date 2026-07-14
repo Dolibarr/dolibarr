@@ -2,9 +2,9 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: focal = 20.04
+# We use dist: focal = 20.04, jammy = 22.04
 os: linux
-dist: focal
+dist: jammy
 
 language: generic
 
@@ -21,7 +21,7 @@ services:
 
 
 addons:
-  mariadb: '10.5'
+  mariadb: '10.6'
 
 
 env:
@@ -119,6 +119,9 @@ before_install:
 
 install:
 - |
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.0
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
   fi
@@ -141,7 +144,9 @@ install:
 
   #sudo apt install composer
   composer -V
-  composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config audit.block-insecure false
+  sudo chmod -R a+rwx /home/travis/.config/composer
   echo
 
 - |
@@ -211,8 +216,8 @@ before_script:
     phpcs -i | head -
     # Check PHP Vardump check version
     echo "PHP Vardump check version"
-    which var_dump_check
-    var_dump_check --version
+    which var-dump-check
+    var-dump-check --version
     # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
@@ -528,12 +533,11 @@ script:
 
   - |
     echo "Unit testing"
-    # Ensure we catch errors with -e. Set this to +e instead of -e if you want to go to the end to see dolibarr.log file.
-    set -e
-    phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
-    phpunitresult=$?
+    # Execute phpunit, check its exit status and that the phpunit output shows a test summary
+    phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     echo "Phpunit return code = $phpunitresult"
-    set +e
+    # Comment next line if you want to go to the end to see the dolibarr.log file.
+    [ $phpunitresult == 0 ] || exit $phpunitresult
     echo
 
 after_script:

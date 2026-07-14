@@ -299,7 +299,7 @@ class FilesLibTest extends CommonClassTest
 		// Again to test there is error when deleting a non existing file with option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertFalse($result, 'delete file that does not exists with disableglo must return ko');
+		$this->assertFalse($result, 'delete file that does not exists with disabling glob must return ko');
 
 		// Again to test there is no error when deleting a non existing file without option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3csv', 0, 1);

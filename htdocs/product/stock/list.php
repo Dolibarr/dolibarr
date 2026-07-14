@@ -199,6 +199,7 @@ $form = new Form($db);
 $warehouse = new Entrepot($db);
 
 $now = dol_now();
+$totalarray = array();
 
 $title = $langs->trans("Warehouses");
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -246,17 +247,17 @@ if ($separatedPMP) {
 }
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 foreach ($search as $key => $val) {
-	if (array_key_exists($key, $object->fields)) {
-		$class_key = $key;
-		if ($class_key == 'status') {
-			$class_key = 'statut'; // remove this after refactoring entrepot.class property statut to status
-		}
+	$class_key = $key;
+	if ($class_key == 'status') {
+		$class_key = 'statut'; // remove this after refactoring entrepot.class property statut to status
+	}
+	if (array_key_exists($class_key, $object->fields)) {
 		if (($key == 'status' && $search[$key] == -1) || $key == 'entity') {
 			continue;
 		}
-		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
+		$mode_search = (($object->isInt($object->fields[$class_key]) || $object->isFloat($object->fields[$class_key])) ? 1 : 0);
+		if ((strpos($object->fields[$class_key]['type'], 'integer:') === 0) || (strpos($object->fields[$class_key]['type'], 'sellist:') === 0) || !empty($object->fields[$class_key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$class_key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$class_key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -615,7 +616,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$totalarray = array();
 $totalarray['nbfield'] = 0;
 
 // Fields title label

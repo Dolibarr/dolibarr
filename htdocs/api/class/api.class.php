@@ -3,6 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,20 @@ class DolibarrApi
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
-		$production_mode = (!getDolGlobalString('API_PRODUCTION_MODE') ? false : true);
+
+		$production_mode = (getDolGlobalString('API_PRODUCTION_MODE') ? true : false);
+
+		if ($production_mode) {
+			// Create the directory Defaults::$cacheDirectory if it does not exist. If dir does not exist, using production_mode generates an error 500.
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (!dol_is_dir(Defaults::$cacheDirectory)) {
+				dol_mkdir(Defaults::$cacheDirectory, DOL_DATA_ROOT);
+			}
+			if (getDolGlobalString('MAIN_API_DEBUG')) {
+				dol_syslog("Debug API construct::cacheDirectory=".Defaults::$cacheDirectory, LOG_DEBUG, 0, '_api');
+			}
+		}
+
 		$this->r = new Restler($production_mode, $refreshCache);
 
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));

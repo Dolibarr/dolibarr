@@ -226,7 +226,8 @@ if ((!$user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('
 	accessforbidden();
 }
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it' an internal user
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -307,7 +308,6 @@ if (empty($reshook)) {
 		$search_categ_sup = 0;
 		$filter = '';
 		$option = '';
-		$socid = "";
 	}
 
 	// Mass actions
@@ -770,7 +770,8 @@ $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPri
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(DISTINCT f.rowid) as nbtotalofrecords', $sql);
+
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid/', '', $sqlforcount);
 

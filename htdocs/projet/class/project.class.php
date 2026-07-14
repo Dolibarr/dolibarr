@@ -1729,9 +1729,7 @@ class Project extends CommonObject
 		// Load source object
 		$clone_project->fetch($fromid);
 		$clone_project->fetch_optionals();
-		if ($newthirdpartyid > 0) {
-			$clone_project->socid = $newthirdpartyid;
-		}
+		$clone_project->socid = ($newthirdpartyid > 0 ? $newthirdpartyid : 0);
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start = $clone_project->date_start;
@@ -2003,7 +2001,7 @@ class Project extends CommonObject
 	public function update_element($tableName, $elementSelectId)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project=".$this->id;
@@ -2039,14 +2037,14 @@ class Project extends CommonObject
 	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".((int) $elementSelectId);
+			$sql .= " SET fk_project = NULL";
+			$sql .= " WHERE id = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
@@ -2205,6 +2203,9 @@ class Project extends CommonObject
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
 				} else {
 					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					if (!isset($this->monthWorkLoadPerTask[$week_number][$obj->fk_element])) {
+						$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = 0;
+					}
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;

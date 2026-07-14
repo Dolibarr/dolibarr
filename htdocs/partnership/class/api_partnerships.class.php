@@ -249,6 +249,12 @@ class Partnerships extends DolibarrApi
 				$this->partnership->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->partnership->array_options[$index] = $this->_checkValForAPI($field, $val, $this->partnership);
+				}
+				continue;
+			}
 
 			$this->partnership->$field = $this->_checkValForAPI($field, $value, $this->partnership);
 		}

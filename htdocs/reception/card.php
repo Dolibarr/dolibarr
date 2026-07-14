@@ -947,7 +947,7 @@ if ($action == 'create') {
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($list) > 1) {
+			if (is_array($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
 				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);

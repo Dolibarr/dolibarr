@@ -105,6 +105,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
+$canvas		= GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
@@ -185,7 +186,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__') . (!empty($canvas) ? "&canvas=" . $canvas : "");
 			}
 		}
 	}
@@ -1265,7 +1266,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
 					allowClear: true,
 					minimumInputLength: 3,
-					language: select2arrayoflanguage,
+					language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 					containerCssClass: ":all:",
 					selectionCssClass: ":all:",
 					tags: true,
@@ -1388,7 +1389,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (getDolGlobalString('THIRDPARTY_SUPPLIER_BY_DEFAULT')) {
 					$default = 1;
 				}
-				print $form->selectyesno("fournisseur", ((GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0), 1);
+				print $form->selectyesno("fournisseur", (GETPOSTINT('fournisseur') > 0 ? GETPOSTINT('fournisseur') : (GETPOST("type") == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0), 1);
 				print '</td>';
 
 
@@ -1578,7 +1579,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Vat is used
 			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
 			print '<td>';
-			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
+			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva_value', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -2069,7 +2070,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Ref/ID
 				if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
-					print $object->ref;
+					print $object->id;
 					print '</td></tr>';
 				}
 

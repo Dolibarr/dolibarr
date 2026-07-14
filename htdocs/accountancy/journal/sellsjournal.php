@@ -398,30 +398,31 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 }
 */
 // New way, single query, load all unbound lines
-
-$sql = "
-SELECT
-    fk_facture,
-    COUNT(fd.rowid) as nb
-FROM
-	".MAIN_DB_PREFIX."facturedet as fd
-WHERE
-    fd.product_type <= 2
-    AND fd.fk_code_ventilation <= 0
-    AND fd.total_ttc <> 0
-	AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
-GROUP BY fk_facture
-";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-		if ($obj->nb > 0) {
-			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+if (!empty($tabfac)) {
+	$sql = "
+	SELECT
+		fk_facture,
+		COUNT(fd.rowid) as nb
+	FROM
+		".MAIN_DB_PREFIX."facturedet as fd
+	WHERE
+		fd.product_type <= 2
+		AND fd.fk_code_ventilation <= 0
+		AND fd.total_ttc <> 0
+		AND fk_facture IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+	GROUP BY fk_facture
+	";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj->nb > 0) {
+				$errorforinvoice[$obj->fk_facture] = 'somelinesarenotbound';
+			}
+			$i++;
 		}
-		$i++;
 	}
 }
 //var_dump($errorforinvoice);exit;
@@ -678,7 +679,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_vat'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_vat'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_vat'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -739,7 +747,14 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 			if (isset($tabrevenuestamp[$key]) && is_array($tabrevenuestamp[$key])) {
 				foreach ($tabrevenuestamp[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch(null, $k, true);    // TODO Use a cache for label
+						if (empty($conf->cache['accountingaccountincurrententity_rs'][$k])) {
+							$accountingaccount = new AccountingAccount($db);
+							$accountingaccount->fetch(0, $k, true);
+							$conf->cache['accountingaccountincurrententity_rs'][$k] = $accountingaccount;
+						} else {
+							$accountingaccount = $conf->cache['accountingaccountincurrententity_rs'][$k];
+						}
+
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
