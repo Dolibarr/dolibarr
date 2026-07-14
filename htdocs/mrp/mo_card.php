@@ -155,10 +155,10 @@ if (empty($reshook)) {
 			$objectbomchildline->fetch($id_bom_line);
 
 			// Find the consume line of the parent MO generated from this BOM line.
-			// The lookup must be scoped to the parent MO and use an exact match, otherwise
-			// the 'origin_id LIKE %..%' filter can return an unrelated line (or none), which
-			// would let the child MO be created from the leftover parent POST data (duplicate MO).
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('customsql' => 'fk_mo = '.((int) $mo_parent->id).' AND origin_id = '.((int) $id_bom_line)." AND origin_type = 'bomline'"));
+			// The lookup must be scoped to the parent MO and use an exact match on origin_id/origin_type,
+			// otherwise the default 'origin_id LIKE %..%' filter can return an unrelated line (or none),
+			// which would let the child MO be created from the leftover parent POST data (duplicate MO).
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('fk_mo' => $mo_parent->id, 'origin_id' => $id_bom_line, 'origin_type' => 'bomline'));
 
 			if (empty($TMoLines)) {
 				continue;
