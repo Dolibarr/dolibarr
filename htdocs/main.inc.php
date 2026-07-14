@@ -749,7 +749,8 @@ if (!defined('NOLOGIN')) {
 		// "password" in the query string, so this does not affect them.
 		if (GETPOST('actionlogin', 'aZ09') == 'login' && (isset($_GET['username']) || isset($_GET['password']))) {
 			dol_syslog("--- Login submission with credentials in the query string refused for ".$_SERVER["PHP_SELF"], LOG_WARNING);
-			$_SESSION["dol_loginmesg"] = 'ErrorLoginMustBePostMethod';
+			$langs->loadLangs(array('main', 'errors'));
+			$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginMustBePostMethod");
 			$test = false;
 		}
 
