@@ -123,6 +123,14 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
 
+		$r++;
+		$this->rights[$r][0] = 155;
+		$this->rights[$r][1] = 'Delete a direct debit payment request';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'delete';
+
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.

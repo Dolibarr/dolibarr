@@ -124,6 +124,13 @@ class modPaymentByBankTransfer extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'debit';
 
+		$r++;
+		$this->rights[$r][0] = 565;
+		$this->rights[$r][1] = 'Delete a bank transfer payment request';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'delete';
+
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
