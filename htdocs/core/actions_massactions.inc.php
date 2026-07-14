@@ -778,7 +778,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$basename = dol_sanitizeFileName($basename);
 		foreach ($listoffiles as $filefound) {
 			if (strstr($filefound["name"], $basename)) {
-				$files[] = $uploaddir.'/'.$basename.'/'.$filefound["name"];
+				$files[] = $filefound['fullname'];
 				break;
 			}
 		}
