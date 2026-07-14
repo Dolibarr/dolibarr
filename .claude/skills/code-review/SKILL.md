@@ -17,6 +17,15 @@ allowed-tools:
 Use this skill whenever the user asks to review code to fix bad practices or to update code to match good practices.
 
 
+## Inputs
+
+The user request should contain, when available:
+
+- a module name
+- or a directory name
+- or a file name
+
+
 ## General Rules
 
 - Follow the coding style already used in files in module builder template in htdocs/modulebuilder/templates

@@ -18,6 +18,15 @@ Use this skill whenever the user asks to create, modify, or complete a **PHP uni
 
 The goal is to produce a unit test that follows Dolibarr conventions and integrates cleanly into the existing PHPUnit test suite.
 
+
+## Inputs
+
+The user request should contain, when available:
+
+- a name of the function to make the unit test for
+- or the method of the class name to make the unit test for
+
+
 ## General Rules
 
 - Follow the coding style already used in files into directory test/phpunit/
