@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Reivew code and fix bad practices
+description: Review code and fix bad practices
 license: MIT
 user-invocable: true
 allowed-tools:
