@@ -1920,7 +1920,10 @@ class pdf_sponge extends ModelePDFFactures
 					$pdf->SetFillColor(255, 255, 255);
 
 					$retainedWarranty = $object->getRetainedWarrantyAmount();
-					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
+					// The amount held back on THIS invoice is the retained warranty of this invoice only (#38849),
+					// not the global one, so the "To pay" line must deduct total_ttc * rate, like the accountancy sells journal.
+					$retainedWarrantyThisInvoice = $object->total_ttc * $object->retained_warranty / 100;
+					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarrantyThisInvoice;
 
 					// Billed - retained warranty
 					$index++;
