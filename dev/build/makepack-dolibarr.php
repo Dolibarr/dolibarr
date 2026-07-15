@@ -230,6 +230,8 @@ if (preg_match("/define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncConten
 	$PROJVERSION = $matches[1];
 }
 if (empty($PROJVERSION)) {
+	$DOL_MAJOR_VERSION = 'notfound';
+	$DOL_MINOR_VERSION = 'notfound';
 	if (preg_match("/define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
 		$DOL_MAJOR_VERSION = $matches[1];
 	}
