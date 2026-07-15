@@ -258,6 +258,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
 $sectionwithinvoicelink = '';
 $CUSTOMER_DISPLAY_line1 = '';
 $CUSTOMER_DISPLAY_line2 = '';
@@ -265,6 +266,16 @@ $headerorder = '';
 $footerorder = '';
 $printer = null;
 $idoflineadded = 0;
+
+// Enforce the "edit lines" permission on every action that modifies an existing line
+// (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
+// the "run" permission elsewhere and must stay available to a plain cashier (#38949).
+if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), array(), 1);
+	$action = '';
+}
+
+
 if (empty($reshook)) {
 	// Test that period is not close
 	$tmpcurrentday = dol_getdate(dol_now());
