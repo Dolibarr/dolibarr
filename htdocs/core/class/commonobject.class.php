@@ -7449,7 +7449,10 @@ abstract class CommonObject
 				$extrafields = new ExtraFields($this->db);
 			}
 			$extrafields->fetch_name_optionals_label($this->table_element);
-
+			if (!isset($extrafields->attributes[$this->table_element]['type'][$key])) {
+				// Extrafield not defined for this object type: nothing to update
+				return 0;
+			}
 			$value = $this->array_options["options_".$key];
 
 			$attributeKey      = $key;

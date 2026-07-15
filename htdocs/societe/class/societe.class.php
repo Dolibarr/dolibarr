@@ -2764,7 +2764,11 @@ class Societe extends CommonObject
 
 			$discount->discount_type = $discount_type;
 			$discount->multicurrency_code = $this->multicurrency_code;
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
+
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
 			$vat_tx = (float) price2num($vatrate);
