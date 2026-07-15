@@ -7001,6 +7001,15 @@ abstract class CommonObject
 		// if the extrafields row already exists for the object, we update it
 		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
+			if (empty($sqlColumnValues)) {
+				// No column of the target element to update. This happens when the object was created from
+				// another element whose extrafields do not exist on this element (e.g. invoice created from a
+				// shipment: the source line extrafields are copied into array_options but none match facturedet).
+				// The existing row is already correct, so there is nothing to update: avoid an empty "SET" clause
+				// that would produce an invalid SQL statement.
+				$this->db->commit();
+				return 1;
+			}
 			$sqlColumnValueString = implode(
 				',',
 				/**
