@@ -1178,7 +1178,7 @@ function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 	$TWeek = array();
-	for ($day = 1; $day < $nb_days; $day++) {
+	for ($day = 1; $day <= $nb_days; $day++) {
 		$week_number = getWeekNumber($day, $month, $year);
 		$TWeek[$week_number] = $week_number;
 	}
