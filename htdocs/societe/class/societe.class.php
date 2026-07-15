@@ -2761,21 +2761,21 @@ class Societe extends CommonObject
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
 			if ($price_base_type == 'TTC') {
-				$discount->total_ttc = price2num($remise, 'MT');
-				$discount->total_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
-				$discount->total_tva = price2num((float) $discount->total_ttc - (float) $discount->total_ht, 'MT');
+				$discount->total_ttc = (float) price2num($remise, 'MT');
+				$discount->total_ht = (float) price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
+				$discount->total_tva = (float) price2num((float) $discount->total_ttc - (float) $discount->total_ht, 'MT');
 
-				$discount->multicurrency_total_ttc = price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_total_ht = price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_total_tva = price2num(((float) $discount->total_ttc - (float) $discount->total_ht) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ttc = (float) price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ht = (float) price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = (float) price2num(((float) $discount->total_ttc - (float) $discount->total_ht) * (float) $discount->multicurrency_tx, 'MT');
 			} else {
-				$discount->total_ht = price2num($remise, 'MT');
-				$discount->total_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
-				$discount->total_ttc = price2num((float) $discount->total_ht + (float) $discount->total_tva, 'MT');
+				$discount->total_ht = (float) price2num($remise, 'MT');
+				$discount->total_tva = (float) price2num((float) $remise * (float) $vatrate / 100, 'MT');
+				$discount->total_ttc = (float) price2num((float) $discount->total_ht + (float) $discount->total_tva, 'MT');
 
-				$discount->multicurrency_total_ht = price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_total_tva = price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_total_ttc = price2num(((float) $discount->total_ht + (float) $discount->total_tva) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ht = (float) price2num((float) $remise * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_tva = (float) price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
+				$discount->multicurrency_total_ttc = (float) price2num(((float) $discount->total_ht + (float) $discount->total_tva) * (float) $discount->multicurrency_tx, 'MT');
 			}
 
 			// For backward compatibility
