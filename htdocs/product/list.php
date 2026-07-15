@@ -153,6 +153,9 @@ if (isModEnabled('variants')) {
 	// the filter at all, and the value is read as a strict 0/1 flag.
 	if (GETPOSTISSET('search_show_childproducts')) {
 		$show_childproducts = GETPOSTINT('search_show_childproducts');
+	} else {
+		// No filter carried (fresh page load): apply the default defined in the variants module setup
+		$show_childproducts = getDolGlobalInt('PRODUIT_ATTRIBUTES_SHOWCHILD_IN_LIST');
 	}
 }
 
@@ -443,7 +446,7 @@ if (empty($reshook)) {
 		$search_date_modif_endday = "";
 		$search_date_modif_end = "";
 
-		$show_childproducts = 0;
+		$show_childproducts = getDolGlobalInt('PRODUIT_ATTRIBUTES_SHOWCHILD_IN_LIST');
 
 		$search_import_key = '';
 		$search_stockable_product = '';
@@ -882,8 +885,9 @@ if ($search_vatrate) {
 if ($fourn_id > 0) {
 	$param .= "&fourn_id=".urlencode((string) ($fourn_id));
 }
-if ($show_childproducts) {
-	$param .= "&search_show_childproducts=".urlencode((string) $show_childproducts);
+if (isModEnabled('variants')) {
+	// Always carry the state so an explicit "off" survives pagination/sorting when the default is "on"
+	$param .= "&search_show_childproducts=".urlencode((string) ($show_childproducts ? 1 : 0));
 }
 if ($type != '') {
 	$param .= '&type='.urlencode((string) ($type));
