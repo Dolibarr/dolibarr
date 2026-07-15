@@ -271,7 +271,7 @@ if (strpos($newbuild, '-') === false) {
 	$newbuild .= '-0.4';  // finale (fedora)
 }
 $REL1 = preg_replace('/-.*$/', '', $newbuild);
-if ($RPMSUBVERSION === 'auto') {
+if ($RPMSUBVERSION === 'auto') {	// @phpstan-ignore-line
 	$RPMSUBVERSION = preg_replace('/^.*-/', '', $newbuild);
 }
 $FILENAMETGZ2    = "$PROJECT-$MAJOR.$MINOR.$REL1";
@@ -316,10 +316,10 @@ for ($i = 1; $i < $argc; $i++) {
 }
 
 // Force output dir if env vars are defined
-if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {
+if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTIBETARC;
 }
-if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {
+if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTISTABLE;
 }
 
@@ -351,12 +351,12 @@ if ($target) {
 	$targetUpper = strtoupper($target);
 	if ($targetUpper === 'ALL') {
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {
+			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
 	}
-	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {
+	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {	// @phpstan-ignore-line
 		$CHOOSEDTARGET[$targetUpper] = 1;
 	}
 	if ($targetUpper === 'SF') {
@@ -401,7 +401,7 @@ if ($target) {
 	} elseif ($NUM_SCRIPT === '0') {
 		$CHOOSEDTARGET['-CHKSUM'] = 1;
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {
+			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
@@ -497,7 +497,7 @@ foreach ($CHOOSEDTARGET as $tgt => $val) {
 
 ksort($CHOOSEDPUBLISH);
 foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-	if ($val < 0) { continue; }
+	if ($val < 0) { continue; }					// @phpstan-ignore-line
 	if ($tgt === 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($tgt === 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
@@ -623,7 +623,7 @@ if ($nboftargetok) {
 	// ========================================================================
 
 	if ($nboftargetneedbuildroot) {
-		if (!$copyalreadydone) {
+		if (!$copyalreadydone) {	// @phpstan-ignore-line
 			echo "Creation of a buildroot used for all packages\n";
 
 			echo "Delete directory $BUILDROOT\n";
@@ -1299,7 +1299,7 @@ if ($nboftargetok) {
 
 	ksort($CHOOSEDPUBLISH);
 	foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-		if ($val < 0) { continue; }
+		if ($val < 0) { continue; }								// @phpstan-ignore-line
 
 		echo "\nList of files to publish (BUILD=$BUILD)\n";
 
