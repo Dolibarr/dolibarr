@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
+         bootstrap="test/phpunit/sqlite-driver/bootstrap.php"
+         colors="true"
+         verbose="true"
+         stopOnFailure="false"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
+         convertDeprecationsToExceptions="false"
+         cacheResult="false">
+
+    <testsuites>
+        <testsuite name="sqlite-driver">
+            <directory>test/phpunit/sqlite-driver</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="display_errors" value="true"/>
+    </php>
+</phpunit>

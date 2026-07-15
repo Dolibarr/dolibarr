@@ -1833,6 +1833,11 @@ function dol_clone($srcobject, $native = 2)
 			$tmpsavdb = $srcobject->db;
 			unset($srcobject->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
 		}
+		// SQLite3 objects cannot be serialized either
+		if (isset($srcobject->db) && isset($srcobject->db->db) && is_object($srcobject->db->db) && get_class($srcobject->db->db) == 'SQLite3') {
+			$tmpsavdb = $srcobject->db;
+			unset($srcobject->db);
+		}
 
 		$myclone = unserialize(serialize($srcobject));	// serialize then unserialize is a hack to be sure to have a new object for all fields
 
@@ -2209,7 +2214,7 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $bad
 	}
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrderInternal
-	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", $str));
+	return str_replace($forbidden_chars_to_replace, $newstr, str_replace($forbidden_chars_to_remove, "", (string) $str));
 }
 
 

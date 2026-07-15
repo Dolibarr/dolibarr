@@ -47,9 +47,14 @@ class DoliDBSqlite3 extends DoliDB
 	private $_results;
 
 	/**
-	 * @var string					Last query string
+	 * @var array<int, string> Store query strings indexed by result object ID
 	 */
-	private $queryString;
+	private $queryStrings = [];
+
+	/**
+	 * @var bool Unescape slash quot
+	 */
+	public $unescapeslashquot = false;
 
 	const WEEK_MONDAY_FIRST = 1;
 	const WEEK_YEAR = 2;
@@ -115,14 +120,7 @@ class DoliDBSqlite3 extends DoliDB
 			$this->database_selected = true;
 			$this->database_name = $name;
 
-			$this->addCustomFunction('IF');
-			$this->addCustomFunction('MONTH');
-			$this->addCustomFunction('CURTIME');
-			$this->addCustomFunction('CURDATE');
-			$this->addCustomFunction('WEEK', 1);
-			$this->addCustomFunction('WEEK', 2);
-			$this->addCustomFunction('WEEKDAY');
-			$this->addCustomFunction('date_format');
+			$this->loadCustomFunctions();
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} else {
 			// host, login ou password incorrect
@@ -153,6 +151,19 @@ class DoliDBSqlite3 extends DoliDB
 		if (preg_match('/^#/i', $line) || preg_match('/^$/i', $line) || preg_match('/^--/i', $line)) {
 			return $line;
 		}
+
+		// SQLite has no row-level locking clause: an explicit transaction
+		// already locks the whole database for writers, so the MySQL /
+		// PostgreSQL pessimistic-locking tail is a no-op here. Strip it
+		// (FOR UPDATE [NOWAIT | SKIP LOCKED], FOR SHARE, LOCK IN SHARE MODE)
+		// so a "SELECT ... FOR UPDATE" runs instead of raising a
+		// "near \"FOR\": syntax error". A trailing ';' is preserved.
+		$line = preg_replace(
+			'/\s+(?:FOR\s+UPDATE(?:\s+NOWAIT|\s+SKIP\s+LOCKED)?|FOR\s+SHARE|LOCK\s+IN\s+SHARE\s+MODE)\s*(;?)\s*$/i',
+			'\\1',
+			$line
+		);
+
 		if ($line != "") {
 			if ($type == 'auto') {
 				if (preg_match('/ALTER TABLE/i', $line)) {
@@ -165,18 +176,25 @@ class DoliDBSqlite3 extends DoliDB
 			}
 
 			if ($type == 'dml') {
+				// Remove inline comments (-- ...) before replacing whitespace
+				// This prevents comments from breaking when newlines are converted to spaces
+				$line = preg_replace('/--[^\n]*$/m', '', $line);
+
 				$line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
 				// we are inside create table statement so let's process datatypes
 				if (preg_match('/(ISAM|innodb)/i', $line)) { // end of create table sequence
-					$line = preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
-					$line = preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb);/i', ');', $line);
+					$line = preg_replace('/\)[\s\t]*type[\s\t]*=[\s\t]*(MyISAM|innodb)[^;]*;/i', ');', $line);
+					$line = preg_replace('/\)[\s\t]*engine[\s\t]*=[\s\t]*(MyISAM|innodb)[^;]*;/i', ');', $line);
 					$line = preg_replace('/,$/', '', $line);
 				}
 
 				// Process case: "CREATE TABLE llx_mytable(rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,code..."
-				if (preg_match('/[\s\t\(]*(\w*)[\s\t]+int.*auto_increment/i', $line, $reg)) {
-					$newline = preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 integer PRIMARY KEY AUTOINCREMENT', $line);
+				// The int family is matched (int/integer/bigint/smallint/tinyint/mediumint) so a
+				// "bigint AUTO_INCREMENT PRIMARY KEY" becomes a proper "integer PRIMARY KEY AUTOINCREMENT"
+				// (SQLite only auto-increments a column declared exactly as INTEGER PRIMARY KEY).
+				if (preg_match('/[\s\t\(]*(\w*)[\s\t]+(?:big|small|tiny|medium)?int.*auto_increment/i', $line, $reg)) {
+					$newline = preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+(?:big|small|tiny|medium)?int.*auto_increment[^,]*/i', '\\1 \\2 integer PRIMARY KEY AUTOINCREMENT', $line);
 					//$line = "-- ".$line." replaced by --\n".$newline;
 					$line = $newline;
 				}
@@ -199,6 +217,13 @@ class DoliDBSqlite3 extends DoliDB
 				$line = preg_replace('/datetime not null/i', 'datetime', $line);
 				$line = preg_replace('/datetime/i', 'timestamp', $line);
 
+				// Remove ON UPDATE CURRENT_TIMESTAMP (not supported in SQLite)
+				$line = preg_replace('/ON UPDATE CURRENT_TIMESTAMP/i', '', $line);
+				$line = preg_replace('/DEFAULT CURRENT_TIMESTAMP/i', 'DEFAULT CURRENT_TIMESTAMP', $line);
+
+				// Remove inline COMMENT 'xxx' (not supported in SQLite)
+				$line = preg_replace('/\s+COMMENT\s+\'[^\']*\'/i', '', $line);
+
 				// double -> numeric
 				$line = preg_replace('/^double/i', 'numeric', $line);
 				$line = preg_replace('/(\s*)double/i', '\\1numeric', $line);
@@ -211,9 +236,55 @@ class DoliDBSqlite3 extends DoliDB
 					$line = preg_replace('/unique index\s*\((\w+\s*,\s*\w+)\)/i', 'UNIQUE\(\\1\)', $line);
 				}
 
+				// alter table add [unique] [index] (field1, field2 ...)
+				// IMPORTANT: Must be processed BEFORE removing inline INDEX definitions below
+				// ALTER TABLE llx_xxx ADD INDEX idx_xxx (field) -> CREATE INDEX idx_xxx ON llx_xxx (field)
+				if (preg_match('/ALTER\s+TABLE\s+(\S+)\s+ADD\s+(UNIQUE\s+INDEX|UNIQUE\s+KEY|INDEX|KEY|UNIQUE)\s+(\S+)\s*\(([\w,\s]+)\)/i', $line, $reg)) {
+					$fieldlist = $reg[4];
+					$idxname = trim($reg[3]);
+					$tablename = trim($reg[1]);
+					$line = "CREATE ".(preg_match('/UNIQUE/i', $reg[2]) ? 'UNIQUE ' : '')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+				}
+
+				// Remove inline FULLTEXT / SPATIAL index definitions (not supported in SQLite).
+				// Handles "FULLTEXT KEY name (col)", "FULLTEXT INDEX name (col)" and "FULLTEXT (col)".
+				// Processed before the plain INDEX/KEY strip below so the whole clause is removed.
+				$line = preg_replace('/(?:^|,)\s*\b(?:FULLTEXT|SPATIAL)\b\s+(?:(?:INDEX|KEY)\s+)?\w*\s*\([^)]+\)/i', '', $line);
+
+				// Remove inline INDEX definitions from CREATE TABLE (not supported in SQLite)
+				// Example: INDEX idx_fk_user (fk_user) or KEY idx_name (field)
+				// Word boundaries are required so column names ending with "_key" or
+				// "_index" (e.g. "import_key VARCHAR(14)") are not corrupted.
+				$line = preg_replace('/(?:^|,)\s*\b(?:INDEX|KEY)\b\s+\w+\s*\([^)]+\)/i', '', $line);
+
 				// We remove end of requests "AFTER fieldxxx"
 				$line = preg_replace('/AFTER [a-z0-9_]+/i', '', $line);
 
+				// Remove inline COMMENT 'xxx' (not supported in SQLite)
+				$line = preg_replace('/\s+COMMENT\s+\'[^\']*\'/i', '', $line);
+
+				// Remove column-level CHARACTER SET specifications (e.g. "varchar(20) CHARACTER SET utf8")
+				$line = preg_replace('/\s+CHARACTER\s+SET\s+[a-z0-9_]+/i', '', $line);
+
+				// Remove DEFAULT CHARSET and COLLATE specifications (table-level and column-level)
+				$line = preg_replace('/\s+DEFAULT\s+CHARSET\s*=\s*[a-z0-9_]+/i', '', $line);
+				$line = preg_replace('/\s+COLLATE\s*=?\s*[a-z0-9_]+/i', '', $line);
+
+				// Remove ENGINE specification and every trailing table option.
+				// Real Dolibarr DDL is written ")ENGINE=innodb ..." (no space before
+				// ENGINE) and the installer strips the trailing ';', so neither a leading
+				// space nor a ';' can be relied on by the earlier ISAM/innodb pattern.
+				// Cutting from the table-closing ")ENGINE" to end of line also removes any
+				// DEFAULT CHARSET / COLLATE / ROW_FORMAT / AUTO_INCREMENT / COMMENT options
+				// that follow, in one shot.
+				$line = preg_replace('/\)\s*ENGINE\s*=\s*\w+.*$/i', ')', $line);
+				$line = preg_replace('/\bENGINE\s*=\s*\w+/i', '', $line);
+
+				// Remove AUTO_INCREMENT start value for tables
+				$line = preg_replace('/\s+AUTO_INCREMENT\s*=\s*\d+/i', '', $line);
+
+				// Remove ROW_FORMAT specification
+				$line = preg_replace('/\s+ROW_FORMAT\s*=\s*\w+/i', '', $line);
 				// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
 				$line = preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i', 'DROP INDEX', $line);
 
@@ -256,8 +327,13 @@ class DoliDBSqlite3 extends DoliDB
 					$fieldlist = $reg[4];
 					$idxname = $reg[3];
 					$tablename = $reg[1];
-					$line = "-- ".$line." replaced by --\n";
-					$line .= "CREATE ".(preg_match('/UNIQUE/', $reg[2]) ? 'UNIQUE ' : '')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+					$line = "CREATE ".(preg_match('/UNIQUE/', $reg[2]) ? 'UNIQUE ' : '')."INDEX ".$idxname." ON ".$tablename." (".$fieldlist.")";
+				}
+				// alter table add constraint name unique (field1, field2 ...) -> SQLite cannot add a
+				// named UNIQUE constraint via ALTER TABLE, so create a unique index instead.
+				// ALTER TABLE llx_product_pricerules ADD CONSTRAINT unique_level UNIQUE (level)
+				if (preg_match('/ALTER\s+TABLE\s+(\S+)\s+ADD\s+CONSTRAINT\s+(\S+)\s+UNIQUE\s*\(([^)]+)\)/i', $line, $reg)) {
+					$line = "CREATE UNIQUE INDEX ".trim($reg[2])." ON ".trim($reg[1])." (".$reg[3].")";
 				}
 				if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $line, $reg)) {
 					// Constraints are not yet created
@@ -293,7 +369,139 @@ class DoliDBSqlite3 extends DoliDB
 			//print "type=".$type." newline=".$line."<br>\n";
 		}
 
+		// Convert MySQL "INSERT INTO ... ON DUPLICATE KEY UPDATE ..." to SQLite "INSERT OR REPLACE INTO ..."
+		// Note: INSERT OR REPLACE deletes and reinserts the row, so all columns should be specified
+		if (preg_match('/INSERT\s+INTO\s+(.*?)\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+/i', $line)) {
+			$line = preg_replace('/\s+ON\s+DUPLICATE\s+KEY\s+UPDATE\s+.*/i', '', $line);
+			$line = preg_replace('/INSERT\s+INTO\s+/i', 'INSERT OR REPLACE INTO ', $line);
+		}
+
+		// Convert MySQL "INSERT IGNORE INTO ..." to SQLite "INSERT OR IGNORE INTO ..."
+		$line = preg_replace('/INSERT\s+IGNORE\s+INTO\s+/i', 'INSERT OR IGNORE INTO ', $line);
+
+		// Convert MySQL SUBSTRING(x FROM y) to SQLite SUBSTR(x, y)
+		// MySQL: SUBSTRING(ref FROM 5) -> SQLite: SUBSTR(ref, 5)
+		$line = preg_replace('/SUBSTRING\s*\(\s*(\w+)\s+FROM\s+(\d+)\s*\)/i', 'SUBSTR(\\1, \\2)', $line);
+
+		// Convert MySQL CAST(x AS SIGNED) to SQLite CAST(x AS INTEGER)
+		// MySQL uses SIGNED/UNSIGNED, SQLite uses INTEGER
+		$line = preg_replace('/CAST\s*\(\s*(.+?)\s+AS\s+SIGNED\s*\)/i', 'CAST(\\1 AS INTEGER)', $line);
+		$line = preg_replace('/CAST\s*\(\s*(.+?)\s+AS\s+UNSIGNED\s*\)/i', 'CAST(\\1 AS INTEGER)', $line);
+
+		// Convert MySQL FROM_UNIXTIME(timestamp) to SQLite datetime(timestamp, 'unixepoch')
+		// MySQL: FROM_UNIXTIME(1234567890) -> SQLite: datetime(1234567890, 'unixepoch')
+		$line = preg_replace('/FROM_UNIXTIME\s*\(\s*([^)]+)\s*\)/i', "datetime(\\1, 'unixepoch')", $line);
+
+		// Convert MySQL UNIX_TIMESTAMP(datetime) to SQLite strftime('%s', datetime)
+		// MySQL: UNIX_TIMESTAMP(date_col) -> SQLite: strftime('%s', date_col)
+		$line = preg_replace('/UNIX_TIMESTAMP\s*\(\s*([^)]+)\s*\)/i', "strftime('%s', \\1)", $line);
+		// MySQL: UNIX_TIMESTAMP() (without args, returns current timestamp)
+		$line = preg_replace('/UNIX_TIMESTAMP\s*\(\s*\)/i', "strftime('%s', 'now')", $line);
+
+		// Convert MySQL GROUP_CONCAT(expr SEPARATOR 'x') to SQLite GROUP_CONCAT(expr, 'x')
+		// SQLite cannot combine DISTINCT with a custom separator, so for the DISTINCT
+		// form the separator is dropped (SQLite then falls back to its default ',').
+		$line = preg_replace_callback(
+			'/\bGROUP_CONCAT\s*\(\s*(DISTINCT\s+)?(.+?)\s+SEPARATOR\s+(\'[^\']*\'|"[^"]*"|\S+?)\s*\)/i',
+			function ($reg) {
+				if (trim($reg[1]) !== '') {
+					if ($reg[3] !== "','" && $reg[3] !== '","') {
+						dol_syslog("DoliDBSqlite3::convertSQLFromMysql GROUP_CONCAT DISTINCT with custom separator unsupported by SQLite, falling back to ','", LOG_WARNING);
+					}
+					return "GROUP_CONCAT(DISTINCT ".$reg[2].")";
+				}
+				return "GROUP_CONCAT(".$reg[2].", ".$reg[3].")";
+			},
+			$line
+		);
+
+		// Remove the MySQL BINARY operator used to force case-sensitive comparison.
+		// SQLite TEXT comparisons already use the case-sensitive BINARY collation by
+		// default, so dropping the keyword is equivalent. Only strip it in operator
+		// position (after a SQL keyword / comma / '(' / '=') to avoid touching data.
+		$line = preg_replace('/(\bWHERE\b|\bAND\b|\bOR\b|\bHAVING\b|\bON\b|,|=|\()\s*BINARY\s+/i', '\\1 ', $line);
+
+		// Convert MySQL DATE_ADD/DATE_SUB(expr, INTERVAL n unit) to SQLite datetime(expr, '+/-n unit')
+		// MySQL: DATE_SUB(NOW(), INTERVAL 1 MONTH) -> SQLite: datetime(NOW(), '-1 months')
+		// (a nested NOW() is converted to datetime('now') by the rule below)
+		$line = preg_replace_callback(
+			'/\bDATE_(ADD|SUB)\s*\(\s*(.+?)\s*,\s*INTERVAL\s+(\S+)\s+(\w+)\s*\)/i',
+			function ($reg) {
+				$sign = (strtoupper($reg[1]) === 'SUB') ? '-' : '+';
+				$modifier = self::sqliteIntervalModifier($sign, $reg[3], $reg[4]);
+				if ($modifier === null) {
+					// Unsupported unit/value: leave untouched rather than emit wrong data.
+					dol_syslog("DoliDBSqlite3::convertSQLFromMysql untranslated INTERVAL: ".$reg[0], LOG_WARNING);
+					return $reg[0];
+				}
+				return "datetime(".$reg[2].", '".$modifier."')";
+			},
+			$line
+		);
+
+		// Convert MySQL EXTRACT(unit FROM expr) to the matching SQLite shim function
+		// MySQL: EXTRACT(YEAR FROM d) -> SQLite: YEAR(d)
+		$line = preg_replace_callback(
+			'/\bEXTRACT\s*\(\s*(\w+)\s+FROM\s+(.+?)\s*\)/i',
+			function ($reg) {
+				$map = array(
+					'YEAR' => 'YEAR', 'MONTH' => 'MONTH', 'DAY' => 'DAY',
+					'HOUR' => 'HOUR', 'MINUTE' => 'MINUTE', 'SECOND' => 'SECOND',
+					'QUARTER' => 'QUARTER', 'WEEK' => 'WEEK',
+				);
+				$unit = strtoupper($reg[1]);
+				if (!isset($map[$unit])) {
+					dol_syslog("DoliDBSqlite3::convertSQLFromMysql untranslated EXTRACT unit: ".$reg[1], LOG_WARNING);
+					return $reg[0];
+				}
+				return $map[$unit].'('.$reg[2].')';
+			},
+			$line
+		);
+
+		// Convert MySQL NOW() to SQLite datetime('now')
+		// MySQL: NOW() -> SQLite: datetime('now')
+		$line = preg_replace('/\bNOW\s*\(\s*\)/i', "datetime('now')", $line);
+
 		return $line;
+	}
+
+	/**
+	 * Build a SQLite datetime() modifier string from a MySQL INTERVAL clause.
+	 *
+	 * SQLite has no 'weeks' or 'quarters' modifier, so those are converted to
+	 * days/months when the quantity is a numeric literal. A non-numeric quantity
+	 * for those units returns null (the caller then leaves the SQL untouched).
+	 *
+	 * @param	string	$sign	'+' for DATE_ADD, '-' for DATE_SUB
+	 * @param	string	$value	Interval quantity (numeric literal expected)
+	 * @param	string	$unit	MySQL interval unit (DAY, MONTH, YEAR, WEEK, QUARTER, ...)
+	 * @return	string|null		SQLite modifier (e.g. "-1 months"), or null if unsupported
+	 */
+	private static function sqliteIntervalModifier($sign, $value, $unit)
+	{
+		$unit = strtoupper($unit);
+		$numeric = is_numeric($value);
+		switch ($unit) {
+			case 'SECOND':
+				return $sign.$value.' seconds';
+			case 'MINUTE':
+				return $sign.$value.' minutes';
+			case 'HOUR':
+				return $sign.$value.' hours';
+			case 'DAY':
+				return $sign.$value.' days';
+			case 'WEEK':
+				return $numeric ? $sign.((int) $value * 7).' days' : null;
+			case 'MONTH':
+				return $sign.$value.' months';
+			case 'QUARTER':
+				return $numeric ? $sign.((int) $value * 3).' months' : null;
+			case 'YEAR':
+				return $sign.$value.' years';
+			default:
+				return null;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -479,7 +687,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
 			if ($ret) {
-				$this->queryString = $query;
+				$this->queryStrings[spl_object_id($ret)] = $query;
 			}
 		} catch (Exception $e) {
 			$this->error = $this->db->lastErrorMsg();
@@ -587,15 +795,13 @@ class DoliDBSqlite3 extends DoliDB
 	public function num_rows($resultset)
 	{
 		// phpcs:enable
-
 		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Ignore Phan - queryString is added as dynamic property @phan-suppress-next-line PhanUndeclaredProperty
-		if (preg_match("/^SELECT/i", $resultset->queryString)) {
-			// Ignore Phan - queryString is added as dynamic property @phan-suppress-next-line PhanUndeclaredProperty
-			return $this->db->querySingle("SELECT count(*) FROM (".$resultset->queryString.") q");
+		$queryString = $this->getQueryString($resultset);
+		if (preg_match("/^SELECT/i", $queryString)) {
+			return $this->db->querySingle("SELECT count(*) FROM (".$queryString.") q");
 		}
 		return 0;
 	}
@@ -611,12 +817,12 @@ class DoliDBSqlite3 extends DoliDB
 	public function affected_rows($resultset)
 	{
 		// phpcs:enable
-
 		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		if (preg_match("/^SELECT/i", $this->queryString)) {
+		$queryString = $this->getQueryString($resultset);
+		if (preg_match("/^SELECT/i", $queryString)) {
 			return $this->num_rows($resultset);
 		}
 		// mysql requires a base link for this function, unlike pgsql which takes a resultset
@@ -638,8 +844,29 @@ class DoliDBSqlite3 extends DoliDB
 		}
 		// Si resultset en est un, on libere la memoire
 		if ($resultset && is_object($resultset)) {
+			// Clean up stored query string
+			$id = spl_object_id($resultset);
+			unset($this->queryStrings[$id]);
 			$resultset->finalize();
 		}
+	}
+
+	/**
+	 * Get the query string associated with a resultset
+	 *
+	 * @param  SQLite3Result|null  $resultset  Resultset to get query for
+	 * @return string                          The query string or empty string
+	 */
+	private function getQueryString($resultset = null)
+	{
+		if (!is_object($resultset)) {
+			$resultset = $this->_results;
+		}
+		if ($resultset && is_object($resultset)) {
+			$id = spl_object_id($resultset);
+			return $this->queryStrings[$id] ?? '';
+		}
+		return '';
 	}
 
 	/**
@@ -650,7 +877,7 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return SQLite3::escapeString($stringtoencode);
+		return SQLite3::escapeString((string) $stringtoencode);
 	}
 
 	/**
@@ -1436,16 +1663,460 @@ class DoliDBSqlite3 extends DoliDB
 		}
 	}
 
+	/**
+	 * Register all MySQL-compatibility SQL functions on the current connection.
+	 *
+	 * Centralised here so the list stays in one place as it grows. Each name is
+	 * resolved to the matching static db<NAME>() method by addCustomFunction()
+	 * (underscores in the SQL name are stripped to build the PHP method name,
+	 * e.g. LAST_DAY -> dbLASTDAY).
+	 *
+	 * @return void
+	 */
+	private function loadCustomFunctions()
+	{
+		// Control flow.
+		$this->addCustomFunction('IF');
+
+		// String functions. CONCAT takes a variable number of arguments (-1).
+		$this->db->createFunction('CONCAT', array(__CLASS__, 'dbCONCAT'), -1);
+		// LOCATE(substr, str [, pos]): variable arg count.
+		$this->db->createFunction('LOCATE', array(__CLASS__, 'dbLOCATE'), -1);
+		// MD5 / SHA1: not built into SQLite.
+		$this->addCustomFunction('MD5');
+		$this->addCustomFunction('SHA1');
+
+		// Comparison helpers. GREATEST/LEAST take a variable number of arguments.
+		$this->db->createFunction('GREATEST', array(__CLASS__, 'dbGREATEST'), -1);
+		$this->db->createFunction('LEAST', array(__CLASS__, 'dbLEAST'), -1);
+
+		// RAND([seed]): SQLite RANDOM() returns a large integer, not a 0..1 float.
+		$this->db->createFunction('RAND', array(__CLASS__, 'dbRAND'), -1);
+
+		// REGEXP operator: SQLite has no default implementation, so "X REGEXP Y"
+		// needs a user function named regexp(pattern, subject) to be registered.
+		$this->addCustomFunction('regexp');
+
+		// Date/time component extractors.
+		$this->addCustomFunction('MONTH');
+		$this->addCustomFunction('YEAR');
+		$this->addCustomFunction('DAY');
+		$this->addCustomFunction('HOUR');
+		$this->addCustomFunction('MINUTE');
+		$this->addCustomFunction('SECOND');
+		$this->addCustomFunction('QUARTER');
+		$this->addCustomFunction('DAYOFWEEK');
+		$this->addCustomFunction('DAYOFYEAR');
+		$this->addCustomFunction('WEEKDAY');
+		$this->addCustomFunction('LAST_DAY');
+		$this->addCustomFunction('WEEK', 1);
+		$this->addCustomFunction('WEEK', 2);
+
+		// Current date/time.
+		$this->addCustomFunction('CURTIME');
+		$this->addCustomFunction('CURDATE');
+
+		// Date formatting.
+		$this->addCustomFunction('date_format');
+	}
+
+	/**
+	 * SQLite custom function: IF(condition, value_if_true, value_if_false)
+	 *
+	 * @param	mixed	$condition		Condition to evaluate
+	 * @param	mixed	$value_true		Value if true
+	 * @param	mixed	$value_false	Value if false
+	 * @return	mixed
+	 */
+	public static function dbIF($condition, $value_true, $value_false)
+	{
+		return $condition ? $value_true : $value_false;
+	}
+
+	/**
+	 * SQLite custom function: MONTH(date)
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int				Month number (1-12)
+	 */
+	public static function dbMONTH($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('n', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: YEAR(date)
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int				Year number (e.g. 2026)
+	 */
+	public static function dbYEAR($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('Y', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: DAY(date) / DAYOFMONTH(date)
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int|null		Day of month (1-31), or null if empty
+	 */
+	public static function dbDAY($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('j', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: HOUR(time)
+	 *
+	 * @param	string	$date	Date/time string
+	 * @return	int|null		Hour (0-23), or null if empty
+	 */
+	public static function dbHOUR($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('G', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: MINUTE(time)
+	 *
+	 * @param	string	$date	Date/time string
+	 * @return	int|null		Minute (0-59), or null if empty
+	 */
+	public static function dbMINUTE($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('i', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: SECOND(time)
+	 *
+	 * @param	string	$date	Date/time string
+	 * @return	int|null		Second (0-59), or null if empty
+	 */
+	public static function dbSECOND($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) date('s', strtotime($date));
+	}
+
+	/**
+	 * SQLite custom function: QUARTER(date)
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int|null		Quarter of year (1-4), or null if empty
+	 */
+	public static function dbQUARTER($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return (int) (floor(((int) date('n', strtotime($date)) - 1) / 3) + 1);
+	}
+
+	/**
+	 * SQLite custom function: DAYOFWEEK(date)
+	 * MySQL convention: 1 = Sunday, 2 = Monday, ... 7 = Saturday.
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int|null		Day of week (1-7), or null if empty
+	 */
+	public static function dbDAYOFWEEK($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return ((int) date('w', strtotime($date))) + 1; // date('w'): 0=Sunday..6=Saturday
+	}
+
+	/**
+	 * SQLite custom function: DAYOFYEAR(date)
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int|null		Day of year (1-366), or null if empty
+	 */
+	public static function dbDAYOFYEAR($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return ((int) date('z', strtotime($date))) + 1; // date('z'): 0-365
+	}
+
+	/**
+	 * SQLite custom function: LAST_DAY(date)
+	 * Returns the date of the last day of the month for the given date.
+	 *
+	 * @param	string	$date	Date string
+	 * @return	string|null		Last day of month as 'Y-m-d', or null if empty
+	 */
+	public static function dbLASTDAY($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		return date('Y-m-t', strtotime($date)); // 't' expands to the last day number of the month
+	}
+
+	/**
+	 * SQLite custom function: CURTIME()
+	 *
+	 * @return	string	Current time in HH:MM:SS format
+	 */
+	public static function dbCURTIME()
+	{
+		return date('H:i:s');
+	}
+
+	/**
+	 * SQLite custom function: CURDATE()
+	 *
+	 * @return	string	Current date in YYYY-MM-DD format
+	 */
+	public static function dbCURDATE()
+	{
+		return date('Y-m-d');
+	}
+
+	/**
+	 * SQLite custom function: WEEK(date, mode)
+	 *
+	 * @param	string	$date	Date string
+	 * @param	int		$mode	Week mode (0-7)
+	 * @return	int				Week number
+	 */
+	public static function dbWEEK($date, $mode = 0)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		$timestamp = strtotime($date);
+		$year = (int) date('Y', $timestamp);
+		$month = (int) date('n', $timestamp);
+		$day = (int) date('j', $timestamp);
+		$dummy = 0;
+		return (int) self::calc_week($year, $month, $day, $mode, $dummy);
+	}
+
+	/**
+	 * SQLite custom function: WEEKDAY(date)
+	 * Returns 0 = Monday, 1 = Tuesday, ... 6 = Sunday
+	 *
+	 * @param	string	$date	Date string
+	 * @return	int				Weekday (0-6)
+	 */
+	public static function dbWEEKDAY($date)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		$timestamp = strtotime($date);
+		$dow = (int) date('w', $timestamp); // 0=Sunday, 6=Saturday
+		return ($dow + 6) % 7; // Convert to 0=Monday
+	}
+
+	/**
+	 * SQLite custom function: date_format(date, format)
+	 * Converts MySQL date_format to PHP date format
+	 *
+	 * @param	string	$date	Date string
+	 * @param	string	$format	MySQL date format string
+	 * @return	string			Formatted date
+	 */
+	public static function dbdateformat($date, $format)
+	{
+		if (empty($date)) {
+			return null;
+		}
+		$timestamp = strtotime($date);
+		// Convert MySQL format to PHP format
+		$replacements = array(
+			'%Y' => 'Y',
+			'%y' => 'y',
+			'%m' => 'm',
+			'%c' => 'n',
+			'%d' => 'd',
+			'%e' => 'j',
+			'%H' => 'H',
+			'%h' => 'h',
+			'%i' => 'i',
+			'%s' => 's',
+			'%W' => 'l',
+			'%M' => 'F',
+			'%b' => 'M',
+			'%a' => 'D',
+			'%j' => 'z',
+			'%U' => 'W',
+			'%u' => 'W',
+			'%%' => '%',
+		);
+		$phpformat = str_replace(array_keys($replacements), array_values($replacements), $format);
+		return date($phpformat, $timestamp);
+	}
+
+	/**
+	 * SQLite custom function: CONCAT(str1, str2, ...)
+	 * Concatenates strings (MySQL compatibility)
+	 *
+	 * @param	mixed	...$args	Strings to concatenate
+	 * @return	string				Concatenated string
+	 */
+	public static function dbCONCAT(...$args)
+	{
+		$result = '';
+		foreach ($args as $arg) {
+			if ($arg !== null) {
+				$result .= $arg;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * SQLite custom function: LOCATE(substr, str [, pos])
+	 * Returns the 1-based position of the first occurrence of $substr in $str,
+	 * or 0 if not found. Case-insensitive, matching MySQL's default collation.
+	 *
+	 * @param	mixed	...$args	substr, str, and optional start position
+	 * @return	int|null			Position (1-based), 0 if not found, null on NULL input
+	 */
+	public static function dbLOCATE(...$args)
+	{
+		if (!isset($args[0], $args[1]) || $args[0] === null || $args[1] === null) {
+			return null;
+		}
+		$substr = (string) $args[0];
+		$str = (string) $args[1];
+		$pos = isset($args[2]) ? max(1, (int) $args[2]) : 1;
+		if ($pos - 1 > strlen($str)) {
+			return 0; // avoid PHP 8 ValueError when offset exceeds string length
+		}
+		$found = stripos($str, $substr, $pos - 1);
+		return $found === false ? 0 : $found + 1;
+	}
+
+	/**
+	 * SQLite custom function: GREATEST(v1, v2, ...)
+	 * Returns the largest argument. Like MySQL, returns null if any argument is null.
+	 *
+	 * @param	mixed	...$args	Values to compare
+	 * @return	mixed				Largest value, or null
+	 */
+	public static function dbGREATEST(...$args)
+	{
+		if (empty($args)) {
+			return null;
+		}
+		foreach ($args as $a) {
+			if ($a === null) {
+				return null;
+			}
+		}
+		return max($args);
+	}
+
+	/**
+	 * SQLite custom function: LEAST(v1, v2, ...)
+	 * Returns the smallest argument. Like MySQL, returns null if any argument is null.
+	 *
+	 * @param	mixed	...$args	Values to compare
+	 * @return	mixed				Smallest value, or null
+	 */
+	public static function dbLEAST(...$args)
+	{
+		if (empty($args)) {
+			return null;
+		}
+		foreach ($args as $a) {
+			if ($a === null) {
+				return null;
+			}
+		}
+		return min($args);
+	}
+
+	/**
+	 * SQLite custom function: RAND([seed])
+	 * Returns a pseudo-random float in [0, 1), matching MySQL (SQLite RANDOM()
+	 * returns a large signed integer instead).
+	 *
+	 * @param	mixed	...$args	Optional integer seed
+	 * @return	float				Random float in [0, 1)
+	 */
+	public static function dbRAND(...$args)
+	{
+		if (isset($args[0]) && is_numeric($args[0])) {
+			mt_srand((int) $args[0]);
+		}
+		return mt_rand() / (mt_getrandmax() + 1);
+	}
+
+	/**
+	 * SQLite custom function: MD5(str)
+	 *
+	 * @param	string	$str	Input string
+	 * @return	string|null		Hex MD5 hash, or null on NULL input
+	 */
+	public static function dbMD5($str)
+	{
+		return $str === null ? null : md5((string) $str);
+	}
+
+	/**
+	 * SQLite custom function: SHA1(str)
+	 *
+	 * @param	string	$str	Input string
+	 * @return	string|null		Hex SHA1 hash, or null on NULL input
+	 */
+	public static function dbSHA1($str)
+	{
+		return $str === null ? null : sha1((string) $str);
+	}
+
+	/**
+	 * SQLite implementation of the REGEXP operator.
+	 * SQLite evaluates "subject REGEXP pattern" as regexp(pattern, subject).
+	 * MySQL REGEXP is case-insensitive for non-binary collations.
+	 *
+	 * @param	string	$pattern	Regular expression (right operand)
+	 * @param	string	$subject	Value being tested (left operand)
+	 * @return	int|null			1 if it matches, 0 otherwise, null on NULL input
+	 */
+	public static function dbREGEXP($pattern, $subject)
+	{
+		if ($pattern === null || $subject === null) {
+			return null;
+		}
+		$delimited = '/'.str_replace('/', '\\/', (string) $pattern).'/i';
+		return @preg_match($delimited, (string) $subject) ? 1 : 0;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/* Unused/commented
+	/**
 	 * calc_daynr
 	 *
-	 * param 	int 	$year		Year
-	 * param 	int 	$month		Month
-	 * param	int     $day 		Day
-	 * return int Formatted date
+	 * @param 	int 	$year		Year
+	 * @param 	int 	$month		Month
+	 * @param	int     $day 		Day
+	 * @return int Formatted date
 	 */
-	/*
 	private static function calc_daynr($year, $month, $day)
 	{
 		// phpcs:enable
@@ -1459,55 +2130,49 @@ class DoliDBSqlite3 extends DoliDB
 		} else {
 			$num -= floor(($month * 4 + 23) / 10);
 		}
-		$temp = floor(($y / 100 + 1) * 3 / 4);
-		return (int) ($num + floor($y / 4) - $temp);
+			$temp = floor(($y / 100 + 1) * 3 / 4);
+			return $num + floor($y / 4) - $temp;
 	}
-	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/* Unused/commented
+	/**
 	 * calc_weekday
 	 *
-	 * param int	$daynr							???
-	 * param bool	$sunday_first_day_of_week		???
-	 * return int
+	 * @param int	$daynr							???
+	 * @param bool	$sunday_first_day_of_week		???
+	 * @return int
 	 */
-	/*
 	private static function calc_weekday($daynr, $sunday_first_day_of_week)
 	{
 		// phpcs:enable
-		$ret = (int) floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
+		$ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
 		return $ret;
 	}
-	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/* Unused/commented
+	/**
 	 * calc_days_in_year
 	 *
-	 * param 	int		$year		Year
-	 * return	int					Nb of days in year
+	 * @param 	string	$year		Year
+	 * @return	int					Nb of days in year
 	 */
-	/*
 	private static function calc_days_in_year($year)
 	{
 		// phpcs:enable
 		return (($year & 3) == 0 && ($year % 100 || ($year % 400 == 0 && $year)) ? 366 : 365);
 	}
-	*/
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/* Unused/commented
+	/**
 	 * calc_week
 	 *
-	 * param 	int		$year				Year
-	 * param 	int		$month				Month
-	 * param 	int		$day				Day
-	 * param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDAY
-	 * param 	int		$calc_year			??? Year where the week started
-	 * return	int							??? Week number in year
+	 * @param 	string	$year				Year
+	 * @param 	string	$month				Month
+	 * @param 	string	$day				Day
+	 * @param 	string	$week_behaviour		Week behaviour
+	 * @param 	string	$calc_year			???
+	 * @return	string						???
 	 */
-	/*
 	private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
 	{
 		// phpcs:enable
@@ -1543,7 +2208,6 @@ class DoliDBSqlite3 extends DoliDB
 				return 1;
 			}
 		}
-		return (int) floor($days / 7 + 1);
+		return floor($days / 7 + 1);
 	}
-	*/
 }
