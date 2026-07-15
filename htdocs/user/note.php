@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 if ($object->id == $user->id) {
 	$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
 } else {
-	$permissionnote = $user->hasRight("user", "user", "write")); // Used by the include of actions_setnotes.inc.php
+	$permissionnote = $user->hasRight("user", "user", "write"); // Used by the include of actions_setnotes.inc.php
 }
 
 // Security check
@@ -81,7 +82,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 /*
  * Actions
  */
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

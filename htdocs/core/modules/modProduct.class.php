@@ -561,7 +561,7 @@ class modProduct extends DolibarrModules
 			'p.price_min' => "MinPrice",
 			'p.price_ttc' => "SellingPriceTTC", //with tax
 			'p.price_min_ttc' => "SellingMinPriceTTC",
-			'p.price_base_type' => "PriceBaseType", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
+			'p.price_base_type' => "PriceBaseType*", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
 			'p.default_vat_code' => 'VATCode',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.datec' => 'DateCreation',
