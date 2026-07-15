@@ -937,18 +937,19 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 * @param float		$amount 			Currency amount to process (with or without tax, depending on $amount_type)
 	 * @param int<0,1> 	$amount_type		0 = Amount includes no taxes, 1 = Amount includes all the taxes
-	 * @param float 	$tva_tx 			TVA (main tax) percentage (>1)
-	 * @param float 	$localtax1_tx 		localtax1 percentage (>1)
-	 * @param float 	$localtax2_tx 		localtax2 percentage (>1)
+	 * @param float 	$tva_tx 			TVA (main tax) percentage (0-100)
+	 * @param float 	$localtax1_tx 		localtax1 percentage (0-100)
+	 * @param float 	$localtax2_tx 		localtax2 percentage (0-100)
 	 * @param int<0,1> 	$localtax1_type 	localtax1 type
 	 * @param int<0,1> 	$localtax2_type 	localtax2 type
 	 * @return int 	OK = >= 0, KO = < 0
 	 */
 	public function generateFromAmount($amount, $amount_type, $tva_tx, $localtax1_tx, $localtax2_tx, $localtax1_type = 1, $localtax2_type = 1)
 	{
+		$tva_tx_pct = (float) ($tva_tx / 100);
 		$localtax1_tx_pct = (float) ($localtax1_tx / 100);
 		$localtax2_tx_pct = (float) ($localtax2_tx / 100);
-		$tva_tx_pct = (float) ($tva_tx / 100);
+
 		$err = 0;
 
 		// Test if localtax type is 2, 4 or 6 (compond tax calculation)
@@ -957,7 +958,6 @@ class DiscountAbsolute extends CommonObject
 
 		if ($amount_type == 1) {
 			// TTC
-
 			$this->total_ttc = price2num($amount, 'MT');
 
 			if (!$localtax1_type2 && !$localtax2_type2) {
@@ -987,11 +987,11 @@ class DiscountAbsolute extends CommonObject
 			// HT
 			$this->total_ht = price2num($amount, 'MT');
 			$this->total_tva = price2num((float) $this->total_ht * $tva_tx_pct, 'MT');
-			$this->total_ttc = price2num((float) $this->total_ht + (float) $this->total_tva, 'MT');
+			//$this->total_ttc = price2num((float) $this->total_ht + (float) $this->total_tva + ..., 'MT');		// Is set later
 
 			$this->multicurrency_total_ht = price2num($amount * (float) $this->multicurrency_tx, 'MT');
 			$this->multicurrency_total_tva = price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_ttc = price2num(((float) $this->total_ht + (float) $this->total_tva) * (float) $this->multicurrency_tx, 'MT');
+			//$this->multicurrency_total_ttc = price2num(((float) $this->total_ht + (float) $this->total_tva + ...) * (float) $this->multicurrency_tx, 'MT');	// Is set later
 		}
 
 		// For backward compatibility

@@ -229,11 +229,11 @@ class DiscountTest extends CommonClassTest
 		$localobject->generateFromAmount($amount, ($price_base == 'HT' ? 0 : 1), $vat_tx, $localtax1_tx, $localtax2_tx, $localtax1_type, $localtax2_type);
 
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ht, $localobject->amount_ht);
+		$this->assertEquals($ex_total_ht, $localobject->total_ht);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_ttc, $localobject->amount_ttc);
+		$this->assertEquals($ex_total_ttc, $localobject->total_ttc);
 		// @phan-suppress-next-line PhanUndeclaredMethod
-		$this->assertEquals($ex_total_tva, $localobject->amount_tva);
+		$this->assertEquals($ex_total_tva, $localobject->total_tva);
 		// @phan-suppress-next-line PhanUndeclaredMethod
 		$this->assertEquals($ex_total_localtax1, price2num($localobject->total_localtax1, 'MT'));
 		// @phan-suppress-next-line PhanUndeclaredMethod
@@ -254,14 +254,14 @@ class DiscountTest extends CommonClassTest
 	{
 		// array(amount, vat_tx, localtax1_tx, localtax1_type, localtax2_tx, localtax2_type, price_base, ex_total_tva, ex_total_localtax1, ex_total_localtax2, ex_total_ttc, ex_total_ht),
 		return array(
-			array(1234,5,9.975,1,0,0,'HT',61.7,123.09,0,1418.79,1234),
-			array(1418.79,5,9.975,1,0,0,'',61.7,123.09,0,1418.79,1234),
-			array(1234,5,9.975,1,4,1,'HT',61.7,123.09,49.36,1468.15,1234),
-			array(1468.15,5,9.975,1,4,1,'',61.7,123.09,49.36,1468.15,1234),
-			array(1234,5,9.975,2,0,0,'HT',61.7,129.25,0,1424.95,1234),
-			array(1424.95,5,9.975,2,0,0,'',61.7,129.25,0,1424.95,1234),
-			array(1234,5,9.975,2,4,2,'HT',61.7,129.25,57,1481.94,1234),
-			array(1481.94,5,9.975,2,4,2,'',61.7,129.25,57,1481.94,1234)
+			array(1234,    5, 9.975, 1, 0, 0, 'HT', 61.7, 123.09, 0, 1418.79, 1234),
+			array(1418.79, 5, 9.975, 1, 0, 0, '',   61.7, 123.09, 0, 1418.79, 1234),
+			array(1234,    5, 9.975, 1, 4, 1, 'HT', 61.7, 123.09, 49.36, 1468.15, 1234),
+			array(1468.15, 5, 9.975, 1, 4, 1, '',   61.7, 123.09, 49.36, 1468.15, 1234),
+			array(1234,    5, 9.975, 2, 0, 0,'HT',  61.7, 129.25, 0, 1424.95, 1234),
+			array(1424.95, 5, 9.975, 2, 0, 0, '',   61.7, 129.25, 0, 1424.95, 1234),
+			array(1234,    5, 9.975, 2, 4, 2,'HT',  61.7, 129.25, 57, 1481.94, 1234),
+			array(1481.94, 5, 9.975, 2, 4, 2, '',   61.7, 129.25, 57, 1481.94, 1234)
 		);
 	}
 
