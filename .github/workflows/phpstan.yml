@@ -95,7 +95,7 @@ jobs:
         #   - the branch is an integration branch (no merge), or,
         #   - the merge from branch contains 'phpstan_full', or,
         #   - there are changes in PHP files.
-        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || contains(github.head_ref, 'phpstan_full') || steps.changed-php.outputs.any_changed == 'true') }}
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phpstan_full') || steps.changed-php.outputs.any_changed == 'true') }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         # shellcheck disable=2086
