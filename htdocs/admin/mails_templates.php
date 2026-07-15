@@ -777,7 +777,7 @@ if ($sortfield) {
 	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 }
 if ($limit) {
-	$paramwithsearch .= '&limit='.urlencode($limit);
+	$paramwithsearch .= '&limit='.((int) $limit);
 }
 if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
