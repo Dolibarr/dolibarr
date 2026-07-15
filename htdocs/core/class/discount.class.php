@@ -952,46 +952,92 @@ class DiscountAbsolute extends CommonObject
 
 		$err = 0;
 
-		// Test if localtax type is 2, 4 or 6 (compond tax calculation)
+		//var_dump("amount=$amount, amount_type=$amount_type, tva_tx=$tva_tx, localtax1_tx=$localtax1_tx, localtax2_tx=$localtax2_tx, localtax1_type=$localtax1_type, localtax2_type=$localtax2_type");
+
+		// Test if localtax type is 2, 4 or 6 (loca tax are calculated on ht + vat)
 		$localtax1_type2 = ((int) $localtax1_type > 0 && (int) $localtax1_type % 2 == 0 ? 1 : 0);
 		$localtax2_type2 = ((int) $localtax2_type > 0 && (int) $localtax2_type % 2 == 0 ? 1 : 0);
 
 		if ($amount_type == 1) {
 			// TTC
-			$this->total_ttc = price2num($amount, 'MT');
+			$this->total_ttc = (float) price2num($amount, 'MT');
 
-			if (!$localtax1_type2 && !$localtax2_type2) {
-				$diviseur = 1 + $tva_tx_pct + $localtax1_tx_pct + $localtax2_tx_pct;
-				$this->total_ht = price2num((float) $amount / $diviseur, 'MT');
-				$this->total_tva = price2num((float) $this->total_ht * $tva_tx_pct, 'MT');
+			$ttc = (float) $this->total_ttc;
+
+			// Calculate lt1 and/or lt2 = taxes added after VAT
+			$lt1 = 0; $lt2 = 0;
+			$tx_before_vat = 0; $tx_before_vat_without1 = 0; $tx_before_vat_without2 = 0;
+			$tx_after_vat = 0; $tx_after_vat_without1 = 0; $tx_after_vat_without2 = 0;
+			if ($localtax1_type2 && $localtax1_tx_pct > 0) {
+				$tx_after_vat += $localtax1_tx_pct;
+				$tx_after_vat_without2 += $localtax1_tx_pct;
 			} else {
-				$diviseur = 1 + $tva_tx_pct * ($localtax1_tx_pct > 0 ? $localtax1_tx_pct : 1) * ($localtax2_tx_pct > 0 ? $localtax2_tx_pct : 1);
-				$lt1 = 0; $lt2 = 0; $ttc = (float) $this->total_ttc;
-				if ($localtax2_tx_pct > 0) {
-					$lt2 = $ttc - $ttc / (1 + $localtax2_tx_pct);
-				}
-				if ($localtax1_tx_pct > 0) {
-					$lt1 = $ttc - $lt2 - ($ttc - $lt2)/ (1 + $localtax1_tx_pct);
-				}
-				$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
-				$this->total_tva = price2num($tva, 'MT');
-				$this->total_localtax1 = $lt1;
-				$this->total_localtax2 = $lt2;
-				$this->total_ht = price2num((float) $this->total_ttc- $this->total_localtax1 - $this->total_localtax2 - (float) $this->total_tva, 'MT');
+				$tx_before_vat += $localtax1_tx_pct;
+				$tx_before_vat_without2 += $localtax1_tx_pct;
+			}
+			if ($localtax2_type2 && $localtax2_tx_pct > 0) {
+				$tx_after_vat += $localtax2_tx_pct;
+				$tx_after_vat_without1 += $localtax2_tx_pct;
+			} else {
+				$tx_before_vat += $localtax2_tx_pct;
+				$tx_before_vat_without1 += $localtax2_tx_pct;
+			}
+			$tx_before_vat += $tva_tx_pct;
+			$tx_before_vat_without1 += $tva_tx_pct;
+			$tx_before_vat_without2 += $tva_tx_pct;
+			if ($localtax1_type2 && $localtax1_tx_pct > 0) {
+				$lt1 = (float) price2num($ttc - $ttc / (1 + $tx_after_vat) * (1 + $tx_after_vat_without1), 'MT');
+			}
+			if ($localtax2_type2 && $localtax2_tx_pct > 0) {
+				$lt2 = (float) price2num($ttc - $ttc / (1 + $tx_after_vat) * (1 + $tx_after_vat_without2), 'MT');
 			}
 
-			$this->multicurrency_total_ttc = price2num($amount * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_ht = price2num((float) $amount / (1 + $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_tva = price2num($this->multicurrency_total_ttc - $this->multicurrency_total_ht, 'MT');
+			// lt1 and lt2 if calculated including taxes
+			//var_dump("if lt1 or lt2 are calculated including vat: lt1=$lt1 lt2=$lt2");
+
+			$htplusbeforevat = $ttc - $lt1 - $lt2;	// $htplusbeforevat = amount with HT + taxes added before VAT
+
+			if (!$localtax1_type2 && $localtax1_tx_pct > 0) {
+				$lt1 = (float) price2num($htplusbeforevat - $htplusbeforevat / (1 + $tx_before_vat) * (1 + $tx_before_vat_without1), 'MT');
+			}
+			if (!$localtax2_type2 && $localtax2_tx_pct > 0) {
+				$lt2 = (float) price2num($htplusbeforevat - $htplusbeforevat / (1 + $tx_before_vat) * (1 + $tx_before_vat_without2), 'MT');
+			}
+
+			// lt1 and lt2 are now local taxes (whatever they are calculated before of after vat)
+			//var_dump("lt1 or lt2 wheteer is calculation mode: lt1=$lt1 lt2=$lt2");
+
+			$tva = ($ttc - $lt2 - $lt1) - ($ttc - $lt2 - $lt1) / ( 1 + $tva_tx_pct);
+			$this->total_tva = (float) price2num($tva, 'MT');
+			$this->total_localtax1 = $lt1;
+			$this->total_localtax2 = $lt2;
+			$this->total_ht = (float) price2num($this->total_ttc - $this->total_localtax1 - $this->total_localtax2 - $this->total_tva, 'MT');
+
+
+			$this->multicurrency_total_ttc = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_total_ht = (float) price2num((float) $amount / (1 + $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_total_tva = (float) price2num($this->multicurrency_total_ttc - $this->multicurrency_total_ht, 'MT');
 		} elseif ($amount_type == 0) {
 			// HT
-			$this->total_ht = price2num($amount, 'MT');
-			$this->total_tva = price2num((float) $this->total_ht * $tva_tx_pct, 'MT');
+			$this->total_ht = (float) price2num($amount, 'MT');
+			$this->total_tva = (float) price2num((float) $this->total_ht * $tva_tx_pct, 'MT');
 			//$this->total_ttc = price2num((float) $this->total_ht + (float) $this->total_tva + ..., 'MT');		// Is set later
 
-			$this->multicurrency_total_ht = price2num($amount * (float) $this->multicurrency_tx, 'MT');
-			$this->multicurrency_total_tva = price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_total_ht = (float) price2num($amount * (float) $this->multicurrency_tx, 'MT');
+			$this->multicurrency_total_tva = (float) price2num(((float) $amount * $tva_tx_pct) * (float) $this->multicurrency_tx, 'MT');
 			//$this->multicurrency_total_ttc = price2num(((float) $this->total_ht + (float) $this->total_tva + ...) * (float) $this->multicurrency_tx, 'MT');	// Is set later
+
+			if ($localtax1_type2 == 0) {
+				$this->total_localtax1 = (float) price2num((float) $this->total_ht * $localtax1_tx_pct, 'MT');
+			} elseif ($localtax1_type2 == 1) {
+				$this->total_localtax1 = (float) price2num(((float) $this->total_ht + (float) $this->total_tva) * $localtax1_tx_pct, 'MT');
+			}
+
+			if ($localtax2_type2 == 0) {
+				$this->total_localtax2 = (float) price2num((float) $this->total_ht * $localtax2_tx_pct, 'MT');
+			} elseif ($localtax2_type2 == 1) {
+				$this->total_localtax2 = (float) price2num(((float) $this->total_ht + (float) $this->total_tva) * $localtax2_tx_pct, 'MT');
+			}
 		}
 
 		// For backward compatibility
@@ -1002,35 +1048,27 @@ class DiscountAbsolute extends CommonObject
 		$this->multicurrency_amount_tva = $this->multicurrency_total_tva;
 		$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
 
-
 		$this->tva_tx = $tva_tx;
 		$this->localtax1_tx = $localtax1_tx;
 		$this->localtax1_type = $localtax1_type;
 		$this->localtax2_tx = $localtax2_tx;
 		$this->localtax2_type = $localtax2_type;
 
-		if ($localtax1_type2 == 0) {
-			$this->total_localtax1 = (float) $this->total_ht * $localtax1_tx_pct;
-		} elseif ($localtax1_type2 == 1) {
-			$this->total_localtax1 = ((float) $this->total_ht + (float) $this->total_tva) * $localtax1_tx_pct;
-		}
+		//var_dump("localtax1 mode=$localtax1_type2 localtax2 mode=$localtax2_type2");
 
-		if ($localtax2_type2 == 0) {
-			$this->total_localtax2 = (float) $this->total_ht * $localtax2_tx_pct;
-		} elseif ($localtax2_type2 == 1) {
-			$this->total_localtax2 = ((float) $this->total_ht + (float) $this->total_tva + $this->total_localtax1) * $localtax2_tx_pct;
-		}
 
 		if (empty($this->total_ttc)) {
 			// If the total amount comes from a split discount, we take it as-is
 			// because recalculating the total amount from the net amount creates precision errors.
-			$this->total_ttc = price2num((float) $this->total_ht + (float) $this->total_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
-			$this->multicurrency_total_ttc = price2num(((float) $this->total_ht + (float) $this->total_tva + $this->total_localtax1 + $this->total_localtax2)  * (float) $this->multicurrency_tx, 'MT');
+			$this->total_ttc = (float) price2num((float) $this->total_ht + (float) $this->total_tva + $this->total_localtax1 + $this->total_localtax2, 'MT');
+			$this->multicurrency_total_ttc = (float) price2num(((float) $this->total_ht + (float) $this->total_tva + $this->total_localtax1 + $this->total_localtax2) * (float) $this->multicurrency_tx, 'MT');
 
 			// For backward compatibility
 			$this->amount_ttc = $this->total_ttc;
 			$this->multicurrency_amount_ttc = $this->multicurrency_total_ttc;
 		}
+
+		//var_dump("total_ht=".$this->total_ht." total_tva=".$this->total_tva." total_localtax1=".$this->total_localtax1." total_localtax2=".$this->total_localtax2." total_ttc=".$this->total_ttc);
 
 		return $err;
 	}
@@ -1086,7 +1124,7 @@ class DiscountAbsolute extends CommonObject
 		$newdiscount2->vat_src_code = $this->vat_src_code;
 
 		$newdiscount1->generateFromAmount($amount_ttc1, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
-		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount1->tva_tx, $newdiscount1->localtax1_tx, $newdiscount1->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
+		$newdiscount2->generateFromAmount($amount_ttc2, 1, $newdiscount2->tva_tx, $newdiscount2->localtax1_tx, $newdiscount2->localtax2_tx, $this->localtax1_type, $this->localtax2_type);
 
 		return array($newdiscount1, $newdiscount2);
 	}

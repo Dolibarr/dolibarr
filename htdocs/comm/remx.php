@@ -192,7 +192,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	}
 	if (!$error) {
 		// Split a discount in two
-		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);
+		$newDiscounts = $discount->splitAmount((float) $amount_ttc_1, (float) $amount_ttc_2);	// Note: splitting this way will result of a total ttc similar to original but total ht and total taxes may differ.
 		$newdiscount1 = $newDiscounts[0];
 		$newdiscount2 = $newDiscounts[1];
 
