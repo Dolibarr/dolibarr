@@ -24,7 +24,7 @@
 // The version of the POS system (Immutable Log system)
 // Can be 3.0.0-beta when not yet certified
 // 3.0.0 once certified
-define('DOLCERT_VERSION', '2.0.0');
+define('DOLCERT_VERSION', '3.0.0');
 
 
 // 1 was used for beta version candidate for certification, or for stable version that has been certified.
