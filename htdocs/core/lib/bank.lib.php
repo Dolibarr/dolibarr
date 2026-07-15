@@ -541,7 +541,7 @@ function checkES($IentOfi, $InumCta)
 
 	$sum = 0;
 
-	for ($i = 0; $i < 11; $i++) {
+	for ($i = 0; $i < 10; $i++) {
 		$sum += $values[$i] * (int) substr($InumCta, $i, 1); //int to cast result of substr to a number
 	}
 
