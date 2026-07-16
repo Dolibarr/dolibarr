@@ -1451,7 +1451,15 @@ class Form
 				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
 			}
 			$htmltoenteralink .= '</td>';
-			$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			$htmltoenteralink .= '<td>';
+			if (!$alreadylinked) {
+				$htmltoenteralink .= '<label for="' . $key . '_' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= $objp->ref;
+			if (!$alreadylinked) {
+				$htmltoenteralink .= '</label>';
+			}
+			$htmltoenteralink .= '</td>';
 			$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
 			$htmltoenteralink .= '<td class="right">';
 			if ($possiblelink['label'] == 'LinkToContract') {
@@ -4322,11 +4330,11 @@ class Form
 		}
 
 		if ($stocktag == 1) {
-			$opt .= ' class="product_line_stock_ok"';
+			$opt .= ' class="product_line_stock_ok" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_ok"';
 		}
 		if ($stocktag == -1) {
-			$opt .= ' class="product_line_stock_too_low"';
+			$opt .= ' class="product_line_stock_too_low" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_too_low"';
 		}
 		$opt .= ' data-html="'.$optionhtmlforattribute.'" data-select-html="'.$optionhtmlforattribute.'"';
@@ -4681,6 +4689,16 @@ class Form
 				}
 				$outvallabel .= ' - ' . dol_trunc($label, $maxlengtharticle);
 
+				$outsearchlabel = implode(' ', array_filter(array(
+					(string) $objp->ref,
+					(string) $objp->ref_fourn,
+					(string) $objp->barcode,
+					(string) $objp->label,
+					dol_string_nohtmltag((string) $objp->description)
+				), function (string $value): bool {
+					return $value !== '';
+				}));
+
 				// Units
 				$optlabel .= $outvalUnits;
 				$outvallabel .= $outvalUnits;
@@ -4811,6 +4829,7 @@ class Form
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
+				$optstart .= ' data-search="' . dol_escape_htmltag($outsearchlabel) . '"';
 
 				// set $parameters to call hook
 				$outarrayentry = array(

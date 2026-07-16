@@ -742,6 +742,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'contrat';
 			require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
+				throw new RestException(403);
+			}
+
 			$object = new Contrat($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -753,6 +757,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'ficheinter';
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+				throw new RestException(403);
+			}
+
 			$object = new Fichinter($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -763,6 +771,10 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 			$modulepart = 'project';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+				throw new RestException(403);
+			}
 
 			$object = new Project($this->db);
 			$result = $object->fetch($id, $ref);
@@ -795,6 +807,10 @@ class Documents extends DolibarrApi
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 
+			if (!DolibarrApiAccess::$user->hasRight('mrp', 'read')) {
+				throw new RestException(403);
+			}
+
 			$object = new Mo($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
@@ -805,6 +821,10 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
 			$modulepart = 'contact';
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'contact', 'lire')) {
+				throw new RestException(403);
+			}
 
 			$object = new Contact($this->db);
 			$result = $object->fetch($id?$id:$ref);
@@ -1104,6 +1124,9 @@ class Documents extends DolibarrApi
 				$relativefile = $tmpreldir.dol_sanitizeFileName((string) $object->ref);
 			}
 			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
+			if (empty($tmp['accessallowed'])) {
+				throw new RestException(403, 'Access not allowed to upload file into this directory');
+			}
 			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
@@ -1127,6 +1150,9 @@ class Documents extends DolibarrApi
 			if ($modulepart != 'ecm') {
 				$relativefile = $subdir;
 				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, '', 'write');
+				if (empty($tmp['accessallowed'])) {
+					throw new RestException(403, 'Access not allowed to upload file into this directory');
+				}
 				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
 			} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {

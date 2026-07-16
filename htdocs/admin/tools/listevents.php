@@ -224,7 +224,7 @@ $sql .= " u.login, u.admin, u.email, u.entity, u.firstname, u.lastname, u.gender
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 if ($search_entity > 0) {
-	$sql .= " WHERE e.entity = ".((int) $search_entity).")";
+	$sql .= " WHERE e.entity = ".((int) $search_entity);
 } else {
 	$sql .= " WHERE e.entity IN (".getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 }

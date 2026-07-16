@@ -948,11 +948,12 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *
  *  @param  string		$paramname	Name of the $_GET or $_POST parameter
  *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @param	int 		$nodefault	Force disable of default values set from the admin setup page
  *  @return int						Value converted into integer
  */
-function GETPOSTINT($paramname, $method = 0)
+function GETPOSTINT($paramname, $method = 0, $nodefault = 0)
 {
-	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0, $nodefault);
 }
 
 /**
@@ -1073,6 +1074,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
+ *  @param	int 	$nodefault	 Force disable of default values set from the admin setup page
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
  *  @phpstan-return (
  *      $check is 'int' ? numeric-string|'' :
@@ -1081,7 +1083,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
  *  )
  */
-function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
+function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0, $nodefault = 0)
 {
 	global $langs, $mysoc, $user, $conf;
 
@@ -1188,7 +1190,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						}
 					}
-				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]) && empty($nodefault)) {
 					// Management of default search_filters and sort order
 					if (!empty($user->default_values)) {
 						// $user->default_values defined from menu 'Setup - Default values'
@@ -9093,9 +9095,9 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		$temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 	}
 
-	// And double quotes
+	// And double spaces
 	if ($removedoublespaces) {
-		while (strpos($temp, "  ")) {
+		while (strpos($temp, "  ") !== false) {
 			$temp = str_replace("  ", " ", $temp);
 		}
 	}
@@ -11927,7 +11929,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 
 		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
 		//var_dump($strToEvaluate, $rep);
-		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
+		$rights = (bool) $rep && (!is_string($rep) || (strpos($rep, 'Exception during') === false && strpos($rep, 'Bad call of') === false && strpos($rep, 'Bad string syntax to evaluate') === false));
 		//var_dump($rights);
 	}
 	return $rights;
