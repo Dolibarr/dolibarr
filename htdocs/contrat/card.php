@@ -1610,7 +1610,7 @@ if ($action == 'create') {
 		$expired= $object->getTotalizedLines(4, 1);
 		$close= $object->getTotalizedLines(5, 0);
 
-		print '<tr><td class="titlefield">'.$langs->trans("Lines").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
 		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
