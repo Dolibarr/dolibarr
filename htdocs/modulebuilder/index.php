@@ -471,6 +471,9 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 	}
 
 	if (!$error) {
+		// Migrate generated internal includes from dol_include_once('/module/...') to include_once __DIR__
+		rewriteGeneratedIncludes($destdir, $modulename);
+
 		setEventMessages($langs->trans('ModuleInitialized', $destdir), null);
 		$module = $modulename;
 
@@ -588,6 +591,9 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 		}
+
+		// Migrate generated internal includes from dol_include_once('/module/...') to include_once __DIR__
+		rewriteGeneratedIncludes($destdir, $module);
 	} else {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');

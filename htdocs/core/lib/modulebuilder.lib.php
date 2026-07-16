@@ -24,6 +24,9 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php';
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/TemplateMutationReport.class.php';
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/IncludeRewritePolicy.class.php';
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/ModuleRootIncludePathResolver.class.php';
 
 /**
  * 	Regenerate files .class.php
@@ -1547,3 +1550,157 @@ function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement
 	}
 	return 1;
 }
+
+
+/**
+ * Rewrite own-module dol_include_once() statements of a generated file to include_once __DIR__ form.
+ *
+ * Pure function: reads no file, writes no file. The returned report carries the replacements
+ * (from/to per line) so the caller applies them. Cross-module, dynamic, commented and core
+ * (DOL_DOCUMENT_ROOT) includes are left untouched. Already migrated lines are ignored, making
+ * the transformation idempotent.
+ *
+ * @param string               $content    File content
+ * @param string               $file       Absolute path of the file (used for depth computation)
+ * @param string               $moduleName Module directory name
+ * @param IncludeRewritePolicy $policy     Rewrite policy
+ * @param IncludePathResolver  $resolver   Path resolver bound to the module root
+ * @return TemplateMutationReport          Report describing replacements/skips/warnings
+ */
+function rewriteIncludeStatements($content, $file, $moduleName, IncludeRewritePolicy $policy, IncludePathResolver $resolver)
+{
+	$report = new TemplateMutationReport($file);
+	$moduleName = strtolower($moduleName);
+	$lines = explode("\n", $content);
+
+	foreach ($lines as $idx => $line) {
+		$lineNumber = $idx + 1;
+
+		if (strpos($line, 'dol_include_once(') === false) {
+			continue;
+		}
+		// Leave commented example includes untouched
+		if (preg_match('/^\s*(\/\/|\*|\/\*)/', $line)) {
+			$report->addSkipped($lineNumber, 'commented');
+			continue;
+		}
+		// Extract the raw argument between the outer parentheses
+		if (!preg_match('/dol_include_once\(\s*(.*?)\s*\)\s*;/', $line, $m)) {
+			continue;
+		}
+		$arg = $m[1];
+		// Accept only a single static string literal path ending in .php (no concatenation / variables)
+		if (!preg_match('#^([\'"])(/[A-Za-z0-9_./\-]+\.php)\1$#', $arg, $mm)) {
+			$report->addSkipped($lineNumber, 'dynamic-or-non-literal');
+			continue;
+		}
+		$path = $mm[2];
+		$segments = explode('/', ltrim($path, '/'));
+		$seg1 = array_shift($segments);
+		if ($seg1 !== $moduleName) {
+			$report->addSkipped($lineNumber, 'cross-module');
+			continue;
+		}
+		$moduleRelative = implode('/', $segments);
+		$rel = $resolver->resolveFromFileDir($file, $moduleRelative);
+		$from = trim($m[0]);
+		$to = "include_once __DIR__.'/".$rel."';";
+		$report->addReplacement($lineNumber, $from, $to);
+	}
+
+	return $report;
+}
+
+
+/**
+ * Post-generation step: rewrite own-module dol_include_once() to include_once __DIR__ across a generated module.
+ *
+ * Idempotent. Skips engine files, the generated API file (legacy regex), dynamic and cross-module
+ * includes. Can be disabled for a quick rollback with the constant MODULEBUILDER_DISABLE_INCLUDE_REWRITE.
+ *
+ * @param string $moduleRootDir Absolute path of the generated module root
+ * @param string $moduleName    Module directory name
+ * @return TemplateMutationReport[] One report per processed file
+ */
+function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
+{
+	$reports = array();
+
+	if (getDolGlobalString('MODULEBUILDER_DISABLE_INCLUDE_REWRITE')) {
+		dol_syslog('rewriteGeneratedIncludes: disabled by MODULEBUILDER_DISABLE_INCLUDE_REWRITE', LOG_NOTICE);
+		return $reports;
+	}
+
+	$moduleRootDir = rtrim($moduleRootDir, '/');
+	$policy = new IncludeRewritePolicy();
+	$resolver = new ModuleRootIncludePathResolver($moduleRootDir);
+
+	$files = dol_dir_list($moduleRootDir, 'files', 1, '\.php$', null, 'name', SORT_ASC, 0, 0, '', 1);
+	if (!is_array($files) || empty($files)) {
+		return $reports;
+	}
+
+	foreach ($files as $fileentry) {
+		$fullpath = $fileentry['fullname'];
+		$relPath = ltrim(substr($fullpath, strlen($moduleRootDir)), '/');
+
+		if (!$policy->shouldProcess($relPath, $moduleName)) {
+			dol_syslog('rewriteGeneratedIncludes: skip '.$relPath, LOG_DEBUG);
+			continue;
+		}
+
+		$content = file_get_contents($fullpath);
+		if ($content === false) {
+			continue;
+		}
+		$report = rewriteIncludeStatements($content, $fullpath, $moduleName, $policy, $resolver);
+		if ($report->hasChanges()) {
+			$newlines = explode("\n", $content);
+			foreach ($report->replacements as $replacement) {
+				$newlines[$replacement['line'] - 1] = str_replace($replacement['from'], $replacement['to'], $newlines[$replacement['line'] - 1]);
+			}
+			$newContent = implode("\n", $newlines);
+			if (moduleBuilderIsPhpParsable($newContent)) {
+				file_put_contents($fullpath, $newContent);
+				dolChmod($fullpath);
+			} else {
+				$report->addWarning('Syntax check failed after rewrite; file left unchanged: '.$relPath);
+				dol_syslog('rewriteGeneratedIncludes: syntax check failed, reverting '.$relPath, LOG_WARNING);
+			}
+		}
+		$reports[] = $report;
+	}
+
+	return $reports;
+}
+
+
+/**
+ * Check a PHP source string is parsable. Uses php -l when exec is available, falls back to a token scan.
+ *
+ * @param string $source PHP source
+ * @return bool          True if parsable
+ */
+function moduleBuilderIsPhpParsable($source)
+{
+	$disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
+	if (function_exists('exec') && !in_array('exec', $disabled, true)) {
+		$tmp = tempnam(sys_get_temp_dir(), 'mbil');
+		if ($tmp !== false) {
+			file_put_contents($tmp, $source);
+			$out = array();
+			$ret = 0;
+			exec('php -l '.escapeshellarg($tmp).' 2>&1', $out, $ret);
+			@unlink($tmp);
+			return $ret === 0;
+		}
+	}
+	// Fallback: token_get_all() raises a ParseError on invalid PHP
+	try {
+		token_get_all($source, TOKEN_PARSE);
+		return true;
+	} catch (\ParseError $e) {
+		return false;
+	}
+}
+
