@@ -141,22 +141,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 /**
- * Sanitize a relative document path received from request.
- *
- * @param	string	$original_file	Relative document path
- * @return	string
- */
-function dol_document_sanitize_original_file($original_file)
-{
-	// Preserve the historical document.php path normalization before running the native secure-access resolver.
-	$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
-	$original_file = str_replace('../', '/', $original_file);
-	$original_file = str_replace('..\\', '/', $original_file);
-
-	return $original_file;
-}
-
-/**
  * Print a translated plain text document error and stop.
  *
  * @param	string	$message	Message to print
@@ -204,7 +188,7 @@ function dol_document_resolve_secure_file($modulepart, $original_file, $entity, 
 	global $db, $langs;
 
 	// The single-file and ZIP download paths must share the same sanitizing, entity and permission checks.
-	$original_file = dol_document_sanitize_original_file($original_file);
+	$original_file = dol_sanitizePathName($original_file);
 
 	if (empty($modulepart)) {
 		accessforbidden('Bad value for parameter modulepart');
