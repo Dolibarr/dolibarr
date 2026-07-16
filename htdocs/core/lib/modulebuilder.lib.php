@@ -1661,8 +1661,12 @@ function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
 			}
 			$newContent = implode("\n", $newlines);
 			if (moduleBuilderIsPhpParsable($newContent)) {
-				file_put_contents($fullpath, $newContent);
-				dolChmod($fullpath);
+				if (file_put_contents($fullpath, $newContent) === false) {
+					$report->addWarning('Failed to write rewritten file: '.$relPath);
+					dol_syslog('rewriteGeneratedIncludes: failed to write '.$relPath, LOG_WARNING);
+				} else {
+					dolChmod($fullpath);
+				}
 			} else {
 				$report->addWarning('Syntax check failed after rewrite; file left unchanged: '.$relPath);
 				dol_syslog('rewriteGeneratedIncludes: syntax check failed, reverting '.$relPath, LOG_WARNING);
@@ -1676,26 +1680,16 @@ function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
 
 
 /**
- * Check a PHP source string is parsable. Uses php -l when exec is available, falls back to a token scan.
+ * Check a PHP source string is parsable, without executing it.
+ *
+ * Uses token_get_all() with the TOKEN_PARSE flag, which runs the parser in-process and raises
+ * a ParseError on invalid syntax. This avoids any dependency on an external "php" binary.
  *
  * @param string $source PHP source
  * @return bool          True if parsable
  */
 function moduleBuilderIsPhpParsable($source)
 {
-	$disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
-	if (function_exists('exec') && !in_array('exec', $disabled, true)) {
-		$tmp = tempnam(sys_get_temp_dir(), 'mbil');
-		if ($tmp !== false) {
-			file_put_contents($tmp, $source);
-			$out = array();
-			$ret = 0;
-			exec('php -l '.escapeshellarg($tmp).' 2>&1', $out, $ret);
-			@unlink($tmp);
-			return $ret === 0;
-		}
-	}
-	// Fallback: token_get_all() raises a ParseError on invalid PHP
 	try {
 		token_get_all($source, TOKEN_PARSE);
 		return true;

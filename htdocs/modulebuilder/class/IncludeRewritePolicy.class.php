@@ -31,13 +31,13 @@
 final class IncludeRewritePolicy
 {
 	/** @var bool Only generated runtime files are rewritten (never engine files) */
-	public bool $generatedRuntimeOnly = true;
+	public $generatedRuntimeOnly = true;
 
 	/** @var string[] Engine files never rewritten */
-	public array $excludedPaths = array('core/lib/modulebuilder.lib.php', 'modulebuilder/index.php');
+	public $excludedPaths = array('core/lib/modulebuilder.lib.php', 'modulebuilder/index.php');
 
 	/** @var string[] Files whose include format is driven by legacy regex and must stay dol_include_once */
-	public array $legacyRegexCompatPaths = array('core/lib/modulebuilder.lib.php');
+	public $legacyRegexCompatPaths = array('core/lib/modulebuilder.lib.php');
 
 	/**
 	 * Tell whether a module-relative path is an excluded engine file.

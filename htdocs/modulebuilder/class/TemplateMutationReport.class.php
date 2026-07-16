@@ -30,16 +30,16 @@
 final class TemplateMutationReport
 {
 	/** @var string Absolute path of the described file */
-	public string $file;
+	public $file;
 
 	/** @var array<int,array{line:int,from:string,to:string}> Applied replacements */
-	public array $replacements = array();
+	public $replacements = array();
 
 	/** @var array<int,array{line:int,reason:string}> Includes deliberately left untouched */
-	public array $skipped = array();
+	public $skipped = array();
 
 	/** @var string[] Non-fatal problems (syntax check failure, unresolved path...) */
-	public array $warnings = array();
+	public $warnings = array();
 
 	/**
 	 * Constructor

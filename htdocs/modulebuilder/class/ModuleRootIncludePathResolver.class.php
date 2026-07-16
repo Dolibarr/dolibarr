@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/modulebuilder/class/IncludePathResolver.interfa
 final class ModuleRootIncludePathResolver implements IncludePathResolver
 {
 	/** @var string Absolute module root directory, without trailing slash */
-	private string $moduleRoot;
+	private $moduleRoot;
 
 	/**
 	 * Constructor
