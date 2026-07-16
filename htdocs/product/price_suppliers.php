@@ -1326,7 +1326,13 @@ if ($id > 0 || $ref) {
 								$obj = $db->fetch_object($resql);
 								foreach ($extralabels as $key => $value) {
 									if (!empty($arrayfields['ef.'.$key]['checked']) && !empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-										print '<td align="right">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product_fournisseur_price')."</td>";
+										$extravalue = $obj->{$key};
+										// If field is a computed field, we make computation to get value
+										if (!empty($extrafields->attributes["product_fournisseur_price"]['computed'][$key])) {
+											$objectoffield = $productfourn; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+											$extravalue = dol_eval((string) $extrafields->attributes["product_fournisseur_price"]['computed'][$key], 1, 1, '2');
+										}
+										print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_fournisseur_price', $langs, $productfourn)."</td>";
 									}
 								}
 							}
