@@ -680,10 +680,10 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						$now = dol_now();
 
 						$sanitizedsetfields = '';
-						if (!empty($notifiedexportdate)) {
+						if (!empty($notifiedexportdate) && (empty($movement->date_export) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
 							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
-						if (!empty($notifiedvalidationdate)) {
+						if (!empty($notifiedvalidationdate) && (empty($movement->date_validation) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
 							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_validated = '".$db->idate($now)."'";
 						}
 
