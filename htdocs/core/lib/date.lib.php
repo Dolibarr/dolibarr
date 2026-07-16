@@ -1005,8 +1005,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		}
 
 		// Increase number of days (on go up into loop)
+		// Advance by exactly one GMT day. We can use += instead of dol_time_plus_duree() here because
+		// inputs of this function are GMT dates (checked above), so a day
+		// is always exactly 86400 seconds.
 		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
-		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		$timestampStart += 86400;
 		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
@@ -1455,7 +1458,7 @@ function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 	$TWeek = array();
-	for ($day = 1; $day < $nb_days; $day++) {
+	for ($day = 1; $day <= $nb_days; $day++) {
 		$week_number = getWeekNumber($day, $month, $year);
 		$TWeek[$week_number] = $week_number;
 	}
