@@ -21,6 +21,7 @@ env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   CACHE_KEY_PART: ${{ ( inputs.gh_event == 'pull_request' || github.event_name == 'pull_request' ) && format('{0}-{1}', github.base_ref, github.head_ref) || github.ref_name }}
   GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
+  DUMMY_FILE: htdocs/theme/md/progress.inc.php
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -45,7 +46,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan:2.1.12, cs2pr
+          tools: phpstan:2.1.12, cs2pr:1.8.6
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 
