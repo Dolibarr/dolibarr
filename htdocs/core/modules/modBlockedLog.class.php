@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017-2025   Laurent Destailleur  <eldy@users.sourcefore.net>
+/* Copyright (C) 2017-2025	Laurent Destailleur	<eldy@users.sourcefore.net>
+ * Copyright (C) 2026		Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ class modBlockedLog extends DolibarrModules
 			// Add key
 			$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
 
-			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+			$result = dolibarr_set_const($this->db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 
 			if ($result < 0) {
 				dol_print_error($this->db);
