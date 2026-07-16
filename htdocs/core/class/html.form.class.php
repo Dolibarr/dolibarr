@@ -8035,11 +8035,13 @@ class Form
 		// First we defined code_country to use to find list.
 		// country_code must be a c_country ISO code (e.g. 'FR', 'CH'). In some setups it may hold a
 		// country label (e.g. 'Suisse') instead, which would make the "c.code IN (...)" lookup done by
-		// load_cache_vatrates() match nothing and wrongly force the VAT rate to 0%. When the value is
-		// not a known country code, we recover the ISO code from the authoritative country id.
+		// load_cache_vatrates() match nothing and wrongly force the VAT rate to 0%. A valid ISO code is
+		// always 2 chars, so when the value is not a well formed ISO code (empty or a label) and we have
+		// a valid country id, we recover the ISO code from the authoritative country id. This way we do
+		// not run any SQL on each page access when we already have a valid ISO code.
 		$sellercountrycode = is_object($societe_vendeuse) ? $societe_vendeuse->country_code : $mysoc->country_code;
 		$sellercountryid = is_object($societe_vendeuse) ? $societe_vendeuse->country_id : $mysoc->country_id;
-		if (!empty($sellercountrycode) && (int) $sellercountryid > 0 && (int) dol_getIdFromCode($this->db, $sellercountrycode, 'c_country', 'code', 'rowid') <= 0) {
+		if ((int) $sellercountryid > 0 && strlen((string) $sellercountrycode) != 2) {
 			$tmpcountrycode = dol_getIdFromCode($this->db, (string) $sellercountryid, 'c_country', 'rowid', 'code');
 			if (!empty($tmpcountrycode) && !is_numeric($tmpcountrycode)) {
 				$sellercountrycode = $tmpcountrycode;
