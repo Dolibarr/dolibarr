@@ -430,8 +430,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"keywords\" content=\".*?\" \/>/ms", "<meta name=\"keywords\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_KEYWORDS__"), 1) . "\"  />", $tmp);'."\n";
 		}
 		if (strpos($objectpage->content, 'define("__SEO_PAGE_TITLE__"') !== false) {
-			$tplcontent .= '$tmp = preg_replace("/^<title>.*?<\/title>/ms", "<title>" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_TITLE__"), 1) . "</title>", $tmp);'."\n";
-			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"title\" content=\".*?\" \/>/ms", "<meta name=\"title\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_TITLE__"), 1) . "\"  />", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/^<title>.*?<\/title>/ms", "<title>" . dolPrintHTMLForAttribute(defined("__SEO_PAGE_TITLE__") ? constant("__SEO_PAGE_TITLE__") : "", 1) . "</title>", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"title\" content=\".*?\" \/>/ms", "<meta name=\"title\" content=\"" . dolPrintHTMLForAttribute(defined("__SEO_PAGE_TITLE__") ? constant("__SEO_PAGE_TITLE__") : "", 1) . "\"  />", $tmp);'."\n";
 		}
 		if (strpos($objectpage->content, 'define("__SEO_PAGE_DESC__"') !== false) {
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"description\" content=\".*?\" \/>/ms", "<meta name=\"description\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_DESC__"), 1) . "\"  />", $tmp);'."\n";
@@ -968,6 +968,10 @@ function showWebsiteTemplates(Website $website, int $refresh)
  * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
+ * This does not check for evil callable function (like dol_eval_standard could do), because php concat should be allowed so obfuscation is always possible so
+ * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
+ * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
+ * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
@@ -987,10 +991,25 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
 		global $dolibarr_website_allow_custom_php;
-		if (empty($dolibarr_website_allow_custom_php)) {
+		if (empty($dolibarr_website_allow_custom_php)) {		// Case of $dolibarr_website_allow_custom_php = 0
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		} elseif ($dolibarr_website_allow_custom_php == 1) {	// Case of $dolibarr_website_allow_custom_php = 1
+			$notdisabledsystemfunction = '';
+			$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+			foreach ($systemfunctions as $systemfunction) {
+				// @phpstan-ignore-next-line
+				if (function_exists($systemfunction)) {
+					$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+				}
+			}
+			if ($notdisabledsystemfunction) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorDynamicPHPContentNotAllowed", 'dolibarr_website_allow_custom_php'), null, 'errors');
+			}
 		}
+
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');

@@ -15,12 +15,13 @@
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
  * Copyright (C) 2018		Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020	Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2086,7 +2087,7 @@ class Societe extends CommonObject
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
-				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
+				$this->stcomm_picto = $obj->stcomm_picto; // commercial status picto
 
 				$this->email = $obj->email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
@@ -2728,7 +2729,7 @@ class Societe extends CommonObject
 	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $mysoc;
 
 		// Clean parameters
 		$remise = (float) price2num($remise);
@@ -2745,7 +2746,9 @@ class Societe extends CommonObject
 		}
 
 		if ($this->id > 0) {
-			// Clean vat code
+			// Separate VAT code from VAT rate string
+			// Discount type determines who is buyer and seller
+			$taxes = getTaxesFromId($vatrate, ($discount_type == 0 ? $this : $mysoc), ($discount_type == 0 ? $mysoc : $this), 0);
 			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
@@ -2761,28 +2764,17 @@ class Societe extends CommonObject
 
 			$discount->discount_type = $discount_type;
 			$discount->multicurrency_code = $this->multicurrency_code;
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
+
 			$discount->multicurrency_tx = $this->multicurrency_tx;
 
-			if ($price_base_type == 'TTC') {
-				$discount->multicurrency_amount_ttc = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ht = price2num(((float) $remise / (1 + (float) $vatrate / 100)) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $discount->amount_ttc - (float) $discount->amount_ht) * (float) $discount->multicurrency_tx, 'MT');
+			$vat_tx = (float) price2num($vatrate);
 
-				$discount->amount_ttc = price2num($remise, 'MT');
-				$discount->amount_ht = price2num((float) $remise / (1 + (float) $vatrate / 100), 'MT');
-				$discount->amount_tva = price2num((float) $discount->amount_ttc - (float) $discount->amount_ht, 'MT');
-			} else {
-				$discount->amount_ht = price2num($remise, 'MT');
-				$discount->amount_tva = price2num((float) $remise * (float) $vatrate / 100, 'MT');
-				$discount->amount_ttc = price2num((float) $discount->amount_ht + (float) $discount->amount_tva, 'MT');
+			$discount->generateFromAmount($remise, ($price_base_type == 'TTC' ? 1 : 0), $vat_tx, $taxes['localtax1'], $taxes['localtax2'], (int) $taxes['localtax1_type'], (int) $taxes['localtax2_type']);
 
-				$discount->multicurrency_amount_ht = price2num($remise * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_tva = price2num(((float) $remise * (float) $vatrate / 100) * (float) $discount->multicurrency_tx, 'MT');
-				$discount->multicurrency_amount_ttc = price2num(((float) $discount->amount_ht + (float) $discount->amount_tva) * (float) $discount->multicurrency_tx, 'MT');
-			}
-
-			$discount->tva_tx = (float) price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
 
 			$discount->description = $desc;
@@ -3505,7 +3497,7 @@ class Societe extends CommonObject
 			if (empty($this->name)) {
 				$this->name = $this->nom;
 			}
-			// TODO: Tester si tel non deja present dans tableau contact
+			// TODO: Test if phone is not already present in contact array
 			$contact_phone['thirdparty'] = $langs->transnoentitiesnoconv("ThirdParty").': '.dol_trunc($this->name, 16)." <".$this->phone.">";
 		}
 		return $contact_phone;
@@ -4170,6 +4162,36 @@ class Societe extends CommonObject
 		return array();
 	}
 
+	/**
+	 *	Get children for company
+	 *
+	 * @param   int         $company_id     ID of company to search children
+	 * @return	int[]
+	 */
+	public function getChildrenForCompany($company_id)
+	{
+		global $langs;
+
+		$children = array();
+		if ($company_id > 0) {
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE parent = ".((int) $company_id);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$child = $obj->rowid;
+					if ($child > 0 && !in_array($child, $children)) {
+						$children[] = $child;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($this->db->lasterror(), 'errors');
+			}
+		}
+		// Return a default value when $company_id is not greater than 0
+		return $children;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Returns if a profid should be verified to be unique
@@ -4749,11 +4771,14 @@ class Societe extends CommonObject
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 			$country_id =  (is_numeric($tmp[0])) ? (int) $tmp[0] : 0;
-			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
+			if (!empty($tmp[1]) && !empty($tmp[2])) {   // MAIN_INFO_SOCIETE_COUNTRY is the canonical "id:code:label"
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
-			} else {
-				// For backward compatibility
+			} elseif ($country_id > 0) {
+				// For backward compatibility. The value is "id" only, or a legacy "id:label" where the
+				// second token is a country label (e.g. 'Suisse') and not an ISO code. In both cases we
+				// must not keep a label in country_code (it would break code-based lookups like VAT rates),
+				// so we rebuild code and label from the authoritative country id.
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$country_code = getCountry($country_id, '2', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
@@ -5373,15 +5398,22 @@ class Societe extends CommonObject
 	public function calculateVATNumberFromProperties($thirdparty)
 	{
 		if ($thirdparty->country_code == 'FR' && empty($thirdparty->tva_intra) && !empty($thirdparty->tva_assuj)) {
-			$siren = trim($thirdparty->idprof1);
-			if (empty($siren)) {
-				$siren = (int) substr(str_replace(' ', '', $thirdparty->idprof2), 0, 9);
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/profid.lib.php';
+
+			$siren = preg_replace('/\s+/', '', (string) $thirdparty->idprof1);
+			$siret = preg_replace('/\s+/', '', (string) $thirdparty->idprof2);
+			if (!isValidSiren($siren)) {
+				if (!isValidSiret($siret)) {
+					return '';
+				}
+
+				$siren = substr($siret, 0, 9);
 			}
 			if (!empty($siren)) {
-				// [FR + code clé  + numéro SIREN ]
-				// Key VAT = [12 + 3 × (SIREN modulo 97)] modulo 97
-				$cle = (12 + 3 * $siren % 97) % 97;
-				$tva_intra = 'FR' . $cle . $siren;
+				// [FR + key code + SIREN number ]
+				// Key VAT = [12 + 3 * (SIREN modulo 97)] modulo 97
+				$cle = (12 + 3 * (((int) $siren) % 97)) % 97;
+				$tva_intra = 'FR' . str_pad((string) $cle, 2, '0', STR_PAD_LEFT) . $siren;
 			}
 		}
 
@@ -5884,6 +5916,19 @@ class Societe extends CommonObject
 				$soc_origin->code_fournisseur = '';
 				$soc_origin->barcode = '';
 				$soc_origin->update($soc_origin->id, $user, 0, 1, 1, 'merge');
+			}
+
+			// Children companies
+			if (!getDolGlobalString('SOCIETE_DISABLE_PARENTCOMPANY')) {
+				// Children
+				$children_ori = $this->getChildrenForCompany($soc_origin->id);
+				if (count($children_ori)) {
+					foreach ($children_ori as $child_id) {
+						$child = new Societe($this->db);
+						$child->id = $child_id;
+						$child->setParent($this->id);
+					}
+				}
 			}
 
 			// Update

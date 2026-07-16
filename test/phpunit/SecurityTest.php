@@ -468,10 +468,10 @@ class SecurityTest extends CommonClassTest
 
 		$url = 'ftp://mydomain.com';
 		$tmp = getURLContent($url);
-		print __METHOD__." url=".$url."\n";
+		print __METHOD__." url=".$url." ".$tmp['curl_error_msg']."\n";
 
-		$tmpvar = preg_match('/not supported/', $tmp['curl_error_msg']);
-		$this->assertEquals(1, $tmpvar, "Did not find the /not supported/ in getURLContent error message. We should.");
+		$tmpvar = preg_match('/not supported|disabled/', $tmp['curl_error_msg']);
+		$this->assertEquals(1, $tmpvar, "Did not find the /not supported|disabled/ in getURLContent error message. We should.");
 
 		$DISABLEREMOTEACCESSTODOLIBARRFR = 1;
 

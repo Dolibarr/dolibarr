@@ -267,6 +267,7 @@ WebPortalErrorFetchLoggedThirdParty=Error when loading third-party (Id : %s)
 WebPortalErrorFetchLoggedMember=Error when loading member (Id : %s)
 WebPortalErrorFetchLoggedPartnership=Error when loading partnership (Third-party Id : %s, Member Id : %s)
 WebPortalErrorNoFetchMethod=Error no fetch method found for authentication
+WebPortalErrorNoThirdPartyScope=No third-party associated with the logged account: access denied
 DownloadZip=Download the zip
 ExportIntoGIT=Export into server directory
 WebPortalMember=Membership

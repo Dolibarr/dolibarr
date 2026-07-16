@@ -76,6 +76,16 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	}
 }
 
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if ($entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
+	define("DOLENTITY", $entity);
+}
 
 /**
  * Header empty
@@ -136,7 +146,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -226,6 +236,8 @@ if (!empty($hashp)) {
 			if ($entity != $conf->entity) {
 				$conf->entity = $entity;
 				$conf->setValues($db);
+				// Multicompany: Here we are switching entity and later we will check the requested object is in this entity but may be that user is not allowed to log/see entity
+				// but we don't mind, we are using the public hash to get file.
 			}
 		} else {
 			$langs->load("errors");
@@ -359,6 +371,75 @@ if ($reshook < 0) {
 // Set this for test
 //$type = 'text/html'; $attachment = -1;
 
+
+// If we show an invoice, we test if we must regenerate the PDF
+if ($modulepart == 'facture') {
+	$refname = basename(dirname($original_file)."/");
+	if ($refname == 'thumbs' || $refname == 'temp') {
+		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+		$refname = basename(dirname(dirname($original_file))."/");
+	}
+
+	$invoice = fetchObjectByElement(0, $modulepart, $refname);
+
+	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
+		// We are on the download or print of the main document
+		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
+			$action = 'DOC_DOWNLOAD';
+			if (GETPOSTISSET('attachement') || GETPOST('preview')) {
+				$action = 'DOC_PREVIEW';
+			}
+
+			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
+
+			// $object->pos_print_counter is current value. We increase it here.
+			if ($invoice->status == Facture::STATUS_CLOSED) {
+				// Increase counter by 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+				$sql .= " WHERE rowid = ".((int) $invoice->id);
+				$db->query($sql);
+
+				$invoice->pos_print_counter += 1;
+				//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
+			}
+
+			// When we reach the second print, we must regenerate the document to have the mention duplicata on PDF)
+			// No need if we are at print 3, 4 or more. The PDF was regenerated when counter was 2,
+			if ($invoice->pos_print_counter == 2) {
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(GETPOST('lang'));
+				$outputlangs->loadLangs(array("admin", "blockedlog"));
+
+				$hidedetails = 0;
+				$hidedesc = 0;
+				$hideref = 0;
+				$moreparams = '';
+				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
+				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
+				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
+				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
+
+				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+				if ($result < 0) {
+					dol_syslog("Failed to regenerate PDF", LOG_WARNING);
+				}
+			}
+
+			// Call trigger
+			$result = $invoice->call_trigger($action, $user);
+			if ($result < 0) {
+				top_httphead();
+
+				http_response_code(500);
+				print 'Error in trigger: '.$invoice->errorsToString();
+				exit;
+			}
+		}
+	}
+}
+
+
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
 
@@ -383,61 +464,6 @@ $readfile = true;
 if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
 	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
 	$readfile = !$imgres;
-}
-
-// If we show an invoice, we test if we must regenerate the PDF
-if ($modulepart == 'facture') {
-	$refname = basename(dirname($original_file)."/");
-	if ($refname == 'thumbs' || $refname == 'temp') {
-		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
-		$refname = basename(dirname(dirname($original_file))."/");
-	}
-
-	$invoice = fetchObjectByElement(0, $modulepart, $refname);
-
-	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
-		// We are on the download or print of the main document
-		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
-			$action = 'DOC_DOWNLOAD';
-			if (GETPOSTISSET('attachement')) {
-				$action = 'DOC_PREVIEW';
-			}
-
-			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
-
-			// Increase counter by 1
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-			$sql .= " WHERE rowid = ".((int) $invoice->id);
-			$db->query($sql);
-
-			$invoice->pos_print_counter += 1;
-			//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
-
-			// When we reach the second print, we must regenerate the document to have the mention duplicate on PDF
-			if ($invoice->pos_print_counter == 2) {
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(GETPOST('lang'));
-				$outputlangs->loadLangs(array("admin", "blockedlog"));
-
-				$hidedetails = 0;
-				$hidedesc = 0;
-				$hideref = 0;
-				$moreparams = '';
-				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
-				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
-				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
-				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
-
-				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-				if ($result < 0) {
-					dol_syslog("Failed to regenerate PDF", LOG_WARNING);
-				}
-			}
-
-			// Call trigger
-			$invoice->call_trigger($action, $user);
-		}
-	}
 }
 
 if (is_object($db)) {

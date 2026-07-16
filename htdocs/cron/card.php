@@ -402,7 +402,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" spellcheck="false"> ';
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.dol_escape_htmltag($object->params).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -411,7 +411,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'"  spellcheck="false" /> ';
+	print '<input type="text" class="minwidth150" name="command" value="'.dol_escape_htmltag($object->command).'"  spellcheck="false" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -818,7 +818,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (empty($object->status)) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
 	} else {
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	}
 
 

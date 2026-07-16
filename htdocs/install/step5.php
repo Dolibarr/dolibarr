@@ -276,7 +276,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				$numrows = $db->num_rows($resql);
 				if ($numrows == 0) {
 					// Define default setup for password encryption
-					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+					// DATABASE_PWD_ENCRYPTED is shared across all entities (admin/security.php:75
+					// stores it with entity=0). Use entity 0 here too.
+					dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', 0);
+
 					if (function_exists('password_hash')) {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0); // All entities
 					} else {
@@ -301,6 +304,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			$newuser = new User($db);
 			$newuser->lastname = 'SuperAdmin';
 			$newuser->firstname = '';
+			$newuser->ldap_sid = '';
 			$newuser->login = $login;
 			$newuser->pass = $pass;
 			$newuser->admin = 1;

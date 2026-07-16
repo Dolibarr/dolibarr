@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +227,7 @@ if (empty($reshook)) {
 		if (!empty($toselect)) {
 			$countUnarchived = 0;
 			foreach ($toselect as $idMemo) {
-				// TODO Récupérer le mémo attention à ne pas récupérer un model ils ne peuvent pas étre rcupr c'est des models
+				// TODO Recover the memo - be careful to not recover a model - models can not be recovered.
 				$selectdModel = new Memo($db);
 				if ($selectdModel->fetch($idMemo) <= 0) {
 					$idMemo = (int) $idMemo; // sanitize

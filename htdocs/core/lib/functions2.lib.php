@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -921,7 +921,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskjournal_value = '';
 	}
 
-	// Personalized field {XXX-1} à {XXX-99}
+	// Personalized field {XXX-1} to {XXX-99}
 	$maskperso = array();
 	$maskpersonew = array();
 	$tmpmask = $mask;
@@ -3111,6 +3111,11 @@ function csvClean($newvalue, $charset = '', $separator = '')
 
 	// Rule 3 CSV: If value contains separator, we must add "
 	if (preg_match('/'.$separator.'/', $newvalue)) {
+		$addquote = 1;
+	}
+
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
+	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
 		$addquote = 1;
 	}
 

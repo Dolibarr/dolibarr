@@ -36,6 +36,7 @@
 @phan-var-force array{nbfield:int,type?:array<int,string>,pos?:array<int,string>,val?:array<int,float>} $totalarray
 @phan-var-force string $sql
 @phan-var-force ?string $sqlfields
+@phan-var-force int	$num
 @phan-var-force ?int	$limit
 ';
 
@@ -149,7 +150,7 @@ if (isset($totalarray['pos'])) {
 					$i++;
 					if (!empty($totalarray['pos'][$i])) {
 						$fieldname = preg_replace('/[^a-z0-9]/', '', $totalarray['pos'][$i]);
-						printTotalValCell($totalarray['type'][$i], $sumsarray[$fieldname]);
+						printTotalValCell($totalarray['type'][$i] ?? '', $sumsarray[$fieldname]);
 					} else {
 						if ($i == 1) {
 							print '<td>';

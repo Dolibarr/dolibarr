@@ -3,9 +3,10 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023	   	Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	   	Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,6 +243,7 @@ class Productlot extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -836,7 +838,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -910,7 +912,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats commande fournisseur pour le lot/numéro de série
+	 *  Load the array of supplier order stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -985,7 +987,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -1058,7 +1060,7 @@ class Productlot extends CommonObject
 	}
 
 	/**
-	 *  Charge tableau des stats expedition pour le lot/numéro de série
+	 *  Load the array of shipment stats for the lot/serial number
 	 *
 	 * @param  int $socid Id societe
 	 * @return int                     Array of stats in $this->stats_expedition, <0 if ko or >0 if ok
@@ -1315,7 +1317,7 @@ class Productlot extends CommonObject
 		$langs->loadLangs(array('stocks', 'productbatch', "products"));
 		$outputlangs->loadLangs(array('stocks', 'productbatch', "products"));
 
-		// Positionne le modele sur le nom du modele a utiliser
+		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {
 			$modele = '';
 

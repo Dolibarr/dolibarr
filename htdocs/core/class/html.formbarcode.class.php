@@ -185,7 +185,7 @@ class FormBarCode
 	 *
 	 *  @param  string		$page        	Page
 	 *  @param  int			$selected    	Id condition preselected
-	 *  @param  string		$htmlname    	Nom du formulaire select
+	 *  @param  string		$htmlname    	Name of the select form
 	 *  @return	void
 	 *  @deprecated
 	 */
@@ -200,7 +200,7 @@ class FormBarCode
 	 *
 	 *  @param  string      $page           Page
 	 *  @param  int         $selected       Id condition preselected
-	 *  @param  string      $htmlname       Nom du formulaire select
+	 *  @param  string      $htmlname       Name of the select form
 	 *  @return string
 	 */
 	public function formBarcodeType($page, $selected = 0, $htmlname = 'barcodetype_id')

@@ -157,6 +157,7 @@ if ($result > 0) {
 
 $object = new Product($db);
 $object->type = $type; // so test later to fill $usercancxxx is correct
+$refLabelKey = ($type == Product::TYPE_SERVICE ? 'ServiceRef' : 'ProductRef');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -531,7 +532,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities($refLabelKey)), null, 'errors');
 				$action = "create";
 				$error++;
 			}
@@ -1516,7 +1517,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					/** @var ModeleProductCode $modCodeProduct */
 					$tmpcode = $modCodeProduct->getNextValue($object, $type);
 				}
-				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans($refLabelKey).'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 				if ($refalreadyexists) {
 					print $langs->trans("RefAlreadyExists");
 				}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,8 @@ class CodingPhpTest extends CommonClassTest
 		 ));
 		 */
 		$returnlist = array_map(function ($value) {
-			return array($value); }, $filesarray);
+			return array($value);
+		}, $filesarray);
 
 		// To process only 1 file, uncomment this
 		/*
@@ -386,29 +387,31 @@ class CodingPhpTest extends CommonClassTest
 		// Check that forged sql string is using ' instead of " as string PHP quotes
 		$ok = true;
 		$matches = array();
-		preg_match_all('/\$sql \.= \'\s*VALUES.*\$/i', $filecontent, $matches, PREG_SET_ORDER);
+		$lines = array();
+		preg_match_all('/(\$sql \.= \'\s*VALUES)(.*)\$/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//if ($val[1] != '\'"' && $val[1] != '\'\'') {
 			var_dump($matches);
 			$ok = false;
-			break;
+			$lines[] = self::reportAndGetLine($val[0].$val[2], $filecontent, $report_filepath, "Use \" not ' to forge SQL query (\$sql = \"SELECT \".\$somevar...) in `{$val[1]}{$val[2]}...`)");
 			//}
 			//if ($reg[0] != 'db') $ok=false;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-		$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
+		$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar... Lines:'.implode(',', $lines));
 		//exit;
 
 		// Check that forged sql string is using ' instead of " as string PHP quotes
 		$ok = true;
 		$matches = array();
-		preg_match_all('/\$sql \.?= \'SELECT.*\$/', $filecontent, $matches, PREG_SET_ORDER);
+		$lines = array();
+		preg_match_all('/(\$sql \.?= \'SELECT)(.*)\$/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			var_dump($matches);
 			$ok = false;
-			break;
+			$lines[] = self::reportAndGetLine($val[0].$val[2], $filecontent, $report_filepath, "Use \" not ' to forge SQL query (\$sql = \"SELECT \".\$somevar...) in `{$val[1]}{$val[2]}...`)");
 		}
-		$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
+		$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...'.implode(',', $lines));
 
 		// Check bad casting on forge sql
 		// with $sql = "..." . $...
@@ -472,7 +475,7 @@ class CodingPhpTest extends CommonClassTest
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 1) in '.$file['relativename'].' - Bad.');
 
-		// Check string sql|set|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+		// Check string sql|SET|WHERE|...'".$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
 		$found = "";
@@ -489,7 +492,7 @@ class CodingPhpTest extends CommonClassTest
 		$this->assertTrue($ok, 'Found non escaped string in building of a sql request (case 2) in '.$file['relativename'].': '.$found.' - Bad.');
 		//exit;
 
-		// Check string sql|set...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
+		// Check string sql|SET...'.$yyy->xxx   with xxx that is not 'escape', 'idate', .... It means we forget a db->escape when forging sql request.
 		$ok = true;
 		$matches = array();
 		$found = "";
@@ -562,7 +565,7 @@ class CodingPhpTest extends CommonClassTest
 		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
-			if (!in_array($val[1], array('$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
+			if (!in_array($val[1], array('$sanitize', '$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
 				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
 				$ok = false;
 				// break;  // Not breaking, report all lines

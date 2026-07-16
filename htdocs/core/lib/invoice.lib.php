@@ -6,7 +6,7 @@
  * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,9 +171,8 @@ function facture_prepare_head($object)
  */
 function invoice_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture');
 	$extrafields->fetch_name_optionals_label('facturedet');
 	$extrafields->fetch_name_optionals_label('facture_rec');

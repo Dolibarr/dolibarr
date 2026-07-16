@@ -75,18 +75,9 @@ if ($element === 'facture') {	// Test on permission done in top of page
 	if ($facture->fetch($id) > 0) {
 		//print 'Object '.$element.' logged with action code = '.$action." pos_print_counter is currently ".$facture->pos_print_counter;
 
-		/* Increase of counter is now managed inside the document.php file
-		if ($facture->status > Facture::STATUS_DRAFT) {
-			// Increase counter by 1
-			$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
-			$sql .= " WHERE rowid = ".((int) $facture->id);
-			$db->query($sql);
+		// Increase of counter is managed by the file that generate the ticket, so "receipt.php"
 
-			$facture->pos_print_counter += 1;
-			// $facture->update($user, 1);	// disabled update, we did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
-		}
-		*/
-
+		// Call trigger to log the $action 'DOC_PREVIEW' or 'DOC_DOWNLOAD'
 		$facture->call_trigger($action, $user);
 	}
 

@@ -705,8 +705,8 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_user_ouverture = ".($this->fk_user_ouverture > 0 ? $this->fk_user_ouverture : "NULL").",";
 		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
 		$sql .= " commentaire = '".$this->db->escape($this->commentaire)."',";
-		$sql .= " fk_unit = ".(!$this->fk_unit ? 'NULL' : $this->fk_unit).",";
-		$sql .= " rang = ".(empty($this->rang) ? '0' : (int) $this->rang);
+		$sql .= " fk_unit = ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit)).",";
+		$sql .= " rang = ".(empty($this->rang) ? '0' : ((int) $this->rang));
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

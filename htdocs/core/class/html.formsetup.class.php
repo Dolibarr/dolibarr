@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021       John BOTELLA            <john.botella@atm-consulting.fr>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -352,7 +352,18 @@ class FormSetup
 			}
 
 			$this->setupNotEmpty++;
-			$out .= '<tr class="'.$trClass.'">';
+
+			$tableLineAttr = [
+				'id' => 'setup-line-item_'. preg_replace('/[^a-zA-Z_]/', '', $item->confKey),
+				'class' => $trClass
+			];
+
+			if ($item->getType() !== 'title') {
+				$tableLineAttr['data-conf-key'] = $item->confKey;
+			}
+
+			$tableLineAttrCompiled = commonHtmlAttributeBuilder($tableLineAttr);
+			$out .= '<tr '. implode(' ', $tableLineAttrCompiled).' >';
 
 			$out .= '<td class="col-setup-title'.(!empty($item->fieldParams['isMandatory']) ? ' fieldrequired' : '').'">';
 			$out .= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
@@ -658,8 +669,14 @@ class FormSetupItem
 	/** @var bool|string set this var to override field input */
 	public $fieldInputOverride = false;
 
+	/** @var callable this will be call before fieldInputOverride */
+	public $fieldInputCallBack;
+
 	/** @var bool|string set this var to override field output */
 	public $fieldOutputOverride = false;
+
+	/** @var callable this will be call before fieldOutputCallBack  */
+	public $fieldOutputCallBack;
 
 	/** @var int  */
 	public $rank = 0;
@@ -771,8 +788,7 @@ class FormSetupItem
 			return $reshook;
 		}
 
-
-		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
+		if ($this->saveCallBack !== null && is_callable($this->saveCallBack)) {
 			return call_user_func($this->saveCallBack, $this);
 		}
 
@@ -818,7 +834,7 @@ class FormSetupItem
 	 */
 	public function setValueFromPost()
 	{
-		if (!empty($this->setValueFromPostCallBack) && is_callable($this->setValueFromPostCallBack)) {
+		if ($this->setValueFromPostCallBack !== null && is_callable($this->setValueFromPostCallBack)) {
 			return call_user_func($this->setValueFromPostCallBack);
 		}
 
@@ -897,6 +913,14 @@ class FormSetupItem
 	public function generateInputField()
 	{
 		global $conf;
+
+		if ($this->fieldInputCallBack !== null && is_callable($this->fieldInputCallBack)) {
+			// can be used to populate fieldInputOverride, fieldOverride or change stuff
+			$resCallback = call_user_func($this->fieldInputCallBack, $this);
+			if (!empty($resCallback)) {
+				return $resCallback;
+			}
+		}
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -1310,6 +1334,14 @@ class FormSetupItem
 	{
 		global $conf, $user, $langs;
 
+		if ($this->fieldOutputCallBack !== null && is_callable($this->fieldOutputCallBack)) {
+			// can be used to populate fieldOutputOverride, fieldOverride or change stuff
+			$resCallback = call_user_func($this->fieldOutputCallBack, $this);
+			if (!empty($resCallback)) {
+				return $resCallback;
+			}
+		}
+
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
 		}
@@ -1713,7 +1745,7 @@ class FormSetupItem
 	/**
 	 * Set type of input as a select list.
 	 *
-	 * @param ?array<int|string,string|array{id:string,label:string,color:string,picto:string,labelhtml:string,note:string}>  $fieldOptions  A table of field options
+	 * @param ?array<int|string,string|array{id:string,label:string,color?:string,picto?:string,labelhtml?:string,note?:string}>  $fieldOptions  A table of field options
 	 * @return self
 	 */
 	public function setAsSelect($fieldOptions)

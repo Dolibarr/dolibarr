@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -659,7 +660,7 @@ class ToolProducts extends McpTool
 	 *
 	 * @param   float   $virtual_stock    Current virtual stock (Physical + Incoming - Outgoing).
 	 * @param   float   $min_stock_alert  Minimum stock alert level (Seuil alerte).
-	 * @param   float   $desired_stock    Desired stock level (Stock désiré).
+	 * @param   float   $desired_stock    Desired stock level.
 	 * @param   float   $dailyBurnRate    Estimated daily consumption rate.
 	 *
 	 * @return  array{action: string, urgency: string, suggested_qty: int, reason: string}
