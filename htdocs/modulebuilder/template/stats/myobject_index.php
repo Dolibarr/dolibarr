@@ -71,9 +71,9 @@ if (!$res) {
  */
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/class/myobjectstats.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
+include_once __DIR__.'/../class/myobject.class.php';
+include_once __DIR__.'/../class/myobjectstats.class.php';
+include_once __DIR__.'/../lib/mymodule_myobject.lib.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');

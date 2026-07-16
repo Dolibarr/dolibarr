@@ -83,7 +83,7 @@ if (!$res) {
  * @var Translate $langs
  * @var User $user
  */
-dol_include_once('/mymodule/class/myobject.class.php');
+include_once __DIR__.'/../class/myobject.class.php';
 
 
 $mode = GETPOST('mode', 'aZ09');

@@ -10,7 +10,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-dol_include_once("/mymodule/class/myobject.class.php");
+include_once __DIR__.'/../../../class/myobject.class.php';
 
 
 /**
