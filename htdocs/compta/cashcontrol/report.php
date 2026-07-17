@@ -223,7 +223,7 @@ if ($resql) {
 	$transactionspertype = array();
 	$amountpertype = array();
 
-	$totalarray = array('nbfield' => 0, 'pos' => array());
+	$totalarray = array('nbfield' => 0, 'pos' => array(), 'val' => array('totaldebfield' => 0, 'totalcredfield' => 0));
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
@@ -315,7 +315,7 @@ if ($resql) {
 
 			// Date ope
 			print '<td class="nowrap left">';
-			print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

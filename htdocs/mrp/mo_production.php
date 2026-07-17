@@ -2,8 +2,9 @@
 /* Copyright (C) 2019-2020 	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 		Christian Humpel     <christian.humpel@gmail.com>
  * Copyright (C) 2023 		Vincent de Grandpré  <vincent@de-grandpre.quebec>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Noé Cendrier		 <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -636,7 +637,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 
@@ -1239,8 +1240,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '</td>';
 						}
 
-						// Action delete line
-						if ($permissiontodelete) {
+						// Action delete line, if no consumption has occurred for this product
+						if ($permissiontodelete && empty($arrayoflines)) {
 							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
 							print '<td class="center">';
 							print '<a class="reposition" href="' . $href . '">';

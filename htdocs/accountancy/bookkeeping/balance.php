@@ -199,6 +199,9 @@ if (empty($reshook)) {
 		$filter['t.reconciled_option'] = $search_not_reconciled;
 		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
 	}
+	if (!empty($show_subgroup)) {
+		$param .= '&show_subgroup='.urlencode($show_subgroup);
+	}
 
 	// param with type of list
 	$url_param = substr($param, 1); // remove first "&"
@@ -306,7 +309,7 @@ if ($action != 'export_csv') {
 	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')" />';
+		$newcardbutton .= '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' (' . getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').')" />';
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {

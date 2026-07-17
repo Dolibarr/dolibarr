@@ -2479,7 +2479,7 @@ if ($action == 'create' && $usercancreate) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$soc->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -3000,7 +3000,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Create intervention
 				$arrayforbutaction[] = array('lang' => 'interventions', 'enabled' => (isModEnabled("intervention") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0), 'perm' => $user->hasRight('ficheinter', 'creer'), 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid);
-				/*if (isModEnabled('ficheinter')) {
+				/* if (isModEnabled('intervention')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {

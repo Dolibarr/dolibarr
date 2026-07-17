@@ -447,6 +447,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	if ($features == 'evaluation') {
+		$features = 'hrm';
+		$feature2 = 'evaluation';
+	}
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
@@ -882,11 +886,17 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature == 'member') {
 			$feature = 'adherent';
 		}
+		if ($feature == 'category') {
+			$feature = 'categorie';
+		}
 		if ($feature == 'project') {
 			$feature = 'projet';
 		}
-		if ($feature == 'task') {
-			$feature = 'projet_task';
+		if ($feature == 'projet' && !empty($feature2) && is_array($feature2) && !empty(array_intersect(array('project_task', 'projet_task'), $feature2))) {
+			$feature = 'project_task';
+		}
+		if ($feature == 'task' || $feature == 'projet_task') {
+			$feature = 'project_task';
 		}
 		if ($feature == 'eventorganization') {
 			$feature = 'agenda';
@@ -903,14 +913,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'payment_sc', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment', 'chargesociales', 'knowledgemanagement', 'stock'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for object Societe
 		$checkparentsoc = array('agenda', 'contact', 'contrat'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
-		$checktask = array('projet_task'); // Test for task object
-		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
+		$checktask = array('projet_task', 'project_task'); // Test for task object
+		$checkhierarchy = array('expensereport', 'holiday', 'hrm');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
-		$nocheck = array('barcode', 'stock'); // No test
+		$nocheck = array('barcode'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -972,7 +982,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND (sc.fk_user = ".((int) $user->id);
 				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 					$userschilds = $user->getAllChildIds();
-					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+					if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 				}
 				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
@@ -1047,6 +1057,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					return false;
 				}
 			} else {
+				$sharedelement = 'project'; // for multicompany compatibility
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
@@ -1082,9 +1093,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND (sc.fk_user = ".((int) $user->id);
 					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 						$userschilds = $user->getAllChildIds();
-						foreach ($userschilds as $key => $value) {
-							$sql .= ' OR sc.fk_user = '.((int) $value);
-						}
+						if (!empty($userschilds)) $sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
 					}
 					$sql .= ')';
 				} else {
@@ -1136,6 +1145,20 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 						return false;
 					}
 				}
+			}
+			if ($feature == 'hrm' && in_array('evaluation', $feature2)) {
+				$useridtocheck = $object->fk_user;
+
+				if ($user->hasRight('hrm', 'evaluation', 'readall')) {
+					// the user can view evaluations for anyone
+					return true;
+				}
+				if (!$user->hasRight('hrm', 'evaluation', 'read')) {
+					// the user can't view any evaluations
+					return false;
+				}
+				// the user can only their own evaluations or their subordinates'
+				return in_array($useridtocheck, $childids);
 			}
 		}
 

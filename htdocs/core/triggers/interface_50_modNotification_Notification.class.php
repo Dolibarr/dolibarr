@@ -99,7 +99,7 @@ class InterfaceNotification extends DolibarrTriggers
 			if (!isset($this->errors)) {
 				$this->errors = [];
 			}
-			$this->errors = array_merge($this->errors, $notify->errors);
+			$this->errors = array_merge($this->errors, empty($notify->error) ? array() : array($notify->error), $notify->errors);
 			return $resultSend;
 		}
 

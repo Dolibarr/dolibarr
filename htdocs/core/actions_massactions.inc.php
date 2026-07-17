@@ -33,6 +33,7 @@
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
+// $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 // $toselect may be defined
 // $diroutputmassaction may be defined
 // $confirm
@@ -1010,11 +1011,12 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 						$model = $objecttmp->model_pdf;
 						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
+
 						// To be sure vars is defined
-						$hidedetails = !empty($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-						$hidedesc = !empty($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-						$hideref = !empty($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-						$moreparams = !empty($moreparams) ? $moreparams : null;
+						$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+						$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+						$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+						$moreparams = isset($moreparams) ? $moreparams : null;
 
 						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
@@ -1145,6 +1147,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
+		$objecttmp->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$outputlangs = $langs;
@@ -1159,7 +1162,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
 				$objecttmp->fetch_thirdparty();
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
@@ -1169,18 +1172,10 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			}
 
 			// To be sure vars is defined
-			if (empty($hidedetails)) {
-				$hidedetails = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-			}
-			if (empty($hidedesc)) {
-				$hidedesc = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-			}
-			if (empty($hideref)) {
-				$hideref = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-			}
-			if (empty($moreparams)) {
-				$moreparams = null;
-			}
+			$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+			$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+			$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+			$moreparams = isset($moreparams) ? $moreparams : null;
 
 			$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
@@ -1631,6 +1626,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
+				$objecttmp->date_approval = dol_now();
+				$objecttmp->fk_user_approve = $user->id;
 				$objecttmp->status = Holiday::STATUS_APPROVED;
 				$objecttmp->statut = $objecttmp->status;	// deprecated
 

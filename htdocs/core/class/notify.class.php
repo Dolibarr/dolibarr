@@ -650,6 +650,9 @@ class Notify
 			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
 		}
 		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
+		if (empty($from)) {
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+		}
 		$object_type = '';
 		$link = '';
 		$num = 0;
@@ -914,6 +917,9 @@ class Notify
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
+								$object->fetch_thirdparty();
+							}
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
@@ -994,6 +1000,12 @@ class Notify
 							'',
 							'notification'
 						);
+
+						if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
+							$this->error = $mailfile->error;
+							$this->errors = $mailfile->errors;
+							return -1;
+						}
 
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
@@ -1229,6 +1241,7 @@ class Notify
 							$outputlangs->loadLangs(array('main', 'other'));
 						}
 					}
+
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
@@ -1293,6 +1306,12 @@ class Notify
 						'',
 						'notification'
 					);
+
+					if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
+						$this->error = $mailfile->error;
+						$this->errors = $mailfile->errors;
+						return -1;
+					}
 
 					if ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";

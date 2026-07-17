@@ -289,7 +289,7 @@ if (empty($reshook)) {
 				$result = $objecttmp->fetch($toselectid);
 				if ($result > 0) {
 					if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
-						$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
+						$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
 						if ($result < 0) {
 							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 							$error++;
@@ -769,7 +769,7 @@ if ($projectid) {
 	print '<input type="hidden" name="projectid" value="'.$projectid.'" >';
 }
 
-$url = DOL_URL_ROOT.'/ticket/card.php?action=create'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
+$url = DOL_URL_ROOT.'/ticket/card.php?action=create&mode=init'.($socid ? '&socid='.$socid : '').($projectid ? '&origin=projet_project&originid='.$projectid : '');
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }

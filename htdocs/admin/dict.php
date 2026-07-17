@@ -2241,7 +2241,7 @@ if ($id > 0) {
 					print '</td>';
 				}
 
-				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+				if ($action == 'edit' && ($rowid == (isset($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -2254,7 +2254,7 @@ if ($id > 0) {
 					}
 
 					print '<td colspan="3" class="center">';
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+					print '<div name="'.(isset($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
 					print '<input type="hidden" name="rowid" value="'.dol_escape_htmltag($rowid).'">';
 					if (!is_null($withentity)) {
@@ -2443,6 +2443,10 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == 'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
+							} elseif ($value == 'libelle' && ($tabname[$id] == 'c_stcomm' || $tabname[$id] == 'c_stcommcontact')) {
+								$key = 'StatusProspect'.$obj->rowid;
+								$trans = $langs->trans($key);
+								$valuetoshow = ($trans != $key ? $trans : $obj->{$value});
 							} elseif ($value == 'label' && $tabname[$id] == 'c_units') {
 								$langs->load('other');
 								$key = $langs->trans($obj->label);

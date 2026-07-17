@@ -45,7 +45,7 @@ $date_endyear = GETPOSTINT('date_endyear');
 
 $nbofyear = 4;
 
-// Change this to test different cases of setup
+// Change this to test different cases of setup.
 //$conf->global->SOCIETE_FISCAL_MONTH_START = 7;
 
 

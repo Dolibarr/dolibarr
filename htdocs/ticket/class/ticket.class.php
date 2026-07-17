@@ -1714,7 +1714,7 @@ class Ticket extends CommonObject
 			$this->status = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".((int) $this->status) .", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1739,7 +1739,9 @@ class Ticket extends CommonObject
 					$this->status = $this->oldcopy->status;
 
 					$this->db->rollback();
+
 					$this->error = implode(',', $this->errors);
+
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
@@ -2004,9 +2006,11 @@ class Ticket extends CommonObject
 
 		if ($this->status != Ticket::STATUS_CLOSED && $this->status != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
+			$this->oldcopy = dol_clone($this);
+			$this->status = ($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut=".$this->status.", progress=100, date_close='".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::close mode=".$mode);
@@ -3010,7 +3014,7 @@ class Ticket extends CommonObject
 				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
 					($object->status > self::STATUS_IN_PROGRESS && $public_area)
 				) {
-					$object->setStatut($object::STATUS_IN_PROGRESS);
+					$object->setStatut($object::STATUS_IN_PROGRESS, null, '', 'TICKET_MODIFY');
 				}
 				return 1;
 			} else {

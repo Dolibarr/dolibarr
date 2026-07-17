@@ -230,7 +230,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
-	$forcenature = getDolGlobalInt('MEMBER_NEWFORM_FORCEMORPHY', 0);
+	$forcenature = getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY'); // 'phy' or 'mor'
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
 

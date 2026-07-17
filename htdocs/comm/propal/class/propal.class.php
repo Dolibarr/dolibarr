@@ -18,8 +18,8 @@
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1768,12 +1768,14 @@ class Propal extends CommonObject
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
+		$sql .= " fk_user_valid = ".(!empty($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
+		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? (int) $this->shipping_method_id : "null").",";
+		$sql .= " fk_availability=".(isset($this->availability_id) ? (int) $this->availability_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
@@ -2064,7 +2066,6 @@ class Propal extends CommonObject
 
 			$this->ref = $num;
 			$this->statut = self::STATUS_VALIDATED;
-			$this->status = self::STATUS_VALIDATED;
 			$this->user_validation_id = $user->id;
 			$this->datev = $now;
 			$this->date_validation = $now;
@@ -4383,8 +4384,17 @@ class PropaleLigne extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
@@ -4586,8 +4596,17 @@ class PropaleLigne extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

@@ -9,7 +9,7 @@
  * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -325,7 +325,7 @@ if ($search_desc) {
 	}
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
+	$sql .= ' AND f.fk_statut = '.((int) ($search_status));
 }
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	if ($search_date_start) {

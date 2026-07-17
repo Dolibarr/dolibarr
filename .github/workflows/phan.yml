@@ -37,7 +37,7 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan
+          tools: cs2pr,phan:5.5.2
       - name: Run Phan analysis
         run: |
           phan $PHAN_QUICK -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP --output-mode=checkstyle -o _phan.xml

@@ -1693,9 +1693,12 @@ class Commande extends CommonOrder
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
 				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					foreach ($this->lines as $line) {
+						if ($line->rang >= $ranktouse) {
+							if (!empty($line->id)) {
+								$this->updateRangOfLine($line->id, $line->rang + 1);
+							}
+						}
 					}
 				}
 
@@ -3233,7 +3236,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice       = $pu_ht;
+			$this->line->subprice       = (float) $pu_ht;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = $total_ht;

@@ -255,11 +255,15 @@ class Product extends CommonObject
 	/**
 	 * Cost price
 	 *
-	 * @var float
+	 * @var ?float
 	 */
 	public $cost_price;
 
-	//! Average price value for product entry into stock (PMP)
+	/**
+	 * Average price value for product entry into stock (PMP)
+	 *
+	 * @var ?float
+	 */
 	public $pmp;
 
 	/**
@@ -528,7 +532,7 @@ class Product extends CommonObject
 	 *
 	 * @var array
 	 */
-	public $sousprods;
+	public $sousprods = array();
 
 	/**
 	 * @var array Path of subproducts. Build from ->sousprods with get_arbo_each_prod()
@@ -2375,7 +2379,7 @@ class Product extends CommonObject
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
-				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
+				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice === 0) {
@@ -2676,7 +2680,7 @@ class Product extends CommonObject
 				$this->price_min = $obj->price_min;
 				$this->price_min_ttc = $obj->price_min_ttc;
 				$this->price_base_type = $obj->price_base_type;
-				$this->cost_price = $obj->cost_price;
+				$this->cost_price = isset($obj->cost_price) ? (float) $obj->cost_price : null;
 				$this->default_vat_code = $obj->default_vat_code;
 				$this->tva_tx = $obj->tva_tx;
 				//! French VAT NPR

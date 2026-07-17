@@ -96,7 +96,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$value = ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
 	$loadmethod = GETPOST('loadmethod', 'alpha', 2);
 	$savemethod = GETPOST('savemethod', 'alpha', 2);
-	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement = $element;
 
 	$view = '';
@@ -219,11 +218,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			}
 		}
 
-		if (!$error) {
-			if ((isset($object) && !is_object($object)) || empty($savemethod)) {
-				$object = new GenericObject($db);
-			}
-
+		if (!$error && isset($object) && is_object($object)) {
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
 			$object->ext_fk_element = $newvalue;
@@ -231,7 +226,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->fk_element = $fk_element;
 			$object->element = $element;
 
-			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
+			$ret = $object->setValueFrom($field, $newvalue, $object->table_element, $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
 					$value = price($newvalue);

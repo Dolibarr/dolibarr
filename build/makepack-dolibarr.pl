@@ -21,6 +21,9 @@ $PROJECT="dolibarr";
 $PUBLISHBETARC="$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 $PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
+# due to implicit origin on git commands, example
+# implicit origin, lionel upstream, eric dolibarr
+$GITREMOTENAME="$ENV{'GITREMOTENAME'}";
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
@@ -98,6 +101,13 @@ if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 	exit 1;
 }
 
+if (! $ENV{"GITREMOTENAME"})
+{
+	print "Error: environment variable GITREMOTENAME does not exist. You can set it to 'origin' or any other git remote name.\n";
+	print "$PROG.$Extension aborted.\n";
+	sleep 2;
+	exit 1;
+}
 # Detect OS type
 # --------------
 if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='linux'; $CR=''; }
@@ -443,15 +453,15 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push -f --tags'."\n";
-				$ret=`git push -f --tags`;
+				print 'Run git push $GITREMOTENAME -f --tags'."\n";
+				$ret=`git push $GITREMOTENAME -f --tags`;
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
-			print 'Run git push --tags'."\n";
-			$ret=`git push --tags`;
+			print 'Run git push $GITREMOTENAME --tags'."\n";
+			$ret=`git push $GITREMOTENAME --tags`;
 			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}
 		chdir("$olddir");
@@ -834,6 +844,7 @@ if ($nboftargetok) {
 			print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
 			$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ2.tgz" $FILENAMETGZ2`;
 
+			if (! -d $RPMDIR . '/SOURCES') { mkdir($RPMDIR . '/SOURCES'); }
 			print "Move $BUILDROOT/$FILENAMETGZ2.tgz to $RPMDIR/SOURCES/$FILENAMETGZ2.tgz\n";
 			$cmd="mv $BUILDROOT/$FILENAMETGZ2.tgz $RPMDIR/SOURCES/$FILENAMETGZ2.tgz";
 			$ret=`$cmd`;

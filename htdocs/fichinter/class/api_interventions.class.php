@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,13 +69,12 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a Expense Report object
-	 * Return an array with Expense Report information
+	 * Get properties of an intervention object
 	 *
 	 * @param       int         $id         ID of Expense Report
 	 * @return		Object					Object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @throws		RestException
 	 */
 	public function get($id)
 	{
@@ -298,9 +298,9 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Delete order
+	 * Delete intervention
 	 *
-	 * @param   int     $id         Order ID
+	 * @param   int     $id         Intervention ID
 	 * @return  array
 	 */
 	public function delete($id)

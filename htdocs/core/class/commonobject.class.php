@@ -4709,6 +4709,8 @@ abstract class CommonObject
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
 				if ($trigkey) {
+					$this->oldcopy = dol_clone($this);
+
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -4952,7 +4954,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -7585,6 +7587,7 @@ abstract class CommonObject
 
 			$tmpselect = '';
 			$nbchoice = 0;
+
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7603,7 +7606,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			$out .= $tmpselect;
@@ -7678,7 +7681,11 @@ abstract class CommonObject
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
+					}
 				}
 
 				$filter_categorie = false;
@@ -7903,15 +7910,19 @@ abstract class CommonObject
 
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
-				}
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
+					}
+				}
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
 					}
 				}
 
@@ -7952,9 +7963,9 @@ abstract class CommonObject
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
 							$sql .= ' as main, ' . $this->db->sanitize($this->db->prefix() . $InfoFieldList[0]) . '_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object = main." . $this->db->sanitize($InfoFieldList[2]);
-							$sqlwhere .= " AND " . $InfoFieldList[4];
+							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						} else {
-							$sqlwhere .= " WHERE " . $InfoFieldList[4];
+							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
 						}
 					} else {
 						$sqlwhere .= ' WHERE 1=1';
@@ -8960,7 +8971,7 @@ abstract class CommonObject
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
 						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
 						$ef_name = 'options_' . $key;
-						$ef_value = $this->array_options[$ef_name];
+						$ef_value = dol_htmlentities($this->array_options[$ef_name], ENT_QUOTES | ENT_SUBSTITUTE);
 						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
@@ -9382,7 +9393,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
-	 * @return float|int<-1,-1>				Return buy price if OK, integer <0 if KO
+	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9435,7 +9446,8 @@ abstract class CommonObject
 				}
 			}
 		}
-		return $buyPrice;
+
+		return (float) $buyPrice;
 	}
 
 	/**

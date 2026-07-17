@@ -103,7 +103,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity');
+$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -216,7 +216,7 @@ if (empty($modulepart)) {
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name

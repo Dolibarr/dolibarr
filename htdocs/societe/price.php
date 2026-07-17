@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+$prodcustprice = null;
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
@@ -92,7 +93,7 @@ if (empty($reshook)) {
 			$action = 'add_customer_price';
 		}
 
-		if (!$error) {
+		if (!$error && $prodcustprice !== null) {
 			$update_child_soc = GETPOST('updatechildprice');
 
 			// add price by customer
@@ -155,7 +156,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_customer_price' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOSTINT('lineid');
 		$result = $prodcustprice->delete($user);
@@ -168,7 +169,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && $prodcustprice !== null && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$prodcustprice->fetch(GETPOSTINT('lineid'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -561,7 +562,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
-		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}

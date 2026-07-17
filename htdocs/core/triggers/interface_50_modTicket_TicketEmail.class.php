@@ -211,7 +211,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 					// if contact selected send to email's contact else send to email's thirdparty
 
-					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
 					$res = 0;
 
 					if (!empty($contactid)) {
@@ -271,7 +271,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$linked_contacts[]['email'] = $object->thirdparty->email;
 					}
 
-					$contactid = empty($object->context['contactid']) ? 0 : $object->context['contactid'];
+					$contactid = empty($object->context['contact_id']) ? 0 : $object->context['contact_id'];
 					$res = 0;
 
 					if ($contactid > 0) {
@@ -447,7 +447,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 
 		if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.((int) $object->track_id);
+			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.urlencode($object->track_id);
 			$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 		} else {

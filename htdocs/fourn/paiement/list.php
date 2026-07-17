@@ -707,6 +707,11 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -724,6 +729,7 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 	}
+
 	$i++;
 }
 

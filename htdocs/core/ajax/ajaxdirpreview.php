@@ -6,6 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,7 +225,11 @@ if ($type == 'directory') {
 	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
-		$automodules[] = $hookmanager->resArray['module'];
+		if (is_array($hookmanager->resArray['module'])) {
+			$automodules = array_merge($automodules, $hookmanager->resArray['module']);
+		} else {
+			$automodules[] = $hookmanager->resArray['module'];
+		}
 	}
 
 	// TODO change for multicompany sharing

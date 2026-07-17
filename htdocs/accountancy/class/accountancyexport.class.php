@@ -206,7 +206,7 @@ class AccountancyExport
 		);
 
 		global $hookmanager;
-		$code = $formatcode[$type];
+		$code = $formatcode[$type] ?? '';
 		$parameters = array('type' => $type);
 		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code);
 
