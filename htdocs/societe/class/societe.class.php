@@ -4771,11 +4771,14 @@ class Societe extends CommonObject
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 			$country_id =  (is_numeric($tmp[0])) ? (int) $tmp[0] : 0;
-			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_COUNTRY is "id:code:label"
+			if (!empty($tmp[1]) && !empty($tmp[2])) {   // MAIN_INFO_SOCIETE_COUNTRY is the canonical "id:code:label"
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
-			} else {
-				// For backward compatibility
+			} elseif ($country_id > 0) {
+				// For backward compatibility. The value is "id" only, or a legacy "id:label" where the
+				// second token is a country label (e.g. 'Suisse') and not an ISO code. In both cases we
+				// must not keep a label in country_code (it would break code-based lookups like VAT rates),
+				// so we rebuild code and label from the authoritative country id.
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 				$country_code = getCountry($country_id, '2', $this->db); // This need a SQL request, but it's the old feature that should not be used anymore
