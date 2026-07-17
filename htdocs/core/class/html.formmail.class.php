@@ -1028,7 +1028,7 @@ class FormMail extends Form
 								if (in_array($ofile['fullname'], $listofpaths)) unset($this->objfilearray[$iof]);
 							}
 							if (count($this->objfilearray)) {
-								$nbMaxDispFiles = getDolGlobalInt('FROM_MAIL_MAX_DISP_FILES') > 0 ? getDolGlobalInt('FROM_MAIL_MAX_DISP_FILES') : 5;
+								$nbMaxDispFiles = getDolGlobalInt('FORM_MAIL_MAX_DISP_FILES') > 0 ? getDolGlobalInt('FORM_MAIL_MAX_DISP_FILES') : 5;
 								$fcnt = 0;
 								$out .= '<div class="addofilelist">';
 								$out .= '<span class="block valignmiddle print-barre-liste">'.$langs->trans("AttachedFiles").' : </span>';
