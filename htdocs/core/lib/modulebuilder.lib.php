@@ -1706,4 +1706,3 @@ function moduleBuilderIsPhpParsable($source): bool
 		return false;
 	}
 }
-

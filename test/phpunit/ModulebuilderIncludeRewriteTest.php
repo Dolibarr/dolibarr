@@ -100,9 +100,9 @@ class ModulebuilderIncludeRewriteTest extends CommonClassTest
 		$this->assertSame('../class/myobject.class.php', $r->resolveFromFileDir('/x/mymodule/stats/myobject_index.php', 'class/myobject.class.php'));
 		// core/modules/mailings/ -> class/ (depth 3)
 		$this->assertSame('../../../class/myobject.class.php', $r->resolveFromFileDir('/x/mymodule/core/modules/mailings/mailing_mymodule_selector1.modules.php', 'class/myobject.class.php'));
-		// core/modules/mymodule/doc/ -> core/modules/mymodule/ (parent, doit rester ../)
+		// core/modules/mymodule/doc/ -> core/modules/mymodule/ (direct parent, must stay ../)
 		$this->assertSame('../modules_myobject.php', $r->resolveFromFileDir('/x/mymodule/core/modules/mymodule/doc/pdf_standard_myobject.modules.php', 'core/modules/mymodule/modules_myobject.php'));
-		// même dossier
+		// same directory
 		$this->assertSame('modules_myobject.php', $r->resolveFromFileDir('/x/mymodule/core/modules/mymodule/mod_myobject_standard.php', 'core/modules/mymodule/modules_myobject.php'));
 		$this->assertSame('myobject.class.php', $r->resolveFromFileDir('/x/mymodule/class/myobjectstats.class.php', 'class/myobject.class.php'));
 		// abs from module root
@@ -120,17 +120,20 @@ class ModulebuilderIncludeRewriteTest extends CommonClassTest
 		$resolver = new ModuleRootIncludePathResolver('/x/mymodule');
 		$file = '/x/mymodule/myobject_card.php';
 
-		$content = "<?php\n"
-			."dol_include_once('/mymodule/class/myobject.class.php');\n"
-			."dol_include_once(\"/mymodule/class/myobject.class.php\");\n"        // double quotes (cf mailings)
-			."include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';\n"
-			."//dol_include_once('/othermodule/class/otherobject.class.php');\n"
-			."dol_include_once('/'.\$moduledir.'/class/'.strtolower(\$k).'.class.php');\n"
-			."dol_include_once('/othermodule/class/otherobject.class.php');\n";
+		// Fake generated file: single/double-quote own-module, core, commented cross-module, dynamic, active cross-module.
+		$content = implode("\n", array(
+			'<?php',
+			"dol_include_once('/mymodule/class/myobject.class.php');",
+			'dol_include_once("/mymodule/class/myobject.class.php");',
+			"include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';",
+			"//dol_include_once('/othermodule/class/otherobject.class.php');",
+			'dol_include_once(\'/\'.$moduledir.\'/class/\'.strtolower($k).\'.class.php\');',
+			"dol_include_once('/othermodule/class/otherobject.class.php');",
+		));
 
 		$report = rewriteIncludeStatements($content, $file, 'mymodule', $policy, $resolver);
 
-		// 2 réécritures (les 2 own-module statiques, simple + double quote)
+		// 2 rewrites (the 2 static own-module includes, single + double quote)
 		$this->assertCount(2, $report->replacements);
 		$this->assertSame("include_once __DIR__.'/class/myobject.class.php';", $report->replacements[0]['to']);
 
@@ -191,7 +194,7 @@ class ModulebuilderIncludeRewriteTest extends CommonClassTest
 		$stats = file_get_contents($root.'/stats/myobject_index.php');
 		$this->assertStringContainsString("include_once __DIR__.'/../class/myobject.class.php';", $stats);
 
-		// fichier API préservé (A2)
+		// API file preserved (A2)
 		$api = file_get_contents($root.'/class/api_mymodule.class.php');
 		$this->assertStringContainsString("dol_include_once('/mymodule/class/myobject.class.php');", $api);
 
@@ -245,12 +248,12 @@ class ModulebuilderIncludeRewriteTest extends CommonClassTest
 			$this->assertNotFalse($content, "Missing template ".$rel);
 			foreach (explode("\n", $content) as $line) {
 				if (preg_match('/^\s*(\/\/|\*|\/\*)/', $line)) {
-					continue; // ligne commentée autorisée
+					continue; // commented line allowed
 				}
 				$this->assertSame(0, preg_match('#dol_include_once\(\s*[\'"]/mymodule/#', $line), "Active own-module dol_include_once remains in ".$rel.": ".$line);
 			}
 		}
-		// API file : dol_include_once conservé par design (A2)
+		// API file: dol_include_once kept by design (A2)
 		$api = file_get_contents($dir.'/class/api_mymodule.class.php');
 		$this->assertSame(1, preg_match('#dol_include_once\(\s*[\'"]/mymodule/#', $api));
 	}
