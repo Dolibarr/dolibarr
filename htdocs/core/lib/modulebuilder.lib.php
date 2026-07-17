@@ -1700,8 +1700,7 @@ function rewriteGeneratedIncludes($moduleRootDir, $moduleName): array
 function moduleBuilderIsPhpParsable($source): bool
 {
 	try {
-		token_get_all($source, TOKEN_PARSE);
-		return true;
+		return is_array(token_get_all($source, TOKEN_PARSE));
 	} catch (\ParseError $e) {
 		return false;
 	}
