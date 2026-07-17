@@ -5,8 +5,8 @@
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2021     	Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class AdherentType extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -84,7 +84,7 @@ class AdherentType extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -111,8 +111,10 @@ class AdherentType extends CommonObject
 		"rowid" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"libelle" => array("type" => "varchar(50)", "label" => "Label", "enabled" => "1", 'position' => 30, 'notnull' => 1, "visible" => "1", "showoncombobox" => 1),
 		"subscription" => array("type" => "varchar(3)", "label" => "Subscription", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "1",),
-		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "1",),
-		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "1",),
+		"caneditamount" => array("type" => "integer", "label" => "Caneditamount", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "1",),
+		"minimumamount" => array("type" => "double(24,8)", "label" => "MinimumAmount", "enabled" => "1", 'position' => 42, 'notnull' => 0, "visible" => "1",),
+		"amount" => array("type" => "double(24,8)", "label" => "Amount", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "1",),
+		"amountformuladescription" => array("type" => "longtext", "label" => "AmountFormulaDescription", "enabled" => "1", 'position' => 46, 'notnull' => 0, "visible" => "-1",),
 		"vote" => array("type" => "varchar(3)", "label" => "Vote", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
 		"mail_valid" => array("type" => "longtext", "label" => "MailValidation", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-3",),
 		"morphy" => array("type" => "varchar(3)", "label" => "MembersNature", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "1",),
@@ -141,7 +143,7 @@ class AdherentType extends CommonObject
 	public $morphy;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $duration;
 
@@ -156,9 +158,19 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var int<0,1> Subscription required (0 or 1)
+	 * @var null|'0'|'1' Subscription required (0 or 1) default '1' in DB, null until value is fetched
 	 */
 	public $subscription;
+
+	/**
+	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
+	 */
+	public $caneditamount;
+
+	/**
+	 * @var float|string    Minimum Amount for subscription (null or '' means not defined)
+	 */
+	public $minimumamount;
 
 	/**
 	 * @var float|string 	Amount for subscription (null or '' means not defined)
@@ -166,9 +178,9 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int Amount can be chosen by the visitor during subscription (0 or 1)
+	 * @var string  Describe the subscription amount formula to follow
 	 */
-	public $caneditamount;
+	public $amountformuladescription;
 
 	/**
 	 * @var string 	Public note
@@ -180,7 +192,7 @@ class AdherentType extends CommonObject
 	public $note_public;
 
 	/**
-	 * @var int<0,1>	Can vote
+	 * @var null|int<0,1>	Can vote, null until fetched
 	 */
 	public $vote;
 
@@ -273,7 +285,7 @@ class AdherentType extends CommonObject
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
 				//print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-				if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+				if ($obj->lang == $current_lang) {  // if we have the translations in the current language, we load them as main information.
 					$this->label        = $obj->label;
 					$this->description = $obj->description;
 					$this->email        = $obj->email;
@@ -293,9 +305,10 @@ class AdherentType extends CommonObject
 	 * Update or add a translation for this member type
 	 *
 	 * @param  User $user Object user making update
+	 * @param  int  $notrigger Do not execute trigger
 	 * @return int        Return integer <0 if KO, >0 if OK
 	 */
-	public function setMultiLangs($user)
+	public function setMultiLangs($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -363,13 +376,15 @@ class AdherentType extends CommonObject
 			}
 		}
 
-		// Call trigger
-		$result = $this->call_trigger('MEMBER_TYPE_SET_MULTILANGS', $user);
-		if ($result < 0) {
-			$this->error = $this->db->lasterror();
-			return -1;
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('MEMBER_TYPE_SET_MULTILANGS', $user);
+			if ($result < 0) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+			// End call triggers
 		}
-		// End call triggers
 
 		return 1;
 	}
@@ -379,9 +394,10 @@ class AdherentType extends CommonObject
 	 *
 	 * @param string $langtodelete 	Language code to delete
 	 * @param User   $user         	Object user making delete
-	 * @return int                   Return integer <0 if KO, >0 if OK
+	 * @param  int   $notrigger     Do not execute trigger
+	 * @return int                  Return integer <0 if KO, >0 if OK
 	 */
-	public function delMultiLangs($langtodelete, $user)
+	public function delMultiLangs($langtodelete, $user, $notrigger = 0)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 		$sql .= " WHERE fk_type = ".((int) $this->id)." AND lang = '".$this->db->escape($langtodelete)."'";
@@ -389,14 +405,16 @@ class AdherentType extends CommonObject
 		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			// Call trigger
-			$result = $this->call_trigger('MEMBER_TYPE_DEL_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
-				return -1;
+			if (empty($notrigger)) {
+				// Call trigger
+				$result = $this->call_trigger('MEMBER_TYPE_DEL_MULTILANGS', $user);
+				if ($result < 0) {
+					$this->error = $this->db->lasterror();
+					dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
+				// End call triggers
 			}
-			// End call triggers
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
@@ -495,8 +513,10 @@ class AdherentType extends CommonObject
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape((string) $this->subscription)."',";
-		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
+		$sql .= "minimumamount = ".((empty($this->minimumamount) && $this->minimumamount == '') ? "null" : ((float) $this->minimumamount)).",";
+		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
+		$sql .= "amountformuladescription = '".$this->db->escape($this->amountformuladescription)."',";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
 		$sql .= "vote = ".(int) $this->db->escape((string) $this->vote).",";
@@ -509,18 +529,16 @@ class AdherentType extends CommonObject
 
 			// Multilangs
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
-				if ($this->setMultiLangs($user) < 0) {
+				if ($this->setMultiLangs($user, $notrigger) < 0) {
 					$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 					return -2;
 				}
 			}
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -588,7 +606,7 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.caneditamount, d.minimumamount, d.amount, d.amountformuladescription, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -608,8 +626,10 @@ class AdherentType extends CommonObject
 				$this->duration_value = (int) substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
-				$this->amount         = $obj->amount;
 				$this->caneditamount  = $obj->caneditamount;
+				$this->minimumamount  = $obj->minimumamount;
+				$this->amount         = $obj->amount;
+				$this->amountformuladescription  = $obj->amountformuladescription;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note_public;	// deprecated
 				$this->note_public    = $obj->note_public;
@@ -676,7 +696,7 @@ class AdherentType extends CommonObject
 	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array<int,string>		Array of membership type
+	 *  @return array<int,float>		Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
@@ -698,7 +718,7 @@ class AdherentType extends CommonObject
 				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
-					$amountbytype[$obj->rowid] = $obj->amount;
+					$amountbytype[$obj->rowid] = (float) $obj->amount;
 					$i++;
 				}
 			}
@@ -707,6 +727,155 @@ class AdherentType extends CommonObject
 		}
 
 		return $amountbytype;
+	}
+
+	/**
+	 *  Return the array of morphy per membership type id
+	 *
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array<int,string>		Array of membership type
+	 */
+	public function morphyByType($status = null)
+	{
+		$morphybytype = array();
+
+		$sql = "SELECT rowid, morphy";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$morphybytype[$obj->rowid] = $obj->morphy;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $morphybytype;
+	}
+
+	/**
+	 *  Return the array of caneditamount per membership type id
+	 *
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array<int,string>		Array of membership type
+	 */
+	public function caneditamountByType($status = null)
+	{
+
+		$caneditamountbytype = array();
+
+		$sql = "SELECT rowid, caneditamount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$caneditamountbytype[$obj->rowid] = $obj->caneditamount;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $caneditamountbytype;
+	}
+
+	/**
+	 *  Return the array of all minimum amounts per membership type id
+	 *
+	 *  @param      int             $status                 Filter on status of type
+	 *  @return array<int,float>            Array of membership type
+	 */
+	public function minimumAmountByType($status = null)
+	{
+		$minimumamountbytype = array();
+
+		$sql = "SELECT rowid, minimumamount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$minimumamountbytype[$obj->rowid] = (float) $obj->minimumamount;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $minimumamountbytype;
+	}
+
+	/**
+	 *  Return the array of all amount formula's descriptions per membership type id
+	 *
+	 *  @param      int             $status                 Filter on status of type
+	 *  @return array<int,float>            Array of membership type
+	 */
+	public function amountFormulaDescriptionByType($status = null)
+	{
+		$amountformuladescriptionbytype = array();
+
+		$sql = "SELECT rowid, amountformuladescription";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$amountformuladescriptionbytype[$obj->rowid] = $obj->amountformuladescription;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $amountformuladescriptionbytype;
 	}
 
 	/**
@@ -764,23 +933,68 @@ class AdherentType extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int<0,2>	$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		$s = '';
+
 		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+			$s = $langs->trans("Physical");
 		} elseif ($morphy == 'mor') {
-			return $langs->trans("Moral");
+			$s = $langs->trans("Moral");
 		} else {
-			return $langs->trans("MorAndPhy");
+			$s = $langs->trans("MorAndPhy");
 		}
-		//return $morphy;
+
+		if ($addbadge) {
+			$labeltoshowm = $langs->trans("Moral");
+			$labeltoshowp = $langs->trans("Physical");
+
+			$labeltoshow = $s;
+			if ($morphy === 'phy') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-individual-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === 'mor') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshow))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshow, 2));
+					}
+				}
+				$s = '<span class="member-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy === '') {
+				if ($addbadge == 2) {
+					$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow1 == dol_strtoupper(dolGetFirstLetters($labeltoshow1))) {
+						$labeltoshow1 = dol_strtoupper(dolGetFirstLetters($labeltoshow1, 2));
+					}
+					$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow2 == dol_strtoupper(dolGetFirstLetters($labeltoshow2))) {
+						$labeltoshow2 = dol_strtoupper(dolGetFirstLetters($labeltoshow2, 2));
+					}
+					$labeltoshow = $labeltoshow1.' '.$langs->trans("or").' '.$labeltoshow2;
+				}
+				$s = '<span class="member-individual-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("MorAndPhy").'">'.$labeltoshow.'</span>';
+			}
+		}
+
+		return $s;
 	}
 
 	/**
 	 * getTooltipContentArray
+	 *
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
@@ -795,7 +1009,7 @@ class AdherentType extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u> '.$this->getLibStatut(4);
 		$datas['label'] = '<br>'.$langs->trans("Label").': '.$this->label;
 		if (isset($this->subscription)) {
-			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
+			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn((int) $this->subscription);
 		}
 		if (isset($this->vote)) {
 			$datas['vote'] = '<br>'.$langs->trans("VoteAllowed").': '.yn($this->vote);
@@ -803,9 +1017,23 @@ class AdherentType extends CommonObject
 		if (isset($this->duration)) {
 			$datas['duration'] = '<br>'.$langs->trans("Duration").': '.$this->duration_value;
 			if ($this->duration_value > 1) {
-				$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+				$dur = array(
+					"i" => $langs->trans("Minutes"),
+					"h" => $langs->trans("Hours"),
+					"d" => $langs->trans("Days"),
+					"w" => $langs->trans("Weeks"),
+					"m" => $langs->trans("Months"),
+					"y" => $langs->trans("Years")
+				);
 			} elseif ($this->duration_value > 0) {
-				$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+				$dur = array(
+					"i" => $langs->trans("Minute"),
+					"h" => $langs->trans("Hour"),
+					"d" => $langs->trans("Day"),
+					"w" => $langs->trans("Week"),
+					"m" => $langs->trans("Month"),
+					"y" => $langs->trans("Year")
+				);
 			}
 			$datas['duration'] .= "&nbsp;" . (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? $langs->trans($dur[$this->duration_unit]) : '');
 		}
@@ -826,14 +1054,12 @@ class AdherentType extends CommonObject
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		$result = '';
-		$option = '';
 
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
-			'option' => $option,
 			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
@@ -844,17 +1070,18 @@ class AdherentType extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
-		if ($option != 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
+		$baseurl = DOL_URL_ROOT . '/adherents/type.php';
+		$query = ['rowid' => $this->id];
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
 		}
+		if ($add_save_lastsearch_values) {
+			$query = array_merge($query, ['save_lastsearch_values' => 1]);
+		}
+		$url = dolBuildUrl($baseurl, $query);
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
@@ -916,7 +1143,7 @@ class AdherentType extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	 *	Returns full DN description in LDAP directory format for the object
 	 *
 	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
 	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
@@ -999,7 +1226,7 @@ class AdherentType extends CommonObject
 		$this->label = 'MEMBERS TYPE SPECIMEN';
 		$this->note_public = 'This is a public note';
 		$this->mail_valid = 'This is welcome email';
-		$this->subscription = 1;
+		$this->subscription = '1';
 		$this->caneditamount = 0;
 		$this->vote = 0;
 
@@ -1092,29 +1319,23 @@ class AdherentType extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 
 		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
 		if ($user->hasRight('adherent', 'configurer')) {
-			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
+			$return .= '<span class="right paddingleft"><a class="editfielda showonhover" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.urlencode($this->ref).'">'.img_edit().'</a></span>';
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}
-		if (property_exists($this, 'vote')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		if (is_null($this->amount) || $this->amount === '') {
+			$return .= '<br>';
+		} else {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+			$return .= '<span class="amount"> : '.price($this->amount).'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			if (is_null($this->amount) || $this->amount === '') {
-				$return .= '<br>';
-			} else {
-				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
-				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
-			}
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

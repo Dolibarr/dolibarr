@@ -76,6 +76,38 @@ class AdminLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
+		// Upgrade required
+		$v1 = '21.0.0-beta'; $v2 = '21.0.0-rc';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.0.0-beta'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.1.1'; $v2 = '21.0.1';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '22.0.1'; $v2 = '21.0.1';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		// Upgrade not required
+		$v1 = '21.0.0'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(false, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.0.1'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(false, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
 		return $result;
 	}
 

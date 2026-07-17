@@ -125,3 +125,5 @@ Signed=signat
 SignedOnly=Només signat
 ExpeditionSigned=Enviament signat
 SignExpedition=Signar l'enviament
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Mostra l'adreça d'enviament
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Indicació obligatòria en alguns països (França, ...)

@@ -173,7 +173,6 @@ UpdateByScaning=Quantité réelle complète en scannant
 UpdateByScaningProductBarcode=Mise à jour par scan (code-barres du produit)
 UpdateByScaningLot=Mise à jour par scan (lot|code-barres série)
 ImportFromCSV=Importer la liste CSV des mouvements
-ChooseFileToImport=Téléchargez le fichier puis cliquez sur l'icône %s pour sélectionner le fichier comme fichier d'importation source...
 InfoTemplateImport=Le fichier téléchargé doit avoir ce format (les * sont des champs obligatoires) :<br>Entrepôt source* | Entrepôt cible* | Produit* | Quantité* | Numéro de lot/série<br>Le séparateur de caractères CSV doit être « <b>%s</b> »
 ConfirmFinish=Confirmez-vous la clôture de l'inventaire ? Cela générera tous les mouvements de stock pour mettre à jour votre stock à la quantité réelle que vous avez saisie dans l'inventaire.
 ObjectNotFound=%s non trouvé

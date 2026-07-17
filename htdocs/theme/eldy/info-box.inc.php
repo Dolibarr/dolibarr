@@ -5,16 +5,23 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+
+// Expected to be defined by including parent
 /**
  * @var Conf $conf
  * @var string $left
  * @var string $right
  */
-// Expected to be defined by including parent
 '
 @phan-var-force string $right
 @phan-var-force string $left
 ';
+
+$heightbox = 94;
+if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("paymentbybanktransfer")) {
+	$heightbox = 110;
+}
+
 ?>
 /* IDE Hack <style type="text/css"> */
 
@@ -34,12 +41,16 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 .info-box {
 	display: block;
 	position: relative;
-	min-height: 94px;	/* must be same height than info-box-icon */
+	min-height: <?php echo $heightbox; ?>px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
-	border-radius: 2px;
-	border: 1px solid #e9e9e9;
+	<?php
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
+	box-shadow: 0 0 5px rgba(128, 128, 128, 0.3);
+	<?php } ?>
+	border-radius: 5px;
+	/* border: 1px solid #e9e9e9; */
+	/* border: 1px solid var(--colorbacktitle1); */
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm {
@@ -48,7 +59,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	/* background: #fff; */
 }
 .opened-dash-board-wrap .info-box, .opened-dash-board-wrap .info-box .info-box-icon  {
-	border-radius: 0 0 0 15px;
+	border-radius: 5px 5px 5px 15px;
 }
 /*.opened-dash-board-wrap .box-flex-item {
 	border-radius: 10px;
@@ -96,13 +107,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	overflow: hidden;
 	float: left;
-	line-height: 94px;	/* must be same height as min-height of .info-box */
-	height: 94px; 	    /* must be same height as min-height of .info-box */
+	line-height: <?php echo $heightbox; ?>px;	/* must be same height as min-height of .info-box */
+	height: <?php echo $heightbox; ?>px; 	    /* must be same height as min-height of .info-box */
 	width: 88px;
 	text-align: center;
 	font-size: 2.8em;
 	background: var(--colorbacktitle1) !important;
 }
+<?php if (!colorIsLight(getDolGlobalString('THEME_ELDY_BACKTITLE1'))) { ?>
+.info-box-icon i.fa, .info-box-icon i.fa:before {
+	color: #fff !important;
+}
+<?php } ?>
 
 .info-box-module .info-box-icon {
 	padding-top: 5px;
@@ -151,12 +167,12 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
 .info-box-line {
-	line-height: 1.35em;
+	line-height: 1.25em;
 }
 .info-box-line-text {
 	overflow: hidden;
@@ -255,17 +271,18 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-content {
 	padding-top: 5px;
 	padding-bottom: 5px;
-	padding-left: 10px;
-	padding-right: 5px;
+	padding-<?php echo $left; ?>: 14px;
+	padding-<?php echo $right; ?>: 5px;
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content {
 	margin-left: 80px;
 	height: 88px;   /* 96 - margins of .info-box-sm .info-box-content */
+	border-top-right-radius: 6px;
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: var(--infoboxmoduleenabledbgcolor);
+	/* background: var(--infoboxmoduleenabledbgcolor); */
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -278,23 +295,27 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .progress-description,
 .info-box-text,
-.info-box-title{
+.info-box-title {
 	display: block;
 	font-size: 12px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.info-box-title{
+.info-box-title {
 	text-transform: uppercase;
-	font-weight: bold;
+	/* font-weight: bold; */
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
-	opacity: 0.6;
+	opacity: 0.5;
 	/* color: var(--colortexttitlenotab); */
 }
-.info-box-text{
+.info-box-text {
 	font-size: 0.92em;
 }
+.info-box-desc {
+	font-size: 0.91em;
+}
+
 /* Force values for small screen 480 */
 @media only screen and (max-width: 480px)
 {
@@ -317,7 +338,36 @@ a.info-box-text{ text-decoration: none;}
 }
 
 
-
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
+.infobox-haslink i.fa.fa-exclamation-triangle.hideonsmartphone {
+	display: none;
+}
 
 
 /* ICONS INFO BOX */
@@ -347,63 +397,61 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php } ?>
 }
 
+.spannature {
+/*
+	padding-top: 6px !important;
+	padding-bottom: 6px !important;
+	vertical-align: middle;
+	white-space: nowrap;
+	display: inline-block;
+*/
+}
+
 .nonature-back {
-	background-color: #EEE;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
+	 background-color: var(--colorwhitelight);
 }
 .prospect-back {
-	background-color: #a7c5b0 !important;
+	background-color: #a3c0ad !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .vendor-back {
-	background-color: #599caf !important;
+	background-color: #499caf !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
 }
 .user-back {
 	background-color: #79633f !important;
 	color: #FFF !important;
-	padding: 2px;
-	margin: 2px;
-	border-radius: 3px;
-}
-.member-company-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
-	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px;
-	margin: 2px;
-	background-color: #e4e4e4;
-	color: #666;
-	border-radius: 3px;
+	background-color: #258fa5;
+	color: #fff;
 	white-space: nowrap;
 }
-
+.member-company-back {
+	background-color: #557b95;
+	color: #fff;
+	white-space: nowrap;
+}
+.member-individual-company-back {
+	background-color: #40859d;
+	color: #fff;
+	white-space: nowrap;
+}
+.nonature-back, .prospect-back, .customer-back, .vendor-back, .user-back, .member-company-back, .member-individual-company-back, .member-individual-back {
+	padding: 2px;
+	margin: 2px;
+	border-radius: 5px;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #b06080 !important;
+	<?php echo $prefix; ?>color: #906080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -436,14 +484,14 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* color: var(--colortextbackvmenu) !important; */
 }
 
-.infobox-adherent, .infobox-member {
+.infobox-adherent, .infobox-member, .infobox-expensereport {
 	color: #79633f;
 }
 .infobox-project{
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #b06080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),
@@ -463,14 +511,11 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-bank_account{
 	color: #b0bb39;
 }
-.infobox-adherent, .infobox-member {
-	color: #79633f;
-}
-.infobox-expensereport{
-	color: #79633f;
-}
 .infobox-holiday{
 	color: #755114;
+}
+.infobox-portal {
+	color: #304;
 }
 
 
@@ -537,7 +582,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
@@ -659,7 +704,6 @@ a.vmenu span, span.vmenu, span.vmenu span {
 		width: 250px;
 	}
 }
-
 
 
 

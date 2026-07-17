@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Accesează <a class="notasortlink" href="%s" target="_b
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID Client OAuth
-OAUTH_SECRET=Secret OAuth
-OAUTH_TENANT=OAuth tenant
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Furnizor OAuth adăugat
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Există deja o intrare OAuth pentru acest furnizor și etichetă
 URLOfOAuthServiceEndpoints=Adresa URL de bază pentru endpoint-uri serviciu OAuth
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=Adresa URL furnizată de serviciul OAuth pentru autentificare
 Scopes=Permisiuni (Domenii)
 ScopeUndefined=Permisiuni (domenii) nedefinite (vezi fila anterioară)
-ScopesDesc=Exemplu: read,write cu Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Token complet (obiect)
 AccessToken=Token de acces
 TokenExpired=Expirat
@@ -50,3 +50,4 @@ RefreshToken=Token de refresh
 RefreshTokenHelp=Utilizează tokenul de reîmprospătare pentru a obține un nou token de acces
 OldTokenWasExpiredItHasBeenRefresh=Vechiul token a expirat, a fost reîmprospătat
 OldTokenWasNotExpiredButItHasBeenRefresh=Vechiul token nu a expirat, dar a fost reîmprospătat
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -48,7 +48,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

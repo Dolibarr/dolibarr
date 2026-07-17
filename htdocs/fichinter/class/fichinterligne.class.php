@@ -4,11 +4,11 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2020 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2025 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,11 @@ class FichinterLigne extends CommonObjectLine
 	public $duration;
 
 	/**
+	 * @var int Special code for subtotal lines
+	 */
+	public $special_code;
+
+	/**
 	 * @var int Line rang
 	 */
 	public $rang = 0;
@@ -124,7 +129,7 @@ class FichinterLigne extends CommonObjectLine
 	{
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 
-		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.extraparams';
+		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang, ft.date, ft.product_type, ft.special_code, ft.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
@@ -137,8 +142,10 @@ class FichinterLigne extends CommonObjectLine
 			$this->date = $this->db->jdate($objp->date);
 			$this->datei = $this->db->jdate($objp->date);	// For backward compatibility
 			$this->desc           	= $objp->description;
+			$this->product_type     = $objp->product_type;
 			$this->duration       	= $objp->duree;
 			$this->rang           	= $objp->rang;
+			$this->special_code     = $objp->special_code;
 
 			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
@@ -156,9 +163,9 @@ class FichinterLigne extends CommonObjectLine
 	/**
 	 *	Insert the line into database
 	 *
-	 *	@param		User	$user 		Object user that make creation
-	 *	@param		int		$notrigger	Disable all triggers
-	 *	@return		int		Return integer <0 if ko, >0 if ok
+	 *	@param		User		$user 		Object user that make creation
+	 *	@param		int<0,1>	$notrigger	Disable all triggers
+	 *	@return		int			Return integer <0 if ko, >0 if ok
 	 */
 	public function insert($user, $notrigger = 0)
 	{
@@ -170,17 +177,22 @@ class FichinterLigne extends CommonObjectLine
 			$this->date = $this->datei;
 		}
 
+		// Check parameters
+		if ($this->product_type < 0) {
+			return -1;
+		}
+
 		$this->db->begin();
 
 		$rangToUse = $this->rang;
 		if ($rangToUse == -1) {
-			// Recupere rang max de la ligne d'intervention dans $rangmax
+			// Retrieve max rank of intervention line into $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
 			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				$rangToUse = $obj->max + 1;
+				$rangToUse = (int) $obj->max + 1;
 			} else {
 				dol_print_error($this->db);
 				$this->db->rollback();
@@ -188,14 +200,16 @@ class FichinterLigne extends CommonObjectLine
 			}
 		}
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' (fk_fichinter, description, date, duree, rang)';
+		$sql .= ' (fk_fichinter, description, date, duree, rang, product_type, special_code)';
 		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->date)."',";
 		$sql .= " ".((int) $this->duration).",";
-		$sql .= ' '.((int) $rangToUse);
+		$sql .= ' '.((int) $rangToUse).",";
+		$sql .= " ".((int) $this->product_type).",";
+		$sql .= " ".((int) $this->special_code);
 		$sql .= ')';
 
 		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
@@ -204,11 +218,9 @@ class FichinterLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
 			$this->rowid = $this->id;
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 
@@ -259,22 +271,21 @@ class FichinterLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
 		$sql .= " description = '".$this->db->escape($this->desc)."',";
 		$sql .= " date = '".$this->db->idate($this->date)."',";
 		$sql .= " duree = ".((int) $this->duration).",";
-		$sql .= " rang = ".((int) $this->rang);
+		$sql .= " rang = ".((int) $this->rang).",";
+		$sql .= " product_type = ".((int) $this->product_type);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			$result = $this->update_total();
@@ -320,6 +331,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter=".((int) $this->fk_fichinter);
+		$sql .= " AND product_type <> 9";
 
 		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 		$resql = $this->db->query($sql);

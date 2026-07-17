@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/modBlockedLog.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -57,9 +58,14 @@ class FactureTest extends CommonClassTest
 	 */
 	public static function setUpBeforeClass(): void
 	{
-		self::assertTrue(isModEnabled('facture'), " module customer invoice must be enabled");
+		self::assertTrue(isModEnabled('invoice'), " module customer invoice must be enabled");
 		self::assertFalse(isModEnabled('ecotaxdeee'), " module ecotaxdeee must not be enabled");
 		parent::setUpBeforeClass();
+
+		// We disable module blocked log to avoid interference with tests
+		global $db;
+		$blockedlogmodule = new modBlockedLog($db);
+		$blockedlogmodule->remove();
 	}
 
 
@@ -151,6 +157,10 @@ class FactureTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
+		// Force to default setup
+		$conf->global->FAC_FORCE_DATE_VALIDATION = 0;
+		$conf->global->INVOICE_CHECK_POSTERIOR_DATE = 0;
+
 		$result = $localobject->validate($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
@@ -161,9 +171,10 @@ class FactureTest extends CommonClassTest
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
 
-		// Hack to avoid test to be wrong when module sellyoursaas is on
-		unset($localobject->array_options['options_commission']);
-		unset($localobject->array_options['options_reseller']);
+		// Hack to avoid test to be wrong when some modules are one
+		unset($localobject->array_options);
+		//unset($localobject->array_options['options_reseller']);
+		//unset($localobject->array_options['options_reseller']);
 
 		$arraywithdiff = $this->objCompare(
 			$localobject,
@@ -171,15 +182,16 @@ class FactureTest extends CommonClassTest
 			true,
 			// Not comparing:
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_creation_id','date_creation','date_validation','datem','date_modification',
-				'ref','statut','status','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+				'newref','oldcopy','oldref','id','lines','client','thirdparty','brouillon', 'fk_user_author', 'user_modification_id', 'date_creation','date_validation','datem','date_modification',
+				'ref','statut','status','paye','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
 				'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
-				'trackid','user_creat','user_valid'
+				'trackid','user_creat','user_valid', 'note'
 			)
 		);
-		$this->assertEquals($arraywithdiff, array());    // Actual, Expected
+
+		$this->assertEquals($arraywithdiff, array(), 'Found differences '.var_export($arraywithdiff, true));    // Actual, Expected. If it differs, do a var_dump($arraywithdiff) to see what differs
 
 		return $localobject;
 	}
@@ -260,6 +272,8 @@ class FactureTest extends CommonClassTest
 		$result = $localobject->delete($user);					// Deletion is KO, it is not last invoice
 		print __METHOD__." id=".$localobject->id." ref=".$localobject->ref." result=".$result."\n";
 		$this->assertEquals(0, $result, 'Deletion should fail, it is not last invoice');
+
+		var_dump($localobject2->is_erasable());
 
 		$result = $localobject2->delete($user);					// Deletion is OK, it is last invoice
 		print __METHOD__." id=".$localobject2->id." ref=".$localobject2->ref." result=".$result."\n";

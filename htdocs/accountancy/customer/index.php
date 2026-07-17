@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
@@ -292,6 +291,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 /*
  * View
  */
+
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("CustomersVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-index');
@@ -302,12 +302,14 @@ $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current +
 
 print load_fiche_titre($langs->trans("CustomersVentilation")." ".$textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer").'</span><br>';
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
-print '</span><br>';
+print '<div class="info">';
+print '<span class="">'.$langs->trans("DescVentilCustomer").'</span><br>';
+print '<span class="hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
+print '</span>';
+print '</div>';
 
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"), 0, 0, 'warning');
 	print "<br>";
 }
 
@@ -602,6 +604,9 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_fd ON prev_fd.rowid = fd.fk_prev_id";
+	}
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
@@ -663,16 +668,16 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
 						"fd.total_ht < 0",
-						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-						"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+						" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+						"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 					).")",
 					'0'
 				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
-				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-				"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+				" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+				"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 			).") as total";
 		} else {
 			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";

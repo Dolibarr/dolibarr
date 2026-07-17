@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
@@ -289,7 +288,7 @@ if ($result < 0) {
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
 } else {
-	// Calcul de $min et $max
+	// Calculate $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
@@ -312,7 +311,7 @@ if ($result < 0) {
 	}
 
 	// CRED PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear = array();
 	'@phan-var-force array<array<string,int|float>> $tblyear';
 	$tblyear[0] = array();
@@ -348,7 +347,7 @@ if ($result < 0) {
 			dol_print_error($db);
 		}
 	}
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();
@@ -397,7 +396,7 @@ if ($result < 0) {
 	unset($tblyear[2]);
 
 	// DEDBT PART
-	// Chargement du tableau des années
+	// Load the year array
 	$tblyear[0] = array();
 	$tblyear[1] = array();
 	$tblyear[2] = array();
@@ -432,7 +431,7 @@ if ($result < 0) {
 		}
 	}
 
-	// Chargement de labels et data_xxx pour tableau 4 Movements
+	// Load labels and data_xxx for the 4 Movements chart
 	$labels = array();
 	$data_year_0 = array();
 	$data_year_1 = array();

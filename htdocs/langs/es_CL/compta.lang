@@ -98,7 +98,6 @@ SalesTurnoverMinimum=Facturación mínima
 ByThirdParties=Por terceros
 ByUserAuthorOfInvoice=Por autor de factura
 NewCheckReceipt=Nuevo descuento
-NewCheckDepositOn=Crear recibo para el depósito en la cuenta: %s
 NoWaitingChecks=No hay cheques pendientes de depósito.
 NbOfCheques=No. de cheques
 PaySocialContribution=Pagar un impuesto social / fiscal

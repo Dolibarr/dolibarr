@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=ການຖອຍຫຼັງໄດ້ຖື
 ValidationOfPaymentFailed=ການກວດສອບການຊໍາລະບໍ່ສໍາເລັດ
 CardOwner=ຜູ້ຖືບັດ
 PayPalBalance=ສິນເຊື່ອ Paypal
-OnlineSubscriptionPaymentLine=ການສະໝັກໃຊ້ອອນໄລນ໌ທີ່ບັນທຶກໄວ້ໃນ %s<br>ຈ່າຍຜ່ານ %s<br>ທີ່ຢູ່ IP ທີ່ມາ: %s<br>ID ທຸລະກຳ:  
+OnlineSubscriptionPaymentLine=ການສະໝັກໃຊ້ອອນໄລນ໌ທີ່ບັນທຶກໄວ້ໃນ %s<br>ຈ່າຍຜ່ານ %s<br>ທີ່ຢູ່ IP ທີ່ມາ: %s<br>ID ທຸລະກຳ:

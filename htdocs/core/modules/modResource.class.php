@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024      MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,13 +197,13 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 100,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'user' => 0
 		);
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', // Uses anchors defined in the parent menu declared above
 			'type' => 'left', // Toujours un menu gauche
 			'titre' => 'MenuResourceAdd',
 			'mainmenu' => 'agenda',
@@ -211,13 +212,13 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 101,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->write',
+			'perms' => '$user->hasRight("resource", "write")',
 			'target' => '',
 			'user' => 0
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', // Uses anchors defined in the parent menu declared above
 			'type' => 'left', // Toujours un menu gauche
 			'titre' => 'List',
 			'mainmenu' => 'agenda',
@@ -226,7 +227,7 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 102,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'target' => '',
 			'user' => 0
 		);

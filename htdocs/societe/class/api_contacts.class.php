@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 //require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
@@ -173,7 +174,7 @@ class Contacts extends DolibarrApi
 	 * @param	int			$page				Page number
 	 * @param	string		$thirdparty_ids		Third party ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param	int			$category			Use this param to filter list by category
-	 * @param	string		$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	int			$includecount		Include count of elements the contact is used as a link for
 	 * @param	int			$includeroles		Includes roles of the contact
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -193,7 +194,7 @@ class Contacts extends DolibarrApi
 		}
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -343,6 +344,16 @@ class Contacts extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
+		// External api user does not know internal country ID
+		if (!isset($request_data['country_id']) && isset($request_data['country_code'])) {
+			$field = strlen($request_data['country_code']) > 2 ? 'code_iso' : 'code';
+			$id = dol_getIdFromCode($this->db, $request_data['country_code'], "c_country", $field, "rowid");
+			if ($id < 0) {
+				throw new RestException(404, 'Country code not found in database: ' . $this->db->error);
+			}
+			$request_data['country_id'] = $id;
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -350,10 +361,23 @@ class Contacts extends DolibarrApi
 				continue;
 			}
 			if ($field == 'array_options' && is_array($value)) {
+				$this->contact->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
+			}
+			if ($field == 'socid') {
+				$new_socid = (int) $value;
+				$loopthirdpartytmp = new Societe($this->db);
+				$new_thirdparty_result = $loopthirdpartytmp->fetch($new_socid);
+				if ($new_thirdparty_result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to socid/thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
 			}
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
@@ -408,9 +432,20 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->contact);
 				}
 				continue;
+			}
+			if ($field == 'socid') {
+				$new_socid = (int) $value;
+				$loopthirdpartytmp = new Societe($this->db);
+				$new_thirdparty_result = $loopthirdpartytmp->fetch($new_socid);
+				if ($new_thirdparty_result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to socid/thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
 			}
 
 			$this->contact->$field = $this->_checkValForAPI($field, $value, $this->contact);
@@ -642,9 +677,12 @@ class Contacts extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object data
+	 * @phpstan-template T
 	 *
 	 * @param	Object	$object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ $search_user = GETPOST("search_user", "alpha");
 $search_desc = GETPOST("search_desc", "alpha");
 $search_ua   = GETPOST("search_ua", "restricthtml");
 $search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
-$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
+$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));		// TODO Replace with $search_entity = GETPOSTINT('search_entity') when the filter is available on screen for this page
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -124,8 +124,8 @@ if ($date_end !== '') {
 $arrayfields = array(
 	'e.prefix_session' => array(
 		'label' => 'UserAgent',
-		'checked' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
-		'enabled' => (!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'checked' => getDolGlobalInt('AUDIT_ENABLE_PREFIX_SESSION'),
+		'enabled' => getDolGlobalInt('AUDIT_ENABLE_PREFIX_SESSION'),
 		'position' => 110
 	)
 );
@@ -175,7 +175,6 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
 	$error = 0;
 
 	$db->begin();
-	$securityevents = new Events($db);
 
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
@@ -225,7 +224,7 @@ $sql .= " u.login, u.admin, u.email, u.entity, u.firstname, u.lastname, u.gender
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 if ($search_entity > 0) {
-	$sql .= " WHERE e.entity = ".((int) $search_entity).")";
+	$sql .= " WHERE e.entity = ".((int) $search_entity);
 } else {
 	$sql .= " WHERE e.entity IN (".getEntity('event', (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 }
@@ -340,10 +339,10 @@ if ($result) {
 
 	$center = '';
 	if ($num) {
-		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'">'.$langs->trans("Purge").'</a>';
 	}
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -375,7 +374,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch center">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -421,7 +420,7 @@ if ($result) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -433,7 +432,7 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
 	print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "e.rowid", "", $param, '', $sortfield, $sortorder);
@@ -447,7 +446,7 @@ if ($result) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
 	print "</tr>\n";
@@ -458,7 +457,7 @@ if ($result) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
 			$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
@@ -473,7 +472,7 @@ if ($result) {
 		print '<td class="nowrap left">'.dol_print_date($db->jdate($obj->dateevent), '%Y-%m-%d %H:%M:%S', 'tzuserrel').'</td>';
 
 		// Code
-		print '<td>'.dol_escape_htmltag($obj->type).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dolPrintLabel($obj->type).'">'.dolPrintLabel($obj->type).'</td>';
 
 		// IP
 		print '<td class="nowraponall">';
@@ -495,9 +494,9 @@ if ($result) {
 			$userstatic->email = $obj->email;
 
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin', 'class="valignmiddle paddingright"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright"');
+				print img_picto($langs->trans("AdministratorDesc"), 'admin', 'class="valignmiddle paddingright"');
 			}
 
 			//print $userstatic->getLoginUrl(-1);
@@ -522,15 +521,15 @@ if ($result) {
 			}
 		}
 		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($text).'">';
-		print dol_escape_htmltag($text);
+		print '<span class="small">'.dol_escape_htmltag($text).'</span>';
 		print '</td>';
 
 		// User agent
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-		print dol_escape_htmltag($obj->user_agent);
+		print '<span class="small">'.dol_escape_htmltag($obj->user_agent).'</span>';
 		print '</td>';
 
-		// Prefix
+		// Prefix (the name of the session is DOLSESSID_
 		if (!empty($arrayfields['e.prefix_session']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
@@ -538,7 +537,7 @@ if ($result) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="right">';
 			$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
 			$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));

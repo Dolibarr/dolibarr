@@ -4,11 +4,13 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2025		Hannes Hieronimi		<hannes@innwerk.org>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +32,6 @@
  *  \brief      Page with bank journal
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -46,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
@@ -233,7 +234,7 @@ if ($resql) {
 				$sql .= " AND fd.product_type IN (0,1)";
 				$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? Facture::TYPE_DEPOSIT."," : "").Facture::TYPE_SITUATION.")";
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";	// TODO Must never have a GROUP BY on a field if field is not inside an aggregate function.
+				//$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id, f.rowid, f.ref, f.total_ht, f.total_ttc, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code, aa.account_number, aa.label, bu.type";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -350,7 +351,7 @@ if ($resql) {
 				$sql .= " AND ffd.product_type IN (0,1)";
 				$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? FactureFournisseur::TYPE_DEPOSIT."," : "").FactureFournisseur::TYPE_SITUATION.")";
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY ffd.rowid, bu.fk_bank";
+				//$sql .= " GROUP BY ffd.rowid, bu.fk_bank, ff.rowid, ff.ref, ff.total_ht, ff.total_ttc, pff.amount, ffd.total_ht, ffd.tva, ffd.total_localtax1, ffd.total_localtax2, ffd.tva_tx, ffd.total_ttc, ffd.vat_src_code, aa.account_number, aa.label, bu.url_id, bu.type";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -461,7 +462,7 @@ if ($resql) {
 				}
 				$sql .= " AND er.fk_statut >= ".ExpenseReport::STATUS_APPROVED;
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id";
+				//$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id, er.rowid, er.ref, er.total_ht, er.total_ttc, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code, ctf.accountancy_code, bu.type, aa.account_number";
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -976,7 +977,7 @@ if ($resql) {
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."subscription as su";
 				$sql .= " INNER JOIN ".$db->prefix()."adherent as adh ON adh.rowid = su.fk_adherent";
-				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = su.rowid AND bu.type = '".$db->escape($type)."'";
+				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = su.fk_bank AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=su.rowid";
@@ -1004,7 +1005,7 @@ if ($resql) {
 						// Add object in payment
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-								'amount' => -$obj->amount_payment,
+								'amount' => $obj->amount_payment,
 								'bu_url_id' => $obj->bu_url_id,
 							);
 						}
@@ -1205,15 +1206,15 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
 						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $amount;
+						$total_operation += (float) $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
 					}
-					$total_check -= $amount;
+					$total_check -= (float) $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
 					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), - (float) $amount, $journal, $journal_label, '');
 					if ($result < 0) {
 						$errorforline++;
 
@@ -1402,7 +1403,7 @@ if (empty($action) || $action == 'view') {
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 
-	print '<div class="tabsAction tabsActionNoBottom">';
+	print '<br><div class="tabsAction tabsActionNoBottom centerimp">';
 
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL')) {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
@@ -1441,7 +1442,6 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print "<td></td>";
 	print "<td>".$langs->trans("Date")."</td>";
 	print "<td>".$langs->trans("Piece").' ('.$langs->trans("ObjectsRef").')</td>';
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
@@ -1482,11 +1482,11 @@ if (empty($action) || $action == 'view') {
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
 						$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-						$total_operation += $value;
+						$total_operation += (float) $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;
 					}
-					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], -$value);
+					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], (string) $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], - (float) $value);
 				}
 				$idx++;
 			}

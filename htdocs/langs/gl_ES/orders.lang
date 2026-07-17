@@ -213,3 +213,4 @@ ExistingDipatchLines = Xa hai liñas que xeraron movemento de stock para este pe
 ConfirmDeleteDispatchedLines = Reverter tamén todos os movementos de accións xa feitos?
 SupplierOrderDeletion = Pedimento a provedor %s Eliminación
 OrderStatusMakeOperationForbidden = Estado de pedimento prohibido para esta operación.
+CreateRemoteOrder=Crear pedimento remoto

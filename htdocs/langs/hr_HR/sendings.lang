@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Opcija iz modula Tijek rada, da se slanje aut
 NoWarehouseInBase=Nema skladišta u bazi
 ShipmentUpdated=Pošiljka uspješno ažurirana
 ShipmentIncrementStockOnDelete = Povećanje zaliha prilikom brisanja
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Dostava
+DeliveryRef=Ref. dostave
+DeliveryCard=Otpremnica
+DeliveryOrder=Otpremnica
+DeliveryDate=Datum isporuke
+CreateDeliveryOrder=Izradi otpremnicu
+DeliveryStateSaved=Status dostave pohranjen
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Postavi dan za slanje
+ValidateDeliveryReceipt=Ovjera otpremnice
+ValidateDeliveryReceiptConfirm=Jeste li sigurni da želite ovjeriti ovu otpremnicu?
+DeleteDeliveryReceipt=Izbriši dostavnicu
+DeleteDeliveryReceiptConfirm=Jeste li sigurni da želite izbrisati potvrdu o isporuci <b> %s </b>?
+DeliveryMethod=Način isporuke
+TrackingNumber=Broj pošiljke
+DeliveryNotValidated=Dostava nije potvrđena
+StatusDeliveryCanceled=Poništeno
+StatusDeliveryDraft=Skica
+StatusDeliveryValidated=Primljeno
+NameAndSignature=Ime i potpis:
+ToAndDate=Za___________________________________ dana ____/_____/__________
+GoodStatusDeclaration=Primljenje su stavke navedene iznad u dobrom stanju,
+Deliverer=Dostavljač:
+Sender=Pošiljatelj
+Recipient=Primatelj
+ErrorStockIsNotEnough=Nema dovoljno robe na skladištu
+Shippable=Isporuka moguća
+NonShippable=Isporuka nije moguća
+ShowShippableStatus=Prikaži status za otpremu
+ShowReceiving=Prikaži dostavnu primku
+NonExistentOrder=Nepostojeća narudžba
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Količine zaliha već dodijeljene na prethodnim linijama
 
 # Sending methods
 # ModelDocument

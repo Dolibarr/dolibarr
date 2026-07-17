@@ -29,7 +29,6 @@ ResponsibleUser=Usuário Responsável
 WithdrawalsSetup=Configuração do pagamento por Débito direto
 WithdrawStatistics=Estatísticas do pagamento por Débito direto
 LastWithdrawalReceipt=Últimos %s recibos de Débito direto
-MakeWithdrawRequest=Preparar um pagamento por débito direto
 MakeWithdrawRequestStripe=Faça uma solicitação de pagamento por débito direto via Stripe
 WithdrawRequestsDone=%s solicitações de pagamento de débito direto registradas
 ThirdPartyBankCode=Código bancário de terceiros

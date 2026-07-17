@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=درج ذیل اعمال عام طور پر صرف
 AccountancyAreaDescActionOnceBis=اکاؤنٹنگ میں ڈیٹا منتقل کرتے وقت آپ کو خود بخود درست ڈیفالٹ اکاؤنٹنگ اکاؤنٹ تجویز کرکے مستقبل میں آپ کا وقت بچانے کے لیے اگلے اقدامات کیے جانے چاہئیں۔
 AccountancyAreaDescActionFreq=درج ذیل کارروائیاں عام طور پر بہت بڑی کمپنیوں کے لیے ہر مہینے، ہفتے یا دن کی جاتی ہیں...
 AccountancyAreaDescJournalSetup=مرحلہ %s: مینو سے اپنے جریدے کی فہرست کا مواد چیک کریں %s
-AccountancyAreaDescChartModel=STEP %s: چیک کریں کہ اکاؤنٹ کے چارٹ کا ماڈل موجود ہے یا مینو سے ایک بنائیں %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=STEP %s: منتخب کریں اور|یا اپنے اکاؤنٹ کا چارٹ مینو %s سے مکمل کریں
 AccountancyAreaDescFiscalPeriod=STEP %s: Define the fiscal period which determines the range of dates accepted for creating accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=STEP %s: ہر VAT کی شرح کے لیے اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) عطی
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) ممبرشپ سبسکرپشنز کو رجسٹر کرنے کے لیے استعمال کیا جائے گا (ممبرشپ ماڈیول - اگر ممبرشپ بغیر رسید کے ریکارڈ کی گئی ہو)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) کسٹمر ڈپازٹ کو رجسٹر کرنے کے لیے ڈیفالٹ اکاؤنٹ کے طور پر استعمال کیا جائے۔
 UseAuxiliaryAccountOnCustomerDeposit=ڈاون پیمنٹ لائنوں کے لیے سبسڈری لیجر میں کسٹمر اکاؤنٹ کو انفرادی اکاؤنٹ کے طور پر اسٹور کریں (اگر غیر فعال ہو تو، ڈاؤن پیمنٹ لائنوں کے لیے انفرادی اکاؤنٹ خالی رہے گا)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) بطور ڈیفالٹ استعمال کیا جائے۔
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=ڈاون پیمنٹ لائنز کے لیے سبسڈیری لیجر میں انفرادی اکاؤنٹ کے طور پر سپلائر اکاؤنٹ اسٹور کریں (اگر غیر فعال ہو تو، ڈاؤن پیمنٹ لائنوں کے لیے انفرادی اکاؤنٹ خالی رہے گا)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=اکاؤنٹنگ اکاؤنٹنگ ڈیفالٹ کسٹمر برقرار وارنٹی رجسٹر کرنے کے لئے
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=اکاؤنٹ (اکاؤنٹ کے چارٹ سے) ایک ہی ملک میں خریدی گئی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹ استعمال کیا جائے (اگر پروڈکٹ شیٹ میں اس کی وضاحت نہ کی گئی ہو)
@@ -275,9 +275,10 @@ HideOpeningBalance=اوپننگ بیلنس چھپائیں۔
 ShowSubtotalByGroup=سطح کے لحاظ سے ذیلی کل دکھائیں۔
 Pcgtype=اکاؤنٹ کا گروپ
 PcgtypeDesc=اکاؤنٹ کے گروپ کو کچھ اکاؤنٹنگ رپورٹس کے لیے پہلے سے طے شدہ 'فلٹر' اور 'گروپنگ' کے معیار کے طور پر استعمال کیا جاتا ہے۔ مثال کے طور پر، 'انکم' یا 'خرچ' کو اخراجات/آمدنی کی رپورٹ بنانے کے لیے مصنوعات کے اکاؤنٹنگ اکاؤنٹس کے لیے بطور گروپ استعمال کیا جاتا ہے۔
-AccountingCategoriesDesc=اکاؤنٹس کے حسب ضرورت گروپ کو اکاؤنٹنگ اکاؤنٹس کو ایک نام میں گروپ کرنے کے لیے استعمال کیا جا سکتا ہے تاکہ فلٹر کے استعمال یا حسب ضرورت رپورٹس کی تعمیر کو آسان بنایا جا سکے۔
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=قابلِ مصالحت
 Centralized=Centralized account
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=ٹیکس سے پہلے کل کاروبار
 TotalMarge=فروخت کا کل مارجن
 DescVentilCustomer=اکاؤنٹ کے چارٹ سے پروڈکٹ اکاؤنٹ سے منسلک کسٹمر انوائس لائنوں کی فہرست یہاں دیکھیں
@@ -319,7 +320,7 @@ NotReconciled=صلح نہیں ہوئی۔
 WarningRecordWithoutSubledgerAreExcluded=انتباہ، سبلیجر اکاؤنٹ کے بغیر تمام لائنوں کو فلٹر کیا گیا ہے اور اس منظر سے خارج کر دیا گیا ہے۔
 AccountRemovedFromCurrentChartOfAccount=اکاؤنٹنگ اکاؤنٹ جو اکاؤنٹس کے موجودہ چارٹ میں موجود نہیں ہے۔
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
-BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=سپلائر کی خریداریوں 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=جب یہ اختیار فعال ہوتا ہے، تو آپ اس بات کی وضاحت کر سکتے ہیں کہ سپلائی کرنے والے یا دیے گئے وینڈر انوائس کو اکاؤنٹنسی میں مختلف طریقے سے منتقل کیا جانا چاہیے: اکاؤنٹنگ کے چارٹ سے 2 دیے گئے اکاؤنٹس پر اکاؤنٹنگ میں ایک اضافی ڈیبٹ اور ایک کریڈٹ لائن تیار ہو جائے گی جس کی وضاحت "%s" سیٹ اپ صفحہ۔
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
+
 ## Export
 NotExportLettering=فائل تیار کرتے وقت حروف کو برآمد نہ کریں۔
 NotifiedExportDate=ابھی تک ایکسپورٹ نہیں کی گئی لائنوں کو ایکسپورٹڈ کے بطور جھنڈا لگائیں <span class="warning">(برآمد شدہ کے طور پر جھنڈے والی لائن میں ترمیم کرنے کے لیے، آپ کو پوری ٹرانزیکشن کو حذف کرنا ہوگا اور اسے اکاؤنٹنگ میں دوبارہ منتقل کرنا ہوگا)</span>
@@ -389,6 +391,7 @@ Modelcsv_Gestinumv5=Gestinum کے لیے برآمد کریں (v5)
 Modelcsv_charlemagne=Aplim Charlemagne کے لیے برآمد کریں۔
 ChartofaccountsId=اکاؤنٹس کی شناخت کا چارٹ
 ExportToPdf = Export to PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Ledger accounts
 PdfBalanceTitle = Ledger Balance
 PdfBookkeepingTitle = Journals
@@ -440,7 +443,7 @@ AccountRemovedFromGroup=اکاؤنٹ گروپ سے ہٹا دیا گیا۔
 SaleLocal=مقامی فروخت
 SaleExport=برآمد کی فروخت
 SaleEEC=ای ای سی میں فروخت
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 AnySale=Any sale
 ForbiddenTransactionAlreadyExported=ممنوع: لین دین کی توثیق اور/یا برآمد کی گئی ہے۔
@@ -485,7 +488,7 @@ AccountancyClosureConfirmClose=کیا آپ واقعی موجودہ مالی مد
 AccountancyClosureConfirmAccountingReversal=کیا آپ واقعی "برقرار آمدنی" کے اندراجات ریکارڈ کرنا چاہتے ہیں؟
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=سیٹ اپ کے کچھ لازمی اقدامات نہیں کیے گئے، براہ کرم انہیں مکمل کریں۔
@@ -508,7 +511,7 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=بک کیپنگ دستاویز کی تاریخ فعال مالی مدت کے اندر نہیں ہے۔
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=بک کیپنگ ڈاک کی تاریخ بند مالی مدت کے اندر ہے۔
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Product or service usage
 ## Import
 ImportAccountingEntries=اکاؤنٹنگ اندراجات
@@ -537,15 +540,15 @@ ExpenseReportJournal=اخراجات کی رپورٹ جرنل
 DocsAlreadyExportedAreIncluded=پہلے سے برآمد شدہ دستاویزات شامل ہیں۔
 ClickToShowAlreadyExportedLines=پہلے سے برآمد شدہ لائنوں کو دکھانے کے لیے کلک کریں۔
 NAccounts=%s اکاؤنٹس
-ACCOUNTING_USE_TREASURY_Desc=This is the mode for treasury accountancy. We are using the payments only and their date for doing the accountancy.
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the mode for real accountancy. We are using both the invoices and payments for doing the accountancy.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
 BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=This will clone the bookkeeping entry (all lines linked to this bookkeeping entry will be cloned). Are you sure you want to clone the selected %s records?
 ConfirmMassCloneBookkeepingWriting=Confirm mass cloning
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass extinction
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will extinguish the bookkeeping entry (all lines linked to this bookkeeping entry will be extinguished). Are you sure you want to bypass the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=This will change the account of all selected lines.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirm mass account change
 CloningSuccess=Successful transaction cloning : %s
@@ -560,6 +563,6 @@ NoAccountsChangedWithAccountNumber=Transactions not updated with account numbers
 HasAlreadyBeenReversed=has already been reversed
 ErrorWhileCreating=Error during creation %s
 ReturnAccount=Return
-Clone=Cloner
+Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed

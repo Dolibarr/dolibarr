@@ -121,7 +121,6 @@ ValideTrip=Phê duyệt báo cáo chi phí
 ExpenseReportPayments=Thanh toán báo cáo chi phí
 TaxUndefinedForThisCategory = Thuế không được xác định cho danh mục này
 errorComputeTtcOnMileageExpense=Lỗi khi tính toán chi phí đi lại
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Chỉ những thành phần trong trạng thái bản nháp mới có thể bị xóa trong hành động hàng loạt
 
 ## Dictionary
 EX_BRE=Bữa ăn sáng
@@ -159,3 +158,4 @@ TF_TRAIN=Xe lửa
 TF_TRIP=Vận chuyển
 FailedToSetPaid=Không thể thiết lập là đã thanh toán
 FailedToSetToCancel=Không thể hủy
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

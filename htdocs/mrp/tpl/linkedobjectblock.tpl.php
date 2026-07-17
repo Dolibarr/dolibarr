@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/mrp/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	mrp
+ *  \brief		Template to show objects linked to MO
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var CommonObject[] $linkedObjectBlock
+ * @var string $action
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -26,15 +47,6 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
-
-global $user, $db, $hookmanager;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force array<CommonObject> $linkedObjectBlock';
-$object = $GLOBALS['object'];
 
 // Load translation files required by the page
 $langs->load("bom");
@@ -58,8 +70,8 @@ if ($object->element == 'mo') {
 			$trclass = 'oddeven';
 
 			echo '<tr class="' . $trclass . '" >';
-			echo '<td class="linkedcol-element tdoverflowmax100">' . $langs->trans("ManufacturingOrder");
-			if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+			echo '<td class="linkedcol-element tdoverflowmax125">' . $langs->trans("ManufacturingOrder");
+			if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 				print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, '1') . '&amp;action=selectlines&amp;token='.newToken().'" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
 			}
 			echo '</td>';
@@ -91,12 +103,20 @@ if ($object->element == 'mo') {
 		}
 	}
 } else {
-	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 	'@phan-var-force array<CommonObject> $linkedObjectBlock';
+
 	$total = 0;
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
 		$ilink++;
+		$refWithThirdparty = $objectlink->ref_client ? dolPrintHTML($objectlink->ref_client).'<br>' : '';
+
+		$objectlink->fetch_thirdparty();
+
+		$refWithThirdparty = '<span class="small">'.$refWithThirdparty;
+		$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
+		$refWithThirdparty .= '</span>';
 
 		$trclass = 'oddeven';
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -104,14 +124,14 @@ if ($object->element == 'mo') {
 		}
 		print '<tr class="'.$trclass.'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
 		print '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("ManufacturingOrder");
-		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 			$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$objectlink->id;
 			print '<a class="objectlinked_importbtn" href="'.$url.'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		}
 		print '</td>';
 
 		print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-		print '<td class="linkedcol-ref" >'.$objectlink->ref_client.'</td>';
+		print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute($objectlink->ref_client).'">'.$refWithThirdparty.'</td>';
 		print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start_planned, 'day').'</td>';
 		print '<td class="linkedcol-amount right">-</td>';
 		print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrProductOrService', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -357,7 +358,7 @@ $server->register(
 
 
 /**
- * Get produt or service
+ * Get product or service
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id of object
@@ -581,21 +582,6 @@ function createProductOrService($authentication, $product)
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
 		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
-		/*foreach($product['lines'] as $line)
-		{
-			$newline=new FactureLigne($db);
-			$newline->type=$line['type'];
-			$newline->desc=$line['desc'];
-			$newline->fk_product=$line['fk_product'];
-			$newline->total_ht=$line['total_net'];
-			$newline->total_vat=$line['total_vat'];
-			$newline->total_ttc=$line['total'];
-			$newline->vat=$line['vat_rate'];
-			$newline->qty=$line['qty'];
-			$newline->fk_product=$line['product_id'];
-		}*/
-		//var_dump($product['ref_ext']);
-		//var_dump($product['lines'][0]['type']);
 
 		$elementtype = 'product';
 
@@ -1042,9 +1028,9 @@ function getProductsForCategory($authentication, $id, $lang = '')
 			if ($result > 0) {
 				$table = "product";
 				$field = "product";
-				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+				$sql  = "SELECT fk_".$db->sanitize($field)." FROM ".MAIN_DB_PREFIX."categorie_".$db->sanitize($table);
 				$sql .= " WHERE fk_categorie = ".((int) $id);
-				$sql .= " ORDER BY fk_".$field." ASC";
+				$sql .= " ORDER BY fk_".$db->sanitize($field)." ASC";
 
 
 				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);

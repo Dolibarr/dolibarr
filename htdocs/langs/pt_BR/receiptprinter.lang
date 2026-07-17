@@ -1,12 +1,9 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuração do módulo ImpressoraRecibo
 PrinterAdded=Impressora %s adicionada
 PrinterUpdated=Impressora %s atualizada
 PrinterDeleted=Impressora %s excluída
 TestSentToPrinter=Teste enviado para a impressora %s
-ReceiptPrinterDesc=Configuração das impressoras de recibo
 ReceiptPrinterTemplateDesc=Configuração do Tema
-ReceiptPrinterProfileDesc=Descrição do Perfil da Impressora de Recibo
 SetupReceiptTemplate=Configuração do Tema
 CONNECTOR_DUMMY=Impressora Virtual
 CONNECTOR_NETWORK_PRINT=Impressora de rede
@@ -14,7 +11,6 @@ CONNECTOR_FILE_PRINT=Impressora local
 CONNECTOR_WINDOWS_PRINT=Impressora local do Windows
 CONNECTOR_CUPS_PRINT=Impressora de copos
 CONNECTOR_DUMMY_HELP=Impressora Falsa para teste, não imprime nada
-CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser:secret@nomedocomputador/grupodetrabalho/Impressora do Recibo
 CONNECTOR_CUPS_PRINT_HELP=Nome da impressora de copos, exemplo: HPRT_TP805L
 PROFILE_DEFAULT=Perfil Padrão
 PROFILE_EPOSTEP=Perfil Epos Tep

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Kontabiliteti
 Accounting=Accounting
+AccountingAccount=Accounting account
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -72,7 +74,7 @@ AccountancyAreaDescActionOnce=Veprimet e mëposhtme zakonisht kryhen vetëm një
 AccountancyAreaDescActionOnceBis=Hapat e mëtejshëm duhet të bëhen për t'ju kursyer kohë në të ardhmen duke ju sugjeruar automatikisht llogarinë e saktë të parazgjedhur të kontabilitetit kur transferoni të dhëna në kontabilitet
 AccountancyAreaDescActionFreq=Veprimet e mëposhtme zakonisht kryhen çdo muaj, javë ose ditë për kompani shumë të mëdha...
 AccountancyAreaDescJournalSetup=HAPI %s: Kontrolloni përmbajtjen e listës së ditarit tuaj nga menyja %s
-AccountancyAreaDescChartModel=HAPI %s: Kontrolloni nëse ekziston një model i skemës së llogarisë ose krijoni një nga menyja %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=HAPI %s: Zgjidhni dhe|ose plotësoni grafikun tuaj të llogarisë nga menyja %s
 AccountancyAreaDescFiscalPeriod=HAPI %s: Përcaktoni periudhën fiskale e cila përcakton diapazonin e datave të pranuara për krijimin e regjistrimeve kontabël. Për këtë, përdorni hyrjen e menysë %s.
 AccountancyAreaDescVat=HAPI %s: Përcaktoni llogaritë e kontabilitetit për çdo normë të TVSH-së. Për këtë, përdorni hyrjen e menysë %s.
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdore
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për të regjistruar abonimet e anëtarësimit (Moduli i anëtarësimit - nëse anëtarësimi regjistrohet pa faturë)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për të regjistruar depozitën e klientit
 UseAuxiliaryAccountOnCustomerDeposit=Ruani llogarinë e klientit si llogari individuale në librin e varur për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si parazgjedhje
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Llogaria e furnitorit të dyqanit si llogari individuale në librin filial për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Llogaria e kontabilitetit si parazgjedhje për të regjistruar garancinë e ruajtur të klientit
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e blera brenda të njëjtit vend (përdoret nëse nuk përcaktohet në fletën e produktit)
@@ -275,9 +277,10 @@ HideOpeningBalance=Fshih bilancin e hapjes
 ShowSubtotalByGroup=Trego nëntotalin sipas nivelit
 Pcgtype=Grupi i llogarive
 PcgtypeDesc=Grupi i llogarive përdoren si kritere të paracaktuara 'filtri' dhe 'grupimi' për disa raporte kontabël. Për shembull, 'TË ARDHURA' ose 'SHPENZIME' përdoren si grupe për llogaritë e kontabilitetit të produkteve për të ndërtuar raportin e shpenzimeve/të ardhurave.
-AccountingCategoriesDesc=Grupi i personalizuar i llogarive mund të përdoret për të grupuar llogaritë e kontabilitetit në një emër për të lehtësuar përdorimin e filtrit ose ndërtimin e raporteve me porosi.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=E pajtueshme
 Centralized=Llogari e centralizuar
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Konsultohuni këtu me listën e linjave të faturave të klientit të lidhura (ose jo) në një llogari produkti nga grafiku i llogarisë
@@ -319,7 +322,7 @@ NotReconciled=I papajtuar
 WarningRecordWithoutSubledgerAreExcluded=Paralajmërim, të gjitha linjat pa llogarinë e përcaktuar të nënlibrit janë filtruar dhe përjashtuar nga kjo pamje
 AccountRemovedFromCurrentChartOfAccount=Llogari kontabël që nuk ekziston në planin aktual të llogarive
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Kujdes, kjo faqe përmban vetëm hyrje të transferuara në sistemin e kontabilitetit.
-BookkeepingNumRefModelDesc = Kthen numrin e referencës në formatin yyyyjjnnnn ku yyyy është viti dhe jj kodi i ditarit, nnnn është një numër sekuencial me rritje automatike në varësi të vitit dhe kodit të ditarit.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Modelet e numërimit të kontabilitetit
 ## Admin
 BindingOptions=Opsionet për transferimin në kontabilitet
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivizoni menaxhimin e tarifës së 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kur aktivizohet ky opsion, ju mund të përcaktoni që një faturë furnizuesi ose një faturë e caktuar shitësi duhet të transferohet në kontabilitet ndryshe: Një debit shtesë dhe një linjë krediti do të gjenerohen në kontabilitet në 2 llogari të dhëna nga skema e llogarisë e përcaktuar në "%s" faqe konfigurimi.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivizoni një skedë në kartat e palëve të treta për të parë librin e llogarive të degëve.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kur ky opsion është i aktivizuar, shfaqet një skedë e re në kartat e palëve të treta për të parë dhe menaxhuar kontabilitetin për palën e tretë, si për të pajtuar, printuar etj.
+
 ## Export
 NotExportLettering=Mos e eksportoni shkronjat kur krijoni skedarin
 NotifiedExportDate=Flamuroni linjat e paeksportuara ende si të eksportuara <span class="warning">(për të modifikuar një linjë të shënuar si të eksportuar, do t'ju duhet të fshini të gjithë transaksionin dhe ta transferoni atë në kontabilitet)</span>
@@ -389,6 +393,7 @@ Modelcsv_Gestinumv5=Eksporto për Gestinum (v5)
 Modelcsv_charlemagne=Eksporti për Aplim Charlemagne
 ChartofaccountsId=Skema e llogarive ID
 ExportToPdf = Eksporto në PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Llogaritë e librit kryesor
 PdfBalanceTitle = Bilanci i Librit Llogaritar
 PdfBookkeepingTitle = Journals
@@ -440,7 +445,7 @@ AccountRemovedFromGroup=Llogaria u hoq nga grupi
 SaleLocal=Shitje lokale
 SaleExport=Shitje eksporti
 SaleEEC=Shitje në EEC
-SaleEECWithVAT=Shitja është në BEE me një TVSH jo të pavlefshme, kështu që supozojmë se kjo NUK është një shitje brenda komunitetit dhe llogaria e sugjeruar është llogaria standarde e produktit.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Shitja është në BEE pa TVSH, por ID-ja e TVSH-së e palës së tretë nuk është përcaktuar. Ne përdorim llogarinë për shitjet standarde. Ju mund të rregulloni ID-në e TVSH-së të palës së tretë ose të ndryshoni llogarinë e produktit të sugjeruar për lidhje nëse është e nevojshme.
 AnySale=Çdo shitje
 ForbiddenTransactionAlreadyExported=E ndaluar: Transaksioni është vërtetuar dhe/ose eksportuar.
@@ -485,7 +490,7 @@ AccountancyClosureConfirmClose=Jeni i sigurt që dëshironi të mbyllni periudh�
 AccountancyClosureConfirmAccountingReversal=Jeni i sigurt që dëshironi të regjistroni hyrjet për "Fitimet e mbajtura" ?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Disa hapa të detyrueshëm të konfigurimit nuk u kryen, ju lutemi plotësoni ato
@@ -508,7 +513,7 @@ ErrorNoFiscalPeriodActiveFound=Nuk u gjet asnjë periudhë fiskale aktive (me nj
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data e dokumentit të kontabilitetit nuk është brenda periudhës aktive fiskale
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data e dokumentit të kontabilitetit është brenda një periudhe fiskale të mbyllur
 Error_BOOKKEEPING_ADDON_NotDefined=Gabim, rregulli për numërimin e kontabilitetit nuk është përcaktuar në konfigurimin e përgjithshëm të modulit të Kontabilitetit.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Provo të fusësh një transaksion të pabalancuar në libër për %s (ID e pagesës: %s). U anulua. Me siguri një gabim.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Përdorimi i produktit ose shërbimit
 ## Import
 ImportAccountingEntries=Regjistrimet e kontabilitetit
@@ -537,15 +542,15 @@ ExpenseReportJournal=Ditari i raportit të shpenzimeve
 DocsAlreadyExportedAreIncluded=Dokumentet e eksportuara tashmë janë përfshirë
 ClickToShowAlreadyExportedLines=Klikoni për të shfaqur linjat e eksportuara tashmë
 NAccounts=llogaritë %s
-ACCOUNTING_USE_TREASURY_Desc=Kjo është mënyra për kontabilitetin e thesarit. Ne po përdorim vetëm pagesat dhe datën e tyre për të bërë kontabilitetin.
-ACCOUNTING_USE_NON_TREASURY_Desc=Kjo është mënyra për kontabilitet të vërtetë. Ne përdorim si faturat ashtu edhe pagesat për të bërë kontabilitetin.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referenca e dokumentit burimor që gjeneron këtë transaksion bankar (Referenca e Faturës, Referenca e Raportit të Shpenzimeve, ...)
 BankTransactionRef=Një referencë për transaksionin bankar (Opsionale, një ID automatik është gjeneruar tashmë)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Kjo do të klonojë zërin e kontabilitetit (të gjitha rreshtat e lidhura me këtë zë të kontabilitetit do të klonohen). A jeni i sigurt që doni të klononi të dhënat e zgjedhura %s?
 ConfirmMassCloneBookkeepingWriting=Konfirmo klonimin masiv
-ConfirmMassReturnAccountBookkeepingWriting=Konfirmo zhdukjen masive
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Kjo do të shuajë zërin e kontabilitetit (të gjitha rreshtat e lidhura me këtë zë të kontabilitetit do të shuhen). A jeni i sigurt që doni të anashkaloni të dhënat e zgjedhura %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Kjo do të ndryshojë llogarinë e të gjitha linjave të zgjedhura.
 confirmMassAssignAccountBookkeepingWritingConfirm=Konfirmo ndryshimin masiv të llogarisë
 CloningSuccess=Klonim i suksesshëm i transaksionit: %s
@@ -560,6 +565,6 @@ NoAccountsChangedWithAccountNumber=Transaksionet nuk janë përditësuar me numr
 HasAlreadyBeenReversed=tashmë është përmbysur
 ErrorWhileCreating=Gabim gjatë krijimit %s
 ReturnAccount=Return
-Clone=Klonues
+Clone=Clone
 AlreadyReturnedAccount=Hyrja nr.%s është anuluar tashmë
 SuccessReturnedAccount=Hyrja nr.%s është anuluar

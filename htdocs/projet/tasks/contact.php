@@ -2,8 +2,9 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Incent Maury TimGroup	<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +27,6 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,20 +34,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$id = GETPOSTINT('id');						// Id of task
+$ref = GETPOST('ref', 'alpha');				// Ref of task
 $withproject = GETPOSTINT('withproject');
 $project_ref = GETPOST('project_ref', 'alpha');
 
 $object = new Task($db);
 $projectstatic = new Project($db);
 
+$hookmanager->initHooks(array('projecttaskcontact', 'globalcard'));
+
+// Load task
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
@@ -67,82 +71,90 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-// Add new contact
-if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
-	$source = 'internal';
-	if (GETPOST("addsourceexternal")) {
-		$source = 'external';
-	}
+$parameters = array('projectid' => $object->fk_project);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	$result = $object->fetch($id, $ref);
-
-	if ($result > 0 && $id > 0) {
-		if ($source == 'internal') {
-			$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
-			$typeid = GETPOST('type');
-		} else {
-			$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOSTINT("contactid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
-			$typeid = GETPOST('typecontact');
+if (empty($reshook)) {
+	// Add new contact
+	if ($action == 'addcontact' && $user->hasRight('projet', 'creer')) {
+		$source = 'internal';
+		if (GETPOST("addsourceexternal")) {
+			$source = 'external';
 		}
-		if ($idfortaskuser == -2) {
-			$result = $projectstatic->fetch($object->fk_project);
-			if ($result <= 0) {
-				dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+
+		$result = $object->fetch($id, $ref);
+
+		if ($result > 0 && $id > 0) {
+			if ($source == 'internal') {
+				$idfortaskuser = ((GETPOST("userid") != 0 && GETPOST('userid') != -1) ? GETPOST("userid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+				$typeid = GETPOST('type');
 			} else {
-				$contactsofproject = $projectstatic->getListContactId('internal');
-				foreach ($contactsofproject as $key => $val) {
-					$result = $object->add_contact($val, $typeid, $source);
-				}
+				$idfortaskuser = ((GETPOST("contactid") > 0) ? GETPOSTINT("contactid") : 0); // GETPOST('contactid') may val -1 to mean empty or -2 to means "everybody"
+				$typeid = GETPOST('typecontact');
 			}
-		} else {
-			$result = $object->add_contact($idfortaskuser, $typeid, $source);
+			if ($idfortaskuser == -2) {
+				$result = $projectstatic->fetch($object->fk_project);
+				if ($result <= 0) {
+					dol_print_error($db, $projectstatic->error, $projectstatic->errors);
+				} else {
+					$contactsofproject = $projectstatic->getListContactId('internal');
+					foreach ($contactsofproject as $key => $val) {
+						$result = $object->add_contact($val, $typeid, $source);
+					}
+				}
+			} else {
+				$result = $object->add_contact($idfortaskuser, $typeid, $source);
+			}
 		}
-	}
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-}
-
-// bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
-	if ($object->fetch($id, $ref)) {
-		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Efface un contact
-if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
-	$object->fetch($id, $ref);
-	$result = $object->delete_contact(GETPOSTINT("lineid"));
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
-if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch(0, $project_ref) > 0) {
-		$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0) {
-			$id = $tasksarray[0]->id;
-		} else {
-			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+		if ($result >= 0) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}
+
+	// bascule du statut d'un contact
+	if ($action == 'swapstatut' && $user->hasRight('projet', 'creer')) {
+		if ($object->fetch($id, $ref)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	if ($action == 'deleteline' && $user->hasRight('projet', 'creer')) {
+		$object->fetch($id, $ref);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
+			exit;
+		} else {
+			dol_print_error($db);
+		}
+	}
+
+	// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
+	if (!empty($project_ref) && !empty($withproject)) {
+		if ($projectstatic->fetch(0, $project_ref) > 0) {
+			$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
+			if (count($tasksarray) > 0) {
+				$id = $tasksarray[0]->id;
+			} else {
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
+				exit;
+			}
 		}
 	}
 }
@@ -173,11 +185,11 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
-			$object->fetchComments();
-		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
+			$object->fetchComments();
+		}
 		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
@@ -216,7 +228,7 @@ if ($id > 0 || !empty($ref)) {
 				$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 			}
 
-			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -259,7 +271,7 @@ if ($id > 0 || !empty($ref)) {
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+				print '<span class="amount">'.price($projectstatic->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 
@@ -531,6 +543,7 @@ if ($id > 0 || !empty($ref)) {
 					$contactstatic->lastname = $tab[$i]['lastname'];
 					$contactstatic->firstname = $tab[$i]['firstname'];
 					$contactstatic->email = $tab[$i]['email'];
+					$contactstatic->status = $tab[$i]['statuscontact'];
 					$contactstatic->statut = $tab[$i]['statuscontact'];
 					print $contactstatic->getNomUrl(1);
 				}

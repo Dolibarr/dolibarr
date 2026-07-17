@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,18 +164,12 @@ class Ctyperesource extends CommonDict
 			if ($numrows) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
-				$this->active = $obj->active;
+				$this->active = (int) $obj->active;
 			}
-
-			// Retrieve all extrafields for invoice
-			// fetch optionals attributes and labels
-			// $this->fetch_optionals();
-
-			// $this->fetch_lines();
 
 			$this->db->free($resql);
 

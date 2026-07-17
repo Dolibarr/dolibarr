@@ -4,7 +4,7 @@
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->TICKET_ADDON_PDF == "$value") {
+		if (getDolGlobalString('TICKET_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'TICKET_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -198,11 +198,22 @@ if ($action == 'updateMask') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 	$notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
-	$notification_email_description = "Sender of ticket replies sent from Dolibarr";
+	$notification_email_description = "Email of user allowed to send ticket replies from Dolibarr";
 	if (!empty($notification_email)) {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
 	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$notification_email_replyto = GETPOST('TICKET_NOTIFICATION_EMAIL_REPLYTO', 'alpha');
+	$notification_email_replyto_description = "Email that must appears as the sender of ticket replies sent from Dolibarr";
+	if (!empty($notification_email)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', $notification_email_replyto, 'chaine', 0, $notification_email_replyto_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_replyto_description, $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -215,6 +226,17 @@ if ($action == 'updateMask') {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, $notification_email_to_description, $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, $notification_email_to_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$notification_email_template = GETPOST('TICKET_NOTIFICATION_EMAIL_TEMPLATE', 'alpha');
+	$notification_email_template_description = 'Template email for ticket create notification';
+	if (!empty($notification_email_to)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', $notification_email_template, 'chaine', 0, $notification_email_template_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TEMPLATE', '', 'chaine', 0, $notification_email_template_description, $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -264,7 +286,7 @@ $page_name = 'TicketSetup';
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket');
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -311,6 +333,7 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 					'@phan-var-force ModeleNumRefTicket $module';
+					/** @var ModeleNumRefTicket $module */
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -341,7 +364,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
+						if (getDolGlobalString('TICKET_ADDON') == 'mod_'.$classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -394,7 +417,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -567,6 +590,22 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"
 print '</td>';
 print '</tr>';
 
+// Auto mark ticket as read when assign someone
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicketWhenAssign").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_ASSIGN');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_ASSIGN", $arrval, getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketWhenAssignHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+
 // Auto assign ticket to user who created it
 print '<tr class="oddeven">';
 print '<td><label for="TICKET_AUTO_ASSIGN_USER_CREATE" class="block">'.$langs->trans("TicketsAutoAssignTicket").'</label></td>';
@@ -645,7 +684,7 @@ if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print "</tr>\n";
 }
 
-// Email to send notifications
+// Email of sender allowed to send technical notifications
 print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
 print '<td class="left">';
 print img_picto('', 'email', 'class="pictofixedwidth"');
@@ -655,11 +694,21 @@ print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFro
 print '</td>';
 print '</tr>';
 
+// Email that must appears as the sender of email notifications
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_REPLYTO" class="block">'.$langs->trans("TicketEmailNotificationReplyTo").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_REPLYTO" name="TICKET_NOTIFICATION_EMAIL_REPLYTO" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationReplyToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
 print '<tr class="oddeven"><td class="titlefieldmiddle"><label for="TICKET_SEND_INTERNAL_CC" class="block">';
 print $form->textwithpicto($langs->trans("TicketSendToInternalCC"), $langs->trans("TicketSendToInternalCCHelp")).'</label></td>';
 print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
-print '<input class="flat width300" name="TICKET_SEND_INTERNAL_CC" value="'.getDolGlobalString('TICKET_SEND_INTERNAL_CC').'">';
+print '<input class="minwidth200" name="TICKET_SEND_INTERNAL_CC" value="'.getDolGlobalString('TICKET_SEND_INTERNAL_CC').'">';
 print '</td>';
 print '<td></td>';
 print '</tr>';
@@ -674,6 +723,32 @@ print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+
+$formmail->fetchAllEMailTemplate('ticket_send', $user, null, -1); // We set lang=null to get in priority record with no lang
+$arrayofmessagename = array();
+if (is_array($formmail->lines_model)) {
+	foreach ($formmail->lines_model as $modelmail) {
+		//var_dump($modelmail);
+		$moreonlabel = '';
+		if (!empty($arrayofmessagename[$modelmail->label])) {
+			$moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+		}
+		// The 'label' is the key that is unique if we exclude the language
+		$arrayofmessagename[$modelmail->label.':ticket_send'] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	}
+}
+
+// Email template for notification of TICKET_CREATE
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TEMPLATE" class="block">'.$langs->trans('TicketEmailNotificationTemplate').'</label></td>';
+print '<td class="left">';
+print $form->selectarray('TICKET_NOTIFICATION_EMAIL_TEMPLATE', $arrayofmessagename, getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TEMPLATE'), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans('TicketEmailNotificationTemplateHelp'), 1, 'help');
 print '</td>';
 print '</tr>';
 

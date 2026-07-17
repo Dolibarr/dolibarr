@@ -131,7 +131,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte = str_replace(array('{s1}', '{s2}', '{s3}', '{s4}'), array($s1, $s2, $s3, $s4), $texte);
 		$texte .= "<br>\n";
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL)) {
+		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
@@ -311,11 +311,11 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		}
 
 		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
+			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
 		} else {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
+			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe";
+			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
 		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
 

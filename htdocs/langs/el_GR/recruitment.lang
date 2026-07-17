@@ -19,7 +19,7 @@ ModuleRecruitmentDesc = Διαχειριστείτε και παρακολουθ
 # Admin page
 RecruitmentSetup = Ρύθμιση προσλήψεων
 RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για την ενότητα προσλήψεων
-RecruitmentArea=Περιοχή προσλήψεων
+RecruitmentArea=Τομέας προσλήψεων
 PublicInterfaceRecruitmentDesc=Οι δημόσιες σελίδες θέσεων εργασίας είναι δημόσιες διευθύνσεις URL για εμφάνιση και απάντηση σε ανοιχτές θέσεις εργασίας. Υπάρχει ένας διαφορετικός σύνδεσμος για κάθε ανοιχτή θέση εργασίας, που βρίσκεται σε κάθε εγγραφή εργασίας.
 EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελίδων ανοιχτών θέσεων εργασίας
 
@@ -68,3 +68,4 @@ ApplyJobCandidature=Κάντε αίτηση για αυτή τη δουλειά
 ErrorRecruitmmentCandidatureAlreadyExists= Η υποψηφιότητα για πρόσληψη υπάρχει ήδη με email %s
 RecruitmentCandidatureSaved=Η υποψηφιότητα πρόσληψης αποθηκεύτηκε με επιτυχία
 NoOpenJobOffer=Δεν υπάρχουν ανοιχτές προσφορές εργασίας αυτή τη στιγμή
+ShowPositionToBeFilled=Εμφάνιση Θέσης προς πλήρωση

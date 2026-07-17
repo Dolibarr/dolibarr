@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-stock');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
@@ -229,31 +230,40 @@ $formproduct = new FormProduct($db);
 
 $disableStockCalculateOn = array();
 if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
-	$langs->load('products');
-	$disableStockCalculateOn[] = 'BILL';
-	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
-	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
-	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
-	$disableStockCalculateOn[] = 'SHIPMENT_CLOSE';
-	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+	// If option virtual stock is enabled, we disable some mode for inc/dec stock change
+	// Why this ? As i don't see why, i comment this code by a hidden option
+	if (getDolGlobalString('PRODUIT_RESTRICT_STOCK_INCDEC_IF_SUBPRODUCTS_ENABLED')) {
+		$disableStockCalculateOn[] = 'BILL';
+		$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+		// STOCK_CALCULATE_ON_SHIPMENT is ok so not disable
+		// STOCK_CALCULATE_ON_SHIPMENT_CLOSE is ok so not disabled
+
+		$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+		$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+
+		print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+	}
 }
 if (isModEnabled('productbatch')) {
-	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
+	// If module lot/serial enabled, we disable some mode for inc/dec stock change
 	$langs->load("productbatch");
 	$disableStockCalculateOn[] = 'BILL';
 	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	// STOCK_CALCULATE_ON_SHIPMENT is ok so not disable
+	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE is ok so not disabled
+
 	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
 	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
 
-	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE
-	$descmode = $langs->trans('DeStockOnShipmentOnClosing');
+	$descmode = ""; $incmode = "";
+	/* $descmode = $langs->trans('DeStockOnShipmentOnClosing');
 	if (!isModEnabled('reception')) {
 		// STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER
 		$incmode = $langs->trans('ReStockOnDispatchOrder');
 	} else {
 		// STOCK_CALCULATE_ON_RECEPTION_CLOSE
 		$incmode = $langs->trans('StockOnReceptionOnClosing');
-	}
+	} */
 	print info_admin($langs->transnoentitiesnoconv("WhenProductBatchModuleOnOptionAreForced", $descmode, $incmode));
 }
 
@@ -605,14 +615,6 @@ if (empty($conf->use_javascript_ajax)) {
 print '</form>';
 
 
-
-print '<form>';
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="page_y" value="">';
-
 /*
  * Document templates generators
  */
@@ -624,7 +626,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -740,7 +742,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
@@ -758,8 +760,6 @@ foreach ($dirmodels as $reldir) {
 
 print '</table>';
 print '</div>';
-
-print '</form>';
 
 
 // Other

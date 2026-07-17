@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - exports
 ImportArea=Importación
+ExportableDatas=Datos exportables
 ImportableDatas=Datos importables
 SelectExportDataSet=Elija un conjunto de datos que desee exportar...
 SelectImportDataSet=Elija el conjunto de datos que desea importar...
@@ -44,7 +45,6 @@ FieldsTarget=Campos específicos
 FieldTarget=Campo de orientación
 FieldSource=Campo de origen
 NbOfSourceLines=Número de líneas en el archivo de origen
-NowClickToTestTheImport=Verifique que el formato del archivo (delimitadores de campo y cadena) de su archivo coincida con las opciones que se muestran y que ha omitido la línea de encabezado, o se marcarán como errores en la siguiente simulación. <br> Haga clic en el botón "<b>%s</b>" para ejecutar una verificación de la estructura / contenido del archivo y simular el proceso de importación. <br> <b> No se modificarán datos en su base de datos </b>.
 RunSimulateImportFile=Ejecutar simulación de importación
 FieldNeedSource=Este campo requiere datos del archivo de origen
 SomeMandatoryFieldHaveNoSource=Algunos campos obligatorios no tienen fuente de archivo de datos
@@ -81,7 +81,6 @@ ExportNumericFilter=NNNNN filtra por un valor <br> NNNNN + NNNNN filtra sobre un
 ImportFromLine=Importación a partir del número de línea
 EndAtLineNb=Finalizar en el número de línea
 ImportFromToLine=Rango límite (De - Para). Ej. Para omitir la línea(s) de encabezado.
-SelectPrimaryColumnsForUpdateAttempt=Seleccione las  columna(s) para usar como clave principal para ACTUALIZAR importación
 UpdateNotYetSupportedForThisImport=La actualización no es compatible con este tipo de importación (sólo insertar)
 NoUpdateAttempt=No se realizó ningún intento de actualización, sólo insertar
 ImportDataset_user_1=Usuarios (empleados o no) y propiedades

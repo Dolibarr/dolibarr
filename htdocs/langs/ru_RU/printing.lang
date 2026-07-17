@@ -46,6 +46,10 @@ IPP_Color=Цвет
 IPP_Device=Устройство
 IPP_Media=СМИ для принтера
 IPP_Supported=Тип СМИ
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Нет
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Цвет
 DirectPrintingJobsDesc=На этой странице перечислены задания печати, найденные для доступных принтеров.
 GoogleAuthNotConfigured=Google OAuth не настроен. Включите модуль OAuth и установите Google ID/Secret.
 GoogleAuthConfigured=Учетные данные Google OAuth были найдены при настройке модуля OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Настройки для драйвера серви
 PrintingDriverDescprintipp=Переменные конфигурации для драйвера печати Cups.
 PrintTestDescprintgcp=Список принтеров для сервиса Google Cloud Print
 PrintTestDescprintipp=Список принтеров для чашек.
-Testbbbb
+PrinterLocation=Printer location
