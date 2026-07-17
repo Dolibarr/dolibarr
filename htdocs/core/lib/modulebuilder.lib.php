@@ -1567,7 +1567,7 @@ function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement
  * @param IncludePathResolver  $resolver   Path resolver bound to the module root
  * @return TemplateMutationReport          Report describing replacements/skips/warnings
  */
-function rewriteIncludeStatements($content, $file, $moduleName, IncludeRewritePolicy $policy, IncludePathResolver $resolver)
+function rewriteIncludeStatements($content, $file, $moduleName, IncludeRewritePolicy $policy, IncludePathResolver $resolver): TemplateMutationReport
 {
 	$report = new TemplateMutationReport($file);
 	$moduleName = strtolower($moduleName);
@@ -1622,7 +1622,7 @@ function rewriteIncludeStatements($content, $file, $moduleName, IncludeRewritePo
  * @param string $moduleName    Module directory name
  * @return TemplateMutationReport[] One report per processed file
  */
-function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
+function rewriteGeneratedIncludes($moduleRootDir, $moduleName): array
 {
 	$reports = array();
 
@@ -1675,6 +1675,15 @@ function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
 		$reports[] = $report;
 	}
 
+	// Surface non-fatal problems (e.g. a file left unchanged after a failed syntax check) to the user.
+	$warnings = array();
+	foreach ($reports as $report) {
+		$warnings = array_merge($warnings, $report->warnings);
+	}
+	if (!empty($warnings)) {
+		setEventMessages('', $warnings, 'warnings');
+	}
+
 	return $reports;
 }
 
@@ -1688,7 +1697,7 @@ function rewriteGeneratedIncludes($moduleRootDir, $moduleName)
  * @param string $source PHP source
  * @return bool          True if parsable
  */
-function moduleBuilderIsPhpParsable($source)
+function moduleBuilderIsPhpParsable($source): bool
 {
 	try {
 		token_get_all($source, TOKEN_PARSE);
