@@ -1028,12 +1028,26 @@ class FormMail extends Form
 								if (in_array($ofile['fullname'], $listofpaths)) unset($this->objfilearray[$iof]);
 							}
 							if (count($this->objfilearray)) {
+								$nbMaxDispFiles = getDolGlobalInt('FROM_MAIL_MAX_DISP_FILES') > 0 ? getDolGlobalInt('FROM_MAIL_MAX_DISP_FILES') : 5;
+								$fcnt = 0;
 								$out .= '<div class="addofilelist">';
 								$out .= '<span class="block valignmiddle print-barre-liste">'.$langs->trans("AttachedFiles").' : </span>';
 								$_SESSION['objfilearray'.$keytoavoidconflict] = $this->objfilearray;
 								foreach ($this->objfilearray as $iof=>$ofile) {
-									$out .= '<span class="block"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
-									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].'</span>';
+									$fcnt ++;
+									$classs10 = $fcnt > $nbMaxDispFiles ? ' classs10' : '';
+									$dispsize = $ofile['size'] > 0 ? ' ('.dol_print_size($ofile['size']).')' : '';
+									$out .= '<span class="block'.$classs10.'"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
+									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].$dispsize.'</span>';
+								}
+								if ($fcnt > $nbMaxDispFiles) {
+									$out .= '<script>'
+											. '$("span.classs10").hide();'
+											. 'function toggleS10Files() {'
+											. '$("span.classs10").toggle();'
+											. '}'
+											. '</script>';
+									$out .= '<span class="block cursorpointer" onclick="toggleS10Files()"><strong><i class="fas fa-arrows-alt-v"></i> '.$langs->trans("ShowMoreLines").'</strong></span>';
 								}
 								$out .=	'</div>';
 							}
