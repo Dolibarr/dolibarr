@@ -1893,6 +1893,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 	}
 
 	if (!$error) {
+		// Migrate generated internal includes from dol_include_once('/module/...') to include_once __DIR__
+		rewriteGeneratedIncludes($destdir, $module);
+
 		setEventMessages($langs->trans('FilesForObjectInitialized', $objectname), null);
 		$tabobj = $objectname;
 	} else {

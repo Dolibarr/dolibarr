@@ -88,10 +88,12 @@ final class IncludeRewritePolicy
 		if (!preg_match('/\.php$/', $relPath)) {
 			return false;
 		}
-		if ($this->isExcluded($relPath) || $this->isLegacyRegexCompat($relPath)) {
+		// The API file is always skipped: its includes are managed by legacy regex.
+		if ($this->isApiFile($relPath, $moduleName)) {
 			return false;
 		}
-		if ($this->isApiFile($relPath, $moduleName)) {
+		// When restricted to generated runtime files, never touch engine / regex-compat files.
+		if ($this->generatedRuntimeOnly && ($this->isExcluded($relPath) || $this->isLegacyRegexCompat($relPath))) {
 			return false;
 		}
 		return true;
