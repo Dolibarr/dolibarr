@@ -1035,19 +1035,19 @@ class FormMail extends Form
 								$_SESSION['objfilearray'.$keytoavoidconflict] = $this->objfilearray;
 								foreach ($this->objfilearray as $iof=>$ofile) {
 									$fcnt ++;
-									$classs10 = $fcnt > $nbMaxDispFiles ? ' classs10' : '';
+									$classsmxdpf = $fcnt > $nbMaxDispFiles ? ' classsmxdpf' : '';
 									$dispsize = $ofile['size'] > 0 ? ' ('.dol_print_size($ofile['size']).')' : '';
-									$out .= '<span class="block'.$classs10.'"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
+									$out .= '<span class="block'.$classsmxdpf.'"><input type="checkbox" name="addofile_'.$iof.'" value="1" class="addofile" ';
 									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].$dispsize.'</span>';
 								}
 								if ($fcnt > $nbMaxDispFiles) {
 									$out .= '<script>';
-									$out .= 'jQuery("span.classs10").hide();';
-									$out .= 'function toggleS10Files() {';
-									$out .= '	jQuery("span.classs10").toggle();';
+									$out .= 'jQuery("span.classsmxdpf").hide();';
+									$out .= 'function toggleSmxdpf() {';
+									$out .= '	jQuery("span.classsmxdpf").toggle();';
 									$out .= '}';
 									$out .= '</script>';
-									$out .= '<span class="block cursorpointer" onclick="toggleS10Files()"><strong><i class="fas fa-arrows-alt-v"></i> '.$langs->trans("ShowMoreLines").'</strong></span>';
+									$out .= '<span class="block cursorpointer" onclick="toggleSmxdpf()"><strong><i class="fas fa-arrows-alt-v"></i> '.$langs->trans("ShowMoreLines").'</strong></span>';
 								}
 								$out .=	'</div>';
 							}
