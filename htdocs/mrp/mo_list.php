@@ -269,7 +269,7 @@ if (empty($reshook)) {
 									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 									break;
 								}
-							} elseif ($action == 'changedateend_confirm') {
+							} elseif ($action == 'changedateend_confirm') {	// Test on permission not required
 								// The end date can be set IF (the start date is empty OR the new date is AFTER the existing start date).
 								if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
 									$objMo->date_end_planned = $newDate;
