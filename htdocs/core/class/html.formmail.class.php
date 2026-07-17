@@ -1041,12 +1041,12 @@ class FormMail extends Form
 									$out .= (GETPOSTINT('addofile_'.$iof) ? ' checked="checked" ' : '').'> '.$ofile['name'].$dispsize.'</span>';
 								}
 								if ($fcnt > $nbMaxDispFiles) {
-									$out .= '<script>'
-											. '$("span.classs10").hide();'
-											. 'function toggleS10Files() {'
-											. '$("span.classs10").toggle();'
-											. '}'
-											. '</script>';
+									$out .= '<script>';
+									$out .= 'jQuery("span.classs10").hide();';
+									$out .= 'function toggleS10Files() {';
+									$out .= '	jQuery("span.classs10").toggle();';
+									$out .= '}';
+									$out .= '</script>';
 									$out .= '<span class="block cursorpointer" onclick="toggleS10Files()"><strong><i class="fas fa-arrows-alt-v"></i> '.$langs->trans("ShowMoreLines").'</strong></span>';
 								}
 								$out .=	'</div>';
