@@ -701,7 +701,7 @@ if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
-	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
+	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');  // @phan-suppress-current-line SqlInjection
 	//var_dump($sortfield); //var_dump($sortorder);
 }
 
@@ -984,7 +984,7 @@ if (empty($reshook)) {
 
 			// List of values
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-				$sql .= $newid.",";
+				$sql .= ((int) $newid).",";
 			}
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
