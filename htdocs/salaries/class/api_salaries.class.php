@@ -141,23 +141,23 @@ class Salaries extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
-			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				if ($id != DolibarrApiAccess::$user->id) {
-					throw new RestException(404, 'salary not found');
-				}
-			} else {
-				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
-				if (!in_array($id, $childids)) {
-					throw new RestException(404, 'salary not found');
-				}
-			}
-		}
-
 		$salary = new Salary($this->db);
 		$result = $salary->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'salary not found');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
 		}
 
 		return $this->_cleanObjectDatas($salary);
