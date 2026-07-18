@@ -244,12 +244,22 @@ if ($socid > 0) {
 	$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
 	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
-	$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
-	$sql .= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // always positive
+	// Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END) as selling_price,"; // may be negative or positive
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN d.qty * d.buy_price_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / 100) ELSE d.qty * d.buy_price_ht * (d.situation_percent / 100) END) as buying_price,"; // always positive
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN (d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent)) - (d.buy_price_ht * d.qty * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / 100)) ELSE abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)) END) as marge"; // always positive
+	} else {
+		$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
+		$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
+		$sql .= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // always positive
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut > 0";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
