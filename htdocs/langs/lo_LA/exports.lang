@@ -1,169 +1,173 @@
 # Dolibarr language file - Source file is en_US - exports
-ImportExportArea=Imports / Exports
-ExportsArea=Exports
-ImportArea=ນຳ ເຂົ້າ
-NewExport=ການສົ່ງອອກໃ່
-NewImport=ການນໍາເຂົ້າໃຫມ່
-ExportableDatas=ຊຸດຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້
-ImportableDatas=ຊຸດຂໍ້ມູນທີ່ ນຳ ເຂົ້າໄດ້
-SelectExportDataSet=ເລືອກຊຸດຂໍ້ມູນທີ່ເຈົ້າຕ້ອງການສົ່ງອອກ ...
-SelectImportDataSet=ເລືອກຊຸດຂໍ້ມູນທີ່ເຈົ້າຕ້ອງການນໍາເຂົ້າ ...
-SelectExportFields=ເລືອກຊ່ອງຂໍ້ມູນທີ່ເຈົ້າຕ້ອງການສົ່ງອອກ, ຫຼືເລືອກໂປຣໄຟລ export ການສົ່ງອອກທີ່ໄດ້ ກຳ ນົດໄວ້ລ່ວງ ໜ້າ
-SelectImportFields=ເລືອກຊ່ອງໄຟລ source ຕົ້ນສະບັບທີ່ເຈົ້າຕ້ອງການນໍາເຂົ້າແລະຊ່ອງຂໍ້ມູນເປົ້າtheirາຍຂອງເຂົາເຈົ້າຢູ່ໃນຖານຂໍ້ມູນໂດຍການຍ້າຍພວກມັນຂຶ້ນແລະລົງດ້ວຍຕົວຍຶດ %s, ຫຼືເລືອກໂປຣໄຟລ import ນໍາເຂົ້າທີ່ໄດ້ກໍານົດໄວ້ລ່ວງ ໜ້າ:
-NotImportedFields=ຊ່ອງຂໍ້ມູນຂອງໄຟລ source ຕົ້ນສະບັບບໍ່ໄດ້ຖືກ ນຳ ເຂົ້າມາ
-SaveExportModel=ບັນທຶກການເລືອກຂອງເຈົ້າເປັນໂປຣໄຟລ export/ແມ່ແບບການສົ່ງອອກ (ເພື່ອໃຊ້ຄືນໃ່).
-SaveImportModel=ບັນທຶກໂປຣໄຟລ import ການ ນຳ ເຂົ້ານີ້ (ເພື່ອໃຊ້ຄືນໃ...່) ...
-ExportModelName=ສົ່ງອອກຊື່ໂປຣໄຟລ
-ExportModelSaved=ບັນທຶກໂປຣໄຟລ Export ສົ່ງອອກເປັນ <b> %s </b>.
-ExportableFields=ຊ່ອງຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້
-ExportedFields=ເຂດຂໍ້ມູນທີ່ສົ່ງອອກ
-ImportModelName=ນຳ ເຂົ້າຊື່ໂປຣໄຟລ
-ImportModelSaved=ໂປຣໄຟລ Import ນຳ ເຂົ້າບັນທຶກເປັນ <b> %s </b>.
-ImportProfile=ນຳເຂົ້າໂປຣໄຟລ໌
-DatasetToExport=ຊຸດຂໍ້ມູນເພື່ອສົ່ງອອກ
-DatasetToImport=ນຳ ເຂົ້າໄຟລ into ເຂົ້າໄປໃນຊຸດຂໍ້ມູນ
-ChooseFieldsOrdersAndTitle=ເລືອກ ລຳ ດັບຊ່ອງຂໍ້ມູນ ...
-FieldsTitle=ຊື່ຊ່ອງຂໍ້ມູນ
-FieldTitle=ຊື່ພາກສະຫນາມ
-NowClickToGenerateToBuildExportFile=ດຽວນີ້, ເລືອກຮູບແບບໄຟລ in ຢູ່ໃນກ່ອງຄອມໂບແລະຄລິກທີ່ "ສ້າງ" ເພື່ອສ້າງໄຟລ export ສົ່ງອອກ ...
-AvailableFormats=ຮູບແບບທີ່ມີຢູ່
-LibraryShort=ຫ້ອງສະຸດ
-ExportCsvSeparator=ຕົວແຍກຕົວອັກສອນ csv
-ImportCsvSeparator=ຕົວແຍກຕົວອັກສອນ csv
-Step=ຂັ້ນຕອນ
-FormatedImport=ນຳ ເຂົ້າຜູ້ຊ່ວຍ
-FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
-FormatedImportDesc2=ຂັ້ນຕອນທໍາອິດແມ່ນເລືອກປະເພດຂໍ້ມູນທີ່ເຈົ້າຕ້ອງການນໍາເຂົ້າ, ຈາກນັ້ນຮູບແບບຂອງໄຟລ source ຕົ້ນສະບັບ, ຈາກນັ້ນຊ່ອງຂໍ້ມູນທີ່ເຈົ້າຕ້ອງການນໍາເຂົ້າ.
-FormatedExport=ສົ່ງອອກຜູ້ຊ່ວຍ
-FormatedExportDesc1=Click here to use the assistant to export data in a supported format
-FormatedExportDesc2=ຂັ້ນຕອນທໍາອິດແມ່ນເລືອກຊຸດຂໍ້ມູນທີ່ໄດ້ກໍານົດໄວ້ລ່ວງ ໜ້າ, ຈາກນັ້ນເຈົ້າຕ້ອງການສົ່ງອອກຊ່ອງຂໍ້ມູນອັນໃດ, ແລະໃນຄໍາສັ່ງອັນໃດ.
-FormatedExportDesc3=ເມື່ອຂໍ້ມູນທີ່ຈະສົ່ງອອກຖືກເລືອກ, ເຈົ້າສາມາດເລືອກຮູບແບບຂອງໄຟລ output ຜົນໄດ້ຮັບ.
-Sheet=ແຜ່ນ
-NoImportableData=ບໍ່ມີຂໍ້ມູນທີ່ສາມາດນໍາເຂົ້າໄດ້ (ບໍ່ມີໂມດູນທີ່ມີຄໍານິຍາມເພື່ອອະນຸຍາດໃຫ້ນໍາເຂົ້າຂໍ້ມູນ)
-FileSuccessfullyBuilt=ສ້າງໄຟລແລ້ວ
-SQLUsedForExport=ການຮ້ອງຂໍ SQL ໃຊ້ເພື່ອສະກັດເອົາຂໍ້ມູນ
-LineId=ID ຂອງແຖວ
-LineLabel=ປ້າຍຂອງແຖວ
-LineDescription=ລາຍລະອຽດຂອງ
-LineUnitPrice=ລາຄາຫົວ ໜ່ວຍ ຂອງເສັ້ນ
-LineVATRate=ອັດຕາອາກອນມູນຄ່າເພີ່ມຂອງເສັ້ນ
-LineLT1Rate=Tax 2 rate for line
-LineLT2Rate=Tax 3 rate for line
-LineLT1Type=Tax 2 type for line
-LineLT2Type=Tax 3 type for line
-LineQty=ປະລິມານ ສຳ ລັບເສັ້ນ
-LineTotalHT=ຈຳ ນວນບໍ່ລວມເອົາ ອາກອນສໍາລັບເສັ້ນ
-LineTotalTTC=ຈຳ ນວນທີ່ມີພາສີຕໍ່ແຖວ
-LineTotalVAT=ຈຳ ນວນອາກອນມູນຄ່າເພີ່ມ ສຳ ລັບເສັ້ນ
-LineTotalLT1=Amount of tax 2 for line
-LineTotalLT2=Amount of tax 3 for line
-TypeOfLineServiceOrProduct=ປະເພດຂອງແຖວ (0 = ຜະລິດຕະພັນ, 1 = ການບໍລິການ)
-FileWithDataToImport=ໄຟລ with ທີ່ມີຂໍ້ມູນເພື່ອນໍາເຂົ້າ
-FileToImport=ໄຟລ Source ແຫຼ່ງທີ່ຈະນໍາເຂົ້າ
-FileMustHaveOneOfFollowingFormat=ໄຟລ to ທີ່ຈະ ນຳ ເຂົ້າຕ້ອງມີ ໜຶ່ງ ໃນຮູບແບບຕໍ່ໄປນີ້
-DownloadEmptyExampleShort=ດາວໂຫລດໄຟລ໌ຕົວຢ່າງ
-DownloadEmptyExample=ດາວໂຫຼດໄຟລ໌ແມ່ແບບທີ່ມີຕົວຢ່າງ ແລະຂໍ້ມູນກ່ຽວກັບຊ່ອງຂໍ້ມູນທີ່ທ່ານສາມາດນໍາເຂົ້າໄດ້
-StarAreMandatory=ເຂົ້າໄປໃນໄຟລ໌ແມ່ແບບ, ຊ່ອງຂໍ້ມູນທັງຫມົດທີ່ມີ * ເປັນຊ່ອງຂໍ້ມູນບັງຄັບ
-ChooseFormatOfFileToImport=ເລືອກຮູບແບບໄຟລ to ເພື່ອໃຊ້ເປັນຮູບແບບໄຟລ import ນໍາເຂົ້າໂດຍການຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກມັນ ...
-ChooseFileToImport=ອັບໂຫຼດໄຟລ then ຈາກນັ້ນຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກໄຟລ as ເປັນໄຟລ import ນໍາເຂົ້າແຫຼ່ງທີ່ມາ ...
-SourceFileFormat=ຮູບແບບໄຟລ Source ແຫຼ່ງຂໍ້ມູນ
-FieldsInSourceFile=ຊ່ອງຂໍ້ມູນໃນໄຟລ source ຕົ້ນສະບັບ
-FieldsInTargetDatabase=Target fields in Dolibarr database
-NoFields=ບໍ່ມີຊ່ອງຂໍ້ມູນ
-MoveField=ຍ້າຍcolumnາຍເລກຖັນພາກສະ ໜາມ %s
-ExampleOfImportFile=Example_of_import_file
-SaveImportProfile=ບັນທຶກໂປຣໄຟລ import ການ ນຳ ເຂົ້ານີ້
-ErrorImportDuplicateProfil=ບັນທຶກໂປຣໄຟລ import ການ ນຳ ເຂົ້າດ້ວຍຊື່ນີ້ບໍ່ ສຳ ເລັດ. ມີໂປຣໄຟລ existing ທີ່ມີຢູ່ແລ້ວໃນຊື່ນີ້.
-TablesTarget=ຕາຕະລາງເປົ້າຫມາຍ
-FieldsTarget=ຂົງເຂດເປົ້າາຍ
-FieldTarget=ພາກສະຫນາມເປົ້າຫມາຍ
-FieldSource=ຊ່ອງຂໍ້ມູນແຫຼ່ງຂໍ້ມູນ
-NbOfSourceLines=ຈຳ ນວນແຖວໃນໄຟລ source ຕົ້ນສະບັບ
-NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to simulate the import process.<br><b>No data will be changed in your database</b>.
-RunSimulateImportFile=ດໍາເນີນການຈໍາລອງການນໍາເຂົ້າ
-FieldNeedSource=ຊ່ອງຂໍ້ມູນນີ້ຕ້ອງການຂໍ້ມູນຈາກໄຟລ source ຕົ້ນສະບັບ
-SomeMandatoryFieldHaveNoSource=ເຂດຂໍ້ມູນບັງຄັບບາງບ່ອນບໍ່ມີແຫຼ່ງຂໍ້ມູນຈາກແຟ້ມຂໍ້ມູນ
-InformationOnSourceFile=Source file
-InformationOnTargetTables=Target fields
-SelectAtLeastOneField=ສະຫຼັບຊ່ອງຂໍ້ມູນແຫຼ່ງຂໍ້ມູນຢ່າງ ໜ້ອຍ ໜຶ່ງ ອັນໃນຖັນຊ່ອງຂໍ້ມູນເພື່ອສົ່ງອອກ
-SelectFormat=ເລືອກຮູບແບບໄຟລ import ການນໍາເຂົ້ານີ້
-RunImportFile=ນຳ ເຂົ້າຂໍ້ມູນ
-NowClickToRunTheImport=ກວດເບິ່ງຜົນຂອງການຈໍາລອງການນໍາເຂົ້າ. ແກ້ໄຂຂໍ້ຜິດພາດຕ່າງ and ແລະທົດສອບຄືນໃ່. <br> ເມື່ອການຈໍາລອງລາຍງານບໍ່ມີຂໍ້ຜິດພາດ, ເຈົ້າອາດຈະດໍາເນີນການນໍາເຂົ້າຂໍ້ມູນເຂົ້າໃນຖານຂໍ້ມູນ.
-DataLoadedWithId=ຂໍ້ມູນທີ່ນໍາເຂົ້າມາຈະມີຊ່ອງຂໍ້ມູນເພີ່ມເຕີມຢູ່ໃນແຕ່ລະຕາຕະລາງຖານຂໍ້ມູນທີ່ມີ id ນໍາເຂົ້ານີ້: <b> %s </b>, ເພື່ອອະນຸຍາດໃຫ້ສາມາດຄົ້ນຫາໄດ້ໃນກໍລະນີຂອງການສືບສວນບັນຫາທີ່ກ່ຽວຂ້ອງກັບການນໍາເຂົ້ານີ້.
-ErrorMissingMandatoryValue=ຂໍ້ມູນບັງຄັບແມ່ນຫວ່າງເປົ່າຢູ່ໃນໄຟລ໌ຕົ້ນສະບັບໃນຖັນ <b>%s</b>.
-TooMuchErrors=ຍັງມີ <b> %s </b> ສາຍສາຍແຫຼ່ງອື່ນ with ທີ່ມີຂໍ້ຜິດພາດແຕ່ຜົນຜະລິດຖືກຈໍາກັດ.
-TooMuchWarnings=ຍັງມີ <b> %s </b> ສາຍສາຍແຫຼ່ງອື່ນ with ທີ່ມີຄໍາເຕືອນແຕ່ຜົນຜະລິດຖືກຈໍາກັດ.
-EmptyLine=ແຖວຫວ່າງເປົ່າ (ຈະຖືກຍົກເລີກ)
-CorrectErrorBeforeRunningImport=ເຈົ້າ <b> ຕ້ອງ </b> ແກ້ໄຂຄວາມຜິດພາດທັງaົດ <b> ກ່ອນ </b> ດໍາເນີນການນໍາເຂົ້າທີ່ແນ່ນອນ.
-FileWasImported=ໄຟລ was ຖືກ ນຳ ເຂົ້າມາດ້ວຍaາຍເລກ <b> %s </b>.
-YouCanUseImportIdToFindRecord=ເຈົ້າສາມາດຊອກຫາບັນທຶກທັງimportedົດທີ່ນໍາເຂົ້າມາໃນຖານຂໍ້ມູນຂອງເຈົ້າໂດຍການກັ່ນຕອງໃສ່ໃນປ່ອງ <b> import_key = '%s' </b>.
-NbOfLinesOK=ຈໍານວນແຖວທີ່ບໍ່ມີຂໍ້ຜິດພາດແລະບໍ່ມີຄໍາເຕືອນ: <b> %s </b>.
-NbOfLinesImported=ຈໍານວນແຖວຖືກນໍາເຂົ້າສໍາເລັດ: <b> %s </b>.
-DataComeFromNoWhere=ຄ່າທີ່ຈະໃສ່ແມ່ນມາຈາກບ່ອນໃດໃນໄຟລ source ຕົ້ນສະບັບ.
-DataComeFromFileFieldNb=ຄ່າທີ່ຈະແຊກມາຈາກຖັນ <b>%s</b> ໃນໄຟລ໌ຕົ້ນສະບັບ.
-DataComeFromIdFoundFromRef=ຄ່າທີ່ມາຈາກໄຟລ໌ຕົ້ນສະບັບຈະຖືກໃຊ້ເພື່ອຊອກຫາ id ຂອງວັດຖຸຫຼັກທີ່ຈະໃຊ້ (ດັ່ງນັ້ນ ວັດຖຸ <b>%s</b> ທີ່ມີເອກະສານອ້າງອີງຈາກແຫຼ່ງໄຟລ໌ຕ້ອງມີຢູ່ໃນຖານຂໍ້ມູນ).
-DataComeFromIdFoundFromCodeId=ຄ່າຂອງລະຫັດທີ່ມາຈາກໄຟລ໌ຕົ້ນສະບັບຈະຖືກໃຊ້ເພື່ອຊອກຫາ id ຂອງວັດຖຸຫຼັກທີ່ຈະໃຊ້ (ດັ່ງນັ້ນລະຫັດຈາກໄຟລ໌ຕົ້ນສະບັບຕ້ອງມີຢູ່ໃນວັດຈະນານຸກົມ <b>%s</b>). ໃຫ້ສັງເກດວ່າຖ້າທ່ານຮູ້ id, ທ່ານຍັງສາມາດໃຊ້ມັນຢູ່ໃນໄຟລ໌ແຫຼ່ງແທນລະຫັດ. ການນໍາເຂົ້າຄວນຈະເຮັດວຽກໃນທັງສອງກໍລະນີ.
-DataIsInsertedInto=ຂໍ້ມູນທີ່ມາຈາກໄຟລ source ແຫຼ່ງທີ່ມາຈະຖືກໃສ່ເຂົ້າໄປໃນຊ່ອງຂໍ້ມູນຕໍ່ໄປນີ້:
-DataIDSourceIsInsertedInto=id ຂອງວັດຖຸຫຼັກ, ທີ່ພົບເຫັນໂດຍໃຊ້ຂໍ້ມູນໃນໄຟລ໌ຕົ້ນສະບັບ, ຈະຖືກໃສ່ເຂົ້າໄປໃນຊ່ອງຂໍ້ມູນຕໍ່ໄປນີ້:
-DataCodeIDSourceIsInsertedInto=id ຂອງແຖວແມ່, ທີ່ພົບເຫັນຈາກລະຫັດ, ຈະຖືກໃສ່ເຂົ້າໄປໃນຊ່ອງຂໍ້ມູນຕໍ່ໄປນີ້:
-SourceRequired=ມູນຄ່າຂໍ້ມູນແມ່ນບັງຄັບ
-SourceExample=ຕົວຢ່າງຂອງມູນຄ່າຂໍ້ມູນທີ່ເປັນໄປໄດ້
-ExampleAnyRefFoundIntoElement=ພົບການອ້າງອີງໃດ for ສຳ ລັບອົງປະກອບ <b> %s </b>
-ExampleAnyCodeOrIdFoundIntoDictionary=ພົບເຫັນລະຫັດ (ຫຼືໄອດີ) ຢູ່ໃນວັດຈະນານຸກົມ <b> %s </b>
-CSVFormatDesc= <b> Comma Separated Value </b> ຮູບແບບໄຟລ (.csv). <br> ນີ້ແມ່ນຮູບແບບໄຟລ text ຂໍ້ຄວາມບ່ອນທີ່ຊ່ອງຂໍ້ມູນຖືກແຍກດ້ວຍເຄື່ອງ[າຍແຍກ [%s]. ຖ້າພົບຕົວແຍກຢູ່ພາຍໃນເນື້ອຫາຂອງຊ່ອງຂໍ້ມູນ, ຊ່ອງຂໍ້ມູນຖືກເຮັດໃຫ້ເປັນມົນດ້ວຍຕົວອັກສອນຮອບ [%s]. ລັກສະນະ ໜີ ເພື່ອ ໜີ ຕົວລະຄອນກົມຄື [%s].
-Excel95FormatDesc= <b> Excel </b> ຮູບແບບໄຟລ (.xls) <br> ນີ້ແມ່ນຮູບແບບ Excel 95 ເດີມ (BIFF5).
-Excel2007FormatDesc= <b> Excel </b> ຮູບແບບໄຟລ (.xlsx) <br> ນີ້ແມ່ນຮູບແບບ Excel 2007 ເດີມ (SpreadsheetML).
-TsvFormatDesc= <b> Tab ຄ່າທີ່ແຍກຕ່າງຫາກ </b> ຮູບແບບໄຟລ ((.tsv) <br> ນີ້ແມ່ນຮູບແບບໄຟລ text ຂໍ້ຄວາມບ່ອນທີ່ຊ່ອງຂໍ້ມູນຖືກແຍກອອກໂດຍ tabulator [tab].
-ExportFieldAutomaticallyAdded=ຊ່ອງຂໍ້ມູນ <b> %s </b> ຖືກເພີ່ມເຂົ້າໂດຍອັດຕະໂນມັດ. ມັນຈະຫຼີກເວັ້ນບໍ່ໃຫ້ເຈົ້າມີສາຍທີ່ຄ້າຍຄືກັນທີ່ຈະຖືກປະຕິບັດເປັນບັນທຶກຊໍ້າກັນ (ດ້ວຍການເພີ່ມຊ່ອງຂໍ້ມູນນີ້, ທຸກສາຍຈະເປັນເຈົ້າຂອງ id ຂອງຕົວເອງແລະຈະແຕກຕ່າງກັນ).
-CsvOptions=ຕົວເລືອກຮູບແບບ CSV
-Separator=ຕົວແຍກພາກສະ ໜາມ
-Enclosure=Stim Delimiter
-SpecialCode=ລະຫັດພິເສດ
-ExportStringFilter=%% ອະນຸຍາດໃຫ້ປ່ຽນຕົວອັກສອນ ໜຶ່ງ ຕົວຫຼືຫຼາຍຕົວໃນຂໍ້ຄວາມ
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: ການກັ່ນຕອງໂດຍ ໜຶ່ງ ປີ/ເດືອນ/ມື້ <br> YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: ການກັ່ນຕອງໃນຊ່ວງຫຼາຍປີ/ເດືອນ/ມື້ a0342fccYY>, ປີຕໍ່ໄປ/ເດືອນ/ມື້ <br> <YYYY, <YYYYMM, <YYYYMMDD: ຕົວກັ່ນຕອງໃນທຸກປີຜ່ານມາ/ເດືອນ/ມື້
-ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
-ImportFromLine=ການ ນຳ ເຂົ້າເລີ່ມຈາກlineາຍເລກແຖວ
-EndAtLineNb=ລົງທ້າຍດ້ວຍຕົວເລກແຖວ
-ImportFromToLine=ຂອບເຂດຈໍາກັດ (ຈາກ - ຫາ). ຕົວຢ່າງ: ເພື່ອລະເວັ້ນແຖວຫົວຂໍ້.
-SetThisValueTo2ToExcludeFirstLine=ຕົວຢ່າງ, ຕັ້ງຄ່ານີ້ເປັນ 3 ເພື່ອຍົກເວັ້ນ 2 ແຖວ ທຳ ອິດ. <br> ຖ້າບໍ່ມີການຍົກເວັ້ນແຖວຫົວຂໍ້, ອັນນີ້ຈະເຮັດໃຫ້ເກີດຄວາມຜິດພາດຫຼາຍຢ່າງຢູ່ໃນການຈໍາລອງການນໍາເຂົ້າ.
-KeepEmptyToGoToEndOfFile=ຮັກສາຊ່ອງຂໍ້ມູນນີ້ໃຫ້ຫວ່າງເພື່ອປະມວນຜົນສາຍທັງtoົດຈົນເຖິງທີ່ສຸດຂອງໄຟລ.
-SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key to check if the record already exists. If a record is already found with this key(s), an UPDATE will be performed instead of an INSERT.
-UpdateNotYetSupportedForThisImport=ການ ນຳ ເຂົ້າປະເພດນີ້ບໍ່ຮອງຮັບການອັບເດດ (ໃສ່ເທົ່ານັ້ນ)
-NoUpdateAttempt=ບໍ່ໄດ້ ດຳ ເນີນການອັບເດດເທື່ອ, ພຽງແຕ່ໃສ່ເຂົ້າໄປ
-ImportDataset_user_1=ຜູ້ໃຊ້ (ພະນັກງານຫຼືບໍ່) ແລະຄຸນສົມບັດ
-ComputedField=ຊ່ອງຂໍ້ມູນທີ່ ຄຳ ນວນແລ້ວ
+ImportExportArea=Imports / Exports = ການນຳເຂົ້າ / ການສົ່ງອອກ
+ExportsArea=Exports = ການສົ່ງອອກ
+ImportArea=Import = ການນຳເຂົ້າ
+NewExport=New Export = ການສົ່ງອອກໃໝ່
+NewImport=New Import = ການນຳເຂົ້າໃໝ່
+ExportableDatas=Exportable dataset = ຊຸດຂໍ້ມູນທີ່ສົ່ງອອກໄດ້
+ImportableDatas=Importable dataset = ຊຸດຂໍ້ມູນທີ່ນຳເຂົ້າໄດ້
+SelectExportDataSet=Choose dataset you want to export... = ເລືອກຊຸດຂໍ້ມູນທີ່ທ່ານຕ້ອງການສົ່ງອອກ...
+SelectImportDataSet=Choose dataset you want to import... = ເລືອກຊຸດຂໍ້ມູນທີ່ທ່ານຕ້ອງການນຳເຂົ້າ...
+SelectExportFields=Choose the fields you want to export, or select a predefined export profile = ເລືອກຟີວທີ່ທ່ານຕ້ອງການສົ່ງອອກ ຫຼື ເລືອກໂປຣໄຟລ໌ການສົ່ງອອກທີ່ກຳນົດໄວ້ລ່ວງໜ້າ
+SelectImportFields=Choose the source file fields you want to import and their target field in database by moving them up and down with anchor %s, or select a predefined import profile: = ເລືອກຟີວຂອງໄຟລ໌ຕົ້ນທາງທີ່ທ່ານຕ້ອງການນຳເຂົ້າ ແລະ ຟີວເປົ້າໝາຍໃນຖານຂໍ້ມູນ ໂດຍການຍ້າຍພວກມັນຂຶ້ນ-ລົງດ້ວຍ %s ຫຼື ເລືອກໂປຣໄຟລ໌ການນຳເຂົ້າທີ່ກຳນົດໄວ້ລ່ວງໜ້າ:
+NotImportedFields=Fields of source file not imported = ຟີວຂອງໄຟລ໌ຕົ້ນທາງທີ່ບໍ່ໄດ້ນຳເຂົ້າ
+SaveExportModel=Save your selections as an export profile/template (for reuse). = ບັນທຶກການເລືອກຂອງທ່ານເປັນໂປຣໄຟລ໌/ແມ່ແບບການສົ່ງອອກ (ເພື່ອໃຊ້ຄືນ).
+SaveImportModel=Save this import profile (for reuse) ... = ບັນທຶກໂປຣໄຟລ໌ການນຳເຂົ້ານີ້ (ເພື່ອໃຊ້ຄືນ) ...
+NoPredefinedProfileYet=No import profile defined yet = ຍັງບໍ່ມີການກຳນົດໂປຣໄຟລ໌ການນຳເຂົ້າ
+NoPredefinedExportProfileYet=No export profile defined yet = ຍັງບໍ່ມີການກຳນົດໂປຣໄຟລ໌ການສົ່ງອອກ
+ExportModelName=Export profile name = ຊື່ໂປຣໄຟລ໌ການສົ່ງອອກ
+ExportModelSaved=Export profile saved as <b>%s</b>. = ບັນທຶກໂປຣໄຟລ໌ການສົ່ງອອກເປັນ <b>%s</b> ແລ້ວ.
+ExportableFields=Exportable fields = ຟີວທີ່ສົ່ງອອກໄດ້
+ExportedFields=Exported fields = ຟີວທີ່ສົ່ງອອກແລ້ວ
+ExportProfile=Export profile = ໂປຣໄຟລ໌ການສົ່ງອອກ
+ImportModelName=Import profile name = ຊື່ໂປຣໄຟລ໌ການນຳເຂົ້າ
+ImportModelSaved=Import profile saved as <b>%s</b>. = ບັນທຶກໂປຣໄຟລ໌ການນຳເຂົ້າເປັນ <b>%s</b> ແລ້ວ.
+ImportProfile=Import profile = ໂປຣໄຟລ໌ການນຳເຂົ້າ
+DatasetToExport=Dataset to export = ຊຸດຂໍ້ມູນທີ່ຈະສົ່ງອອກ
+DatasetToImport=Import file into dataset = ນຳເຂົ້າໄຟລ໌ໃສ່ໃນຊຸດຂໍ້ມູນ
+ChooseFieldsOrdersAndTitle=Choose fields order... = ເລືອກລຳດັບຂອງຟີວ...
+FieldsTitle=Fields title = ຫົວຂໍ້ຟີວ
+FieldTitle=Field title = ຫົວຂໍ້ຟີວ
+NowClickToGenerateToBuildExportFile=Now, select the file format in the combo box and click on "Generate" to build the export file... = ຕອນນີ້, ເລືອກຮູບແບບໄຟລ໌ໃນຊ່ອງໂຕເລືອກ ແລະ ຄລິກທີ່ "Generate" ເພື່ອສ້າງໄຟລ໌ສົ່ງອອກ...
+AvailableFormats=Available Formats = ຮູບແບບທີ່ມີໃຫ້ໃຊ້
+LibraryShort=Library = ຄັງສະໝຸດ
+ExportCsvSeparator=Csv character separator = ຕົວແຍກຕົວອັກສອນ Csv
+ImportCsvSeparator=Csv character separator = ຕົວແຍກຕົວອັກສອນ Csv
+Step=Step = ຂັ້ນຕອນ
+FormatedImport=Import Assistant = ຜູ້ຊ່ວຍການນຳເຂົ້າ
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file. = ຄລິກທີ່ນີ້ເພື່ອໃຊ້ຜູ້ຊ່ວຍໃນການອັບເດດຂໍ້ມູນທີ່ມີຢູ່ ຫຼື ເພີ່ມວັດຖຸໃໝ່ເຂົ້າໃນຖານຂໍ້ມູນຈາກໄຟລ໌.
+FormatedImportDesc2=First step is to choose the kind of data you want to import, then the format of the source file, then the fields you want to import. = ຂັ້ນຕອນທຳອິດແມ່ນການເລືອກປະເພດຂໍ້ມູນທີ່ທ່ານຕ້ອງການນຳເຂົ້າ, ຈາກນັ້ນແມ່ນຮູບແບບຂອງໄຟລ໌ຕົ້ນທາງ, ແລະ ຟີວທີ່ທ່ານຕ້ອງການນຳເຂົ້າ.
+FormatedExport=Export Assistant = ຜູ້ຊ່ວຍການສົ່ງອອກ
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format = ຄລິກທີ່ນີ້ເພື່ອໃຊ້ຜູ້ຊ່ວຍໃນການສົ່ງອອກຂໍ້ມູນໃນຮູບແບບທີ່ຮອງຮັບ
+FormatedExportDesc2=First step is to choose a predefined dataset, then which fields you want to export, and in which order. = ຂັ້ນຕອນທຳອິດແມ່ນການເລືອກຊຸດຂໍ້ມູນທີ່ກຳນົດໄວ້, ຈາກນັ້ນແມ່ນຟີວທີ່ທ່ານຕ້ອງການສົ່ງອອກ ແລະ ລຳດັບຂອງມັນ.
+FormatedExportDesc3=When data to export are selected, you can choose the format of the output file. = ເມື່ອເລືອກຂໍ້ມູນທີ່ຈະສົ່ງອອກແລ້ວ, ທ່ານສາມາດເລືອກຮູບແບບຂອງໄຟລ໌ຜົນອອກໄດ້.
+Sheet=Sheet = ແຜ່ນງານ (Sheet)
+NoImportableData=No importable data (no module with definitions to allow data imports) = ບໍ່ມີຂໍ້ມູນທີ່ສາມາດນຳເຂົ້າໄດ້ (ບໍ່ມີໂມດູນທີ່ມີການກຳນົດຄ່າເພື່ອອະນຸຍາດໃຫ້ການນຳເຂົ້າຂໍ້ມູນ)
+FileSuccessfullyBuilt=File generated = ສ້າງໄຟລ໌ສຳເລັດແລ້ວ
+SQLUsedForExport=SQL Request used to extract data = ຄຳສັ່ງ SQL ທີ່ໃຊ້ໃນການດຶງຂໍ້ມູນ
+LineId=Id of line = ໄອດີຂອງແຖວ
+LineLabel=Label of line = ປ້າຍຊື່ຂອງແຖວ
+LineDescription=Description of line = ຄຳອະທິບາຍຂອງແຖວ
+LineUnitPrice=Unit price of line = ລາຄາຕໍ່ໜ່ວຍຂອງແຖວ
+LineVATRate=VAT Rate of line = ອັດຕາອາກອນ (VAT) ຂອງແຖວ
+LineLT1Rate=Tax 2 rate for line = ອັດຕາພາສີ 2 ສຳລັບແຖວ
+LineLT2Rate=Tax 3 rate for line = ອັດຕາພາສີ 3 ສຳລັບແຖວ
+LineLT1Type=Tax 2 type for line = ປະເພດພາສີ 2 ສຳລັບແຖວ
+LineLT2Type=Tax 3 type for line = ປະເພດພາສີ 3 ສຳລັບແຖວ
+LineQty=Quantity for line = ຈຳນວນສຳລັບແຖວ
+LineTotalHT=Amount excl. tax for line = ຈຳນວນເງິນບໍ່ລວມອາກອນສຳລັບແຖວ
+LineTotalTTC=Amount with tax for line = ຈຳນວນເງິນລວມອາກອນສຳລັບແຖວ
+LineTotalVAT=Amount of VAT for line = ຈຳນວນອາກອນ (VAT) ສຳລັບແຖວ
+LineTotalLT1=Amount of tax 2 for line = ຈຳນວນພາສີ 2 ສຳລັບແຖວ
+LineTotalLT2=Amount of tax 3 for line = ຈຳນວນພາສີ 3 ສຳລັບແຖວ
+TypeOfLineServiceOrProduct=Type of line (0=product, 1=service) = ປະເພດຂອງແຖວ (0=ສິນຄ້າ, 1=ບໍລິການ)
+FileWithDataToImport=File with data to import = ໄຟລ໌ທີ່ມີຂໍ້ມູນທີ່ຈະນຳເຂົ້າ
+FileToImport=Source file to import = ໄຟລ໌ຕົ້ນທາງທີ່ຈະນຳເຂົ້າ
+FileMustHaveOneOfFollowingFormat=File to import must have one of following formats = ໄຟລ໌ທີ່ຈະນຳເຂົ້າຕ້ອງມີຮູບແບບໃດໜຶ່ງດັ່ງຕໍ່ໄປນີ້
+DownloadEmptyExampleShort=Download a sample file = ດາວໂຫລດໄຟລ໌ຕົວຢ່າງ
+DownloadEmptyExample=Download a template file with examples and information on fields you can import = ດາວໂຫລດໄຟລ໌ແມ່ແບບທີ່ມີຕົວຢ່າງ ແລະ ຂໍ້ມູນກ່ຽວກັບຟີວທີ່ທ່ານສາມາດນຳເຂົ້າໄດ້
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields = ໃນໄຟລ໌ແມ່ແບບ, ທຸກໆຟີວທີ່ມີເຄື່ອງໝາຍ * ແມ່ນຟີວທີ່ຈຳເປັນຕ້ອງປ້ອນ
+ChooseFormatOfFileToImport=Choose the file format to use as import file format by clicking on the %s icon to select it... = ເລືອກຮູບແບບໄຟລ໌ທີ່ຈະໃຊ້ເປັນຮູບແບບການນຳເຂົ້າໂດຍການຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກ...
+ChooseFileToImport=Upload file then click on the %s icon to select file as source import file... = ອັບໂຫລດໄຟລ໌ແລ້ວຄລິກທີ່ໄອຄອນ %s ເພື່ອເລືອກໄຟລ໌ເປັນໄຟລ໌ຕົ້ນທາງໃນການນຳເຂົ້າ...
+SourceFileFormat=Source file format = ຮູບແບບໄຟລ໌ຕົ້ນທາງ
+FieldsInSourceFile=Fields in source file = ຟີວໃນໄຟລ໌ຕົ້ນທາງ
+FieldsInTargetDatabase=Target fields in Dolibarr database = ຟີວເປົ້າໝາຍໃນຖານຂໍ້ມູນ Dolibarr
+NoFields=No fields = ບໍ່ມີຟີວ
+MoveField=Move field column number %s = ຍ້າຍຖັນຟີວໝາຍເລກ %s
+ExampleOfImportFile=Example_of_import_file = ຕົວຢ່າງ_ຂອງ_ໄຟລ໌_ການນຳເຂົ້າ
+SaveImportProfile=Save this import profile = ບັນທຶກໂປຣໄຟລ໌ການນຳເຂົ້ານີ້
+ErrorImportDuplicateProfil=Failed to save this import profile with this name. An existing profile already exists with this name. = ບໍ່ສາມາດບັນທຶກໂປຣໄຟລ໌ການນຳເຂົ້ານີ້ດ້ວຍຊື່ນີ້ໄດ້. ມີໂປຣໄຟລ໌ທີ່ມີຊື່ນີ້ຢູ່ແລ້ວ.
+TablesTarget=Targeted tables = ຕາຕະລາງເປົ້າໝາຍ
+FieldsTarget=Targeted fields = ຟີວເປົ້າໝາຍ
+FieldTarget=Targeted field = ຟີວເປົ້າໝາຍ
+FieldSource=Source field = ຟີວຕົ້ນທາງ
+NbOfSourceLines=Number of lines in source file = ຈຳນວນແຖວໃນໄຟລ໌ຕົ້ນທາງ
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to simulate the import process.<br><b>No data will be changed in your database</b>. = ກວດສອບວ່າຮູບແບບໄຟລ໌ (ຕົວແຍກຟີວ ແລະ ຂໍ້ຄວາມ) ກົງກັບຕົວເລືອກທີ່ສະແດງ ແລະ ທ່ານໄດ້ຂ້າມແຖວຫົວຂໍ້ແລ້ວ, ຖ້າບໍ່ດັ່ງນັ້ນ ພວກມັນຈະຖືກໝາຍວ່າເປັນຂໍ້ຜິດພາດໃນການຈຳລອງຕໍ່ໄປ.<br>ຄລິກທີ່ປຸ່ມ "<b>%s</b>" ເພື່ອຈຳລອງຂະບວນການນຳເຂົ້າ.<br><b>ຈະບໍ່ມີການປ່ຽນແປງຂໍ້ມູນໃດໆໃນຖານຂໍ້ມູນຂອງທ່ານ</b>.
+RunSimulateImportFile=Run Import Simulation = ເລີ່ມການຈຳລອງການນຳເຂົ້າ
+FieldNeedSource=This field requires data from the source file = ຟີວນີ້ຕ້ອງການຂໍ້ມູນຈາກໄຟລ໌ຕົ້ນທາງ
+SomeMandatoryFieldHaveNoSource=Some mandatory fields have no source from data file = ບາງຟີວທີ່ຈຳເປັນບໍ່ມີຂໍ້ມູນຕົ້ນທາງຈາກໄຟລ໌ຂໍ້ມູນ
+InformationOnSourceFile=Source file = ຂໍ້ມູນໄຟລ໌ຕົ້ນທາງ
+InformationOnTargetTables=Target fields = ຟີວເປົ້າໝາຍ
+SelectAtLeastOneField=Switch at least one source field in the column of fields to export = ເລືອກຢ່າງໜ້ອຍໜຶ່ງຟີວຕົ້ນທາງເຂົ້າໃນຖັນຂອງຟີວທີ່ຈະສົ່ງອອກ
+SelectFormat=Choose this import file format = ເລືອກຮູບແບບໄຟລ໌ການນຳເຂົ້ານີ້
+RunImportFile=Import Data = ນຳເຂົ້າຂໍ້ມູນ
+NowClickToRunTheImport=Check the results of the import simulation. Correct any errors and re-test.<br>When the simulation reports no errors you may proceed to import the data into the database. = ກວດສອບຜົນຂອງການຈຳລອງການນຳເຂົ້າ. ແກ້ໄຂຂໍ້ຜິດພາດຕ່າງໆ ແລະ ທົດສອບຄືນໃໝ່.<br>ເມື່ອການຈຳລອງບໍ່ມີຂໍ້ຜິດພາດ, ທ່ານສາມາດດຳເນີນການນຳເຂົ້າຂໍ້ມູນເຂົ້າໃນຖານຂໍ້ມູນໄດ້.
+DataLoadedWithId=The imported data will have an additional field in each database table with this import id: <b>%s</b>, to allow it to be searchable in the case of investigating a problem related to this import. = ຂໍ້ມູນທີ່ນຳເຂົ້າຈະມີຟີວເພີ່ມເຕີມໃນແຕ່ລະຕາຕະລາງຖານຂໍ້ມູນດ້ວຍໄອດີການນຳເຂົ້ານີ້: <b>%s</b>, ເພື່ອໃຫ້ສາມາດຄົ້ນຫາໄດ້ໃນກໍລະນີທີ່ມີການກວດສອບບັນຫາທີ່ກ່ຽວຂ້ອງກັບການນຳເຂົ້ານີ້.
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>. = ຂໍ້ມູນທີ່ຈຳເປັນແມ່ນວ່າງຢູ່ໃນໄຟລ໌ຕົ້ນທາງໃນຖັນ <b>%s</b>.
+TooMuchErrors=There are still <b>%s</b> other source lines with errors but output has been limited. = ຍັງມີອີກ <b>%s</b> ແຖວຕົ້ນທາງທີ່ມີຂໍ້ຜິດພາດ ແຕ່ການສະແດງຜົນຖືກຈຳກັດ.
+TooMuchWarnings=There are still <b>%s</b> other source lines with warnings but output has been limited. = ຍັງມີອີກ <b>%s</b> ແຖວຕົ້ນທາງທີ່ມີຄຳເຕືອນ ແຕ່ການສະແດງຜົນຖືກຈຳກັດ.
+EmptyLine=Empty line (will be discarded) = ແຖວວ່າງ (ຈະຖືກຕັດຖິ້ມ)
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import. = ທ່ານ <b>ຕ້ອງ</b> ແກ້ໄຂຂໍ້ຜິດພາດທັງໝົດ <b>ກ່ອນ</b> ທີ່ຈະດຳເນີນການນຳເຂົ້າຕົວຈິງ.
+FileWasImported=File was imported with number <b>%s</b>. = ໄຟລ໌ຖືກນຳເຂົ້າແລ້ວດ້ວຍໝາຍເລກ <b>%s</b>.
+YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>. = ທ່ານສາມາດຊອກຫາບັນທຶກທີ່ນຳເຂົ້າທັງໝົດໃນຖານຂໍ້ມູນຂອງທ່ານ ໂດຍການກອງຢູ່ຟີວ <b>import_key='%s'</b>.
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>. = ຈຳນວນແຖວທີ່ບໍ່ມີຂໍ້ຜິດພາດ ແລະ ບໍ່ມີຄຳເຕືອນ: <b>%s</b>.
+NbOfLinesImported=Number of lines successfully imported: <b>%s</b>. = ຈຳນວນແຖວທີ່ນຳເຂົ້າສຳເລັດ: <b>%s</b>.
+DataComeFromNoWhere=Value to insert comes from nowhere in source file. = ຄ່າທີ່ຈະແຊກບໍ່ມີແຫຼ່ງທີ່ມາໃນໄຟລ໌ຕົ້ນທາງ.
+DataComeFromFileFieldNb=Value to insert comes from column <b>%s</b> in source file. = ຄ່າທີ່ຈະແຊກມາຈາກຖັນ <b>%s</b> ໃນໄຟລ໌ຕົ້ນທາງ.
+DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database). = ຄ່າທີ່ມາຈາກໄຟລ໌ຕົ້ນທາງຈະຖືກໃຊ້ເພື່ອຊອກຫາໄອດີຂອງວັດຖຸແມ່ທີ່ຈະໃຊ້ (ດັ່ງນັ້ນວັດຖຸ <b>%s</b> ທີ່ມີການອ້າງອີງຈາກໄຟລ໌ຕົ້ນທາງຕ້ອງມີຢູ່ໃນຖານຂໍ້ມູນ).
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases. = ຄ່າຂອງລະຫັດທີ່ມາຈາກໄຟລ໌ຕົ້ນທາງຈະຖືກໃຊ້ເພື່ອຊອກຫາໄອດີຂອງວັດຖຸແມ່ທີ່ຈະໃຊ້ (ດັ່ງນັ້ນລະຫັດຈາກໄຟລ໌ຕົ້ນທາງຕ້ອງມີຢູ່ໃນພົດຈະນານຸກົມ <b>%s</b>). ໝາຍເຫດ: ຖ້າທ່ານຮູ້ໄອດີ, ທ່ານຍັງສາມາດໃຊ້ມັນໃນໄຟລ໌ຕົ້ນທາງແທນລະຫັດໄດ້. ການນຳເຂົ້າຄວນຈະໃຊ້ໄດ້ທັງສອງກໍລະນີ.
+DataIsInsertedInto=Data coming from source file will be inserted into the following field: = ຂໍ້ມູນທີ່ມາຈາກໄຟລ໌ຕົ້ນທາງຈະຖືກແຊກເຂົ້າໃນຟີວດັ່ງຕໍ່ໄປນີ້:
+DataIDSourceIsInsertedInto=The id of the parent object, that was found using the data in the source file, will be inserted into the following field: = ໄອດີຂອງວັດຖຸແມ່, ທີ່ຖືກຊອກຫາໂດຍໃຊ້ຂໍ້ມູນໃນໄຟລ໌ຕົ້ນທາງ, ຈະຖືກແຊກເຂົ້າໃນຟີວດັ່ງຕໍ່ໄປນີ້:
+DataCodeIDSourceIsInsertedInto=The id of the parent line, that was found from code, will be inserted into the following field: = ໄອດີຂອງແຖວແມ່, ທີ່ຖືກຊອກຫາຈາກລະຫັດ, ຈະຖືກແຊກເຂົ້າໃນຟີວດັ່ງຕໍ່ໄປນີ້:
+SourceRequired=Data value is mandatory = ຄ່າຂໍ້ມູນແມ່ນຈຳເປັນ
+SourceExample=Example of possible data value = ຕົວຢ່າງຂອງຄ່າຂໍ້ມູນທີ່ເປັນໄປໄດ້
+ExampleAnyRefFoundIntoElement=Any ref found for element <b>%s</b> = ການອ້າງອີງໃດໆທີ່ພົບສຳລັບອົງປະກອບ <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionary=Any code (or id) found into dictionary <b>%s</b> = ລະຫັດ (ຫຼື ໄອດີ) ໃດໆທີ່ພົບໃນພົດຈະນານຸກົມ <b>%s</b>
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ]. = ຮູບແບບໄຟລ໌ <b>ຄ່າທີ່ແຍກດ້ວຍຈຸດ (Comma Separated Value)</b> (.csv).<br>ນີ້ແມ່ນຮູບແບບໄຟລ໌ຂໍ້ຄວາມທີ່ຟີວຕ່າງໆຖືກແຍກດ້ວຍຕົວແຍກ [ %s ]. ຖ້າພົບຕົວແຍກພາຍໃນເນື້ອຫາຟີວ, ຟີວຈະຖືກກຸມດ້ວຍຕົວອັກສອນກຸມ [ %s ]. ຕົວອັກສອນ Escape ເພື່ອຫຼີກຕົວອັກສອນກຸມແມ່ນ [ %s ].
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is the native Excel 95 format (BIFF5). = ຮູບແບບໄຟລ໌ <b>Excel</b> (.xls)<br>ນີ້ແມ່ນຮູບແບບ Excel 95 ດັ້ງເດີມ (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is the native Excel 2007 format (SpreadsheetML). = ຮູບແບບໄຟລ໌ <b>Excel</b> (.xlsx)<br>ນີ້ແມ່ນຮູບແບບ Excel 2007 ດັ້ງເດີມ (SpreadsheetML).
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab]. = ຮູບແບບໄຟລ໌ <b>ຄ່າທີ່ແຍກດ້ວຍແຖບ (Tab Separated Value)</b> (.tsv)<br>ນີ້ແມ່ນຮູບແບບໄຟລ໌ຂໍ້ຄວາມທີ່ຟີວຕ່າງໆຖືກແຍກດ້ວຍແຖບ [tab].
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate record (with this field added, all lines will own their own id and will differ). = ຟີວ <b>%s</b> ຖືກເພີ່ມໂດຍອັດຕະໂນມັດ. ມັນຈະຊ່ວຍໃຫ້ທ່ານຫຼີກລ່ຽງການມີແຖວທີ່ຄືກັນເຊິ່ງຈະຖືກປະຕິບັດເປັນບັນທຶກທີ່ຊ້ຳກັນ (ດ້ວຍຟີວນີ້ທີ່ເພີ່ມເຂົ້າມາ, ທຸກໆແຖວຈະມີໄອດີຂອງຕົນເອງ ແລະ ຈະແຕກຕ່າງກັນ).
+CsvOptions=CSV format options = ຕົວເລືອກຮູບແບບ CSV
+Separator=Field Separator = ຕົວແຍກຟີວ
+Enclosure=String Delimiter = ຕົວຂັ້ນຂໍ້ຄວາມ
+SpecialCode=Special code = ລະຫັດພິເສດ
+ExportStringFilter=%% allows replacing one or more characters in the text = %% ອະນຸຍາດໃຫ້ປ່ຽນແທນໜຶ່ງ ຫຼື ຫຼາຍຕົວອັກສອນໃນຂໍ້ຄວາມ
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days = YYYY, YYYYMM, YYYYMMDD: ກອງຕາມ ປີ/ເດືອນ/ວັນ<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: ກອງຕາມຊ່ວງຂອງ ປີ/ເດືອນ/ວັນ<br> > YYYY, > YYYYMM, > YYYYMMDD: ກອງຕາມ ປີ/ເດືອນ/ວັນ ຕໍ່ໆມາທັງໝົດ<br> < YYYY, < YYYYMM, < YYYYMMDD: ກອງຕາມ ປີ/ເດືອນ/ວັນ ຜ່ານມາທັງໝົດ
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values = NNNNN ກອງຕາມໜຶ່ງຄ່າ<br>NNNNN+NNNNN ກອງຕາມຊ່ວງຂອງຄ່າ<br>< NNNNN ກອງຕາມຄ່າທີ່ຕ່ຳກວ່າ<br>> NNNNN ກອງຕາມຄ່າທີ່ສູງກວ່າ
+ImportThisFile=Import this file = ນຳເຂົ້າໄຟລ໌ນີ້
+ImportFromLine=Import starting from line number = ນຳເຂົ້າເລີ່ມຕົ້ນຈາກແຖວໝາຍເລກ
+EndAtLineNb=End at line number = ສິ້ນສຸດທີ່ແຖວໝາຍເລກ
+ImportFromToLine=Limit range (From - To). Eg. to omit header line(s). = ຈຳກັດຊ່ວງ (ຈາກ - ຫາ). ເຊັ່ນ: ເພື່ອຂ້າມແຖວຫົວຂໍ້.
+SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude the 2 first lines.<br>If the header lines are NOT omitted, this will result in multiple errors in the Import Simulation. = ຕົວຢ່າງ: ຕັ້ງຄ່ານີ້ເປັນ 3 ເພື່ອຍົກເວັ້ນ 2 ແຖວທຳອິດ.<br>ຖ້າແຖວຫົວຂໍ້ບໍ່ໄດ້ຖືກຂ້າມ, ມັນຈະເຮັດໃຫ້ເກີດຂໍ້ຜິດພາດຫຼາຍຢ່າງໃນການຈຳລອງການນຳເຂົ້າ.
+KeepEmptyToGoToEndOfFile=Keep this field empty to process all lines to the end of the file. = ປະຟີວນີ້ໃຫ້ວ່າງໄວ້ເພື່ອປະມວນຜົນທຸກໆແຖວຈົນເຖິງທ້າຍໄຟລ໌.
+SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key to check if the record already exists. If a record is already found with this key(s), an UPDATE will be performed instead of an INSERT. = ເລືອກຖັນທີ່ຈະໃຊ້ເປັນຄີຫຼັກ (Primary Key) ເພື່ອກວດສອບວ່າບັນທຶກມີຢູ່ແລ້ວຫຼືບໍ່. ຖ້າພົບບັນທຶກທີ່ມີຄີນີ້ແລ້ວ, ຈະມີການເຮັດ UPDATE ແທນທີ່ຈະເປັນ INSERT.
+UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert) = ຍັງບໍ່ຮອງຮັບການອັບເດດ (Update) ສຳລັບການນຳເຂົ້າປະເພດນີ້ (ແຊກຂໍ້ມູນໃໝ່ເທົ່ານັ້ນ)
+NoUpdateAttempt=No update attempt was performed, only insert = ບໍ່ມີການພະຍາຍາມອັບເດດ, ມີພຽງແຕ່ການແຊກຂໍ້ມູນໃໝ່
+ImportDataset_user_1=Users (employees or not) and properties = ຜູ້ໃຊ້ (ພະນັກງານ ຫຼື ບໍ່ແມ່ນ) ແລະ ຄຸນສົມບັດ
+ComputedField=Computed field = ຟີວທີ່ຄຳນວນແລ້ວ
 ## filters
-SelectFilterFields=ຖ້າເຈົ້າຕ້ອງການກັ່ນຕອງໃສ່ບາງຄ່າ, ພຽງແຕ່ປ້ອນຄ່າໃສ່ບ່ອນນີ້.
-FilteredFields=ກັ່ນຕອງທົ່ງນາ
-FilteredFieldsValues=ຄ່າສໍາລັບການກັ່ນຕອງ
-FormatControlRule=ກົດລະບຽບການຄວບຄຸມຮູບແບບ
+SelectFilterFields=If you want to filter on some values, just input values here. = ຖ້າທ່ານຕ້ອງການກອງບາງຄ່າ, ພຽງແຕ່ປ້ອນຄ່າໃສ່ບ່ອນນີ້.
+FilteredFields=Filtered fields = ຟີວທີ່ຖືກກອງ
+FilteredFieldsValues=Value for filter = ຄ່າສຳລັບການກອງ
 ## imports updates
-KeysToUseForUpdates=ກະແຈ (ຖັນ) ເພື່ອໃຊ້ສໍາລັບການອັບເດດຂໍ້ມູນທີ່ມີຢູ່ແລ້ວ <b> </b>
-NbInsert=ຈໍານວນຂອງແຖວທີ່ໃສ່ເຂົ້າ: %s
-NbInsertSim=ຈຳນວນແຖວທີ່ຈະໃສ່: %s
-NbUpdate=ຈໍານວນແຖວທີ່ອັບເດດ: %s
-NbUpdateSim=ຈໍານວນແຖວທີ່ຈະປັບປຸງ : %s
-MultipleRecordFoundWithTheseFilters=ພົບບັນທຶກຫຼາຍອັນດ້ວຍຕົວກັ່ນຕອງເຫຼົ່ານີ້: %s
-StocksWithBatch=ຫຼັກຊັບແລະສະຖານທີ່ (ສາງ) ຜະລິດຕະພັນທີ່ມີຊຸດ/ialາຍເລກຊີລຽວ
-WarningFirstImportedLine=ແຖວທຳອິດຈະບໍ່ຖືກນຳເຂົ້າພ້ອມກັບການເລືອກປັດຈຸບັນ
-NotUsedFields=ຊ່ອງຂໍ້ມູນຂອງຖານຂໍ້ມູນບໍ່ໄດ້ໃຊ້
-SelectImportFieldsSource = ເລືອກຊ່ອງຂໍ້ມູນແຫຼ່ງໄຟລ໌ທີ່ທ່ານຕ້ອງການທີ່ຈະນໍາເຂົ້າ ແລະຊ່ອງຂໍ້ມູນເປົ້າຫມາຍຂອງເຂົາເຈົ້າໃນຖານຂໍ້ມູນໂດຍການເລືອກຊ່ອງຂໍ້ມູນໃນແຕ່ລະກ່ອງເລືອກ, ຫຼືເລືອກໂປຣໄຟລ໌ການນໍາເຂົ້າທີ່ກໍານົດໄວ້ກ່ອນ:
-MandatoryTargetFieldsNotMapped=ບາງຊ່ອງຂໍ້ມູນບັງຄັບບໍ່ໄດ້ເຮັດແຜນທີ່
-AllTargetMandatoryFieldsAreMapped=ຊ່ອງຂໍ້ມູນເປົ້າໝາຍທັງໝົດທີ່ຕ້ອງການຄ່າບັງຄັບແມ່ນໄດ້ຖືກແຜນທີ່
-ResultOfSimulationNoError=ຜົນຂອງການຈຳລອງ: ບໍ່ມີຂໍ້ຜິດພາດ
-NumberOfLinesLimited=ຈໍານວນຈໍາກັດ
-ErrorFileLinesReachEOF=File has %s lines. However we reach the end of file or an empty line at record %s. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.
-ImportInProcess=Import of file %s is in process
-ImportTriggerModeLabel=Import mode
-ImportTriggerModeStrictLine=Secured mode (slower) - applies all automatic actions on each imported line
-ImportTriggerModeFastBulk=Fast mode (faster) - does not apply automatic actions on lines
-ImportTriggerModeHint=Use the Secured mode to guarantee that automatic business actions (usually provided by some modules) are done (triggered controls, notifications, synchronizations, linked updates, etc.).<br>Use the fast mode if you understand what it means.
-ImportTriggerModeFastBulkWarning=Warning: in Fast mode, automatic actions (triggered controls, notifications, synchronizations) are not executed.
-ImportTriggerModeSimulationWarningTitle=Simulation mode
-ImportTriggerModeSimulationWarning=Simulation never executes automatic import actions.
-ImportTriggerModeSimulationInfo=Simulation: no automatic action is executed (this is expected).
-ImportTriggerModeSummaryFast=Fast mode (no automatic actions)
-ImportTriggerModeSummaryStrict=Secure mode (automatic actions on each line)
-ImportTriggerModeSummaryHint=Use fast mode for high volumes, if secure mode is too slow or if you want avoid triggered business event.
-ImportTriggerModeFastBulkFinalWarningTitle=Fast mode
-ImportTriggerModeFastBulkFinalWarning=During this import, automatic actions will not be executed line by line.
+FormatControlRule=Format control rule = ກົດການຄວບຄຸມຮູບແບບ
+KeysToUseForUpdates=Key (column) for update = ຄີ (ຖັນ) ສຳລັບການອັບເດດ
+NbInsert=Number of inserted lines: %s = ຈຳນວນແຖວທີ່ແຊກເຂົ້າ: %s
+NbInsertSim=Number of lines that will be inserted: %s = ຈຳນວນແຖວທີ່ຈະຖືກແຊກເຂົ້າ: %s
+NbUpdate=Number of updated lines: %s = ຈຳນວນແຖວທີ່ອັບເດດ: %s
+NbUpdateSim=Number of lines that will be updated : %s = ຈຳນວນແຖວທີ່ຈະຖືກອັບເດດ: %s
+MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s = ພົບບັນທຶກຫຼາຍອັນດ້ວຍການກອງເຫຼົ່ານີ້: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number = ສະຕັອກ ແລະ ສະຖານທີ່ (ສາງ) ຂອງສິນຄ້າທີ່ມີໝາຍເລກລັອດ/ຊີຣຽວ
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection = ແຖວທຳອິດຈະບໍ່ຖືກນຳເຂົ້າຕາມການເລືອກໃນປັດຈຸບັນ
+NotUsedFields=Fields of database not used = ຟີວຂອງຖານຂໍ້ມູນທີ່ບໍ່ໄດ້ໃຊ້
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes...<br>or select a predefined import profile: = ເລືອກຟີວຂອງໄຟລ໌ຕົ້ນທາງທີ່ທ່ານຕ້ອງການນຳເຂົ້າ ແລະ ຟີວເປົ້າໝາຍໃນຖານຂໍ້ມູນ ໂດຍການເລືອກຟີວໃນແຕ່ລະຊ່ອງໂຕເລືອກ...<br>ຫຼື ເລືອກໂປຣໄຟລ໌ການນຳເຂົ້າທີ່ກຳນົດໄວ້ລ່ວງໜ້າ:
+MandatoryTargetFieldsNotMapped=Some mandatory target fields are not mapped = ບາງຟີວເປົ້າໝາຍທີ່ຈຳເປັນຍັງບໍ່ໄດ້ຖືກເຊື່ອມໂຍງ (Mapped)
+AllTargetMandatoryFieldsAreMapped=All target fields that need a mandatory value are mapped = ທຸກໆຟີວເປົ້າໝາຍທີ່ຕ້ອງການຄ່າຈຳເປັນໄດ້ຖືກເຊື່ອມໂຍງແລ້ວ
+ResultOfSimulationNoError=Result of simulation: No error = ຜົນຂອງການຈຳລອງ: ບໍ່ມີຂໍ້ຜິດພາດ
+NumberOfLinesLimited=Number of lines limited = ຈຳນວນແຖວຖືກຈຳກັດ
+ErrorFileLinesReachEOF=File has %s lines. However we reach the end of file or an empty line at record %s. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields. = ໄຟລ໌ມີ %s ແຖວ. ແນວໃດກໍ່ຕາມ ພວກເຮົາໄປຮອດຈຸດສິ້ນສຸດຂອງໄຟລ໌ ຫຼື ພົບແຖວວ່າງຢູ່ທີ່ບັນທຶກ %s. ສິ່ງນີ້ອາດຈະເກີດຂຶ້ນເມື່ອບາງບັນທຶກຖືກແບ່ງອອກເປັນຫຼາຍແຖວ ແລະ ບໍ່ໄດ້ຖືກຂັ້ນດ້ວຍ "ຕົວຂັ້ນຂໍ້ຄວາມ" ຢ່າງຖືກຕ້ອງ, ຫຼື ມີແຖວທີ່ບໍ່ມີຂໍ້ມູນໃນທຸກໆຟີວ.
+ImportInProcess=Import of file %s is in process = ການນຳເຂົ້າໄຟລ໌ %s ກຳລັງດຳເນີນການ
+ImportTriggerModeLabel=Import mode = ໂໝດການນຳເຂົ້າ
+ImportTriggerModeStrictLine=Secured mode (slower) - applies all automatic actions on each imported line = ໂໝດປອດໄພ (ຊ້າກວ່າ) - ນຳໃຊ້ທຸກການກະທຳອັດຕະໂນມັດໃນແຕ່ລະແຖວທີ່ນຳເຂົ້າ
+ImportTriggerModeFastBulk=Fast mode (faster) - does not apply automatic actions on lines = ໂໝດໄວ (ໄວກວ່າ) - ບໍ່ນຳໃຊ້ການກະທຳອັດຕະໂນມັດໃນແຖວຕ່າງໆ
+ImportTriggerModeHint=Use the Secured mode to guarantee that automatic business actions (usually provided by some modules) are done (triggered controls, notifications, synchronizations, linked updates, etc.).<br>Use the fast mode if you understand what it means. = ໃຊ້ໂໝດປອດໄພເພື່ອຮັບປະກັນວ່າການກະທຳທາງທຸລະກິດອັດຕະໂນມັດ (ປົກກະຕິແລ້ວແມ່ນມາຈາກບາງໂມດູນ) ໄດ້ຖືກປະຕິບັດ (ການຄວບຄຸມທີ່ຖືກກະຕຸ້ນ, ການແຈ້ງເຕືອນ, ການຊິງໂຄຣໄນ, ການອັບເດດທີ່ກ່ຽວຂ້ອງ, ແລະອື່ນໆ).<br>ໃຊ້ໂໝດໄວຖ້າທ່ານເຂົ້າໃຈຄວາມໝາຍຂອງມັນ.
+ImportTriggerModeFastBulkWarning=Warning: in Fast mode, automatic actions (triggered controls, notifications, synchronizations) are not executed. = ຄຳເຕືອນ: ໃນໂໝດໄວ, ການກະທຳອັດຕະໂນມັດ (ການຄວບຄຸມທີ່ຖືກກະຕຸ້ນ, ການແຈ້ງເຕືອນ, ການຊິງໂຄຣໄນ) ຈະບໍ່ຖືກປະຕິບັດ.
+ImportTriggerModeSimulationWarningTitle=Simulation mode = ໂໝດການຈຳລອງ
+ImportTriggerModeSimulationWarning=Simulation never executes automatic import actions. = ການຈຳລອງຈະບໍ່ດຳເນີນການກະທຳການນຳເຂົ້າແບບອັດຕະໂນມັດໃດໆ.
+ImportTriggerModeSimulationInfo=Simulation: no automatic action is executed (this is expected). = ການຈຳລອງ: ບໍ່ມີການກະທຳອັດຕະໂນມັດໃດໆຖືກປະຕິບັດ (ນີ້ແມ່ນສິ່ງທີ່ຄາດໄວ້).
+ImportTriggerModeSummaryFast=Fast mode (no automatic actions) = ໂໝດໄວ (ບໍ່ມີການກະທຳອັດຕະໂນມັດ)
+ImportTriggerModeSummaryStrict=Secure mode (automatic actions on each line) = ໂໝດປອດໄພ (ມີການກະທຳອັດຕະໂນມັດໃນແຕ່ລະແຖວ)
+ImportTriggerModeSummaryHint=Use fast mode for high volumes, if secure mode is too slow or if you want avoid triggered business event. = ໃຊ້ໂໝດໄວສຳລັບຂໍ້ມູນປະລິມານຫຼາຍ, ຖ້າໂໝດປອດໄພຊ້າເກີນໄປ ຫຼື ຖ້າທ່ານຕ້ອງການຫຼີກລ່ຽງເຫດການທາງທຸລະກິດທີ່ຖືກກະຕຸ້ນ.
+ImportTriggerModeFastBulkFinalWarningTitle=Fast mode = ໂໝດໄວ
+ImportTriggerModeFastBulkFinalWarning=During this import, automatic actions will not be executed line by line. = ໃນລະຫວ່າງການນຳເຂົ້ານີ້, ການກະທຳອັດຕະໂນມັດຈະບໍ່ຖືກປະຕິບັດເທື່ອລະແຖວ.

@@ -14,41 +14,46 @@
 # Module label 'ModuledatapolicyName'
 Module4100Name = ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = ໂມດູນເພື່ອຈັດການຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ (ສອດຄ່ອງກັບ GDPR)
+Module4100Desc = ໂມດູນສຳລັບຈັດການຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ (ສອດຄ່ອງກັບ GDPR)
 # Administration page
-datapolicySetup = ການຕັ້ງຄ່ານະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນໂມດູນ
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+datapolicySetup = ການຕັ້ງຄ່ານະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ
+DataDeletion = ການລຶບຂໍ້ມູນ
+DataAnonymization = ການເຮັດໃຫ້ຂໍ້ມູນເປັນນາມມະຍົດ
+DataAnonymizationOrDeletion = ການເຮັດໃຫ້ຂໍ້ມູນເປັນນາມມະຍົດ ຫຼື ການລຶບຂໍ້ມູນ
+datapolicySetupPage = ອີງຕາມກົດໝາຍຂອງປະເທດທ່ານ (ຕົວຢ່າງ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">ມາດຕາ 5</a> ຂອງ GDPR), ຂໍ້ມູນສ່ວນບຸກຄົນຕ້ອງໄດ້ຮັບການເກັບຮັກສາໄວ້ໃນໄລຍະເວລາທີ່ບໍ່ເກີນກວ່າຄວາມຈຳເປັນສຳລັບຈຸດປະສົງທີ່ໄດ້ເກັບກຳຂໍ້ມູນນັ້ນມາ, ຍົກເວັ້ນເພື່ອຈຸດປະສົງໃນການເກັບມ້ຽນເອກະສານທາງປະຫວັດສາດ.<br>ໂມດູນນີ້ຈະເຮັດການປ່ຽນຂໍ້ມູນໃຫ້ເປັນນາມມະຍົດໂດຍອັດຕະໂນມັດ ຫຼັງຈາກຜ່ານໄລຍະເວລາໃດໜຶ່ງທີ່ບໍ່ມີການເຄື່ອນໄຫວ (ຕາມໄລຍະເວລາທີ່ທ່ານໄດ້ກຳນົດໄວ້ລຸ່ມນີ້) ແລະ ຖ້າຫາກຂໍ້ມູນນັ້ນບໍ່ມີຂໍ້ມູນລູກທີ່ກ່ຽວຂ້ອງກັບທາງທຸລະກິດ.
 NB_MONTHS = %s ເດືອນ
 ONE_YEAR = 1 ປີ
 NB_YEARS = %s ປີ
 DATAPOLICY_TIERS_CLIENT = ລູກຄ້າ
-DATAPOLICY_TIERS_PROSPECT = ຄວາມສົດໃສດ້ານ
-DATAPOLICY_TIERS_PROSPECT_CLIENT = ຄວາມສົດໃສດ້ານ/ລູກຄ້າ
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຄວາມສົດໃສດ້ານ / ຫຼືລູກຄ້າ
-DATAPOLICY_TIERS_FOURNISSEUR = ຜູ້ສະຫນອງ
+DATAPOLICY_TIERS_PROSPECT = ຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ
+DATAPOLICY_TIERS_PROSPECT_CLIENT = ຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ/ລູກຄ້າ
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ/ບໍ່ແມ່ນລູກຄ້າ
+DATAPOLICY_TIERS_FOURNISSEUR = ຜູ້ສະໜອງ
 DATAPOLICY_CONTACT_CLIENT = ລູກຄ້າ
-DATAPOLICY_CONTACT_PROSPECT = ຄວາມສົດໃສດ້ານ
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = ຄວາມສົດໃສດ້ານ/ລູກຄ້າ
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຄວາມສົດໃສດ້ານ / ຫຼືລູກຄ້າ
-DATAPOLICY_CONTACT_FOURNISSEUR = ຜູ້ສະຫນອງ
+DATAPOLICY_CONTACT_PROSPECT = ຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = ຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ/ລູກຄ້າ
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຜູ້ທີ່ຄາດວ່າຈະເປັນລູກຄ້າ/ບໍ່ແມ່ນລູກຄ້າ
+DATAPOLICY_CONTACT_FOURNISSEUR = ຜູ້ສະໜອງ
 DATAPOLICY_ADHERENT = ສະມາຊິກ
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
-SendAgreementText = ທ່ານສາມາດສົ່ງອີເມວ GDPR ໄປຫາຜູ້ຕິດຕໍ່ທີ່ກ່ຽວຂ້ອງທັງຫມົດຂອງທ່ານ (ຜູ້ທີ່ຍັງບໍ່ທັນໄດ້ຮັບອີເມລ໌ແລະທີ່ທ່ານບໍ່ໄດ້ລົງທະບຽນຫຍັງກ່ຽວກັບຂໍ້ຕົກລົງ GDPR ຂອງພວກເຂົາ). ເພື່ອເຮັດສິ່ງນີ້, ໃຊ້ປຸ່ມຕໍ່ໄປນີ້.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = ການສະໝັກງານ
+DATAPOLICY_Tooltip_SETUP = ການເຮັດໃຫ້ຂໍ້ມູນເປັນນາມມະຍົດແມ່ນດຳເນີນການໂດຍ ງານທີ່ກຳນົດເວລາ "%s" ເຊິ່ງເຮັດວຽກໂດຍໂມດູນ "%s", ດັ່ງນັ້ນໂມດູນນີ້ຕ້ອງໄດ້ຮັບການເປີດໃຊ້ງານ ແລະ ເຮັດວຽກຢ່າງຖືກຕ້ອງ.
+SendAgreementText = ທ່ານສາມາດສົ່ງອີເມວ GDPR ຫາທຸກລາຍຊື່ຜູ້ຕິດຕໍ່ທີ່ກ່ຽວຂ້ອງ (ຜູ້ທີ່ຍັງບໍ່ທັນໄດ້ຮັບອີເມວ ແລະ ຜູ້ທີ່ທ່ານຍັງບໍ່ທັນໄດ້ລົງທະບຽນການຍິນຍອມ GDPR ຂອງພວກເຂົາ). ເພື່ອດຳເນີນການນີ້, ໃຫ້ໃຊ້ປຸ່ມລຸ່ມນີ້.
 SendAgreement = ສົ່ງອີເມວ
-AllAgreementSend = ອີເມວທັງໝົດຖືກສົ່ງໄປແລ້ວ
-TXTLINKDATAPOLICYACCEPT = ຂໍ້ຄວາມສໍາລັບການເຊື່ອມຕໍ່ "ຂໍ້ຕົກລົງ"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+AllAgreementSend = ສົ່ງອີເມວທັງໝົດແລ້ວ
+TXTLINKDATAPOLICYACCEPT = ຂໍ້ຄວາມສຳລັບລິ້ງ "ການຍິນຍອມ"
+TXTLINKDATAPOLICYREFUSE = ຂໍ້ຄວາມສຳລັບລິ້ງ "ການປະຕິເສດ"
+DelayForAnonymization = ໄລຍະເວລາລໍຖ້າກ່ອນເຮັດໃຫ້ເປັນນາມມະຍົດ
+DelayForDeletion = ໄລຍະເວລາລໍຖ້າກ່ອນການລຶບ
 # Extrafields
-DATAPOLICY_BLOCKCHECKBOX = GDPR : ການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ
-DATAPOLICY_consentement = ການຍິນຍອມທີ່ໄດ້ຮັບສຳລັບການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = GDPR : ການປະມວນຜົນຂໍ້ມູນສ່ວນບຸກຄົນ
+DATAPOLICY_consentement = ໄດ້ຮັບການຍິນຍອມສຳລັບການປະມວນຜົນຂໍ້ມູນສ່ວນບຸກຄົນ
+DATAPOLICY_opposition_traitement = ຄັດຄ້ານການປະມວນຜົນຂໍ້ມູນສ່ວນບຸກຄົນ
+DATAPOLICY_opposition_prospection = ຄັດຄ້ານການປະມວນຜົນຂໍ້ມູນສ່ວນບຸກຄົນເພື່ອຈຸດປະສົງທາງການຕະຫຼາດ
 # Notes added during an anonymization
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-MailSent = ອີ​ເມວ​ໄດ້​ຖືກ​ສົ່ງ​ໄປ​ແລ້ວ
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+DATAPOLICY_date = ວັນທີໃຫ້ການຍິນຍອມ/ປະຕິເສດ GDPR
+DATAPOLICY_send = ວັນທີສົ່ງອີເມວຂໍຄວາມຍິນຍອມ
+MailSent = ອີເມວຖືກສົ່ງແລ້ວ
+NUMBER_MONTH_BEFORE_DELETION = ຈຳນວນເດືອນກ່ອນການລຶບ
+TheFollowingFieldsAreReplaceWith = ບາງຟິວ (Field) ຈະຖືກແທນທີ່ດ້ວຍຄ່າສະເພາະ:
+OtherFieldsAreReplaceWithStaticValues = ບາງຟິວອື່ນໆຈະຖືກແທນທີ່ດ້ວຍຄ່າຄົງທີ່:
+QualifiedNumber = ຈຳນວນຂໍ້ມູນທີ່ກົງຕາມເງື່ອນໄຂ

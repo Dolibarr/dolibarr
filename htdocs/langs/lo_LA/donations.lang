@@ -1,37 +1,63 @@
 # Dolibarr language file - Source file is en_US - donations
-Donation=ການບໍລິຈາກ
-Donations=ການບໍລິຈາກ
-DonationRef=ການບໍລິຈາກອ້າງອີງ
-Donor=ຜູ້ໃຫ້ທຶນ
-AddDonation=ສ້າງການບໍລິຈາກ
-NewDonation=ການບໍລິຈາກໃ່
-DeleteADonation=ລຶບການບໍລິຈາກອອກ
-ConfirmDeleteADonation=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບການບໍລິຈາກນີ້ອອກ?
-PublicDonation=ການບໍລິຈາກສາທາລະນະ
-DonationsArea=ພື້ນທີ່ບໍລິຈາກ
-DonationStatusPromiseNotValidated=ຮ່າງ ຄຳ ັ້ນສັນຍາ
-DonationStatusPromiseValidated=ຄຳ ສັນຍາທີ່ຖືກຕ້ອງ
-DonationStatusPaid=ໄດ້ຮັບການບໍລິຈາກ
-DonationStatusPromiseNotValidatedShort=ຮ່າງ
-DonationStatusPromiseValidatedShort=ກວດສອບແລ້ວ
-DonationStatusPaidShort=ໄດ້ຮັບ
-DonationTitle=ໃບຮັບເງິນບໍລິຈາກ
-DonationDate=ວັນບໍລິຈາກ
-DonationDatePayment=ວັນທີຊໍາລະ
-ValidPromess=ຮັບຮອງ ຄຳ ັ້ນສັນຍາ
-DonationReceipt=ໃບຮັບເງິນບໍລິຈາກ
-DonationsModels=ແບບເອກະສານ ສຳ ລັບໃບຮັບເງິນບໍລິຈາກ
-LastModifiedDonations=ການບໍລິຈາກທີ່ໄດ້ຮັບການແກ້ໄຂຫຼ້າສຸດ %s
-DonationRecipient=ຜູ້ຮັບບໍລິຈາກ
-IConfirmDonationReception=ຜູ້ຮັບປະກາດຮັບ, ເປັນການບໍລິຈາກ, ຂອງຈໍານວນດັ່ງຕໍ່ໄປນີ້
-MinimumAmount=ຈຳ ນວນຂັ້ນຕ່ ຳ ແມ່ນ %s
-FreeTextOnDonations=ຂໍ້ຄວາມຟຣີທີ່ຈະສະແດງຢູ່ສ່ວນທ້າຍ
-FrenchOptions=ທາງເລືອກສໍາລັບປະເທດຣັ່ງ
-DONATION_ART200=ສະແດງບົດຄວາມ 200 ຈາກ CGI ຖ້າເຈົ້າເປັນຫ່ວງ
-DONATION_ART238=ສະແດງບົດຄວາມ 238 ຈາກ CGI ຖ້າເຈົ້າເປັນຫ່ວງ
-DONATION_ART978=ສະແດງບົດຄວາມ 978 ຈາກ CGI ຖ້າທ່ານມີຄວາມກັງວົນ
-DonationPayment=ການຈ່າຍເງິນບໍລິຈາກ
-DonationPayments=Donation payments
-DonationValidated=ກວດສອບ %s ການບໍລິຈາກແລ້ວ
-DonationUseThirdparties=ໃຊ້ທີ່ຢູ່ຂອງພາກສ່ວນທີສາມທີ່ມີຢູ່ແລ້ວເປັນທີ່ຢູ່ຂອງຜູ້ໃຫ້ທຶນ
-DonationsStatistics=ສະຖິຕິການບໍລິຈາກ
+Donation=Donation=ການບໍລິຈາກ
+Donations=Donations=ການບໍລິຈາກທັງໝົດ
+DonationRef=Donation ref.=ເລກອ້າງອີງການບໍລິຈາກ
+Donor=Donor=ຜູ້ບໍລິຈາກ
+AddDonation=Create a donation=ສ້າງລາຍການບໍລິຈາກ
+NewDonation=New donation=ການບໍລິຈາກໃໝ່
+DeleteADonation=Delete a donation=ລຶບລາຍການບໍລິຈາກ
+ConfirmDeleteADonation=Are you sure you want to delete this donation?=ທ່ານແນ່ໃຈບໍວ່າຕ້ອງການລຶບລາຍການບໍລິຈາກນີ້?
+PublicDonation=Public donation=ການບໍລິຈາກສາທາລະນະ
+DonationsArea=Donations area=ເຂດຈັດການການບໍລິຈາກ
+DonationStatusPromiseNotValidated=Draft promise=ຮ່າງຄຳໝັ້ນສັນຍາ
+DonationStatusPromiseValidated=Validated promise=ຄຳໝັ້ນສັນຍາທີ່ຢືນຢັນແລ້ວ
+DonationStatusPaid=Donation received=ໄດ້ຮັບການບໍລິຈາກແລ້ວ
+DonationStatusPromiseNotValidatedShort=Draft=ຮ່າງ
+DonationStatusPromiseValidatedShort=Validated=ຢືນຢັນແລ້ວ
+DonationStatusPaidShort=Received=ໄດ້ຮັບແລ້ວ
+DonationTitle=Donation receipt=ໃບຢັ້ງຢືນການບໍລິຈາກ
+DonationDate=Donation date=ວັນທີບໍລິຈາກ
+DonationDatePayment=Payment date=ວັນທີຊຳລະເງິນ
+ValidPromess=Validate promise=ຢືນຢັນຄຳໝັ້ນສັນຍາ
+DonationReceipt=Donation receipt=ໃບຮັບເງິນບໍລິຈາກ
+DonationsModels=Documents models for donation receipts=ຮູບແບບເອກະສານສຳລັບໃບຢັ້ງຢືນການບໍລິຈາກ
+LastModifiedDonations=Latest %s modified donations=ລາຍການບໍລິຈາກ %s ຫຼ້າສຸດທີ່ມີການປ່ຽນແປງ
+DonationRecipient=Donation recipient=ຜູ້ຮັບການບໍລິຈາກ
+IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount=ຜູ້ຮັບຢັ້ງຢືນການໄດ້ຮັບເງິນບໍລິຈາກຕາມຈຳນວນດັ່ງຕໍ່ໄປນີ້
+MinimumAmount=Minimum amount is %s=ຈຳນວນຕ່ຳສຸດແມ່ນ %s
+FreeTextOnDonations=Free text to show in footer=ຂໍ້ຄວາມອິດສະຫຼະທີ່ຈະສະແດງຢູ່ສ່ວນທ້າຍ
+FrenchOptions=Options for France=ຕົວເລືອກສຳລັບປະເທດຝຣັ່ງ
+DONATION_ART200=Show article 200 from CGI if you are concerned=ສະແດງມາດຕາ 200 ຈາກ CGI ຖ້າທ່ານມີສ່ວນກ່ຽວຂ້ອງ
+DONATION_ART238=Show article 238 from CGI if you are concerned=ສະແດງມາດຕາ 238 ຈາກ CGI ຖ້າທ່ານມີສ່ວນກ່ຽວຂ້ອງ
+DONATION_ART978=Show article 978 from CGI if you are concerned=ສະແດງມາດຕາ 978 ຈາກ CGI ຖ້າທ່ານມີສ່ວນກ່ຽວຂ້ອງ
+DonationPayment=Donation payment=ການຊຳລະເງິນບໍລິຈາກ
+DonationPayments=Donation payments=ລາຍການຊຳລະເງິນບໍລິຈາກ
+DonationValidated=Donation %s validated=ການບໍລິຈາກ %s ໄດ້ຮັບການຢືນຢັນແລ້ວ
+DonationUseThirdparties=Use the address of an existing thirdparty as the address of the donor=ໃຊ້ທີ່ຢູ່ຂອງບຸກຄົນພາຍນອກທີ່ມີຢູ່ແລ້ວເປັນທີ່ຢູ່ຂອງຜູ້ບໍລິຈາກ
+DonationsStatistics=Donation's statistics=ສະຖິຕິການບໍລິຈາກ
+NbOfDonations=Number of donations=ຈຳນວນການບໍລິຈາກ
+BlankDonationForm=Public donation form=ແບບຟອມການບໍລິຈາກສາທາລະນະ
+BlankDonationFormDesc=Dolibarr can provide you a public URL/website to allow external visitors to make a donation. If an online payment module is enabled, a payment form may also be automatically provided.=Dolibarr ສາມາດສ້າງ URL/ເວັບໄຊສາທາລະນະເພື່ອໃຫ້ບຸກຄົນພາຍນອກເຂົ້າມາບໍລິຈາກໄດ້. ຖ້າເປີດໃຊ້ງານໂມດູນການຊຳລະເງິນອອນໄລນ໌, ແບບຟອມການຊຳລະເງິນກໍຈະຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດ.
+EnablePublicDonationForm=Enable the public donation form=ເປີດໃຊ້ງານແບບຟອມການບໍລິຈາກສາທາລະນະ
+EnablePublicDonationList=Enable the public donation List=ເປີດໃຊ້ງານລາຍຊື່ການບໍລິຈາກສາທາລະນະ
+ForceDonateurNature = Force donateur nature (Individual or Corporation)=ບັງຄັບປະເພດຜູ້ບໍລິຈາກ (ບຸກຄົນທົ່ວໄປ ຫຼື ນິຕິບຸກຄົນ)
+MinimumAmountDonation=Minimum amount of donation payment=ຈຳນວນເງິນຕ່ຳສຸດຂອງການຊຳລະບໍລິຈາກ
+donationCountersArePublic = The total amount of valid donations is publicly visible=ຈຳນວນລວມຂອງການບໍລິຈາກທີ່ຢືນຢັນແລ້ວແມ່ນສາມາດເບິ່ງເຫັນໄດ້ຕໍ່ສາທາລະນະ
+DONATION_NEWFORM_PAYONLINE=After the donation form, switch automatically to the online payment page=ຫຼັງຈາກຕື່ມແບບຟອມບໍລິຈາກແລ້ວ ໃຫ້ປ່ຽນໄປໜ້າການຊຳລະເງິນອອນໄລນ໌ໂດຍອັດຕະໂນມັດ
+ErrorFieldMinimumAmount=Minimum amount of donation is %s=ຈຳນວນການບໍລິຈາກຕ່ຳສຸດແມ່ນ %s
+NewDonationForm=New donation form=ແບບຟອມບໍລິຈາກໃໝ່
+NewDonationbyWeb=New donation added. Awaiting for payment=ເພີ່ມການບໍລິຈາກໃໝ່ແລ້ວ. ກຳລັງລໍຖ້າການຊຳລະເງິນ
+NewDonationDesc=This form allows you to make a donation.=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ທ່ານເຮັດການບໍລິຈາກ.
+donationPublic=Public donation=ການບໍລິຈາກສາທາລະນະ
+donationAmount=Contribution Amount=ຈຳນວນເງິນສົມທົບ
+GetDonationButtonLabel=Donate=ບໍລິຈາກ
+AnyAmountForDonation=Any amount of your choice=ຈຳນວນເງິນໃດກໍໄດ້ຕາມທີ່ທ່ານຕ້ອງການ
+project=Cause=ຈຸດປະສົງ/ໂຄງການ
+donAnonymous=Anonymous donation=ການບໍລິຈາກແບບບໍ່ປະສົງອອກນາມ
+AnonymousDonationTooltip=Check this box if you want your donation to remain anonymous. Your personal information will not be asked.=ໝາຍເອົາຫ້ອງນີ້ຖ້າທ່ານຕ້ອງການບໍລິຈາກແບບບໍ່ປະສົງອອກນາມ. ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານຈະບໍ່ຖືກຖາມ.
+publicDonationFieldHelp=%s can publish my donation in the public register=%s ສາມາດເຜີຍແຜ່ການບໍລິຈາກຂອງຂ້ອຍໃນບັນຊີລາຍຊື່ສາທາລະນະ
+listOfPublicDonations=List of public donations=ລາຍຊື່ການບໍລິຈາກສາທາລະນະ
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s=ເກີດຂໍ້ຜິດພາດຂຶ້ນ. ເພື່ອເຮັດໃຫ້ການບໍລິຈາກຂອງທ່ານສຳເລັດ, ກະລຸນາຕິດຕໍ່ຫາພວກເຮົາທີ່ %s
+descDonationLineInInvoice=Donation and contribution=ການບໍລິຈາກ ແລະ ການສົມທົບທຶນ
+companyBusinessNumber=Business Registration Number=ເລກທະບຽນວິສາຫະກິດ
+companyTIN=Tax Identification Number=ເລກປະຈຳຕົວຜູ້ເສຍພາສີ

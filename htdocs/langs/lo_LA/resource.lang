@@ -1,39 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=ຊັບ​ພະ​ຍາ​ກອນ
-MenuResourceAdd=ຊັບພະຍາກອນໃຫມ່
-DeleteResource=ລຶບຊັບພະຍາກອນ
-ConfirmDeleteResourceElement=ຢືນຢັນການລຶບຊັບພະຍາກອນສໍາລັບອົງປະກອບນີ້
-NoResourceInDatabase=ບໍ່ມີຊັບພະຍາກອນຢູ່ໃນຖານຂໍ້ມູນ.
-NoResourceLinked=ບໍ່ມີການເຊື່ອມໂຍງຊັບພະຍາກອນ
-ActionsOnResource=ເຫດການກ່ຽວກັບຊັບພະຍາກອນນີ້
-ResourcePageIndex=ລາຍການຊັບພະຍາກອນ
-ResourceSingular=ຊັບພະຍາກອນ
-ResourceCard=ບັດຊັບພະຍາກອນ
-AddResource=ສ້າງຊັບພະຍາກອນ
-ResourceFormLabel_ref=ຊື່ຊັບພະຍາກອນ
-ResourceType=ປະເພດຊັບພະຍາກອນ
-ResourceFormLabel_description=ລາຍລະອຽດຊັບພະຍາກອນ
+MenuResourceIndex=ຊັບພະຍາກອນ (Resources)
+MenuResourceAdd=ຊັບພະຍາກອນໃໝ່ (New resource)
+DeleteResource=ລຶບຊັບພະຍາກອນ (Delete resource)
+ConfirmDeleteResourceElement=ຢືນຢັນການລຶບຊັບພະຍາກອນສຳລັບລາຍການນີ້ (Confirm delete the resource for this element)
+NoResourceInDatabase=ບໍ່ມີຊັບພະຍາກອນໃນຖານຂໍ້ມູນ (No resource in database.)
+NoResourceLinked=ບໍ່ມີຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງ (No resource linked)
+ActionsOnResource=ເຫດການກ່ຽວກັບຊັບພະຍາກອນນີ້ (Events about this resource)
+ResourcePageIndex=ລາຍການຊັບພະຍາກອນ (Resources list)
+ResourceSingular=ຊັບພະຍາກອນ (Resource)
+ResourceCard=ບັດຊັບພະຍາກອນ (Resource card)
+NewResource=ຊັບພະຍາກອນໃໝ່ (New resource)
+AddResource=ສ້າງຊັບພະຍາກອນ (Create a resource)
+ResourceFormLabel_ref=ຊື່ຊັບພະຍາກອນ (Resource name)
+ResourceFormLabel_description=ຄຳອະທິບາຍຊັບພະຍາກອນ (Resource description)
+ResourceType=ປະເພດຊັບພະຍາກອນ (Resource type)
+ResourceTypeID=ລະຫັດປະເພດຊັບພະຍາກອນ (Resource type ID)
+ResourceTypeLabel=ປ້າຍຊື່ປະເພດຊັບພະຍາກອນ (Resource type label)
+ResourcesLinkedToElement=ຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງກັບລາຍການ (Resources linked to element)
 
-ResourcesLinkedToElement=ຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງກັບອົງປະກອບ
-
-ShowResource=ສະແດງຊັບພະຍາກອນ
-
-ResourceElementPage=ຊັບພະຍາກອນອົງປະກອບ
-ResourceCreatedWithSuccess=ສ້າງຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-RessourceLineSuccessfullyDeleted=ລຶບແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-RessourceLineSuccessfullyUpdated=ອັບເດດແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-ResourceLinkedWithSuccess=ຊັບພະຍາກອນເຊື່ອມໂຍງກັບຄວາມສໍາເລັດ
-
-ConfirmDeleteResource=ຢືນຢັນການລຶບຊັບພະຍາກອນນີ້
-RessourceSuccessfullyDeleted=ລຶບຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-DictionaryResourceType=ປະເພດຂອງຊັບພະຍາກອນ
-
-SelectResource=ເລືອກຊັບພະຍາກອນ
-
-IdResource=ຊັບພະຍາກອນ Id
-AssetNumber=Serາຍເລກຊີຣຽວ
-ResourceTypeCode=ລະຫັດປະເພດຊັບພະຍາກອນ
-ImportDataset_resource_1=ຊັບ​ພະ​ຍາ​ກອນ
-
-ErrorResourcesAlreadyInUse=ມີການ ນຳ ໃຊ້ຊັບພະຍາກອນບາງອັນ
-ErrorResourceUseInEvent=%s ໃຊ້ໃນເຫດການ %s
+ShowResource=ສະແດງຊັບພະຍາກອນ (Show resource)
+ResourceElementPage=ຊັບພະຍາກອນຂອງລາຍການ (Element resources)
+ResourceCreatedWithSuccess=ສ້າງຊັບພະຍາກອນສຳເລັດແລ້ວ (Resource successfully created)
+RessourceLineSuccessfullyDeleted=ລຶບແຖວຊັບພະຍາກອນສຳເລັດແລ້ວ (Resource line successfully deleted)
+RessourceLineSuccessfullyUpdated=ອັບເດດແຖວຊັບພະຍາກອນສຳເລັດແລ້ວ (Resource line successfully updated)
+ResourceLinkedWithSuccess=ເຊື່ອມໂຍງຊັບພະຍາກອນສຳເລັດແລ້ວ (Resource linked with success)
+ConfirmDeleteResource=ຢືນຢັນການລຶບຊັບພະຍາກອນນີ້ (Confirm to delete this resource)
+RessourceSuccessfullyDeleted=ລຶບຊັບພະຍາກອນສຳເລັດແລ້ວ (Resource successfully deleted)
+DictionaryResourceType=ປະເພດຂອງຊັບພະຍາກອນ (Type of resources)
+SelectResource=ເລືອກຊັບພະຍາກອນ (Select resource)
+IdResource=ລະຫັດຊັບພະຍາກອນ (Id resource)
+AssetNumber=ໝາຍເລກຊັບສິນ (Serial number)
+ResourceTypeCode=ລະຫັດປະເພດຊັບພະຍາກອນ (Resource type code)
+ImportDataset_resource_1=ຊັບພະຍາກອນ (Resources)
+ErrorResourcesAlreadyInUse=ຊັບພະຍາກອນບາງຢ່າງພວມຖືກໃຊ້ງານຢູ່ (Some resources are in use)
+ErrorResourceUseInEvent=%s ຖືກໃຊ້ໃນເຫດການ %s (%s used in %s event)
+MaxUsers=ຈຳນວນຜູ້ໃຊ້ສູງສຸດ (Maximum number of users)
+MaxUsersResourceDesc=ຖ້າຊັບພະຍາກອນສາມາດໃຊ້ໄດ້ຫຼາຍຄົນພ້ອມກັນ (ລົດ, ຫ້ອງ, ...), ທ່ານສາມາດລະບຸຈຳນວນຜູ້ໃຊ້ສູງສຸດທີ່ອະນຸຍາດໃຫ້ໃຊ້ຊັບພະຍາກອນໃນເວລາດຽວກັນ (ຈຳນວນບ່ອນນັ່ງ, ສະຖານທີ່, ...). (If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).)
+MaxUsersLabel=ຜູ້ໃຊ້ສູງສຸດ (Maximum users)

@@ -1,0 +1,200 @@
+BackToDolibarr=ກັບຄືນສູ່ Dolibarr
+WelcomeToDocumentation=ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ ເອກະສານແນະນຳ UI/UX ຂອງ Dolibarr!
+WelcomeToDocumentationDescription=ເອກະສານສະບັບນີ້ມີຈຸດປະສົງເພື່ອແນະນຳທ່ານກ່ຽວກັບສ່ວນປະກອບຕ່າງໆຂອງໜ້າຕາຜູ້ໃຊ້ Dolibarr ແລະ ຊ່ວຍໃຫ້ທ່ານນຳໃຊ້ພວກມັນໄດ້ຢ່າງມີປະສິດທິພາບ. ທ່ານສາມາດສຶກສາບົດຕ່າງໆຂອງເອກະສານນີ້ເພື່ອຄົ້ນຫາສ່ວນປະກອບຂອງ Dolibarr ແລະ ຮຽນຮູ່ວິທີນຳໃຊ້ຢ່າງເກີດປະໂຫຍດ.
+DocumentationHome=ເອກະສານແນະນຳ UI
+DocBasicUsage=ການນຳໃຊ້ພື້ນຖານ
+DocLinkSectionResources=ແຫຼ່ງຂໍ້ມູນ
+DocHowContribute=ວິທີການມີສ່ວນຮ່ວມ?
+DocHowContributeDescription=ເອກະສານນີ້ກຳລັງຢູ່ໃນຂັ້ນຕອນການຂຽນ. ຮຽນຮູ້ນຳກັນວ່າຈະມີສ່ວນຮ່ວມ ແລະ ເພີ່ມເນື້ອຫາໃຫ້ເອກະສານນີ້ແນວໃດ.
+DocListLinks=ລາຍການລິ້ງ - %s
+DocGroupIndexDescription=ໜ້ານີ້ລວມເອົາລິ້ງທັງໝົດຈາກພາກສ່ວນ "%s".
+DocCodeForMenuOrModuleBuilder=ລະຫັດຮູບພາບສຳລັບການຕັ້ງຄ່າເມນູ ຫຼື ຟິລໃນ modulebuilder
+DocExampleForPHPCode=ຕົວຢ່າງລະຫັດສຳລັບໃຊ້ໃນ PHP
+
+# Components
+DocComponentsTitle=ສ່ວນປະກອບ
+DocComponentsMainDescription=ລາຍລະອຽດສ່ວນປະກອບແມ່ນກຳລັງຢູ່ໃນຂັ້ນຕອນພັດທະນາ
+FreezeTooltip=ການຄ້າງຄຳອະທິບາຍ (Tooltip freeze)
+
+# Badges
+DocBadgeTitle=ປ້າຍ (Badges)
+DocBadgeMainDescription=ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບປ້າຍ, ເຊິ່ງເປັນສ່ວນປະກອບສຳລັບສະແດງຈຳນວນ ແລະ ຂໍ້ຄວາມກຳກັບຂະໜາດນ້ອຍ.
+DocBadgeScaleDescription=ປ້າຍຈະປັບຂະໜາດໃຫ້ເຂົ້າກັບອົງປະກອບຫຼັກໂດຍການໃຊ້ຂະໜາດຟອນແບບສຳພັນ ແລະ ຫົວໜ່ວຍ em.
+DocBadgeUseOnLinksOrButtons=ປ້າຍສາມາດໃຊ້ເປັນສ່ວນໜຶ່ງຂອງລິ້ງ ຫຼື ປຸ່ມເພື່ອສະແດງຕົວເລກນັບ.
+DocBadgeWarningAriaHidden1=ໝາຍເຫດ: ການໃຊ້ປ້າຍອາດເຮັດໃຫ້ຜູ້ໃຊ້ເຄື່ອງອ່ານໜ້າຈໍ (screen readers) ສັບສົນໄດ້ ຂຶ້ນກັບຮູບແບບການນຳໃຊ້. ເຖິງວ່າຈະມີການຕົບແຕ່ງໃຫ້ເຫັນໄດ້ດ້ວຍຕາ, ແຕ່ຜູ້ໃຊ້ກຸ່ມນີ້ຈະໄດ້ຮັບພຽງຂໍ້ມູນເນື້ອຫາຂອງປ້າຍເທົ່ານັ້ນ. ບາງກໍລະນີ ປ້າຍອາດຈະຖືກອ່ານເປັນຄຳສັບ ຫຼື ຕົວເລກທີ່ບໍ່ກ່ຽວຂ້ອງຢູ່ທ້າຍປະໂຫຍກ.
+DocBadgeWarningAriaHidden2=ນອກຈາກວ່າບໍລິບົດຈະແຈ້ງດີແລ້ວ (ເຊັ່ນຕົວຢ່າງ "ການແຈ້ງເຕືອນ", ທີ່ເຂົ້າໃຈໄດ້ວ່າ "4" ຄືຈຳນວນການແຈ້ງເຕືອນ), ຄວນພິຈາລະນາເພີ່ມຂໍ້ຄວາມອະທິບາຍທີ່ເຊື່ອງໄວ້ເພື່ອຄວາມເຂົ້າໃຈ.
+DocBadgeWarningAriaHidden3=ຢ່າລືມໃຊ້ attribute aria-label ເພື່ອຄວາມສະດວກໃນການເຂົ້າເຖິງໃນ Dolibarr ແລະ ຢ່າລືມໃຊ້ aria-hidden ກັບໄອຄອນທີ່ຢູ່ໃນປ້າຍ.
+DocBadgeContextualVariations=ຮູບແບບຕາມບໍລິບົດ
+DocBadgeContextualVariationsDescription=ເພີ່ມ modifier classes ທີ່ກຳນົດໄວ້ລຸ່ມນີ້ ເພື່ອປ່ຽນຮູບລັກສະນະຂອງປ້າຍ.
+DocBadgeContextualVariationsWarning1=ການສື່ຄວາມໝາຍໃຫ້ເຕັກໂນໂລຊີຊ່ວຍເຫຼືອ
+DocBadgeContextualVariationsWarning2=ການໃຊ້ສີເພື່ອບອກຄວາມໝາຍຈະສະແດງຜົນໃຫ້ເຫັນດ້ວຍຕາເທົ່ານັ້ນ, ເຊິ່ງຈະບໍ່ຖືກສົ່ງໄປຫາຜູ້ໃຊ້ເຄື່ອງອ່ານໜ້າຈໍ. ຄວນໝັ້ນໃຈວ່າຂໍ້ມູນທີ່ສື່ດ້ວຍສີນັ້ນມີຄວາມແຈ້ງໃນຕົວມັນເອງ ຫຼື ໄດ້ເພີ່ມຂໍ້ຄວາມອະທິບາຍຜ່ານ class .sr-only ແລ້ວ.
+DocBadgeDefaultStatus=ສະຖານະເລີ່ມຕົ້ນ
+DocBadgeDefaultStatusDescription=ເພີ່ມ modifier classes ເພື່ອປ່ຽນຮູບລັກສະນະຂອງປ້າຍໃຫ້ເຊື່ອມໂຍງກັບສະຖານະເລີ່ມຕົ້ນ.
+DocBadgePillBadges=ປ້າຍແບບມົນ (Pill badges)
+DocBadgePillBadgesDescription=ໃຊ້ class .badge-pill ເພື່ອເຮັດໃຫ້ປ້າຍມີຄວາມມົນຂຶ້ນ (ເພີ່ມລັດສະໝີຂອບ ແລະ ໄລຍະຫ່າງດ້ານຂ້າງ).
+DocBadgeDotBadges=ປ້າຍແບບຈຸດ (Dot badges)
+DocBadgeDotBadgesDescription=ໃຊ້ class .badge-dot ເພື່ອເຮັດໃຫ້ປ້າຍເປັນຮູບວົງມົນ.
+DocBadgeLinks=ລິ້ງ
+DocBadgeLinksDescription=ການໃຊ້ class .badge-* ກັບແທັກ <a> ຈະຊ່ວຍໃຫ້ສ້າງປ້າຍທີ່ກົດໄດ້ ພ້ອມມີສະຖານະ hover ແລະ focus.
+DocBadgeHelper=ໃຊ້ຟັງຊັນຊ່ວຍສ້າງປ້າຍ
+DocBadgeHelperDescription=ການໃຊ້ຟັງຊັນ dolGetBadge ໃນ core/lib/functions.lib.php. <br><b>ແນະນຳໃຫ້ໃຊ້ຟັງຊັນນີ້ເພື່ອໃຫ້ລະຫັດເປັນມາດຕະຖານດຽວກັນ ແລະ ງ່າຍຕໍ່ການບຳລຸງຮັກສາ</b>
+
+# Buttons
+DocButtonsTitle=ປຸ່ມສຳລັບການຈັດການ
+DocButtonsMainDescription=ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບປຸ່ມ.
+DocButtonBasicUsageDescription=ສະແດງປຸ່ມຕາມການຈັດການທີ່ຕ້ອງການ ແລະ ຕາມສິດຂອງຜູ້ໃຊ້
+DocButtonModal=ປຸ່ມທີ່ມີກ່ອງຢືນຢັນ
+DocButtonModalDescription=ທ່ານສາມາດເພີ່ມກ່ອງຢືນຢັນໃນປຸ່ມທຸກປະເພດ ແຕ່ມັນຈະບໍ່ເຮັດວຽກຖ້າຜູ້ໃຊ້ບໍ່ມີສິດຈັດການ
+DocButtonSubmenu=ປຸ່ມແບບລາຍການເລືອກລົງ (Dropdown)
+DocButtonSubmenuDescription=ໃສ່ຄ່າ $url ເປັນ array ຂອງ url ເພື່ອສ້າງປຸ່ມແບບ dropdown.
+
+#Tables
+DocTableTitle=ຕາຕະລາງ
+DocTableMainDescription=ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບຕາຕະລາງ.
+DocTableMainDescriptionNote=<b>ໝາຍເຫດ:</b> ແນະນຳໃຫ້ໃສ່ ID ທີ່ບໍ່ຊ້ຳກັນໃຫ້ຕາຕະລາງສະເໝີ ເພື່ອໃຫ້ຜູ້ພັດທະນາຈັດການກັບ CSS ຫຼື JS ໄດ້ງ່າຍ.
+DocTableBasic=ການນຳໃຊ້ພື້ນຖານ
+DocTableBasicDescription=ນີ້ແມ່ນແມ່ແບບສຳລັບສ້າງຕາຕະລາງຂໍ້ມູນພື້ນຖານ.
+DocTableWithFilters=ແຖວຕົວຕອງ (Filters)
+DocTableWithFiltersDescription=ທ່ານສາມາດເພີ່ມແຖວຕົວຕອງໄດ້ໂດຍໃຊ້ syntax ລຸ່ມນີ້. ຕາຕະລາງຂອງທ່ານຕ້ອງຢູ່ໃນແທັກ form. <br>ສຳລັບການສະແດງຊ່ອງກອກຂໍ້ມູນ ສາມາດໃຊ້ Form Class (ເບິ່ງທີ່ <a href="%s">#Inputs</a>) <br><span class="opacitylow"><i>ເບິ່ງໄຟລ໌ list ເພື່ອເບິ່ງວິທີໃຊ້ dynamic fields.</i></span>
+DocTableBeforeFilters=ໃຊ້ແຖວທີ່ກຳນົດເອງກ່ອນແຖວຕົວຕອງ
+DocTableBeforeFiltersDescription=ທ່ານສາມາດເພີ່ມແຖວກ່ອນຕົວຕອງໄດ້ດ້ວຍ syntax ນີ້. <br>ຢ່າລືມໃຊ້ class listwithfilterbefore ໃນຕາຕະລາງຂອງທ່ານ.
+DocTableCSSClass=ການໃຊ້ CSS Classes
+DocTableCSSClassDescription=ມີຫຼາຍ classes ສຳລັບຕາຕະລາງໃນ Dolibarr, ລຸ່ມນີ້ແມ່ນລາຍການບາງສ່ວນທີ່ສຳຄັນ.
+DocTableTRCSSClassDescription=<b><u>Class ສຳລັບແຖວ (row):</u></b>
+DocTableTABLECSSClassDescription=<b><u>Class ສຳລັບຕາຕະລາງ (table):</u></b>
+DocTableCSSClass_tagtable=<b>tagtable:</b> ໃຊ້ display table
+DocTableCSSClass_liste=<b>liste:</b> ກຽມຕາຕະລາງສຳລັບລາຍການ
+DocTableCSSClass_listwithfilterbefore=<b>listwithfilterbefore:</b> Class ທີ່ມີປະໂຫຍດໃນການເຊື່ອງຂອບເທິງ ແລະ ມຸມມົນ ຖ້າມີອົງປະກອບວາງໄວ້ກ່ອນຕົວຕອງ
+DocTableCSSClass_liste_titre=<b>liste_titre:</b> ໃຊ້ສຳລັບຫົວຂໍ້ຕາຕະລາງ
+DocTableCSSClass_liste_titre_filter=<b>liste_titre_filter:</b> ໃຊ້ສຳລັບແຖວຕົວຕອງ
+DocTableCSSClass_liste_total=<b>liste_total:</b> ໃຊ້ສຳລັບສ່ວນສະຫຼຸບທ້າຍຕາຕະລາງ
+DocTableCSSClass_oddeven=<b>oddeven / nooddeven:</b> Class ນີ້ຊ່ວຍໃຫ້ສີຂອງແຖວໃນຕາຕະລາງແຕກຕ່າງກັນສະລັບກັນ (ຫຼື ເພື່ອເຊື່ອງ)
+
+#Progress bars
+DocProgressBarsTitle = ແຖບສະແດງຄວາມຄືບໜ້າ (Progress bars)
+DocProgressBarsMainDescription = ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບການໃຊ້ແຖບສະແດງຄວາມຄືບໜ້າ ທີ່ຮອງຮັບການວາງຊ້ອນກັນ, ພື້ນຫຼັງແບບເຄື່ອນໄຫວ ແລະ ຂໍ້ຄວາມກຳກັບ.
+DocProgressBarsDescription = ສ່ວນປະກອບຄວາມຄືບໜ້າຖືກສ້າງຂຶ້ນດ້ວຍ HTML ສອງອົງປະກອບ, ໃຊ້ CSS ກຳນົດຄວາມກວ້າງ ແລະ attributes ບາງຢ່າງ. ພວກເຮົາບໍ່ໄດ້ໃຊ້ <progress> ຂອງ HTML5 ເພື່ອໃຫ້ທ່ານສາມາດວາງແຖບຊ້ອນກັນ ແລະ ໃສ່ຂໍ້ຄວາມກຳກັບໄດ້.
+DocProgressCanBeSpaced = ສາມາດເພີ່ມໄລຍະຫ່າງໄດ້ໂດຍການໃຊ້ class .spaced
+DocColorVariants = ສີຕ່າງໆ
+DocColorVariantsDesc = ໃຊ້ class ຈັດການສີເພື່ອປ່ຽນຮູບລັກສະນະຂອງແຖບຄວາມຄືບໜ້າ.
+DocStripedVariants = ແບບລາຍທາງ
+DocStripedVariantsDesc = ເພີ່ມ .progress-bar-striped ເຂົ້າໃນ .progress-bar ເພື່ອສະແດງລາຍທາງ.
+DocOtherVariants = ຮູບແບບອື່ນໆ
+DocOtherVariantsDesc =
+
+# Set Event Message
+DocSetEventMessageTitle = ຂໍ້ຄວາມແຈ້ງເຕືອນ (Event Message)
+DocSetEventMessageMainDescription = ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບຂໍ້ຄວາມແຈ້ງເຕືອນ
+DocSetEventMessageContextualVariationsDescription = ກຳນົດຄ່າ "style" ໃນຟັງຊັນເພື່ອປ່ຽນສີຂອງຂໍ້ຄວາມແຈ້ງເຕືອນ
+DocSetEventMessageContextualVariations = ຮູບແບບຕາມບໍລິບົດ
+DocSetEventMessageDescription = ສະແດງຂໍ້ຄວາມດຽວ ຫຼື ຫຼາຍຂໍ້ຄວາມ
+DocSetEventMessageDisplayMessage = ສະແດງຂໍ້ຄວາມ
+DocSetEventMessageDisplayMessages = ສະແດງຂໍ້ຄວາມທັງໝົດ
+DocSetEventMessageDisplayOKMessage = ສະແດງຂໍ້ຄວາມ "ສຳເລັດ" (OK)
+DocSetEventMessageDisplayWarningMessage = ສະແດງຂໍ້ຄວາມ "ເຕືອນ" (Warning)
+DocSetEventMessageDisplayErrorMessage = ສະແດງຂໍ້ຄວາມ "ຜິດພາດ" (Error)
+DocSetEventMessageOK = ຂໍ້ຄວາມ OK
+DocSetEventMessageWarning = ຂໍ້ຄວາມເຕືອນ
+DocSetEventMessageError = ຂໍ້ຄວາມຜິດພາດ
+DocSetEventMessageUnique = ຂໍ້ຄວາມດຽວ
+DocSetEventMessage = ຂໍ້ຄວາມ #%s
+DocSetEventMessageJsContext = ການໃຊ້ Java Script ໃນບໍລິບົດຂອງ Dolibarr
+
+DocButtonIconsLowEmphasis = ປຸ່ມໄອຄອນແບບເນັ້ນໜ້ອຍ
+DocButtonIconsDescriptionLowEmphasis = ປຸ່ມໄອຄອນແບບເນັ້ນໜ້ອຍປົກກະຕິຈະມີພຽງແຕ່ໄອຄອນ (ບໍ່ມີຂໍ້ຄວາມ) ແລະ ຕົບແຕ່ງໜ້ອຍທີ່ສຸດເພື່ອບໍ່ໃຫ້ໂດດເດັ່ນເກີນໄປ. ເໝາະສຳລັບການຈັດການສຳຮອງ ເຊັ່ນ: ລຶບຂໍ້ມູນໃນຊ່ອງ, ຕື່ມຂໍ້ມູນ, ໝາຍໄວ້ ຫຼື ແບ່ງປັນ.
+DocButtonIconsForTitle = ປຸ່ມສຳລັບຫົວຂໍ້ລາຍການ
+
+# Fontawesome icons
+DocIconsTitle = ໄອຄອນທີ່ໃຊ້ໃນ Dolibarr
+DocIconsList = ລາຍການໄອຄອນທີ່ນຳໃຊ້ໄດ້
+DocIconsListImgPicto = ລາຍການໄອຄອນທີ່ໃຊ້ຜ່ານຟັງຊັນ img_picto
+DocIconsListFontAwesome = ລາຍການໄອຄອນທີ່ໃຊ້ຜ່ານ Font Awesome
+DocIconsMainDescription = Dolibarr ນຳໃຊ້ບາງສ່ວນຂອງໄອຄອນ Font Awesome 5
+DocIconsFontAwesomeList = ລາຍການໄອຄອນ Font Awesome ທີ່ນຳໃຊ້ໄດ້
+
+#Input
+DocClassicInputsDescription = ຊ່ອງກອກຂໍ້ມູນທົ່ວໄປສຳລັບ ຂໍ້ຄວາມ, ຕົວເລກ...
+DocCheckboxInputsDescription = ຊ່ອງເລືອກແບບ Checkbox ສຳລັບຄ່າ boolean
+DocRadioInputsDescription = ຊ່ອງເລືອກແບບ Radio ສຳລັບຄ່າ boolean
+DocHelperFunctionsInputUsage = ການໃຊ້ຟັງຊັນຊ່ວຍ (Helper functions)
+DocHelperFunctionsGetSearchFilterToolInput = ຟັງຊັນຊ່ວຍສຳລັບຊ່ອງຄົ້ນຫາ + ຕົວຕອງ js ແບບ dynamic
+DocSelectInputsDescription = ຊ່ອງເລືອກແບບ Select ສຳລັບເລືອກຄ່າດຽວ
+DocMultiSelectInputsDescription = ຊ່ອງເລືອກແບບ Multiselect ສຳລັບເລືອກຫຼາຍຄ່າ
+DocEditorInputsDescription = ຊ່ອງກອກຂໍ້ມູນແບບ Editor ສຳລັບຂໍ້ຄວາມ HTML
+DocDateSelectInputsDescription = ຊ່ອງເລືອກວັນທີ ພ້ອມເວລາ ຫຼື ບໍ່ມີເວລາກໍໄດ້
+DocInputsMainDescription = ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບຊ່ອງກອກຂໍ້ມູນ
+DocInputsTitle = ຊ່ອງກອກຂໍ້ມູນ (Inputs)
+DocSearchInputUsage = ຟັງຊັນຊ່ວຍສຳລັບຊ່ອງຄົ້ນຫາ + ຕົວຕອງ js ແບບ dynamic
+DocSearchInputUsageDescription = ຄ່າ attribute `data-search-tool-target`, `data-counter-target`, ແລະ `data-no-item-target` ແມ່ນ CSS selectors ທີ່ຊ່ວຍໃຫ້ກຳນົດເປົ້າໝາຍການຄົ້ນຫາໄດ້ຫຼາຍບ່ອນ.
+
+#Contributing
+DocContributeStep1=ສ້າງໜ້າເອກະສານຂອງທ່ານ
+DocContributeStep1Description=ໃນການສ້າງໜ້າໃໝ່, ທ່ານສາມາດກັອບປີ້ໄຟລ໌ template/documentation_page.php ໄປໄວ້ໃນໂຟນເດີທີ່ຕ້ອງການ ຫຼື ກັອບປີ້ລະຫັດລຸ່ມນີ້ໄປໃສ່ໄຟລ໌ໃໝ່.
+DocContributeStep2=ຕັ້ງຄ່າເມນູ ແລະ ສ່ວນສະຫຼຸບ
+DocContributeStep2Description=ເມນູຕ່າງໆ (ແຖບຂ້າງ, ສ່ວນສະຫຼຸບ) ຈະຖືກສ້າງຂຶ້ນໂດຍອັດຕະໂນມັດຈາກເມນູທີ່ກຳນົດໃນ Documentation class. ທ່ານຕ້ອງກຳນົດຄ່າໃນ array ເມນູໃນຟັງຊັນ <b>setMenu()</b>.
+DocContributeAddMenuEntry=<b><u>ນີ້ແມ່ນຕົວຢ່າງການເພີ່ມເມນູໃນ "Components" ໂດຍຟັງຊັນ setMenu():</u></b>
+DocContributeStep3=Breadcrumb (ເສັ້ນທາງເມນູ)
+DocContributeStep3Description=ເພື່ອຕັ້ງຄ່າ Breadcrumb ໃຫ້ຖືກຕ້ອງ, ທ່ານຕ້ອງກຳນົດຄ່າ $documentation->view ໃນ view ຂອງທ່ານໃຫ້ຄົບຖ້ວນທຸກລະດັບ.
+DocExampleError=ຕົວຢ່າງຂໍ້ຄວາມຜິດພາດ
+DocExampleGreen=ຕົວຢ່າງຂໍ້ຄວາມສຳເລັດ
+DocExampleInfo=ຕົວຢ່າງຂໍ້ຄວາມຂໍ້ມູນ
+DocExampleWarning=ຕົວຢ່າງຂໍ້ຄວາມເຕືອນ
+
+#Template
+DocMyPageTitle=ຫົວຂໍ້ໜ້າຂອງຂ້ອຍ
+DocMyPageDescription=ລາຍລະອຽດຫຼັກຂອງໜ້າ
+DocMySectionTitle=ຫົວຂໍ້ພາກສ່ວນຂອງຂ້ອຍ
+DocMySectionText=ຂໍ້ຄວາມອະທິບາຍສ່ວນປະກອບ
+DocMySectionText2=ທ່ານສາມາດເພີ່ມຂໍ້ຄວາມໄດ້ຫຼາຍແຖວ
+DocMySectionExample=ບ່ອນນີ້ສຳລັບໃສ່ຕົວຢ່າງສ່ວນປະກອບຂອງທ່ານ
+
+TableRowIntuitiveSelect = ການເລືອກແຖວຕາຕະລາງແບບງ່າຍດາຍ
+
+#ExperimentalUx
+ExperimentalUx = UX ແບບທົດລອງ (Experimental UX)
+ExperimentalUxTitle = ການທົດລອງ UX ໃນ Dolibarr
+ExperimentalUxIntroductionTitle = ບົດນຳ
+ExperimentalUxIntroductionMenu = ບົດນຳ
+ExperimentalUxIntroductionTxt01 = ພາກສ່ວນນີ້ລວບລວມການທົດລອງ UX ທີ່ຍັງບໍ່ທັນໄດ້ລວມເຂົ້າໃນ Dolibarr ແບບທາງການ ແຕ່ມີໃຫ້ທົດລອງໃນໜ້າສະເພາະເຫຼົ່ານີ້ ເພື່ອທົດສອບຮູບແບບຕ່າງໆກ່ອນຈະນຳເຂົ້າສູ່ branch <code>develop</code>.
+ExperimentalUxIntroductionTxt02 = ແຕ່ລະການທົດລອງຈະຖືກແຍກເປັນໂຄງສ້າງໄຟລ໌ທີ່ຊັດເຈນ ເພື່ອໃຫ້ງ່າຍຕໍ່ການນຳໃຊ້ໃນອະນາຄົດ.
+ExperimentalUxIntroductionTxt03 = <b>ໝາຍເຫດ:</b> ເພື່ອບໍ່ໃຫ້ລົບກວນໄຟລ໌ແປພາສາ, ເອກະສານສຳລັບການທົດລອງເຫຼົ່ານີ້ຈະຂຽນເປັນພາສາອັງກິດເທົ່ານັ້ນ.
+
+# (Skip contributing texts as per note 03 above if preferred, but translating key ones)
+ExperimentalUxContributionTitle = ການມີສ່ວນຮ່ວມໃນ UX ທົດລອງ
+ExperimentalUxContributionEnd = ໂຄງສ້າງນີ້ຊ່ວຍໃຫ້ການຈັດການການທົດລອງ UX ເປັນລະບົບ ແລະ ມີປະສິດທິພາບ.
+
+UxDolibarrContext = ບໍລິບົດ JS ຂອງ Dolibarr
+UxDolibarrContextHowItWork = ວິທີການເຮັດວຽກ
+UxDolibarrContextLangsTool = ເຄື່ອງມືພາສາ (Langs tool)
+UxDolibarrContextKnowsHooks = ລາຍການ JS Hooks ທົ່ວໄປ
+
+UxMenuTooltipTheme = Tooltips & themes
+TooltipThemesAndOrientation = ຮູບແບບ Tooltip ແລະ ທິດທາງ
+
+# Start experiements menu title
+ExperimentalUxInputAjaxFeedback = ການຕອບສະໜອງຂອງ Input (Input feedback)
+
+# Title section
+DocTitleTitle=ຫົວຂໍ້ໜ້າ
+DocTitleMainDescription=ເອກະສານ ແລະ ຕົວຢ່າງສຳລັບຫົວຂໍ້ໜ້າ.
+DocTitleBasicDescription=ໃຊ້ຟັງຊັນ load_fiche_titre() ຖ້າທ່ານຕ້ອງການສະແດງຫົວຂໍ້ພ້ອມໄອຄອນ. ມີ 3 ວິທີໃນການກຳນົດໄອຄອນ:
+DocTitleIconUsageMethod1=ໃຊ້ໄອຄອນທາງລັດຂອງ Dolibarr. <a href="%s">ເບິ່ງລາຍການໄອຄອນ</a>
+DocTitleIconUsageMethod2=ໃຊ້ໄອຄອນຈາກ FontAwesome (ຕົວຢ່າງ: fa-rocket_fas_#b0bb39). <a href="%s">ເບິ່ງລາຍການໄອຄອນ</a>
+DocTitleIconUsageMethod3=ໃຊ້ຮູບພາບຂອງທ່ານເອງ.
+DocTitleMoreContentDescription=ທ່ານສາມາດປັບແຕ່ງຫົວຂໍ້ເພີ່ມເຕີມໄດ້ໂດຍການເພີ່ມ ID ຫຼື CSS class.
+DocTitleWithFilters=ສະແດງຫົວຂໍ້ພ້ອມຕົວຕອງ, ປຸ່ມ ຫຼື ການນຳທາງ
+DocTitleWithFiltersDescription=ຖ້າຕ້ອງການສະແດງຫົວຂໍ້ທີ່ມີຕົວເລືອກການນຳທາງຫຼາຍຢ່າງ ຄືກັບໜ້າລາຍການ, ສາມາດໃຊ້ຟັງຊັນ print_barre_liste().
+JSDolibarrhooksReadyVsInit = ຄວາມແຕກຕ່າງລະຫວ່າງ Dolibarr:Init ແລະ Dolibarr:Ready
+SetAndUseContextVars = ກຳນົດ ແລະ ໃຊ້ຕົວປ່ຽນບໍລິບົດ (context vars)
+
+ConsoleHelp = ການຊ່ວຍເຫຼືອ Console
+JSDolibarrhooks = JS Dolibarr hooks
+JSDolibarrAwaitHooks = JS Dolibarr Async Hooks (Await Hooks) - ການເຮັດວຽກແບບລໍາດັບ
+ExampleOfCreatingNewContextTool = ຕົວຢ່າງການສ້າງເຄື່ອງມືບໍລິບົດໃໝ່
+SetEventMessageTool = ເຄື່ອງມືຕັ້ງຄ່າຂໍ້ຄວາມແຈ້ງເຕືອນ
+
+ContextLangToolTest = ຂໍ້ຄວາມນີ້ເປັນພາສາອັງກິດ
+LangsLocalChangedTo = ປ່ຽນພາສາທ້ອງຖິ່ນເປັນ %s. ການແປຈະໃຊ້ພາສາໃໝ່ນີ້.
+CacheCleared = ລ້າງ Cache ແລ້ວ
+
+JSDolibarrhooksAjaxSpecial = Dom reloaded Hook

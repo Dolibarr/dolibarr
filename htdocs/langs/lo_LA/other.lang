@@ -1,407 +1,503 @@
 # Dolibarr language file - Source file is en_US - other
 # THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
-SecurityCode=ລະ​ຫັດ​ຄວາມ​ປອດ​ໄພ
-NumberingShort=N °
-ToolsDesc=ເຄື່ອງມືທັງnotົດທີ່ບໍ່ລວມຢູ່ໃນລາຍການເມນູອື່ນ are ແມ່ນຖືກຈັດເປັນກຸ່ມຢູ່ທີ່ນີ້. <br> ເຄື່ອງມືທັງcanົດສາມາດເຂົ້າຫາໄດ້ຜ່ານເມນູດ້ານຊ້າຍ.
-Birthday=ວັນເດືອນປີເກີດ
-BirthdayAlert=ແຈ້ງເຕືອນວັນເກີດ
-BirthdayAlertOn=ເປີດໃຊ້ການເຕືອນວັນເດືອນປີເກີດແລ້ວ
-BirthdayAlertOff=ການແຈ້ງເຕືອນວັນເດືອນປີເກີດບໍ່ໄດ້ໃຊ້
-TransKey=ການແປພາສາຂອງ TransKey ທີ່ສໍາຄັນ
-MonthOfInvoice=ເດືອນ (ຕົວເລກ 1-12) ຂອງວັນທີໃບແຈ້ງ ໜີ້
-TextMonthOfInvoice=ເດືອນ (ຂໍ້ຄວາມ) ຂອງວັນທີໃບຮຽກເກັບເງິນ
-PreviousMonthOfInvoice=ເດືອນກ່ອນ ໜ້າ (ຕົວເລກ 1-12) ຂອງວັນທີໃບແຈ້ງ ໜີ້
-TextPreviousMonthOfInvoice=ເດືອນກ່ອນ ໜ້າ (ຂໍ້ຄວາມ) ຂອງວັນທີໃບຮຽກເກັບເງິນ
-NextMonthOfInvoice=ເດືອນຕໍ່ໄປ (ຕົວເລກ 1-12) ຂອງວັນທີໃບແຈ້ງ ໜີ້
-TextNextMonthOfInvoice=ເດືອນຕໍ່ໄປ (ຂໍ້ຄວາມ) ຂອງວັນທີໃບແຈ້ງ ໜີ້
-PreviousMonth=ເດືອນກ່ອນ
-PreviousYear=Previous year
-NextMonth=Next month
-NextYear=Next year
-CurrentMonth=ເດືອນປະຈຸບັນ
-ZipFileGeneratedInto=ສ້າງໄຟລ Z Zip ເປັນ <b> %s </b>.
-DocFileGeneratedInto=ໄຟລ Doc Doc ສ້າງຂຶ້ນເປັນ <b> %s </b>.
-JumpToLogin=ຕັດການເຊື່ອມຕໍ່ແລ້ວ. ໄປທີ່ ໜ້າ ເຂົ້າສູ່ລະບົບ ...
-MessageForm=ຂໍ້ຄວາມຢູ່ໃນແບບຟອມການຊໍາລະເງິນອອນໄລນ
-MessageOK=ຂໍ້ຄວາມຢູ່ ໜ້າ ສົ່ງຄືນ ສຳ ລັບການຊໍາລະທີ່ຖືກຕ້ອງ
-MessageKO=ຂໍ້ຄວາມຢູ່ໃນ ໜ້າ ສົ່ງຄືນສໍາລັບການຊໍາລະທີ່ຖືກຍົກເລີກ
-ContentOfDirectoryIsNotEmpty=ເນື້ອໃນຂອງບັນຊີລາຍຊື່ນີ້ແມ່ນບໍ່ເປົ່າຫວ່າງ.
-DeleteAlsoContentRecursively=ກວດເບິ່ງເພື່ອລຶບເນື້ອຫາທັງrecົດອອກເປັນປະ ຈຳ
-PoweredBy=ສະ​ຫນັບ​ສະ​ຫນູນ​ໂດຍ
-YearOfInvoice=ປີຂອງວັນທີໃບຮຽກເກັບເງິນ
-PreviousYearOfInvoice=ປີກ່ອນຂອງວັນທີໃບຮຽກເກັບເງິນ
-NextYearOfInvoice=ປີຕໍ່ໄປຂອງວັນທີໃບຮຽກເກັບເງິນ
-DateNextInvoiceBeforeGen=ວັນທີຂອງໃບແຈ້ງ ໜີ້ ຄັ້ງຕໍ່ໄປ (ກ່ອນສ້າງ)
-DateNextInvoiceAfterGen=ວັນທີຂອງໃບແຈ້ງ ໜີ້ ຄັ້ງຕໍ່ໄປ (ຫຼັງການຜະລິດ)
-GraphInBarsAreLimitedToNMeasures=ກຣາບຟິກຖືກຈຳກັດໃຫ້ວັດແທກ %s ໃນໂໝດ 'Bars'. ໂໝດ 'ສາຍ' ຖືກເລືອກໂດຍອັດຕະໂນມັດແທນ.
-OnlyOneFieldForXAxisIsPossible=ປະຈຸບັນມີພຽງ 1 ສະ ໜາມ ເທົ່ານັ້ນເປັນ X-Axis. ມີພຽງແຕ່ພາກສະ ໜາມ ທີ່ຖືກຄັດເລືອກ ທຳ ອິດເທົ່ານັ້ນທີ່ຖືກເລືອກ.
-AtLeastOneMeasureIsRequired=ຕ້ອງມີຢ່າງ ໜ້ອຍ 1 ຊ່ອງຂໍ້ມູນເພື່ອວັດແທກ
-AtLeastOneXAxisIsRequired=ຕ້ອງມີຢ່າງ ໜ້ອຍ 1 ຊ່ອງ ສຳ ລັບ X-Axis
-LatestBlogPosts=ກະທູ້ Blog ຫຼ້າສຸດ
-notiftouser=ແກ່ຜູ້ໃຊ້
-notiftofixedemail=ກັບ mail ຄົງ
-notiftouserandtofixedemail=ກັບຜູ້ໃຊ້ແລະເມລຄົງທີ່
-Notify_ORDER_VALIDATE=ກວດສອບໃບສັ່ງຂາຍແລ້ວ
-Notify_ORDER_SENTBYMAIL=ຄໍາສັ່ງຂາຍສົ່ງທາງໄປສະນີ
-Notify_ORDER_CLOSE=ຈັດສົ່ງສັ່ງຂາຍແລ້ວ
-Notify_ORDER_CANCEL=Sales order canceled
-Notify_ORDER_SUPPLIER_SENTBYMAIL=ການສັ່ງຊື້ຖືກສົ່ງທາງອີເມລ
-Notify_ORDER_SUPPLIER_CANCEL=Purchase order canceled
-Notify_ORDER_SUPPLIER_VALIDATE=ບັນທຶກ ຄຳ ສັ່ງຊື້ແລ້ວ
-Notify_ORDER_SUPPLIER_APPROVE=ອະນຸມັດ ຄຳ ສັ່ງຊື້ແລ້ວ
-Notify_ORDER_SUPPLIER_SUBMIT=ສົ່ງໃບສັ່ງຊື້ແລ້ວ
-Notify_ORDER_SUPPLIER_REFUSE=ການສັ່ງຊື້ຖືກປະຕິເສດ
-Notify_PROPAL_VALIDATE=ກວດສອບຂໍ້ສະ ເໜີ ຂອງລູກຄ້າແລ້ວ
-Notify_PROPAL_CLOSE_SIGNED=ເຊັນບົດສະ ເໜີ ລູກຄ້າປິດແລ້ວ
-Notify_PROPAL_CLOSE_REFUSED=ການສະ ເໜີ ປິດຂອງລູກຄ້າຖືກປະຕິເສດ
-Notify_PROPAL_SENTBYMAIL=ຂໍ້ສະ ເໜີ ທາງການຄ້າຖືກສົ່ງທາງໄປສະນີ
-Notify_WITHDRAW_TRANSMIT=ການຖອນການສົ່ງຜ່ານ
-Notify_WITHDRAW_CREDIT=ການຖອນເງິນສິນເຊື່ອ
-Notify_WITHDRAW_EMIT=ປະຕິບັດການຖອນເງິນ
-Notify_COMPANY_CREATE=ສ້າງພາກສ່ວນທີສາມແລ້ວ
-Notify_COMPANY_SENTBYMAIL=ຈົດໝາຍທີ່ສົ່ງມາຈາກໜ້າຂອງພາກສ່ວນທີສາມ
-Notify_BILL_VALIDATE=ກວດສອບໃບຮຽກເກັບເງິນລູກຄ້າແລ້ວ
-Notify_BILL_UNVALIDATE=ໃບຮຽກເກັບເງິນລູກຄ້າບໍ່ໄດ້ມີການກວດສອບ
-Notify_BILL_PAYED=ໃບແຈ້ງ ໜີ້ ລູກຄ້າຈ່າຍແລ້ວ
-Notify_BILL_CANCEL=ໃບແຈ້ງ ໜີ້ ລູກຄ້າຖືກຍົກເລີກແລ້ວ
-Notify_BILL_SENTBYMAIL=ໃບແຈ້ງ ໜີ້ ລູກຄ້າຖືກສົ່ງທາງໄປສະນີ
-Notify_BILL_SUPPLIER_VALIDATE=ກວດສອບໃບຮຽກເກັບເງິນຜູ້ຂາຍແລ້ວ
-Notify_BILL_SUPPLIER_PAYED=ຈ່າຍໃບແຈ້ງ ໜີ້ ຜູ້ຂາຍແລ້ວ
-Notify_BILL_SUPPLIER_SENTBYMAIL=ໃບແຈ້ງ ໜີ້ ຜູ້ຂາຍຖືກສົ່ງທາງໄປສະນີ
-Notify_BILL_SUPPLIER_CANCELED=ໃບຮຽກເກັບເງິນຂອງຜູ້ຂາຍຖືກຍົກເລີກ
-Notify_CONTRACT_MODIFY=Contract modified
-Notify_CONTRACT_VALIDATE=ກວດສອບສັນຍາແລ້ວ
-Notify_FICHINTER_VALIDATE=ການແຊກແຊງຖືກກວດສອບແລ້ວ
-Notify_FICHINTER_MODIFY=Intervention modified
-Notify_FICHINTER_CLOSE=ປິດການແຊກແຊງ
-Notify_FICHINTER_ADD_CONTACT=ເພີ່ມລາຍຊື່ຜູ້ຕິດຕໍ່ເຂົ້າໃນການແຊກແຊງ
-Notify_FICHINTER_SENTBYMAIL=ການແຊກແຊງຖືກສົ່ງທາງໄປສະນີ
-Notify_SHIPPING_MODIFY=Shipping modified
-Notify_SHIPPING_VALIDATE=ກວດສອບການຈັດສົ່ງແລ້ວ
-Notify_SHIPPING_SENTBYMAIL=ການຂົນສົ່ງຖືກສົ່ງທາງໄປສະນີ
-Notify_RECEPTION_SENTBYMAIL=Reception sent by mail
-Notify_MEMBER_VALIDATE=ກວດສອບສະມາຊິກແລ້ວ
-Notify_MEMBER_MODIFY=ແກ້ໄຂສະມາຊິກແລ້ວ
-Notify_MEMBER_SUBSCRIPTION=ສະມາຊິກໄດ້ສະັກໃຊ້
-Notify_MEMBER_RESILIATE=ສະມາຊິກສິ້ນສຸດລົງ
-Notify_MEMBER_DELETE=ລຶບສະມາຊິກອອກແລ້ວ
-Notify_PROJECT_CREATE=ການສ້າງໂຄງການ
-Notify_TASK_CREATE=ສ້າງ ໜ້າ ວຽກແລ້ວ
-Notify_TASK_MODIFY=ແກ້ໄຂ ໜ້າ ວຽກແລ້ວ
-Notify_TASK_DELETE=ລຶບ ໜ້າ ວຽກອອກແລ້ວ
-Notify_EXPENSE_REPORT_VALIDATE=ກວດສອບລາຍງານລາຍຈ່າຍແລ້ວ (ຕ້ອງການການອະນຸມັດ)
-Notify_EXPENSE_REPORT_APPROVE=ລາຍງານລາຍຈ່າຍໄດ້ຮັບການອະນຸມັດ
-Notify_HOLIDAY_VALIDATE=ກວດສອບ ຄຳ ຮ້ອງຂໍການປ່ອຍ (ຕ້ອງມີການອະນຸມັດ)
-Notify_HOLIDAY_APPROVE=ຄໍາຮ້ອງຂໍການອະນຸມັດ
-Notify_ACTION_CREATE=ເພີ່ມ ຄຳ ສັ່ງໃສ່ວາລະແລ້ວ
-SeeModuleSetup=ເບິ່ງການຕັ້ງຄ່າໂມດູນ %s
-NbOfAttachedFiles=ຈຳ ນວນເອກະສານ/ເອກະສານທີ່ຕິດຄັດມາ
-TotalSizeOfAttachedFiles=ຂະ ໜາດ ລວມຂອງເອກະສານ/ເອກະສານທີ່ຕິດຄັດມາ
-MaxSize=ຂະ ໜາດ ສູງສຸດ
-AttachANewFile=ແນບໄຟລ//ເອກະສານໃ່
-LinkedObject=ອອບເຈັກທີ່ເຊື່ອມໂຍງແລ້ວ
-NbOfActiveNotifications=ຈຳ ນວນການແຈ້ງເຕືອນ (ຈຳ ນວນອີເມວຜູ້ຮັບ)
-PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe lines are separated by a carriage return.\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentContract=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nWe would like to remind you that the invoice  __REF__ seems to have not been paid. A copy of the invoice is attached as a reminder.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendProposal=__(Hello)__\n\nPlease find commercial proposal __REF__ attached \n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nPlease find price request __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendOrder=__(Hello)__\n\nPlease find order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nPlease find our order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendShipping=__(Hello)__\n\nPlease find shipping __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendReception=__(Hello)__\n\nPlease find reception __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendFichInter=__(Hello)__\n\nPlease find intervention __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentLink=ເຈົ້າສາມາດຄລິກໃສ່ການເຊື່ອມຕໍ່ລຸ່ມນີ້ເພື່ອຊໍາລະເງິນຂອງເຈົ້າຖ້າມັນຍັງບໍ່ແລ້ວ.\n\n%s\n\n
-PredefinedMailContentGeneric=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendActionComm=ແຈ້ງເຕືອນເຫດການ "__EVENT_LABEL__" ໃນ __EVENT_DATE__ ເວລາ __EVENT_TIME__ <br> <br> ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດ, ກະລຸນາຢ່າຕອບກັບ.
-DemoDesc=Dolibarr ເປັນ ERP/CRM ທີ່ກະທັດຮັດສະ ໜັບ ສະ ໜູນ ໂມດູນທຸລະກິດຫຼາຍອັນ. ການສາທິດການສະແດງໂມດູນທັງmakesົດບໍ່ມີຄວາມasາຍເພາະສະຖານະການນີ້ບໍ່ເຄີຍເກີດຂຶ້ນ (ມີຫຼາຍຮ້ອຍອັນ). ດັ່ງນັ້ນ, ໂປຣໄຟລ dem ສາທິດ ຈຳ ນວນ ໜຶ່ງ ສາມາດໃຊ້ໄດ້.
-DemoDesc2=This is a restricted shared demo, you may prefer to test on your own dedicated instance with a full admin access, to do so, <a href="%s" target="_blank">go here <span class="fas fa-external-link-alt"></span></a>.
-ChooseYourDemoProfil=ເລືອກໂປຣໄຟລ dem ສາທິດທີ່ເsuitsາະສົມກັບຄວາມຕ້ອງການຂອງເຈົ້າທີ່ສຸດ ...
-ChooseYourDemoProfilMore=... ຫຼືສ້າງໂປຣໄຟລ your ຂອງເຈົ້າເອງ <br> (ການເລືອກໂມດູນດ້ວຍຕົນເອງ)
-DemoFundation=ຄຸ້ມຄອງສະມາຊິກຂອງຮາກຖານ
-DemoFundation2=ຄຸ້ມຄອງສະມາຊິກແລະບັນຊີທະນາຄານຂອງມູນນິທິ
-DemoCompanyServiceOnly=ບໍລິສັດຫຼືບໍລິການຂາຍອິດສະຫຼະເທົ່ານັ້ນ
-DemoCompanyShopWithCashDesk=ຄຸ້ມຄອງຮ້ານຄ້າດ້ວຍກ່ອງເງິນ
-DemoCompanyProductAndStocks=ຮ້ານຂາຍຜະລິດຕະພັນທີ່ມີຈຸດຂາຍ
-DemoCompanyManufacturing=ຜະລິດຕະພັນຂອງບໍລິສັດ
-DemoCompanyAll=ບໍລິສັດທີ່ມີຫຼາຍກິດຈະກໍາ (ທຸກໂມດູນຫຼັກ)
-CreatedBy=ສ້າງໂດຍ %s
-ModifiedBy=ແກ້ໄຂໂດຍ %s
-ValidatedBy=ກວດສອບແລ້ວໂດຍ %s
-SignedBy=ເຊັນໂດຍ %s
-ClosedBy=ປິດໂດຍ %s
-CreatedById=ID ຜູ້ໃຊ້ທີ່ສ້າງ
-ModifiedById=ID ຜູ້ໃຊ້ທີ່ເຮັດການປ່ຽນແປງລ້າສຸດ
-ValidatedById=ID ຜູ້ໃຊ້ທີ່ກວດສອບແລ້ວ
-CanceledById=ID ຜູ້ໃຊ້ທີ່ຍົກເລີກ
-ClosedById=ID ຜູ້ໃຊ້ທີ່ປິດ
-CreatedByLogin=ຜູ້ໃຊ້ເຂົ້າສູ່ລະບົບຜູ້ສ້າງ
-ModifiedByLogin=ເຂົ້າສູ່ລະບົບຂອງຜູ້ໃຊ້ຜູ້ທີ່ເຮັດການປ່ຽນແປງລ້າສຸດ
-ValidatedByLogin=ຜູ້ໃຊ້ເຂົ້າສູ່ລະບົບຜູ້ທີ່ກວດສອບ
-CanceledByLogin=ຜູ້ໃຊ້ເຂົ້າສູ່ລະບົບຜູ້ທີ່ຍົກເລີກ
-ClosedByLogin=ຜູ້ໃຊ້ເຂົ້າສູ່ລະບົບຜູ້ທີ່ປິດ
-FileWasRemoved=ໄຟລ a %s ຖືກລຶບອອກ
-DirWasRemoved=ບັນຊີລາຍຊື່ %s ຖືກລຶບອອກແລ້ວ
-FeatureNotYetAvailable=ຄຸນສົມບັດຍັງບໍ່ທັນມີຢູ່ໃນເວີຊັນປັດຈຸບັນ
-FeatureNotAvailableOnDevicesWithoutMouse=ຄຸນສົມບັດບໍ່ມີໃຫ້ ນຳ ໃຊ້ໃນອຸປະກອນທີ່ບໍ່ມີເມົາສ
-FeaturesSupported=ຄຸນນະສົມບັດສະຫນັບສະຫນູນ
-Width=ກວ້າງ
-Height=ຄວາມສູງ
-Depth=ຄວາມເລິກ
-Top=ທາງເທີງ
-Bottom=ດ້ານລຸ່ມ
-Left=ຊ້າຍ
-Right=ຖືກຕ້ອງ
-CalculatedWeight=ນໍ້າ ໜັກ ຄິດໄລ່
-CalculatedVolume=ປະລິມານທີ່ ຄຳ ນວນແລ້ວ
-Weight=ນ້ ຳ ໜັກ
-WeightUnitton=ໂຕນ
-WeightUnitkg=ກິ​ໂລກ​ຣາມ
-WeightUnitg=g
-WeightUnitmg=ມລກ
-WeightUnitpound=ປອນ
-WeightUnitounce=ອອນ
-Length=ຄວາມຍາວ
-LengthUnitm=ມ
-LengthUnitdm=dm
-LengthUnitcm=ຊັງ​ຕີ​ແມັດ
-LengthUnitmm=ມມ
-Surface=ພື້ນທີ່
-SurfaceUnitm2=m²
-SurfaceUnitdm2=dm²
-SurfaceUnitcm2=cm²
-SurfaceUnitmm2=mm²
-SurfaceUnitfoot2=ft²
-SurfaceUnitinch2=ໃນ
-Volume=ປະລິມານ
-VolumeUnitm3=m³
-VolumeUnitdm3=dm³ (L)
-VolumeUnitcm3=cm³ (ml)
-VolumeUnitmm3=mm³ (µl)
-VolumeUnitfoot3=ft³
-VolumeUnitinch3=ໃນ
-VolumeUnitounce=ອອນ
-VolumeUnitlitre=ລິດ
-VolumeUnitgallon=ກາລອນ
-SizeUnitm=ມ
-SizeUnitdm=dm
-SizeUnitcm=ຊັງ​ຕີ​ແມັດ
-SizeUnitmm=ມມ
-SizeUnitinch=ນິ້ວ
-SizeUnitfoot=ຕີນ
-SizeUnitpoint=ຈຸດ
-BugTracker=ຕົວຕິດຕາມຂໍ້ຜິດພາດ
-SendNewPasswordDesc=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ເຈົ້າຮ້ອງຂໍລະຫັດຜ່ານໃ່. ມັນຈະຖືກສົ່ງໄປຫາທີ່ຢູ່ອີເມລ your ຂອງທ່ານ. <br> ການປ່ຽນແປງຈະມີຜົນບັງຄັບໃຊ້ເມື່ອເຈົ້າຄລິກໃສ່ລິ້ງການຢືນຢັນໃນອີເມວ. <br> ກວດເບິ່ງອິນບັອກຂອງເຈົ້າ.
-EnterNewPasswordHere=ໃສ່ລະຫັດຜ່ານໃໝ່ຂອງເຈົ້າທີ່ນີ້
-BackToLoginPage=ກັບໄປທີ່ ໜ້າ ເຂົ້າສູ່ລະບົບ
-AuthenticationDoesNotAllowSendNewPassword=ຮູບແບບການພິສູດຢືນຢັນແມ່ນ <b> %s </b>. <br> ຢູ່ໃນໂmodeດນີ້, Dolibarr ບໍ່ສາມາດຮູ້ຫຼືປ່ຽນລະຫັດຜ່ານຂອງເຈົ້າໄດ້. <br> ຕິດຕໍ່ຫາຜູ້ເບິ່ງແຍງລະບົບຂອງເຈົ້າຖ້າເຈົ້າຕ້ອງການປ່ຽນລະຫັດຜ່ານຂອງເຈົ້າ.
-EnableGDLibraryDesc=ຕິດຕັ້ງຫຼືເປີດໃຊ້ຫ້ອງສະGຸດ GD ໃນການຕິດຕັ້ງ PHP ຂອງເຈົ້າເພື່ອໃຊ້ຕົວເລືອກນີ້.
-ProfIdShortDesc= <b> Prof Id %s </b> ແມ່ນຂໍ້ມູນອີງຕາມປະເທດຂອງບຸກຄົນທີສາມ. <br> ຕົວຢ່າງ, ສໍາລັບປະເທດ <b> %s </b>, ມັນເປັນລະຫັດ <b> %s a09a4b739f17f800.
-DolibarrDemo=ການສາທິດ Dolibarr ERP/CRM
-StatsByAmount=ສະ​ຖິ​ຕິ​ຈໍາ​ນວນ​ຂອງ​ຜະ​ລິດ​ຕະ​ພັນ / ການ​ບໍ​ລິ​ການ​
-StatsByAmountProducts=ສະຖິຕິກ່ຽວກັບປະລິມານຂອງຜະລິດຕະພັນ
-StatsByAmountServices=ສະຖິຕິກ່ຽວກັບຈໍານວນການບໍລິການ
-StatsByNumberOfUnits=ສະຖິຕິຜົນລວມຂອງ ຈຳ ນວນຜະລິດຕະພັນ/ການບໍລິການ
-StatsByNumberOfUnitsProducts=ສະຖິຕິສໍາລັບຜົນລວມຂອງ qty ຂອງຜະລິດຕະພັນ
-StatsByNumberOfUnitsServices=ສະຖິຕິສໍາລັບຜົນລວມຂອງ qty ຂອງການບໍລິການ
-StatsByNumberOfEntities=ສະຖິຕິສໍາລັບຈໍານວນຂອງນິຕິບຸກຄົນທີ່ອ້າງອີງ (ບໍ່ມີໃບຮຽກເກັບເງິນ, ຫຼືຄໍາສັ່ງ ... )
-NumberOf=ຈໍານວນ %s
-NumberOfUnits=ຈຳນວນຫົວໜ່ວຍໃນ %s
-AmountIn=ຈຳນວນໃນ %s
-NumberOfUnitsMos=ຈຳ ນວນຫົວ ໜ່ວຍ ເພື່ອຜະລິດຕາມ ລຳ ດັບການຜະລິດ
-EMailTextInterventionAddedContact=ການແຊກແຊງໃa່ %s ໄດ້ມອບyouາຍໃຫ້ເຈົ້າ.
-EMailTextInterventionValidated=ການແຊກແຊງ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextInterventionModified=The intervention %s has been modified. %s
-EMailTextInterventionClosed=ການແຊກແຊງ %s ໄດ້ຖືກປິດ.
-EMailTextInvoiceValidated=ໃບແຈ້ງ ໜີ້ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextInvoicePayed=ໃບແຈ້ງ ໜີ້ %s ໄດ້ຈ່າຍແລ້ວ.
-EMailTextInvoiceCanceled=Invoice %s has been canceled.
-EMailTextProposalValidated=ຂໍ້ສະ ເໜີ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextProposalClosedSigned=ຂໍ້ສະ ເໜີ %s ໄດ້ຖືກປິດລົງແລ້ວ.
-EMailTextProposalClosedSignedWeb=ຂໍ້ສະເໜີ %s ໄດ້ຖືກປິດລົງນາມໃນໜ້າປະຕູ.
-EMailTextProposalClosedRefused=ຂໍ້ສະເໜີ %s ຖືກປະຕິເສດ.
-EMailTextProposalClosedRefusedWeb=ຂໍ້ສະເໜີ %s ຖືກປິດການປະຕິເສດຢູ່ໃນໜ້າປະຕູ.
-EMailTextOrderValidated=ຄຳ ສັ່ງ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextOrderClose=ສັ່ງໄດ້ %s ຈັດສົ່ງແລ້ວ.
-EMailTextOrderCanceled=Order %s has been canceled.
-EMailTextSupplierOrderApprovedBy=ການສັ່ງຊື້ %s ໄດ້ຮັບການອະນຸມັດໂດຍ %s.
-EMailTextSupplierOrderCanceledBy=Purchase order %s has been canceled by %s.
-EMailTextSupplierOrderValidatedBy=ການສັ່ງຊື້ %s ໄດ້ຖືກບັນທຶກໂດຍ %s.
-EMailTextSupplierOrderSubmittedBy=ການສັ່ງຊື້ %s ໄດ້ຖືກສົ່ງໂດຍ %s.
-EMailTextSupplierOrderRefusedBy=ຄໍາສັ່ງຊື້ %s ໄດ້ຖືກປະຕິເສດໂດຍ %s.
-EMailTextExpeditionModified=Shipping %s has been validated. %s
-EMailTextExpeditionValidated=ການຂົນສົ່ງ %s ໄດ້ຮັບການກວດສອບ.
-EMailTextExpenseReportValidated=ລາຍງານຄ່າໃຊ້ຈ່າຍ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextExpenseReportApproved=ລາຍງານຄ່າໃຊ້ຈ່າຍ %s ໄດ້ຮັບການອະນຸມັດ.
-EMailTextHolidayValidated=ການຮ້ອງຂໍການອອກຈາກ %s ໄດ້ຖືກກວດສອບແລ້ວ.
-EMailTextHolidayApproved=ຄຳ ຮ້ອງຂໍອອກຈາກການອະນຸມັດ %s.
-EMailTextActionAdded=ການປະຕິບັດ %s ໄດ້ຖືກເພີ່ມເຂົ້າໃນວາລະ.
-EMailTextContractModified=The contract %s has been modified. %s
-ImportedWithSet=ຊຸດຂໍ້ມູນການ ນຳ ເຂົ້າ
-DolibarrNotification=ການແຈ້ງເຕືອນອັດຕະໂນມັດ
-ResizeDesc=ໃສ່ຄວາມກວ້າງໃa່ <b> ຫຼື </b> ຄວາມສູງໃ່. ອັດຕາສ່ວນຈະຖືກຮັກສາໄວ້ໃນລະຫວ່າງການປັບຂະ ໜາດ ...
-NewLength=ຄວາມກວ້າງໃຫມ່
-NewHeight=ຄວາມສູງໃ່
-NewSizeAfterCropping=ຂະ ໜາດ ໃafter່ຫຼັງຈາກການປູກພືດ
-DefineNewAreaToPick=ກຳ ນົດພື້ນທີ່ໃon່ໃສ່ຮູບເພື່ອເລືອກ (ຄລິກຊ້າຍທີ່ຮູບແລ້ວລາກໄປຈົນກວ່າເຈົ້າໄປເຖິງມຸມກົງກັນຂ້າມ)
-CurrentInformationOnImage=ເຄື່ອງມືນີ້ໄດ້ຖືກອອກແບບມາເພື່ອຊ່ວຍໃຫ້ເຈົ້າສາມາດປັບຂະ ໜາດ ຫຼືຕັດຮູບໄດ້. ນີ້ແມ່ນຂໍ້ມູນກ່ຽວກັບຮູບພາບທີ່ແກ້ໄຂໃນປັດຈຸບັນ
-ImageEditor=ບັນນາທິການຮູບພາບ
-YouReceiveMailBecauseOfNotification=ເຈົ້າໄດ້ຮັບຂໍ້ຄວາມນີ້ເພາະວ່າອີເມລ your ຂອງເຈົ້າໄດ້ຖືກເພີ່ມເຂົ້າໃນບັນຊີລາຍຊື່ເປົ້າtoາຍທີ່ຈະໄດ້ຮັບແຈ້ງເຫດການສະເພາະເຂົ້າໃນຊອບແວ %s ຂອງ %s.
-YouReceiveMailBecauseOfNotification2=ເຫດການນີ້ມີດັ່ງນີ້:
-ThisIsListOfModules=ນີ້ແມ່ນບັນຊີລາຍຊື່ຂອງໂມດູນທີ່ເລືອກໄວ້ໂດຍໂປຣໄຟລ dem ສາທິດນີ້ (ມີພຽງແຕ່ໂມດູນທົ່ວໄປທີ່ເຫັນໄດ້ໃນການສາທິດນີ້). ແກ້ໄຂອັນນີ້ເພື່ອໃຫ້ມີການສາທິດທີ່ເປັນແບບສ່ວນຕົວກວ່າແລະຄລິກໃສ່ "ເລີ່ມຕົ້ນ".
-UseAdvancedPerms=ໃຊ້ສິດອະນຸຍາດຂັ້ນສູງຂອງບາງໂມດູນ
-FileFormat=ຮູບແບບໄຟລ
-SelectAColor=ເລືອກສີ
-AddFiles=ເພີ່ມໄຟລ
-StartUpload=ເລີ່ມອັບໂຫລດ
-CancelUpload=ຍົກເລີກການອັບໂຫລດ
-FileIsTooBig=ໄຟລ is ໃຫຍ່ເກີນໄປ
-PleaseBePatient=ກະລຸນາອົດທົນ ...
-NewPassword=ລະຫັດຜ່ານໃຫມ່
-ResetPassword=ຣີເຊັດລະຫັດຜ່ານ
-RequestToResetPasswordReceived=ໄດ້ຮັບ ຄຳ ຮ້ອງຂໍປ່ຽນລະຫັດຜ່ານຂອງທ່ານແລ້ວ.
-NewKeyIs=ນີ້ແມ່ນກະແຈໃyour່ຂອງເຈົ້າເພື່ອເຂົ້າສູ່ລະບົບ
-NewKeyWillBe=ລະຫັດໃYour່ຂອງເຈົ້າເພື່ອເຂົ້າສູ່ລະບົບຫາຊອບແວຈະເປັນ
-ClickHereToGoTo=ຄລິກທີ່ນີ້ເພື່ອໄປຫາ %s
-YouMustClickToChange=ແນວໃດກໍ່ຕາມເຈົ້າຕ້ອງຄລິກໃສ່ລິ້ງຕໍ່ໄປນີ້ເພື່ອກວດສອບການປ່ຽນແປງລະຫັດຜ່ານນີ້
-ConfirmPasswordChange=ຢືນຢັນການປ່ຽນລະຫັດຜ່ານ
-ForgetIfNothing=ຖ້າເຈົ້າບໍ່ໄດ້ຮ້ອງຂໍການປ່ຽນແປງນີ້, ພຽງແຕ່ລືມອີເມວນີ້. ຂໍ້ມູນປະ ຈຳ ຕົວຂອງເຈົ້າຖືກເກັບຮັກສາໄວ້ຢ່າງປອດໄພ.
-IfAmountHigherThan=ຖ້າ ຈຳ ນວນສູງກວ່າ <strong> %s </strong>
-SourcesRepository=ຖານຂໍ້ມູນສໍາລັບແຫຼ່ງຂໍ້ມູນ
-Chart=ແຜນຜັງ
-PassEncoding=ການເຂົ້າລະຫັດລັບ
-PermissionsAdd=ເພີ່ມສິດອະນຸຍາດແລ້ວ
-PermissionsDelete=ລຶບການອະນຸຍາດອອກແລ້ວ
-YourPasswordMustHaveAtLeastXChars=ລະຫັດຜ່ານຂອງທ່ານຕ້ອງມີຕົວອັກສອນຢ່າງ ໜ້ອຍ <strong> %s </strong>
-PasswordNeedAtLeastXUpperCaseChars=ລະຫັດຜ່ານຕ້ອງການຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວອັກສອນຕົວພິມໃຫຍ່
-PasswordNeedAtLeastXDigitChars=ລະຫັດຜ່ານຕ້ອງການຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວອັກສອນຕົວເລກ
-PasswordNeedAtLeastXSpecialChars=ລະຫັດຜ່ານຕ້ອງການຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວອັກສອນພິເສດ
-PasswordNeedNoXConsecutiveChars=ລະຫັດຜ່ານຈະຕ້ອງບໍ່ມີ <strong>%s</strong> ຕົວອັກສອນທີ່ຄ້າຍຄືກັນຕິດຕໍ່ກັນ
-YourPasswordHasBeenReset=ຣີເຊັດລະຫັດຜ່ານຂອງທ່ານ ສຳ ເລັດແລ້ວ
-ApplicantIpAddress=ທີ່ຢູ່ IP ຂອງຜູ້ສະັກ
-SMSSentTo=ສົ່ງ SMS ຫາ %s
-MissingIds=ບໍ່ມີໄອດີ
-ThirdPartyCreatedByEmailCollector=ພາກສ່ວນທີສາມສ້າງໂດຍຜູ້ເກັບອີເມລ email ຈາກອີເມລ MS MSGID %s
-ContactCreatedByEmailCollector=ຕິດຕໍ່/ທີ່ຢູ່ສ້າງຂຶ້ນໂດຍຜູ້ເກັບອີເມລ from ຈາກອີເມລ MS MSGID %s
-ProjectCreatedByEmailCollector=ໂຄງການສ້າງຂຶ້ນໂດຍຜູ້ເກັບອີເມລ from ຈາກອີເມລ MS MSGID %s
-TicketCreatedByEmailCollector=ປີ້ສ້າງໂດຍຜູ້ເກັບອີເມລ from ຈາກອີເມລ MS MSGID %s
-OpeningHoursFormatDesc=ໃຊ້ a - ເພື່ອແຍກຊົ່ວໂມງເປີດແລະປິດ. <br> ໃຊ້ຍະຫວ່າງເພື່ອປ້ອນໄລຍະຕ່າງ different. <br> ຕົວຢ່າງ: 8-12 14-18
-SuffixSessionName=ຄຳ ຕໍ່ທ້າຍ ສຳ ລັບຊື່ເຊດຊັນ
-LoginWith=ເຂົ້າສູ່ລະບົບດ້ວຍ %s
-ObjectId=Object ID
-FullData=Full data
-
-##### Export #####
-ExportsArea=ເຂດສົ່ງອອກ
-AvailableFormats=ຮູບແບບທີ່ມີຢູ່
-LibraryUsed=ໃຊ້ຫ້ອງສະຸດແລ້ວ
-LibraryVersion=ສະບັບຫ້ອງສະຸດ
-ExportableDatas=ຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້
-NoExportableData=ບໍ່ມີຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້ (ບໍ່ມີໂມດູນທີ່ໂຫຼດຂໍ້ມູນສົ່ງອອກໄດ້, ຫຼືຂາດການອະນຸຍາດ)
-##### External sites #####
-WebsiteSetup=ການຕັ້ງເວັບໄຊທ module ໂມດູນ
-WEBSITE_PAGEURL=URL ຂອງ ໜ້າ
-WEBSITE_TITLE=ຊື່ເລື່ອງ
-WEBSITE_DESCRIPTION=ລາຍລະອຽດ
-WEBSITE_IMAGE=ຮູບພາບ
-WEBSITE_IMAGEDesc=ເສັ້ນທາງທີ່ກ່ຽວຂ້ອງຂອງສື່ພາບ. ເຈົ້າສາມາດປະໃຫ້ເປົ່າຫວ່າງອັນນີ້ບໍ່ຄ່ອຍໄດ້ໃຊ້ (ມັນສາມາດຖືກນໍາໃຊ້ໂດຍເນື້ອໃນທີ່ເຄື່ອນໄຫວເພື່ອສະແດງໃຫ້ເຫັນພາບຫຍໍ້ຢູ່ໃນລາຍການຂອງບົດຄວາມ blog). ໃຊ້ __WEBSITE_KEY__ ໃນເສັ້ນທາງຖ້າເສັ້ນທາງຂຶ້ນກັບຊື່ເວັບໄຊທ ((ຕົວຢ່າງ: image/__ WEBSITE_KEY __/stories/myimage.png).
-WEBSITE_KEYWORDS=ຄໍາສໍາຄັນ
-LinesToImport=ສາຍທີ່ຈະນໍາເຂົ້າ
-MemoryUsage=ການໃຊ້ຄວາມຈໍາ
-RequestDuration=ໄລຍະເວລາຂອງການຮ້ອງຂໍ
-ProductsServicesPerPopularity=ຜະລິດຕະພັນ|ການບໍລິການຕາມຄວາມນິຍົມ
-ProductsPerPopularity=ຜະລິດຕະພັນໂດຍຄວາມນິຍົມ
-ServicesPerPopularity=ບໍລິການຕາມຄວາມນິຍົມ
-PopuProp=ຜະລິດຕະພັນ|ການບໍລິການຕາມຄວາມນິຍົມໃນຂໍ້ສະເໜີ
-PopuCom=ຜະລິດຕະພັນ|ການບໍລິການຕາມຄວາມນິຍົມໃນຄໍາສັ່ງ
-ProductStatistics=ຜະລິດຕະພັນ|ບໍລິການສະຖິຕິ
-NbOfQtyInOrders=ຈໍານວນໃນຄໍາສັ່ງ
-SelectTheTypeOfObjectToAnalyze=ເລືອກວັດຖຸໃດນຶ່ງເພື່ອເບິ່ງສະຖິຕິຂອງມັນ ...
-ConfirmBtnCommonContent = ເຈົ້າແນ່ໃຈບໍ່ວ່າເຈົ້າຕ້ອງການ "%s"?
-ConfirmBtnCommonTitle = ຢືນຢັນການກະ ທຳ ຂອງເຈົ້າ
-CloseDialog = ປິດ
-Autofill = ຕື່ມຂໍ້ມູນອັດຕະໂນມັດ
-OrPasteAnURL=ຫຼືວາງ URL
-# externalsite
-ExternalSiteSetup=ຕິດຕັ້ງການເຊື່ອມຕໍ່ກັບເວັບໄຊທ໌ພາຍນອກ
-ExternalSiteURL=URL ເວັບໄຊທ໌ພາຍນອກຂອງເນື້ອຫາ HTML iframe
-ExternalSiteModuleNotComplete=Module ExternalSite ບໍ່ໄດ້ຖືກຕັ້ງຄ່າຢ່າງຖືກຕ້ອງ.
-ExampleMyMenuEntry=ເມນູຂອງຂ້ອຍ
-# ftp
-FTPClientSetup=ການຕິດຕັ້ງໂມດູນລູກຄ້າ FTP ຫຼື SFTP
-NewFTPClient=ການຕັ້ງຄ່າການເຊື່ອມຕໍ່ FTP/SFTP ໃໝ່
-FTPArea=ພື້ນທີ່ FTP/SFTP
-FTPAreaDesc=ໜ້າຈໍນີ້ສະແດງມຸມມອງຂອງເຊີບເວີ FTP ແລະ SFTP.
-SetupOfFTPClientModuleNotComplete=ການຕິດຕັ້ງໂມດູນລູກຄ້າ FTP ຫຼື SFTP ເບິ່ງຄືວ່າບໍ່ສົມບູນ
-FTPFeatureNotSupportedByYourPHP=PHP ຂອງທ່ານບໍ່ຮອງຮັບຟັງຊັນ FTP ຫຼື SFTP
-FailedToConnectToFTPServer=ລົ້ມເຫລວໃນການເຊື່ອມຕໍ່ກັບເຊີບເວີ (ເຊີບເວີ %s, port %s)
-FailedToConnectToFTPServerWithCredentials=ລົ້ມເຫລວໃນການເຂົ້າສູ່ລະບົບເຊີບເວີດ້ວຍການເຂົ້າສູ່ລະບົບ/ລະຫັດຜ່ານທີ່ກຳນົດໄວ້
-FailedToChdirOnFTPServer=Failed to change directory on the FTP server
-FTPFailedToRemoveFile=ລົ້ມເຫລວໃນການລຶບໄຟລ໌ <b>%s</b>.
-FTPFailedToRemoveDir=ລົ້ມເຫລວໃນການລຶບໄດເລກະທໍລີ <b>%s</b>: ກວດເບິ່ງການອະນຸຍາດ ແລະວ່າໄດເລກະທໍລີ ຫວ່າງເປົ່າ.
-FTPPassiveMode=ໂໝດຕົວຕັ້ງຕົວຕີ
-ChooseAFTPEntryIntoMenu=ເລືອກເວັບໄຊ FTP/SFTP ຈາກເມນູ...
-FailedToGetFile=ລົ້ມເຫລວໃນການໂຫຼດໄຟລ໌ %s
-ErrorFTPNodisconnect=ເກີດຄວາມຜິດພາດໃນການຕັດການເຊື່ອມຕໍ່ເຊີບເວີ FTP/SFTP
-FileWasUpload=ໄຟລ໌ <b>%s</b> ຖືກອັບໂຫລດແລ້ວ
-FTPFailedToUploadFile=ລົ້ມເຫລວໃນການອັບໂຫລດໄຟລ໌ <b>%s</b>.
-AddFolder=ສ້າງໂຟນເດີ
-FileWasCreateFolder=ໂຟນເດີ <b>%s</b> ຖືກສ້າງຂຶ້ນ
-FTPFailedToCreateFolder=ລົ້ມເຫລວໃນການສ້າງໂຟນເດີ <b>%s</b>.
-SelectADay=Select a day in calendar
-SelectANewDate=Select a new date
-EmailContent=Email content
-Pre-Prompt=Pre-prompt
-Post-Prompt=Post-prompt
-AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
-PayOfBankTransferInvoice=You are going to make an online payment for this invoice. However, this invoice has been set up to be paid in "Credit Transfer" mode, so to avoid paying twice, please verify that no current bank transfer has already been initiated before continuing.
-Exceptions=Exceptions
-TranslateByAI=Translate message into
-SummarizeByAI=Summarize message in
-SummarizeTwentyWords=20 words
-SummarizeFiftyWords=50 words
-SummarizeHundredWords=100 words
-SummarizeTwoHundredWords=200 words
-SummarizeOneParagraphs=1 paragraph
-SummarizeTwoParagraphs=2 paragraphs
-SummarizeTwentyFivePercent=25%%
-SummarizeFiftyPercent=50%%
-SummarizeSeventyFivePercent=75%%
-TextSummarize=Text summarize
-RephraserByAI=Rephrase message in
-RephraseStyleProfessional=Professional style
-RephraseStyleHumouristic=Humouristic style
-TextRephraser=Text style rephraser
-AIEnhancements=AI Enhancements
-TLSv1=TLSv1
-TLSv1.2=TLSv1.2
-TLS/STARTTLS=TLS/STARTTLS
-FillExtrafieldWithAi=Fill extrafield with AI content
-ExtrafieldFiller=Extrafield filler
-OurProductSelection=Our selection of new products
-NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
-# Bookmarks
-AddThisPageToBookmarks = Add current page to bookmarks
-BehaviourOnClick = Behavior when a bookmark URL is selected
-BookmarkTargetNewWindowShort = New tab
-BookmarkTargetReplaceWindowShort = Current tab
-BookmarkTitle = Bookmark name
-BookmarksManagement = Bookmarks management
-BookmarksMenuShortCut = Ctrl + shift + m
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page should open in the current tab or a new tab
-CreateBookmark = Create bookmark
-EditBookmarks = List/edit bookmarks
-ListOfBookmarks = List of bookmarks
-NewBookmark = New bookmark
-NoBookmarkFound = No bookmark found
-NoBookmarks = No bookmarks defined
-OpenANewWindow = Open a new tab
-ReplaceWindow = Replace current tab
-SetHereATitleForLink = Set a name for the bookmark
-ShowBookmark = Show bookmark
-UrlOrLink = URL
-UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SecurityCode=Security code -> SecurityCode=ລະຫັດຄວາມປອດໄພ
+NumberingShort=N° -> NumberingShort=ເລກທີ
+ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu. -> ToolsDesc=ເຄື່ອງມືທັງໝົດທີ່ບໍ່ໄດ້ລວມຢູ່ໃນລາຍການເມນູອື່ນໆແມ່ນຖືກຈັດກຸ່ມຢູ່ທີ່ນີ້.<br>ເຄື່ອງມືທັງໝົດສາມາດເຂົ້າເຖິງໄດ້ຜ່ານເມນູດ້ານຊ້າຍ.
+Birthday=Birthday -> Birthday=ວັນເກີດ
+BirthdayAlert=Birthday alert -> BirthdayAlert=ການແຈ້ງເຕືອນວັນເກີດ
+BirthdayAlertOn=birthday alert active -> BirthdayAlertOn=ເປີດການແແຈ້ງເຕືອນວັນເກີດ
+BirthdayAlertOff=birthday alert inactive -> BirthdayAlertOff=ປິດການແຈ້ງເຕືອນວັນເກີດ
+TransKey=Translation of the key TransKey -> TransKey=ການແປຂອງຄີ TransKey
+MonthOfInvoice=Month (number 1-12) of invoice date -> MonthOfInvoice=ເດືອນ (ຕົວເລກ 1-12) ຂອງວັນທີອອກໃບເກັບເງິນ
+TextMonthOfInvoice=Month (text) of invoice date -> TextMonthOfInvoice=ເດືອນ (ຕົວອັກສອນ) ຂອງວັນທີອອກໃບເກັບເງິນ
+PreviousMonthOfInvoice=Previous month (number 1-12) of invoice date -> PreviousMonthOfInvoice=ເດືອນກ່ອນໜ້າ (ຕົວເລກ 1-12) ຂອງວັນທີອອກໃບເກັບເງິນ
+TextPreviousMonthOfInvoice=Previous month (text) of invoice date -> TextPreviousMonthOfInvoice=ເດືອນກ່ອນໜ້າ (ຕົວອັກສອນ) ຂອງວັນທີອອກໃບເກັບເງິນ
+NextMonthOfInvoice=Following month (number 1-12) of invoice date -> NextMonthOfInvoice=ເດືອນຖັດໄປ (ຕົວເລກ 1-12) ຂອງວັນທີອອກໃບເກັບເງິນ
+TextNextMonthOfInvoice=Following month (text) of invoice date -> TextNextMonthOfInvoice=ເດືອນຖັດໄປ (ຕົວອັກສອນ) ຂອງວັນທີອອກໃບເກັບເງິນ
+PreviousMonth=Previous month -> PreviousMonth=ເດືອນກ່ອນໜ້າ
+PreviousYear=Previous year -> PreviousYear=ປີກ່ອນໜ້າ
+NextMonth=Next month -> NextMonth=ເດືອນຖັດໄປ
+NextYear=Next year -> NextYear=ປີຖັດໄປ
+CurrentMonth=Current month -> CurrentMonth=ເດືອນປັດຈຸບັນ
+ZipFileGeneratedInto=Zip file generated into <b>%s</b>. -> ZipFileGeneratedInto=ໄຟລ໌ Zip ຖືກສ້າງຂຶ້ນໃນ <b>%s</b>.
+DocFileGeneratedInto=Doc file generated into <b>%s</b>. -> DocFileGeneratedInto=ໄຟລ໌ເອກະສານ ຖືກສ້າງຂຶ້ນໃນ <b>%s</b>.
+JumpToLogin=Disconnected. Go to login page... -> JumpToLogin=ຕັດການເຊື່ອມຕໍ່ແລ້ວ. ໄປທີ່ໜ້າເຂົ້າສູ່ລະບົບ...
+MessageForm=Message on online payment form -> MessageForm=ຂໍ້ຄວາມໃນແບບຟອມການຊຳລະເງິນອອນໄລນ໌
+MessageOK=Message on the return page for a validated payment -> MessageOK=ຂໍ້ຄວາມໃນໜ້າຕອບກັບສຳລັບການຊຳລະເງິນທີ່ສຳເລັດແລ້ວ
+MessageKO=Message on the return page for a canceled payment -> MessageKO=ຂໍ້ຄວາມໃນໜ້າຕອບກັບສຳລັບການຊຳລະເງິນທີ່ຖືກຍົກເລີກ
+ContentOfDirectoryIsNotEmpty=Content of this directory is not empty. -> ContentOfDirectoryIsNotEmpty=ເນື້ອໃນຂອງໂຟນເດີນີ້ບໍ່ວ່າງເປົ່າ.
+DeleteAlsoContentRecursively=Check to delete all content recursively -> DeleteAlsoContentRecursively=ໝາຍເພື່ອລຶບເນື້ອໃນທັງໝົດແບບຕໍ່ເນື່ອງ
+PoweredBy=Powered by -> PoweredBy=ຂັບເຄື່ອນໂດຍ
+YearOfInvoice=Year of invoice date -> YearOfInvoice=ປີຂອງວັນທີອອກໃບເກັບເງິນ
+PreviousYearOfInvoice=Previous year of invoice date -> PreviousYearOfInvoice=ປີກ່ອນໜ້າຂອງວັນທີອອກໃບເກັບເງິນ
+NextYearOfInvoice=Following year of invoice date -> NextYearOfInvoice=ປີຖັດໄປຂອງວັນທີອອກໃບເກັບເງິນ
+DateNextInvoiceBeforeGen=Date of next invoice (before generation) -> DateNextInvoiceBeforeGen=ວັນທີຂອງໃບເກັບເງິນຖັດໄປ (ກ່ອນການສ້າງ)
+DateNextInvoiceAfterGen=Date of next invoice (after generation) -> DateNextInvoiceAfterGen=ວັນທີຂອງໃບເກັບເງິນຖັດໄປ (ຫຼັງການສ້າງ)
+GraphInBarsAreLimitedToNMeasures=Graphics are limited to %s measures in 'Bars' mode. The mode 'Lines' was automatically selected instead. -> GraphInBarsAreLimitedToNMeasures=ກຣາບແບບແທ່ງຖືກຈຳກັດໄວ້ທີ່ %s ຄ່າ. ໂໝດ 'ເສັ້ນ' ຖືກເລືອກໂດຍອັດຕະໂນມັດແທນ.
+OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Only the first selected field has been selected. -> OnlyOneFieldForXAxisIsPossible=ສາມາດໃຊ້ໄດ້ພຽງ 1 ຟິລສຳລັບແກນ X. ສະເພາະຟິລທຳອິດທີ່ເລືອກເທົ່ານັ້ນທີ່ຈະຖືກໃຊ້.
+AtLeastOneMeasureIsRequired=At least 1 field for measure is required -> AtLeastOneMeasureIsRequired=ຕ້ອງມີຢ່າງໜ້ອຍ 1 ຟິລສຳລັບການວັດແທກ
+AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required -> AtLeastOneXAxisIsRequired=ຕ້ອງມີຢ່າງໜ້ອຍ 1 ຟິລສຳລັບແກນ X
+LatestBlogPosts=Latest Blog Posts -> LatestBlogPosts=ໂພສບລັອກລ່າສຸດ
+notiftouser=To users -> notiftouser=ເຖິງຜູ້ໃຊ້
+notiftofixedemail=To fixed mail -> notiftofixedemail=ເຖິງອີເມວທີ່ກຳນົດໄວ້
+notiftouserandtofixedemail=To user and fixed mail -> notiftouserandtofixedemail=ເຖິງຜູ້ໃຊ້ ແລະ ອີເມວທີ່ກຳນົດໄວ້
+Notify_ORDER_VALIDATE=Sales order validated -> Notify_ORDER_VALIDATE=ໃບສັ່ງຊື້ສິນຄ້າຖືກຢືນຢັນແລ້ວ
+Notify_ORDER_SENTBYMAIL=Sales order sent by mail -> Notify_ORDER_SENTBYMAIL=ໃບສັ່ງຊື້ສິນຄ້າຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_ORDER_CLOSE=Sales order delivered -> Notify_ORDER_CLOSE=ໃບສັ່ງຊື້ສິນຄ້າຖືກສົ່ງມອບແລ້ວ
+Notify_ORDER_CANCEL=Sales order canceled -> Notify_ORDER_CANCEL=ໃບສັ່ງຊື້ສິນຄ້າຖືກຍົກເລີກແລ້ວ
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email -> Notify_ORDER_SUPPLIER_SENTBYMAIL=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_ORDER_SUPPLIER_CANCEL=Purchase order canceled -> Notify_ORDER_SUPPLIER_CANCEL=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກຍົກເລີກແລ້ວ
+Notify_ORDER_SUPPLIER_VALIDATE=Purchase order recorded -> Notify_ORDER_SUPPLIER_VALIDATE=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກບັນທຶກແລ້ວ
+Notify_ORDER_SUPPLIER_APPROVE=Purchase order approved -> Notify_ORDER_SUPPLIER_APPROVE=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກອະນຸມັດແລ້ວ
+Notify_ORDER_SUPPLIER_SUBMIT=Purchase order submitted -> Notify_ORDER_SUPPLIER_SUBMIT=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກສົ່ງແລ້ວ
+Notify_ORDER_SUPPLIER_REFUSE=Purchase order refused -> Notify_ORDER_SUPPLIER_REFUSE=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງຖືກປະຕິເສດແລ້ວ
+Notify_PROPAL_VALIDATE=Customer proposal validated -> Notify_PROPAL_VALIDATE=ຂໍ້ສະເໜີໃຫ້ລູກຄ້າຖືກຢືນຢັນແລ້ວ
+Notify_PROPAL_CLOSE_SIGNED=Customer proposal closed signed -> Notify_PROPAL_CLOSE_SIGNED=ຂໍ້ສະເໜີໃຫ້ລູກຄ້າຖືກປິດແລ້ວ (ເຊັນແລ້ວ)
+Notify_PROPAL_CLOSE_REFUSED=Customer proposal closed refused -> Notify_PROPAL_CLOSE_REFUSED=ຂໍ້ສະເໜີໃຫ້ລູກຄ້າຖືກປິດແລ້ວ (ຖືກປະຕິເສດ)
+Notify_PROPAL_SENTBYMAIL=Commercial proposal sent by mail -> Notify_PROPAL_SENTBYMAIL=ຂໍ້ສະເໜີທາງການຄ້າຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_WITHDRAW_TRANSMIT=Transmission withdrawal -> Notify_WITHDRAW_TRANSMIT=ການສົ່ງຂໍ້ມູນການຖອນເງິນ
+Notify_WITHDRAW_CREDIT=Credit withdrawal -> Notify_WITHDRAW_CREDIT=ການໂອນເງິນເຂົ້າບັນຊີ
+Notify_WITHDRAW_EMIT=Perform withdrawal -> Notify_WITHDRAW_EMIT=ດຳເນີນການຖອນເງິນ
+Notify_COMPANY_CREATE=Third party created -> Notify_COMPANY_CREATE=ສ້າງຂໍ້ມູນບຸກຄົນພາຍນອກແລ້ວ
+Notify_COMPANY_SENTBYMAIL=Mails sent from the page of third party -> Notify_COMPANY_SENTBYMAIL=ອີເມວຖືກສົ່ງຈາກໜ້າຂໍ້ມູນບຸກຄົນພາຍນອກ
+Notify_BILL_VALIDATE=Customer invoice validated -> Notify_BILL_VALIDATE=ໃບເກັບເງິນລູກຄ້າຖືກຢືນຢັນແລ້ວ
+Notify_BILL_UNVALIDATE=Customer invoice unvalidated -> Notify_BILL_UNVALIDATE=ໃບເກັບເງິນລູກຄ້າຖືກຍົກເລີກການຢືນຢັນ
+Notify_BILL_PAYED=Customer invoice paid -> Notify_BILL_PAYED=ໃບເກັບເງິນລູກຄ້າຖືກຊຳລະແລ້ວ
+Notify_BILL_CANCEL=Customer invoice canceled -> Notify_BILL_CANCEL=ໃບເກັບເງິນລູກຄ້າຖືກຍົກເລີກແລ້ວ
+Notify_BILL_SENTBYMAIL=Customer invoice sent by mail -> Notify_BILL_SENTBYMAIL=ໃບເກັບເງິນລູກຄ້າຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_BILL_SUPPLIER_VALIDATE=Vendor invoice validated -> Notify_BILL_SUPPLIER_VALIDATE=ໃບເກັບເງິນຜູ້ສະໜອງຖືກຢືນຢັນແລ້ວ
+Notify_BILL_SUPPLIER_PAYED=Vendor invoice paid -> Notify_BILL_SUPPLIER_PAYED=ໃບເກັບເງິນຜູ້ສະໜອງຖືກຊຳລະແລ້ວ
+Notify_BILL_SUPPLIER_SENTBYMAIL=Vendor invoice sent by mail -> Notify_BILL_SUPPLIER_SENTBYMAIL=ໃບເກັບເງິນຜູ້ສະໜອງຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_BILL_SUPPLIER_CANCELED=Vendor invoice canceled -> Notify_BILL_SUPPLIER_CANCELED=ໃບເກັບເງິນຜູ້ສະໜອງຖືກຍົກເລີກແລ້ວ
+Notify_CONTRACT_MODIFY=Contract modified -> Notify_CONTRACT_MODIFY=ສັນຍາຖືກແກ້ໄຂແລ້ວ
+Notify_CONTRACT_VALIDATE=Contract validated -> Notify_CONTRACT_VALIDATE=ສັນຍາຖືກຢືນຢັນແລ້ວ
+Notify_FICHINTER_VALIDATE=Intervention validated -> Notify_FICHINTER_VALIDATE=ການເຂົ້າປະຕິບັດງານຖືກຢືນຢັນແລ້ວ
+Notify_FICHINTER_MODIFY=Intervention modified -> Notify_FICHINTER_MODIFY=ການເຂົ້າປະຕິບັດງານຖືກແກ້ໄຂແລ້ວ
+Notify_FICHINTER_CLOSE=Intervention closed -> Notify_FICHINTER_CLOSE=ການເຂົ້າປະຕິບັດງານຖືກປິດແລ້ວ
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention -> Notify_FICHINTER_ADD_CONTACT=ເພີ່ມຜູ້ຕິດຕໍ່ເຂົ້າໃນການປະຕິບັດງານແລ້ວ
+Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail -> Notify_FICHINTER_SENTBYMAIL=ການເຂົ້າປະຕິບັດງານຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_SHIPPING_MODIFY=Shipping modified -> Notify_SHIPPING_MODIFY=ການຈັດສົ່ງຖືກແກ້ໄຂແລ້ວ
+Notify_SHIPPING_VALIDATE=Shipping validated -> Notify_SHIPPING_VALIDATE=ການຈັດສົ່ງຖືກຢືນຢັນແລ້ວ
+Notify_SHIPPING_SENTBYMAIL=Shipping sent by mail -> Notify_SHIPPING_SENTBYMAIL=ການຈັດສົ່ງຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_RECEPTION_SENTBYMAIL=Reception sent by mail -> Notify_RECEPTION_SENTBYMAIL=ໃບຮັບສິນຄ້າຖືກສົ່ງທາງອີເມວແລ້ວ
+Notify_MEMBER_VALIDATE=Member validated -> Notify_MEMBER_VALIDATE=ສະມາຊິກຖືກຢືນຢັນແລ້ວ
+Notify_MEMBER_MODIFY=Member modified -> Notify_MEMBER_MODIFY=ສະມາຊິກຖືກແກ້ໄຂແລ້ວ
+Notify_MEMBER_SUBSCRIPTION=Member subscribed -> Notify_MEMBER_SUBSCRIPTION=ສະມາຊິກລົງທະບຽນແລ້ວ
+Notify_MEMBER_RESILIATE=Member terminated -> Notify_MEMBER_RESILIATE=ສະມາຊິກຖືກຍົກເລີກ
+Notify_MEMBER_DELETE=Member deleted -> Notify_MEMBER_DELETE=ສະມາຊິກຖືກລຶບແລ້ວ
+Notify_PROJECT_CREATE=Project creation -> Notify_PROJECT_CREATE=ສ້າງໂຄງການແລ້ວ
+Notify_TASK_CREATE=Task created -> Notify_TASK_CREATE=ສ້າງວຽກແລ້ວ
+Notify_TASK_MODIFY=Task modified -> Notify_TASK_MODIFY=ວຽກຖືກແກ້ໄຂແລ້ວ
+Notify_TASK_DELETE=Task deleted -> Notify_TASK_DELETE=ວຽກຖືກລຶບແລ້ວ
+Notify_EXPENSE_REPORT_VALIDATE=Expense report validated (approval required) -> Notify_EXPENSE_REPORT_VALIDATE=ໃບລາຍງານຄ່າໃຊ້ຈ່າຍຖືກຢືນຢັນແລ້ວ (ລໍຖ້າການອະນຸມັດ)
+Notify_EXPENSE_REPORT_APPROVE=Expense report approved -> Notify_EXPENSE_REPORT_APPROVE=ໃບລາຍງານຄ່າໃຊ້ຈ່າຍຖືກອະນຸມັດແລ້ວ
+Notify_HOLIDAY_VALIDATE=Leave request validated (approval required) -> Notify_HOLIDAY_VALIDATE=ຄຳຮ້ອງຂໍລາພັກຖືກຢືນຢັນແລ້ວ (ລໍຖ້າການອະນຸມັດ)
+Notify_HOLIDAY_APPROVE=Leave request approved -> Notify_HOLIDAY_APPROVE=ຄຳຮ້ອງຂໍລາພັກຖືກອະນຸມັດແລ້ວ
+Notify_ACTION_CREATE=Added action to Agenda -> Notify_ACTION_CREATE=ເພີ່ມກິດຈະກຳເຂົ້າໃນຕາຕະລາງວຽກແລ້ວ
+Notify_STOCKTRANSFER_CREATE=Stock transfer created -> Notify_STOCKTRANSFER_CREATE=ສ້າງການໂອນຍ້າຍສິນຄ້າແລ້ວ
+Notify_STOCKTRANSFER_VALIDATE=Stock transfer validated -> Notify_STOCKTRANSFER_VALIDATE=ການໂອນຍ້າຍສິນຄ້າຖືກຢືນຢັນແລ້ວ
+Notify_STOCKTRANSFER_UNVALIDATE=Stock transfer set back to draft -> Notify_STOCKTRANSFER_UNVALIDATE=ການໂອນຍ້າຍສິນຄ້າຖືກປ່ຽນກັບເປັນສະບັບຮ່າງ
+Notify_STOCKTRANSFER_CLOSE=Stock transfer closed -> Notify_STOCKTRANSFER_CLOSE=ການໂອນຍ້າຍສິນຄ້າຖືກປິດແລ້ວ
+SeeModuleSetup=See setup of module %s -> SeeModuleSetup=ເບິ່ງການຕັ້ງຄ່າຂອງໂມດູນ %s
+NbOfAttachedFiles=Number of attached files/documents -> NbOfAttachedFiles=ຈຳນວນໄຟລ໌/ເອກະສານທີ່ຄັດຕິດ
+TotalSizeOfAttachedFiles=Total size of attached files/documents -> TotalSizeOfAttachedFiles=ຂະໜາດລວມຂອງໄຟລ໌/ເອກະສານທີ່ຄັດຕິດ
+MaxSize=Maximum size -> MaxSize=ຂະໜາດສູງສຸດ
+AttachANewFile=Attach a new file/document -> AttachANewFile=ຄັດຕິດໄຟລ໌/ເອກະສານໃໝ່
+LinkedObject=Linked object -> LinkedObject=ວັດຖຸທີ່ເຊື່ອມໂຍງ
+NbOfActiveNotifications=Number of notifications (no. of recipient emails) -> NbOfActiveNotifications=ຈຳນວນການແຈ້ງເຕືອນ (ຈຳນວນອີເມວຜູ້ຮັບ)
+PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe lines are separated by a carriage return.\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailTest=__(ສະບາຍດີ)__\nນີ້ແມ່ນອີເມວທົດສອບທີ່ສົ່ງເຖິງ __EMAIL__.\nແຕ່ລະແຖວຖືກແຍກດ້ວຍການຂຶ້ນແຖວໃໝ່.\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__SENDEREMAIL_SIGNATURE__ -> PredefinedMailTestHtml=__(ສະບາຍດີ)__<br>ນີ້ແມ່ນອີເມວ <b>ທົດສອບ</b> ທີ່ສົ່ງເຖິງ __EMAIL__ (ຄຳວ່າ ທົດສອບ ຕ້ອງເປັນຕົວໜາ).<br>ແຕ່ລະແຖວຖືກແຍກດ້ວຍການຂຶ້ນແຖວໃໝ່.<br><br>__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentContract=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentContract=__(ສະບາຍດີ)__\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendInvoice=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງໃບເກັບເງິນ __REF__ ທີ່ຄັດຕິດມານີ້ \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nWe would like to remind you that the invoice  __REF__ seems to have not been paid. A copy of the invoice is attached as a reminder.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendInvoiceReminder=__(ສະບາຍດີ)__\n\nພວກເຮົາຂໍແຈ້ງເຕືອນທ່ານວ່າໃບເກັບເງິນ __REF__ ຍັງບໍ່ທັນໄດ້ຮັບການຊຳລະ. ໄດ້ຄັດຕິດສຳເນົາໃບເກັບເງິນມາພ້ອມນີ້ເພື່ອເປັນການແຈ້ງເຕືອນ.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nPlease find commercial proposal __REF__ attached \n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendProposal=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງຂໍ້ສະເໜີທາງການຄ້າ __REF__ ທີ່ຄັດຕິດມານີ້ \n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nPlease find price request __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendSupplierProposal=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງການຂໍລາຄາ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendOrder=__(Hello)__\n\nPlease find order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendOrder=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງໃບສັ່ງຊື້ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nPlease find our order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendSupplierOrder=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງໃບສັ່ງຊື້ຂອງພວກເຮົາ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendSupplierInvoice=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງໃບເກັບເງິນ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierPayment=__(Hello)__\n\nPlease find  on __DATE_YMD__ payment __REF__, corresponding to invoices : \n\n__SUPPLIER_PAYMENT_INVOICES_LIST__\n\nTotal : __SUPPLIER_PAYMENT_INVOICES_TOTAL__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendSupplierPayment=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງການຊຳລະເງິນ __REF__ ໃນວັນທີ __DATE_YMD__, ເຊິ່ງກົງກັບໃບເກັບເງິນ: \n\n__SUPPLIER_PAYMENT_INVOICES_LIST__\n\nລວມທັງໝົດ: __SUPPLIER_PAYMENT_INVOICES_TOTAL__\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+AmountPayed=amount paid -> AmountPayed=ຈຳນວນທີ່ຊຳລະແລ້ວ
+PredefinedMailContentSendShipping=__(Hello)__\n\nPlease find shipping __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendShipping=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງການຈັດສົ່ງ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendReception=__(Hello)__\n\nPlease find reception __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendReception=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງການຮັບສິນຄ້າ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendFichInter=__(Hello)__\n\nPlease find intervention __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentSendFichInter=__(ສະບາຍດີ)__\n\nກະລຸນາເບິ່ງການເຂົ້າປະຕິບັດງານ __REF__ ທີ່ຄັດຕິດມານີ້\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.\n\n%s\n\n -> PredefinedMailContentLink=ທ່ານສາມາດຄລິກທີ່ລິ້ງລຸ່ມນີ້ເພື່ອດຳເນີນການຊຳລະເງິນ ຫາກທ່ານຍັງບໍ່ທັນໄດ້ຊຳລະ.\n\n%s\n\n
+PredefinedMailContentGeneric=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__ -> PredefinedMailContentGeneric=__(ສະບາຍດີ)__\n\n\n__(ດ້ວຍຄວາມນັບຖື)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendActionComm=Event reminder "__EVENT_LABEL__" on __EVENT_DATE__ at __EVENT_TIME__<br><br>This is an automatic message, please do not reply. -> PredefinedMailContentSendActionComm=ແຈ້ງເຕືອນກິດຈະກຳ "__EVENT_LABEL__" ໃນວັນທີ __EVENT_DATE__ ເວລາ __EVENT_TIME__<br><br>ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດ, ກະລຸນາຢ່າຕອບກັບ.
+DemoDesc=Dolibarr is a compact ERP/CRM supporting several business modules. A demo showcasing all modules makes no sense as this scenario never occurs (several hundred available). So, several demo profiles are available. -> DemoDesc=Dolibarr ເປັນລະບົບ ERP/CRM ທີ່ຮອງຮັບຫຼາຍໂມດູນທຸລະກິດ. ການສະແດງເດໂມທຸກໂມດູນອາດຈະບໍ່ເໝາະສົມເພາະສະຖານະການນີ້ບໍ່ຄ່ອຍເກີດຂຶ້ນ (ມີຫຼາຍຮ້ອຍໂມດູນ). ດັ່ງນັ້ນ, ຈຶ່ງມີໂປຣໄຟລ໌ເດໂມຫຼາຍຮູບແບບໃຫ້ເລືອກ.
+DemoDesc2=This is a restricted shared demo, you may prefer to test on your own dedicated instance with a full admin access, to do so, <a href="%s" target="_blank">go here <span class="fas fa-external-link-alt"></span></a>. -> DemoDesc2=ນີ້ແມ່ນເດໂມທີ່ໃຊ້ຮ່ວມກັນແບບຈຳກັດ, ທ່ານອາດຈະຢາກທົດລອງໃຊ້ໃນລະບົບສ່ວນຕົວທີ່ມີສິດຜູ້ດູແລເຕັມຮູບແບບ, ເພື່ອເຮັດແນວນັ້ນ <a href="%s" target="_blank">ໄປທີ່ນີ້ <span class="fas fa-external-link-alt"></span></a>.
+ChooseYourDemoProfil=Choose the demo profile that best suits your needs... -> ChooseYourDemoProfil=ເລືອກໂປຣໄຟລ໌ເດໂມທີ່ກົງກັບຄວາມຕ້ອງການຂອງທ່ານ...
+ChooseYourDemoProfilMore=...or build your own profile<br>(manual module selection) -> ChooseYourDemoProfilMore=...ຫຼື ສ້າງໂປຣໄຟລ໌ຂອງທ່ານເອງ<br>(ເລືອກໂມດູນດ້ວຍຕົນເອງ)
+DemoFundation=Manage members of a foundation -> DemoFundation=ຈັດການສະມາຊິກຂອງມູນນິທິ
+DemoFundation2=Manage members and bank account of a foundation -> DemoFundation2=ຈັດການສະມາຊິກ ແລະ ບັນຊີທະນາຄານຂອງມູນນິທິ
+DemoCompanyServiceOnly=Company or freelance selling service only -> DemoCompanyServiceOnly=ບໍລິສັດ ຫຼື ຜູ້ປະກອບອາຊີບອິດສະຫຼະທີ່ຂາຍບໍລິການເທົ່ານັ້ນ
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box -> DemoCompanyShopWithCashDesk=ຈັດການຮ້ານຄ້າທີ່ມີເຄື່ອງຄິດເງິນ
+DemoCompanyProductAndStocks=Shop selling products with Point Of Sales -> DemoCompanyProductAndStocks=ຮ້ານຂາຍສິນຄ້າພ້ອມລະບົບຈຸດຂາຍ (POS)
+DemoCompanyManufacturing=Company manufacturing products -> DemoCompanyManufacturing=ບໍລິສັດຜະລິດສິນຄ້າ
+DemoCompanyAll=Company with multiple activities (all main modules) -> DemoCompanyAll=ບໍລິສັດທີ່ມີຫຼາຍກິດຈະກຳ (ລວມທຸກໂມດູນຫຼັກ)
+CreatedBy=Created by %s -> CreatedBy=ສ້າງໂດຍ %s
+ModifiedBy=Modified by %s -> ModifiedBy=ແກ້ໄຂໂດຍ %s
+ValidatedBy=Validated by %s -> ValidatedBy=ຢືນຢັນໂດຍ %s
+SignedBy=Signed by %s -> SignedBy=ເຊັນໂດຍ %s
+ClosedBy=Closed by %s -> ClosedBy=ປິດໂດຍ %s
+CreatedById=User id who created -> CreatedById=ໄອດີຜູ້ໃຊ້ທີ່ສ້າງ
+ModifiedById=User id who made latest change -> ModifiedById=ໄອດີຜູ້ໃຊ້ທີ່ແກ້ໄຂຫຼ້າສຸດ
+ValidatedById=User id who validated -> ValidatedById=ໄອດີຜູ້ໃຊ້ທີ່ຢືນຢັນ
+CanceledById=User id who canceled -> CanceledById=ໄອດີຜູ້ໃຊ້ທີ່ຍົກເລີກ
+ClosedById=User id who closed -> ClosedById=ໄອດີຜູ້ໃຊ້ທີ່ປິດ
+CreatedByLogin=User login who created -> CreatedByLogin=ຊື່ເຂົ້າໃຊ້ຂອງຜູ້ທີ່ສ້າງ
+ModifiedByLogin=User login who made latest change -> ModifiedByLogin=ຊື່ເຂົ້າໃຊ້ຂອງຜູ້ທີ່ແກ້ໄຂຫຼ້າສຸດ
+ValidatedByLogin=User login who validated -> ValidatedByLogin=ຊື່ເຂົ້າໃຊ້ຂອງຜູ້ທີ່ຢືນຢັນ
+CanceledByLogin=User login who canceled -> CanceledByLogin=ຊື່ເຂົ້າໃຊ້ຂອງຜູ້ທີ່ຍົກເລີກ
+ClosedByLogin=User login who closed -> ClosedByLogin=ຊື່ເຂົ້າໃຊ້ຂອງຜູ້ທີ່ປິດ
+FileWasRemoved=File %s was removed -> FileWasRemoved=ໄຟລ໌ %s ຖືກຍ້າຍອອກແລ້ວ
+DirWasRemoved=Directory %s was removed -> DirWasRemoved=ໂຟນເດີ %s ຖືກຍ້າຍອອກແລ້ວ
+FeatureNotYetAvailable=Feature not yet available in the current version -> FeatureNotYetAvailable=ຄຸນສົມບັດນີ້ຍັງບໍ່ທັນມີໃຫ້ໃຊ້ໃນເວີຊັນປັດຈຸບັນ
+FeatureNotAvailableOnDevicesWithoutMouse=Feature not available on devices without mouse -> FeatureNotAvailableOnDevicesWithoutMouse=ຄຸນສົມບັດນີ້ບໍ່ຮອງຮັບໃນອຸປະກອນທີ່ບໍ່ມີເມົາສ໌
+FeaturesSupported=Supported features -> FeaturesSupported=ຄຸນສົມບັດທີ່ຮອງຮັບ
+Width=Width -> Width=ຄວາມກວ້າງ
+Height=Height -> Height=ຄວາມສູງ
+Depth=Depth -> Depth=ຄວາມເລິກ
+Top=Top -> Top=ເທິງ
+Bottom=Bottom -> Bottom=ລຸ່ມ
+Left=Left -> Left=ຊ້າຍ
+Right=Right -> Right=ຂວາ
+CalculatedWeight=Calculated weight -> CalculatedWeight=ນ້ຳໜັກທີ່ຄິດໄລ່
+CalculatedVolume=Calculated volume -> CalculatedVolume=ບໍລິມາດທີ່ຄິດໄລ່
+Weight=Weight -> Weight=ນ້ຳໜັກ
+WeightUnitton=ton -> WeightUnitton=ໂຕນ
+WeightUnitkg=kg -> WeightUnitkg=ກິໂລກຣາມ
+WeightUnitg=g -> WeightUnitg=ກຣາມ
+WeightUnitmg=mg -> WeightUnitmg=ມິນລີກຣາມ
+WeightUnitpound=pound -> WeightUnitpound=ປອນ
+WeightUnitounce=ounce -> WeightUnitounce=ອອນ
+Length=Length -> Length=ຄວາມຍາວ
+LengthUnitm=m -> LengthUnitm=ແມັດ
+LengthUnitdm=dm -> LengthUnitdm=ເດຊີແມັດ
+LengthUnitcm=cm -> LengthUnitcm=ຊັງຕີແມັດ
+LengthUnitmm=mm -> LengthUnitmm=ມິນລີແມັດ
+Surface=Area -> Surface=ເນື້ອທີ່
+SurfaceUnitm2=m² -> SurfaceUnitm2=ມ²
+SurfaceUnitdm2=dm² -> SurfaceUnitdm2=ເດຊີແມັດ²
+SurfaceUnitcm2=cm² -> SurfaceUnitcm2=ຊັງຕີແມັດ²
+SurfaceUnitmm2=mm² -> SurfaceUnitmm2=ມິນລີແມັດ²
+SurfaceUnitfoot2=ft² -> SurfaceUnitfoot2=ຟຸດ²
+SurfaceUnitinch2=in² -> SurfaceUnitinch2=ນິ້ວ²
+Volume=Volume -> Volume=ບໍລິມາດ
+VolumeUnitm3=m³ -> VolumeUnitm3=ແມັດ³
+VolumeUnitdm3=dm³ (L) -> VolumeUnitdm3=ເດຊີແມັດ³ (ລິດ)
+VolumeUnitcm3=cm³ (ml) -> VolumeUnitcm3=ຊັງຕີແມັດ³ (ມິນລີລິດ)
+VolumeUnitmm3=mm³ (µl) -> VolumeUnitmm3=ມິນລີແມັດ³ (ໄມໂຄລິດ)
+VolumeUnitfoot3=ft³ -> VolumeUnitfoot3=ຟຸດ³
+VolumeUnitinch3=in³ -> VolumeUnitinch3=ນິ້ວ³
+VolumeUnitounce=ounce -> VolumeUnitounce=ອອນ
+VolumeUnitlitre=liter -> VolumeUnitlitre=ລິດ
+VolumeUnitgallon=gallon -> VolumeUnitgallon=ກາລອນ
+SizeUnitm=m -> SizeUnitm=ແມັດ
+SizeUnitdm=dm -> SizeUnitdm=ເດຊີແມັດ
+SizeUnitcm=cm -> SizeUnitcm=ຊັງຕີແມັດ
+SizeUnitmm=mm -> SizeUnitmm=ມິນລີແມັດ
+SizeUnitinch=inch -> SizeUnitinch=ນິ້ວ
+SizeUnitfoot=foot -> SizeUnitfoot=ຟຸດ
+SizeUnitpoint=point -> SizeUnitpoint=ພອຍ (point)
+BugTracker=Bug tracker -> BugTracker=ລະບົບຕິດຕາມບັກ
+SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox. -> SendNewPasswordDesc=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ທ່ານຂໍລະຫັດຜ່ານໃໝ່. ມັນຈະຖືກສົ່ງໄປຫາອີເມວຂອງທ່ານ.<br>ການປ່ຽນແປງຈະມີຜົນຫຼັງຈາກທີ່ທ່ານຄລິກລິ້ງຢືນຢັນໃນອີເມວ.<br>ກະລຸນາກວດເບິ່ງກ່ອງຈົດໝາຍຂອງທ່ານ.
+EnterNewPasswordHere=Enter your new password here -> EnterNewPasswordHere=ປ້ອນລະຫັດຜ່ານໃໝ່ຂອງທ່ານທີ່ນີ້
+BackToLoginPage=Back to login page -> BackToLoginPage=ກັບໄປໜ້າເຂົ້າສູ່ລະບົບ
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password. -> AuthenticationDoesNotAllowSendNewPassword=ໂໝດການຢືນຢັນຕົວຕົນແມ່ນ <b>%s</b>.<br>ໃນໂໝດນີ້, Dolibarr ບໍ່ສາມາດຮູ້ ຫຼື ປ່ຽນລະຫັດຜ່ານຂອງທ່ານໄດ້.<br>ກະລຸນາຕິດຕໍ່ຜູ້ດູແລລະບົບຫາກທ່ານຕ້ອງການປ່ຽນລະຫັດຜ່ານ.
+EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option. -> EnableGDLibraryDesc=ຕິດຕັ້ງ ຫຼື ເປີດໃຊ້ງານໄລບຣາຣີ GD ໃນ PHP ຂອງທ່ານເພື່ອໃຊ້ຕົວເລືອກນີ້.
+ProfIdShortDesc=<b>Prof Id %s</b> is an information depending on third party country.<br>For example, for country <b>%s</b>, it's code <b>%s</b>. -> ProfIdShortDesc=<b>Prof Id %s</b> ແມ່ນຂໍ້ມູນທີ່ຂຶ້ນກັບປະເທດຂອງບຸກຄົນພາຍນອກ.<br>ຕົວຢ່າງ: ສຳລັບປະເທດ <b>%s</b>, ມັນແມ່ນລະຫັດ <b>%s</b>.
+DolibarrDemo=Dolibarr ERP/CRM demo -> DolibarrDemo=ເດໂມ Dolibarr ERP/CRM
+StatsByAmount=Statistics on amount of products/services -> StatsByAmount=ສະຖິຕິຕາມຈຳນວນເງິນຂອງ ສິນຄ້າ/ບໍລິການ
+StatsByAmountProducts=Statistics on amount of products -> StatsByAmountProducts=ສະຖິຕິຕາມຈຳນວນເງິນຂອງສິນຄ້າ
+StatsByAmountServices=Statistics on amount of services -> StatsByAmountServices=ສະຖິຕິຕາມຈຳນວນເງິນຂອງບໍລິການ
+StatsByNumberOfUnits=Statistics for sum of qty of products/services -> StatsByNumberOfUnits=ສະຖິຕິຕາມຈຳນວນລວມຂອງ ສິນຄ້າ/ບໍລິການ
+StatsByNumberOfUnitsProducts=Statistics for sum of qty of products -> StatsByNumberOfUnitsProducts=ສະຖິຕິຕາມຈຳນວນລວມຂອງສິນຄ້າ
+StatsByNumberOfUnitsServices=Statistics for sum of qty of services -> StatsByNumberOfUnitsServices=ສະຖິຕິຕາມຈຳນວນລວມຂອງບໍລິການ
+StatsByNumberOfEntities=Statistics for number of referring entities (no. of invoices, or orders...) -> StatsByNumberOfEntities=ສະຖິຕິຕາມຈຳນວນຂອງລາຍການທີ່ອ້າງອີງ (ຈຳນວນໃບເກັບເງິນ ຫຼື ໃບສັ່ງຊື້...)
+NumberOf=Number of %s -> NumberOf=ຈຳນວນຂອງ %s
+NumberOfUnits=Number of units on %s -> NumberOfUnits=ຈຳນວນໜ່ວຍໃນ %s
+AmountIn=Amount in %s -> AmountIn=ຈຳນວນເງິນໃນ %s
+NumberOfUnitsMos=Number of units to produce in manufacturing orders -> NumberOfUnitsMos=ຈຳນວນໜ່ວຍທີ່ຈະຜະລິດໃນໃບສັ່ງຜະລິດ
+EMailTextInterventionAddedContact=A new intervention %s has been assigned to you. -> EMailTextInterventionAddedContact=ມີການມອບໝາຍການເຂົ້າປະຕິບັດງານໃໝ່ %s ໃຫ້ທ່ານ.
+EMailTextInterventionValidated=The intervention %s has been validated. -> EMailTextInterventionValidated=ການເຂົ້າປະຕິບັດງານ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextInterventionModified=The intervention %s has been modified. %s -> EMailTextInterventionModified=ການເຂົ້າປະຕິບັດງານ %s ຖືກແກ້ໄຂແລ້ວ. %s
+EMailTextInterventionClosed=The intervention %s has been closed. -> EMailTextInterventionClosed=ການເຂົ້າປະຕິບັດງານ %s ຖືກປິດແລ້ວ.
+EMailTextInvoiceValidated=Invoice %s has been validated. -> EMailTextInvoiceValidated=ໃບເກັບເງິນ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextInvoicePayed=Invoice %s has been paid. -> EMailTextInvoicePayed=ໃບເກັບເງິນ %s ຖືກຊຳລະແລ້ວ.
+EMailTextInvoiceCanceled=Invoice %s has been canceled. -> EMailTextInvoiceCanceled=ໃບເກັບເງິນ %s ຖືກຍົກເລີກແລ້ວ.
+EMailTextProposalValidated=Proposal %s has been validated. -> EMailTextProposalValidated=ຂໍ້ສະເໜີ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextProposalClosedSigned=Proposal %s has been closed signed. -> EMailTextProposalClosedSigned=ຂໍ້ສະເໜີ %s ຖືກປິດແລ້ວ (ເຊັນແລ້ວ).
+EMailTextProposalClosedSignedWeb=Proposal %s has been closed signed on portal page. -> EMailTextProposalClosedSignedWeb=ຂໍ້ສະເໜີ %s ຖືກປິດແລ້ວ (ເຊັນແລ້ວຜ່ານໜ້າເວັບໄຊ).
+EMailTextProposalClosedRefused=Proposal %s has been closed refused. -> EMailTextProposalClosedRefused=ຂໍ້ສະເໜີ %s ຖືກປິດແລ້ວ (ຖືກປະຕິເສດ).
+EMailTextProposalClosedRefusedWeb=Proposal %s has been closed refuse on portal page. -> EMailTextProposalClosedRefusedWeb=ຂໍ້ສະເໜີ %s ຖືກປິດແລ້ວ (ຖືກປະຕິເສດຜ່ານໜ້າເວັບໄຊ).
+EMailTextOrderValidated=Order %s has been validated. -> EMailTextOrderValidated=ໃບສັ່ງຊື້ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextOrderClose=Order %s has been delivered. -> EMailTextOrderClose=ໃບສັ່ງຊື້ %s ຖືກສົ່ງມອບແລ້ວ.
+EMailTextOrderCanceled=Order %s has been canceled. -> EMailTextOrderCanceled=ໃບສັ່ງຊື້ %s ຖືກຍົກເລີກແລ້ວ.
+EMailTextSupplierOrderApprovedBy=Purchase order %s has been approved by %s. -> EMailTextSupplierOrderApprovedBy=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງ %s ຖືກອະນຸມັດໂດຍ %s.
+EMailTextSupplierOrderCanceledBy=Purchase order %s has been canceled by %s. -> EMailTextSupplierOrderCanceledBy=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງ %s ຖືກຍົກເລີກໂດຍ %s.
+EMailTextSupplierOrderValidatedBy=Purchase order %s has been recorded by %s. -> EMailTextSupplierOrderValidatedBy=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງ %s ຖືກບັນທຶກໂດຍ %s.
+EMailTextSupplierOrderSubmittedBy=Purchase order %s has been submitted by %s. -> EMailTextSupplierOrderSubmittedBy=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງ %s ຖືກສົ່ງໂດຍ %s.
+EMailTextSupplierOrderRefusedBy=Purchase order %s has been refused by %s. -> EMailTextSupplierOrderRefusedBy=ໃບສັ່ງຊື້ຈາກຜູ້ສະໜອງ %s ຖືກປະຕິເສດໂດຍ %s.
+EMailTextExpeditionModified=Shipping %s has been validated. %s -> EMailTextExpeditionModified=ການຈັດສົ່ງ %s ຖືກຢືນຢັນແລ້ວ. %s
+EMailTextExpeditionValidated=Shipping %s has been validated. -> EMailTextExpeditionValidated=ການຈັດສົ່ງ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextExpenseReportValidated=Expense report %s has been validated. -> EMailTextExpenseReportValidated=ໃບລາຍງານຄ່າໃຊ້ຈ່າຍ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextExpenseReportApproved=Expense report %s has been approved. -> EMailTextExpenseReportApproved=ໃບລາຍງານຄ່າໃຊ້ຈ່າຍ %s ຖືກອະນຸມັດແລ້ວ.
+EMailTextHolidayValidated=Leave request %s has been validated. -> EMailTextHolidayValidated=ຄຳຮ້ອງຂໍລາພັກ %s ຖືກຢືນຢັນແລ້ວ.
+EMailTextHolidayApproved=Leave request %s has been approved. -> EMailTextHolidayApproved=ຄຳຮ້ອງຂໍລາພັກ %s ຖືກອະນຸມັດແລ້ວ.
+EMailTextActionAdded=The action %s has been added to the Agenda. -> EMailTextActionAdded=ກິດຈະກຳ %s ຖືກເພີ່ມເຂົ້າໃນຕາຕະລາງວຽກແລ້ວ.
+EMailTextContractModified=The contract %s has been modified. %s -> EMailTextContractModified=ສັນຍາ %s ຖືກແກ້ໄຂແລ້ວ. %s
+ImportedWithSet=Importation data set -> ImportedWithSet=ຊຸດຂໍ້ມູນການນຳເຂົ້າ
+DolibarrNotification=Automatic notification -> DolibarrNotification=ການແຈ້ງເຕືອນອັດຕະໂນມັດ
+ResizeDesc=Enter new width <b>OR</b> new height. Ratio will be kept during resizing... -> ResizeDesc=ປ້ອນຄວາມກວ້າງໃໝ່ <b>ຫຼື</b> ຄວາມສູງໃໝ່. ອັດຕາສ່ວນຈະຖືກຮັກສາໄວ້ໃນລະຫວ່າງການປ່ຽນຂະໜາດ...
+NewLength=New width -> NewLength=ຄວາມກວ້າງໃໝ່
+NewHeight=New height -> NewHeight=ຄວາມສູງໃໝ່
+NewSizeAfterCropping=New size after cropping -> NewSizeAfterCropping=ຂະໜາດໃໝ່ຫຼັງຈາກການຄອບຕັດ
+DefineNewAreaToPick=Define new area on image to pick (left click on image then drag until you reach the opposite corner) -> DefineNewAreaToPick=ກຳນົດພື້ນທີ່ໃໝ່ເທິງຮູບເພື່ອເລືອກ (ຄລິກຊ້າຍເທິງຮູບແລ້ວລາກຈົນກວ່າຈະຮອດມຸມກົງກັນຂ້າມ)
+CurrentInformationOnImage=This tool was designed to help you to resize or crop an image. This is the information on the current edited image -> CurrentInformationOnImage=ເຄື່ອງມືນີ້ຖືກອອກແບບມາເພື່ອຊ່ວຍທ່ານປ່ຽນຂະໜາດ ຫຼື ຄອບຕັດຮູບ. ນີ້ແມ່ນຂໍ້ມູນກ່ຽວກັບຮູບທີ່ກຳລັງແກ້ໄຂປັດຈຸບັນ
+ImageEditor=Image editor -> ImageEditor=ເຄື່ອງມືແກ້ໄຂຮູບ
+YouReceiveMailBecauseOfNotification=You receive this message because your email has been added to list of targets to be informed of particular events into %s software of %s. -> YouReceiveMailBecauseOfNotification=ທ່ານໄດ້ຮັບຂໍ້ຄວາມນີ້ເນື່ອງຈາກອີເມວຂອງທ່ານຖືກເພີ່ມເຂົ້າໃນລາຍຊື່ຜູ້ຮັບທີ່ຈະໄດ້ຮັບແຈ້ງເຫດການສະເພາະໃນຊອບແວ %s ຂອງ %s.
+YouReceiveMailBecauseOfNotification2=This event is the following: -> YouReceiveMailBecauseOfNotification2=ເຫດການມີດັ່ງນີ້:
+ThisIsListOfModules=This is a list of modules preselected by this demo profile (only most common modules are visible in this demo). Edit this to have a more personalized demo and click on "Start". -> ThisIsListOfModules=ນີ້ແມ່ນລາຍຊື່ໂມດູນທີ່ຖືກເລືອກໄວ້ລ່ວງໜ້າໂດຍໂປຣໄຟລ໌ເດໂມນີ້ (ມີພຽງໂມດູນທີ່ໃຊ້ທົ່ວໄປທີ່ສຸດເທົ່ານັ້ນທີ່ສະແດງໃນເດໂມ). ແກ້ໄຂສິ່ງນີ້ເພື່ອໃຫ້ໄດ້ເດໂມທີ່ປັບແຕ່ງຕາມຄວາມຕ້ອງການ ແລ້ວຄລິກ "ເລີ່ມຕົ້ນ".
+UseAdvancedPerms=Use the advanced permissions of modules -> UseAdvancedPerms=ໃຊ້ສິດການເຂົ້າເຖິງຂັ້ນສູງຂອງໂມດູນ
+FileFormat=File format -> FileFormat=ຮູບແບບໄຟລ໌
+SelectAColor=Select a color -> SelectAColor=ເລືອກສີ
+AddFiles=Add Files -> AddFiles=ເພີ່ມໄຟລ໌
+StartUpload=Start upload -> StartUpload=ເລີ່ມອັບໂຫຼດ
+CancelUpload=Cancel upload -> CancelUpload=ຍົກເລີກການອັບໂຫຼດ
+FileIsTooBig=Files is too big -> FileIsTooBig=ໄຟລ໌ມີຂະໜາດໃຫຍ່ເກີນໄປ
+PleaseBePatient=Please be patient... -> PleaseBePatient=ກະລຸນາລໍຖ້າດ້ວຍຄວາມອົດທົນ...
+NewPassword=New password -> NewPassword=ລະຫັດຜ່ານໃໝ່
+ResetPassword=Reset password -> ResetPassword=ຕັ້ງລະຫັດຜ່ານໃໝ່
+RequestToResetPasswordReceived=A request to change your password has been received. -> RequestToResetPasswordReceived=ໄດ້ຮັບຄຳຮ້ອງຂໍປ່ຽນລະຫັດຜ່ານຂອງທ່ານແລ້ວ.
+NewKeyIs=This is your new keys to login -> NewKeyIs=ນີ້ແມ່ນລະຫັດໃໝ່ຂອງທ່ານເພື່ອເຂົ້າສູ່ລະບົບ
+NewKeyWillBe=Your new key to login to software will be -> NewKeyWillBe=ລະຫັດໃໝ່ຂອງທ່ານເພື່ອເຂົ້າສູ່ລະບົບຊອບແວຈະແມ່ນ
+ClickHereToGoTo=Click here to go to %s -> ClickHereToGoTo=ຄລິກທີ່ນີ້ເພື່ອໄປຫາ %s
+ClickHereToGoToDictionary=Click here to edit the dictionary setup (also available from menu %s - %s - %s) -> ClickHereToGoToDictionary=ຄລິກທີ່ນີ້ເພື່ອແກ້ໄຂການຕັ້ງຄ່າວັດຈະນານຸກົມ (ຍັງສາມາດເຂົ້າເຖິງໄດ້ຈາກເມນູ %s - %s - %s)
+YouMustClickToChange=You must however first click on the following link to validate this password change -> YouMustClickToChange=ຢ່າງໃດກໍຕາມ, ກ່ອນອື່ນທ່ານຕ້ອງຄລິກທີ່ລິ້ງຕໍ່ໄປນີ້ເພື່ອຢືນຢັນການປ່ຽນລະຫັດຜ່ານນີ້
+ConfirmPasswordChange=Confirm password change -> ConfirmPasswordChange=ຢືນຢັນການປ່ຽນລະຫັດຜ່ານ
+ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe. -> ForgetIfNothing=ຫາກທ່ານບໍ່ໄດ້ຮ້ອງຂໍການປ່ຽນແປງນີ້, ກະລຸນາເມີນເສີຍຕໍ່ອີເມວນີ້. ຂໍ້ມູນປະຈຳຕົວຂອງທ່ານຍັງປອດໄພ.
+IfAmountHigherThan=If amount higher than <strong>%s</strong> -> IfAmountHigherThan=ຫາກຈຳນວນເງິນສູງກວ່າ <strong>%s</strong>
+SourcesRepository=Repository for sources -> SourcesRepository=ບ່ອນເກັບຊອດໂຄ້ດ (Repository)
+Chart=Chart -> Chart=ແຜນພູມ
+PassEncoding=Password encoding -> PassEncoding=ການເຂົ້າລະຫັດຂອງລະຫັດຜ່ານ
+PermissionsAdd=Permissions added -> PermissionsAdd=ເພີ່ມສິດການເຂົ້າເຖິງແລ້ວ
+PermissionsDelete=Permissions removed -> PermissionsDelete=ຖອນສິດການເຂົ້າເຖິງອອກແລ້ວ
+YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars -> YourPasswordMustHaveAtLeastXChars=ລະຫັດຜ່ານຂອງທ່ານຕ້ອງມີຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວອັກສອນ
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars -> PasswordNeedAtLeastXUpperCaseChars=ລະຫັດຜ່ານຕ້ອງມີຕົວອັກສອນໃຫຍ່ຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວ
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars -> PasswordNeedAtLeastXDigitChars=ລະຫັດຜ່ານຕ້ອງມີຕົວເລກຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວ
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars -> PasswordNeedAtLeastXSpecialChars=ລະຫັດຜ່ານຕ້ອງມີຕົວອັກສອນພິເສດຢ່າງໜ້ອຍ <strong>%s</strong> ຕົວ
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars -> PasswordNeedNoXConsecutiveChars=ລະຫັດຜ່ານຕ້ອງບໍ່ມີຕົວອັກສອນທີ່ຊ້ຳກັນຕິດຕໍ່ກັນ <strong>%s</strong> ຕົວ
+YourPasswordHasBeenReset=Your password has been reset successfully -> YourPasswordHasBeenReset=ລະຫັດຜ່ານຂອງທ່ານຖືກຕັ້ງຄ່າໃໝ່ສຳເລັດແລ້ວ
+ApplicantIpAddress=IP address of applicant -> ApplicantIpAddress=ທີ່ຢູ່ IP ຂອງຜູ້ຮ້ອງຂໍ
+SMSSentTo=SMS sent to %s -> SMSSentTo=ສົ່ງ SMS ໄປຫາ %s ແລ້ວ
+MissingIds=Missing ids -> MissingIds=ໄອດີທີ່ຂາດຫາຍໄປ
+ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s -> ThirdPartyCreatedByEmailCollector=ບຸກຄົນພາຍນອກຖືກສ້າງໂດຍລະບົບເກັບກຳອີເມວຈາກອີເມວ MSGID %s
+ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s -> ContactCreatedByEmailCollector=ຜູ້ຕິດຕໍ່/ທີ່ຢູ່ ຖືກສ້າງໂດຍລະບົບເກັບກຳອີເມວຈາກອີເມວ MSGID %s
+ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s -> ProjectCreatedByEmailCollector=ໂຄງການຖືກສ້າງໂດຍລະບົບເກັບກຳອີເມວຈາກອີເມວ MSGID %s
+TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s -> TicketCreatedByEmailCollector=ທິກເກັດຖືກສ້າງໂດຍລະບົບເກັບກຳອີເມວຈາກອີເມວ MSGID %s
+OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18 -> OpeningHoursFormatDesc=ໃຊ້ເຄື່ອງໝາຍ - ເພື່ອແຍກເວລາເປີດ ແລະ ປິດ.<br>ໃຊ້ຊ່ອງວ່າງເພື່ອປ້ອນຊ່ວງເວລາທີ່ຕ່າງກັນ.<br>ຕົວຢ່າງ: 8-12 14-18
+SuffixSessionName=Suffix for session name -> SuffixSessionName=ຄຳຕໍ່ທ້າຍສຳລັບຊື່ເຊດຊັນ
+LoginWith=Login with %s -> LoginWith=ເຂົ້າສູ່ລະບົບດ້ວຍ %s
+ObjectId=Object ID -> ObjectId=ໄອດີວັດຖຸ
+FullData=Full data -> FullData=ຂໍ້ມູນຄົບຖ້ວນ
+ExportsArea=Exports area -> ExportsArea=ພື້ນທີ່ການສົ່ງອອກ
+AvailableFormats=Available formats -> AvailableFormats=ຮູບແບບທີ່ມີໃຫ້ໃຊ້
+LibraryUsed=Library used -> LibraryUsed=ໄລບຣາຣີທີ່ໃຊ້
+LibraryVersion=Library version -> LibraryVersion=ເວີຊັນຂອງໄລບຣາຣີ
+ExportableDatas=Exportable data -> ExportableDatas=ຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້
+NoExportableData=No exportable data (no modules with exportable data loaded, or missing permissions) -> NoExportableData=ບໍ່ມີຂໍ້ມູນທີ່ສາມາດສົ່ງອອກໄດ້ (ບໍ່ມີໂມດູນທີ່ມີຂໍ້ມູນສົ່ງອອກໄດ້ຖືກໂຫຼດ, ຫຼື ຂາດສິດການເຂົ້າເຖິງ)
+WebsiteSetup=Setup of module website -> WebsiteSetup=ການຕັ້ງຄ່າໂມດູນເວັບໄຊ
+WEBSITE_PAGEURL=URL of page -> WEBSITE_PAGEURL=URL ຂອງໜ້າເວັບ
+WEBSITE_TITLE=Title -> WEBSITE_TITLE=ຫົວຂໍ້
+WEBSITE_DESCRIPTION=Description -> WEBSITE_DESCRIPTION=ຄຳອະທິບາຍ
+WEBSITE_IMAGE=Image -> WEBSITE_IMAGE=ຮູບພາບ
+WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITE_KEY__ in the path if path depends on website name (for example: image/__WEBSITE_KEY__/stories/myimage.png). -> WEBSITE_IMAGEDesc=ເສັ້ນທາງສຳພັນຂອງສື່ຮູບພາບ. ທ່ານສາມາດປະວ່າງໄວ້ໄດ້ເພາະບໍ່ຄ່ອຍໄດ້ໃຊ້ (ມັນສາມາດໃຊ້ໂດຍເນື້ອຫາແບບໄດນາມິກເພື່ອສະແດງຮູບຕົວຢ່າງໃນລາຍຊື່ໂພສບລັອກ). ໃຊ້ __WEBSITE_KEY__ ໃນເສັ້ນທາງຫາກເສັ້ນທາງຂຶ້ນກັບຊື່ເວັບໄຊ (ຕົວຢ່າງ: image/__WEBSITE_KEY__/stories/myimage.png).
+WEBSITE_KEYWORDS=Keywords -> WEBSITE_KEYWORDS=ຄຳຄົ້ນຫາ (Keywords)
+LinesToImport=Lines to import -> LinesToImport=ແຖວທີ່ຈະນຳເຂົ້າ
+MemoryUsage=Memory usage -> MemoryUsage=ການໃຊ້ໜ່ວຍຄວາມຈຳ
+RequestDuration=Duration of request -> RequestDuration=ໄລຍະເວລາຂອງການຮ້ອງຂໍ
+ProductsServicesPerPopularity=Products|Services by popularity -> ProductsServicesPerPopularity=ສິນຄ້າ|ບໍລິການ ຕາມຄວາມນິຍົມ
+ProductsPerPopularity=Products by popularity -> ProductsPerPopularity=ສິນຄ້າຕາມຄວາມນິຍົມ
+ServicesPerPopularity=Services by popularity -> ServicesPerPopularity=ບໍລິການຕາມຄວາມນິຍົມ
+PopuProp=Products|Services by popularity in Proposals -> PopuProp=ສິນຄ້າ|ບໍລິການ ຕາມຄວາມນິຍົມໃນຂໍ້ສະເໜີ
+PopuCom=Products|Services by popularity in Orders -> PopuCom=ສິນຄ້າ|ບໍລິການ ຕາມຄວາມນິຍົມໃນໃບສັ່ງຊື້
+ProductStatistics=Products|Services Statistics -> ProductStatistics=ສະຖິຕິສິນຄ້າ|ບໍລິການ
+NbOfQtyInOrders=Qty in orders -> NbOfQtyInOrders=ຈຳນວນໃນໃບສັ່ງຊື້
+SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics... -> SelectTheTypeOfObjectToAnalyze=ເລືອກວັດຖຸເພື່ອເບິ່ງສະຖິຕິ...
+ConfirmBtnCommonContent = Are you sure you want to "%s" ? -> ConfirmBtnCommonContent = ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ "%s" ?
+ConfirmBtnCommonTitle = Confirm your action -> ConfirmBtnCommonTitle = ຢືນຢັນການດຳເນີນການຂອງທ່ານ
+CloseDialog = Close -> CloseDialog = ປິດ
+Autofill = Autofill -> Autofill = ຕື່ມຂໍ້ມູນອັດຕະໂນມັດ
+OrPasteAnURL=or Paste an URL -> OrPasteAnURL=ຫຼື ວາງ URL
+ExternalSiteSetup=Setup link to external website -> ExternalSiteSetup=ຕັ້ງຄ່າລິ້ງໄປຫາເວັບໄຊພາຍນອກ
+ExternalSiteURL=External Site URL of HTML iframe content -> ExternalSiteURL=URL ເວັບໄຊພາຍນອກຂອງເນື້ອຫາ HTML iframe
+ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly. -> ExternalSiteModuleNotComplete=ໂມດູນ ExternalSite ຍັງບໍ່ໄດ້ຖືກຕັ້ງຄ່າຢ່າງຖືກຕ້ອງ.
+ExampleMyMenuEntry=My menu entry -> ExampleMyMenuEntry=ລາຍການເມນູຂອງຂ້ອຍ
+FTPClientSetup=FTP or SFTP Client module setup -> FTPClientSetup=ການຕັ້ງຄ່າໂມດູນ FTP ຫຼື SFTP Client
+NewFTPClient=New FTP/SFTP connection setup -> NewFTPClient=ການຕັ້ງຄ່າການເຊື່ອມຕໍ່ FTP/SFTP ໃໝ່
+FTPArea=FTP/SFTP Area -> FTPArea=ພື້ນທີ່ FTP/SFTP
+FTPAreaDesc=This screen shows a view of an FTP et SFTP server. -> FTPAreaDesc=ໜ້ານີ້ສະແດງມຸມມອງຂອງເຊີບເວີ FTP ແລະ SFTP.
+SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete -> SetupOfFTPClientModuleNotComplete=ການຕັ້ງຄ່າໂມດູນ FTP ຫຼື SFTP client ເບິ່ງຄືວ່າຍັງບໍ່ສົມບູນ
+FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions -> FTPFeatureNotSupportedByYourPHP=PHP ຂອງທ່ານບໍ່ຮອງຮັບຟັງຊັນ FTP ຫຼື SFTP
+FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s) -> FailedToConnectToFTPServer=ເຊື່ອມຕໍ່ກັບເຊີບເວີບໍ່ສຳເລັດ (ເຊີບເວີ %s, ພອດ %s)
+FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password -> FailedToConnectToFTPServerWithCredentials=ເຂົ້າສູ່ລະບົບເຊີບເວີດ້ວຍຊື່ເຂົ້າໃຊ້/ລະຫັດຜ່ານທີ່ກຳນົດໄວ້ບໍ່ສຳເລັດ
+FailedToChdirOnFTPServer=Failed to change directory on the FTP server -> FailedToChdirOnFTPServer=ປ່ຽນໂຟນເດີໃນເຊີບເວີ FTP ບໍ່ສຳເລັດ
+FTPFailedToRemoveFile=Failed to remove file <b>%s</b>. -> FTPFailedToRemoveFile=ລຶບໄຟລ໌ <b>%s</b> ບໍ່ສຳເລັດ.
+FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty. -> FTPFailedToRemoveDir=ລຶບໂຟນເດີ <b>%s</b> ບໍ່ສຳເລັດ: ກະລຸນາກວດເບິ່ງສິດການເຂົ້າເຖິງ ແລະ ໃຫ້ແນ່ໃຈວ່າໂຟນເດີນັ້ນວ່າງເປົ່າ.
+FTPPassiveMode=Passive mode -> FTPPassiveMode=ໂໝດ Passive
+ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu... -> ChooseAFTPEntryIntoMenu=ເລືອກເວັບໄຊ FTP/SFTP ຈາກເມນູ...
+FailedToGetFile=Failed to get files %s -> FailedToGetFile=ດຶງໄຟລ໌ %s ບໍ່ສຳເລັດ
+ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server -> ErrorFTPNodisconnect=ເກີດຂໍ້ຜິດພາດໃນການຕັດການເຊື່ອມຕໍ່ເຊີບເວີ FTP/SFTP
+FileWasUpload=File <b>%s</b> was uploaded -> FileWasUpload=ໄຟລ໌ <b>%s</b> ຖືກອັບໂຫຼດແລ້ວ
+FTPFailedToUploadFile=Failed to upload the file <b>%s</b>. -> FTPFailedToUploadFile=ອັບໂຫຼດໄຟລ໌ <b>%s</b> ບໍ່ສຳເລັດ.
+AddFolder=Create folder -> AddFolder=ສ້າງໂຟນເດີ
+FileWasCreateFolder=Folder <b>%s</b> has been created -> FileWasCreateFolder=ໂຟນເດີ <b>%s</b> ຖືກສ້າງຂຶ້ນແລ້ວ
+FTPFailedToCreateFolder=Failed to create folder <b>%s</b>. -> FTPFailedToCreateFolder=ສ້າງໂຟນເດີ <b>%s</b> ບໍ່ສຳເລັດ.
+SelectADay=Select an available slot in the calendar -> SelectADay=ເລືອກມື້ທີ່ວ່າງໃນປະຕິທິນ
+SelectANewDate=Select a new date -> SelectANewDate=ເລືອກວັນທີໃໝ່
+EmailContent=Email content -> EmailContent=ເນື້ອຫາອີເມວ
+Pre-Prompt=Pre-prompt -> Pre-Prompt=Pre-prompt
+Post-Prompt=Post-prompt -> Post-Prompt=Post-prompt
+AIProcessingPleaseWait=AI (%s) is processing your request, please wait... -> AIProcessingPleaseWait=AI (%s) ກຳລັງປະມວນຜົນຄຳຮ້ອງຂໍຂອງທ່ານ, ກະລຸນາລໍຖ້າ...
+PayOfBankTransferInvoice=You are going to make an online payment for this invoice. However, this invoice has been set up to be paid in "Credit Transfer" mode, so to avoid paying twice, please verify that no current bank transfer has already been initiated before continuing. -> PayOfBankTransferInvoice=ທ່ານກຳລັງຈະດຳເນີນການຊຳລະເງິນອອນໄລນ໌ສຳລັບໃບເກັບເງິນນີ້. ແນວໃດກໍຕາມ, ໃບເກັບເງິນນີ້ຖືກຕັ້ງຄ່າໃຫ້ຊຳລະໃນໂໝດ "ໂອນເງິນຜ່ານທະນາຄານ", ດັ່ງນັ້ນເພື່ອຫຼີກເວັ້ນການຊຳລະຊ້ຳຊ້ອນ, ກະລຸນາກວດສອບວ່າບໍ່ມີການໂອນເງິນຜ່ານທະນາຄານທີ່ກຳລັງດຳເນີນການຢູ່ກ່ອນທີ່ຈະໄປຕໍ່.
+Exceptions=Exceptions -> Exceptions=ຂໍ້ຍົກເວັ້ນ
+TranslateByAI=Translate message into -> TranslateByAI=ແປຂໍ້ຄວາມເປັນ
+SummarizeByAI=Summarize message in -> SummarizeByAI=ສະຫຼຸບຂໍ້ຄວາມໃນ
+SummarizeTwentyWords=20 words -> SummarizeTwentyWords=20 ຄຳ
+SummarizeFiftyWords=50 words -> SummarizeFiftyWords=50 ຄຳ
+SummarizeHundredWords=100 words -> SummarizeHundredWords=100 ຄຳ
+SummarizeTwoHundredWords=200 words -> SummarizeTwoHundredWords=200 ຄຳ
+SummarizeOneParagraphs=1 paragraph -> SummarizeOneParagraphs=1 ຫຍໍ້ໜ້າ
+SummarizeTwoParagraphs=2 paragraphs -> SummarizeTwoParagraphs=2 ຫຍໍ້ໜ້າ
+SummarizeTwentyFivePercent=25%% -> SummarizeTwentyFivePercent=25%%
+SummarizeFiftyPercent=50%% -> SummarizeFiftyPercent=50%%
+SummarizeSeventyFivePercent=75%% -> SummarizeSeventyFivePercent=75%%
+TextSummarize=Text summarize -> TextSummarize=ສະຫຼຸບຂໍ້ຄວາມ
+RephraserByAI=Correct message -> RephraserByAI=ແກ້ໄຂຂໍ້ຄວາມ
+RephraseStyleProfessional=Professional style -> RephraseStyleProfessional=ຮູບແບບມືອາຊີບ
+RephraseStyleHumouristic=Humouristic style -> RephraseStyleHumouristic=ຮູບແບບຕະຫຼົກ
+RephraseSpellChecker=Spell checker -> RephraseSpellChecker=ເຄື່ອງກວດສອບຕົວສະກົດ
+TextRephraser=Text style rephraser -> TextRephraser=ເຄື່ອງມືປັບປ່ຽນຮູບແບບຂໍ້ຄວາມ
+TextSpellChecker=Text spell checker -> TextSpellChecker=ເຄື່ອງມືກວດສອບຕົວສະກົດຂໍ້ຄວາມ
+AIEnhancements=AI Enhancements -> AIEnhancements=ການປັບປຸງດ້ວຍ AI
+TLSv1=TLSv1 -> TLSv1=TLSv1
+TLSv1.2=TLSv1.2 -> TLSv1.2=TLSv1.2
+TLS/STARTTLS=TLS/STARTTLS -> TLS/STARTTLS=TLS/STARTTLS
+FillExtrafieldWithAi=Fill extrafield with AI content -> FillExtrafieldWithAi=ຕື່ມຂໍ້ມູນຟິລເພີ່ມເຕີມດ້ວຍເນື້ອຫາຈາກ AI
+ExtrafieldFiller=Extrafield filler -> ExtrafieldFiller=ເຄື່ອງມືຕື່ມຂໍ້ມູນຟິລເພີ່ມເຕີມ
+OurProductSelection=The product to discover -> OurProductSelection=ສິນຄ້າທີ່ໜ້າສົນໃຈ
+NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet. -> NoSupportedModulesHaveBeenActivated=ເຄື່ອງມືການລາຍງານສາມາດສ້າງລາຍງານແບບໄດນາມິກສຳລັບບາງໂມດູນເທົ່ານັ້ນ. ຍັງບໍ່ທັນມີໂມດູນທີ່ຮອງຮັບຖືກເປີດໃຊ້ງານເທື່ອ.
+TryAnotherConnectionMode=Try another connection mode -> TryAnotherConnectionMode=ລອງໃຊ້ໂໝດການເຊື່ອມຕໍ່ອື່ນ
+BehaviourOnClick = Behavior when a bookmark URL is selected -> BehaviourOnClick = ພຶດຕິກຳເມື່ອເລືອກ URL ບຸກມາກ
+BookmarkTargetNewWindowShort = New tab -> BookmarkTargetNewWindowShort = ແທັບໃໝ່
+BookmarkTargetReplaceWindowShort = Current tab -> BookmarkTargetReplaceWindowShort = ແທັບປັດຈຸບັນ
+BookmarkTitle = Bookmark name -> BookmarkTitle = ຊື່ບຸກມາກ
+BookmarksManagement = Bookmarks management -> BookmarksManagement = ການຈັດການບຸກມາກ
+BookmarksMenuShortCut = Ctrl + shift + m -> BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page should open in the current tab or a new tab -> ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = ເລືອກວ່າຈະໃຫ້ໜ້າທີ່ເຊື່ອມໂຍງເປີດໃນແທັບປັດຈຸບັນ ຫຼື ແທັບໃໝ່
+CreateBookmark = Create bookmark -> CreateBookmark = ສ້າງບຸກມາກ
+ListOfBookmarks = List of bookmarks -> ListOfBookmarks = ລາຍຊື່ບຸກມາກ
+NewBookmark = New bookmark -> NewBookmark = ບຸກມາກໃໝ່
+NoBookmarks = No bookmarks defined -> NoBookmarks = ບໍ່ມີການກຳນົດບຸກມາກ
+OpenANewWindow = Open a new tab -> OpenANewWindow = ເປີດແທັບໃໝ່
+ReplaceWindow = Replace current tab -> ReplaceWindow = ແທນທີ່ແທັບປັດຈຸບັນ
+SetHereATitleForLink = Set a name for the bookmark -> SetHereATitleForLink = ກຳນົດຊື່ສຳລັບລິ້ງ
+ShowBookmark = Show bookmark -> ShowBookmark = ສະແດງບຸກມາກ
+UrlOrLink = URL -> UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456. -> UseAnExternalHttpLinkOrRelativeDolibarrLink = ໃຊ້ລິ້ງພາຍນອກ/ສົມບູນ (https://externalurl.com) ຫຼື ລິ້ງພາຍໃນ/ສຳພັນ (/mypage.php). ທ່ານຍັງສາມາດໃຊ້ເບີໂທລະສັບເຊັ່ນ tel:0123456.
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation -> SubscribeToFoundation=ຊ່ວຍເຫຼືອໂຄງການ Dolibarr, ສະໝັກສະມາຊິກມູນນິທິ
+MoveField=Move the field %s -> MoveField=ຍ້າຍຟິລ %s
+ThirdpartyDetails=Thirdparty Details -> ThirdpartyDetails=ລາຍລະອຽດບຸກຄົນພາຍນອກ
+NoDataAvailable=No Data Available -> NoDataAvailable=ບໍ່ມີຂໍ້ມູນ
+AIWelcomeMessage=Hi! I'm your Dolibarr assistant. How can I help you today? -> AIWelcomeMessage=ສະບາຍດີ! ຂ້ອຍແມ່ນຜູ້ຊ່ວຍ Dolibarr ຂອງເຈົ້າ. ມີຫຍັງໃຫ້ຂ້ອຍຊ່ວຍໃນມື້ນີ້?
+AIExpandPanel=Enlarge panel -> AIExpandPanel=ຂະຫຍາຍແຖບ
+AIReducePanel=Reduce panel -> AIReducePanel=ຫຍໍ້ແຖບ
+AIOpenFullPage=Open the assistant in a full page -> AIOpenFullPage=ເປີດຜູ້ຊ່ວຍໃນໜ້າເຕັມ
+AIProviderInUse=AI provider in use -> AIProviderInUse=ຜູ້ໃຫ້ບໍລິການ AI ທີ່ໃຊ້ຢູ່
+AIGreeting=Hi %s, how can I help? -> AIGreeting=ສະບາຍດີ %s, ມີຫຍັງໃຫ້ຊ່ວຍບໍ່?
+AIGreetingSubtitle=Ask a question in natural language about your third parties, invoices, orders or products. -> AIGreetingSubtitle=ຖາມຄຳຖາມໃນພາສາທຳມະຊາດກ່ຽວກັບບຸກຄົນພາຍນອກ, ໃບເກັບເງິນ, ໃບສັ່ງຊື້ ຫຼື ສິນຄ້າຂອງທ່ານ.
+AIQuickInvoicesTitle=Unpaid invoices -> AIQuickInvoicesTitle=ໃບເກັບເງິນທີ່ຍັງບໍ່ທັນຊຳລະ
+AIQuickInvoicesDesc=The oldest ones to follow up -> AIQuickInvoicesDesc=ລາຍການທີ່ເກົ່າທີ່ສຸດທີ່ຕ້ອງຕິດຕາມ
+AIQuickInvoicesPrompt=List my unpaid customer invoices, oldest first. -> AIQuickInvoicesPrompt=ລາຍຊື່ໃບເກັບເງິນລູກຄ້າທີ່ຍັງບໍ່ທັນຊຳລະ, ເລີ່ມຈາກອັນທີ່ເກົ່າທີ່ສຸດ.
+AIQuickRevenueTitle=Revenue this month -> AIQuickRevenueTitle=ລາຍຮັບໃນເດືອນນີ້
+AIQuickRevenueDesc=Sales report for the current month -> AIQuickRevenueDesc=ລາຍງານການຂາຍສຳລັບເດືອນປັດຈຸບັນ
+AIQuickRevenuePrompt=Give me this month's revenue (sales report). -> AIQuickRevenuePrompt=ຂໍຂໍ້ມູນລາຍຮັບຂອງເດືອນນີ້ (ລາຍງານການຂາຍ).
+AIQuickFinanceTitle=Financial summary -> AIQuickFinanceTitle=ສະຫຼຸບທາງການເງິນ
+AIQuickFinanceDesc=Income, expenses and net profit this month -> AIQuickFinanceDesc=ລາຍຮັບ, ລາຍຈ່າຍ ແລະ ກຳໄລສຸດທິໃນເດືອນນີ້
+AIQuickFinancePrompt=Give me this month's financial summary: income, expenses and net profit. -> AIQuickFinancePrompt=ຂໍສະຫຼຸບທາງການເງິນຂອງເດືອນນີ້: ລາຍຮັບ, ລາຍຈ່າຍ ແລະ ກຳໄລສຸດທິ.
+AIQuickInventoryTitle=Stock status -> AIQuickInventoryTitle=ສະຖານະສິນຄ້າຄົງຄັງ
+AIQuickInventoryDesc=Stock levels and valuation -> AIQuickInventoryDesc=ລະດັບສິນຄ້າຄົງຄັງ ແລະ ການປະເມີນມູນຄ່າ
+AIQuickInventoryPrompt=Give me the current inventory report with stock levels and valuation per product. -> AIQuickInventoryPrompt=ຂໍລາຍງານສິນຄ້າຄົງຄັງປັດຈຸບັນ ພ້ອມກັບລະດັບສິນຄ້າ ແລະ ການປະເມີນມູນຄ່າຕໍ່ສິນຄ້າ.
+TotalValue=Total Value -> TotalValue=ມູນຄ່າລວມ
+Expenses=Expenses -> Expenses=ລາຍຈ່າຍ
+ClearChatHistoryTitle=Clear Chat History -> ClearChatHistoryTitle=ລ້າງປະຫວັດການສົນທະນາ
+Clear=Clear -> Clear=ລ້າງ
+OptionTextOnly=Text Only -> OptionTextOnly=ຂໍ້ຄວາມເທົ່ານັ້ນ
+OptionCloudFast=Voice-Google (Fast) -> OptionCloudFast=ສຽງ-Google (ໄວ)
+OptionWhisperLocal=Voice-Whisper (Local) -> OptionWhisperLocal=ສຽງ-Whisper (ພາຍໃນເຄື່ອງ)
+OptionCloudFasthelp=Google Chrome only (Fast, Cloud-based, your prompt is transmitted to Google) -> OptionCloudFasthelp=ສະເພາະ Google Chrome ເທົ່ານັ້ນ (ໄວ, ໃຊ້ຄລາວ, ຄຳຖາມຂອງທ່ານຈະຖືກສົ່ງໄປຫາ Google)
+OptionWhisperLocalhelp=Whisper (Private, Local processing) -> OptionWhisperLocalhelp=Whisper (ສ່ວນຕົວ, ປະມວນຜົນພາຍໃນເຄື່ອງ)
+ToggleMicrophone=Toggle Microphone -> ToggleMicrophone=ເປີດ/ປິດ ໄມໂຄຣໂຟນ
+TypeYourQuestion=Type your question... -> TypeYourQuestion=ພິມຄຳຖາມຂອງທ່ານ...
+SendPrompt=Send -> SendPrompt=ສົ່ງ
+ConfirmAiAction=Are you sure you want to %1$s using the %2$s tool? -> ConfirmAiAction=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການ %1$s ໂດຍໃຊ້ເຄື່ອງມື %2$s?
+OptionLocalParsing=Local doc processing(Private) -> OptionLocalParsing=ການປະມວນຜົນເອກະສານພາຍໃນເຄື່ອງ (ສ່ວນຕົວ)
+OptionCloudParsing=AI doc processing -> OptionCloudParsing=ການປະມວນຜົນເອກະສານດ້ວຍ AI
+UploadLocalDoc=Upload your file for local parsing... -> UploadLocalDoc=ອັບໂຫຼດໄຟລ໌ຂອງທ່ານສຳລັບການປະມວນຜົນພາຍໃນເຄື່ອງ...
+UploadCloudDoc=Upload your file for cloud parsing... -> UploadCloudDoc=ອັບໂຫຼດໄຟລ໌ຂອງທ່ານສຳລັບການປະມວນຜົນດ້ວຍຄລາວ...
+DocLoaded=Document loaded. Please type your request. -> DocLoaded=ໂຫຼດເອກະສານແລ້ວ. ກະລຸນາພິມຄຳຮ້ອງຂໍຂອງທ່ານ.
+Transcribed=Transcribed -> Transcribed=ຖອດຄວາມແລ້ວ
+HistoryCleared=History Cleared -> HistoryCleared=ລ້າງປະຫວັດແລ້ວ
+AttachFile=Attach File -> AttachFile=ຄັດຕິດໄຟລ໌
+CloudSpeechReady=Cloud Speech Ready -> CloudSpeechReady=ລະບົບສຽງຄລາວພ້ອມແລ້ວ
+WhisperReady=Whisper Ready -> WhisperReady=Whisper ພ້ອມແລ້ວ
+NoSpeech=No Speech -> NoSpeech=ບໍ່ມີສຽງ
+ProcessingAudio=Processing Audio... -> ProcessingAudio=ກຳລັງປະມວນຜົນສຽງ...
+Timeout=Timeout -> Timeout=ໝົດເວລາ
+DownloadingModel=Downloading Model -> DownloadingModel=ກຳລັງດາວໂຫຼດໂມເດລ
+ModelLoading=Loading AI Model... -> ModelLoading=ກຳລັງໂຫຼດໂມເດລ AI...
+ProcessingFile=Processing File -> ProcessingFile=ກຳລັງປະມວນຜົນໄຟລ໌
+ReadingPdf=Reading Pdf -> ReadingPdf=ກຳລັງອ່ານ PDF
+PdfError=PDF.js loaded but 'pdfjsLib' not found on window. -> PdfError=PDF.js ຖືກໂຫຼດແລ້ວ ແຕ່ບໍ່ພົບ 'pdfjsLib' ໃນ window.
+UnsupportedFileType=Unsupported File Type -> UnsupportedFileType=ບໍ່ຮອງຮັບປະເພດໄຟລ໌ນີ້
+TryingOCR=Trying OCR -> TryingOCR=ກຳລັງລອງໃຊ້ OCR
+OcrProgress=Ocr Progress -> OcrProgress=ຄວາມຄືບໜ້າຂອງ OCR
+OcrFailed=Ocr Failed -> OcrFailed=OCR ຫຼົ້ມເຫຼວ
+SwitchingAIModel=Switching AI Model -> SwitchingAIModel=ກຳລັງປ່ຽນໂມເດລ AI
+ReadingWord=Reading Word file -> ReadingWord=ກຳລັງອ່ານໄຟລ໌ Word
+ReadingExcel=Reading Excel file -> ReadingExcel=ກຳລັງອ່ານໄຟລ໌ Excel
+ReadingOdf=Reading Odf file -> ReadingOdf=ກຳລັງອ່ານໄຟລ໌ Odf
+MicError=Microphone Error -> MicError=ຂໍ້ຜິດພາດຂອງໄມໂຄຣໂຟນ
+Listening=Listening -> Listening=ກຳລັງຟັງ
+TypeResponse=Type your response... -> TypeResponse=ພິມຄຳຕອບຂອງທ່ານ...
+ConnectionBlocked=Google Speech Network Error: Are you using HTTPS? -> ConnectionBlocked=Network Error ຂອງ Google Speech: ທ່ານກຳລັງໃຊ້ HTTPS ຫຼື ບໍ່?
+CloudVoiceRequiresSecureContext=The Cloud Voice engine requires %s or %s. If you are on an IP address, please switch to "%s" mode in the top right menu. -> CloudVoiceRequiresSecureContext=ລະບົບ Cloud Voice ຕ້ອງການ %s ຫຼື %s. ຫາກທ່ານໃຊ້ທີ່ຢູ່ IP, ກະລຸນາປ່ຽນເປັນໂໝດ "%s" ໃນເມນູຂວາເທິງ.
+WorkerInitFailed=Failed to initialize worker (Network or CSP error?). Try 'Cloud' mode. -> WorkerInitFailed=ເລີ່ມຕົ້ນ worker ບໍ່ສຳເລັດ (Network ຫຼື CSP error?). ລອງໃຊ້ໂໝດ 'Cloud'.
+NetworkError=Failed to load -> NetworkError=ໂຫຼດບໍ່ສຳເລັດ
+AIError=AI Error -> AIError=ຂໍ້ຜິດພາດຂອງ AI
+EmptyAIResponse=Empty AI Response -> EmptyAIResponse=ບໍ່ມີຄຳຕອບຈາກ AI
+BrowserNotSupported=Browser is not supported -> BrowserNotSupported=ບຣາວເຊີບໍ່ຮອງຮັບ
+YesProceed=Yes Proceed -> YesProceed=ແມ່ນແລ້ວ ດຳເນີນການຕໍ່
+ActionCancelled=Action Cancelled -> ActionCancelled=ຍົກເລີກການດຳເນີນການແລ້ວ
+ExecutingTool=Executing Tool -> ExecutingTool=ກຳລັງດຳເນີນການເຄື່ອງມື
+FetchingData=Fetching Data -> FetchingData=ກຳລັງດຶງຂໍ້ມູນ
+GeneratingLink=Generating navigation link... -> GeneratingLink=ກຳລັງສ້າງລິ້ງນຳທາງ...
+Found=Found -> Found=ພົບແລ້ວ
+VoiceYesNo=Say Yes or No -> VoiceYesNo=ເວົ້າ ແມ່ນ ຫຼື ບໍ່
+VoiceQuiet=No voice detected. Please speak louder -> VoiceQuiet=ບໍ່ກວດພົບສຽງ. ກະລຸນາເວົ້າໃຫ້ແຮງຂຶ້ນ
+MicTooQuiet=Microphone input too quiet. Please speak louder -> MicTooQuiet=ສຽງຈາກໄມໂຄຣໂຟນເບົາເກີນໄປ. ກະລຸນາເວົ້າໃຫ້ແຮງຂຶ້ນ
+PleaseRepeat=I didn't understand that. Please try again. -> PleaseRepeat=ຂ້ອຍບໍ່ເຂົ້າໃຈ. ກະລຸນາລອງໃໝ່.
+HeardText=You said -> HeardText=ເຈົ້າເວົ້າວ່າ
+DocContextIntro=Document Content: -> DocContextIntro=ເນື້ອໃນເອກະສານ:
+DocContextOutro=End of document -> DocContextOutro=ຈົບເອກະສານ
+YourInstallIsOldThanksToUpgrade=Your Dolibarr version seems to be an old version. Thanks to request an upgrade from your customer dashboard. -> YourInstallIsOldThanksToUpgrade=ເວີຊັນ Dolibarr ຂອງທ່ານເບິ່ງຄືວ່າເກົ່າແລ້ວ. ກະລຸນາຮ້ອງຂໍການອັບເກຣດຈາກແດຊບອດລູກຄ້າຂອງທ່ານ.
+moduleDirectoryRule1=- only 1 directory matching your module or theme name (recommended), -> moduleDirectoryRule1=- ພຽງ 1 ໂຟນເດີທີ່ກົງກັບຊື່ໂມດູນ ຫຼື ທຮີມຂອງທ່ານ (ແນະນຳ),
+moduleDirectoryRule2=- or several directories matching following names: ./htdocs/yourmodulename, ./docs, ./scripts, ./test or ./build. -> moduleDirectoryRule2=- ຫຼື ຫຼາຍໂຟນເດີທີ່ກົງກັບຊື່ດັ່ງນີ້: ./htdocs/yourmodulename, ./docs, ./scripts, ./test ຫຼື ./build.
+moduleContents=Sorry, a module file can only contain into zip root: -> moduleContents=ຂໍອະໄພ, ໄຟລ໌ໂມດູນສາມາດບັນຈຸພາຍໃນຮາກຂອງ zip ໄດ້ພຽງແຕ່:
+UnvalidZipFile=Unvalid zip file -> UnvalidZipFile=ໄຟລ໌ zip ບໍ່ຖືກຕ້ອງ
+mainIncludeError=The call of main.inc.php or master.inc.php in the file "%s" in module "%s" does not follow good practices. You must have at least (minimum) 2 tries to include the main.inc.php or master.inc.php file:<br>1 if module is inside the dolibarr root directory, and 1 to support when module is inside "the custom" directory. Best is to read the file modulebuilder/template/mymoduleindex.php for an example of sequence to load the main/master.inc.php. -> mainIncludeError=ການເອີ້ນໃຊ້ main.inc.php ຫຼື master.inc.php ໃນໄຟລ໌ "%s" ໃນໂມດູນ "%s" ບໍ່ເປັນໄປຕາມແນວທາງທີ່ດີ. ທ່ານຕ້ອງມີການລອງຢ່າງໜ້ອຍ 2 ຄັ້ງເພື່ອລວມໄຟລ໌ main.inc.php ຫຼື master.inc.php:<br>1 ຫາກໂມດູນຢູ່ໃນໂຟນເດີຮາກຂອງ dolibarr, ແລະ 1 ເພື່ອຮອງຮັບເມື່ອໂມດູນຢູ່ໃນໂຟນເດີ "custom". ວິທີທີ່ດີທີ່ສຸດແມ່ນອ່ານໄຟລ໌ modulebuilder/template/mymoduleindex.php ເພື່ອເບິ່ງຕົວຢ່າງລຳດັບການໂຫຼດ main/master.inc.php.
+directoryFound=But we found a directory or file with name: -> directoryFound=ແຕ່ພວກເຮົາພົບໂຟນເດີ ຫຼື ໄຟລ໌ທີ່ມີຊື່ວ່າ:
+docRootError=The call of your module class should not be done with DOL_DOCUMENT_ROOT, the file "%s" of module "%s" is wrong, you must correct the line below with "dol_include_once": -> docRootError=ການເອີ້ນໃຊ້ຄລາດໂມດູນຂອງທ່ານບໍ່ຄວນໃຊ້ DOL_DOCUMENT_ROOT, ໄຟລ໌ "%s" ຂອງໂມດູນ "%s" ບໍ່ຖືກຕ້ອງ, ທ່ານຕ້ອງແກ້ໄຂແຖບລຸ່ມນີ້ດ້ວຍ "dol_include_once":
+dolIncludeError=The call of dol_include_once of the file "%s" in module "%s" is wrong, you must correct the line below: -> dolIncludeError=ການເອີ້ນໃຊ້ dol_include_once ຂອງໄຟລ໌ "%s" ໃນໂມດູນ "%s" ບໍ່ຖືກຕ້ອງ, ທ່ານຕ້ອງແກ້ໄຂແຖບລຸ່ມນີ້:
+moduleNameMismatch=Warning, the module file contains a directory in root called "%s" but this does not match the name of module used as file name that is "%s". -> moduleNameMismatch=ຄຳເຕືອນ, ໄຟລ໌ໂມດູນມີໂຟນເດີໃນຮາກທີ່ຊື່ວ່າ "%s" ແຕ່ມັນບໍ່ກົງກັບຊື່ຂອງໂມດູນທີ່ໃຊ້ເປັນຊື່ໄຟລ໌ເຊິ່ງແມ່ນ "%s".
+rootDirWarning=Warning, a module file can contain only 1 root directory with the same name as the module (into the root of zip or into the htdocs directory). We found %s files/directories into the root of module. If this module is a meta-package (a module embedding several other modules), you must include a file metapackage.conf with list of all embedded module names in directory "%s" -> rootDirWarning=ຄຳເຕືອນ, ໄຟລ໌ໂມດູນສາມາດມີໂຟນເດີຮາກໄດ້ພຽງ 1 ໂຟນເດີທີ່ມີຊື່ດຽວກັບໂມດູນ (ໃນຮາກຂອງ zip ຫຼື ໃນໂຟນເດີ htdocs). ພວກເຮົາພົບ %s ໄຟລ໌/ໂຟນເດີ ໃນຮາກຂອງໂມດູນ. ຫາກໂມດູນນີ້ເປັນ meta-package (ໂມດູນທີ່ລວມຫຼາຍໂມດູນອື່ນໄວ້), ທ່ານຕ້ອງລວມໄຟລ໌ metapackage.conf ພ້ອມກັບລາຍຊື່ໂມດູນທັງໝົດທີ່ລວມຢູ່ນັ້ນໃນໂຟນເດີ "%s"
