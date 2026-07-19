@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +178,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
 
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 
 	dol_syslog("listevents purge", LOG_DEBUG);
 	$resql = $db->query($sql);
