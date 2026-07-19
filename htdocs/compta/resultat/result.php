@@ -560,7 +560,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						) {
 							//var_dump($monthtoprocess.'_'.$yeartoprocess);
 							if (isset($cpt['account_number'])) {
-								$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+								$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
 								if ($return < 0) {
 									setEventMessages(null, $AccCat->errors, 'errors');
 									$resultM = 0;
