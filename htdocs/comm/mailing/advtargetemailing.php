@@ -1084,11 +1084,11 @@ if ($object->fetch($id) >= 0) {
 		// Standard Extrafield feature
 		if (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			$contactstatic = new Contact($db);
-			$elementype = $contactstatic->table_element;
+			$elementtype = $contactstatic->table_element;
 			// fetch optionals attributes and labels
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
-			$extrafields->fetch_name_optionals_label($elementype);
+			$extrafields->fetch_name_optionals_label($elementtype);
 			if (!empty($extrafields->attributes[$elementtype]['type'])) {
 				foreach ($extrafields->attributes[$elementtype]['type'] as $key => &$value) {
 					if ($value == 'radio') {
