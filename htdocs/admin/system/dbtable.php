@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,7 +67,7 @@ if ($action == 'convertutf8') {
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1] @phan-suppress-current-line SqlInjection
 				$logsql .= $sql.'<br>';
 
 				$db->query($sql);
@@ -78,7 +78,7 @@ if ($action == 'convertutf8') {
 					$collation = 'utf8_general_ci';
 				}
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1] @phan-suppress-current-line SqlInjection
 				$logsql .= $sql.'<br>';
 
 				$resql2 = $db->query($sql);
@@ -103,7 +103,7 @@ if ($action == 'convertutf8mb4') {
 		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]  @phan-suppress-current-line SqlInjection
 				$logsql .= $sql.'<br>';
 
 				$db->query($sql);
@@ -114,7 +114,7 @@ if ($action == 'convertutf8mb4') {
 					$collation = 'utf8mb4_general_ci';
 				}
 
-				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]  @phan-suppress-current-line SqlInjection
 				$logsql .= $sql.'<br>';
 
 				$resql2 = $db->query($sql);
