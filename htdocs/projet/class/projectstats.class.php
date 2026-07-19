@@ -1,7 +1,7 @@
 <?php
 /* Lead
  * Copyright (C) 2014-2015 Florian HENRY <florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ class ProjectStats extends Stats
 	/**
 	 * Return count, and sum of products
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
@@ -224,7 +224,7 @@ class ProjectStats extends Stats
 		}
 
 		if (!empty($this->status)) {
-			$sqlwhere[] = " t.fk_statut IN (".$this->db->sanitize($this->status).")";
+			$sqlwhere[] = " t.fk_statut IN (".$this->db->sanitize((string) $this->status).")";
 		}
 
 		if (!empty($this->opp_status)) {
@@ -314,7 +314,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return int<-1,-1>|array<array<int<0,11>,array{0:int<1,12>,1:int|float}>>	Array of values or <0 if error
+	 * @return int<-1,-1>|array<int<0,11>,array{0:string,1:int,2?:int,3?:int,4?:int}>	Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -561,8 +561,8 @@ class ProjectStats extends Stats
 	 */
 	protected function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";

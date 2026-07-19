@@ -208,8 +208,12 @@ if (GETPOST('code') || GETPOST('error')) {     // We are coming from oauth provi
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	$params = array();
 	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('state' => $state));
+		$params['state'] = $state;
+	}
+	if (!empty($params)) {
+		$url = $apiService->getAuthorizationUri($params);
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}

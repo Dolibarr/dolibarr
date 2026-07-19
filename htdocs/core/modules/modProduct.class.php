@@ -8,7 +8,9 @@
  * Copyright (C) 2014		Christophe Battarel		<contact@altairis.fr>
  * Copyright (C) 2014		Cedric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +27,10 @@
  */
 
 /**
- *	\defgroup   produit     Module products
+ *	\defgroup   product     Module products
  *	\brief      Module to manage catalog of predefined products
  *	\file       htdocs/core/modules/modProduct.class.php
- *	\ingroup    produit
+ *	\ingroup    product
  *	\brief      Description and activation file for the module to manage catalog of predefined products
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -78,29 +80,30 @@ class modProduct extends DolibarrModules
 		$this->langfiles = array("products", "companies", "stocks", "bills");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
+		$this->const = [
+			[
+				"PRODUCT_CODEPRODUCT_ADDON",
+				"chaine",
+				"mod_codeproduct_leopard",
+				'Module to control product codes',
+				0,
+			],
+			[
 
-		$this->const[$r][0] = "PRODUCT_CODEPRODUCT_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_codeproduct_leopard";
-		$this->const[$r][3] = 'Module to control product codes';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = 'pricing rule by default';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Default module for document generation';
-		$this->const[$r][4] = 0;
-		$r++;*/
+				"PRODUCT_PRICE_UNIQ",
+				"chaine",
+				"1",
+				'pricing rule by default',
+				0,
+			],
+			/*[
+				"PRODUCT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Default module for document generation',
+				0,
+			],*/
+		];
 
 		// Boxes
 		$this->boxes = array(
@@ -136,6 +139,23 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
+		$this->rights[$r][0] = 35; // id de la permission
+		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'product_advance';
+		$this->rights[$r][5] = 'read_supplier_prices';
+		$r++;
+
+			// EN: Advanced permission to write supplier prices
+		$this->rights[$r][0] = 36; // id de la permission
+		$this->rights[$r][1] = 'Write supplier prices'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'product_advance';
+		$this->rights[$r][5] = 'write_supplier_prices';
+		$r++;
+
 		$this->rights[$r][0] = 34; // id de la permission
 		$this->rights[$r][1] = 'Delete products'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
@@ -162,17 +182,25 @@ class modProduct extends DolibarrModules
 
 		$this->menu = 1; // This module adds menu entries. They are coded into menu manager.
 		/* We can't enable this here because it must be enabled in both product and service module and this creates duplicate inserts
-		$r=0;
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'ProductVatMassChange',
-								'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
-								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>300,
-								'enabled'=>'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r = 0;
+		$this->menu[$r] = array(
+			// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu' => 'fk_mainmenu=home,fk_leftmenu=admintools',
+			// This is a Left menu entry
+			'type' => 'left',
+			'titre' => 'ProductVatMassChange',
+			'url' => '/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs' => 'products',
+			'position' => 300,
+			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled' => 'isModEnabled("product") && preg_match(\'/^(admintools|all)/\',$leftmenu)',
+			// Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'perms' => '1',
+			'target' => '',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user' => 0
+		);
 		$r++;
 		*/
 
@@ -195,7 +223,7 @@ class modProduct extends DolibarrModules
 			'p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
 			'p.fk_product_type' => 'Type', 'p.tosell' => "OnSell", 'p.tobuy' => "OnBuy",
 			'p.description' => "Description", 'p.url' => "PublicUrl",
-			'p.customcode' => 'CustomCode', 'p.fk_country' => 'IDCountry',
+			'p.customcode' => 'CustomsCode', 'p.fk_country' => 'IDCountry',
 			$alias_product_perentity . '.accountancy_code_sell' => "ProductAccountancySellCode", $alias_product_perentity . '.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
 			$alias_product_perentity . '.accountancy_code_sell_export' => "ProductAccountancySellExportCode", $alias_product_perentity . '.accountancy_code_buy' => "ProductAccountancyBuyCode",
 			$alias_product_perentity . '.accountancy_code_buy_intra' => "ProductAccountancyBuyIntraCode", $alias_product_perentity . '.accountancy_code_buy_export' => "ProductAccountancyBuyExportCode",
@@ -331,12 +359,14 @@ class modProduct extends DolibarrModules
 			$this->export_code[$r] = $this->rights_class.'_'.$r;
 			$this->export_label[$r] = "ProductsMultiPrice"; // Translation key (used only if key ExportDataset_xxx_z not found)
 			$this->export_permission[$r] = array(array("produit", "export"));
-			$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
+			$this->export_fields_array[$r] = array(
+				'p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
 				'pr.price_base_type' => "PriceBase", 'pr.price_level' => "PriceLevel",
 				'pr.price' => "PriceLevelUnitPriceHT", 'pr.price_ttc' => "PriceLevelUnitPriceTTC",
 				'pr.price_min' => "MinPriceLevelUnitPriceHT", 'pr.price_min_ttc' => "MinPriceLevelUnitPriceTTC",
 				'pr.tva_tx' => 'PriceLevelVATRate',
-				'pr.date_price' => 'DateCreation');
+				'pr.date_price' => 'DateCreation'
+			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
 			}
@@ -346,19 +376,27 @@ class modProduct extends DolibarrModules
 			//	'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
 			//	'p.datec'=>'Date','p.tms'=>'Date'
 			//);
-			$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product", 'p.label' => "Label",
+			$this->export_entities_array[$r] = array(
+				'p.rowid' => "product", 'p.ref' => "product", 'p.label' => "Label",
 				'pr.price_base_type' => "product", 'pr.price_level' => "product", 'pr.price' => "product",
 				'pr.price_ttc' => "product",
 				'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 				'pr.tva_tx' => 'product',
 				'pr.recuperableonly' => 'product',
-				'pr.date_price' => "product");
+				'pr.date_price' => "product"
+			);
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product AND pr.entity = '.$conf->entity; // export prices only for the current entity
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_price_extrafields as extra ON pr.rowid = extra.fk_object';
 			$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
 			$this->export_sql_end[$r] .= ' AND pr.date_price = (SELECT MAX(pr2.date_price) FROM '.MAIN_DB_PREFIX.'product_price as pr2 WHERE pr2.fk_product = pr.fk_product AND pr2.price_level = pr.price_level AND pr2.entity IN ('.getEntity('product').'))'; // export only latest prices not full history
-			$this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
+			// $this->export_sql_end[$r] .= ' ORDER BY p.ref, pr.price_level';
+			global $keyforselect, $keyforelement, $keyforaliasextra;
+			$keyforselect = 'product_price';
+			$keyforelement = 'product';
+			$keyforaliasextra = 'extra';
+			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
 
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
@@ -370,11 +408,14 @@ class modProduct extends DolibarrModules
 			$this->export_fields_array[$r] = array('p.rowid' => "Id", 'p.ref' => "Ref", 'p.label' => "Label",
 				's.nom' => 'ThirdParty',
 				's.code_client' => 'CodeClient',
+				'pr.date_begin' => "AppliedPricesFrom",
+				'pr.date_end' => "AppliedPricesTo",
 				'pr.price_base_type' => "PriceBase",
 				'pr.price' => "PriceUnitPriceHT", 'pr.price_ttc' => "PriceUnitPriceTTC",
 				'pr.price_min' => "MinPriceUnitPriceHT", 'pr.price_min_ttc' => "MinPriceUnitPriceTTC",
 				'pr.tva_tx' => 'PriceVATRate',
 				'pr.default_vat_code' => 'PriceVATCode',
+				'pr.discount_percent' => 'Discount',
 				'pr.datec' => 'DateCreation');
 			if (is_object($mysoc) && $usenpr) {
 				$this->export_fields_array[$r]['pr.recuperableonly'] = 'NPR';
@@ -382,11 +423,14 @@ class modProduct extends DolibarrModules
 			$this->export_entities_array[$r] = array('p.rowid' => "product", 'p.ref' => "product", 'p.label' => "Label",
 				's.nom' => 'company',
 				's.code_client' => 'company',
+				'pr.date_begin' => "product",
+				'pr.date_end' => "product",
 				'pr.price_base_type' => "product", 'pr.price' => "product",
 				'pr.price_ttc' => "product",
 				'pr.price_min' => "product", 'pr.price_min_ttc' => "product",
 				'pr.tva_tx' => 'product',
 				'pr.default_vat_code' => 'product',
+				'pr.discount_percent' => 'product',
 				'pr.recuperableonly' => 'product',
 				'pr.datec' => "product");
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -408,7 +452,7 @@ class modProduct extends DolibarrModules
 				$alias_product_perentity . '.accountancy_code_sell_export' => "ProductAccountancySellExportCode", $alias_product_perentity . '.accountancy_code_buy' => "ProductAccountancyBuyCode",
 				$alias_product_perentity . '.accountancy_code_buy_intra' => "ProductAccountancyBuyIntraCode", $alias_product_perentity . '.accountancy_code_buy_export' => "ProductAccountancyBuyExportCode",
 				'p.note' => "NotePrivate", 'p.note_public' => 'NotePublic',
-				'p.weight' => "Weight", 'p.length' => "Length", 'p.surface' => "Surface", 'p.volume' => "Volume", 'p.customcode' => 'CustomCode',
+				'p.weight' => "Weight", 'p.length' => "Length", 'p.surface' => "Surface", 'p.volume' => "Volume", 'p.customcode' => 'CustomsCode',
 				'p.price_base_type' => "PriceBase", 'p.price' => "UnitPriceHT", 'p.price_ttc' => "UnitPriceTTC", 'p.tva_tx' => 'VATRate', 'p.tosell' => "OnSell",
 				'p.tobuy' => "OnBuy", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
 			);
@@ -489,7 +533,7 @@ class modProduct extends DolibarrModules
 			'p.tobuy' => "OnBuy*",
 			'p.description' => "Description",
 			'p.url' => "PublicUrl",
-			'p.customcode' => 'CustomCode',
+			'p.customcode' => 'CustomsCode',
 			'p.fk_country' => 'CountryCode',
 			'p.accountancy_code_sell' => "ProductAccountancySellCode",
 			'p.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
@@ -519,6 +563,7 @@ class modProduct extends DolibarrModules
 			'p.price_min_ttc' => "SellingMinPriceTTC",
 			'p.price_base_type' => "PriceBaseType*", //price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
 			'p.tva_tx' => 'VATRate',
+			'p.default_vat_code' => 'VATCode',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice"
 		);
@@ -609,13 +654,15 @@ class modProduct extends DolibarrModules
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse' => 'DefaultWarehouse',
 				'p.tobatch' => 'ManageLotSerial',
+				'p.sell_or_eat_by_mandatory' => 'SellOrEatByMandatory',
 				'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
 				'p.pmp' => 'PMPValue', //weighted average price
 				'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
 			));
 
 			$this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
-				'p.tobatch' => '^[0|1|2]$'
+				'p.tobatch' => '^[0|1|2]$',
+				'p.sell_or_eat_by_mandatory' => '^[0-3]$'
 			));
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
@@ -626,6 +673,12 @@ class modProduct extends DolibarrModules
 					'method' => 'fetch',
 					'element' => 'Warehouse'
 				)
+			));
+		}
+
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
+				'p.packaging' => 'PackagingForThisProductSell',
 			));
 		}
 
@@ -678,7 +731,8 @@ class modProduct extends DolibarrModules
 			'p.price_ttc' => "110",
 			'p.price_min_ttc' => "110",
 			'p.price_base_type' => "HT (show/use price excl. tax) / TTC (show/use price incl. tax)",
-			'p.tva_tx' => '10', // tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
+			'p.tva_tx' => '10', 			// tax rate eg: 10. Must match numerically one of the tax rates defined for your country
+			'p.default_vat_code' => '',		// to use the correct vat line when there is several lines with the same vat rate for your country
 			'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
 			'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
 			'p.fk_product_type' => "0 (product) / 1 (service)",
@@ -708,6 +762,7 @@ class modProduct extends DolibarrModules
 		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 				'p.tobatch' => "0 (don't use) / 1 (use batch) / 2 (use serial number)",
+				'p.sell_or_eat_by_mandatory' => "0 (none) / 1 (sell-by) / 2 (eat-by) / 3 (sell+eat)",
 				'p.seuil_stock_alerte' => '',
 				'p.pmp' => '0',
 				'p.desiredstock' => ''
@@ -736,6 +791,9 @@ class modProduct extends DolibarrModules
 				)
 			);
 
+			if (!is_array($this->import_convertvalue_array[$r])) {
+				$this->import_convertvalue_array[$r] = array();
+			}
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',
@@ -746,6 +804,13 @@ class modProduct extends DolibarrModules
 				)
 			));
 		}
+
+		if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+			$import_sample = array_merge($import_sample, array(
+				'p.packaging' => "2",
+			));
+		}
+
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref' => 'Ref');
 		if (isModEnabled('barcode')) {
@@ -797,7 +862,8 @@ class modProduct extends DolibarrModules
 				'sp.default_vat_code' => 'VATCode',
 				'sp.delivery_time_days' => 'NbDaysToDelivery',
 				'sp.supplier_reputation' => 'SupplierReputation',
-				'sp.status' => 'Status'
+				'sp.status' => 'Status',
+				'sp.datec' => 'DateCreation'
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.recuperableonly' => 'VATNPR'));
@@ -841,11 +907,20 @@ class modProduct extends DolibarrModules
 				}
 			}
 			// End add extra fields
-			$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+
+			// Add some field automatically (if they are not yet provided explicitly)
+			$this->import_fieldshidden_array[$r] = array(
+				'sp.datec' => 'const-'.dol_print_date(dol_now(), 'standard'),
+				'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'
+			); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent or 'const-xxxx')
 
 			$this->import_convertvalue_array[$r] = array(
 					'sp.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 					'sp.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_regex_array[$r] = array(
+				'sp.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$'
 			);
 
 			$this->import_examplevalues_array[$r] = array(
@@ -854,13 +929,14 @@ class modProduct extends DolibarrModules
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
 				'sp.tva_tx' => '10',
+				'sp.default_vat_code' => '',
 				'sp.price' => "50",
 				'sp.unitprice' => '50',
 				'sp.remise_percent' => '0',
-				'sp.default_vat_code' => '',
 				'sp.delivery_time_days' => '5',
 				'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER',
-				'sp.status' => '1'
+				'sp.status' => '1',
+				'sp.datec' => dol_print_date(dol_now(), '%Y-%m-%d %H:%M:%S'),
 			);
 			if (is_object($mysoc) && $usenpr) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly' => ''));
@@ -879,7 +955,7 @@ class modProduct extends DolibarrModules
 			));
 			if (isModEnabled("multicurrency")) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-					'sp.fk_multicurrency' => 'eg: 2, rowid for code of multicurrency currency',
+					'sp.fk_multicurrency' => 'eg: 2 = the rowid for code of multicurrency currency',
 					'sp.multicurrency_code' => 'GBP',
 					'sp.multicurrency_tx' => '1.12345',
 					'sp.multicurrency_unitprice' => '',
@@ -947,6 +1023,55 @@ class modProduct extends DolibarrModules
 				'pr.tva_tx' => '20',
 				'pr.recuperableonly' => '0',
 				'pr.date_price' => '2020-12-31');
+		}
+
+
+		if (getDolGlobalInt('PRODUIT_CUSTOMER_PRICES')) {
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_productcustomerprice';
+			$this->import_label[$r] = "ProductsPricePerCustomer"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('sp' => $this->db->prefix().'product_customer_price', 'extra' => $this->db->prefix().'product_customer_price_extrafields');
+			$this->import_tables_creator_array[$r] = array('sp' => 'fk_user'); // Fields to store import user id
+			$this->import_fields_array[$r] = array(
+				'sp.fk_product' => "Products*",
+				'sp.fk_soc' => "Customer*",
+				'sp.ref_customer' => "RefCustomer",
+				'sp.date_begin' => "AppliedPricesFrom*",
+				'sp.date_end' => "AppliedPricesTo",
+				'sp.tva_tx' => "VATRate*",
+				'sp.default_vat_code' => 'VATCode',
+				'sp.discount_percent' => 'Discount',
+				'sp.price_base_type' => "PriceBase*",
+				'sp.price' => "SellingUnitPriceHT*",
+				'sp.price_min' => "SellingUnitMinPriceHT",
+				'sp.price_ttc' => "SellingUnitPriceTTC",
+				'sp.price_min_ttc' => "SellingUnitMinPriceTTC",
+				'sp.datec' => "DateCreation");
+
+			$this->import_convertvalue_array[$r] = array(
+				'sp.fk_soc' => array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
+				'sp.fk_product' => array('rule' => 'fetchidfromref', 'classfile' => '/product/class/product.class.php', 'class' => 'Product', 'method' => 'fetch', 'element' => 'Product')
+			);
+
+			$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+			$this->import_examplevalues_array[$r] = array(
+				'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
+				'sp.fk_soc' => "My Supplier",
+				'sp.ref_customer' => "XYZ-F123456",
+				'sp.date_begin' => "2025-06-30",
+				'sp.date_end' => "2027-06-30",
+				'sp.tva_tx' => '20',
+				'sp.default_vat_code' => '5',
+				'sp.discount_percent' => '30',
+				'sp.price_base_type'=> 'HT (for excl tax) or TTC (for inc tax)',
+				'sp.price' => "100",
+				'sp.price_min' => "80",
+				'sp.price_ttc' => "120",
+				'sp.price_min_ttc' => "96",
+				'sp.datec' => "2025-09-30"
+			);
 		}
 
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {

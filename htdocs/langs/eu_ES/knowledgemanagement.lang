@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Ezagutza Kudeatzeko Sistema
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Ezagutza Kudeaketa (KM) edo Laguntza Mahaia base bat kudeatu
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Ezagutza Kudeatzeko Sistemaren konfigurazioa
+KnowledgeManagementSetupPage = Ezagutza Kudeatzeko Sistemaren konfigurazio orria
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = Ezagutza Kudeaketari buruz
+KnowledgeManagementAboutPage = Ezagutza Kudeaketa orrialdeari buruz
+KnowledgeManagementArea = Ezagutza Kudeaketa
+MenuKnowledgeRecord = Ezagutza-basea
+MenuKnowledgeRecordShort = Ezagutza-basea
+ListKnowledgeRecord = Artikuluen zerrenda
+NewKnowledgeRecord = Artikulu berria
+ValidateReply = Balioztatu irtenbidea
+KnowledgeRecords = Artikuluak
+KnowledgeRecord = Artikulua
+KnowledgeRecordExtraFields = Artikuluaren eremu gehigarriak
+GroupOfTicket=Txartelen multzoa.
+YouCanLinkArticleToATicketCategory=Artikulua txartel-talde bati lotu diezaiokezu (horrela, artikulua talde honetako txartel guztietan nabarmenduta agertuko da)
+SuggestedForTicketsInGroup=Txartelak sortzean iradokizunak
+SetObsolete=Zaharkituta gisa ezarri
+ConfirmCloseKM=Artikulu honen itxiera zaharkituta dagoela baieztatzen al duzu?
+ConfirmReopenKM=Artikulu hau "Balioztatuta" egoerara leheneratu nahi duzu?
+BoxLastKnowledgerecordDescription=Azken %s artikuluak
+BoxLastKnowledgerecord=Azken artikuluak
+BoxLastKnowledgerecordContent=Azken artikuluak
+BoxLastKnowledgerecordModifiedContent=Azken aldatutako artikuluak
+BoxLastModifiedKnowledgerecordDescription=Azken %s aldatutako artikuluak
+BoxLastModifiedKnowledgerecord=Azken aldatutako artikuluak

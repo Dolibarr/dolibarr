@@ -68,5 +68,3 @@ It is possible to specify url for API methods by simply use the PHPDoc tag **@ur
 Other annotations are used, you are encouraged to read them : https://github.com/Luracast/Restler/blob/master/ANNOTATIONS.md
 
 PHPDoc tags can also be used to specify variables information for API. Again, rtfm : https://github.com/Luracast/Restler/blob/master/PARAM.md 
-
-

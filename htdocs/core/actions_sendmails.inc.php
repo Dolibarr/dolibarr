@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
 *  Copyright (C) 2013 Juanjo Menent		   <jmenent@2byte.es>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -24,31 +24,33 @@
  *  \brief			Code for actions on sending mails from object page
  */
 
-// $mysoc must be defined
-// $id must be defined
-// $paramname may be defined
-// $autocopy may be defined (used to know the automatic BCC to add)
-// $triggersendname must be set (can be '')
-// $actiontypecode can be set
-// $object and $subject may be defined
 /**
- * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
- * @var string $dolibarr_main_url_root
- * @var string $action
+ * @var CommonObject $object
+ *
+ * @var int		$id
+ * @var int 	$error
+ * @var string 	$dolibarr_main_url_root
+ * @var string 	$action
  * @var ?string $subject
+ * @var ?string $triggersendname (can be '')
+ * @var ?string	$sendcontext
+ * @var ?string	$autocopy (used to know the automatic BCC to add)
+ * @var ?string	$actiontypecode
+ * @var ?string $paramname
  */
 '
 @phan-var-force Societe      $mysoc
 @phan-var-force CommonObject $object
+@phan-var-force int 		 $error
 ';
 
-$error = 0;
 
 /*
  * Add file in email form
@@ -69,7 +71,7 @@ if (GETPOST('addfile', 'alpha')) {
 /*
  * Remove file in email form
  */
-if (GETPOST('removedfile') && !GETPOST('removAll')) {
+if (GETPOST('removedfile') && !GETPOST('removeAll')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -80,14 +82,14 @@ if (GETPOST('removedfile') && !GETPOST('removAll')) {
 
 	// TODO Delete only files that was uploaded from email form. This can be addressed by adding the trackid into the temp path then changing donotdeletefile to 2 instead of 1 to say "delete only if into temp dir"
 	// GETPOST('removedfile','alpha') is position of file into $_SESSION["listofpaths"...] array.
-	dol_remove_file_process(GETPOST('removedfile', 'alpha'), 0, 1, $trackid); // We do not delete because if file is the official PDF of doc, we don't want to remove it physically
+	dol_remove_file_process(GETPOSTINT('removedfile'), 0, 1, $trackid); // We do not delete because if file is the official PDF of doc, we don't want to remove it physically
 	$action = 'presend';
 }
 
 /*
  * Remove all files in email form
  */
-if (GETPOST('removAll', 'alpha')) {
+if (GETPOST('removeAll', 'alpha')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	$listofpaths = array();
@@ -123,7 +125,7 @@ if (GETPOST('removAll', 'alpha')) {
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
+if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removeAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
 	if (empty($trackid)) {
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
@@ -135,6 +137,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	$subject = '';
 	//$actionmsg = '';
 	$actionmsg2 = '';
+	$thirdparty = null;
+	$contact = null;
+	$result = 0;
 
 	$langs->load('mails');
 
@@ -144,17 +149,19 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		$result = $object->fetch($id);
 
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
-			$resultthirdparty = $object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
 			if (is_object($thirdparty)) {
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'member' || $object->element == 'user') {
+			'@phan-var-force Adherent|User $object';
 			$thirdparty = $object;
 			if ($object->socid > 0) {
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'expensereport') {
+			'@phan-var-force ExpenseReport $object';
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
@@ -162,11 +169,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$sendtosocid = $object->socid;
 			}
 		} elseif ($object->element == 'societe') {
+			'@phan-var-force Societe $object';
 			$thirdparty = $object;
 			if (is_object($thirdparty) && $thirdparty->id > 0) {
 				$sendtosocid = $thirdparty->id;
 			}
 		} elseif ($object->element == 'contact') {
+			'@phan-var-force Contact $object';
 			$contact = $object;
 			if ($contact->id > 0) {
 				$contact->fetch_thirdparty();
@@ -185,9 +194,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		}
 	} else {
 		$thirdparty = $mysoc;
+		$result = 1; // No object to fetch (e.g. Setup -> Emails -> send test email): consider OK
 	}
 
 	if ($result > 0) {
+		$from = '';
 		$sendto = '';
 		$sendtocc = '';
 		$sendtobcc = '';
@@ -220,7 +231,24 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// Recipient was provided from combo list
 			foreach ($receiver as $key => $val) {
 				if ($val == 'thirdparty') { // Key selected means current third party ('thirdparty' may be used for current member or current user too)
-					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
+					$thirdpartyEmail = (is_object($thirdparty) && !empty($thirdparty->email)) ? (string) $thirdparty->email : '';
+					if ($thirdpartyEmail !== '') {
+						$thirdpartyLabel = '';
+						if (is_object($thirdparty)) {
+							if (method_exists($thirdparty, 'getFullName')) {
+								$thirdpartyLabel = (string) $thirdparty->getFullName($langs);
+							} elseif (!empty($thirdparty->name)) {
+								$thirdpartyLabel = (string) $thirdparty->name;
+							} elseif (!empty($thirdparty->nom)) {
+								$thirdpartyLabel = (string) $thirdparty->nom;
+							}
+						}
+						if ($thirdpartyLabel !== '') {
+							$tmparray[] = dol_string_nospecial($thirdpartyLabel, ' ', array(",")).' <'.$thirdpartyEmail.'>';
+						} else {
+							$tmparray[] = $thirdpartyEmail;
+						}
+					}
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
@@ -270,10 +298,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			foreach ($receivercc as $key => $val) {
 				if ($val == 'thirdparty') {	// Key selected means current thirdparty (may be usd for current member or current user too)
 					// Recipient was provided from combo list
-					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial((string) $thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				} elseif ($val == 'contact') {	// Key selected means current contact
 					// Recipient was provided from combo list
-					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
+					$tmparray[] = dol_string_nospecial((string) $contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
 				} elseif ($val) {				// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
@@ -306,25 +334,24 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			$reg = array();
 			$fromtype = GETPOST('fromtype', 'alpha');
+			$emailsendersignature = '';
 			if ($fromtype === 'robot') {
-				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
+				$from = dol_string_nospecial(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
 			} elseif ($fromtype === 'user') {
 				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 			} elseif ($fromtype === 'company') {
-				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
-				$tmp = explode(',', $user->email_aliases);
-				$from = trim($tmp[((int) $reg[1] - 1)]);
+				$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+				$sql = 'SELECT rowid, label, email, signature FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
 				$sql .= ' WHERE rowid = '.(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+					$emailsendersignature = $obj->signature;
 				}
 			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
 				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
@@ -338,7 +365,11 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
 
-			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
+			$replyto = '';
+			if (GETPOST('replytomail')) {
+				$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(","));
+				$replyto .= ($replyto ? ' ' : '').'<'.GETPOST('replytomail').'>';
+			}
 
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
@@ -384,6 +415,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+
+			$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = (empty($emailsendersignature) ? $user->signature : $emailsendersignature);
 			$substitutionarray['__EMAIL__'] = $sendto;
 			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
@@ -402,7 +435,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			if (empty($sendcontext)) {
 				$sendcontext = 'standard';
 			}
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, $replyto, $upload_dir_tmp);
 
 			if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
@@ -412,8 +445,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				if ($result) {
 					// Initialisation of datas of object to call trigger
 					if (is_object($object)) {
+						$db->begin();	// Transaction for post action must start after sending email to avoid lock when sending email that may be long
+
 						if (empty($actiontypecode)) {
-							$actiontypecode = 'AC_OTH_AUTO'; // Event inserted into agenda automatically
+							$actiontypecode = 'AC_EMAIL'; // Event inserted into agenda automatically
 						}
 
 						$object->socid = $sendtosocid; // To link to a company
@@ -435,27 +470,51 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 							$object->sendtouserid = $sendtouserid;
 						}
 
+						// TODO Fix this: Such properties does not exists on all objects
+						$object->context['email_msgid'] = $mailfile->msgid;
+						$object->context['email_from'] = $from;
+						$object->context['email_subject'] = $subject;
+						$object->context['email_to'] = $sendto;
+						$object->context['email_tocc'] = $sendtocc;
+						$object->context['email_tobcc'] = $sendtobcc;
+
 						$object->email_msgid = $mailfile->msgid; // @todo Set msgid into $mailfile after sending
 						$object->email_from = $from;
 						$object->email_subject = $subject;
 						$object->email_to = $sendto;
 						$object->email_tocc = $sendtocc;
 						$object->email_tobcc = $sendtobcc;
-						$object->email_subject = $subject;
 
-						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
-						if (!empty($triggersendname) || !empty($trigger_name)) {
-							// Call trigger
-							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
+						// Call of triggers (you should have set $triggersendname to execute trigger.
+						if (!empty($triggersendname)) {
+							if ($triggersendname == 'BILL_SENTBYMAIL' && $object instanceof Facture) {
+								/* @var Facture $object */
+
+								// If sending email for invoice, we increase the counter of invoices sent by email
+								$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET email_sent_counter = email_sent_counter + 1";
+								$sql .= " WHERE rowid = ".((int) $object->id);
+
+								$resql = $db->query($sql);
+								if ($resql) {
+									$object->email_sent_counter += 1;
+								}
+							}
+
+							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
 							}
-							// End call triggers
 							if ($error) {
 								setEventMessages($object->error, $object->errors, 'errors');
 							}
 						}
 						// End call of triggers
+
+						if (!$error) {
+							$db->commit();
+						} else {
+							$db->rollback();
+						}
 					}
 
 					// Redirect here
@@ -463,12 +522,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
 					setEventMessages($mesg, null, 'mesgs');
 
-					$moreparam = '';
-					if (isset($paramval2)) { // @phan-var-suppress-current-line PhanPluginUndeclaredVariableIsset
-						// @phan-var-suppress-next-line PhanUndeclaredGlobalVariable
-						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
-					}
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : ''));
 					exit;
 				} else {
 					$langs->load("other");

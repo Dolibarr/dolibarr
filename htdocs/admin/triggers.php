@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,28 +68,24 @@ print "<br>\n";
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList();
 $param = '';
-$align = '';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'active', "", $param, 'align="center"', $sortfield, $sortorder, '', 1)."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
 
 foreach ($triggers as $trigger) {
 	print '<tr class="oddeven">';
-	print '<td class=" width="32">'.$trigger['picto'].'</td>';
-	print '<td>'.$trigger['file'].'</td>';
+	print '<td>'.$trigger['picto'].' '.$trigger['file'].'</td>';
 	print '<td class="center">'.$trigger['status'].'</td>';
 	print '<td>';
-	$text = $trigger['info'];
-	$text .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
-	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	print $form->textwithpicto('', $text);
+	$htmltooltip = $trigger['info'];
+	$htmltooltip .= "<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
+	//$htmltooltip.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
+	print $form->textwithpicto('', $htmltooltip);
 	print '</td>';
 	print '</tr>';
 }

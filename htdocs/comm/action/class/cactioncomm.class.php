@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,12 +83,6 @@ class CActionComm
 	public $picto;
 
 	/**
-	 * @var array array of type_actions  // TODO: Remove or explain
-	 */
-	public $type_actions = array();
-
-
-	/**
 	 * @var array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>}	Used to return value by some methods
 	 */
 	public $liste_array;
@@ -106,17 +101,22 @@ class CActionComm
 	/**
 	 *  Load action type from database
 	 *
-	 *  @param  int|string	$id     id or code of action type to read
+	 *  @param  int|string	$id     Id or code of action type to read
+	 *  @param	string		$code	Code
 	 *  @return int             	1=ok, 0=not found, -1=error
 	 */
-	public function fetch($id)
+	public function fetch($id, $code = '')
 	{
 		$sql = "SELECT id, code, type, libelle as label, color, active, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if (is_numeric($id)) {
-			$sql .= " WHERE id=".(int) $id;
+		if (!empty($id)) {
+			if (is_numeric($id)) {
+				$sql .= " WHERE id = ".(int) $id;
+			} else {	// For backward compatibility
+				$sql .= " WHERE code = '".$this->db->escape($id)."'";
+			}
 		} else {
-			$sql .= " WHERE code='".$this->db->escape($id)."'";
+			$sql .= " WHERE code = '".$this->db->escape($code)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -153,7 +153,7 @@ class CActionComm
 	 *  @param  'id'|'code'|'all'      $idorcode       'id' or 'code' or 'all'
 	 *  @param  string		$excludetype    Type to exclude ('system' or 'systemauto')
 	 *  @param  int<-2,1>	$onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
-	 *  @param  string      $morefilter     Add more SQL filter
+	 *  @param  string      $morefilter     Add more SQL filter. Must be USF filter.
 	 *  @param  int<0,1>	$shortlabel     1=Get short label instead of long label
 	 *	@return	int<-1,-1>|array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>,AC_OTH_AUTO?:mixed}	Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
 	 */
@@ -181,7 +181,7 @@ class CActionComm
 			$sql .= " AND type <> '".$this->db->escape($excludetype)."'";
 		}
 		if ($morefilter) {
-			$sql .= " AND ".$morefilter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($morefilter);
 		}
 		// If AGENDA_SORT_EVENT_TYPE_BY_POSITION_FIRST is defined, we use position as main sort criterion
 		// otherwise we use type as main sort criterion
@@ -195,13 +195,13 @@ class CActionComm
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
+			$TSystem = array(
+				'id' => [],
+				'code' => [],
+				'all' => []
+			);
 			if ($nump) {
 				$idforallfornewmodule = 96;
-				$TSystem = array(
-					'id' => [],
-					'code' => [],
-					'all' => []
-				);
 				$TSystemAuto = array(
 					'id' => [],
 					'code' => [],

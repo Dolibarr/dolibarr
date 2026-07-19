@@ -36,6 +36,11 @@ class mod_member_advanced extends ModeleNumRefMembers
 	public $name = 'Advanced';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 40;
+
 	// variables not inherited
 
 	/**

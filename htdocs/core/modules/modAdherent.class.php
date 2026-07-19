@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,117 +77,116 @@ class modAdherent extends DolibarrModules
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "ADHERENT_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
-		$this->const[$r][3] = 'Name of PDF model of member';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For emails
-		$this->const[$r][0] = "ADHERENT_MAIL_FROM";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "From des mails";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnAutoSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnNewSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingReminderForExpiredSubscription)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_CANCELATION";
-		$this->const[$r][1] = "emailtemplate:member";
-		$this->const[$r][2] = "(SendingEmailOnCancelation)";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For cards
-		$this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__YEAR__";
-		$this->const[$r][3] = "Texte imprimé sur le haut de la carte adhérent";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_CARD_FOOTER_TEXT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__COMPANY__";
-		$this->const[$r][3] = "Texte imprimé sur le bas de la carte adhérent";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_CARD_TEXT";
-		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__";
-		$this->const[$r][3] = "Text to print on member cards";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "Password admin mailman lists";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TYPE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "L7163";
-		$this->const[$r][3] = "Type of address sheets";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
-		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
-		$this->const[$r][3] = "Text to print on member address sheets";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		// For subscriptions
-		$this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "ID of bank account to use";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "ID of bank transaction category to use";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MEMBER_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/members";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
+		$this->const = [
+			[
+				"ADHERENT_ADDON_PDF",
+				"chaine",
+				"standard",
+				'Name of PDF model of member',
+				0
+			],
+			// For emails
+			[
+				"ADHERENT_MAIL_FROM",
+				"chaine",
+				"",
+				"From des mails",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER",
+				"emailtemplate:member",
+				"(SendingEmailOnAutoSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION",
+				"emailtemplate:member",
+				"(SendingEmailOnNewSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION",
+				"emailtemplate:member",
+				"(SendingReminderForExpiredSubscription)",
+				"",
+				0,
+			],
+			[
+				"ADHERENT_EMAIL_TEMPLATE_CANCELATION",
+				"emailtemplate:member",
+				"(SendingEmailOnCancelation)",
+				"",
+				0,
+			],
+			// For cards
+			[
+				"ADHERENT_CARD_HEADER_TEXT",
+				"chaine",
+				"__YEAR__",
+				"Texte imprimé sur le haut de la carte adhérent",
+				0,
+			],
+			[
+				"ADHERENT_CARD_FOOTER_TEXT",
+				"chaine",
+				"__COMPANY__",
+				"Texte imprimé sur le bas de la carte adhérent",
+				0,
+			],
+			[
+				"ADHERENT_CARD_TEXT",
+				"texte",
+				"__FULLNAME__\r\nID: __ID__\r\n__EMAIL__\r\n__ADDRESS__\r\n__ZIP__ __TOWN__\r\n__COUNTRY__",
+				"Text to print on member cards",
+				0,
+			],
+			[
+				"ADHERENT_MAILMAN_ADMIN_PASSWORD",
+				"chaine",
+				"",
+				"Password admin mailman lists",
+				0,
+			],
+			[
+				"ADHERENT_ETIQUETTE_TYPE",
+				"chaine",
+				"L7163",
+				"Type of address sheets",
+				0,
+			],
+			[
+				"ADHERENT_ETIQUETTE_TEXT",
+				"texte",
+				"__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__",
+				"Text to print on member address sheets",
+				0,
+			],
+			// For subscriptions
+			[
+				"ADHERENT_BANK_ACCOUNT",
+				"chaine",
+				"",
+				"ID of bank account to use",
+				0,
+			],
+			[
+				"ADHERENT_BANK_CATEGORIE",
+				"chaine",
+				"",
+				"ID of bank transaction category to use",
+				0,
+			],
+			[
+				"MEMBER_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/members",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		//-------
@@ -207,11 +207,11 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][1]     Default label if translation of key “PermissionXXX” not found (XXX = Permission ID)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Allowed by default, 0=Not allowed by default
+		// $this->rights[$r][4]     Level 1 for naming permission in code
+		// $this->rights[$r][5]     Level 2 to name permission in code
 
 		$r++;
 		$this->rights[$r][0] = 71;
@@ -398,6 +398,31 @@ class modAdherent extends DolibarrModules
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
 		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
+
+		// Import subscriptions
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "Subscriptions"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('c'=>MAIN_DB_PREFIX.'subscription');
+		$this->import_fields_array[$r] = array(
+			'c.fk_adherent' => 'MemberRef*',
+			'c.note'=>'Note', 'c.dateadh'=>'DateSubscription', 'c.datef'=>'DateEndSubscription', 'c.subscription'=>'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'c.fk_adherent' => array(
+				'rule'=>'fetchidfromref',
+				'classfile'=>'/adherents/class/adherent.class.php',
+				'class'=>'Adherent',
+				'method'=>'fetch',
+				'element'=>'member'
+			)
+		);
+		$this->import_examplevalues_array[$r] = array(
+			'c.fk_adherent' => 'member ref',
+			'c.note'=>'Subscription #33', 'c.dateadh'=>'2025-09-01', 'c.datef'=>'2026-08-31', 'c.subscription'=>'50'
+		);
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());

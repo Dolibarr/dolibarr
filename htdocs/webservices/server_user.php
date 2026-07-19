@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ $server->soap_defencoding = 'UTF-8';
 $server->decode_utf8 = false;
 $ns = 'http://www.dolibarr.org/ns/';
 $server->configureWSDL('WebServicesDolibarrUser', $ns);
+// @phan-suppress-next-line PhanUndeclaredProperty
 $server->wsdl->schemaTargetNamespace = $ns;
 
 
@@ -326,7 +327,7 @@ $server->register(
 
 
 /**
- * Get produt or service
+ * Get product or service
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
  * @param	int			$id					Id of object
@@ -392,7 +393,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => $user->statut,
+						'statut' => (int) $user->statut,
+						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
 						//'rights' => $user->rights,
@@ -561,7 +563,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
+					$sql .= " AND code = '".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql) {
@@ -606,6 +608,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						$contact->status = 1;
 						$contact->statut = 1;
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;
@@ -638,7 +641,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
 								if ($thirdpartywithuser['group_id'] > 0) {
-									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
+									$edituser->SetInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
 								}
 							} else {
 								$error++;
@@ -721,7 +724,8 @@ function setUserPassword($authentication, $shortuser)
 	if (!$error) {
 		$fuser->loadRights();
 
-		if ($fuser->hasRight('user', 'user', 'password') || $fuser->hasRight('user', 'self', 'password')) {
+		if ($fuser->hasRight('user', 'user', 'password')
+			|| ($fuser->hasRight('user', 'self', 'password') && $fuser->login == $shortuser['login'])) {
 			$userstat = new User($db);
 			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {

@@ -13,7 +13,7 @@
 
 # Generic
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Sistema de xestión do coñecemento 
+ModuleKnowledgeManagementName = Sistema de xestión do coñecemento
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Xestionar a Xestión do Coñecemento (XC) ou  Help_Desk
 # Admin page

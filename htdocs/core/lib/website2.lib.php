@@ -67,8 +67,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	$aliascontent = '<?php'."\n";
 	$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
 	$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
-	$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'./page'.$objectpage->id.'.tpl.php\'; ';
-	$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+	$aliascontent .= 'if (empty($dolibarr_main_data_root)) $res=include \'./page'.$objectpage->id.'.tpl.php\'; ';
+	$aliascontent .= 'else $res=include $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+	$aliascontent .= 'if ($res === false) { http_response_code(500); print \'Failed to make include\'; }'."\n";
 	$aliascontent .= '?>'."\n";
 	$result = file_put_contents($filealias, $aliascontent);
 	if ($result === false) {
@@ -87,8 +88,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		$aliascontent = '<?php'."\n";
 		$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
 		$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
-		$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
-		$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+		$aliascontent .= 'if (empty($dolibarr_main_data_root)) $res=include \'../page'.$objectpage->id.'.tpl.php\'; ';
+		$aliascontent .= 'else $res=include $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+		$aliascontent .= 'if ($res === false) { http_response_code(500); print \'Failed to make include\'; }'."\n";
 		$aliascontent .= '?>'."\n";
 		$result = file_put_contents($filealiassub, $aliascontent);
 		if ($result === false) {
@@ -110,8 +112,9 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 				$aliascontent = '<?php'."\n";
 				$aliascontent .= "// File generated to wrap the alias page - DO NOT MODIFY - It is just a wrapper to real page\n";
 				$aliascontent .= 'global $dolibarr_main_data_root;'."\n";
-				$aliascontent .= 'if (empty($dolibarr_main_data_root)) require \'../page'.$objectpage->id.'.tpl.php\'; ';
-				$aliascontent .= 'else require $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+				$aliascontent .= 'if (empty($dolibarr_main_data_root)) $res=include \'../page'.$objectpage->id.'.tpl.php\'; ';
+				$aliascontent .= 'else $res=include $dolibarr_main_data_root.\'/website/\'.$website->ref.\'/page'.$objectpage->id.'.tpl.php\';'."\n";
+				$aliascontent .= 'if ($res === false) { http_response_code(500); print \'Failed to make include\'; }'."\n";
 				$aliascontent .= '?>'."\n";
 
 				dol_mkdir($dirname.'/'.$sublang);
@@ -141,7 +144,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  */
 function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
-	global $db;
+	global $conf, $db;
 
 	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
 	dol_syslog("dolSavePageContent We regenerate the tpl page filetpl=".$filetpl);
@@ -180,10 +183,19 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (getDolGlobalString("MAIN_ADD_WAF_V22") && empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
-		$tplcontent .= "} // Not already loaded\n";
+		$tplcontent .= "}\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
@@ -201,7 +213,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<title>'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'</title>'."\n";
 		$tplcontent .= '<meta charset="utf-8">'."\n";
 		$tplcontent .= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
-		$tplcontent .= '<meta name="robots" content="index, follow" />'."\n";
+		$tplcontent .= '<meta name="robots" content="'.($objectpage->index ? 'index' : 'noindex').', '.($objectpage->follow ? 'follow' : 'nofollow').'" />'."\n";
 		$tplcontent .= '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 		$tplcontent .= '<meta name="keywords" content="'.dol_string_nohtmltag($objectpage->keywords, 1, 'UTF-8').'" />'."\n";
 		$tplcontent .= '<meta name="title" content="'.dol_string_nohtmltag($objectpage->title, 1, 'UTF-8').'" />'."\n";
@@ -209,8 +221,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 		$tplcontent .= '<meta name="dolibarr:pageid" content="'.((int) $objectpage->id).'" />'."\n";
 
-		// Add favicon
-		if (in_array($objectpage->type_container, array('page', 'blogpost'))) {
+		// Add favicon if not already done in htmlheader
+		$htmldeaderindestdir = dol_sanitizePathName($conf->website->dir_temp.'/'.$object->ref.'/containers/htmlheader.html');
+		$htmlheader = file_get_contents($htmldeaderindestdir);
+		if (in_array($objectpage->type_container, array('page', 'blogpost')) && !preg_match('/'.preg_quote('rel="icon"', '/').'/', $htmlheader)) {
 			$tplcontent .= '<link rel="icon" type="image/png" href="/favicon.png" />'."\n";
 		}
 
@@ -320,11 +334,74 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '<!-- Include link to common JS file -->'."\n";
 		$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 		$tplcontent .= '</head>'."\n";
+		$tplcontent .= "\n";
 
 		// Page content
-		$tplcontent .= '<!-- File generated by Dolibarr website module editor -->'."\n";
+		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
 		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+
+		// Import necessary environment for the config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '';
+			$content .= '<?php'."\n";
+			$content .= 'require_once DOL_DOCUMENT_ROOT.\'/core/class/html.formsetup.class.php\';'."\n";
+			$content .= '$formSetup = new FormSetup($db);'."\n";
+			$content .= '?>'."\n";
+			$tplcontent .= $content."\n";
+		}
+
 		$tplcontent .= $objectpage->content."\n";
+
+		// Add logic to handle view and actions for managing parameters in the special config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '<div id="websitetemplateconfigpage">'."\n";
+			$content .= '<?php'."\n";
+			$content .= '/*' . "\n";
+			$content .= ' * Actions' . "\n";
+			$content .= ' */' . "\n";
+			$content .= '$websitetemplateconf = GETPOSTINT(\'websitetemplateconf\');' . "\n";
+			$content .= 'include DOL_DOCUMENT_ROOT.\'/core/actions_setmoduleoptions.inc.php\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '/*' . "\n";
+			$content .= ' * View' . "\n";
+			$content .= ' */' . "\n";
+			$content .= 'print load_fiche_titre($langs->trans(\'SetupAndProperties\'), \'\', \'title_setup\');' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($message)) {' . "\n";
+			$content .= '    print $message;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($formSetup->items)) {' . "\n";
+			$content .= '    $html = \'\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    $html .= \'<form action="config.php" method="POST">\';' . "\n";
+			$content .= '    // Generate hidden values from $formSetup->formHiddenInputs' . "\n";
+			$content .= '    if (!empty($formSetup->formHiddenInputs) && is_array($formSetup->formHiddenInputs)) {' . "\n";
+			$content .= '        foreach ($formSetup->formHiddenInputs as $hiddenKey => $hiddenValue) {' . "\n";
+			$content .= '            $html .= \'<input type="hidden" name="\' . dol_escape_htmltag($hiddenKey) . \'" value="\' . dol_escape_htmltag($hiddenValue) . \'">\';' . "\n";
+			$content .= '        }' . "\n";
+			$content .= '    }' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Generate output table' . "\n";
+			$content .= '    $html .= $formSetup->generateTableOutput(true);' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Submit button' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="action" value="preview">\';' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="websitetemplateconf" value="1">\';' . "\n";
+			$content .= '    $html .= \'<br>\';' . "\n";
+			$content .= '    $html .= \'<div class="form-setup-button-container center">\';' . "\n";
+			$content .= '    $html .= \'<input class="button button-submit" type="submit" value="\' . $langs->trans("Save") . \'">\';' . "\n";
+			$content .= '    $html .= \'</div>\';' . "\n";
+			$content .= '    $html .= \'</form>\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    print $html;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '?>' . "\n";
+			$content .= '</div>' . "\n";
+			$tplcontent .= $content."\n";
+		}
+
+
 		$tplcontent .= '</body>'."\n";
 		$tplcontent .= '</html>'."\n";
 
@@ -353,14 +430,14 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"keywords\" content=\".*?\" \/>/ms", "<meta name=\"keywords\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_KEYWORDS__"), 1) . "\"  />", $tmp);'."\n";
 		}
 		if (strpos($objectpage->content, 'define("__SEO_PAGE_TITLE__"') !== false) {
-			$tplcontent .= '$tmp = preg_replace("/^<title>.*?<\/title>/ms", "<title>" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_TITLE__"), 1) . "</title>", $tmp);'."\n";
-			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"title\" content=\".*?\" \/>/ms", "<meta name=\"title\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_TITLE__"), 1) . "\"  />", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/^<title>.*?<\/title>/ms", "<title>" . dolPrintHTMLForAttribute(defined("__SEO_PAGE_TITLE__") ? constant("__SEO_PAGE_TITLE__") : "", 1) . "</title>", $tmp);'."\n";
+			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"title\" content=\".*?\" \/>/ms", "<meta name=\"title\" content=\"" . dolPrintHTMLForAttribute(defined("__SEO_PAGE_TITLE__") ? constant("__SEO_PAGE_TITLE__") : "", 1) . "\"  />", $tmp);'."\n";
 		}
 		if (strpos($objectpage->content, 'define("__SEO_PAGE_DESC__"') !== false) {
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"description\" content=\".*?\" \/>/ms", "<meta name=\"description\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_DESC__"), 1) . "\"  />", $tmp);'."\n";
 		}
 		if (empty($objectpage->lang)) {		// We may need to use param into the canonical url
-			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
+			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "\"", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
 
 			$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 			$tplcontent .= '$tmp = preg_replace("/__SEO_CANONICAL_LANG__/", (defined("__SEO_PAGE_LANG__") ? preg_replace(\'/\[_-\].*$/\', "", constant("__SEO_PAGE_LANG__")) : (empty($weblangs->shortlang) ? "'.$tmpshortlangcode.'" : $weblangs->shortlang)), $tmp);'."\n";
@@ -375,10 +452,19 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (getDolGlobalString("MAIN_ADD_WAF_V22") && empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
-		$tplcontent .= "} // Not already loaded\n";
+		$tplcontent .= "}\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		if (in_array($objectpage->type_container, array('page', 'blogpost', 'service'))) {
@@ -654,9 +740,10 @@ function dolSaveLicense($file, $content)
  * 	Show list of themes. Show all thumbs of themes/skins
  *
  *	@param	Website		$website		Object website to load the template into
+ *  @param	int			$refresh		1 = Recopy templates into sources not into documents
  * 	@return	void
  */
-function showWebsiteTemplates(Website $website)
+function showWebsiteTemplates(Website $website, int $refresh)
 {
 	global $conf, $langs, $form, $user;
 
@@ -664,7 +751,112 @@ function showWebsiteTemplates(Website $website)
 	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
 
+	$warningtoshow = '';
+	$arrayoftemplatesfound = array();
+
+	if (count($dirthemes)) {
+		$i = 0;
+		// Scan dir to get all deployed qualified templates
+		foreach ($dirthemes as $dir) {
+			$dirtheme = DOL_DATA_ROOT.$dir;
+
+			if (is_dir($dirtheme)) {
+				$handle = opendir($dirtheme);
+				if (is_resource($handle)) {
+					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
+						//var_dump($dirtheme.'/'.$subdir);
+						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
+
+							// Disable not stable themes (dir ends with _exp or _dev)
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdirwithoutzip)) {
+								continue;
+							}
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
+								continue;
+							}
+
+							$arrayoftemplatesfound[$subdirwithoutzip] = array('id' => $subdirwithoutzip);
+							$i++;
+						}
+					}
+				}
+			}
+		}
+
+		// Now test if we found template available into source not copied into documents
+		$arrayofsourcetemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/websites', 'directories', 0, 'website_.*$');
+		$arrayofsourcetemplatesnotdeployed = array();
+		foreach ($arrayofsourcetemplates as $val) {
+			// Disable not stable themes (dir ends with _exp or _dev)
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $val['relativename'])) {
+				continue;
+			}
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $val['relativename'])) {
+				continue;
+			}
+
+			if (empty($arrayoftemplatesfound[$val['relativename']])) {
+				// We found a template into sources that is not into documents
+				if ($refresh) {		// We copy it
+					$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/websites/'.$val['name'];
+					$dest = DOL_DATA_ROOT.'/doctemplates/websites/'.$val['name'];
+
+					dol_delete_file($dest.'.zip');
+
+					// Compress it
+					global $errormsg;	// Used by dol_compress_dir
+					$errormsg = '';
+					$result = dol_compress_dir($src, $dest.'.zip', 'zip');
+					if ($result < 0) {
+						dol_syslog("Error in compress of dir ".$src, LOG_ERR);
+					}
+
+					$srcfile = DOL_DOCUMENT_ROOT.'/install/doctemplates/websites/'.preg_replace('/(_exp|_dev)$/', '', $val['name']).'.jpg';
+					$destfile = DOL_DATA_ROOT.'/doctemplates/websites/'.preg_replace('/(_exp|_dev)$/', '', $val['name']).'.jpg';
+
+					dol_copy($srcfile, $destfile);
+				} else {
+					$arrayofsourcetemplatesnotdeployed[$val['relativename']] = $val;
+				}
+			}
+		}
+
+		if (count($arrayofsourcetemplatesnotdeployed)) {
+			$warningtoshow = img_picto($langs->trans("WarningTemplatesFoundNotDeployedClickRefresh").': '.implode(', ', array_keys($arrayofsourcetemplatesnotdeployed)).'. '.$langs->trans("WarningTemplatesFoundNotDeployedClickRefresh2"), 'warning', 'class="valignmiddle paddingright"');
+		}
+	}
+
 	$colspan = 2;
+
+	$importButtonIsDisabled = 0;
+
+	global $dolibarr_website_allow_custom_php;
+	if (!empty($dolibarr_website_allow_custom_php) && $dolibarr_website_allow_custom_php == 1) {
+		$notdisabledsystemfunction = '';
+		$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+		foreach ($systemfunctions as $systemfunction) {
+			// @phpstan-ignore-next-line
+			if (function_exists($systemfunction)) {
+				$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+			}
+		}
+		if ($notdisabledsystemfunction) {
+			print '<div class="warning">';
+			print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsAllowedIf", 'warning');
+			print '</div>';
+
+			$importButtonIsDisabled = 1;
+		}
+	}
+	if (empty($dolibarr_website_allow_custom_php)) {
+		print '<div class="warning">';
+		print $langs->trans("ImportOfWebsiteTemplateIncludingPHPIsDisabled", 'warning');
+		print '</div>';
+
+		$importButtonIsDisabled = 1;
+	}
 
 	print '<!-- For website template import -->'."\n";
 	print '<table class="noborder centpercent">';
@@ -673,12 +865,13 @@ function showWebsiteTemplates(Website $website)
 	print '<tr class="liste_titre"><th class="titlefield">';
 	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.implode(", ", $dirthemes));
 	print ' ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" rel="noopener noreferrer external">';
-	print img_picto('', 'refresh');
+	print '<a class="valignmiddle" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=2" rel="noopener noreferrer external">';
+	print $warningtoshow;
+	print img_picto($langs->trans("Refresh"), 'refresh', 'class="valignmiddle"');
 	print '</a>';
 	print '</th>';
 	print '<th class="right">';
-	$url = 'https://www.dolistore.com/43-web-site-templates';
+	$url = 'https://www.dolistore.com/index.php?cat=84';
 	print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 	print img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans('DownloadMoreSkins');
 	print '</a>';
@@ -696,7 +889,7 @@ function showWebsiteTemplates(Website $website)
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
-					while (($subdir = readdir($handle)) !== false) {
+					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
 						//var_dump($dirtheme.'/'.$subdir);
 						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
@@ -709,6 +902,8 @@ function showWebsiteTemplates(Website $website)
 							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
 								continue;
 							}
+
+							$arrayoftemplatesfound[$subdirwithoutzip] = array('id' => $subdirwithoutzip);
 
 							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
@@ -744,7 +939,7 @@ function showWebsiteTemplates(Website $website)
 							if ($user->hasRight('website', 'delete')) {
 								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
 							}
-							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button'.($importButtonIsDisabled ? ' disabled' : '').'">'.$langs->trans("Load").'</a>';
 							print '</div>';
 
 							$i++;
@@ -770,9 +965,13 @@ function showWebsiteTemplates(Website $website)
 
 
 /**
- * Check a new string containing only php code (including <php tag)
+ * Check that the new string $phpfullcodestring contains only php code (including <php tag)
  * - Block if user has no permission to change PHP code.
  * - Block also if bad code found in the new string.
+ * This does not check for evil callable function (like dol_eval_standard could do), because php concat should be allowed so obfuscation is always possible so
+ * detecting callable function can't be guaranteed. For this reason, application is protected by a global variable $dolibarr_website_allow_custom_php = 0 by default
+ * that disallow PHP code. If $dolibarr_website_allow_custom_php=1, PHP code is allowed only if all RCE PHP functions are disabled.
+ * Any PHP code is allowed if $dolibarr_website_allow_custom_php=2 but setup explains that an apparmor or SE protection is required to restrict allowed RCE commands.
  *
  * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
  * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
@@ -791,6 +990,26 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 
 	// First check permission
 	if ($phpfullcodestringold != $phpfullcodestring) {
+		global $dolibarr_website_allow_custom_php;
+		if (empty($dolibarr_website_allow_custom_php)) {		// Case of $dolibarr_website_allow_custom_php = 0
+			$error++;
+			setEventMessages($langs->trans("NotAllowedToAddDynamicContentDisabledGlobaly", 'dolibarr_website_allow_custom_php'), null, 'errors');
+		} elseif ($dolibarr_website_allow_custom_php == 1) {	// Case of $dolibarr_website_allow_custom_php = 1
+			$notdisabledsystemfunction = '';
+			$systemfunctions = array("exec", "passthru", "shell_exec", "system", "popen", "proc_open");
+			foreach ($systemfunctions as $systemfunction) {
+				// @phpstan-ignore-next-line
+				if (function_exists($systemfunction)) {
+					$notdisabledsystemfunction .= ($notdisabledsystemfunction ? ', ' : '').$systemfunction;
+				}
+			}
+			if ($notdisabledsystemfunction) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorDynamicPHPContentNotAllowed", 'dolibarr_website_allow_custom_php'), null, 'errors');
+			}
+		}
+
 		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
@@ -824,9 +1043,14 @@ function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		}
 		if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
-			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "flock", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		}
+		if (getDolGlobalString('WEBSITE_PHP_DISALLOW_READ')) {    // If option is not on, we disallow functions to read files
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_decode")); // more dolibarr functions
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("file", "fopen", "file_get_contents", "fgets", "fgetscsv", "fgetss", "fread"));
+		}
+
 		//$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function

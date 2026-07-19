@@ -98,7 +98,7 @@ class Vkontakte extends AbstractService
 
         return $token;
     }
-    
+
     /**
      * {@inheritdoc}
      */

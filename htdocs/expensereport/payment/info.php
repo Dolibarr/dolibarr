@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,14 +35,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'trips'));
 
-$id = GETPOST('id');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+
+$object = new PaymentExpenseReport($db);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
+}
+
+// Security check
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
+}
+
+$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+
 
 /*
  * Actions
@@ -60,8 +77,6 @@ $confirm = GETPOST('confirm', 'alpha');
 
 llxHeader('', $langs->trans("Payment"));
 
-$object = new PaymentExpenseReport($db);
-$object->fetch($id);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);

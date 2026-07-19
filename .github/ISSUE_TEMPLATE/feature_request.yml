@@ -28,8 +28,3 @@ body:
       label: Suggested implementation
       description: Verbose description
 
-  - type: textarea
-    id: suggested-steps
-    attributes:
-      label: Suggested steps
-      description: List of tasks to achieve goal

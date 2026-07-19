@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014	    Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
@@ -162,8 +162,8 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
-	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	if ($validatemonth && $validateyear) {
 		$sql .= dolSqlDateFilter('f.datef', 0, $validatemonth, $validateyear);
@@ -208,9 +208,9 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 			$product_static->label = $objp->product_label;
 			$product_static->status = !empty($objp->status) ? $objp->status : 0;
 			$product_static->status_buy = !empty($objp->status_buy) ? $objp->status_buy : 0;
-			$product_static->accountancy_code_sell = $objp->code_sell;
-			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
-			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
+			$product_static->accountancy_code_sell = !empty($objp->code_sell)? $objp->code_sell : "";
+			$product_static->accountancy_code_sell_intra = !empty($objp->code_sell_intra)? $objp->code_sell_intra : "";
+			$product_static->accountancy_code_sell_export = !empty($objp->code_sell_export)? $objp->code_sell_export : "";
 			$product_static->accountancy_code_buy = !empty($objp->code_buy) ? $objp->code_buy : "";
 			$product_static->accountancy_code_buy_intra = !empty($objp->code_buy_intra) ? $objp->code_buy_intra : "";
 			$product_static->accountancy_code_buy_export = !empty($objp->code_buy_export) ? $objp->code_buy_export : "";
@@ -297,6 +297,7 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 /*
  * View
  */
+
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("SuppliersVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-supplier page-index');
@@ -306,9 +307,11 @@ $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current +
 
 print load_fiche_titre($langs->trans("SuppliersVentilation")." ".$textprevyear."&nbsp;".$langs->trans("Year")."&nbsp;".$year_start."&nbsp;".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilSupplier").'</span><br>';
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
-print '</span><br>';
+print '<div class="info">';
+print '<span class="">'.$langs->trans("DescVentilSupplier").'</span><br>';
+print '<span class="hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
+print '</span>';
+print '</div>';
 
 $y = $year_current;
 
@@ -364,8 +367,8 @@ $sql .= "  LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
@@ -417,10 +420,10 @@ if ($resql) {
 			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
-			print '<td class="right nowraponall amount" title="'.price($row[2*$i - 2]).' - '.$row[2*$i - 1].' lines">';
-			print price($row[2*$i - 2]);
+			print '<td class="right nowraponall amount" title="'.price($row[2 * $i - 2]).' - '.$row[2 * $i - 1].' lines">';
+			print price($row[2 * $i - 2]);
 			// Add link to make binding
-			if (!empty(price2num($row[2*$i - 2])) || !empty($row[2*$i - 1])) {
+			if (!empty(price2num($row[2 * $i - 2])) || !empty($row[2 * $i - 1])) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
 				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
@@ -495,8 +498,8 @@ $sql .= "  LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = ffd
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= "  AND ff.fk_statut > 0";
@@ -588,8 +591,8 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	$sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
-	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-		$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND ff.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 	$sql .= "  AND ff.fk_statut > 0";

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015 Frederic France	<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2025  Frédéric France	<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class box_ficheinter extends ModeleBoxes
 	public $boxcode = "ficheinter";
 	public $boximg = "object_intervention";
 	public $boxlabel = "BoxFicheInter";
-	public $depends = array("ficheinter"); // conf->contrat->enabled
+	public $depends = array("intervention");
 
 	/**
 	 *  Constructor
@@ -43,7 +43,7 @@ class box_ficheinter extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -111,7 +111,7 @@ class box_ficheinter extends ModeleBoxes
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->datem);
 
-					$ficheinterstatic->statut = $objp->status;
+					$ficheinterstatic->statut = $objp->status;	// deprecated
 					$ficheinterstatic->status = $objp->status;
 					$ficheinterstatic->id = $objp->rowid;
 					$ficheinterstatic->ref = $objp->ref;

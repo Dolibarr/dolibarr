@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani  <acianfa@free.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
 if ($action == 'setpricelevel' && $user->hasRight('societe', 'creer')) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->setPriceLevel(GETPOST("price_level"), $user);
+	$soc->setPriceLevel(GETPOSTINT("price_level"), $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;

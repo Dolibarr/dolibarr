@@ -74,3 +74,5 @@ NewPartnershipRequest=Nová žiadosť o partnerstvo
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Táto stránka musí obsahovať aspoň jeden odkaz na jednu z nasledujúcich domén: %s
 IPOfApplicant=IP žiadateľa
+PartnershipToReopen=Znovu otvoriť
+PartnershipConfirmReOpenAsk=Naozaj chcete znovu otvoriť toto partnerstvo <b> %s</b>?

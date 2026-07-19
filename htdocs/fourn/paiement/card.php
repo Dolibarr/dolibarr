@@ -3,8 +3,9 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +31,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
@@ -68,8 +67,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 // Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
 // It should be enough because all payments are done on invoices of the same thirdparty.
@@ -194,8 +193,9 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -208,7 +208,7 @@ if ($result > 0) {
 	print '</td></tr>';*/
 
 	// Date of payment
-	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
+	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))).'</td>';
 	print '<td>';
 	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
@@ -239,6 +239,7 @@ if ($result > 0) {
 	}
 
 	$allow_delete = 1;
+	$title_button = '';
 	// Bank account
 	if (isModEnabled("bank")) {
 		if ($object->fk_account) {
@@ -261,14 +262,14 @@ if ($result > 0) {
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td>';
-			print $bankline->getNomUrl(1, 0, 'showconciliated');
+			print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 			print '</td>';
 			print '</tr>';
 		}
 	}
 
 	// Note
-	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, (int) ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))).'</td>';
 	print '<td>';
 	print $form->editfieldval("Note", 'note', $object->note_private, $object, ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'textarea');
 	print '</td></tr>';
@@ -277,7 +278,9 @@ if ($result > 0) {
 
 	print '</div>';
 
-	print '<br>';
+
+	print '<br><br>';
+
 
 	/**
 	 *	List of seller's invoices
@@ -367,9 +370,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		} else {
-			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 		}
 	}
 
@@ -395,6 +398,11 @@ if ($result > 0) {
 	}
 	print '</div>';
 
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -407,9 +415,16 @@ if ($result > 0) {
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF') ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF'));
+			if (empty($modelpdf) && !empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$modelpdf = (string) $tmpkeys[0];
+			}
+			if (empty($modelpdf)) {
+				$modelpdf = 'standard_supplierpayment';
+			}
 
-			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
+			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
 		}
 
@@ -425,8 +440,26 @@ if ($result > 0) {
 		print '</div></div>';
 	}
 
+	// Ensure we have a PDF model to generate/attach the receipt on presend
+	if ($action == 'presend' && empty($object->model_pdf)) {
+		$defaultpdfmodel = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
+		if (!empty($defaultpdfmodel)) {
+			$object->model_pdf = $defaultpdfmodel;
+		} else {
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+			$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+			if (!empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$object->model_pdf = (string) $tmpkeys[0];
+			}
+		}
+		if (empty($object->model_pdf)) {
+			$object->model_pdf = 'standard_supplierpayment';
+		}
+	}
+
 	// Presend form
-	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$modelmail = 'supplier_payment_send';
 	$defaulttopic = 'SendPaymentReceipt';
 	$diroutput = $conf->fournisseur->payment->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
@@ -434,8 +467,7 @@ if ($result > 0) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 } else {
-	$langs->load("errors");
-	print $langs->trans("ErrorRecordNotFound");
+	recordNotFound('', 0);
 }
 
 print dol_get_fiche_end();

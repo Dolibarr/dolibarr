@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       /htdocs/fourn/ajax/getSupplierPrices.php
+ *	\file       htdocs/fourn/ajax/getSupplierPrices.php
  *	\brief      File to return an Ajax response to get list of possible prices for margin calculation
  */
 
@@ -47,6 +47,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  * @var User $user
  */
 
+// init getSupplierPrices hook
+$hookmanager->initHooks(array('ajaxGetSupplierPrices'));
+
 $idprod = GETPOSTINT('idprod');
 
 $prices = array();
@@ -54,25 +57,45 @@ $prices = array();
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "margins", "products"));
 
+if (!isModEnabled('product') && !isModEnabled('service')) {
+	accessforbidden("Not allowed");
+}
+if (!$user->hasRight('fournisseur', 'lire')) {
+	accessforbidden("Not allowed");
+}
+
+$object = new ProductFournisseur($db);
+
+if ($idprod > 0) {
+	$object->fetch($idprod);
+
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', 'rowid');
+}
+
+
 
 /*
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if ($idprod > 0) {
-	$producttmp = new ProductFournisseur($db);
-	$producttmp->fetch($idprod);
-
 	$sorttouse = 's.nom, pfp.quantity, pfp.price';
 	if (GETPOST('bestpricefirst')) {
 		$sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
 	}
 
-	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
+	$productSupplierArray = $object->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if (is_array($productSupplierArray)) {
 		foreach ($productSupplierArray as $productSupplier) {
 			if (getDolGlobalInt("DISABLE_BAD_REPUTATION_PRODUCT_PRICE") && $productSupplier->supplier_reputation == "DONOTORDER") {
@@ -82,7 +105,7 @@ if ($idprod > 0) {
 			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
 			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
 
-			$title = $productSupplier->fourn_name.' - '.$productSupplier->fourn_ref.' - ';
+			$title = $productSupplier->fourn_name.' - '.$productSupplier->ref_supplier.' - ';
 
 			if ($productSupplier->fourn_qty == 1) {
 				$title .= price($price, 0, $langs, 0, 0, -1, $conf->currency)."/";
@@ -96,22 +119,47 @@ if ($idprod > 0) {
 			}
 
 			$label = price($price, 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit");
-			if ($productSupplier->fourn_ref) {
-				$label .= ' ('.$productSupplier->fourn_ref.')';
+			if ($productSupplier->ref_supplier) {
+				$label .= ' ('.$productSupplier->ref_supplier.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array(
+				"id" => $productSupplier->product_fourn_price_id,
+				"price" => price2num($price, '', 0),	// For price field, we must use price2num(), for label or title, price()
+				"label" => $label,
+				"title" => $title,
+
+				// New data to allow js UX to build more interesting stuff
+				"supplierData" => [
+					'price' => (float) $productSupplier->fourn_price,
+					'unitPrice' => (float) $productSupplier->fourn_price,
+					'discountPercent' => (float) $productSupplier->fourn_remise_percent,
+					'qty' => (float) $productSupplier->fourn_qty,
+					'finalUnitPrice' => (float) $unitprice,
+					'finalPrice' => (float) $price,
+					'socName' => $productSupplier->fourn_name,
+					'ref' => $productSupplier->ref_supplier,
+					'reputation' => $productSupplier->supplier_reputation,
+					'dateCreation' => $productSupplier->fourn_date_creation,
+					'deliveryTimeDays' => $productSupplier->delivery_time_days,
+					// Carry the product's default unit so the line form can preselect
+					// #units like the customer side already does for idprod (see
+					// issues #34610 for the customer side and #38636 for the
+					// supplier side).
+					"fk_unit" => $productSupplier->fk_unit
+				],
+			);
 		}
 	}
 
 	// After best supplier prices and before costprice
 	if (isModEnabled('stock')) {
 		// Add price for pmp
-		$price = $producttmp->pmp;
+		$price = $object->pmp;
 		if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 			// get pmp for subproducts if any
-			$producttmp->get_sousproduits_arbo();
-			$prods_arbo=$producttmp->get_arbo_each_prod();
+			$object->get_sousproduits_arbo();
+			$prods_arbo = $object->get_arbo_each_prod();
 			if (!empty($prods_arbo)) {
 				$price = 0;
 				foreach ($prods_arbo as $child) {
@@ -122,15 +170,15 @@ if ($idprod > 0) {
 			}
 		}
 
-		$prices[] = array("id" => 'pmpprice', "price" => price2num($price), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
+		$prices[] = array("id" => 'pmpprice', "price" => price2num($price, 'MU'), "label" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency));  // For price field, we must use price2num(), for label or title, price()
 	}
 
 	// Add price for costprice (at end)
-	$price = $producttmp->cost_price;
+	$price = $object->cost_price;
 	if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 		// get costprice for subproducts if any
-		$producttmp->get_sousproduits_arbo();
-		$prods_arbo=$producttmp->get_arbo_each_prod();
+		$object->get_sousproduits_arbo();
+		$prods_arbo = $object->get_arbo_each_prod();
 		if (!empty($prods_arbo)) {
 			$price = 0;
 			foreach ($prods_arbo as $child) {
@@ -142,6 +190,14 @@ if ($idprod > 0) {
 	}
 
 	$prices[] = array("id" => 'costprice', "price" => price2num($price), "label" => $langs->trans("CostPrice").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price, 0, $langs, 0, 0, -1, $conf->currency)); // For price field, we must use price2num(), for label or title, price()
+
+	$parameters = array(
+		'prices' => &$prices,
+		'idprod' => $idprod,
+		'bestpricefirst' => GETPOST('bestpricefirst')
+	);
+
+	$hookmanager->executeHooks('afterGetSupplierPrices', $parameters, $producttmp);
 }
 
 echo json_encode($prices);

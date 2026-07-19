@@ -67,6 +67,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
+ * #LNE1-QU2507-0005
+ *
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
@@ -127,7 +129,6 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$_POST["param19"] = '<a href="j&Tab;a&Tab;v&Tab;asc&NewLine;ri&Tab;pt:&lpar;alert(document.cookie)&rpar;">XSS</a>';
 		//$_POST["param19"]='<a href="javascript:alert(document.cookie)">XSS</a>';
 		$_GET["param20"] = '<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />';
-
 
 
 		$result = GETPOST('id', 'int');              // Must return nothing
@@ -276,7 +277,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 
 		$result = GETPOST("param7", 'restricthtml');
 		print __METHOD__." result param7 = ".$result."\n";
-		$this->assertEquals('"c:\this is a path~1\aaan &#x;;;;" abcdef', $result);
+		$this->assertEquals('"c:\this is a path~1\aaan ;" abcdef', $result);
 
 		$result = GETPOST("param8e", 'restricthtml');
 		print __METHOD__." result param8e = ".$result."\n";
@@ -316,6 +317,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 
+
 		//$_POST["param0"] = 'A real string with <a href="rrr" title="aabb">aaa</a> and " inside content';
 		$result = GETPOST("param0", 'restricthtml');
 		$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and &amp; inside content';
@@ -337,6 +339,11 @@ class SecurityGETPOSTTest extends CommonClassTest
 		//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
 		//$this->assertEquals('"c:\this is a path~1\aaan 110;" abcdef', $result);		// ... on other PHP and libxml versions, we got a HTML that has been cleaned
 
+		$_POST["pagecontentwithaconstantvarinurl"] = '<a href="https://__[aaa]__/aaa.html">https://__[aaa]__/aaa.html</a>';
+		$result = GETPOST("pagecontentwithaconstantvarinurl", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<a href="https://__[aaa]__/aaa.html">https://__[aaa]__/aaa.html</a>', $result, 'Test on HTML content with url with constant');
+
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY only to test disabling of bad attributes
 
@@ -345,7 +352,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 			$result = GETPOST("param0", 'restricthtml');
-			$resultexpected = 'A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and & inside content';
+			$resultexpected = 'A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and &amp; inside content';
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
@@ -357,12 +364,12 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$result = GETPOST("param6", 'restricthtml');
 			print __METHOD__." result for param6=".$result." - before=".$_POST["param6"]."\n";
 			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
-			$this->assertEquals('"&gt;', $result);
+			$this->assertEquals('&quot;&gt;', $result);
 
 			$result = GETPOST("param7", 'restricthtml');
 			print __METHOD__." result param7 = ".$result."\n";
 			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
-			$this->assertEquals('"c:\this is a path~1\aaan &amp;#x110;" abcdef', $result);
+			$this->assertEquals('"c:\this is a path~1\aaan ;" abcdef', $result);
 		}
 
 
@@ -373,7 +380,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 			$result = GETPOST("param0", 'restricthtml');
-			$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and & inside content';
+			$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and &amp; inside content';
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
@@ -456,6 +463,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
+		// Test with restricthtml + MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT to test limit of external links
 
 		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
 		$_POST["pagecontentwithlinks"] = '<img src="aaa"><img src="bbb"><img src="/ccc"><span style="background: url(/ddd)"></span>';
@@ -490,24 +498,23 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$_POST["pagecontentwithnowrapperlinks"] = '<img src="https://aaa">';
 		$result = GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed (Example: https://aaa)', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 		// Test that links not on wrapper and not data are disallowed
 		$_POST["pagecontentwithnowrapperlinks"] = '<span style="background: url(http://ddd)"></span>';
 		$result = GETPOST("pagecontentwithnowrapperlinks", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
-
+		$this->assertEquals('ErrorHTMLExternalLinksNotAllowed (Example: http://ddd)', $result, 'Test on MAIN_DISALLOW_URL_INTO_DESCRIPTIONS = 1 (no links to http allowed)');
 
 		// Test substitution in GET url
 		$user->fk_user = 999;
 		$mysoc->country_id = 1;
-		$_GET['paramtestsubstit'] = 'XXX __NOTDEFINED__ XXX __USER_SUPERVISOR_ID__ XXX __MYCOMPANY_COUNTRY_ID__ XXX  __MYCOUNTRY_ID__ XXX';
+		$_GET['paramtestsubstit'] = 'XXX __NOTDEFINED__ XXX __USER_SUPERVISOR_ID__ XXX __MYCOMPANY_COUNTRY_ID__ XXX';
 
 		// Test that links not on wrapper and not data are disallowed
 		$result = GETPOST("paramtestsubstit", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('XXX __NOTDEFINED__ XXX 999 XXX 1 XXX 1 XXX', $result, 'Failed to do conversion');
+		$this->assertEquals('XXX __NOTDEFINED__ XXX 999 XXX 1 XXX', $result, 'Failed to do conversion');
 
 
 		return $result;

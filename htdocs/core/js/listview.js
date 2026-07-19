@@ -51,7 +51,7 @@ function Listview_modifyUrl(strURL,paramName,paramNewValue){
               		  strURL=strFirstPart+paramNewValue+strLastPart;
                 }
         else{
-                if (strURL.search('=')!=-1) // permet de verifier s'il y a dej� des param�tres dans l'URL
+                if (strURL.search('=')!=-1) // permet de verifier s'il y a dejà des paramètres dans l'URL
                         strURL+='&'+paramName+'='+paramNewValue;
                 else
                         strURL+='?'+paramName+'='+paramNewValue;

@@ -39,7 +39,7 @@ class modZapier extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 		// Id for module (must be unique).
@@ -61,15 +61,15 @@ class modZapier extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Zapier description (Long)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		//Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 		// Key used in llx_const table to save module status enabled/disabled (where ZAPIERFORDOLIBARR is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
+		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue.png'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'zapier';
+		$this->picto = 'zapier.png';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -128,15 +128,8 @@ class modZapier extends DolibarrModules
 		//$this->phpmin = array(7, 0);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(10, 0);
-		// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation = array();
-		// Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();
-		// $this->automatic_activation = array(
-		//     'FR'=>'ZapierWasAutomaticallyActivatedBecauseOfYourCountryChoice',
-		// );
-		// If true, can't be disabled
-		// $this->always_enabled = true;
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(
@@ -211,7 +204,7 @@ class modZapier extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->zapier->enabled',
+			//      'test' => 'isModEnabled('zapier')',
 			//      'priority' => 50,
 			//  ),
 		);

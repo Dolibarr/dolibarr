@@ -74,3 +74,5 @@ NewPartnershipRequest=Ny förfrågan om partnerskap
 NewPartnershipRequestDesc=I detta formulär kan du skicka in en fråga och beägra att bli en del av vårt partnerskapsprogram. Om du behöver hjälp med att fylla i detta formulär, vänligen kontakta oss via e-post <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Den här sidan måste innehålla minst en länk till en av följande domäner: %s
 IPOfApplicant=Sökandens IP
+PartnershipToReopen=Att öppna igen
+PartnershipConfirmReOpenAsk=Är du säker på att du vill återuppta detta partnerskap <b> %s</b>?

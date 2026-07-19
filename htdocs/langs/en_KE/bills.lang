@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - bills
+ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.

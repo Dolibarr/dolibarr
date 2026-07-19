@@ -33,7 +33,7 @@ function showOnlineSignatureUrl($type, $ref, $obj = null, $mode = '')
 	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("payment", "paybox", "stripe"));
+	$langs->loadLangs(array("payment", "stripe"));
 
 	$servicename = 'Online';
 
@@ -93,10 +93,13 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		$urltouse = $urlwithroot;
 	}
 
+	global $dolibarr_main_instance_unique_id;
+	$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+
 	$securekeyseed = '';
 
 	if ($type == 'proposal') {
-		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -113,7 +116,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : $obj->entity) : ''), 'hash'));
 		}
 		/*
 		if ($mode == 1) {
@@ -140,7 +143,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			}
 		}*/
 	} elseif ($type == 'contract') {
-		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -157,10 +160,10 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + contract_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
 		}
 	} elseif ($type == 'fichinter') {
-		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -177,10 +180,10 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
 		}
 	} else {	// For example $type = 'societe_rib'
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter '.dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -197,18 +200,13 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + $type + '_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $obj->entity), '0');
+			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
 		}
 	}
 
 	// For multicompany
 	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".(empty($obj->entity) ? '' : (int) $obj->entity); // Check the entity because we may have the same reference in several entities
-	} elseif ($mode == 0) {
-		// Bcrypt output (dol_hash type '0') can legitimately end with '.' or '/', which Gmail and several mobile mail
-		// clients strip from autolinked URLs and break the signature link. Append a stable trailing parameter that
-		// the receiver ignores so the URL never ends with the hash. Only for the real URL (mode 0), not the preview.
-		$out .= "&_=1";
 	}
 
 	return $out;

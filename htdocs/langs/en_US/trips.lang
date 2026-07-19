@@ -121,7 +121,6 @@ ValideTrip=Approve expense report
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Breakfast
@@ -157,3 +156,6 @@ TF_PEAGE=Toll
 TF_TAXI=Taxi
 TF_TRAIN=Train
 TF_TRIP=Transportation
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

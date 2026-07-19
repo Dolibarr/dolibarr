@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
-if (isModEnabled("bank")) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +32,11 @@ if (isModEnabled("bank")) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+if (isModEnabled("bank")) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "loan"));
@@ -50,7 +49,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 // TODO ajouter regle pour restreindre access paiement
-//$result = restrictedArea($user, 'facture', $id,'');
+//restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
 if ($id > 0) {
@@ -58,6 +57,10 @@ if ($id > 0) {
 	if (!$result) {
 		dol_print_error($db, 'Failed to get payment id '.$id);
 	}
+}
+
+if (!$user->hasRight('loan', 'read')) {
+	accessforbidden();
 }
 
 
@@ -98,7 +101,9 @@ $help_url = "EN:Module_Loan|FR:Module_Emprunt";
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-payment-card');
 
 $h = 0;
+$head = [];
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = (string) $h;
@@ -237,7 +242,7 @@ if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
 		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
 	} else {
-		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
+		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 0);
 	}
 }
 

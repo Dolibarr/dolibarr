@@ -17,6 +17,7 @@ AccountancyCodeAsset=Kirjanpitokoodi (omaisuus)
 AccountancyCodeDepreciationAsset=Kirjanpitokoodi (omaisuuden poistot tili)
 AccountancyCodeDepreciationExpense=Kirjanpitokoodi (poistokustannuslaskelma)
 AssetsLines=Omaisuudet
+ConfirmValidateAsset=Haluatko varmasti validoida tämän resurssin viitteellä <b>%s</b>?
 DeleteType=Poista
 DeleteAnAssetType=Poista omaisuusmalli
 ConfirmDeleteAssetType=Haluatko varmasti poistaa tämän omaisuusmallin?
@@ -34,7 +35,7 @@ AssetsTypeId=Omaisuus mallin tunnus
 AssetsTypeLabel=Omaisuus mallin etiketti
 AssetsTypes=Omaisuusmallit
 ASSET_ACCOUNTANCY_CATEGORY=Kiinteä omaisuus kirjanpito ryhmä
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Yhden vuoden poiston laskemiseen käytetty suhteellinen ajanjakso päivinä
 # Menu
 MenuAssets=Omaisuudet
 MenuNewAsset=Lisää omaisuus
@@ -70,6 +71,7 @@ AssetDisposal=Hävittäminen
 AssetConfirmDisposalAsk=Haluatko varmasti luopua omaisuudesta<b> %s</b>?
 AssetConfirmReOpenAsk=Haluatko varmasti avata omaisuuden uudelleen <b> %s</b>?
 # Asset status
+AssetInDraft=Vekseli
 AssetInProgress=Käsittelyssä
 AssetDisposed=Hävitetty
 AssetRecorded=Kirjattu

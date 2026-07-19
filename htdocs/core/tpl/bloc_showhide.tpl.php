@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,14 @@
  * @var CommonObject $object
  *
  * @var string $blocname
+ * @var string $title
  */
+'
+@phan-var-force string $blocname
+@phan-var-force string $title
+@phan-var-force array<string,null|string|int> $parameters
+';
+
 // Protection to avoid direct call of template
 if (empty($blocname)) {
 	print "Error, template page can't be called as URL";
@@ -69,9 +76,9 @@ print '});'."\n";
 print '</script>'."\n";
 
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-'.$blocname.'"';
-print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow.png').'</div>'."\n";
+print ' class="linkobject'.($hide ? ' hideobject' : '').'">'.img_picto('', '1uparrow').'</div>'."\n";
 print '<div style="float:right; position: relative; top: 3px; right:5px;" id="show-'.$blocname.'"';
-print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow.png').'</div>'."\n";
+print ' class="linkobject'.($hide ? '' : ' hideobject').'">'.img_picto('', '1downarrow').'</div>'."\n";
 print '<div id="'.$blocname.'_title" class="liste_titre">'.$title.'</div>'."\n";
 print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobject').'">'."\n";
 
