@@ -1886,12 +1886,6 @@ class Expedition extends CommonObject
 		}
 
 		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
-
 			// No delete expedition
 			if (!$error) {
 				$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
