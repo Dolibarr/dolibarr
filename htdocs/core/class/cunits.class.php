@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur      <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,8 +92,8 @@ class CUnits extends CommonDict
 
 		// Clean parameters
 
-		if (isset($this->id)) {
-			$this->id = (int) $this->id;
+		if (empty($this->id)) {
+			return -1;
 		}
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -126,7 +126,7 @@ class CUnits extends CommonDict
 		$sql .= "unit_type,";
 		$sql .= "scale";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
+		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
 		$sql .= " ".(!isset($this->short_label) ? 'NULL' : "'".$this->db->escape($this->short_label)."'").",";
@@ -208,7 +208,13 @@ class CUnits extends CommonDict
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
-				$this->scale = $obj->scale ? (int) $obj->scale : null;
+				// Preserve scale=0 (e.g. the kg row). A truthy test on $obj->scale would
+				// collapse the legitimate scale of "0" into null and, downstream, the
+				// "weight unit" dropdown comparison in selectMeasuringUnits would no
+				// longer match the stored value under PHP 8 strict numeric-string
+				// rules, silently switching saved products to the first option (see
+				// issue #38497).
+				$this->scale = isset($obj->scale) ? (int) $obj->scale : null;
 				$this->unit_type = $obj->unit_type;
 				$this->active = (int) $obj->active;
 			}
@@ -302,7 +308,8 @@ class CUnits extends CommonDict
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
-					$record->scale = $obj->scale ? (int) $obj->scale : null;
+					// Same scale-preservation as in fetch(): see issue #38497.
+					$record->scale = isset($obj->scale) ? (int) $obj->scale : null;
 					$record->active = (int) $obj->active;
 
 					$this->records[$record->id] = $record;
@@ -457,13 +464,13 @@ class CUnits extends CommonDict
 		$value = (float) price2num($value);
 		$fk_unit = intval($fk_unit);
 
-		// Calcul en unité de base
+		// Calculate in base unit
 		$scaleUnitPow = $this->scaleOfUnitPow($fk_unit);
 
 		// convert to standard unit
 		$value *= $scaleUnitPow;
 		if ($fk_new_unit != 0) {
-			// Calcul en unité de base
+			// Calculate in base unit
 			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
 			if (!empty($scaleUnitPow)) {
 				// convert to new unit

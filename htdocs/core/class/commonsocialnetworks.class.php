@@ -57,10 +57,8 @@ trait CommonSocialNetworks
 
 		if ($nbofnetworks > 1) {
 			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
-			//print '</td>';
-			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
-			//print '<br>';
 			print ' <a class="paddingtop paddingbottom socialnetworklnk onreposition" href="#"><span class="badge badge-secondary socialnetworklnk">'.$nbactive.'</span></a>';
+			print ' <span class="soc_network">'.$form->textwithpicto("", $langs->transnoentitiesnoconv("YouCanChangeValuesForThisListFromModuleSetup", $langs->transnoentitiesnoconv("SocialNetworks"))).'</span>';
 			print '</td>';
 			print '</tr>';
 		}

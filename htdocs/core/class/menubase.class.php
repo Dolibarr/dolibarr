@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class Menubase
 	public $id;
 
 	/**
-	 * @var int Entity
+	 * @var ?int Entity
 	 */
 	public $entity;
 
@@ -444,8 +444,8 @@ class Menubase
 				$this->title = $obj->title;
 				$this->prefix = $obj->prefix;
 				$this->langs = $obj->langs;
-				$this->perms = str_replace("\"", "'", $obj->perms);
-				$this->enabled = str_replace("\"", "'", $obj->enabled);
+				$this->perms = (string) str_replace("\"", "'", $obj->perms);
+				$this->enabled = (string) str_replace("\"", "'", $obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->showtopmenuinframe = $obj->showtopmenuinframe;
@@ -569,7 +569,7 @@ class Menubase
 		foreach ($tabMenu as $key => $val) {
 			// Define menutopid of mainmenu
 			if (empty($menutopid) && $val['type'] == 'top' && $val['mainmenu'] == $mainmenu) {
-				$menutopid = $val['rowid'];
+				$menutopid = (int) $val['rowid'];
 				break;
 			}
 		}
@@ -679,7 +679,7 @@ class Menubase
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$perms = verifCond($tmpcond);
-					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
+					//var_dump($menu['rowid'].' - '.$menu['titre'].' - '.$menu['perms'].' => '.$tmpcond.":".$perms);
 				}
 
 				// Define $enabled

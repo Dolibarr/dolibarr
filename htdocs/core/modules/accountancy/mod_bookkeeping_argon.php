@@ -22,6 +22,7 @@
  *  \ingroup    accountancy
  *  \brief      File of class to manage Bookkeeping numbering rules Argon
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/accountancy/modules_accountancy.php';
 
 /**
@@ -79,7 +80,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	public function getExample(): string
 	{
-		return "2025VT0001";
+		return "2501VT00001";
 	}
 
 
@@ -123,7 +124,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		global $conf, $db;
 
 		// Get mask
-		$mask = '{yyyy}{jj}{0000@1}';
+		$mask = '{yy}{mm}{jj}{00000@99}';
 
 		$where = '';
 
@@ -151,6 +152,6 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		$docYear = (int) dol_print_date($object->doc_date, '%Y');
 		$docMonth = (int) dol_print_date($object->doc_date, '%m');
 		$docFiscalYear = $docMonth < $fiscalStartMonth ? ($docYear - 1) : $docYear;
-		return $docFiscalYear .  str_pad($object->code_journal, 3, "0", STR_PAD_LEFT);
+		return $docFiscalYear .  str_pad((string) $object->code_journal, 3, "0", STR_PAD_LEFT);
 	}
 }

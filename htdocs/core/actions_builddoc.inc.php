@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,26 +29,40 @@
 // $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
+
 /**
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
+ * @var CommonObject|Societe $object
+ *
  * @var string $action
  * @var int $id
- * @var CommonObject $object
- * @var ?int $permissiontocreate
+ * @var ?int $permissioncreate
+ * @var ?int $usercangeneratedoc
  * @var int $permissiontoadd
  * @var string $upload_dir
+ * @var int $donotredirect
+ *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
  * @var ?int $hideref
+ * @var ?array<string,mixed> $moreparams
  */
+'
+@phan-var-force int $id
+@phan-var-force int $permissiontoadd
+@phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force CommonObject|Societe $object
+@phan-var-force int $id
+';
+
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
 
 // Build doc
-if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneratedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Model")), null, 'errors');
 	} else {
@@ -78,7 +92,7 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {
 			$newlang = $object->thirdparty->default_lang; // for proposal, order, invoice, ...
 		}
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->default_lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && property_exists($object, 'default_lang') && empty($newlang) && isset($object->default_lang)) {
 			$newlang = $object->default_lang; // for thirdparty
 		}
 		if (!empty($newlang)) {
@@ -87,22 +101,16 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// To be sure vars is defined
-		if (empty($hidedetails)) {
-			$hidedetails = 0;
-		}
-		if (empty($hidedesc)) {
-			$hidedesc = 0;
-		}
-		if (empty($hideref)) {
-			$hideref = 0;
-		}
-		if (empty($moreparams)) {
-			$moreparams = null;
-		}
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$moreparams = isset($moreparams) ? $moreparams : null;
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($object->warning, $object->warnings, 'warnings');
 			$action = '';
 		} else {
 			if (empty($donotredirect)) {	// This is set when include is done by bulk action "Bill Orders"
@@ -133,12 +141,12 @@ if ($action == 'remove_file' && $permissiontoadd) {
 		$langs->load("other");
 		$filetodelete = GETPOST('file', 'alpha');
 		$file = $upload_dir.'/'.$filetodelete;
-		$dirthumb = dirname($file).'/thumbs/'; // Chemin du dossier contenant la vignette (if file is an image)
+		$dirthumb = dirname($file).'/thumbs/'; // Path to the folder containing the thumbnail (if file is an image)
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) {
 			// If it exists, remove thumb.
 			$regs = array();
-			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs)) {
+			if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff|\.webp|\.xpm|\.xbm|\.avif)$/i', $file, $regs)) {
 				$photo_vignette = basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
 				if (file_exists(dol_osencode($dirthumb.$photo_vignette))) {
 					dol_delete_file($dirthumb.$photo_vignette);

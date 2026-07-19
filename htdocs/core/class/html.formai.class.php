@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,16 +27,16 @@
 /**
  *       \file       htdocs/core/class/html.formai.class.php
  *       \ingroup    core
- *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      File for class FormAI class to generate HTML forms for single email
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Class permettant la generation du formulaire html d'envoi de mail unitaire
- *      Usage: $formail = new FormAI($db)
- *             $formai->proprietes=1 ou chaine ou tableau de valeurs
- *             $formai->show_form() affiche le formulaire
+ *      Class to generate HTML forms for single email
+ *      Usage: $formai = new FormAI($db)
+ *             $formai->proprietes=1 or string or table of values
+ *             $formai->show_form() shows the form
  */
 class FormAI extends Form
 {
@@ -127,7 +127,7 @@ class FormAI extends Form
 		}
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('texttranslation'))) {
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
 			$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
@@ -136,19 +136,19 @@ class FormAI extends Form
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textsummarize'))) {
 			$summarizearray = getListForAISummarize();
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_summarize'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 
 		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephrase'))) {
 			$stylearray = getListForAIRephraseStyle();
-			$out .= ($out ? '<br>' : '');
+			$out .= ($out ? '<div style="height: 10px;"></div>' : '');
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, '', 1, 0, 0, '', 'minwidth250 ai_rephraser'.$htmlContent.'_select');
 			$out .= '</div>';
 		}
 
@@ -207,14 +207,14 @@ class FormAI extends Form
 				});
 
 				$('#ai_summarize".$htmlContent."_select').on('change', function() {
-					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
+					console.log('We change #ai_summarize".$htmlContent."_select with length '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
 					}
 				});
 
 				$('#ai_rephraser".$htmlContent."_select').on('change', function() {
-					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
+					console.log('We change #ai_summarize".$htmlContent."_select with mode '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
 					}
@@ -238,10 +238,11 @@ class FormAI extends Form
 					instructions = '';
 					htmlname = '".dol_escape_js($htmlContent)."';
 					format = '".dol_escape_js($format)."';
-					functionai = $(element).data('functionai');		/* element is the html element we have manipulated in the ai tool */
+					functionai = $(element).data('functionai');				/* element is the html element we have manipulated in the ai tool */
+					style = $('#ai_rephraser'+htmlname+'_select').val();
 					texttomodify = '';
 
-					console.log('htmlname='+htmlname+' functionai='+functionai);
+					console.log('htmlname='+htmlname+' functionai='+functionai+' style='+style);
 					if ($('#'+htmlname).is('div')) {
 						texttomodify = $('#'+htmlname).html();	/* for div */
 					} else {
@@ -289,8 +290,12 @@ class FormAI extends Form
 						}
 						instructions = 'Summarize the following text '+ (unit == 'percent' ? 'by ' : 'in') + width + ' ' + unit + ': ' + texttomodify;
 					} else if (functionai == 'textrephraser') {
-						style = $('#ai_rephraser'+htmlname+'_select').val();
-						instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+						if (style == 'spellchecker') {
+							instructions = 'Fix spelling and grammar errors in the following text : ' + texttomodify;
+							functionai = 'textspellchecker';
+						} else {
+							instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+						}
 					} else if (functionai == 'textgenerationextrafield'){
 						instructions = $(element).val();
 					} else {
@@ -411,7 +416,7 @@ class FormAI extends Form
 						console.log('Add response into field \'#'+htmlname+'\': '+response);
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
-						jQuery('#'+htmlname).html(response);	// If #htmlContent is a div
+						jQuery('#'+htmlname).html(response).trigger('change');	// If #htmlContent is a div and trigger event change for extrafield update
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {
@@ -514,121 +519,5 @@ class FormAI extends Form
 				$this->substit_lines[$line->id] = $substit_line;	// @phan-suppress-current-line PhanTypeMismatchProperty
 			}
 		}
-	}
-
-	/**
-	 * Get list of substitution keys available for emails. This is used for tooltips help.
-	 * This include the complete_substitutions_array.
-	 *
-	 * @param	string	$mode		'formai', 'formaiwithlines', 'formaiforlines', 'ai', ...
-	 * @param	?Object	$object		Object if applicable
-	 * @return	array<string,string>               Array of substitution values for emails.
-	 */
-	public static function getAvailableSubstitKey($mode = 'formai', $object = null)
-	{
-		global $langs;
-
-		$tmparray = array();
-		if ($mode == 'formai' || $mode == 'formaiwithlines' || $mode == 'formaiforlines') {
-			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
-			complete_substitutions_array($tmparray, $langs, null, $parameters);
-
-			if ($mode == 'formwithlines') {
-				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
-			}
-			if ($mode == 'formforlines') {
-				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
-			}
-		}
-
-		if ($mode == 'emailing') {
-			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
-			complete_substitutions_array($tmparray, $langs, null, $parameters);
-
-			// For mass emailing, we have different keys specific to the data into tagerts list
-			$tmparray['__ID__'] = 'IdRecord';
-			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
-			$tmparray['__EMAIL__'] = 'EMailRecipient';
-			$tmparray['__LASTNAME__'] = 'Lastname';
-			$tmparray['__FIRSTNAME__'] = 'Firstname';
-			$tmparray['__MAILTOEMAIL__'] = 'TagMailtoEmail';
-			$tmparray['__OTHER1__'] = 'Other1';
-			$tmparray['__OTHER2__'] = 'Other2';
-			$tmparray['__OTHER3__'] = 'Other3';
-			$tmparray['__OTHER4__'] = 'Other4';
-			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
-			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
-			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';
-
-			$onlinepaymentenabled = 0;
-			if (isModEnabled('paypal')) {
-				$onlinepaymentenabled++;
-			}
-			if (isModEnabled('paybox')) {
-				$onlinepaymentenabled++;
-			}
-			if (isModEnabled('stripe')) {
-				$onlinepaymentenabled++;
-			}
-			if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-				$tmparray['__SECUREKEYPAYMENT__'] = getDolGlobalString('PAYMENT_SECURITY_TOKEN');
-				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-					if (isModEnabled('member')) {
-						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
-					}
-
-					//Online payment link
-					if (isModEnabled('member')) {
-						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
-					}
-				}
-			} else {
-				/* No need to show into tooltip help, option is not enabled
-				$vars['__SECUREKEYPAYMENT__']='';
-				$vars['__SECUREKEYPAYMENT_MEMBER__']='';
-				$vars['__SECUREKEYPAYMENT_INVOICE__']='';
-				$vars['__SECUREKEYPAYMENT_ORDER__']='';
-				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
-				*/
-			}
-			if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
-				$tmparray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
-			}
-		}
-
-		foreach ($tmparray as $key => $val) {
-			if (empty($val)) {
-				$tmparray[$key] = $key;
-			}
-		}
-
-		return $tmparray;
 	}
 }

@@ -206,7 +206,7 @@ array:2 [
         %sGeneratorDemo.php:10: {
           :     yield 1;
           : }
-          : 
+          :
         }
       }
     }

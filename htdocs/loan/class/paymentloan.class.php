@@ -48,17 +48,17 @@ class PaymentLoan extends CommonObject
 	public $picto = 'money-bill-alt';
 
 	/**
-	 * @var int Loan ID
+	 * @var ?int Loan ID
 	 */
 	public $fk_loan;
 
 	/**
-	 * @var string Create date
+	 * @var int|'' Create date
 	 */
 	public $datec = '';
 
 	/**
-	 * @var string Payment date
+	 * @var int|'' Payment date
 	 */
 	public $datep = '';
 
@@ -68,12 +68,12 @@ class PaymentLoan extends CommonObject
 	public $amounts = array();
 
 	/**
-	 * @var float|int  Total amount of payment
+	 * @var null|float|int  Total amount of payment
 	 */
 	public $amount_capital;
 
 	/**
-	 * @var float|int
+	 * @var null|float|int
 	 */
 	public $amount_insurance;
 
@@ -83,28 +83,28 @@ class PaymentLoan extends CommonObject
 	public $amount_interest;
 
 	/**
-	 * @var int Payment mode ID
+	 * @var ?int Payment mode ID
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int user ID
+	 * @var ?int user ID
 	 */
 	public $fk_user_modif;
 
@@ -112,14 +112,17 @@ class PaymentLoan extends CommonObject
 	 * @var string
 	 */
 	public $type_code;
+
 	/**
 	 * @var string
 	 */
 	public $type_label;
+
 	/**
 	 * @var int
 	 */
 	public $chid;
+
 	/**
 	 * @var string
 	 */
@@ -522,7 +525,7 @@ class PaymentLoan extends CommonObject
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total = $this->amount_capital;
+			$total = (float) $this->amount_capital;
 			if ($mode == 'payment_loan') {
 				$total = -$total;
 			}
@@ -651,15 +654,17 @@ class PaymentLoan extends CommonObject
 			$label .= ' - '.$moretitle;
 		}
 
-		$url = DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id;
+		$baseurl = DOL_URL_ROOT.'/loan/payment/card.php';
+		$query = ['id' => $this->id];
 
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
 		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+			$query += ['save_lastsearch_values' => 1];
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';

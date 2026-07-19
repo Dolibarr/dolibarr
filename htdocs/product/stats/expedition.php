@@ -135,8 +135,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -152,14 +152,14 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, e.ref, e.ref_customer";
 			$sql .= ", e.date_creation, e.date_delivery, e.fk_statut as statut, e.rowid as expeditionid, ed.rowid";
 			$sql .= ", ed.qty , cd.subprice * (100 - cd.remise_percent) / 100 * ed.qty AS total_ht";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON e.fk_soc = s.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_expedition = e.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.rowid = ed.fk_elementdet AND (ed.element_type = 'commande' OR ed.element_type = 'order')";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -204,8 +204,10 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&search_year='.urlencode((string) ($search_year));
 				}
 
+				print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="">';
 				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				}
@@ -226,8 +228,8 @@ if ($id > 0 || !empty($ref)) {
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre reposition" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';

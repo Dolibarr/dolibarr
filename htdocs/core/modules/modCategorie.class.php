@@ -7,6 +7,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Charlene Benke		    <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -600,7 +601,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cp' => MAIN_DB_PREFIX.'categorie_product');
 			$this->import_fields_array[$r] = array('cp.fk_categorie' => "Category*", 'cp.fk_product' => "Product*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=0');
+			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:0)');
 
 			$this->import_convertvalue_array[$r] = array(
 					'cp.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -662,9 +663,9 @@ class modCategorie extends DolibarrModules
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_contact');
+			$this->import_tables_array[$r] = array('cm' => MAIN_DB_PREFIX.'categorie_member');
 			$this->import_fields_array[$r] = array('cm.fk_categorie' => "Category*", 'cm.fk_member' => "Member*");
-			$this->import_regex_array[$r] = array('cm.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=3');
+			$this->import_regex_array[$r] = array('cm.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:3)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -707,7 +708,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cp' => MAIN_DB_PREFIX.'categorie_project');
 			$this->import_fields_array[$r] = array('cp.fk_categorie' => "Category*", 'cp.fk_project' => "Project*");
-			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=6');
+			$this->import_regex_array[$r] = array('cp.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:6)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -726,7 +727,7 @@ class modCategorie extends DolibarrModules
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r] = array('cu' => MAIN_DB_PREFIX.'categorie_user');
 			$this->import_fields_array[$r] = array('cu.fk_categorie' => "Category*", 'cu.fk_user' => "User*");
-			$this->import_regex_array[$r] = array('cu.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type=7');
+			$this->import_regex_array[$r] = array('cu.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:7)');
 
 			$this->import_convertvalue_array[$r] = array(
 				'cu.fk_categorie' => array('rule' => 'fetchidfromref', 'classfile' => '/categories/class/categorie.class.php', 'class' => 'Categorie', 'method' => 'fetch', 'element' => 'category'),
@@ -901,7 +902,7 @@ class modCategorie extends DolibarrModules
 			'ci.fk_categorie'  => 'Category*',
 			'ci.fk_'.$categcode => ucfirst($categcode).'*'
 		];
-		$this->import_regex_array[$r] = ['ci.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:type='.$cat_id];
+		$this->import_regex_array[$r] = ['ci.fk_categorie' => 'rowid@'.MAIN_DB_PREFIX.'categorie:(type:=:'.$cat_id.')'];
 
 		$this->import_convertvalue_array[$r] = [
 			'ci.fk_categorie' =>
@@ -937,6 +938,16 @@ class modCategorie extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		if (isModEnabled("invoice")) {
+			$this->_load_tables('/install/mysql/', 'facture');
+		}
+		if (isModEnabled("order")) {
+			$this->_load_tables('/install/mysql/', 'commande');
+		}
+		if (isModEnabled("propal")) {
+			$this->_load_tables('/install/mysql/', 'propal');
+		}
+
 		// Permissions
 		$this->remove($options);
 

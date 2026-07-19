@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +25,23 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions"));
+$langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions", "mrp"));
 $langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets"));
 
 // Get parameters
@@ -62,8 +63,10 @@ if (empty($mode)) {
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];
+if (is_numeric($type)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+	$tmpcategory = new Categorie($db);
+	$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+	$type = $MAP_ID_TO_CODE[(int) $type];
 }
 $nosearch = GETPOSTINT('nosearch');
 
@@ -82,8 +85,8 @@ $pagenext = $page + 1;
 
 // Initialize technical objects
 $object = new Categorie($db);
-$extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->categories->dir_output.'/temp/massgeneration/'.$user->id;
+
+$diroutputmassaction = $conf->category->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
 // Fetch optionals attributes and labels
@@ -234,7 +237,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+if ($type == 'product' || $type == 'service') {
+	$title .= ' ('.$langs->trans("ProductsOrServices").')';
+} else {
+	$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
+}
 //$help_url = "EN:Module_Categorie|FR:Module_Categorie_FR|ES:Módulo_Categorie";
 $help_url = '';
 $morejs = array();
@@ -262,7 +269,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".$db->prefix().$object->table_element." as t";
 //$sql .= " LEFT JOIN ".$db->prefix()."anothertable as rc ON rc.parent = t.rowid";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."s_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 // Add table from hooks
 $parameters = array();
@@ -280,9 +287,6 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$field_spec = $object->fields[$key];
-		if ($field_spec === null) {
-			continue;
-		}
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
 		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || ($search[$key] === '0' && !isset($field_spec['arrayofkeyval']['0']))) {
@@ -338,7 +342,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -370,11 +374,14 @@ if ($mode == 'hierarchy') {
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
 	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
+	}
 
 	$typetext = $type;
 
-	$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-	$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+	$arrayofjs = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+	$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 	// Load array of categories
 	$cate_arbo = $object->get_full_arbo($typetext);
@@ -429,7 +436,7 @@ if ($mode == 'hierarchy') {
 		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
 		if (!empty($conf->main_checkbox_left_column)) {
 			if ($user->hasRight('categorie', 'creer')) {
-				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . ((int) $val['id']) . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type).'&'.$param) . '">' . img_edit() . '</a>';
 			}
 			if ($user->hasRight('categorie', 'supprimer')) {
 				$entry .= ' &nbsp; <a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
@@ -443,7 +450,10 @@ if ($mode == 'hierarchy') {
 		if (empty($conf->main_checkbox_left_column)) {
 			$entry .= '<td class="right" width="30px;">';
 			if ($user->hasRight('categorie', 'creer')) {
-				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+				$query = [];
+				parse_str($param, $query);
+				$query = array_merge($query, ['id' => $val['id'], 'backtopage' => (dolBuildUrl($_SERVER["PHP_SELF"], ['type' => $type]).$param)]);
+				$entry .= '<a class="editfielda" href="' . dolBuildUrl(DOL_URL_ROOT . '/categories/edit.php', $query).'">' . img_edit() . '</a>';
 			}
 			$entry .= '</td>';
 
@@ -480,7 +490,10 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	$morehtmlrightbeforebutton = '';
+	if (!GETPOST('dol_openinpopup', 'aZ')) {
+		$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	}
 
 	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
 
@@ -506,7 +519,10 @@ if ($mode == 'hierarchy') {
 		print '<tr class="oddeven">';
 		print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 		print '<td class="valignmiddle">';
-		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet").'</span>';
+		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet");
+		print '. ';
+		print $langs->trans("ClickOnPlusToCreateOne");
+		print '</span>';
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '</table></td>';
@@ -519,7 +535,7 @@ if ($mode == 'hierarchy') {
 } else {
 	// Mode list
 
-	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
+	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-acategory page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -539,6 +555,9 @@ if ($mode == 'hierarchy') {
 	}
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
+	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key])) {
@@ -601,7 +620,10 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	$morehtmlrightbeforebutton = '';
+	if (!GETPOST('dol_openinpopup', 'aZ')) {
+		$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+	}
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforebutton);
 
@@ -928,7 +950,9 @@ if ($mode == 'hierarchy') {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+		print $langs->trans("NoRecordFound");
+		print '</span></td></tr>';
 	}
 
 

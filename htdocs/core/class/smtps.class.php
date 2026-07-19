@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,6 +78,11 @@ class SMTPs
 	private $_smtpsToken = null;
 
 	/**
+	 * @var ?string Message-ID to use
+	 */
+	private $_msgId = null;
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -138,7 +143,7 @@ class SMTPs
 	private $_msgSensitivity = 0;
 
 	/**
-	 * @var string[] Message Sensitivity
+	 * @var array<string|false> Message Sensitivity
 	 */
 	private $_arySensitivity = array(false,
 								  'Personal',
@@ -146,7 +151,7 @@ class SMTPs
 								  'Company Confidential');
 
 	/**
-	 * @var int Message Sensitivity
+	 * @var int<0,5> Message Sensitivity
 	 * Defaults to 3 - Normal
 	 */
 	private $_msgPriority = 3;
@@ -293,8 +298,20 @@ class SMTPs
 	 */
 	private $_options = array();
 
+
 	/**
-	 * Set delivery receipt
+	 * Set Message-ID
+	 *
+	 * @param	string	$_msgId		Message-ID to use
+	 * @return	void
+	 */
+	public function setMessageID($_msgId = '')
+	{
+		$this->_msgId = $_msgId;
+	}
+
+	/**
+	 * Set options
 	 *
 	 * @param	array<string,array<string,mixed>>	$_options	An array of options for stream_context_create()
 	 * @return	void
@@ -1546,16 +1563,15 @@ class SMTPs
 
 		$host = dol_getprefix('email');
 
-		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '.$this->getSubject()."\r\n";
 		$_header .= 'Date: '.date("r")."\r\n";
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs-dolibarr-'.$trackid.'@'.$host : $this->_msgId).">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
 		} else {
-			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs@'.$host : $this->_msgId).">\r\n";
 		}
 		if (!empty($_SERVER['REMOTE_ADDR'])) {
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
@@ -1845,8 +1861,8 @@ class SMTPs
 		if ($strContent) {
 			$this->_msgContent['image'][$strImageName]['mimeType'] = $strMimeType;
 			$this->_msgContent['image'][$strImageName]['imageName'] = $strImageName;
-			$this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
+			$this->_msgContent['image'][$strImageName]['cid']      = $strImageCid;
 
 			if ($this->getMD5flag()) {
 				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, '3');

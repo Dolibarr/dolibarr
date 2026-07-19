@@ -39,6 +39,10 @@
  * @var Translate $langs
  *
  * @var string $action
+ * @var int $permissiontoedit
+ * @var int<0,1> $hidedetails
+ * @var int<0,1> $hidedesc
+ * @var int<0,1> $hideref
  */
 if ($action == 'up' && $permissiontoedit) {
 	$object->line_up(GETPOSTINT('rowid'));

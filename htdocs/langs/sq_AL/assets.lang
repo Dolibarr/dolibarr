@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Aset i ri
 AccountancyCodeAsset=Kodi i kontabilitetit (pasuria)
 AccountancyCodeDepreciationAsset=Kodi i kontabilitetit (llogaria e aktivit të amortizimit)
 AccountancyCodeDepreciationExpense=Kodi i kontabilitetit (llogaria e shpenzimeve të amortizimit)
 AssetsLines=Asetet
+ConfirmValidateAsset=A jeni i sigurt që doni ta validoni këtë aset me referencën <b>%s</b>?
 DeleteType=Fshi
 DeleteAnAssetType=Fshi një model aktivi
 ConfirmDeleteAssetType=Je i sigurt që dëshiron ta fshish këtë model të punës?
 ShowTypeCard=Shfaq modelin '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Asetet
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Përshkrimi i aseteve
-
-#
 # Admin page
-#
 AssetSetup=Konfigurimi i aseteve
 AssetSetupPage=Faqja e konfigurimit të aseteve
 ExtraFieldsAssetModel=Atributet plotësuese (modeli i aktivit)
-
 AssetsType=Modeli i aseteve
 AssetsTypeId=ID-ja e modelit të aktivit
 AssetsTypeLabel=Etiketa e modelit të asetit
 AssetsTypes=Modelet e aseteve
 ASSET_ACCOUNTANCY_CATEGORY=Grupi i kontabilitetit të aktiveve fikse
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Periudha proporcionale në ditë për llogaritjen e amortizimit gjatë një viti
 # Menu
-#
 MenuAssets=Asetet
 MenuNewAsset=Aset i ri
 MenuAssetModels=Asetet model
 MenuListAssets=Listë
 MenuNewAssetModel=Modeli i aktivit të ri
 MenuListAssetModels=Listë
-
-#
 # Module
-#
 ConfirmDeleteAsset=Dëshiron vërtet ta heqësh këtë punë?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Opsionet e amortizimit
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=amortizimi
-
-#
 # Asset
-#
 Asset=Aseti
 Assets=Asetet
 AssetReversalAmountHT=Shuma e kthimit (pa taksa)
@@ -89,32 +70,21 @@ AssetNotDepreciated=I pa amortizuar
 AssetDisposal=Asgjesimi
 AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
 AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
-
-#
 # Asset status
-#
+AssetInDraft=Draft
 AssetInProgress=Në vazhdim
 AssetDisposed=Të disponuar
 AssetRecorded=Llogaritur
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Data e asgjësimit
 AssetDisposalAmount=Vlera e asgjësimit
 AssetDisposalType=Lloji i asgjësimit
 AssetDisposalDepreciated=Zhvlerësoni vitin e transferimit
 AssetDisposalSubjectToVat=Asgjesimi me TVSH
-
-#
 # Asset model
-#
 AssetModel=Modeli i aktivit
 AssetModels=Modelet e aseteve
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Zhvlerësimi ekonomik
 AssetDepreciationOptionAcceleratedDepreciation=Amortizimi i përshpejtuar (taksa)
 AssetDepreciationOptionDepreciationType=Lloji i amortizimit
@@ -131,10 +101,7 @@ AssetDepreciationOptionRate=Vlerësimi (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Baza e amortizimit (pa TVSH)
 AssetDepreciationOptionAmountBaseDeductibleHT=Baza e zbritshme (pa TVSH)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Shuma totale e amortizimit të fundit (pa TVSH)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Zhvlerësimi ekonomik
 AssetAccountancyCodeAsset=Aseti
 AssetAccountancyCodeDepreciationAsset=amortizimi
@@ -148,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortizimi i përshpejtu
 AssetAccountancyCodeAcceleratedDepreciation=Llogari
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Shpenzimet e amortizimit
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Riposedim/Provizion
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Baza e amortizimit (pa TVSH)
 AssetDepreciationBeginDate=Fillimi i amortizimit më
 AssetDepreciationDuration=Kohëzgjatja
@@ -163,10 +127,7 @@ AssetResidualHT=Vlera e mbetur (pa TVSH)
 AssetDispatchedInBookkeeping=Zhvlerësimi i regjistruar
 AssetFutureDepreciationLine=Zhvlerësimi i ardhshëm
 AssetDepreciationReversal=Përmbysja
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=ID-ja e aktivit ose modeli i gjetur nuk është dhënë
 AssetErrorFetchAccountancyCodesForMode=Gabim gjatë marrjes së llogarive të kontabilitetit për modalitetin e amortizimit '%s'
 AssetErrorDeleteAccountancyCodesForMode=Gabim gjatë fshirjes së llogarive të kontabilitetit nga modaliteti i amortizimit '%s'

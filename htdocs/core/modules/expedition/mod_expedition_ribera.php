@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -78,7 +78,10 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");

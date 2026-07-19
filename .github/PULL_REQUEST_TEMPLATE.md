@@ -3,6 +3,7 @@
 *Please:*
 - *only keep the "FIX", "CLOSE", "NEW", "UIUX", PERF" or "QUAL" section* (use uppercase to have the PR appears into the ChangeLog, lowercase will not appears)
 - *follow the project [contributing guidelines](/.github/CONTRIBUTING.md)*
+- ***in particular, in case of a bugfix, please check that you are targetting the branch corresponding to the oldest version in which the bug occurs***
 - *replace the bracket enclosed texts with meaningful information*
 
 

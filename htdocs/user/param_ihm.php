@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
@@ -56,7 +55,7 @@ if (!isset($id) || empty($id)) {
 }
 '@phan-var-force int<1,max> $id';
 
-// $user est le user qui edite, $id est l'id de l'utilisateur edite
+// $user is the user doing the edit, $id is the id of the user being edited
 $caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 || (($user->id != $id) && $user->hasRight("user", "user", "write")));
 
@@ -79,7 +78,7 @@ if ($user->id != $id && !$canreaduser) {
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
 
-// Charge utilisateur edite
+// Load editing user
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
@@ -296,10 +295,27 @@ if ($reshook < 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
 
+// 1) Normalisation
+foreach ($tmparray as $k => $v) {
+	if (!is_array($v)) {
+		$tmparray[$k] = [
+			'label' => is_string($v) ? $v : (is_string($k) ? $k : (string) $k),
+			'picto' => 'generic',
+		];
+	} else {
+		$tmparray[$k]['label'] = $tmparray[$k]['label'] ?? (is_string($k) ? $k : (string) $k);
+		$tmparray[$k]['picto'] = !empty($tmparray[$k]['picto']) ? $tmparray[$k]['picto'] : 'generic';
+	}
+}
+
 foreach ($tmparray as $key => $val) {
-	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
+	$tmparray[$key]['data-html'] = img_picto(
+		$langs->trans($val['label']),
+		$val['picto'],
+		'class="pictofixedwidth"'
+	) . $langs->trans($val['label']);
+
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
-	$tmparray[$key]['picto'] = empty($val['picto']) ? 'generic' : $val['picto'];
 }
 
 $head = user_prepare_head($object);
@@ -307,7 +323,7 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
@@ -326,6 +342,30 @@ if ($action == 'edit') {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="underbanner clearboth"></div>';
+
+
+	print '<table class="border centpercent tableforfield">';
+
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->status == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
+	}
+	print '</tr>'."\n";
+
+	print '</table>';
 
 	print dol_get_fiche_end();
 
@@ -376,17 +416,20 @@ if ($action == 'edit') {
 
 	clearstatcache();
 
+	print '<br>';
+
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td>';
+	print '<td class="nowraponall">'.$langs->trans("DefaultValue").'</td><td></td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
 	// Language by default
 	print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("Language").'</td>';
 	print '<td>';
 	$s = picto_from_langcode(getDolGlobalString('MAIN_LANG_DEFAULT'));
 	print $s ? $s.' ' : '';
-	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
-	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "");
+	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(getDolGlobalString('MAIN_LANG_DEFAULT') ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_LANG_DEFAULT">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>';
@@ -396,9 +439,9 @@ if ($action == 'edit') {
 	// Landing page
 	print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
 	print '<td>';
-	print(!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : $conf->global->MAIN_LANDING_PAGE);
+	print getDolGlobalString('MAIN_LANDING_PAGE');
 	print '</td>';
-	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
+	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> <label for="check_MAIN_LANDING_PAGE">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>';
@@ -455,35 +498,34 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
+
 	print '<table class="border centpercent tableforfield">';
 
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';
 	} else {
 		print '<td>';
 		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
 		print '</td>';
@@ -496,6 +538,7 @@ if ($action == 'edit') {
 
 	print dol_get_fiche_end();
 
+	print '<br>';
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
@@ -505,8 +548,8 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
 	print '<td>';
 	$s = picto_from_langcode(getDolGlobalString('MAIN_LANG_DEFAULT'));
-	print($s ? $s.' ' : '');
-	print(getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
+	print ($s ? $s.' ' : '');
+	print (getDolGlobalString('MAIN_LANG_DEFAULT') == 'auto' ? $form->textwithpicto($langs->trans("Automatic"), $langs->trans("AutoDetectLang")) : $langs->trans("Language_" . getDolGlobalString('MAIN_LANG_DEFAULT')));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_LANG_DEFAULT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
@@ -594,7 +637,8 @@ if ($action == 'edit') {
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
 		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
 	} else {
-		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
+		if ($caneditfield || !empty($user->admin)) {
+			// If the user editing is the current user (no special permissions required as this is an output modification page and not a data modification page), or if they are an admin.
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';

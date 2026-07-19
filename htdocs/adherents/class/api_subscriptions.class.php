@@ -102,8 +102,6 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
@@ -139,7 +137,8 @@ class Subscriptions extends DolibarrApi
 		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < min($limit, $num)) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$subscription = new Subscription($this->db);
 				if ($subscription->fetch($obj->rowid)) {
@@ -243,7 +242,7 @@ class Subscriptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$subscription->array_options[$index] = $this->_checkValForAPI($field, $val, $subscription);
+					$subscription->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $subscription);
 				}
 				continue;
 			}

@@ -34,5 +34,6 @@ ResourceTypeCode=Ressource type kode
 ImportDataset_resource_1=Ressourcer
 ErrorResourcesAlreadyInUse=Nogle ressourcer er i brug
 ErrorResourceUseInEvent=%s bruges i %s tilfælde
-MaxUsers=Maksimalt antal brugere (pladser, sæder osv.)
+MaxUsers=Maksimalt antal brugere
+MaxUsersResourceDesc=Hvis ressourcen kan bruges af flere personer på én gang (bil, rum, ...), kan du her indtaste det maksimale antal brugere, der må bruge ressourcen på samme tid (antal sæder, pladser, ...).
 MaxUsersLabel=Maksimalt antal brugere

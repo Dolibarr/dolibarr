@@ -80,7 +80,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 $PAYPALTOKEN = "";
 $PAYPALPAYERID = "";
@@ -94,12 +94,6 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-/*
-if (isModEnabled('paybox')) {
-}
-if (isModEnabled('stripe')) {
-}
-*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
@@ -194,7 +188,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
+	$paymentType        = $_SESSION['PaymentType'] ?? '';
 	$currencyCodeType   = $_SESSION['currencyCodeType'];
 	$FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
 	// From env
@@ -226,7 +220,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($myCompanyDefaultLang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'stripe'));
 
 		$from = getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		$sendto = $sendemail;

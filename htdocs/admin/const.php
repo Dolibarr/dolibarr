@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -44,11 +43,14 @@ $langs->load("admin");
 $rowid = GETPOSTINT('rowid');
 $entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'aZ09');
+
 $debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -194,9 +196,7 @@ jQuery(document).ready(function() {
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
-print "<br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
 
 $param = '';
 
@@ -224,10 +224,10 @@ print "</tr>\n";
 print "\n";
 
 print '<tr class="oddeven nohover"><td>';
-print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'">';
+print '<input type="text" class="flat minwidth300" name="constname" value="'.$constname.'" spellcheck="false">';
 print '</td>'."\n";
 print '<td>';
-print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'">';
+print '<input type="text" class="flat minwidth100" name="constvalue" value="'.$constvalue.'" spellcheck="false">';
 print '</td>';
 print '<td>';
 print '<input type="text" class="flat minwidth100" name="constnote" value="'.$constnote.'">';
