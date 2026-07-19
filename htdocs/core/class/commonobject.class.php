@@ -1406,7 +1406,7 @@ abstract class CommonObject
 			// Insert into database
 			$sql = "INSERT INTO ".$this->db->prefix()."element_contact";
 			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-			$sql .= " VALUES (".$this->id.", ".((int) $fk_socpeople)." , ";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
 			$sql .= ", 4, ".((int) $id_type_contact);
 			$sql .= ")";
@@ -1751,11 +1751,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (empty($order)) {
-			$order = 'position';
+		$sanitized_order = $order;  // @phan-suppress-current-line SqlInjection
+
+		if (empty($sanitized_order)) {
+			$sanitized_order = 'position';
 		}
-		if ($order == 'position') {
-			$order .= ',code';
+		if ($sanitized_order == 'position') {
+			$sanitized_order .= ',code';
 		}
 
 		$tab = array();
@@ -1772,7 +1774,7 @@ abstract class CommonObject
 		if (!empty($code)) {
 			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
-		$sql .= $this->db->order($order, 'ASC');
+		$sql .= $this->db->order($sanitized_order, 'ASC');
 
 		//print "sql=".$sql;
 		$resql = $this->db->query($sql);
@@ -2572,7 +2574,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filtermax)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filtermax;
+			$sql .= $filtermax;  // @phan-suppress-current-line SqlInjection
 		} else {
 			$sql .= $tmpsql;
 		}
@@ -2621,7 +2623,7 @@ abstract class CommonObject
 		$sql .= " FROM ".(empty($nodbprefix) ? $this->db->prefix() : '').$this->table_element." as te";
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
-			$sql .= ", ".$this->db->prefix().$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+			$sql .= ", ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
 		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe as s"; // If we need to link to societe to limit select to socid
 		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
@@ -2658,7 +2660,7 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filtermin)) {
 				$sql .= " AND ";
 			}
-			$sql .= $filtermin;
+			$sql .= $filtermin;  // @phan-suppress-current-line SqlInjection
 
 			$filtermin = '';
 		} else {
@@ -6814,7 +6816,7 @@ abstract class CommonObject
 				// use geo sql function to read as text
 				if (!empty($extrafields->attributes[$this->table_element]['type'][$name]) && in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
 					// TODO Add an abstraction method in the database driver
-					$sql .= ", ST_AsWKT(".$name.") as ".$this->db->sanitize($name);
+					$sql .= ", ST_AsWKT(".$this->db->sanitize($name).") as ".$this->db->sanitize($name);
 				}
 			}
 			$sql .= " FROM ".$this->db->prefix().$table_element."_extrafields";
@@ -7209,7 +7211,7 @@ abstract class CommonObject
 			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
 			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
 			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
+			$sqlColumnValues[$attributeKey] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";  // @phan-suppress-current-line SqlInjection
 		}
 
 		$this->db->begin();
@@ -7391,7 +7393,7 @@ abstract class CommonObject
 
 					if ($value !== '') {
 						$sql = "INSERT INTO ".$this->db->prefix()."object_lang (fk_object, property, type_object, lang, value";
-						$sql .= ") VALUES (".$this->id.", '".$this->db->escape($key)."', '".$this->db->escape($table_element)."', '".$this->db->escape($langcode)."', '".$this->db->escape($value)."'";
+						$sql .= ") VALUES (".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($table_element)."', '".$this->db->escape($langcode)."', '".$this->db->escape($value)."'";
 						$sql .= ")";
 
 						$resql = $this->db->query($sql);
@@ -7691,7 +7693,7 @@ abstract class CommonObject
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
-				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
+				$sanitizedGeoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;  // @phan-suppress-current-line SqlInjection
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($table_element)."_extrafields";
 					$sql .= " SET ".$this->db->sanitize($key)." = null";
@@ -9017,7 +9019,7 @@ abstract class CommonObject
 				$sql .= " WHERE ".$this->db->sanitize($selectkey)." = '".$this->db->escape((string) $value)."'";
 			}
 
-			//$sql.= ' AND entity = '.$conf->entity;
+			//$sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -9120,7 +9122,7 @@ abstract class CommonObject
 				$sql .= ' as main';
 			}
 			// $sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
-			// $sql.= ' AND entity = '.$conf->entity;
+			// $sql.= ' AND entity = '.((int) $conf->entity);
 
 			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -10645,7 +10647,7 @@ abstract class CommonObject
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
 					if (!isset($this->{$field})) {
 						if (!empty($info['default'])) {
-							$queryarray[$field] = $info['default'];
+							$queryarray[$field] = $info['default'];  // From safe source @phan-suppress-current-line SqlInjection
 						} else {
 							$queryarray[$field] = 0;
 						}
@@ -10865,31 +10867,31 @@ abstract class CommonObject
 
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
-		$keys = array();
-		$values = array(); // Array to store string forged for SQL syntax
+		$sanitized_keys = array();
+		$sanitized_values = array(); // Array to store string forged for SQL syntax
 		foreach ($fieldvalues as $k => $v) {
-			$keys[$k] = $k;
+			$sanitized_keys[$k] = $k;  // Safe source @phan-suppress-current-line SqlInjection
 			$value = $this->fields[$k];
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
+			$sanitized_values[$k] = $this->quote($v, $value); // May return string 'NULL' if $value is null
 		}
 
 		// Clean and check mandatory
-		foreach ($keys as $key) {
+		foreach ($sanitized_keys as $key) {
 			if (!isset($this->fields[$key])) {
 				continue;
 			}
 			$key_fields = $this->fields[$key];
 
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (preg_match('/^integer:/i', $key_fields['type']) && $values[$key] == '-1') {
-				$values[$key] = '';
+			if (preg_match('/^integer:/i', $key_fields['type']) && $sanitized_values[$key] == '-1') {
+				$sanitized_values[$key] = '';
 			}
-			if (!empty($key_fields['foreignkey']) && $values[$key] == '-1') {
-				$values[$key] = '';
+			if (!empty($key_fields['foreignkey']) && $sanitized_values[$key] == '-1') {
+				$sanitized_values[$key] = '';
 			}
 
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($sanitized_values[$key]) || $sanitized_values[$key] === 'NULL') && (!isset($key_fields['default']) || is_null($key_fields['default']))) {
 				$error++;
 				global $langs;
 				if (empty($langs)) {
@@ -10903,20 +10905,20 @@ abstract class CommonObject
 			}
 
 			// If value is null and there is a default value for field @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && array_key_exists('default', $key_fields) && !is_null($key_fields['default'])) {
-				$values[$key] = $this->quote($key_fields['default'], $key_fields);
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 1 && (!isset($sanitized_values[$key]) || $sanitized_values[$key] === 'NULL') && array_key_exists('default', $key_fields) && !is_null($key_fields['default'])) {
+				$sanitized_values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
 			// If field is an implicit foreign key field (so type = 'integer:...')
-			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($values[$key])) {
+			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($sanitized_values[$key])) {
 				if (isset($key_fields['default'])) {
-					$values[$key] = ((int) $key_fields['default']);
+					$sanitized_values[$key] = ((int) $key_fields['default']);
 				} else {
-					$values[$key] = 'null';
+					$sanitized_values[$key] = 'null';
 				}
 			}
-			if (!empty($key_fields['foreignkey']) && empty($values[$key])) {
-				$values[$key] = 'null';
+			if (!empty($key_fields['foreignkey']) && empty($sanitized_values[$key])) {
+				$sanitized_values[$key] = 'null';
 			}
 		}
 
@@ -10928,8 +10930,8 @@ abstract class CommonObject
 
 		if (!$error) {
 			$sql = "INSERT INTO ".$this->db->prefix().$this->table_element;
-			$sql .= " (".implode(", ", $keys).')';
-			$sql .= " VALUES (".implode(", ", $values).")";		// $values can contains 'abc' or 123
+			$sql .= " (".implode(", ", $sanitized_keys).')';
+			$sql .= " VALUES (".implode(", ", $sanitized_values).")";		// $sanitized_values can contains 'abc' or 123
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -11196,7 +11198,7 @@ abstract class CommonObject
 		// Add quotes and escape on fields with type string
 		$keys = array();
 		$values = array();
-		$tmp = array();
+		$sanitized_tmp = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
@@ -11207,8 +11209,8 @@ abstract class CommonObject
 				$v = preg_replace('/\s/', ',', $v);
 				$v = preg_replace('/,+/', ',', $v);
 			}
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, SqlInjection
+			$sanitized_tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
 		}
 
 		// Clean and check mandatory fields
@@ -11229,7 +11231,7 @@ abstract class CommonObject
 			 }*/
 		}
 
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $sanitized_tmp).' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
