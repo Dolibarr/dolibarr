@@ -691,19 +691,19 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " localtax2_tx = ".price2num($this->localtax2_tx).",";
 		$sql .= " qty = ".price2num($this->qty).",";
 		$sql .= " remise_percent = ".price2num($this->remise_percent).",";
-		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
-		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
+		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? ((int) $this->fk_remise_except) : "null").",";
+		$sql .= " subprice = ".($this->subprice != '' ? ((float) $this->subprice) : "null").",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_tva = ".((float) $this->total_tva).",";
 		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
 		$sql .= " total_localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
-		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
+		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
 		$sql .= " info_bits = '".$this->db->escape((string) $this->info_bits)."',";
-		$sql .= " fk_user_author = ".($this->fk_user_author >= 0 ? $this->fk_user_author : "NULL").",";
-		$sql .= " fk_user_ouverture = ".($this->fk_user_ouverture > 0 ? $this->fk_user_ouverture : "NULL").",";
-		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
+		$sql .= " fk_user_author = ".($this->fk_user_author >= 0 ? ((int) $this->fk_user_author) : "NULL").",";
+		$sql .= " fk_user_ouverture = ".($this->fk_user_ouverture > 0 ? ((int) $this->fk_user_ouverture) : "NULL").",";
+		$sql .= " fk_user_cloture = ".($this->fk_user_cloture > 0 ? ((int) $this->fk_user_cloture) : "NULL").",";
 		$sql .= " commentaire = '".$this->db->escape($this->commentaire)."',";
 		$sql .= " fk_unit = ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit)).",";
 		$sql .= " rang = ".(empty($this->rang) ? '0' : ((int) $this->rang));
@@ -834,7 +834,7 @@ class ContratLigne extends CommonObjectLine
 			$sql .= ",date_fin_validite";
 		}
 		$sql .= ") VALUES (".((int) $this->fk_contrat).", '', '".$this->db->escape($this->description)."',";
-		$sql .= ($this->fk_product > 0 ? $this->fk_product : "null").",";
+		$sql .= ($this->fk_product > 0 ? ((int) $this->fk_product) : "null").",";
 		$sql .= " '".$this->db->escape((string) $this->qty)."',";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " '".$this->db->escape($this->tva_tx)."',";
