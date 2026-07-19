@@ -4414,17 +4414,17 @@ if ($action == 'create') {
 			print '<script type="text/javascript">
 					$(document).ready(function() {
 						var listType = {'.$jsListType.'};
-						$("[name=\'type\'").change(function() {
+						$("[name=\'type\']").change(function() {
 							console.log("change name=type");
 							if ($( this ).prop("checked"))
 							{
 								if(($( this ).val() in listType))
 								{
-									$("#model").val(listType[$( this ).val()]);
+									$("#model").val(listType[$( this ).val()]).trigger("change");
 								}
 								else
 								{
-									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'");
+									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'").trigger("change");
 								}
 							}
 						});
