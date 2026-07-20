@@ -827,7 +827,7 @@ class Documents extends DolibarrApi
 			}
 
 			$object = new Contact($this->db);
-			$result = $object->fetch($id?$id:$ref);
+			$result = $object->fetch($id ? $id : $ref);
 			if (!$result) {
 				throw new RestException(404, 'Contact not found');
 			}
