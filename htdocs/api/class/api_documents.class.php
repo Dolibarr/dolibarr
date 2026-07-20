@@ -612,7 +612,9 @@ class Documents extends DolibarrApi
 			$objectType = $object->table_element;
 		}
 
-		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$filearraytmp = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
+		$filearray = $filearraytmp;		// We store answer into an array that we will extends with ecm data
 		$countarray = count($filearray);
 		$filearray = array_slice($filearray, $limit * $page, $limit);
 		if (empty($filearray)) {
@@ -638,7 +640,7 @@ class Documents extends DolibarrApi
 								$filearray[$i]['fullpath_orig'] = $line->fullpath_orig;
 								$filearray[$i]['position'] = $line->position;
 								$filearray[$i]['gen_or_uploaded'] = $line->gen_or_uploaded;
-								$filearray[$i]['description'] = $line->description;
+								$filearray[$i]['description'] = $line->desc;
 								$filearray[$i]['keywords'] = $line->keywords;
 								$filearray[$i]['cover'] = $line->cover;
 								$filearray[$i]['share'] = $line->share;
