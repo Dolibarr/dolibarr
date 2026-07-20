@@ -10059,7 +10059,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/^(?:tiny|small|medium|big)?int|int$/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
