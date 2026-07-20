@@ -63,8 +63,8 @@ $id = (GETPOSTINT('mailid') ? GETPOSTINT('mailid') : GETPOSTINT('id'));
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
-$urlfrom = GETPOST('urlfrom');
 $projectid = GETPOSTINT('projectid');
+$urlfrom = GETPOST('urlfrom');
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
