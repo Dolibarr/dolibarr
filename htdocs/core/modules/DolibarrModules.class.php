@@ -2028,7 +2028,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($row[0] == 0) {   // If not found
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."overwrite_trans (entity,lang,transkey,transvalue)";
 					$sql .= " VALUES (";
-					$sql .= $entity;
+					$sql .= (int) $entity;
 					$sql .= ",'".$this->db->escape($lang)."'";
 					$sql .= ",'".$this->db->escape($transkey)."'";
 					$sql .= ",'".$this->db->escape($transvalue)."'";
