@@ -68,7 +68,7 @@ jobs:
         run: |-
           [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
       # Install python and pre-commit tool
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           cache: pip
           python-version: "3.11"
