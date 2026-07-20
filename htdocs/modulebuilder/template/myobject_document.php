@@ -48,7 +48,7 @@
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
@@ -78,21 +78,20 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "companies", "other", "mails"));
@@ -133,6 +132,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[$object->entity ? $object->entity : $conf->entity]."/myobject/".get_exdir(0, 0, 0, 1, $object);
 }
@@ -160,7 +160,7 @@ if (!isModEnabled("mymodule")) {
 if (!$permissiontoread) {
 	accessforbidden();
 }
-if (empty($object->id)) {
+if (empty($object->id) || $upload_dir === null) {
 	accessforbidden();
 }
 
@@ -206,41 +206,27 @@ $linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restor
 
 $morehtmlref = '<div class="refidno">';
 /*
- // Ref customer
- $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
- $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
- // Thirdparty
- $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
- // Project
- if (isModEnabled('project')) {
- $langs->load("projects");
- $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
- if ($permissiontoadd)
- {
- if ($action != 'classify')
- //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
- $morehtmlref.=' : ';
- if ($action == 'classify') {
- //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
- $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
- $morehtmlref.='<input type="hidden" name="action" value="classin">';
- $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
- $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
- $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
- $morehtmlref.='</form>';
- } else {
- $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
- }
- } else {
- if (!empty($object->fk_project)) {
- $proj = new Project($db);
- $proj->fetch($object->fk_project);
- $morehtmlref .= ': '.$proj->getNomUrl();
- } else {
- $morehtmlref .= '';
- }
- }
- }*/
+// Ref customer
+$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+// Thirdparty
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+// Project
+if (isModEnabled('project')) {
+		// Project
+		if (isModEnabled('project')) {
+			$langs->load("projects");
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				}
+			}
+		}
+	}
+*/
 $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

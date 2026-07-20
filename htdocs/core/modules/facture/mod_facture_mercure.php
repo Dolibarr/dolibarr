@@ -86,6 +86,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
@@ -186,6 +188,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Get entities
 		$entity = getEntity('invoicenumber', 1, $invoice);
+
 		$numFinal = get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, (empty($invoice) ? dol_now() : $invoice->date), $mode, false, null, $entity);
 		if (!preg_match('/([0-9])+/', $numFinal)) {
 			$this->error = $numFinal;

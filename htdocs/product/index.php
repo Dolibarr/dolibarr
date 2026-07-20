@@ -2,10 +2,10 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -32,11 +32,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
 $type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
@@ -87,7 +86,7 @@ if (GETPOST('addbox')) {
 	}
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -119,10 +118,8 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
-		// Ensure $listofsearchfields is set and array
-		$listofsearchfields = array();
-	}
+	$listofsearchfields = array();
+
 	// Search contract
 	if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$listofsearchfields['search_product'] = array('text' => 'ProductOrService');
@@ -204,7 +201,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	if ($conf->use_javascript_ajax) {
 		$graph .= '<div class="div-table-responsive-no-min">';
 		$graph .= '<table class="noborder centpercent">';
-		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		$graph .= '<tr class="liste_titre"><th>'.$langs->trans("Statistics").' - '.$langs->trans("ProductStatus").'</th></tr>';
 		$graph .= '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];
@@ -317,11 +314,13 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 /*
  * Latest modified products
  */
+$lastmodified = "";
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
-	$sql .= " p.tms as datem";
+	$sql .= " GREATEST(p.tms, pef.tms) as datem";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as pef ON pef.fk_object=p.rowid";
 	$sql .= " WHERE p.entity IN (".getEntity($product_static->element, 1).")";
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
@@ -337,11 +336,10 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
-	$sql .= $db->order("p.tms", "DESC");
+	$sql .= $db->order("datem", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	//print $sql;
-	$lastmodified = "";
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -361,7 +359,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			$lastmodified .= '<table class="noborder centpercent">';
 
 			$colnb = 2;
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$colnb++;
 			}
 
@@ -430,7 +428,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$lastmodified .= dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				$lastmodified .= "</td>";
 				// Sell price
-				if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);

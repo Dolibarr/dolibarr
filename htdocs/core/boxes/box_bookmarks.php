@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class box_bookmarks extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -73,14 +73,14 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		} else {
 			$this->info_box_head['subpicto'] = 'bookmark';
-			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
+			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmarks");
 		}
 
 		if ($user->hasRight('bookmark', 'lire')) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql .= " WHERE fk_user = ".((int) $user->id);
-			$sql .= " AND b.entity = ".$conf->entity;
+			$sql .= " AND b.entity = ".((int) $conf->entity);
 			$sql .= $this->db->order("position", "ASC");
 			$sql .= $this->db->plimit($max, 0);
 

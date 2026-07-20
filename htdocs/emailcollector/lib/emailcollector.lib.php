@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -122,8 +122,10 @@ function getAttachments($jk, $mbox)
 
 	$fpos = 2;
 	$attachments = array();
-	$nb = count($parts);
-	if ($nb && !empty($parts)) {
+
+	if (!empty($parts)) {
+		$nb = count($parts);
+
 		for ($i = 1; $i < $nb; $i++) {
 			$part = $parts[$i];
 
@@ -140,15 +142,16 @@ function getAttachments($jk, $mbox)
 			$fpos++;
 		}
 	}
+
 	return $attachments;
 }
 
 /**
  * Get content of a joined file from its position into a given email
  *
- * @param integer $jk numéro du mail
- * @param string $fpos position de la pièce jointe
- * @param integer $type type de la pièce jointe
+ * @param integer $jk mail number
+ * @param string $fpos attachment position
+ * @param integer $type attachment type
  * @param \IMAP\Connection $mbox object connection imap
  * @return string data
  */
@@ -158,36 +161,6 @@ function getFileData($jk, $fpos, $type, $mbox)
 	$data = getDecodeValue($merge, $type);
 
 	return $data;
-}
-
-/**
- * Save the attached file into a directory with a given name
- *
- * @param 	string 		$path 		Path to file
- * @param 	string 		$filename 	Name of file
- * @param 	mixed 		$data 		Content to save
- * @return 	string|-1 				Return the path to the saved file, or -1 if error
- **/
-function saveAttachment($path, $filename, $data)
-{
-	$tmp = explode('.', $filename);
-	$ext = array_pop($tmp);
-	$filename = implode('.', $tmp);
-	if (!file_exists($path)) {
-		if (dol_mkdir($path) < 0) {
-			return -1;
-		}
-	}
-
-	$i = 1;
-	$filepath = $path . $filename . '.' . $ext;
-
-	while (file_exists($filepath)) {
-		$filepath = $path . $filename . '(' . $i . ').' . $ext;
-		$i++;
-	}
-	file_put_contents($filepath, $data);
-	return $filepath;
 }
 
 /**

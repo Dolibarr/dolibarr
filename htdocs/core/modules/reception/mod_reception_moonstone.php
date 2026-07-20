@@ -62,7 +62,10 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");

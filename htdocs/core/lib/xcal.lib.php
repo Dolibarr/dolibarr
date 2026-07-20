@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,6 @@
  */
 function build_calfile($format, $title, $desc, $events_array, $outputfile)
 {
-	global $conf, $langs;
-
 	dol_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) {
@@ -73,9 +71,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
 		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
-			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
-			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
-			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
+			$hh = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "hour");
+			$mm = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "min");
+			$ss = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "sec");
 
 			fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
 		}
@@ -125,7 +123,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 heure
+			SUMMARY:Task 1 hour
 			TRANSP:OPAQUE
 			END:VEVENT
 
@@ -141,7 +139,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			LOCATION:
 			SEQUENCE:0
 			STATUS:CONFIRMED
-			SUMMARY:Tâche 1 jour
+			SUMMARY:Task 1 day
 			TRANSP:TRANSPARENT
 			END:VEVENT
 			*/
@@ -321,11 +319,12 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
  *  @param		string	$langcode			Language code to show in header
+ *  @param		bool	$useurlforguid		If true, use URL as guid, else use uid as guid. Using URL as guid is better for RSS reader to detect changes of event, but it can cause problem if URL is not stable (for example if it contains a session id or a token that can change).
  *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
-function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '', $useurlforguid = false)
 {
-	global $user, $conf, $langs, $mysoc;
+	global $langs, $mysoc;
 	global $dolibarr_main_url_root;
 
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
@@ -341,11 +340,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 	if ($fichier) {
 		// Print header
-		fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>');
-		fwrite($fichier, "\n");
+		fwrite($fichier, '<?xml version="1.0" encoding="'.$langs->charset_output.'"?>'."\n");
 
-		fwrite($fichier, '<rss version="2.0">');
-		fwrite($fichier, "\n");
+		fwrite($fichier, '<rss version="2.0">'."\n");
 
 		fwrite($fichier, "<channel>\n");
 		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
@@ -363,7 +360,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		if (empty($url)) {
 			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'));
 		}
-		fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+		//fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		fwrite($fichier, "<link>".getRootURLFromURL($url)."</link>\n");
 
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
@@ -373,6 +372,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>".htmlspecialchars($title)."</title><link><![CDATA[".$url."]]></link></image>\n");
 			}
 		}
+
+		// Add a tag for some readers (Google / Feed readers) to detect that this is a RSS feed and not a generic XML file
+		fwrite($fichier, '<atom:link href="'.$url.'" rel="self" type="application/rss+xml"/>'."\n");
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;
@@ -455,7 +457,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
-				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+				//fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
+				fwrite($fichier, "<link>".$url."</link>\n");
+
 				//fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
 					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
@@ -465,16 +469,18 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				if (!empty($image)) {
 					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
 				}
-
 				if ($description) {
 					fwrite($fichier, $description);
 				}
-				// else
-				//     fwrite($fichier, "NoDesc");
-
 				fwrite($fichier, "]]></description>\n");
+				// Note: We may also add description into content:encoded tag.
+
 				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
-				fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.str_pad($uid, 10, "0", STR_PAD_LEFT).']]></guid>'."\n");
+				if ($useurlforguid) {
+					fwrite($fichier, '<guid isPermaLink="true">'.$url.'</guid>'."\n");
+				} else {
+					fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.str_pad($uid, 10, "0", STR_PAD_LEFT).']]></guid>'."\n");
+				}
 				fwrite($fichier, '<source url="'.$url.'"><![CDATA[Dolibarr]]></source>'."\n");
 				fwrite($fichier, "</item>\n");
 			}

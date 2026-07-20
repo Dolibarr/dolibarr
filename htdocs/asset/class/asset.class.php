@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ class Asset extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -103,10 +103,11 @@ class Asset extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 0, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object", "css" => "maxwidth150"),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
 		'fk_asset_model' => array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => 1, 'csslist' => 'tdoverflowmax75', 'css' => 'maxwidth300'),
@@ -247,16 +248,18 @@ class Asset extends CommonObject
 	 * @var string
 	 */
 	public $last_main_doc;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $import_key;
 	/**
 	 * @var string
 	 */
 	public $model_pdf;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
@@ -359,8 +362,8 @@ class Asset extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
-		$error = 0;
+		//global $langs, $extrafields;
+		//$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -744,25 +747,9 @@ class Asset extends CommonObject
 			return -1;
 		}
 
-		// Old request with 'WITH'
-		/*
-		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
-		$sql .= " SELECT DISTINCT fk_docdet";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-		$sql .= " WHERE doc_type = 'asset'";
-		$sql .= ")";
-		$sql .= "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht,";
+		$sql .= " " . $this->db->ifsql('EXISTS (SELECT fk_docdet FROM ' . MAIN_DB_PREFIX . 'accounting_bookkeeping as ab WHERE ab.doc_type = \'asset\' AND ab.fk_docdet = ad.rowid)', '1', '0') . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-		$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
-		$sql .= " ORDER BY ad.depreciation_date ASC";
-		*/
-
-		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', '1', '0') . " AS bookkeeping";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
-		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
 		$sql .= " ORDER BY ad.depreciation_date ASC";
 
@@ -970,16 +957,19 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+
 			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
 			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
+			/*
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
 				$pastmonthyear = $dates['pastmonthyear'];
 				$pastmonth = $dates['pastmonth'];
 				$init_fiscal_period_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
 				$init_fiscal_period_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 			}
+			*/
 
 			foreach ($options->deprecation_options as $mode_key => $fields) {
 				// Get last depreciation lines save in bookkeeping
@@ -1025,8 +1015,8 @@ class Asset extends CommonObject
 				}
 
 				// Set last cumulative depreciation
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
-				$sql .= " SET total_amount_last_depreciation_ht = " . (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht);
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($options->deprecation_options_fields[$mode_key]['table']);
+				$sql .= " SET total_amount_last_depreciation_ht = " . ((float) (empty($last_cumulative_depreciation_ht) ? 0 : $last_cumulative_depreciation_ht));
 				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1036,13 +1026,12 @@ class Asset extends CommonObject
 				}
 
 				// Delete old lines
-				$sql = "DELETE " . MAIN_DB_PREFIX . "asset_depreciation FROM " . MAIN_DB_PREFIX . "asset_depreciation";
-				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab ON ab.doc_type = 'asset' AND ab.fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid";
-				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
-				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND ab.fk_docdet IS NULL";
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
+				$sql .= " WHERE fk_asset = " . (int) $this->id;
+				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
+				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . MAIN_DB_PREFIX . "asset_depreciation.rowid)";
 				if ($last_depreciation_date !== "") {
-					$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+					$sql .= " AND ref <> ''";
 				}
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1109,10 +1098,11 @@ class Asset extends CommonObject
 				//-----------------------------------------------------
 				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
 				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
-				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
+				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
-				// TODO fix declaration of $begin_period
-				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+
+				//$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+				$first_period_date = $fiscal_period_start;
 
 				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');
 
@@ -1185,13 +1175,30 @@ class Asset extends CommonObject
 
 					// Next fiscal period (+1 day/month/year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
-					$dates_fiscal_period = getCurrentPeriodOfFiscalYear($this->db, $conf, $fiscal_period_start, 'gmt');
-					if ($fields['duration_type'] == 2) { // Daily
-						$fiscal_period_end = $fiscal_period_start;
+
+					if ($fields['duration_type'] == 0) { // Annually - use fiscal year-end
+						// Search for the NEXT fiscal year
+						$next_fy = getNextFiscalYear($this->db, $fiscal_period_end, 'gmt');
+
+						if ($next_fy !== null) {
+							// Exercise found in database
+							$fiscal_period_start = $next_fy['date_start'];
+							$fiscal_period_end = $next_fy['date_end'];
+						} else {
+							// If there is no subsequent fiscal year in the database, a one-year fiscal year is automatically generated.
+							// based on the structure of the current fiscal year
+							$current_fy_start_parts = dol_getdate($fiscal_period_start);
+
+							// Calculate the end: 1 year minus 1 day from the start
+							$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+
+							// If the amortization end date is exceeded, there is no need to continue after that.
+							// The loop will end naturally with the while condition.
+						}
 					} elseif ($fields['duration_type'] == 1) { // Monthly
 						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'm'), -1, 'd');
-					} else { // Annually
-						$fiscal_period_end = $dates_fiscal_period['date_end'];
+					} else { // Daily
+						$fiscal_period_end = $fiscal_period_start;
 					}
 					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
@@ -1253,8 +1260,8 @@ class Asset extends CommonObject
 			if ($obj = $this->db->fetch_object($resql)) {
 				$mode_key = $obj->depreciation_mode;
 				if (!empty($options->deprecation_options_fields[$mode_key])) {
-					$sql = "UPDATE " . MAIN_DB_PREFIX . $options->deprecation_options_fields[$mode_key]['table'];
-					$sql .= " SET total_amount_last_depreciation_ht = " . $obj->cumulative_depreciation_ht;
+					$sql = "UPDATE " . MAIN_DB_PREFIX . $this->db->sanitize($options->deprecation_options_fields[$mode_key]['table']);
+					$sql .= " SET total_amount_last_depreciation_ht = " . ((float) $obj->cumulative_depreciation_ht);
 					$sql .= " WHERE fk_asset = " . (int) $obj->fk_asset;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -1539,7 +1546,7 @@ class Asset extends CommonObject
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	/**
@@ -1550,7 +1557,7 @@ class Asset extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1672,6 +1679,7 @@ class Asset extends CommonObject
 				$obj = new $classname();
 
 				'@phan-var-force ModeleNumRefAsset $obj';
+				/** @var ModeleNumRefAsset $obj */
 
 				$numref = $obj->getNextValue($this);
 
@@ -1721,7 +1729,7 @@ class Asset extends CommonObject
 		if (/* !$error && */ (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -1757,14 +1765,14 @@ class Asset extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'asset/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'asset/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

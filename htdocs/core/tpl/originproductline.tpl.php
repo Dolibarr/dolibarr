@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2022		Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2022		Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@
 /**
  * @var CommonObject $this
  * @var Conf $conf
+ * @var Translate $langs
  * @var CommonObjectLine $line
  */
 // Protection to avoid direct call of template
@@ -30,7 +32,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/originproductline.tpl.php -->
 <?php
 '
 @phan-var-force CommonObject $this
@@ -51,6 +53,7 @@ if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIA
 	return require DOL_DOCUMENT_ROOT.'/core/tpl/originsubtotalline.tpl.php';
 }
 
+// Show line using ->tpl[]
 print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';
@@ -62,7 +65,7 @@ if (isModEnabled("multicurrency")) {
 
 print '<td class="linecolqty right">'.$this->tpl['qty'].'</td>';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-	print '<td class="linecoluseunit left">'.$langs->trans($this->tpl['unit']).'</td>';
+	print '<td class="linecoluseunit left">'.$langs->trans((string) $this->tpl['unit']).'</td>';
 }
 
 print '<td class="linecoldiscount right">'.$this->tpl['remise_percent'].'</td>';

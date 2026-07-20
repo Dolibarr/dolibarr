@@ -37,17 +37,17 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var string $dolibarr_main_url_root
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -302,6 +302,7 @@ if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '</div>';
 }
 
+// url for the download .vcf file link
 $urlforqrcode = $object->getOnlineVirtualCardUrl('vcard');
 
 $socialnetworksdict = getArrayOfSocialNetworks();
@@ -314,10 +315,17 @@ if ($showbarcode) {
 
 	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
+	$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+	if (isModEnabled('multicompany')) {
+		$entity_qr = '&entity='.((int) $conf->entity);
+	} else {
+		$entity_qr = '';
+	}
+
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
 	//print '<!-- filename = '.dol_escape_htmltag($filename).' -->';
-	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode'.$entity_qr.'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'&securekey='.$encodedsecurekey.'">';
 	print '</div>';
 	print '<br>';
 }
@@ -498,20 +506,22 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	// Output payment summary form
 	print '<tr><td class="left">';
 
-	print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
+	if ($companysection || $mysoc->name) {
+		print '<div class="nowidthimp nopaddingtoponsmartphone" id="tablepublicpayment">';
 
-	// Add company info
-	if ($mysoc->name) {
-		print '<div class="center bold">';
-		print dol_escape_htmltag($mysoc->name);
-		print '</div>';
-		print '<br>';
+		// Add company info
+		if ($mysoc->name) {
+			print '<div class="center bold">';
+			print dol_escape_htmltag($mysoc->name);
+			print '</div>';
+			print '<br>';
+		}
+
+		print $companysection;
+
+		print '</div>'."\n";
+		print "\n";
 	}
-
-	print $companysection;
-
-	print '</div>'."\n";
-	print "\n";
 
 	print '</td></tr>'."\n";
 

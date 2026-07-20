@@ -30,5 +30,3 @@ services:
         networks:
             - internal-pod
             - external-pod
-
-

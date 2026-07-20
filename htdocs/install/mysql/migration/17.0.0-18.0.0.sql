@@ -73,6 +73,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_SENTBYMAIL','Mails sent from partnership file','Executed when you send email from partnership file','partnership',58004);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PARTNERSHIP_DELETE','Partnership deleted','Executed when a partnership is deleted','partnership',58006);
 
+-- perf User::fetchAll
+ALTER TABLE llx_user ADD INDEX idx_user_status_employee(statut, employee);
 
 -- amount was removed in v12
 ALTER TABLE llx_facture DROP COLUMN amount;
@@ -489,7 +491,7 @@ ALTER TABLE llx_partnership ADD COLUMN email_partnership varchar(64) after fk_me
 
 ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_statut (statut);
 
-ALTER TABLE fk_product_price_product DROP FOREIGN KEY fk_product_price_product;
+ALTER TABLE llx_product_price DROP FOREIGN KEY fk_product_price_product;
 
 ALTER TABLE llx_societe_rib ADD COLUMN ext_payment_site varchar(128);
 
@@ -679,7 +681,7 @@ ALTER TABLE llx_product_lot_extrafields CHANGE COLUMN tms tms timestamp DEFAULT 
 ALTER TABLE llx_product_lot CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_price_by_qty CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_price CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
-ALTER TABLE llx_product_stock_entrepot CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE llx_product_warehouse_properties CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_product_stock CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_projet_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_projet CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
@@ -721,3 +723,6 @@ ALTER TABLE llx_user CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP O
 ALTER TABLE llx_salary_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 -- 15.0 -> 16.0 rename llx_advtargetemailing to llx_mailing_advtarget
 ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- 3.6 -> 3.7 typo on llx_adherents ('end with s') and varchar is 128
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);

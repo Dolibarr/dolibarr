@@ -23,7 +23,10 @@ AllPropals=تمام تجاویز
 SearchAProposal=ایک تجویز تلاش کریں۔
 NoProposal=کوئی تجویز نہیں۔
 ProposalsStatistics=تجارتی تجویز کے اعدادوشمار
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=مہینے کے حساب سے نمبر
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=ماہانہ رقم (ٹیکس کے علاوہ)
 NbOfProposals=تجارتی تجاویز کی تعداد
 ShowPropal=تجویز دکھائیں۔
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 ہفتہ
 AvailabilityTypeAV_2W=2 ہفتے
 AvailabilityTypeAV_3W=3 ہفتے
 AvailabilityTypeAV_1M=1 مہینہ
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=نمائندہ پیروی کی تجویز
 TypeContact_propal_external_BILLING=کسٹمر انوائس رابطہ
 TypeContact_propal_external_CUSTOMER=کسٹمر رابطہ فالو اپ تجویز
 TypeContact_propal_external_SHIPPING=ڈیلیوری کے لیے کسٹمر رابطہ کریں۔
-
 # Document models
 CantBeNoSign=دستخط کیے بغیر سیٹ نہیں کیا جا سکتا
 CaseFollowedBy=اس کے بعد کیس
@@ -122,3 +123,5 @@ SignSociete_rib=Sign mandate
 SignPropal=تجویز قبول کریں۔
 Signed=دستخط شدہ
 SignedOnly=صرف دستخط شدہ
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

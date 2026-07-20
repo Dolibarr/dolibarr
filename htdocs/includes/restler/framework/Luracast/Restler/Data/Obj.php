@@ -154,4 +154,3 @@ class Obj
         unset(self::$fix[$name]);
     }
 }
-

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+/* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -66,6 +65,7 @@ global $dolibarr_main_url_root;
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  */
 
 // Init vars
@@ -107,17 +107,15 @@ $langs->loadLangs(array("main", "companies", "install", "other", "eventorganizat
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
-$extrafields = new ExtraFields($db);
-
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='booth@eventorganization'");
+$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module:=:'booth@eventorganization'");
 if ($arrayofconfboothtype == -1) {
 	$arrayofconfboothtype = [];
 }
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
@@ -133,9 +131,10 @@ if (empty($conf->eventorganization->enabled)) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -249,6 +248,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	$thirdparty = null;
+	$contact = null;
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -291,6 +291,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+			/** @var ModeleThirdPartyCode $modCodeClient */
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -321,6 +322,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				$contact->country_id = GETPOSTINT("country_id");
 				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
+				$contact->status = 1; //Default status to Actif
 				$contact->statut = 1; //Default status to Actif
 
 				$resultcreatecontact = $contact->create($user);
@@ -362,6 +364,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 					$modCodeFournisseur = new $module($db);
 					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
+					/** @var ModeleThirdPartyCode $modCodeFournisseur */
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -461,8 +464,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							}
 							$resultfacture = $facture->create($user);
 							if ($resultfacture <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							} else {
 								$db->commit();
@@ -475,8 +477,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
 							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							}
 							/*if (!$error) {
@@ -485,11 +486,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 								$reftouse = $facture->id;
 								$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
 								if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-									if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-										$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
-									} else {
-										$redirection .= '&securekey='.getDolGlobalString('PAYMENT_SECURITY_TOKEN');
-									}
+									$redirection .= '&securekey='.dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $sourcetouse . $reftouse, '2'); // Use the source in the hash to avoid duplicates if the references are identical
 								}
 								header("Location: ".$redirection);
 								exit;

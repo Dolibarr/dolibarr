@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,11 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 */
 	public $name = 'standard';
 
+	/**
+	 * @var int 	position
+	 */
+	public $position = 40;
+
 
 	/**
 	 *  Return description of numbering module
@@ -94,12 +99,12 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+			$sql .= " AND entity = ".((int) $conf->entity);
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 
@@ -132,12 +137,12 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+			$sql .= " AND entity = ".((int) $conf->entity);
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 

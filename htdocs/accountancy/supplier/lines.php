@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr) <github@accedinfo.com>
- * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
+ * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,14 @@
  * \brief 		Page of detail of the lines of ventilation of invoices suppliers
  */
 require '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -38,18 +45,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "productbatch", "products"));
 
+$action = GETPOST('action', 'aZ');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $account_parent = GETPOST('account_parent');
@@ -102,6 +101,8 @@ if (!$sortorder) {
 $contextpage = 'accountancysupplierlines';
 $hookmanager->initHooks([$contextpage]);
 
+$object = new AccountingAccount($db);
+
 // Security check
 if (!isModEnabled('accounting')) {
 	accessforbidden();
@@ -121,7 +122,7 @@ $arrayfields = array(
 	   'f.libelle'             => array('label' => "InvoiceLabel",                     'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	   'f.datef'               => array('label' => "Date",                             'position' => 1, 'checked' => '1', 'enabled' => '1'), // f.datef, f.ref, l.rowid
 	   'p.ref'                 => array('label' => "ProductRef",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
-	   'l.description'         => array('label' => "ProductDescription",       'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'l.description'         => array('label' => "ProductDescription",       'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	   'l.total_ht'            => array('label' => "Amount",                           'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	   'l.tva_tx'              => array('label' => "VATRate",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	   's.nom'                 => array('label' => "ThirdParty",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
@@ -355,7 +356,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -441,11 +442,12 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilDoneSupplier").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("InvoiceLinesDone").'<br><span class="opacityhigh small">'.$langs->trans("DescVentilDoneSupplier").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
-	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom marginbottomonly">';
+	print '<br>'.$langs->trans("ChangeAccount").' <div class="inline-block paddingbottom paddingtop">';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button small smallpaddingimp valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<br><br>';
 
 	$moreforfilter = '';
 
@@ -484,9 +486,9 @@ if ($result) {
 			print '<input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 			print '</td>';
 	}
-	// date
+	// Date
 	if (!empty($arrayfields['f.datef']['checked'])) {
-			print '<td class="liste_titre center nowraponall">';
+			print '<td class="liste_titre center">';
 			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
@@ -528,7 +530,7 @@ if ($result) {
 	// Country
 	if (!empty($arrayfields['co.label']['checked'])) {
 			print '<td class="liste_titre" data-key="country">';
-			print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+			print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
 			//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 			print '</td>';
 	}
@@ -703,7 +705,7 @@ if ($result) {
 		}
 		// Ref Invoice
 		if (!empty($arrayfields['f.ref']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax125">';
+			print '<td class="nowraponall tdoverflowmax125 cell2linesheight">';
 			print $facturefournisseur_static->getNomUrl(1);
 			if ($objp->ref_supplier) {
 				print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
@@ -718,7 +720,7 @@ if ($result) {
 		print '</td>';
 		*/
 		// Supplier invoice label
-		if (!empty($arrayfields['l.description']['checked'])) {
+		if (!empty($arrayfields['f.libelle']['checked'])) {
 			print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 			print dol_escape_htmltag($objp->invoice_label);
 			print '</td>';
@@ -731,7 +733,7 @@ if ($result) {
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100 cell2linesheight">';
 			if ($productstatic->id > 0) {
 				print $productstatic->getNomUrl(1);
 			}
@@ -739,7 +741,7 @@ if ($result) {
 				print '<br>';
 			}
 			if ($objp->product_label) {
-				print '<span class="opacitymedium">'.$objp->product_label.'</span>';
+				print '<span class="opacitymedium">'.dolPrintHTML($objp->product_label).'</span>';
 			}
 			print '</td>';
 			$totalarray['nbfield']++;
@@ -747,7 +749,7 @@ if ($result) {
 		// Description
 		if (!empty($arrayfields['l.description']['checked'])) {
 			$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
-			print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
+			print '<td class="tdoverflowmax200 small" title="'.dolPrintHTMLForAttribute($text).'">';
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 			print '</td>';
@@ -770,21 +772,22 @@ if ($result) {
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')').'">';
 			if ($objp->country_code) {
-				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
+				print $langs->trans("Country".$objp->country_code);
+				//print ' ('.$objp->country_code.')';
 			}
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
 		// TVA Intracom
 		if (!empty($arrayfields['s.tva_intra']['checked'])) {
-			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+			print '<td class="tdoverflowmax80" title="'.dolPrintHTMLForAttribute($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 			$totalarray['nbfield']++;
 		}
 		// Account
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($accountingaccountstatic->label).'">';
 			print '<a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 			print img_edit();
 			print '</a> ';
@@ -811,7 +814,13 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

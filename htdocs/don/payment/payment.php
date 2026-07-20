@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("bills", "donations"));
+$langs->loadLangs(array("banks", "bills", "donations"));
 
 $chid = GETPOSTINT("rowid");
 $action = GETPOST('action', 'aZ09');
@@ -199,7 +199,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaid : -1) : 0;
+	$datepayment = getDolGlobalString('MAIN_AUTOFILL_DATE') ? 0 : (GETPOST("remonth") ? $datepaid : -1);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";
 	print '</tr>';
@@ -219,7 +219,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'" spellcheck="false"></td></tr>'."\n";
 
 	// Check transmitter
 	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
@@ -279,7 +279,7 @@ if ($action == 'create') {
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
 			}
 			print '<input type="text" size="8" name="'.$namef.'">';
 		} else {

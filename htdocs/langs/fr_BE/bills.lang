@@ -4,7 +4,6 @@ InvoiceStandardDesc=Ce type de facture est le type commun.
 InvoiceProFormaDesc=<b>Une facture proforma</b> est l'image d'une vraie facture mais n'a pas de valeur comptable.
 InvoiceReplacementAsk=Facture de remplacement pour facture
 InvoiceAvoir=Note de crédit
-InvoiceAvoirAsk=Note de crédit pour correction de la facture
 ReplaceInvoice=Remplacer facture %s
 ReplacementInvoice=Facture de remplacement
 ReplacedByInvoice=Remplacée par facture %s

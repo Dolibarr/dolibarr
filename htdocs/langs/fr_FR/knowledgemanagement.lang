@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Gestion d'une base de connaissance
+ModuleKnowledgeManagementName = Base de connaissance
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Gérer une base de connaissance ou d'assistance (KM)
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Configuration du système de gestion des connaissances
 KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = A propos de la base de connaissances
 KnowledgeManagementAboutPage = A propos de la base de connaissances
-
 KnowledgeManagementArea = Base de connaissances
 MenuKnowledgeRecord = Base de connaissance
 MenuKnowledgeRecordShort = Base de connaissance
@@ -47,7 +34,6 @@ KnowledgeRecordExtraFields = Attributs supplémentaires pour les articles
 GroupOfTicket=Catégorisation de tickets
 YouCanLinkArticleToATicketCategory=Vous pouvez lier l'article à un groupe de tickets (ainsi l'article sera mis en évidence sur tous les tickets de ce groupe)
 SuggestedForTicketsInGroup=Suggéré lors de la création de tickets
-
 SetObsolete=Définir comme obsolète
 ConfirmCloseKM=Confirmez-vous la fermeture de cet article comme obsolète ?
 ConfirmReopenKM=Souhaitez-vous remettre cet article au statut "Validé" ?

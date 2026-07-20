@@ -4,8 +4,8 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,9 +118,19 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
-	 * @var int<0,1>	Disable WAF
+	 * @var int 		Use meta robot tag "index" (else "noindex")
 	 */
-	public $disable_waf = 0;
+	public $index = 1;
+
+	/**
+	 * @var int 		Use meta robot tag "follow" (else "nofollow")
+	 */
+	public $follow = 1;
+
+	/**
+	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
+	 */
+	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup
 
 	/**
 	 * @var string 		Page html header
@@ -179,14 +189,14 @@ class WebsitePage extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -203,7 +213,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -269,21 +279,48 @@ class WebsitePage extends CommonObject
 		// Remove spaces and be sure we have main language only
 		$this->lang = preg_replace('/[_-].*$/', '', trim($this->lang)); // en_US or en-US -> en
 
+		// Check there is no PHP into HTML header
+		$dataposted = trim($this->htmlheader);		// Must accept tags like '<script>' and '<link>'
+		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
+		$dataposted = str_replace('<?=', '<?php', $dataposted);
+
+		// Test if page contains dynamic PHP content
+		if (!$user->hasRight('website', 'writephp')) {
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			$phpcontent = dolKeepOnlyPhpCode($this->content);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+
+			// Check there is no PHP content into the imported file (must be only HTML + JS)
+			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+			if ($phpcontent) {
+				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int       	$id             		Id object.
-	 *                                  			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  			- If value is < 0, we must exclude this ID.
-	 * @param 	?string    	$website_id     		Web site id (page name must also be filled if this parameter is used)
-	 * @param 	?string    	$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
-	 * @param 	?string    	$aliasalt       		Alternative alias to search page (slow)
-	 * @param	int			$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
-	 * @param	string		$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
-	 * @return 	int<-1,1>							Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int       		$id             		Id object.
+	 *                          	        			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                              	    			- If value is < 0, we must exclude this ID.
+	 * @param 	int|string|null $website_id     		Web site id (page name must also be filled if this parameter is used)
+	 * @param 	?string    		$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
+	 * @param 	?string    		$aliasalt       		Alternative alias to search page (slow)
+	 * @param	int				$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
+	 * @param	string			$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
+	 * @return 	int<-1,1>								Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $website_id = null, $page = null, $aliasalt = null, $translationparentid = 0, $translationparentlang = '')
 	{
@@ -324,7 +361,7 @@ class WebsitePage extends CommonObject
 				$sql .= ' AND t.rowid <> '.((int) abs($id));
 			}
 			if (null !== $website_id) {
-				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
+				$sql .= " AND t.fk_website = ".((int) $website_id);
 				if ($page) {
 					$pagetouse = $page;
 					$langtouse = '';
@@ -470,11 +507,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -591,11 +628,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -829,8 +866,7 @@ class WebsitePage extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 

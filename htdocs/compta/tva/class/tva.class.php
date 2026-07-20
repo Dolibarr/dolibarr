@@ -5,7 +5,8 @@
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *  Class to manage VAT - Value-added tax
- *  (also known in French as TVA - Taxe sur la valeur ajoutée)
+ *  (also known in French as TVA)
  */
 class Tva extends CommonObject
 {
@@ -263,7 +264,7 @@ class Tva extends CommonObject
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id));
+		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? ((int) $this->fk_user_modif) : ((int) $user->id)));
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -742,12 +743,12 @@ class Tva extends CommonObject
 	/**
 	 *	Send name clickable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss		More CSS
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option						Link option
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param	string	$morecss					More CSS
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -816,12 +817,9 @@ class Tva extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'payment_vat';
-		$field = 'fk_tva';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX."payment_vat";
+		$sql .= " WHERE fk_tva = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -959,17 +957,44 @@ class Tva extends CommonObject
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
 		if (property_exists($this, 'type_payment')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payement").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
 		}
 		if (property_exists($this, 'datev')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label" >'.dol_print_date($this->datev).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *	Id of vat payment object
+	 *
+	 *	@param	string		$label     Label of vat payment
+	 *	@return	int
+	 */
+	public function getIdForLabel($label)
+	{
+		$id = 0;
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+
+		dol_syslog(get_class($this)."::getIdForLabel", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$id = $obj->rowid;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $id;
 	}
 }

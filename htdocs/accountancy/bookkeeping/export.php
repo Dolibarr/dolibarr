@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022       Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
@@ -30,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
@@ -41,24 +48,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
-
-$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
+
+$socid = GETPOSTINT('socid');
 $search_mvt_num = GETPOST('search_mvt_num', 'alpha');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
@@ -168,7 +167,7 @@ $hookmanager->initHooks(array('bookkeepingexport'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
+if (!in_array($action, array('export_file', 'export_fileconfirm', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == 0 && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$sql = "SELECT date_start, date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
@@ -244,6 +243,11 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
+// Permissions
+$permissiontoread = $user->hasRight('accounting', 'mouvements', 'lire');
+$permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$permissiontoexport = $user->hasRight('accounting', 'mouvements', 'export');
 
 /*
  * Actions
@@ -364,7 +368,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -493,9 +497,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
-	$permissiontoread = ($user->hasRight('societe', 'lire') == 1);
-	$permissiontodelete = ($user->hasRight('societe', 'supprimer') == 1);
-	$permissiontoadd = ($user->hasRight('societe', 'creer') == 1);
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -678,17 +679,17 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 						// Update the line to set date_export and/or date_validated (if not already set !)
 						$now = dol_now();
 
-						$setfields = '';
-						if (!empty($notifiedexportdate) && empty($movement->date_export)) {
-							$setfields .= ($setfields ? "," : "")." date_export = '".$db->idate($now)."'";
+						$sanitizedsetfields = '';
+						if (!empty($notifiedexportdate) && (empty($movement->date_export) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_export = '".$db->idate($now)."'";
 						}
-						if (!empty($notifiedvalidationdate) && empty($movement->date_validation)) {
-							$setfields .= ($setfields ? "," : "")." date_validated = '".$db->idate($now)."'";
+						if (!empty($notifiedvalidationdate) && (empty($movement->date_validation) || getDolGlobalString('ACCOUNTING_REEXPORT'))) {
+							$sanitizedsetfields .= ($sanitizedsetfields ? "," : "")." date_validated = '".$db->idate($now)."'";
 						}
 
-						if ($setfields) {
+						if ($sanitizedsetfields) {
 							$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-							$sql .= " SET ".$setfields;		// $setfields is already a sanitized SQL string
+							$sql .= " SET ".$sanitizedsetfields;		// $setfields is already a sanitized SQL string
 							$sql .= " WHERE rowid = ".((int) $movement->id);
 
 							$result = $db->query($sql);
@@ -764,7 +765,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -811,73 +812,111 @@ if ($action == 'export_file') {
 
 	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
 		// If 1, we check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
+		$checked_exportreconcile = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING') ? 'true' : 'false';
 		$form_question['notexportlettering'] = array(
 			'name' => 'notexportlettering',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotExportLettering'),
-			'value' => $checked,
+			'value' => $checked_exportreconcile,
 		);
 
 		$form_question['separator1'] = array('name' => 'separator1', 'type' => 'separator');
 	}
 
 	// If 1 or not set, we check by default.
-	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE'));
+	$checked_exportdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'true' : 'false';
 	$form_question['notifiedexportdate'] = array(
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (getDolGlobalString('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE') ? 'false' : 'true'),
+		'value' => $checked_exportdate,
 	);
 
 	$form_question['separator2'] = array('name' => 'separator2', 'type' => 'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
-		$checked = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE');
+		$checked_validationdate = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE') ? 'true' : 'false';
 		$form_question['notifiedvalidationdate'] = array(
 			'name' => 'notifiedvalidationdate',
 			'type' => 'checkbox',
 			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
-			'value' => $checked,
+			'value' => $checked_validationdate,
 		);
 
 		$form_question['separator3'] = array('name' => 'separator3', 'type' => 'separator');
 	}
 
 	// add documents in an archive for some accountancy export format
-	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS
-		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC
-		|| getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_FEC2
-	) {
-		$form_question['notifiedexportfull'] = array(
-			'name' => 'notifiedexportfull',
-			'type' => 'checkbox',
-			'label' => $langs->trans('NotifiedExportFull'),
-			'value' => 'false',
-		);
+	$exportTypesWithDocs = array(
+		AccountancyExport::$EXPORT_TYPE_QUADRATUS,
+		AccountancyExport::$EXPORT_TYPE_FEC,
+		AccountancyExport::$EXPORT_TYPE_FEC2
+	);
+
+	$except = array();
+	if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+		$except[] = $langs->trans('Invoice');
+	}
+	if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+		$except[] = $langs->trans('ExpenseReport');
+	}
+	if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+		$except[] = $langs->trans('SupplierInvoice');
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 390, 700);
+	$checked_exportfull = getDolGlobalString('ACCOUNTING_DEFAULT_NOTIFIED_EXPORTFULL') ? 'true' : 'false';
+	$form_question['notifiedexportfull'] = array(
+		'name' => 'notifiedexportfull',
+		'type' => 'checkbox',
+		'label' => $langs->trans('NotifiedExportFull').(empty($except) ? '' : ' <spanc class="opacitymedium">('.$langs->trans("except").' '.implode(', ', $except).')</span>'),
+		'value' => $checked_exportfull,
+	);
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").'...', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 500, 700);
+
+	$formconfirm .= '<script>
+	jQuery(document).ready(function() {
+		const exportTypesWithDocs = ['.implode(',', $exportTypesWithDocs).'];
+		const $formatExport = jQuery("#formatexport");
+
+		// We retrieve the configured default value (true or false in native JavaScript)
+		const defaultChecked = ' . $checked_exportfull . ';
+
+		function toggleExportFull() {
+			const $checkbox = jQuery("#notifiedexportfull");
+			const show = exportTypesWithDocs.indexOf(parseInt($formatExport.val())) !== -1;
+			$checkbox.closest(".tagtr").toggle(show);
+
+			if (!show) {
+				$checkbox.prop("checked", false); // remove checked if hidden
+			} else {
+				$checkbox.prop("checked", defaultChecked); // Restore the default configuration if displayed
+			}
+		}
+
+		$formatExport.on("change", toggleExportFull);
+		toggleExportFull();
+	});
+	</script>';
 }
 
 // Print form confirm
 print $formconfirm;
 
-//$param='';	param started before
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+//$param='';	param started in action part
+if ($contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 
 // List of mass actions available
 $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') {
@@ -914,7 +953,7 @@ if (empty($reshook)) {
 	}
 
 	if ($user->hasRight('accounting', 'mouvements', 'export')) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $user->hasRight('accounting', 'mouvements', 'export'));
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList"), 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : '').'&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder), '', $permissiontoexport);
 	}
 }
 
@@ -932,7 +971,7 @@ if (!getDolGlobalString('ACCOUNTING_REEXPORT')) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -968,7 +1007,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Filters lines
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1013,19 +1052,12 @@ if (!empty($arrayfields['t.numero_compte']['checked'])) {
 // Subledger account
 if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
-	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
-	// use setup of "keypress to select thirdparty" and this hangs browser on large databases.
-	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-		print '<div class="nowrap">';
-		//print $langs->trans('From').' ';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth150', 'subledgeraccount');
-		print '</div>';
-		print '<div class="nowrap">';
-		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth150', 'subledgeraccount');
-		print '</div>';
-	} else {
-		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
-	}
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth150', 'subledgeraccount');
+	print '</div>';
+	print '<div class="nowrap">';
+	print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth150', 'subledgeraccount');
+	print '</div>';
 	print '</td>';
 }
 // Label operation
@@ -1046,7 +1078,7 @@ if (!empty($arrayfields['t.credit']['checked'])) {
 	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
 	print '</td>';
 }
-// Lettering code
+// Matching code
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.dol_escape_htmltag($search_lettering_code).'"/>';
@@ -1109,7 +1141,7 @@ if (!empty($arrayfields['t.import_key']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1118,7 +1150,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 }
 if (!empty($arrayfields['t.piece_num']['checked'])) {
@@ -1170,7 +1202,7 @@ if (!empty($arrayfields['t.date_validated']['checked'])) {
 if (!empty($arrayfields['t.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER["PHP_SELF"], "t.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
@@ -1223,7 +1255,7 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -1399,7 +1431,7 @@ while ($i < min($num, $limit)) {
 		$totalarray['val']['totalcredit'] += $line->credit;
 	}
 
-	// Lettering code
+	// Matching code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
 		print '<td class="center">'.$line->lettering_code.'</td>';
 		if (!$i) {
@@ -1452,7 +1484,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowraponall center">';
 		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

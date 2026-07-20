@@ -5,6 +5,7 @@
  * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
  * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,8 @@ if (empty($reshook)) {
 	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		$action = '';
+		header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+		exit;
 	}
 
 	// Add translation
@@ -111,7 +113,7 @@ if (empty($reshook)) {
 			$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
 			$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
 
-			$object->update($object->id, $user);
+			$object->update($object->id, $user, 1); // trigger will be called by setMultiLangs
 		} else {
 			$object->multilangs[GETPOST("forcelangprod")]["label"] = GETPOST("libelle");
 			$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
@@ -127,7 +129,8 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'add';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -138,7 +141,7 @@ if (empty($reshook)) {
 	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$current_lang = $langs->getDefaultLang();
 
-		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
+		foreach ($object->multilangs as $key => $value) { // Record the new values in the object
 			if ($key == $current_lang) {
 				$object->label = GETPOST("libelle-" . $key);
 				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
@@ -154,7 +157,8 @@ if (empty($reshook)) {
 
 		$result = $object->setMultiLangs($user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -167,7 +171,8 @@ if (empty($reshook)) {
 
 		$result = $object->delMultiLangs($langtodelete, $user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');

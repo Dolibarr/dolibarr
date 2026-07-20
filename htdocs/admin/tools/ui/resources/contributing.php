@@ -191,7 +191,7 @@ $documentation->showSidebar(); ?>
 				'$documentation->docFooter();',
 				'?>',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Second Step -->
@@ -231,7 +231,7 @@ $documentation->showSidebar(); ?>
 				'	)',
 				');',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 		<!-- Third Step -->
@@ -247,7 +247,7 @@ $documentation->showSidebar(); ?>
 				'// Set view for menu and breadcrumb',
 				'$documentation->view = array(\'Components\', \'MyComponent\');',
 			);
-			echo $documentation->showCode($lines, 'php'); ?>
+			$documentation->showCode($lines, 'php'); ?>
 		</div>
 
 	</div>

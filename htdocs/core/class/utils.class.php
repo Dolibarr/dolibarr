@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -219,8 +219,9 @@ class Utils
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
 
-		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
+		// Recreate temp dir that are not automatically recreated by core code, we need them
 		if (isModEnabled('api')) {
+			// We should create also dir x/api/temp for multicompany dirs, but this has become useless because dir is now recreated by constructor of api.class.php
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -411,6 +412,8 @@ class Utils
 					$handle = fopen($outputfile, 'w');
 				}
 			} else {
+				// TODO Add a pipe into script to decrypt dolCrypted values
+
 				if ($compression == 'none') {
 					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
@@ -442,7 +445,7 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod.", lowmemorydump=".$lowmemorydump.", command=".$fullcommandcrypted, LOG_INFO);
 
 
 				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
@@ -479,6 +482,8 @@ class Utils
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
+									// TODO decrypt dolCrypted values from $read
+
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 										$ok = 1;
@@ -507,9 +512,9 @@ class Utils
 								continue;
 							}
 							fwrite($handle, $read);
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+							if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 								$ok = 1;
-							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
 								$ok = 1;
 							}
 						}
@@ -718,7 +723,7 @@ class Utils
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$output = '';
@@ -812,6 +817,7 @@ class Utils
 		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($this->db);
@@ -826,7 +832,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion = explode('.', $moduleobj->version, 3);
+		$arrayversion = $moduleobj === null ? array() : explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';
@@ -1311,8 +1317,8 @@ class Utils
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+		} elseif (getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 		} else {
 			$error++;
 		}
@@ -1320,7 +1326,7 @@ class Utils
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+			$sendto = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1376,7 +1382,8 @@ class Utils
 		$mailfile = null;
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
+			// $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
 			if ($mailfile->error) {
 				$error++;
 				$output = $mailfile->error;

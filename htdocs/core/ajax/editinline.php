@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/ajax/editinline.php
  *      \ingroup    website
- *      \brief      Save changes done into a website page hen we are in "edit inline" mode.
+ *      \brief      Save changes done into a website page when we are in "edit inline" mode.
  */
 
 if (!defined('NOTOKENRENEWAL')) {

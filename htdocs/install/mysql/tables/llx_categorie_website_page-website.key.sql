@@ -22,4 +22,3 @@ ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_w
 
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_websitepage_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_websitepage_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
-

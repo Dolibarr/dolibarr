@@ -2,9 +2,9 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: focal = 20.04
+# We use dist: focal = 20.04, jammy = 22.04
 os: linux
-dist: focal
+dist: jammy
 
 language: generic
 
@@ -21,7 +21,7 @@ services:
 
 
 addons:
-  mariadb: '10.5'
+  mariadb: '10.6'
 
 
 env:
@@ -39,24 +39,34 @@ jobs:
   allow_failures:
   - php: 'latest'
   include:
-    - stage: PHP min and max
+    - stage: PHP min
       if: type = push
-      php: '7.1'
+      php: '7.2'
       env:
       - DB=postgresql
-      - TRAVIS_PHP_VERSION=7.1
-    - stage: PHP min and max
-      if: type = pull_request OR type = push
+      - TRAVIS_PHP_VERSION=7.2
+      - TRAVIS_TYPE=push
+    - stage: PHP max pull_request
+      if: type = pull_request
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_TYPE=pull_request
+    - stage: PHP max
+      if: type = push
+      php: '8.4'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.4
+      - TRAVIS_TYPE=push
     - stage: PHP latest
       if: type = push AND branch = develop
       php: 'latest'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=latest
+      - TRAVIS_TYPE=push
 
 notifications:
   email:
@@ -78,12 +88,16 @@ before_install:
   sudo add-apt-repository -y ppa:ondrej/php
   sudo apt-get update
   echo TRAVIS_PHP_VERSION=$TRAVIS_PHP_VERSION
+  echo TRAVIS_TYPE=$TRAVIS_TYPE
 
 - |
   echo Install packages for PHP
   sudo apt-get install -y pgloader memcached
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
   	sudo apt install unzip apache2 php7.1 php7.1-cli php7.1-curl php7.1-mysql php7.1-pgsql php7.1-gd php7.1-imap php7.1-intl php7.1-ldap php7.1-xml php7.1-mbstring php7.1-xml php7.1-zip libapache2-mod-php7.1
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+  	sudo apt install unzip apache2 php7.2 php7.2-cli php7.2-curl php7.2-mysql php7.2-pgsql php7.2-gd php7.2-imap php7.2-intl php7.2-ldap php7.2-xml php7.2-mbstring php7.2-xml php7.2-zip libapache2-mod-php7.2
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
@@ -109,8 +123,8 @@ before_install:
     #ps fauxww | grep postgres
     ls /etc/postgresql/13/main/
 
-    sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/13/main/pg_hba.conf
-    sudo cat /etc/postgresql/13/main/pg_hba.conf
+    sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/14/main/pg_hba.conf
+    sudo cat /etc/postgresql/14/main/pg_hba.conf
 
     sudo service postgresql restart
 
@@ -125,8 +139,14 @@ before_install:
 
 install:
 - |
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.0
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.2
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
     sudo update-alternatives --set php /usr/bin/php8.1
@@ -147,7 +167,9 @@ install:
 
   #sudo apt install composer
   composer -V
-  composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config audit.block-insecure false
+  sudo chmod -R a+rwx /home/travis/.config/composer
   echo
 
 - |
@@ -217,8 +239,8 @@ before_script:
     phpcs -i | head -
     # Check PHP Vardump check version
     echo "PHP Vardump check version"
-    which var_dump_check
-    var_dump_check --version
+    which var-dump-check
+    var-dump-check --version
     # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
@@ -242,7 +264,7 @@ before_script:
       sleep 3
       sudo ps fauxww
       echo "MySQL set root password"
-      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
+      sudo mysql -u root -h 127.0.0.1 -e "FLUSH PRIVILEGES; CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8mb4'; ALTER USER 'root'@'localhost' IDENTIFIED BY 'password'; CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY 'password'; CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON travis.* TO root@127.0.0.1; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;"
       echo "MySQL grant"
       sudo mysql -u root -h 127.0.0.1 -ppassword -e 'FLUSH PRIVILEGES; GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1; FLUSH PRIVILEGES;'
       echo "MySQL list current users"
@@ -288,6 +310,8 @@ before_script:
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
+    echo '$'dolibarr_main_db_character=\'utf8mb4\'';' >> $CONF_FILE
+    #echo '$'dolibarr_main_db_collation=\'travis\'';' >> $CONF_FILE
     echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
@@ -340,28 +364,28 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
       parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
         --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
         --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
@@ -377,17 +401,16 @@ script:
     set -e
     CACHE_OPT="--cache=${HOME}/.cache/dolibarr-phpcs-${TRAVIS_PHP_VERSION}.cache"
     # Exclusions are defined in the ruleset.xml file
-    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --severity=1 ${CACHE_OPT} --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
@@ -398,17 +421,16 @@ script:
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
-    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
-    if [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
+    if [ "$TRAVIS_TYPE" = "push" ] && [ "$TRAVIS_PHP_VERSION" = "8.4" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     set +e
@@ -518,13 +540,19 @@ script:
     php upgrade.php 21.0.0 22.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade21002200.log || cat $TRAVIS_BUILD_DIR/upgrade21002200.log
     php upgrade2.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-2.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-2.log
     php step5.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-3.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-3.log
+    php upgrade.php 22.0.0 23.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade22002300.log || cat $TRAVIS_BUILD_DIR/upgrade22002300.log
+    php upgrade2.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-2.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-2.log
+    php step5.php 22.0.0 23.0.0 > $TRAVIS_BUILD_DIR/upgrade22002300-3.log || cat $TRAVIS_BUILD_DIR/upgrade22002300-3.log
+    php upgrade.php 23.0.0 24.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade23002400.log || cat $TRAVIS_BUILD_DIR/upgrade23002400.log
+    php upgrade2.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-2.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-2.log
+    php step5.php 23.0.0 24.0.0 > $TRAVIS_BUILD_DIR/upgrade23002400-3.log || cat $TRAVIS_BUILD_DIR/upgrade23002400-3.log
     set +e
     echo
 
   - |
-    echo Show some debug info like table content or log
-    #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo Show some debug info, like table content, or migration log from some versions
+    echo '\d llx_blockedlog' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+    cat $TRAVIS_BUILD_DIR/upgrade500600.log
     cat $TRAVIS_BUILD_DIR/upgrade19002000.log
     echo
 
@@ -544,6 +572,7 @@ script:
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KnowledgeManagement,MAIN_MODULE_EventOrganization,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
     php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_EmailCollector >> $TRAVIS_BUILD_DIR/enablemodule.log
+    php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_BlockedLog >> $TRAVIS_BUILD_DIR/enablemodule.log
     echo $?
     cd -
     set +e
@@ -557,6 +586,8 @@ script:
     # Execute phpunit, check its exit status and that the phpunit output shows a test summary
     phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php | tee /dev/tty | grep -qE "(OK .*[0-9]+ tests.*[0-9]+ assertions|Tests: [0-9]+)" ; phpunitresult=$((PIPESTATUS[0]?PIPESTATUS[0]:PIPESTATUS[2]))
     echo "Phpunit return code = $phpunitresult"
+    echo "Content of end of apache error.log"
+    sudo tail -n 200 /var/log/apache2/travis_error_log
     # Comment next line if you want to go to the end to see the dolibarr.log file.
     [ $phpunitresult == 0 ] || exit $phpunitresult
     echo

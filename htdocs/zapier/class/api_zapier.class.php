@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ class Zapier extends DolibarrApi
 	 * @param string           $sortorder           Sort order
 	 * @param int              $limit               Limit for list
 	 * @param int              $page                Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return Hook[]
@@ -155,34 +155,14 @@ class Zapier extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
-
-		// Set to 1 if there is a field socid in table of object
-		$restrictonsocid = 0;
-
-		// If the internal user must only see his customers, force searching by him
-		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
-			$search_sale = DolibarrApiAccess::$user->id;
-		}
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."hook_mytable as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."zapier_hook as t";
 		$sql .= " WHERE 1 = 1";
 		$tmpobject = new Hook($this->db);
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity('hook').')';
-		}
-		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".((int) $socid);
-		}
-		// Search on sale representative
-		if ($search_sale && $search_sale != '-1') {
-			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
-			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
-			}
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -205,8 +185,10 @@ class Zapier extends DolibarrApi
 		$result = $this->db->query($sql);
 		$i = 0;
 		if ($result) {
+			$i = 0;
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$hook_static = new Hook($this->db);
 				if ($hook_static->fetch($obj->rowid)) {
@@ -308,8 +290,13 @@ class Zapier extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
+	 * @phpstan-template T
+	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	public function _cleanObjectDatas($object)
 	{

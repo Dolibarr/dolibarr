@@ -66,7 +66,6 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-
 /*
  * Action
  */
@@ -235,7 +234,8 @@ $help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauthlogintokens');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 $head = oauthadmin_prepare_head();
@@ -432,7 +432,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '<td>';
 			if ($keyforprovider != 'Login') {
 				if (is_object($tokenobj)) {
-					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
+					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').'<br>Scopes saved into field state='.dol_escape_htmltag($storage->state));
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
 				}
