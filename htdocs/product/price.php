@@ -1287,6 +1287,13 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 						$extravalue = $genericObject->array_options['options_' . $key];
 						// If field is a computed field, we make computation to get value
 						if (!empty($extrafields->attributes["product_price"]['computed'][$key])) {
+							$genericObject->price = $object->multiprices[$i];
+							$genericObject->price_ttc = $object->multiprices_ttc[$i];
+							$genericObject->price_base_type = $object->multiprices_base_type[$i];
+							$genericObject->price_min = $object->multiprices_min[$i];
+							$genericObject->price_min_ttc = $object->multiprices_min_ttc[$i];
+							$genericObject->tva_tx = $object->multiprices_tva_tx[$i];
+
 							$objectoffield = $genericObject; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 							$extravalue = dol_eval((string) $extrafields->attributes["product_price"]['computed'][$key], 1, 1, '2');
 						}
@@ -2657,7 +2664,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && $extrafields->attributes["product_customer_price"]['list'][$key] != 3) {
 								// If field is a computed field, we make computation to get value, whether or not a stored row exists
 								if (!empty($extrafields->attributes["product_customer_price"]['computed'][$key])) {
-									$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
+									$objectoffield = $line; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 									$extravalue = dol_eval((string) $extrafields->attributes["product_customer_price"]['computed'][$key], 1, 1, '2');
 									print '<td align="right">'.$extrafields->showOutputField($key, $extravalue, '', 'product_customer_price')."</td>";
 								} elseif ($obj) {
