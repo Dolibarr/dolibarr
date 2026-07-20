@@ -684,7 +684,9 @@ class EcmFiles extends CommonObject
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
 				$line->agenda_id = $obj->agenda_id;
+
 				$line->fetch_optionals();
+
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
