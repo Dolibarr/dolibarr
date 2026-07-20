@@ -295,8 +295,8 @@ CurrencyXPF=Franc CFP
 CurrencySingXPF=CFP Franc
 CurrencyCentEUR=sen
 CurrencyCentSingEUR=sen
-CurrencyCentINR=paise
-CurrencyCentSingINR=paisa
+CurrencyCentINR=uang kertas
+CurrencyCentSingINR=bahasa paisa
 CurrencyThousandthSingTND=keseribu
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var stdClass $obj
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ *
+ * @var string $extrafieldsobjectkey
+ * @var string $extrafieldsobjectprefix
+ * @var int $i
+ * @var array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
  */
-
 '
 @phan-var-force CommonObject $object
+@phan-var-force stdClass $obj
+@phan-var-force int $i
+@phan-var-force array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
 ';
 
 // Protection to avoid direct call of template
@@ -61,14 +70,16 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 					$value = $datenotinstring;
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
-					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0' ? $obj->$tmpkey : '');
+					$value = $obj->$tmpkey ?? (isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : null) ?? '';
 				} else {
 					// The key may be in $obj->array_options if not in $obj
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
 						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : ''));
 				}
-				// If field is a computed field, we make computation to get value
-				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
+				// If field is a computed field, we make computation to get value.
+				// But when MAIN_STORE_COMPUTED_EXTRAFIELDS is enabled, the value stored in database is used instead,
+				// because the raw row available in a list has no object context (like $objectoffield->array_options) that the formula may rely on.
+				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key] && !getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
 					$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
@@ -76,12 +87,13 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 				}
 
-				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object ?? null, 'list');
+
 				$title = dol_string_nohtmltag($valuetoshow);
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;

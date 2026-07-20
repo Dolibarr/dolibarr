@@ -164,7 +164,7 @@ $documentation->showSidebar(); ?>
 					'',
 					'</table>',
 				);
-				echo $documentation->showCode($lines, 'php'); ?>
+				$documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!-- Table with filters -->
@@ -283,7 +283,7 @@ $documentation->showSidebar(); ?>
 					'	</table>',
 					'</form>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- Add a row before filters -->
@@ -386,7 +386,7 @@ $documentation->showSidebar(); ?>
 					'	<!-- Total -->',
 					'</table>',
 				);
-				echo $documentation->showCode($lines); ?>
+				$documentation->showCode($lines); ?>
 			</div>
 
 			<!-- CSS classes for tables -->

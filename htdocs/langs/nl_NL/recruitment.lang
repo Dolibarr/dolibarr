@@ -68,3 +68,4 @@ ApplyJobCandidature=Solliciteer op deze baan
 ErrorRecruitmmentCandidatureAlreadyExists= Kandidaat voor werving bestaat al met e-mailadres %s
 RecruitmentCandidatureSaved=Kandidaat voor werving succesvol opgeslagen
 NoOpenJobOffer=Momenteel geen openstaande vacatures
+ShowPositionToBeFilled=Toon vacature

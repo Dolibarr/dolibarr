@@ -147,7 +147,10 @@ class FormWebsite
 					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
-						$transcodecontainer = ucfirst($obj->typecontainer);
+						$transcodecontainer = ucfirst($obj->typecontainer);	// Label of group of page type
+						if ($transcodecontainer == 'Library') {
+							$transcodecontainer = 'System';
+						}
 						if ($obj->typecontainer == 'page') {
 							$transcodecontainer = 'CompletePage';
 						} elseif ($obj->typecontainer == 'container') {
@@ -346,6 +349,7 @@ class FormWebsite
 	 *
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      HTML for model page boxes
+	 * @see getEmailLayoutSelector()
 	 */
 	public function getContentPageTemplate($htmlContent = 'message')
 	{
@@ -356,8 +360,12 @@ class FormWebsite
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 
 		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
-		$arrayofsamples = array();
-		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+
+		// Define list of layouts to use
+		$arrayofsamples = array(
+			'empty' => 'EmptyPage',
+		);
+
 		foreach ($listofsamples as $sample) {
 			$reg = array();
 			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
@@ -369,7 +377,7 @@ class FormWebsite
 				$arrayofsamples[$key] = $labelkey;
 			}
 		}
-		$out = '<div id="template-selector" class="template-container hidden">';
+		$out = '<div id="template-selector" class="template-selector template-container hidden">';
 
 		// We disable some not ready templates
 		unset($arrayofsamples['dynamiccontent']);
@@ -388,7 +396,7 @@ class FormWebsite
 			$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
-			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.($template === 'empty' ? 'none' : $template).'.png" />';
 			$out .= '<span class="template-option-text">'.($template != 'text' ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
 			$out .= '</div>';
 		}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,15 +24,17 @@
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Form $form
+ * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  *
  * @var string	$action
  * @var	array<string,mixed>	$parameters		Array of parameters
- * @var int 	$cols
+ * @var int 	$cols		@deprecated 	Add this information into $parameters['cols']
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -44,17 +46,23 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
+// Ensure $objectoffield is available for dol_eval visibility formulas.
+global $objectoffield;
+$objectoffield = $object;
+
 ?>
-<!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
-	$parameters['colspan'] = ' colspan="'.$cols.'"';
+	$parameters['colspan'] = ' colspan="'.$cols.'"';	// deprecated, keptfor backward compatibility
 }
-if (!empty($cols)) {
+if (!empty($cols) && !isset($parameters['cols'])) {
 	$parameters['cols'] = $cols;
+} elseif (isset($parameters['cols'])) {
+	$cols = $parameters['cols'];
 }
 if (!empty($object->fk_soc)) {
 	$parameters['socid'] = $object->fk_soc;
@@ -68,9 +76,9 @@ if ($reshook < 0) {
 
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && !empty($object->table_element) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
-	$lastseparatorkeyfound = '';
+	//$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
-	$extrafields_collapse_num_old = '';
+	//$extrafields_collapse_num_old = '';
 	$i = 0;
 
 	// Loop on each extrafield
@@ -83,12 +91,12 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
+			$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -121,7 +129,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
-			$lastseparatorkeyfound = $tmpkeyextra;
+			//$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
 
@@ -137,7 +145,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print ' style="display: none;"';
 			}
 			print '>';
-			$extrafields_collapse_num_old = $extrafields_collapse_num;
+			//$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
@@ -229,25 +237,38 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
-			}
-			if (isModEnabled("ai") && $action == 'edit_extras' && GETPOST('attribute') == $tmpkeyextra && !empty($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra])) {
-				if (in_array($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra], array("varchar", "text", "html", "int", 'double', 'price'))) {
-					$showlinktoai = "extrafieldfiller";		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+				print '<td class="right">';
+				if (isModEnabled("ai") && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
+					$showlinktoai = "extrafieldfiller_".$tmpkeyextra;
 					$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
-					$htmlname = "options_".$tmpkeyextra;
+					$htmlname = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : "options_".$tmpkeyextra;
 					$onlyenhancements = "textgenerationextrafield";
 					$morecss = "editfielda";
+					$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
 					$out = "";
 
 					// Fill $out
 					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
-					print '<td class="right">';
-					print '<!-- TODO Step 2 Have code that will make the AI call and update input field without the popup-->';
-					print '<!-- TODO Step 3 Then a next step will be to use the ajax call core/aja/updateextrafield.php to update field in database directly with no need to pass by edit_extras step -->';
 					print $out;
-					print '</td>';
+					print '<script>
+						$(document).ready(function() {
+							$("#'.$htmlname.'").on("change", function () {
+								value = $(this).html();
+								$.ajax({
+									method: "POST",
+									dataType: "json",
+									url: "'. DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
+									data: {"token": "'.currentToken().'", "objectType": "'.$object->element.'", "objectId": "'.$object->id.'", "field": "'.$tmpkeyextra.'", "value": value},
+									success: function(response) {
+										console.log("Extrafield "+'.$tmpkeyextra.'+" successfully updated");
+									},
+								});
+							});
+						});
+					</script>';
 				}
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print'</td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -265,7 +286,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
@@ -274,10 +295,10 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
-			//TODO Improve element and rights detection
+			// TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permtoeditextrafield && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
 				// Show the extrafield in create or edit mode
 				$fieldid = 'id';
@@ -289,12 +310,14 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
+				print '<input type="hidden" name="page_y" value="">';
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 
-				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 
+				/** @var ?FormAI $formai */
 				if (empty($formai) || $formai instanceof FormAI) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 					$formai = new FormAI($db);
@@ -302,9 +325,11 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print $formai->getAjaxAICallFunction();
 			} else {
 				// Show the extrafield in view mode
-
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
+
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
+
+				print '<input type="hidden" value="' . dolPrintHTMLForAttribute($value) . '" name="options_' . dol_escape_htmltag($tmpkeyextra) . '" id="options_' . dol_escape_htmltag($tmpkeyextra) . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
 			}
 
 			print '</td>';
@@ -319,35 +344,10 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 		print '
 				<script>
 				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
-
-								/* Activate the handler to call showOptions on each future change */
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
-						}
 						setListDependencies();
 				    });
 				</script>'."\n";
 	}
 }
 ?>
-<!-- END PHP TEMPLATE extrafields_view.tpl.php -->
+<!-- END PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->

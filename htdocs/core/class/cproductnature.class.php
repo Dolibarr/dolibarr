@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Florian HENRY <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Florian HENRY           <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +69,9 @@ class CProductNature extends CommonDict
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
+		if (empty($this->id)) {
+			return -1;
+		}
 		// Insert request
 		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element."(";
 		$sql .= "rowid,";
@@ -77,7 +79,7 @@ class CProductNature extends CommonDict
 		$sql .= "label,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : ((int) $this->id)).",";
+		$sql .= (int) $this->id . ",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : ((int) $this->code)).",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
@@ -110,8 +112,6 @@ class CProductNature extends CommonDict
 	 */
 	public function fetch($id, $code = '')
 	{
-		global $langs;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
@@ -134,7 +134,7 @@ class CProductNature extends CommonDict
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = (int) $obj->rowid;
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->active = $obj->active;

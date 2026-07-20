@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
@@ -27,6 +27,13 @@
  */
 
 require "../../main.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -37,24 +44,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadlangs(array('projects', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-//$cancel = GETPOST('cancel', 'aZ09');
+//$cancel = GETPOST('cancel');
 //$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 //$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-//$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
@@ -97,6 +95,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 /*
  * Actions
  */
+
 $error = 0;
 
 if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
@@ -129,7 +128,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 		$object->date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
-		$object->budget_amount = GETPOSTFLOAT('budget_amount');
+		$object->budget_amount = (GETPOST('budget_amount') != '' ? GETPOSTFLOAT('budget_amount'): null);
 		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 		if (GETPOST('progress') == '100') {
 			$object->status = $object::STATUS_CLOSED;
@@ -181,7 +180,7 @@ if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet',
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes') {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
 	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
 	$clone_time = GETPOST('clone_time') ? 1 : 0;
@@ -207,6 +206,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet'
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
+	// $object is task to delete
 	if ($object->delete($user) > 0) {
 		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 		exit;
@@ -220,13 +220,11 @@ if ($action == 'confirm_close' && $confirm == "yes" && $user->hasRight('projet',
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
-	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) > 0) {
-		header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
-		exit;
-	} else {
+	// $object is task to close
+	if ($object->setStatusCommon($user, Task::STATUS_CLOSED) <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
 	}
+	$action = '';
 }
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
@@ -278,9 +276,20 @@ if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 
 // Reopen task
 if ($action == 'reopen' && $user->hasRight('projet', 'creer')) {
+	$result = $object->setStatusCommon($user, Task::STATUS_DRAFT);
+	if ($result >= 0) {
+		setEventMessages($langs->trans("TaskBackToDraft"), null, 'mesgs');
+	} else {
+		$error++;
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Validate status of task
+if ($action == 'valid' && $user->hasRight('projet', 'creer')) {
 	$result = $object->setStatusCommon($user, Task::STATUS_VALIDATED);
 	if ($result >= 0) {
-		setEventMessages($langs->trans("TaskReopened"), null, 'mesgs');
+		setEventMessages($langs->trans("TaskValidated"), null, 'mesgs');
 	} else {
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -297,7 +306,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $object->ref;
+$title = (string) $object->ref;
 if (!empty($withproject)) {
 	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
 }
@@ -308,10 +317,9 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-task
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
-	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && empty($object->comments)) {
 		$object->fetchComments();
 	}
-
 
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
@@ -466,29 +474,6 @@ if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}
 
-	/*
-	 * Actions
-	*/
-	/*print '<div class="tabsAction">';
-
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-	if ($projectstatic->public || $userWrite > 0)
-	{
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-	}
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
-	}
-
-	print '</div>';
-	*/
 
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
@@ -498,13 +483,23 @@ if ($id > 0 || !empty($ref)) {
 	$head = task_prepare_head($object);
 
 	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
+
+		$param = (GETPOST('withproject') ? '&withproject=1' : '');
+		$linkback = GETPOST('withproject') ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
+
+		if (!GETPOST('withproject') || empty($projectstatic->id)) {
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+			$object->next_prev_filter = "fk_projet:IN:".$db->sanitize($projectsListId);
+		} else {
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
+		}
 
 		print '<table class="border centpercent">';
 
@@ -676,7 +671,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Task parent
-		print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("ChildOfTask").'</td><td>';
 		if ($object->fk_task_parent > 0) {
 			$tasktmp = new Task($db);
 			$tasktmp->fetch($object->fk_task_parent);
@@ -685,7 +680,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 
 		// Date start - Date end task
-		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
 		$start = dol_print_date($object->date_start, 'dayhour');
 		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'dayhour');
@@ -717,7 +712,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Progress declared
-		print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
 		if ($object->progress != '' && $object->progress != '-1') {
 			print $object->progress.' %';
 		}
@@ -779,20 +774,24 @@ if ($id > 0 || !empty($ref)) {
 		if (empty($reshook)) {
 			// Modify
 			if ($user->hasRight('projet', 'creer')) {
-				if ($object->status != $object::STATUS_CLOSED) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_ONGOING) {
+					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("SetToDraft").'">'.$langs->trans('SetToDraft').'</a>';
+				} elseif ($object->status == $object::STATUS_DRAFT) {
+					print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=valid&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Validate').'</a>';
 				}
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
-				print '<a class="butActionDelete classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
+				//if ($object->status != $object::STATUS_CLOSED) {
+				print '<a class="butAction reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				//}
 
 				if ($object->status != $object::STATUS_CLOSED) {
-					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
+					print '<a class="butAction classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("Close").'">'.$langs->trans('Close').'</a>';
 				}
-				if ($object->status == $object::STATUS_CLOSED) {
-					print '<a class="butAction classfortooltip" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("ReOpen").'">'.$langs->trans('ReOpen').'</a>';
-				}
+
+				print '<a class="butAction butActionClone reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
+
+				print '<a class="butActionDelete classfortooltip reposition" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=merge&token='.newToken().'&withproject='.((int) $withproject).'" title="'.$langs->trans("MergeTasks").'">'.$langs->trans('Merge').'</a>';
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butActionRefused classfortooltip reposition" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}
 
 			// Delete
@@ -801,7 +800,7 @@ if ($id > 0 || !empty($ref)) {
 				if (!$object->hasChildren() && !$object->hasTimeSpent()) {
 					print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
 				} else {
-					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', 0);
+					print dolGetButtonAction($langs->trans("TaskHasChild"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', -1);
 				}
 			} else {
 				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject), 'delete', $permissiontodelete);
@@ -816,13 +815,13 @@ if ($id > 0 || !empty($ref)) {
 		/*
 		 * Generated documents
 		 */
-		$filename = '';
-		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$subdir = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".$subdir;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire'));
 		$delallowed = ($user->hasRight('projet', 'creer'));
 
-		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
+		print $formfile->showdocuments('project_task', $subdir, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 0, 0, '', '', '', '', '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('project_task'), 1);

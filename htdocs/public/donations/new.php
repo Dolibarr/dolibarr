@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -105,6 +105,39 @@ $object = new Don($db);
 
 $user->loadDefaultValues();
 
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
 
 /**
  * Show header for new donation
@@ -117,9 +150,10 @@ $user->loadDefaultValues();
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -188,11 +222,16 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
-		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+	$ok = false;
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION') && is_object($captchaobj)) {
+		if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
+		} else {
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
+		}
 		if (!$ok) {
 			$error++;
+			$langs->load("errors");
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
 			$action = '';
 		}
@@ -403,8 +442,9 @@ if (!$action || $action == 'create') {
 	}
 
 	// Anonymous
+	/*
 	print '<tr>';
-	print '<td>'.$form->textwithpicto($langs->trans("donAnonymous"), $langs->trans("AnonymousDonationTooltip")).'</td>';
+	print '<td class="titlefieldcreate"><label for="anonymous">'.$form->textwithpicto($langs->trans("donAnonymous"), $langs->trans("AnonymousDonationTooltip")).'</label></td>';
 	print '<td><input type="checkbox" name="anonymous" id="anonymous" '.(GETPOST('anonymous') ? 'checked' : '').'></td>';
 	print '</tr>'."\n";
 	print '<script type="text/javascript">
@@ -426,6 +466,12 @@ if (!$action || $action == 'create') {
 		});
 	});
 	</script>';
+	*/
+
+	// EMail
+	print '<tr id="tremail"><td class="fieldrequired" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").'</td><td>';
+	//print img_picto('', 'email', 'class="pictofixedwidth"');
+	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Company
 	print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
@@ -437,11 +483,6 @@ if (!$action || $action == 'create') {
 
 	// Lastname
 	print '<tr id="trlastname"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
-
-	// EMail
-	print '<tr id="tremail"><td class="" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").'</td><td>';
-	//print img_picto('', 'email', 'class="pictofixedwidth"');
-	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Address
 	print '<tr id="tradress"><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -491,7 +532,8 @@ if (!$action || $action == 'create') {
 
 	// Public
 	$publiclabel = $langs->trans("publicDonationFieldHelp", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
-	print '<tr><td>'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+	print '<tr><td><label for="public">'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</label></td>';
+	print '<td><input type="checkbox" name="public" id="public"></td></tr>'."\n";
 
 	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
 		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
@@ -506,7 +548,7 @@ if (!$action || $action == 'create') {
 		print ' <span>*</span></td><td class="nowrap">';
 
 		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
-		print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
+		print ' '.$langs->trans("Currency".getDolCurrency()).'<span class="opacitymedium hideifautoturnover"> - ';
 		print $langs->trans("AnyAmountForDonation");
 		print '</span>';
 
@@ -520,19 +562,15 @@ if (!$action || $action == 'create') {
 	print '</tr>'."\n";
 
 	// Display Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION')) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
-		print '<span class="span-icon-security inline-block">';
-		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
-		print '</span>';
-		print '<span class="nowrap inline-block">';
-		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-		print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
-		print '</span>';
-		print '</td></tr>';
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_DONATION') && is_object($captchaobj)) {
+		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td><br>';
+		if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+			print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+		} else {
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+		}
+		print '<br></td></tr>';
 	}
-
 	print "</table>\n";
 
 	print dol_get_fiche_end();

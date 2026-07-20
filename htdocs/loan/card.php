@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -27,6 +27,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -43,15 +50,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta", "loan"));
 
@@ -63,10 +61,11 @@ $cancel = GETPOST('cancel', 'alpha');
 $projectid = GETPOSTINT('projectid');
 
 // Security check
+/*
 $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
-}
+} */
 $hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
@@ -291,8 +290,6 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
 
-	$datec = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-
 	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -307,7 +304,7 @@ if ($action == 'create') {
 	// Bank account
 	if (isModEnabled("bank")) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("BankAccount").'</td><td>';
-		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
+		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "(courant:=:1)", 1); // Show list of bank account with courant
 		print '</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
@@ -348,7 +345,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject = $formproject->select_projects(-1, (string) $projectid, 'projectid', 16, 0, 1, 1);
+		$formproject->select_projects(-1, (string) $projectid, 'projectid', 16, 0, 1, 1);
 
 		print '</td></tr>';
 	}
@@ -460,7 +457,7 @@ if ($id > 0) {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->hasRight('loan', 'write')) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					$maxlength = 0;
@@ -684,8 +681,6 @@ if ($id > 0) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total_insurance = 0;
-			$total_interest = 0;
 			$total_capital = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

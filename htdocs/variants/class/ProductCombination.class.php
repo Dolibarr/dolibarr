@@ -2,8 +2,9 @@
 /* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ class ProductCombination
 	/**
 	 * Is the price variation a relative variation?
 	 * Can be an array if multiprice feature per level is enabled.
-	 * @var bool|array
+	 * @var bool
 	 */
 	public $variation_price_percentage = false;
 
@@ -359,7 +360,7 @@ class ProductCombination
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 		}
 
@@ -429,7 +430,14 @@ class ProductCombination
 		$parent = new Product($this->db);
 		$parent->fetch($this->fk_product_parent);
 
-		$this->updateProperties($parent, $user);
+		// Propagate failure of updateProperties (otherwise an update where the variant
+		// percentage drives the new price below the parent product's price_min returns
+		// success but leaves the variant product at the price=0 it had right after
+		// createProductCombination, see issue #32372).
+		$result = $this->updateProperties($parent, $user);
+		if ($result < 0) {
+			return $result;
+		}
 
 		return 1;
 	}
@@ -467,34 +475,36 @@ class ProductCombination
 	/**
 	 * Deletes all product combinations of a parent product
 	 *
-	 * @param User		$user Object user
-	 * @param int 		$fk_product_parent Rowid of parent product
-	 * @return int Return integer <0 KO >0 OK
+	 * @param User		$user 				Object user
+	 * @param int 		$fk_product_parent 	Rowid of parent product
+	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
-		$this->db->begin();
-
 		$arrayofparent = $this->fetchAllByFkProductParent($fk_product_parent);
 
-		if (is_array($arrayofparent)) {
-			foreach ($arrayofparent as $prodcomb) {
-				$prodstatic = new Product($this->db);
+		if (!is_array($arrayofparent)) { // No combinations found, return success
+			return 1;
+		}
 
-				$res = $prodstatic->fetch($prodcomb->fk_product_child);
+		$this->db->begin();
 
-				if ($res > 0) {
-					$res = $prodcomb->delete($user);
-				}
+		foreach ($arrayofparent as $prodcomb) {
+			$prodstatic = new Product($this->db);
 
-				if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
-					$res = $prodstatic->delete($user);
-				}
+			$res = $prodstatic->fetch($prodcomb->fk_product_child);
 
-				if ($res < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			if ($res > 0) {
+				$res = $prodcomb->delete($user);
+			}
+
+			if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
+				$res = $prodstatic->delete($user);
+			}
+
+			if ($res < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 		}
 
@@ -520,10 +530,10 @@ class ProductCombination
 		$child->price_autogen = $parent->price_autogen;
 		$child->weight = $parent->weight;
 		// Only when Parent Status are updated
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status != $parent->oldcopy->status)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status != $parent->oldcopy->status)) {
 			$child->status = $parent->status;
 		}
-		if (is_object($parent->oldcopy) && !$parent->oldcopy->isEmpty() && ($parent->status_buy != $parent->oldcopy->status_buy)) {
+		if (is_object($parent->oldcopy) && !empty($parent->oldcopy->id) && ($parent->status_buy != $parent->oldcopy->status_buy)) {
 			$child->status_buy = $parent->status_buy;
 		}
 
@@ -548,22 +558,22 @@ class ProductCombination
 			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				$produit_multiprices_limit = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
 				for ($i = 1; $i <= $produit_multiprices_limit; $i++) {
-					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
+					if ((isset($parent->multiprices[$i]) && $parent->multiprices[$i] != '') || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
-						$new_min_price = $parent->multiprices_min[$i];
+						$new_min_price = isset($parent->multiprices_min[$i]) ? $parent->multiprices_min[$i] : 0;
 						$variation_price = (float) (!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
 						$variation_price_percentage = (bool) (!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
-						if ($parent->prices_by_qty_list[$i]) {
+						if (!empty($parent->prices_by_qty_list[$i])) {
 							$new_psq = 1;
 						} else {
 							$new_psq = 0;
 						}
 
 						if ($new_type == 'TTC') {
-							$new_price = $parent->multiprices_ttc[$i];
+							$new_price = isset($parent->multiprices_ttc[$i]) ? $parent->multiprices_ttc[$i] : 0;
 						} else {
-							$new_price = $parent->multiprices[$i];
+							$new_price = isset($parent->multiprices[$i]) ? $parent->multiprices[$i] : 0;
 						}
 
 						if ($variation_price_percentage) {
@@ -715,8 +725,12 @@ class ProductCombination
 			$attrval = new ProductAttributeValue($this->db);
 			// fetch only the used values of this attribute
 			foreach ($attrval->fetchAllByProductAttribute($attr->id, true) as $val) {
-				'@phan-var-force ProductAttributeValue $val';
-				$tmp->values[] = $val;
+				$tmpValue = new stdClass();
+				$tmpValue->id = $val->id;
+				$tmpValue->fk_product_attribute = $val->fk_product_attribute;
+				$tmpValue->ref = $val->ref;
+				$tmpValue->value = $val->value;
+				$tmp->values[] = $tmpValue;
 			}
 
 			$variants[] = $tmp;
@@ -746,9 +760,10 @@ class ProductCombination
 	 * @param false|float               $forced_weightvar       Value of the weight variation if it is forced
 	 * @param false|string              $forced_refvar          Value of the reference if it is forced
 	 * @param string                    $ref_ext                External reference
+	 * @param bool                      $clone_categories       Add parent product categories to the created variant
 	 * @return int<-1,1>                                        Return integer <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '', $clone_categories = false)
 	{
 		global $conf;
 
@@ -851,11 +866,7 @@ class ProductCombination
 			}
 
 			if ($forced_refvar === false) {
-				if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-					$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR') . $prodattrval->ref;
-				} else {
-					$newproduct->ref .= '_'.$prodattrval->ref;
-				}
+				$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_') . $prodattrval->ref;
 			}
 
 			//The first one should not contain a linebreak
@@ -948,6 +959,16 @@ class ProductCombination
 		}
 
 		$newcomb->fk_product_child = $newproduct->id;
+
+		if ($clone_categories) {
+			$clone_result = $newproduct->cloneCategories($product->id, $newproduct->id);
+			if ($clone_result < 0) {
+				$this->error = $newproduct->error;
+				$this->errors = $newproduct->errors;
+				$this->db->rollback();
+				return -1;
+			}
+		}
 
 		if ($newcomb->update($user) < 0) {
 			$this->error = $newcomb->error;

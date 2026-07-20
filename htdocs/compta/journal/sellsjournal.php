@@ -7,8 +7,8 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,8 +121,7 @@ if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
-$p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-$idpays = $p[0];
+$idpays = $mysoc->country_id;
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client, f.situation_cycle_ref,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
@@ -163,15 +162,15 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 }
 
 $tabfac = array();
+$tabht = array();
+$tabtva = array();
+$tablocaltax1 = array();
+$tablocaltax2 = array();
+$tabttc = array();
+$tabcompany = array();
 
 $result = $db->query($sql);
 if ($result) {
-	$tabht = array();
-	$tabtva = array();
-	$tablocaltax1 = array();
-	$tablocaltax2 = array();
-	$tabttc = array();
-	$tabcompany = array();
 	$account_localtax1 = 0;
 	$account_localtax2 = 0;
 
@@ -181,17 +180,17 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		// les variables
-		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+		$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', $langs->trans("CodeNotDef"));
 		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			}
 		}
-		$cpttva = (getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+		$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
 		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->socid, $mysoc);
@@ -204,18 +203,28 @@ if ($result) {
 		$line->fetch($obj->id); // id of line
 		$prev_progress = 0;
 		if ($obj->situation_cycle_ref > 0) {	// It is a situation invoice
+			$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
+				// backward compat: old behavior => line's situation_percent was cumulative
+				// (it reflected the line's progress state, not the line progress delta)
+				$progressDelta = $obj->situation_percent - $prev_progress;
+				$progressState = $obj->situation_percent;
+			} else {
+				$progressDelta = $obj->situation_percent;
+				$progressState = $prev_progress + $progressDelta;
+			}
+
 			// Avoid divide by 0
-			if ($obj->situation_percent == 0) {
+			if ($progressState == 0) {
 				$situation_ratio = 0;
 			} else {
-				$prev_progress = $line->get_prev_progress($obj->rowid); // id on invoice
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				$situation_ratio = $progressDelta / $progressState;
 			}
 		} else {
 			$situation_ratio = 1;
 		}
 
-		//la ligne facture
+		// Invoice line
 		$tabfac[$obj->rowid]["date"] = $obj->datef;
 		$tabfac[$obj->rowid]["ref"] = $obj->ref;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
@@ -257,7 +266,8 @@ if ($result) {
 print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
-print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
+print '<td>'.$langs->trans('Date').'</td>';
+print '<td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
 print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td>';
 print '<td class="right">'.$langs->trans('AccountingDebit').'</td>';
@@ -269,7 +279,7 @@ $invoicestatic = new Facture($db);
 $companystatic = new Client($db);
 
 foreach ($tabfac as $key => $val) {
-	$invoicestatic->id = $key;
+	$invoicestatic->id = (int) $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
 
@@ -306,8 +316,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {

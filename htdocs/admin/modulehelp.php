@@ -34,10 +34,6 @@ if (!defined('NOTOKENRENEWAL')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
@@ -213,7 +212,11 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							print info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							// Skip warning for modules being refactored (class split in progress)
+							$silentModules = array('modSupplierOrder', 'modSupplierInvoice', 'modFournisseur');
+							if (!in_array($modName, $silentModules)) {
+								print info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							}
 						}
 					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
@@ -268,7 +271,7 @@ $head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename = $objMod->getName();
-$moduledesc = $objMod->getDesc();
+$moduledesc = $objMod->getDesc(1);
 $moduleauthor = $objMod->getPublisher();
 $moduledir = strtolower(preg_replace('/^mod/i', '', get_class($objMod)));
 
@@ -294,7 +297,7 @@ if ($ip) {
 	$text .= $ip;
 }
 $lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
-if ($lastactivationversion) {
+if ($lastactivationversion && $lastactivationversion != 'dolibarr') {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
 	$text .= $lastactivationversion;
 }
@@ -307,7 +310,7 @@ print '<div class="centpercent">';
 
 $picto = 'object_'.$objMod->picto;
 
-print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto, 0, '', 'titlemodulehelp');
+print load_fiche_titre($title, $moreinfo, $picto, 0, '', 'titlemodulehelp');
 print '<br>';
 
 print dol_get_fiche_head($head, $mode, '', -1);
@@ -364,10 +367,14 @@ if ($mode == 'desc') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
 		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
 
+		$installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
 		global $dolibarr_allow_download_external_modules;
-		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', (string) $dirofmodule)) {
+		if ((!file_exists($installmoduleslock) || !empty($dolibarr_allow_download_external_modules)) && preg_match('/\/custom\//', (string) $dirofmodule)) {
 			// Add a link to download a zip of the module
 			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
+		} else {
+			// Add a link to download a zip of the module
+			$textexternal .= img_picto($langs->trans("DownloadOfModuleFileDisallowed"), 'download', 'class="opacitymedium paddingleft"');
 		}
 
 		if ($objMod->editor_name != 'dolibarr') {
@@ -375,10 +382,12 @@ if ($mode == 'desc') {
 		}
 		$editor_url = $objMod->editor_url;
 		if (!preg_match('/^http/', $editor_url)) {
-			$editor_url = 'http://'.$editor_url;
+			$editor_url = 'https://'.$editor_url;
 		}
+		$editor_url_to_show = preg_replace('/(utm_[a-z_]+|origin)=[a-z0-9_]+/i', '', $editor_url);
+		$editor_url_to_show = preg_replace('/[\/\?]+$/', '', $editor_url_to_show);
 		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
-			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$editor_url_to_show.'</a>';
 		}
 		$text .= $textexternal;
 	} else {
@@ -406,9 +415,9 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->depends as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).implode(', ', $modulestringorarray);
 			} else {
-				$text .= ($i ? ', ' : '').$modulestringorarray;
+				$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$modulestringorarray;
 			}
 			$i++;
 		}
@@ -422,9 +431,9 @@ if ($mode == 'feature') {
 		$i = 0;
 		foreach ($objMod->requiredby as $modulestringorarray) {
 			if (is_array($modulestringorarray)) {
-				$text .= ($i ? ', ' : '').implode(', ', $modulestringorarray);
+				$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).implode(', ', $modulestringorarray);
 			} else {
-				$text .= ($i ? ', ' : '').$modulestringorarray;
+				$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$modulestringorarray;
 			}
 			$i++;
 		}
@@ -442,7 +451,7 @@ if ($mode == 'feature') {
 	if (count($sqlfiles) > 0) {
 		$i = 0;
 		foreach ($sqlfiles as $val) {
-			$text .= ($i ? ', ' : '').preg_replace('/\-'.$moduledir.'$/', '', preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name'])));
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).preg_replace('/\-'.$moduledir.'$/', '', preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name'])));
 			$i++;
 		}
 	} else {
@@ -455,7 +464,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib'])) {
 		$i = 0;
 		foreach ($objMod->dictionaries['tablib'] as $val) {
-			$text .= ($i ? ', ' : '').$val;
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$val;
 			$i++;
 		}
 	} else {
@@ -467,7 +476,7 @@ if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("AddData").':</strong> ';
 	$filedata = dol_buildpath($moduledir.'/sql/data.sql');
 	if (dol_is_file($filedata)) {
-		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
+		$text .= img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
@@ -495,7 +504,7 @@ if ($mode == 'feature') {
 
 	$text .= '<br><strong>'.$langs->trans("AddModels").':</strong> ';
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models']) {
-		$text .= $langs->trans("Yes");
+		$text .= img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("Yes");
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
@@ -504,7 +513,7 @@ if ($mode == 'feature') {
 
 	$text .= '<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions']) {
-		$text .= $langs->trans("Yes");
+		$text .= img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("Yes");
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
@@ -515,7 +524,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs)) {
 		$i = 0;
 		foreach ($objMod->cronjobs as $val) {
-			$text .= ($i ? ', ' : '').($val['label']);
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$langs->trans($val['label']);
 			$i++;
 		}
 	} else {
@@ -541,7 +550,7 @@ if ($mode == 'feature') {
 		}
 	}
 
-	$text .= $langs->trans($yesno).$moreinfoontriggerfile;
+	$text .= ($yesno == 'Yes' ? img_picto('', 'tick', 'class="pictofixedwidth"') : '').$langs->trans($yesno).$moreinfoontriggerfile;
 
 	$text .= '<br>';
 
@@ -551,7 +560,7 @@ if ($mode == 'feature') {
 		foreach ($objMod->boxes as $val) {
 			$boxstring = (empty($val['file']) ? (empty($val[0]) ? '' : $val[0]) : $val['file']);
 			if ($boxstring) {
-				$text .= ($i ? ', ' : '').$boxstring;
+				$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$boxstring;
 			}
 			$i++;
 		}
@@ -573,7 +582,7 @@ if ($mode == 'feature') {
 			if ($key === 'data') {
 				if (is_array($val)) {
 					foreach ($val as $value) {
-						$text .= ($i ? ', ' : '').($value);
+						$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).($value);
 						$i++;
 					}
 
@@ -581,7 +590,7 @@ if ($mode == 'feature') {
 				}
 			}
 
-			$text .= ($i ? ', ' : '').($val);
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).($val);
 			$i++;
 		}
 	} else {
@@ -594,7 +603,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights)) {
 		$i = 0;
 		foreach ($objMod->rights as $val) {
-			$text .= ($i ? ', ' : '').($val[1]);
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).($val[1]);
 			$i++;
 		}
 	} else {
@@ -605,7 +614,7 @@ if ($mode == 'feature') {
 
 	$text .= '<br><strong>'.$langs->trans("AddMenus").':</strong> ';
 	if (isset($objMod->menu) && !empty($objMod->menu)) { // objMod can be an array or just an int 1
-		$text .= $langs->trans("Yes");
+		$text .= img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("Yes");
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
@@ -616,7 +625,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label)) {
 		$i = 0;
 		foreach ($objMod->export_label as $val) {
-			$text .= ($i ? ', ' : '').($val);
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$langs->trans($val);
 			$i++;
 		}
 	} else {
@@ -629,7 +638,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label)) {
 		$i = 0;
 		foreach ($objMod->import_label as $val) {
-			$text .= ($i ? ', ' : '').($val);
+			$text .= ($i ? ', ' : img_picto('', 'tick', 'class="pictofixedwidth"')).$langs->trans($val);
 			$i++;
 		}
 	} else {
@@ -640,7 +649,7 @@ if ($mode == 'feature') {
 
 	$text .= '<br><strong>'.$langs->trans("AddWebsiteTemplates").':</strong> ';
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['websitetemplates']) && $objMod->module_parts['websitetemplates']) {
-		$text .= $langs->trans("Yes");
+		$text .= img_picto('', 'tick', 'class="pictofixedwidth"').$langs->trans("Yes");
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}

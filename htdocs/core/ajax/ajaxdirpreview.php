@@ -5,8 +5,9 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,15 @@ if (!defined('NOREQUIREAJAX')) {
  * @var User $user
  *
  * @var string $module
- * @var string $mode
+ * @var ?string $mode
+ * @var string $websitekey
+ * @var string $dolibarr_main_data_root
+ * @var int $pageid
  */
+
+'
+@phan-var-force ?string $mode
+';
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
@@ -101,11 +109,20 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	// When no an ajax call (include from other file)
 	/**
 	 * @var string $module
+	 * @var int $section
+	 * @var string $action
+	 * @var string $dolibarr_main_data
+	 * @var string $showonrightsize
+	 * @var string $sortfield
+	 * @var string $sortorder
 	 */
 	'
 	@phan-var-force int $section
+	@phan-var-force string $action
 	@phan-var-force string $module
 	@phan-var-force string $showonrightsize
+	@phan-var-force string $sortfield
+	@phan-var-force string $sortorder
 	';
 
 	$rootdirfordoc = $conf->ecm->dir_output;
@@ -198,7 +215,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
+print '<!-- ajaxdirpreview mode='.$mode.' type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
@@ -248,7 +265,11 @@ if ($type == 'directory') {
 	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
-		$automodules[] = $hookmanager->resArray['module'];
+		if (is_array($hookmanager->resArray['module'])) {
+			$automodules = array_merge($automodules, $hookmanager->resArray['module']);
+		} else {
+			$automodules[] = $hookmanager->resArray['module'];
+		}
 	}
 
 	// TODO change for multicompany sharing
@@ -256,7 +277,7 @@ if ($type == 'directory') {
 		$upload_dir = $conf->societe->dir_output;
 		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
-		$upload_dir = $conf->facture->dir_output;
+		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
 		$upload_dir = $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
@@ -264,11 +285,11 @@ if ($type == 'directory') {
 	} elseif ($module == 'supplier_proposal') {
 		$upload_dir = $conf->supplier_proposal->dir_output;
 	} elseif ($module == 'order') {
-		$upload_dir = $conf->commande->dir_output;
+		$upload_dir = $conf->order->dir_output;
 	} elseif ($module == 'order_supplier') {
 		$upload_dir = $conf->fournisseur->commande->dir_output;
 	} elseif ($module == 'contract') {
-		$upload_dir = $conf->contrat->dir_output;
+		$upload_dir = $conf->contract->dir_output;
 	} elseif ($module == 'product') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
@@ -339,6 +360,7 @@ if ($type == 'directory') {
 
 		$perm = $user->hasRight('ecm', 'upload');
 
+		// Print list of files
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
 		// Manual list
@@ -402,7 +424,7 @@ if ($type == 'directory') {
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
-			$perm = ($user->hasRight("website", "write") || $user->hasRight("emailing", "creer"));
+			$perm = $user->hasRight("website", "write");
 			$title = 'none';
 		} elseif ($module == 'ecm') { // DMS/ECM -> manual structure
 			if ($user->hasRight("ecm", "read")) {
@@ -432,8 +454,9 @@ if ($type == 'directory') {
 
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-		// var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
+		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
+
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
 	}
 }
 
@@ -492,15 +515,20 @@ if ($useajax) {
 	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-	// Wrapper to manage document_preview
+	// Because the content is reloaded by ajax call, we must also redefine/reenable some jquery hooks.
+
+	// Handler to manage document_preview on click on a .documentpreview css class.
 	if ($conf->browser->layout != 'phone') {
 		print "\n/* JS CODE TO ENABLE document_preview */\n";
 		print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
         		});

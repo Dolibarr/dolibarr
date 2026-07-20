@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=Ewch i <a class="notasortlink" href="%s" target="_blank
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID Cleient OAuth
-OAUTH_SECRET=OAuth gyfrinach
-OAUTH_TENANT=tenant OAuth
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=Ychwanegwyd darparwr OAuth
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Mae cofnod OAuth ar gyfer y darparwr hwn a'r label hwn eisoes yn bodoli
 URLOfOAuthServiceEndpoints=Base URL for OAuth service endpoints
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=URL a ddarperir gan wasanaeth OAuth ar gyfer dilysu
 Scopes=Caniatâd (Cwmpasau)
 ScopeUndefined=Caniatadau (Cwmpasau) heb eu diffinio (gweler y tab blaenorol)
-ScopesDesc=Example: read,write with Mastodom
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Full Token (object)
 AccessToken=Access Token
 TokenExpired=Expired
@@ -50,3 +50,4 @@ RefreshToken=Refresh token
 RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

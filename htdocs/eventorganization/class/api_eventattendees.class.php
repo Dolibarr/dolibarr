@@ -1,6 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,125 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+	 * Delete an event attendee
+	 *
+	 * @param   int     $id         event attendee ID
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE {id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteById($id)
+	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		$allowaccess = $this->_checkAccessRights('delete', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'Event attendee with id '.$id.' not found');
+		}
+
+		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'event attendee deleted'
+			)
+		);
+	}
+
+	/**
+	 * Delete an event attendee
+	 *
+	 * @param   string     $ref         event attendee ref
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE ref/{ref}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteByRef($ref)
+	{
+		$allowaccess = $this->_checkAccessRights('delete', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch(0, $ref);
+		if (!$result) {
+			throw new RestException(404, "Event attendee with ref ".$ref." not found");
+		}
+
+		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'event attendee deleted'
+			)
+		);
+	}
+
+	/**
+	 * Get properties of a event attendee by id
+	 *
+	 * Return an array with event attendee information
+	 *
+	 * @param   int         $id		ID of event attendee
+	 * @return  Object				Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @url	GET {id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	public function getById($id)
+	{
+		return $this->_fetch($id, '');
+	}
+
+	/**
+	 * Get properties of an event attendee by ref
+	 *
+	 * Return an array with order information
+	 *
+	 * @param       string		$ref		Ref of object
+	 * @return      Object				    Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @url GET    ref/{ref}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	public function getByRef($ref)
+	{
+		return $this->_fetch(0, $ref);
+	}
+
+	/**
 	 * List Event attendees
 	 *
 	 * Get a list of Event attendees
@@ -80,7 +200,8 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.status:=:1) and (t.email:=:'bad@example.com')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array						Array of order objects
+	 * @param int		$loadlinkedobjects	Load also linked object. 0 (default), 1 load linked objects
+	* @return  array						Array of order objects
 	 * @phan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
@@ -89,7 +210,7 @@ class EventAttendees extends DolibarrApi
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		// $allowaccess = $this->_checkAccessRights('read', 0);
 		// if (!$allowaccess) {
@@ -143,9 +264,13 @@ class EventAttendees extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
-				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
+				if ($event_attendees_static->fetch($obj->rowid) > 0) {
 					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
 					if ($rowallowaccess) {
+						if ($loadlinkedobjects) {
+							// retrieve linked objects
+								$event_attendees_static->fetchObjectLinked();
+						}
 						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
 						$onerowaccessgranted = $rowallowaccess;
 					}
@@ -180,7 +305,6 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
-
 	 * Create an event attendee
 	 *
 	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
@@ -225,17 +349,171 @@ class EventAttendees extends DolibarrApi
 		return ((int) $this->event_attendees->id);
 	}
 
+	/**
+	 * Update an event attendee
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"ref":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	int		$id             Id of order to update
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT {id}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putById($id, $request_data = null)
+	{
+		if ($id < 1 ) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		$allowaccess = $this->_checkAccessRights('write', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'event attendee not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->event_attendees->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch($id, '');
+		} else {
+			throw new RestException(500, end($this->event_attendees->errors));
+		}
+	}
+
+	/**
+	 * Update an event attendee
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"ref":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	string	$ref			Ref of order to update
+	 * @param	array	$request_data	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT ref/{ref}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putByRef($ref, $request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('write', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch(0, $ref);
+		if (!$result) {
+			throw new RestException(404, 'event attendee not found');
+		}
+
+		$newref = $ref;
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'ref') {
+				$newref = $this->_checkValForAPI($field, $value, $this->event_attendees);
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->event_attendees->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch(0, $newref);
+		} else {
+			throw new RestException(500, end($this->event_attendees->errors));
+		}
+	}
+
+	/**
+	 * Get properties of an event attendee
+	 *
+	 * Return an array with Event attendees
+	 *
+	 * @param   int         $id             ID of event_attendees
+	 * @param	string		$ref			Ref of event_attendees
+	 * @return  Object						Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 */
+	private function _fetch($id, $ref = '')
+	{
+		if ($id < 1 && empty($ref)) {
+			throw new RestException(400, 'No eventattendee with id<1 can exist');
+		}
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		// we first need to fetch the object so we can get the fk_project id and then check for access
+		$result = $this->event_attendees->fetch($id, $ref);
+		if (!$result) {
+			if ($id) {
+				throw new RestException(404, 'Event attendee with id '.((string) $id).' not found');
+			}
+			if ($ref) {
+				throw new RestException(404, 'Event attendee with ref '.$ref.' not found');
+			}
+			throw new RestException(404, 'Event attendee not found');
+		}
+		$project_id = $this->event_attendees->fk_project;
+		$allowaccess = $this->_checkAccessRights('read', $project_id);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		$this->event_attendees->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->event_attendees);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     	Object to clean
 	 * @phan-param		ConferenceOrBoothAttendee	$object
-	 * @phpstan-param	ConferenceOrBoothAttendee	$object
+	 * @phpstan-param	T	$object
 	 *
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ConferenceOrBoothAttendee
-	 * @phpstan-return	ConferenceOrBoothAttendee
+	 * @phpstan-return	T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -282,14 +560,9 @@ class EventAttendees extends DolibarrApi
 		unset($object->actiontypecode);
 		unset($object->name);
 		unset($object->civility_id);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->totalpaid);
 		unset($object->product);
@@ -306,6 +579,7 @@ class EventAttendees extends DolibarrApi
 		unset($object->rowid);
 		unset($object->module);
 		unset($object->entity);
+		unset($object->paid);
 
 		return $object;
 	}
@@ -346,11 +620,11 @@ class EventAttendees extends DolibarrApi
 	{
 		// what kind of access management do we need?
 		$moduleaccess = false;
-		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
+		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('project', $accesstype)) {
 			$moduleaccess = true;
 		}
 		$fullprojectaccess = false;
-		if (DolibarrApiAccess::$user->hasRight('projet', 'all', $accesstype)) {
+		if (DolibarrApiAccess::$user->hasRight('project', 'all', $accesstype)) {
 			$fullprojectaccess = true;
 		}
 

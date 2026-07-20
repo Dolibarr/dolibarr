@@ -2,6 +2,7 @@
 IdAgenda=شناختی واقعہ
 Actions=تقریبات
 Agenda=ایجنڈا
+AgendaEvents=ایجنڈا واقعات
 TMenuAgenda=ایجنڈا
 Agendas=ایجنڈا
 LocalAgenda=ڈیفالٹ کیلنڈر
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=تجویز %s سے انکار کر دیا گیا۔
 PropalValidatedInDolibarr=تجویز %s کی توثیق کر دی گئی۔
 PropalBackToDraftInDolibarr=تجویز %s ڈرافٹ کی حیثیت پر واپس جائیں
 PropalClassifiedBilledInDolibarr=تجویز %s کلاسیفائیڈ بل
+InvoiceCreatedInDolibarr=انوائس %s بنایا گیا
 InvoiceValidatedInDolibarr=انوائس %s کی توثیق ہو گئی۔
 InvoiceValidatedInDolibarrFromPos=انوائس %s POS سے تصدیق شدہ
 InvoiceBackToDraftInDolibarr=انوائس %s ڈرافٹ اسٹیٹس پر واپس جائیں۔
@@ -86,8 +88,8 @@ ShippingSentByEMail=کھیپ %s ای میل کے ذریعے بھیجی گئی۔
 ShippingValidated= کھیپ %s کی توثیق کر دی گئی۔
 InterventionSentByEMail=مداخلت %s ای میل کے ذریعے بھیجی گئی۔
 ProjectSentByEMail=پروجیکٹ %s بذریعہ ای میل بھیجا گیا
-ProjectDeletedInDolibarr=Project %s deleted
-ProjectClosedInDolibarr=Project %s closed
+ProjectDeletedInDolibarr=پروجیکٹ %s حذف کر دیا گیا
+ProjectClosedInDolibarr=پروجیکٹ %s بند
 ProposalDeleted=تجویز حذف کر دی گئی۔
 OrderDeleted=آرڈر حذف کر دیا گیا۔
 InvoiceDeleted=رسید حذف کر دی گئی۔
@@ -128,7 +130,7 @@ MRP_MO_DELETEInDolibarr=MO حذف کر دیا گیا۔
 MRP_MO_CANCELInDolibarr=MO منسوخ کر دیا گیا۔
 PAIDInDolibarr=%s ادا کیا گیا۔
 ENABLEDISABLEInDolibarr=صارف فعال یا غیر فعال
-CANCELInDolibarr=Canceled
+CANCELInDolibarr=منسوخ
 ##### End agenda events #####
 AgendaModelModule=تقریب کے لیے دستاویز کے سانچے
 DateActionStart=شروع کرنے کی تاریخ
@@ -137,8 +139,8 @@ AgendaUrlOptions1=آپ فلٹر آؤٹ پٹ میں درج ذیل پیرامیٹ�
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> صارف کو تفویض کردہ کارروائیوں تک آؤٹ پٹ کو محدود کرنے کے لیے
 AgendaUrlOptionsProject= <b> پروجیکٹ=__PROJECT_ID__ </b> پروجیکٹ سے منسلک کارروائیوں تک آؤٹ پٹ کو محدود کرنے کے لیے <b> __PROJECT_ID__ </b> ۔
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=خودکار یا دستی ایونٹس حاصل کرنے کے لیے <b>actiontype=%s</b>
+AgendaUrlOptionsCode=<b>actioncode=%s</b> صرف دیئے گئے کوڈ کے ساتھ ایونٹس حاصل کرنے کے لیے
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> تعطیلات کے واقعات شامل کرنے کے لیے
 AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
 AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
@@ -202,6 +204,9 @@ AppointmentDuration = ملاقات کا دورانیہ : %s
 BookingSuccessfullyBooked=آپ کی بکنگ محفوظ ہو گئی ہے۔
 BookingReservationHourAfter=ہم تاریخ %s پر اپنی میٹنگ کی ریزرویشن کی تصدیق کرتے ہیں۔
 BookcalBookingTitle=آن لائن ملاقات
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = شفافیت
+ReadMore = مزید پڑھیں
+ReadLess = کم پڑھیں
+RecurringEvent=بار بار ہونے والا واقعہ
+EventPartOfARecurringSerie=Event is part of a recurring series with ID %s
+BookCalSystem=Online booking

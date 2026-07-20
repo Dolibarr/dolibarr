@@ -23,7 +23,10 @@ AllPropals=Bütün təkliflər
 SearchAProposal=Təklif axtarın
 NoProposal=Təklif yoxdur
 ProposalsStatistics=Kommersiya təklifinin statistikası
+NumberOfProposals=Təkliflərin sayı
 NumberOfProposalsByMonth=Aylara görə sayı
+AmountOfProposals=Təkliflərin miqdarı
+AmountOfProposalsHT=Təkliflərin məbləği (vergi istisna olmaqla)
 AmountOfProposalsByMonthHT=Aylar üzrə məbləğ (vergi istisna olmaqla)
 NbOfProposals=Kommersiya təkliflərinin sayı
 ShowPropal=Təklif göstərin
@@ -37,7 +40,7 @@ PropalStatusNotSigned=İmzasız (qapalı)
 PropalStatusBilled=Hesablanmışdır
 PropalStatusCanceledShort=Ləğv edildi
 PropalStatusDraftShort=Qaralama
-PropalStatusValidatedShort=Open
+PropalStatusValidatedShort=Açıq
 PropalStatusClosedShort=Bağlı
 PropalStatusSignedShort=İmzalanıb
 PropalStatusNotSignedShort=İmzalanmadı
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 həftə
 AvailabilityTypeAV_2W=2 həftə
 AvailabilityTypeAV_3W=3 həftə
 AvailabilityTypeAV_1M=1 ay
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Nümayəndənin təqib təklifi
 TypeContact_propal_external_BILLING=Müştəri faktura əlaqəsi
 TypeContact_propal_external_CUSTOMER=Müştəri ilə əlaqə izləmə təklifi
 TypeContact_propal_external_SHIPPING=Çatdırılma üçün müştəri əlaqəsi
-
 # Document models
 CantBeNoSign=təyin edilə bilməz imzalanmadı
 CaseFollowedBy=Dava izlədi
@@ -122,3 +123,5 @@ SignSociete_rib=İmza mandatı
 SignPropal=Təklifi qəbul edin
 Signed=imzaladı
 SignedOnly=Yalnız imzalanmışdır
+ExpeditionSigned=Göndərmə imzalanıb
+SignExpedition=Göndərməni imzalayın

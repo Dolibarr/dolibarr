@@ -2,7 +2,7 @@
 ContractsArea=معاہدوں کا علاقہ
 ListOfContracts=معاہدوں کی فہرست
 AllContracts=تمام معاہدے
-ContractCard=Contract
+ContractCard=معاہدہ
 ContractStatusNotRunning=نہیں چل رہا ہے۔
 ContractStatusDraft=مسودہ
 ContractStatusValidated=تصدیق شدہ
@@ -20,7 +20,7 @@ ContractsSubscriptions=معاہدے/سبسکرپشنز
 ContractsAndLine=معاہدے اور معاہدے کی لائن
 Contract=معاہدہ
 ContractLine=معاہدہ لائن
-ContractLines=Contract lines
+ContractLines=کنٹریکٹ لائنز
 Closing=بند کرنا
 NoContracts=کوئی معاہدہ نہیں۔
 MenuServices=خدمات
@@ -36,10 +36,18 @@ ActivateAllOnContract=تمام خدمات کو چالو کریں۔
 CloseAContract=ایک معاہدہ بند کریں۔
 ConfirmDeleteAContract=کیا آپ واقعی یہ معاہدہ اور اس کی تمام سروسز کو حذف کرنا چاہتے ہیں؟
 ConfirmValidateContract=کیا آپ واقعی <b> %s </b> کے نام سے اس معاہدے کی توثیق کرنا چاہتے ہیں؟
+ConfirmSignContract=کیا آپ واقعی اس معاہدے کو دستخط شدہ کے طور پر سیٹ کرنا چاہتے ہیں؟
+ConfirmUnsignContract=کیا آپ واقعی اس معاہدے کو غیر دستخط شدہ کے طور پر سیٹ کرنا چاہتے ہیں؟
 ConfirmActivateAllOnContract=اس سے تمام خدمات کھل جائیں گی (ابھی تک فعال نہیں ہیں)۔ کیا آپ واقعی تمام سروسز کھولنا چاہتے ہیں؟
 ConfirmCloseContract=اس سے تمام سروسز بند ہو جائیں گی (میعاد ختم ہو چکی ہے یا نہیں)۔ کیا آپ واقعی یہ معاہدہ بند کرنا چاہتے ہیں؟
 ConfirmCloseService=کیا آپ واقعی اس سروس کو <b> %s </b> کے ساتھ بند کرنا چاہتے ہیں؟
 ValidateAContract=معاہدے کی توثیق کریں۔
+UnsignContract=معاہدہ ختم کریں۔
+ContractSign=دستخط شدہ سیٹ کریں۔
+ContractUnsign=غیر دستخط شدہ سیٹ کریں۔
+ContractSignedInDolibarr=معاہدہ پر دستخط کئے
+ContractSignedOnline=معاہدے پر آن لائن دستخط ہوئے۔
+ContractUnsignedInDolibarr=معاہدہ غیر دستخط شدہ
 ActivateService=سروس کو چالو کریں۔
 ConfirmActivateService=کیا آپ واقعی اس سروس کو <b> %s </b> کے ساتھ فعال کرنا چاہتے ہیں؟
 RefContract=معاہدہ کا حوالہ
@@ -47,6 +55,7 @@ DateContract=معاہدے کی تاریخ
 DateServiceActivate=سروس ایکٹیویشن کی تاریخ
 ListOfServices=خدمات کی فہرست
 ListOfInactiveServices=غیر فعال خدمات کی فہرست
+ListOfNotExpiredServices=غیر ختم شدہ فعال خدمات کی فہرست
 ListOfExpiredServices=میعاد ختم ہونے والی فعال خدمات کی فہرست
 ListOfClosedServices=بند خدمات کی فہرست
 ListOfRunningServices=چلانے والی خدمات کی فہرست
@@ -78,9 +87,9 @@ CloseAllContracts=تمام کنٹریکٹ لائنیں بند کریں۔
 DeleteContractLine=معاہدہ لائن کو حذف کریں۔
 ConfirmDeleteContractLine=کیا آپ واقعی اس معاہدہ لائن کو حذف کرنا چاہتے ہیں؟
 MoveToAnotherContract=سروس کو دوسرے معاہدے میں منتقل کریں۔
-ConfirmMoveToAnotherContract=میں نے نیا ہدف معاہدہ منتخب کیا اور تصدیق کی کہ میں اس سروس کو اس معاہدے میں منتقل کرنا چاہتا ہوں۔
+ConfirmMoveToAnotherContract=میں نے ایک نئے ہدف کے معاہدے کا انتخاب کیا اور تصدیق کی کہ میں اس سروس کو اس معاہدے میں منتقل کرنا چاہتا ہوں۔
 ConfirmMoveToAnotherContractQuestion=منتخب کریں کہ کون سا موجودہ معاہدہ (اسی تیسرے فریق کا) ہے، آپ اس سروس کو منتقل کرنا چاہتے ہیں؟
-PaymentRenewContractId=Renew contract %s (service %s)
+PaymentRenewContractId=معاہدے کی تجدید کریں %s (سروس %s)
 ExpiredSince=میعاد ختم ہونے کی تاریخ
 NoExpiredServices=کوئی میعاد ختم شدہ فعال خدمات نہیں ہیں۔
 ListOfServicesToExpireWithDuration=خدمات کی فہرست %s دنوں میں ختم ہونے والی ہے۔
@@ -103,5 +112,5 @@ TypeContact_contrat_external_SALESREPSIGN=کنٹریکٹ پر دستخط کرن�
 HideClosedServiceByDefault=بند خدمات کو بطور ڈیفالٹ چھپائیں۔
 ShowClosedServices=بند خدمات دکھائیں۔
 HideClosedServices=بند خدمات کو چھپائیں۔
-UserStartingService=User starting service
-UserClosingService=User closing service
+UserStartingService=صارف شروع کرنے کی خدمت
+UserClosingService=صارف بند کرنے کی خدمت

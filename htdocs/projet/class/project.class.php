@@ -9,7 +9,7 @@
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -309,7 +309,7 @@ class Project extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
@@ -319,7 +319,7 @@ class Project extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -339,13 +339,13 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'position' => 12),
+		'fk_project' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 12),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
-		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1),
+		'title' => array('type' => 'varchar(255)', 'label' => 'ProjectLabel', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 17, 'showoncombobox' => 2, 'searchall' => 1, 'csslist' => 'tdoverflowmax250'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 19),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'dateo' => array('type' => 'date', 'label' => 'DateStart', 'enabled' => 1, 'visible' => -1, 'position' => 30),
@@ -517,7 +517,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->escape($this->title)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(is_numeric($this->status) ? ((int) $this->status) : '0');
 		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
@@ -630,10 +630,10 @@ class Project extends CommonObject
 			$sql .= ", fk_project=".($this->fk_project ? ((int) $this->fk_project) : "null");
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
+			$sql .= ", fk_soc = ".($this->socid > 0 ? ((int) $this->socid) : "null");
 			$sql .= ", fk_statut = ".((int) $this->status);
-			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
-			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
+			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'null');
+			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? ((float) $this->opp_percent) : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
 			$sql .= ", datec = ".($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
 			$sql .= ", dateo = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -641,7 +641,7 @@ class Project extends CommonObject
 			$sql .= ", date_close = ".($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
 			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
-			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
+			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? ((int) $this->fk_user_close) : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
 			$sql .= ", fk_user_modif = ".((int) $user->id);
@@ -854,7 +854,7 @@ class Project extends CommonObject
 			}
 		}
 
-		return $substitution;
+		return (string) $substitution;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -896,7 +896,7 @@ class Project extends CommonObject
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity($type).")";
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->db->sanitize($tablename)." WHERE ".$this->db->sanitize($projectkey)." IN (".$this->db->sanitize((string) $ids).") AND entity IN (".getEntity($type).")";
 		}
 
 		if (isDolTms($date_start) && $type == 'loan') {
@@ -908,7 +908,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $date_start)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." >= '".$this->db->idate((int) $date_start)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		if (isDolTms($date_end) && $type == 'loan') {
@@ -920,7 +920,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $date_end)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." <= '".$this->db->idate((int) $date_end)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		$parameters = array(
@@ -1021,7 +1021,7 @@ class Project extends CommonObject
 			} else {
 				$fieldname = $value;
 			}
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$fieldname." = NULL where ".$fieldname." = ".((int) $this->id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($key)." SET ".$this->db->sanitize($fieldname)." = NULL WHERE ".$this->db->sanitize($fieldname)." = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1058,7 +1058,7 @@ class Project extends CommonObject
 			$elements = array('categorie_project'); // elements to delete. TODO Make goodway to delete
 			foreach ($elements as $table) {
 				if (!$error) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->db->sanitize($table);
 					$sql .= " WHERE fk_project = ".((int) $this->id);
 
 					$result = $this->db->query($sql);
@@ -1161,7 +1161,7 @@ class Project extends CommonObject
 		} elseif ($type == 'loan') {
 			$sql = "SELECT COUNT(l.rowid) as nb FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".((int) $this->id);
 		} else {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$this->db->sanitize($tablename)." WHERE ".$this->db->sanitize($projectkey)." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
 		}
 
 		$result = $this->db->query($sql);
@@ -1229,7 +1229,7 @@ class Project extends CommonObject
 		}
 
 		// Check parameters
-		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ').'/', $this->title)) {
+		if (preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->title)) {
 			$this->error = $langs->trans("ErrorFieldFormat", $langs->transnoentities("Label")).'. '.$langs->trans('RemoveString', $langs->transnoentitiesnoconv("CopyOf"));
 			return -1;
 		}
@@ -1415,7 +1415,7 @@ class Project extends CommonObject
 	 *
 	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	string		$option			          Variant where the link point to ('', 'nolink')
-	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, n>1=Add the n first chars of label in ref, -1=Label replace the ref
 	 *  @param	string		$moreinpopup	          Text to add into popup
 	 *  @param	string		$sep			          Separator between ref and label if option addlabel is set
 	 *  @param	int<0,1>   	$notooltip		          1=Disable tooltip
@@ -1462,6 +1462,8 @@ class Project extends CommonObject
 				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
 			} elseif ($option == 'eventorganization') {
 				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+			} elseif ($option == 'mailing') {
+				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
 			} else {
 				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
 			}
@@ -1505,11 +1507,15 @@ class Project extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="pictofixedwidth em088"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->title;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
+			$result .= (($addlabel > 0 && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		global $action;
@@ -1639,33 +1645,17 @@ class Project extends CommonObject
 	/**
 	 * Return array of projects a user has permission on, is affected to, or all projects
 	 *
-	 * @param 	User	$user			User object
-	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
+	 * @param 	User	$fuser			User object
+	 * @param 	int		$mode			0=All project user has permission on (assigned to the user or public), 1=Projects assigned to the user only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			Additional filter on project (statut, ref, ...). TODO Use USF syntax here.
-	 * @return 	int[]|string			Array of projects id, or string with projects id separated with "," if list is 1
+	 * @param	string	$filter			Additional filter on project (statut, ref, ...). Use USF syntax here.
+	 * @return 	int[]|string			Array of projects id, or string with projects id separated with "," if param list is 1
 	 */
-	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
+	public function getProjectsAuthorizedForUser($fuser, $mode = 0, $list = 0, $socid = 0, $filter = '')
 	{
 		$projects = array();
 		$temp = array();
-
-		$sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		if ($mode == 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = p.rowid";
-		} elseif ($mode == 1) {
-			$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-		} // elseif ($mode == 2) {
-		// No filter. Use this if user has permission to see all project
-		// }
-		$sql .= " WHERE p.entity IN (".getEntity('project').")";
-		// Internal users must see project he is contact to even if project linked to a third party he can't see.
-		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		if ($socid > 0) {
-			$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-		}
 
 		// Get id of types of contacts for projects (This list never contains a lot of elements)
 		$listofprojectcontacttype = array();
@@ -1684,19 +1674,27 @@ class Project extends CommonObject
 			$listofprojectcontacttype[0] = '0'; // To avoid syntax error if not found
 		}
 
+
+		$sql = "SELECT p.rowid, p.ref";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE p.entity IN (".getEntity('project').")";
+		// Internal users must see project he is contact to even if project is linked to a third party he can't see.
+		if ($socid > 0) {
+			$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
+		}
+
 		if ($mode == 0) {
-			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
-			$sql .= " )";
+			$sql .= " AND (p.public = 1";
+			$sql .= " OR EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+			$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $fuser->id).")";
+			$sql .= ")";
 		} elseif ($mode == 1) {
-			$sql .= " AND ec.element_id = p.rowid";
-			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
-			$sql .= " AND ec.fk_socpeople = ".((int) $user->id).")";
-			$sql .= " )";
+			$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+			$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_c_type_contact IN (".$this->db->sanitize(implode(',', array_keys($listofprojectcontacttype))).")";
+			$sql .= " AND ec.fk_socpeople = ".((int) $fuser->id).")";
 		} // elseif ($mode == 2) {
-		// No filter. Use this if user has permission to see all project
+		// No filter. Use this if fuser has permission to see all project
 		//}
 
 		// Manage filter
@@ -1705,10 +1703,8 @@ class Project extends CommonObject
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			$sql .= $filter;
+			$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 		}
-
-		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1781,8 +1777,12 @@ class Project extends CommonObject
 		$clone_project->id = 0;
 		if ($move_date) {
 			$clone_project->date_start = $now;
-			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end += ($now - $orign_dt_start);
+			if (!empty($clone_project->date_end)) {
+				if (!empty($orign_dt_start)) {
+					$clone_project->date_end += ($now - (int) $orign_dt_start);
+				} elseif (!empty($clone_project->date_c)) {
+					$clone_project->date_end += ($now - (int) $clone_project->date_c);
+				}
 			}
 		}
 
@@ -1980,7 +1980,7 @@ class Project extends CommonObject
 	 */
 	public function shiftTaskDate($old_project_dt_start)
 	{
-		global $user, $langs, $conf;
+		global $user;
 
 		$error = 0;
 		$result = 0;
@@ -2048,20 +2048,21 @@ class Project extends CommonObject
 	public function update_element($tableName, $elementSelectId)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE id=".((int) $elementSelectId);
-		} elseif (in_array($tableName, ["entrepot","mrp_mo","stocktransfer_stocktransfer"])) {
-			$sql .= " SET fk_project=".$this->id;
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET fk_project = ".((int) $this->id);
+			$sql .= " WHERE id = ".((int) $elementSelectId);
+		} elseif (in_array($tableName, ["entrepot", "mrp_mo", "stocktransfer_stocktransfer"])) {
+			$sql .= " SET fk_project = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET fk_projet=".$this->id;
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET fk_projet = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -2078,23 +2079,23 @@ class Project extends CommonObject
 	 *    @param	string	$tableName			Table of the element to update
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @param	string	$projectfield	    The column name that stores the link with the project
-	 *
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
 	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tableName;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->db->sanitize($tableName);
 
 		if ($tableName == "actioncomm") {
-			$sql .= " SET fk_project=NULL";
-			$sql .= " WHERE id=".((int) $elementSelectId);
+			$sql .= " SET fk_project = NULL";
+			$sql .= " WHERE id = ".((int) $elementSelectId);
 		} else {
-			$sql .= " SET ".$projectfield."=NULL";
-			$sql .= " WHERE rowid=".((int) $elementSelectId);
+			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
+			$sql .= " WHERE rowid = ".((int) $elementSelectId);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -2143,7 +2144,7 @@ class Project extends CommonObject
 	 * @param 	int		$datestart		First day of week (use dol_get_first_day to find this date)
 	 * @param 	int		$taskid			Filter on a task id
 	 * @param 	int		$userid			Time spent by a particular user
-	 * @return 	int						Return integer <0 if OK, >0 if KO
+	 * @return 	int						Return integer <0 if OK, >=0 if KO
 	 */
 	public function loadTimeSpent($datestart, $taskid = 0, $userid = 0)
 	{
@@ -2179,18 +2180,19 @@ class Project extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$day = $this->db->jdate($obj->element_date); // task_date is date without hours
+
 				if (empty($dayallreadyfound[$day])) {
-					$this->weekWorkLoad[$day] = $obj->element_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = $obj->element_duration;
+					$this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
 				} else {
-					$this->weekWorkLoad[$day] += $obj->element_duration;
-					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += $obj->element_duration;
+					$this->weekWorkLoad[$day] += (int) $obj->element_duration; // Float in db used as int
+					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += (int) $obj->element_duration;
 				}
 				$dayallreadyfound[$day] = 1;
 				$i++;
 			}
 			$this->db->free($resql);
-			return 1;
+			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
@@ -2246,14 +2248,14 @@ class Project extends CommonObject
 					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
 				if (empty($weekalreadyfound[$week_number])) {
-					$this->monthWorkLoad[$week_number] = $obj->element_duration;
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = $obj->element_duration;
+					$this->monthWorkLoad[$week_number] = (int) $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = (int) $obj->element_duration;
 				} else {
-					$this->monthWorkLoad[$week_number] += $obj->element_duration;
+					$this->monthWorkLoad[$week_number] += (int) $obj->element_duration;
 					if (!isset($this->monthWorkLoadPerTask[$week_number][$obj->fk_element])) {
 						$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] = 0;
 					}
-					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += $obj->element_duration;
+					$this->monthWorkLoadPerTask[$week_number][$obj->fk_element] += (int) $obj->element_duration;
 				}
 				$weekalreadyfound[$week_number] = 1;
 				$i++;
@@ -2534,7 +2536,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero">';
+		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero '.($arraydata['mode'] == 'kanbangroupby' ? 'kanban-draggable" data-itemid="'.$this->id.'" data-element="'.$this->element.'" data-tableelement="'.$this->table_element.'"' : '"').'>';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->public ? 'projectpub' : $this->picto);
@@ -2562,7 +2564,7 @@ class Project extends CommonObject
 			}
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
-		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty) && $this->thirdparty instanceof Societe) {
+		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty) && $this->thirdparty instanceof Societe && $this->thirdparty->id > 0) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax125 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
 			$return .= '</div>';
 			if (!empty($this->thirdparty->phone)) {
@@ -2640,11 +2642,12 @@ class Project extends CommonObject
 
 	/**
 	 * Method for calculating weekly hours worked and generating a report
+	 *
 	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function createWeeklyReport()
 	{
-		global $mysoc, $user;
+		global $mysoc, $user, $langs;
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
@@ -2685,19 +2688,32 @@ class Project extends CommonObject
 		} else {
 			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
 			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
-			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+			$reportContent .= '<tr><th>'.$langs->trans("User").'</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
 
-			$weekendEnabled = 0;
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
 			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
+
+				$weekendEnabled = 0;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
-				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays -= 2;
-					$weekendEnabled = 2;
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_TUESDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
 				}
 
 				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);

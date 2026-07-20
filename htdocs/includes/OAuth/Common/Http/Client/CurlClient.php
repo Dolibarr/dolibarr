@@ -70,7 +70,7 @@ class CurlClient extends AbstractClient
         // Normalize method name
         $method = strtoupper($method);
 
-        $this->normalizeHeaders($extraHeaders);
+        $extraHeaders = $this->normalizeHeaders($extraHeaders);
 
         if ($method === 'GET' && !empty($requestBody)) {
             throw new \InvalidArgumentException('No body expected for "GET" request.');
@@ -128,7 +128,7 @@ class CurlClient extends AbstractClient
         	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $requestBody."\n", FILE_APPEND);
         	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", $method."\n", FILE_APPEND);
         	file_put_contents(DOL_DATA_ROOT . "/dolibarr_oauth.log", var_export($extraHeaders, true)."\n", FILE_APPEND);
-        	@chmod(DOL_DATA_ROOT . "/dolibarr_oauth.log", octdec(empty($conf->global->MAIN_UMASK)?'0664':$conf->global->MAIN_UMASK));
+        	dolChmod(DOL_DATA_ROOT . "/dolibarr_oauth.log");
         }
 
         $response     = curl_exec($ch);

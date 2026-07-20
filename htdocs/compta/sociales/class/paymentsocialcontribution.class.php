@@ -2,8 +2,8 @@
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,14 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public $fk_charge;
 
+	/**
+	 * @var int|''  Date of creation
+	 */
 	public $datec = '';
+
+	/**
+	 * @var int|''  Date of payment
+	 */
 	public $datep = '';
 
 	/**
@@ -137,7 +144,7 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
-	 * @var int|string datepaye
+	 * @var int|'' Payment date when creating
 	 */
 	public $datepaye;
 
@@ -215,6 +222,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
+			$this->error = 'ErrorPaymentAmountMustNotBeNull';
 			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 		}
 
@@ -224,17 +232,17 @@ class PaymentSocialContribution extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".((float) $totalamount).",";
-			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
 
-				// Insere tableau des montants / factures
+				// Insert amounts / invoices array
 				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
 					if (is_numeric($amount) && $amount != 0) {
@@ -503,6 +511,7 @@ class PaymentSocialContribution extends CommonObject
 		$object->fetch($fromid);
 		$object->id = 0;
 		$object->statut = 0;
+		$object->status = 0;
 
 		// Clear fields
 		// ...
@@ -513,7 +522,7 @@ class PaymentSocialContribution extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -608,7 +617,6 @@ class PaymentSocialContribution extends CommonObject
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
 					$error++;
-					dol_print_error($this->db);
 				}
 
 				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
@@ -620,7 +628,7 @@ class PaymentSocialContribution extends CommonObject
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
 						$error++;
-						dol_print_error($this->db);
+						$this->setErrorsFromObject($acc);
 					}
 				}
 
@@ -632,7 +640,8 @@ class PaymentSocialContribution extends CommonObject
 						$socialcontrib->fetch($key);
 						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
 						if ($result <= 0) {
-							dol_print_error($this->db);
+							$this->setErrorsFromObject($acc);
+							$error++;
 						}
 
 						if ($socialcontrib->fk_user) {
@@ -649,14 +658,14 @@ class PaymentSocialContribution extends CommonObject
 							);
 
 							if ($result <= 0) {
-								$this->error = $acc->error;
+								$this->setErrorsFromObject($acc);
 								$error++;
 							}
 						}
 					}
 				}
 			} else {
-				$this->error = $acc->error;
+				$this->setErrorsFromObject($acc);
 				$error++;
 			}
 		}
@@ -760,7 +769,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Longueur max libelle
-	 *	@return	string					Chaine avec URL
+	 *	@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{

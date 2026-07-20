@@ -74,3 +74,5 @@ NewPartnershipRequest=Nuova richiesta di partnership
 NewPartnershipRequestDesc=Questo modulo ti consente di richiedere di far parte di uno dei nostri programmi di partnership. Se hai bisogno di aiuto per compilare questo modulo, contatta via email <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Questa pagina deve contenere almeno un dominio collegamento a uno dei domini seguire: %s
 IPOfApplicant=IP del richiedente
+PartnershipToReopen=Per riaprire
+PartnershipConfirmReOpenAsk=Sei sicuro che vuoi per riaprire questa partnership <b> %s</b>?

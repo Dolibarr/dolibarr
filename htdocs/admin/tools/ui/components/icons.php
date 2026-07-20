@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2024 Anthony Damhet <a.damhet@progiseize.fr>
+ * Copyright (C) 2026		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program and files/directory inner it is free software: you can
  * redistribute it and/or modify it under the terms of the
@@ -42,15 +43,15 @@ $langs->load('uxdocumentation');
 $documentation = new Documentation($db);
 
 // Output html head + body - Param is Title
-$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css']);
+$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css'], GETPOST('hidenavmenu'));
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
 $documentation->view = array('Components','Icons');
 $form = new Form($db);
 
-
-$displayMode = GETPOST('displayMode') == 'kanban' ?  'kanban' : 'icon-only';
+$mode = GETPOST('mode'); // ex : no-btn
+$displayMode = GETPOST('displayMode') == 'kanban' ? 'kanban' : 'icon-only';
 $revertDisplayMode = $displayMode == 'kanban' ? 'icon-only' : 'kanban';
 $revertDisplayName = $displayMode == 'kanban' ? $langs->trans('ViewList') : $langs->trans('ViewKanban');
 $switchDisplayLink = dol_buildpath($documentation->baseUrl . '/components/icons.php', 1) . '?displayMode=' . $revertDisplayMode;
@@ -62,7 +63,7 @@ if (!GETPOST('hidenavmenu')) {
 }
 ?>
 
-<div class="doc-wrapper">
+<div class="doc-wrapper<?php print GETPOST('hidenavmenu') ? "-bis" : ""; ?>">
 
 		<?php
 		if (!GETPOST('hidenavmenu')) {
@@ -78,12 +79,12 @@ if (!GETPOST('hidenavmenu')) {
 			<!-- Summary -->
 			<?php $documentation->showSummary(); ?>
 
+			<br>
 
 			<!-- List of usage font awesome icon -->
 			<div class="documentation-section" id="img-picto-section-list">
 
 				<?php
-
 				$iconFileName = 'shims.json';
 				$iconFilePath = DOL_DOCUMENT_ROOT . '/theme/common/fontawesome-5/metadata';
 
@@ -112,7 +113,11 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($mode != 'no-btn') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext' => 1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">
@@ -142,7 +147,7 @@ if (!GETPOST('hidenavmenu')) {
 								</div>';
 							} else {
 								$tooltip = '<u>'.$langs->trans("DocCodeForMenuOrModuleBuilder").':</u><br>'.$iconName;
-								$tooltip .= '<br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
+								$tooltip .= '<br><br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
 								$iconCode = img_picto($tooltip, $iconName, '', 0, 0, 0, '', 'classfortooltip');
 								print '<span class="doc-icon-list-item">'.$iconCode;
 								print '<span class="doc-icon-hidden-name-for-search">'.$iconName.'</span></span>';
@@ -157,22 +162,34 @@ if (!GETPOST('hidenavmenu')) {
 			<!--  -->
 
 
+			<br><br>
+
+
 			<!-- List of usage font awesome icon -->
 			<div class="documentation-section" id="icon-section-list">
 
 				<?php
-
-				$iconFileName = 'shims.json';
+				$iconFileFa   = 'icons.json';
 				$iconFilePath = DOL_DOCUMENT_ROOT . '/theme/common/fontawesome-5/metadata';
 
-				$fontAwesomeIconRaw = file_get_contents($iconFilePath. '/' .$iconFileName);
-				if ($fontAwesomeIconRaw === false) {
-					dol_print_error($db, 'Error missing file  '. $iconFilePath . '/' . $iconFileName);
-				}
+				// Load the full FontAwesome 5 icons JSON
+				$allIconsRaw = file_get_contents($iconFilePath . '/' . $iconFileFa);
+				$fontAwesomeIcons = []; // This will be the output array in shims.json format
 
-				$fontAwesomeIcons = json_decode($fontAwesomeIconRaw);
-				if ($fontAwesomeIcons === null) {
-					dol_print_error($db, 'Error decoding '. $iconFilePath . '/' . $iconFileName);
+				if ($allIconsRaw === false) {
+					dol_print_error($db, 'Error: missing file ' . $iconFilePath . '/' . $iconFileFa);
+				} else {
+					$allIcons = json_decode($allIconsRaw, true);
+					if ($allIcons === null) {
+						dol_print_error($db, 'Error: cannot decode JSON from ' . $iconFilePath . '/' . $iconFileFa);
+					} else {
+						foreach ($allIcons as $iconName => $iconData) {
+							// Determine prefix: 'fab' for brands, 'fas' or 'far' can be added later if needed
+							$prefix = in_array('brands', $iconData['styles']) ? 'fab' : null;
+							// Format: [ "icon-name", "prefix if any", null ]
+							$fontAwesomeIcons[] = [$iconName, $prefix, null]; // null reserved for future alias
+						}
+					}
 				}
 				?>
 
@@ -189,20 +206,24 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($mode != 'no-btn') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext' => 1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">
 					<div class="documentation-fontawesome-icon-list">
 					<?php
 					$alreadyDisplay = [];
-					if ($fontAwesomeIcons && is_array($fontAwesomeIcons)) {
+					if ($fontAwesomeIcons) {
 						foreach ($fontAwesomeIcons as $iconData) {
-							$class= $iconData[1]??'fa';
+							$class = $iconData[1] ?? 'fa';
 							if (!empty($iconData[2])) {
-								$class.= ' fa-'.$iconData[2];
+								$class .= ' fa-'.$iconData[2];
 							} else {
-								$class.= ' fa-'.$iconData[0];
+								$class .= ' fa-'.$iconData[0];
 							}
 
 							if (in_array($class, $alreadyDisplay)) {
@@ -211,6 +232,7 @@ if (!GETPOST('hidenavmenu')) {
 
 							$alreadyDisplay[] = $class;
 							$iconCode =  '<span class="'.$class.'" ></span>';
+							$iconLabel = !empty($iconData[2]) ? $iconData[2] : $iconData[0];
 
 							if ($displayMode == 'kanban') {
 								print '<div class="info-box ">
@@ -218,7 +240,7 @@ if (!GETPOST('hidenavmenu')) {
 											' . $iconCode . '
 										</span>
 										<div class="info-box-content">
-											<div class="info-box-title" >' . ($iconData[2] ?? ($iconData[0] ?? '')) . '</div>
+											<div class="info-box-title" >' . $iconLabel . '</div>
 											<div class="info-box-lines">
 												<div class="info-box-line spanoverflow nowrap">
 													<div class="inline-block nowraponall">
@@ -247,3 +269,136 @@ if (!GETPOST('hidenavmenu')) {
 <?php
 // Output close body + html
 $documentation->docFooter();
+
+
+/**
+ * Get all usage icon key usable for img_picto(..., key)
+ *
+ * @return string[]
+ * @see getImgPictoConv()
+ */
+function getImgPictoNameList()
+{
+	$imgpicto = array_merge(array_keys(getImgPictoConv()), array(
+		// Keep in this list only picto that are NOT already into getImgPictoConv()
+		'1downarrow',
+		'1uparrow',
+		'1leftarrow',
+		'1rightarrow',
+		'1uparrow_selected',
+		'1downarrow_selected',
+		'1leftarrow_selected',
+		'1rightarrow_selected',
+		'angle-double-down',
+		'angle-double-up',
+		'barcode',
+		'bank',
+		'bell',
+		'birthday-cake',
+		'briefcase-medical',
+		'bug',
+		'building',
+		'hourglass',
+		'cash-register',
+		'clock',
+		'clone',
+		'code',
+		'cog',
+		'cron',
+		'cubes',
+		'check-circle',
+		'check-square',
+		'circle',
+		'chevron-left',
+		'chevron-right',
+		'chevron-down',
+		'chevron-up',
+		'dolly',
+		'download',
+		'ellipsis-h',
+		'envelope',
+		'eraser',
+		'external-link-alt',
+		'external-link-square-alt',
+		'eye',
+		'file',
+		'file-code',
+		'file-export',
+		'file-import',
+		'file-upload',
+		'autofill',
+		'folder',
+		'folder-open',
+		'folder-plus',
+		'font',
+		'generic',
+		'globe-americas',
+		'hands-helping',
+		'id-card',
+		'images',
+		'key',
+		'language',
+		'link',
+		'list',
+		'listlight',
+		'lock',
+		'long-arrow-alt-right',
+		'map-marker-alt',
+		'minus',
+		'money-bill-alt',
+		'note',
+		'off',
+		'on',
+		'paragraph',
+		'play',
+		'phone',
+		'search',
+		'share-alt',
+		'stripe-s',
+		'unlink',
+		'user',
+		'user-tie',
+		'wrench',
+		'discord',
+		'facebook',
+		'flickr',
+		'instagram',
+		'linkedin',
+		'github',
+		'google',
+		'meetup',
+		'microsoft',
+		'skype',
+		'slack',
+		'twitter',
+		'pinterest',
+		'reddit',
+		'snapchat',
+		'tumblr',
+		'youtube',
+		'viadeo',
+		'google-plus-g',
+		'whatsapp',
+		'home',
+		'pencil-ruler',
+		'question',
+		'rss',
+		'search-plus',
+		'shapes',
+		'square',
+		'sort-numeric-down',
+		'supplier_invoice',
+		'terminal',
+		'undo',
+		'user-cog',
+		'user-injured',
+		'user-md',
+		'upload',
+		'stamp',
+		'signature'
+	));
+
+	asort($imgpicto);
+
+	return array_unique($imgpicto);  // @phpstan-ignore return.type
+}

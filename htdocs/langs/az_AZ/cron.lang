@@ -29,8 +29,8 @@ CronExecute=İndi işə salın
 CronConfirmExecute=Bu planlaşdırılan işləri indi yerinə yetirmək istədiyinizə əminsiniz?
 CronInfo=Planlaşdırılmış iş modulu işlərin avtomatik yerinə yetirilməsini planlaşdırmağa imkan verir. İşlərə əl ilə də başlamaq olar.
 CronTask=İş
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=Planlaşdırılmış tapşırığın növbəti icrası
+CronNotYetRan=Heç vaxt edam edilməyib
 CronDtStart=Əvvəl yox
 CronDtEnd=Sonra yox
 CronDtNextLaunch=Növbəti icra
@@ -50,7 +50,7 @@ JobFinished=İş başladı və bitdi
 Scheduled=Planlaşdırılıb
 #Page card
 CronAdd=İş əlavə edin
-CronEvery=Run job every
+CronEvery=Hər dəfə işlə məşğul olun
 CronObject=Yaratmaq üçün Nümunə/Obyekt
 CronArgs=Parametrlər
 CronSaveSucess=Uğurla yadda saxlayın
@@ -77,6 +77,7 @@ CronType=İş Tipi
 CronType_method=PHP Sinifinin çağırış metodu
 CronType_command=Shell əmri
 CronCannotLoadClass=%s sinif faylını yükləmək mümkün deyil (%s sinfindən istifadə etmək üçün)
+CronModuleNotEnabledInThisEntity=Cron modulu bu qurumda aktiv deyil (%s obyektinin %s metodundan istifadə etmək üçün)
 CronCannotLoadObject=%s sinif faylı yükləndi, lakin %s obyekti onda tapılmadı
 UseMenuModuleToolsToAddCronJobs=Planlaşdırılmış işlərə baxmaq və redaktə etmək üçün "<a href="%s">Ev - Admin alətləri - Planlaşdırılmış işlər</a>" menyusuna daxil olun.
 JobDisabled=İş əlil
