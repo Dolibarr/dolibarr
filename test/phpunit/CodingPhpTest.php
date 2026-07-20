@@ -117,7 +117,7 @@ class CodingPhpTest extends CommonClassTest
 		// To process only 1 file, uncomment this
 		/*
 		foreach($returnlist as $key => $val) {
-			if ($val[0]['name'] != 'societe.class.php') {
+			if ($val[0]['name'] != 'companybankaccount.class.php') {
 				unset($returnlist[$key]);
 			}
 		}
@@ -407,21 +407,52 @@ class CodingPhpTest extends CommonClassTest
 		}
 		$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables in file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 
-		// Check sql string VALUES ... , ".$xxx
+		// Check sql string VALUES ... , ".$xxx  or  string VALUES ... , '".$xxx
 		//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
+		// ... = " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."',";
+
 		$ok = true;
 		$matches = array();
-		preg_match_all('/(VALUES).*,\s*"\s*\.\s*\$(...)/', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/(VALUES).*,\s*\'?"\s*\.\s*\$([a-z\-\>]+)/', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
-			if ($val[1] == 'VALUES' && $val[2] == 'db-') {		// exclude $db->escape(
-				continue;
+			$matches2 = array();
+			preg_match_all('/,\s*\'?"\s*\.\s*\$([a-z\-\>]+)/', $val[0], $matches2, PREG_SET_ORDER);
+			foreach ($matches2 as $key2 => $val2) {
+				if ($val2[1] == 'mydb->escape') {		// exclude ".$mydb->escape(
+					continue;
+				}
+				if ($val2[1] == 'dbsession->escape') {		// exclude ".$dbsession->escape(
+					continue;
+				}
+				if ($val2[1] == 'dbsession->idate') {		// exclude ".$dbsession->escape(
+					continue;
+				}
+				if ($val2[1] == 'this->db->encrypt') {		// exclude ".$this->db->encrypt(
+					continue;
+				}
+				if ($val2[1] == 'this->db->escape') {		// exclude ".$this->db->escape(
+					continue;
+				}
+				if ($val2[1] == 'this->db->idate') {		// exclude ".$this->db->idate(
+					continue;
+				}
+				if ($val2[1] == 'db->encrypt') {		// exclude ".$db->encrypt(
+					continue;
+				}
+				if ($val2[1] == 'db->escape') {		// exclude ".$db->escape(
+					continue;
+				}
+				if ($val2[1] == 'db->idate') {		// exclude ".$db->idate(
+					continue;
+				}
+				if ($val2[1] == 'this->escape') {		// exclude ".$this->db->encrypt(
+					continue;
+				}
+
+				var_dump($matches2);
+				$ok = false;
+				break;
 			}
-			if ($val[1] == 'VALUES' && $val[2] == 'thi' && preg_match('/this->db->encrypt/', $val[0])) {	// exclude ".$this->db->encrypt(
-				continue;
-			}
-			var_dump($matches);
-			$ok = false;
-			break;
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 		$this->assertTrue($ok, 'Found non quoted or not casted var in sql request '.$file['relativename'].' - Bad.');
