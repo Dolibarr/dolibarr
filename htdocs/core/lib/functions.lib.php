@@ -3487,6 +3487,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} else {
+		// $modulepart may have been set previously if Imagick class exists (see before).
 		if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
 			$phototoshow = '';
 			// Check if a preview file is available
