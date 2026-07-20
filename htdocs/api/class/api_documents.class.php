@@ -612,7 +612,10 @@ class Documents extends DolibarrApi
 			$objectType = $object->table_element;
 		}
 
-		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$filearraytmp = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+
+		$filearray = $filearraytmp;		// We store answer into an array that we will extends with ecm data
+		/** @var $filearray array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,ref:string,label:string,filepath:string,filename:string,fullpath_orig:string,position:int,gen_or_uploaded:int,description:string,keywords:string,cover:int,share:int,date_c:string,agenda_id:int,fk_user_c:int,fk_user_m:int,note_private:string,note_public:string,content-type:string}> */
 		$countarray = count($filearray);
 		$filearray = array_slice($filearray, $limit * $page, $limit);
 		if (empty($filearray)) {
@@ -638,7 +641,7 @@ class Documents extends DolibarrApi
 								$filearray[$i]['fullpath_orig'] = $line->fullpath_orig;
 								$filearray[$i]['position'] = $line->position;
 								$filearray[$i]['gen_or_uploaded'] = $line->gen_or_uploaded;
-								$filearray[$i]['description'] = $line->description;
+								$filearray[$i]['description'] = $line->desc;
 								$filearray[$i]['keywords'] = $line->keywords;
 								$filearray[$i]['cover'] = $line->cover;
 								$filearray[$i]['share'] = $line->share;
@@ -650,9 +653,11 @@ class Documents extends DolibarrApi
 								$filearray[$i]['note_public'] = $line->note_public;
 							}
 						}
-						if (isset($filearray[$i]['relativename'])) $filearray[$i]['content-type'] = dol_mimetype($filearray[$i]['relativename']);
+						if (isset($filearray[$i]['relativename'])) {
+							$filearray[$i]['content-type'] = dol_mimetype((string) $filearray[$i]['relativename']);
+						}
 						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype($filearray[$i]['relativename']), $arraycontenttype)) {
+						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype((string) $filearray[$i]['relativename']), $arraycontenttype)) {
 							unset($filearray[$i]);
 							$countarray -= 1;
 						}
