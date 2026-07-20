@@ -14,7 +14,6 @@
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: var(--colortextbackhmenu);
 }
 .mainmenu:not(.fab)::before, .mainmenu:not(.fab) span:not(.fab)::before {
 	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";

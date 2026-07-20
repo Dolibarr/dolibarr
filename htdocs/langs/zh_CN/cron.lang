@@ -92,7 +92,7 @@ DATAPOLICYJob=数据清理器和匿名器
 JobXMustBeEnabled=必须启用任务 %s
 EmailIfError=错误警告电子邮件
 JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
-ErrorInBatch=运行任务 %s 时出错 
+ErrorInBatch=运行任务 %s 时出错
 
 # Cron Boxes
 LastExecutedScheduledJob=最后执行的计划任务

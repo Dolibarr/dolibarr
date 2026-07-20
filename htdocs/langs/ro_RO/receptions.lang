@@ -53,4 +53,5 @@ RestoreWithCurrentQtySaved=Completează cantitățile cu cele mai recente valori
 ReceptionsRecorded=Recepții înregistrate
 ReceptionUpdated=Recepția a fost actualizată cu succes
 ReceptionDistribution=Recepție distribuție
+ReceptionMustBeInTheSameCurrencyThanOther=Recepția trebuie să fie în aceeași monedă ca și cealaltă.
 AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Validarea automată nu este posibilă atunci când stocul este redus la validarea facturii

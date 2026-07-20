@@ -1,6 +1,7 @@
 <!-- file home.tpl.php -->
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -8,8 +9,10 @@ if (empty($context) || !is_object($context)) {
 	exit(1);
 }
 '@phan-var-force Context $context';
-
-global $conf, $langs;
+/**
+ * @var Context $context
+ * @var Translate $langs
+ */
 
 ?>
 
@@ -32,6 +35,12 @@ global $conf, $langs;
 			<article class="home-links-card --invoice-list">
 				<div class="home-links-card__icon" ></div>
 				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('invoicelist') . '" title="' . $langs->trans('WebPortalInvoiceListDesc') . '">' . $langs->trans('WebPortalInvoiceListTitle') . '</a>'; ?>
+			</article>
+			<?php endif; ?>
+			<?php if (isModEnabled('member') && in_array(getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS'), ['visible', 'edit']) && $context->logged_member && $context->logged_member->id > 0) : ?>
+			<article class="home-links-card --membercard">
+				<div class="home-links-card__icon" ></div>
+				<?php print '<a class="home-links-card__link" href="' . $context->getControllerUrl('membercard') . '" title="' . $langs->trans('WebPortalMemberCardMenu') . '">' . $langs->trans('WebPortalMemberCardMenu') . '</a>'; ?>
 			</article>
 			<?php endif; ?>
 		</div>

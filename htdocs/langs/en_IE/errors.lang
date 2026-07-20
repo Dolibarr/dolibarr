@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorPHPDoesNotSupport=Votre installation PHP ne prend pas en charge les fonctions %s.
+ErrorOpenIDSetupConfNotComplete=For security reason, you must also setup the Dolibarr config file conf.php to allow OpenID authentication

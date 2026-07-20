@@ -5,9 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France		 <frederic.france@free.fr>
- * Copyright (C) 2025       Lenin Rivas          <lenin.rivas777@gmail.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -42,14 +48,6 @@ if (isModEnabled("bank")) {
 if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -93,7 +91,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -314,7 +312,7 @@ dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">'."\n";
+print '<table class="border tableforfield centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
@@ -442,7 +440,7 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
+print '<tr><td class="'.($user->hasRight('facture', 'paiement') ? 'tdtop' : '').'">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'string', '', 0, 0).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
@@ -466,16 +464,26 @@ if (!empty($object->ext_payment_id)) {
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
-		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
-			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+
+		if ($stripecu) {
+			$url = 'https://dashboard.stripe.com/'.$connect.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'customers/'.$stripecu;
+			if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+				$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+			}
+		} else {
+			$url = 'https://dashboard.stripe.com/'.($object->ext_payment_site == 'Stripe' ? 'test/' : '').'payments/'.$object->ext_payment_id;
 		}
+
 		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
 	} else {
 		print dol_escape_htmltag($object->ext_payment_id);
 	}
 	print '</td></tr>';
 }
+
+// Other attributes
+$cols = 2;
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 // Other attributes
 $parameters = array();
@@ -539,6 +547,7 @@ if ($resql) {
 
 			$invoice = new Facture($db);
 			$invoice->fetch($objp->facid);
+			$marginInfo = null;
 
 			// Add Margin
 			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
@@ -567,7 +576,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
+			if (isModEnabled('multicompany') && isset($mc) && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;
@@ -575,7 +584,7 @@ if ($resql) {
 			}
 
 			// Add margin
-			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT')) {
+			if (isModEnabled('margin') && getDolGlobalInt('MARGIN_SHOW_MARGIN_ON_PAYMENT') && $marginInfo !== null) {
 				print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
 			}
 

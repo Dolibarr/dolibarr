@@ -23,7 +23,10 @@ AllPropals=全部报价单
 SearchAProposal=搜索报价单
 NoProposal=无报价单
 ProposalsStatistics=报价单统计
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=月数量
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Amount by month (excl. tax)
 NbOfProposals=报价单数量
 ShowPropal=显示报价
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 周
 AvailabilityTypeAV_2W=2 周
 AvailabilityTypeAV_3W=3 周
 AvailabilityTypeAV_1M=1 个月
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=跟进报价单的销售代表
 TypeContact_propal_external_BILLING=客户账单联系人
 TypeContact_propal_external_CUSTOMER=跟进报价单的客户联系人
@@ -122,3 +125,5 @@ Signed=signed
 SignedOnly=Signed only
 ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
+PROPOSAL_SHOW_SHIPPING_ADDRESS=显示货运目的地址
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=某些国家/地区的强制指示（法国、...）

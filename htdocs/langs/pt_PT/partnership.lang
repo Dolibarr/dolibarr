@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Gestão de parceria
 PartnershipDescription=Módulo de gestão de parceria
 PartnershipDescriptionLong= Módulo de gestão de parceria
@@ -24,17 +20,11 @@ Partnerships=Parcerias
 AddPartnership=Adicionar parceria
 CancelPartnershipForExpiredMembers=Parceria: cancelar parceria de membros com assinaturas expiradas
 PartnershipCheckBacklink=Parceria: verificar backlink de referência
-
-#
 # Menu
-#
 NewPartnership=Nova Parceria
 NewPartnershipbyWeb=O seu pedido de parceria foi adicionado com sucesso. Poderemos entrar em contato com você em breve...
 ListOfPartnerships=Lista de parcerias
-
-#
 # Admin page
-#
 PartnershipSetup=Configurar parceria
 PartnershipAbout=Sobre Parceria
 PartnershipAboutPage=Página de sobre Parcerias
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Número de dias antes d
 ReferingWebsiteCheck=verificar de Site da Web referente
 ReferingWebsiteCheckDesc=Você pode ativar um recurso para verificar que seus parceiros adicionaram um backlink para seus domínios Site da Web por conta própria Site da Web.
 PublicFormRegistrationPartnerDesc=Dolibarr pode fornecer a você um URL público/Site da Web para permitir que visitantes externos solicitem fazer parte do programa de parceria.
-
-#
 # Object
-#
 DeletePartnership=eliminar, apagar uma parceria
 PartnershipDedicatedToThisThirdParty=Parceria dedicada a este terceiro
 PartnershipDedicatedToThisMember=Parceria dedicada a isso membro
@@ -68,31 +55,24 @@ PartnershipAccepted=Aceite
 PartnershipRefused=Recusada
 PartnershipCanceled=Cancelada
 PartnershipManagedFor=Os parceiros são
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Parceria será cancelada em breve
 SendingEmailOnPartnershipRefused=Parceria recusada
 SendingEmailOnPartnershipAccepted=Parceria aceita
 SendingEmailOnPartnershipCanceled=Parceria cancelada
-
 YourPartnershipWillSoonBeCanceledTopic=Parceria será cancelada em breve
 YourPartnershipRefusedTopic=Parceria recusada
 YourPartnershipAcceptedTopic=Parceria aceita
 YourPartnershipCanceledTopic=Parceria cancelada
-
 YourPartnershipWillSoonBeCanceledContent=Gostaríamos de informar que nossa parceria será cancelada em breve (não obtivemos renovação ou não foram atendidos pré-requisitos para nossa parceria). Entre em contato conosco se você recebeu isso devido a um erro.
 YourPartnershipRefusedContent=Gostaríamos de informar que o seu pedido de parceria foi recusado. Os pré-requisitos não foram atendidos. Por favor, contate-nos se necessitar de maiores informações.
 YourPartnershipAcceptedContent=Gostaríamos de informar que seu pedido de parceria foi aceito.
 YourPartnershipCanceledContent=Gostaríamos de informar que nossa parceria foi cancelada. Por favor, contate-nos se necessitar de maiores informações.
-
 CountLastUrlCheckError=Número de erros no último URL verificar
 LastCheckBacklink=data do último URL verificar
-
 NewPartnershipRequest=Nova solicitação de parceria
 NewPartnershipRequestDesc=Este formulário permite que você solicite fazer parte de um de nossos programas de parceria. Se precisar de ajuda para preencher este formulário, entre em contato pelo e-mail <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Esta página deve conter pelo menos um hiperligação, conexão para um dos seguintes domínios: %s
-
 IPOfApplicant=IP do requerente
-
+PartnershipToReopen=Para reabrir
+PartnershipConfirmReOpenAsk=Tem a certeza que pretende para reabrir esta parceria <b> %s</b>?

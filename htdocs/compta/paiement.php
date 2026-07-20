@@ -9,7 +9,7 @@
  * Copyright (C) 2014       Teddy Andreotti         <125155@supinfo.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
+ * Copyright (C) 2023-2026	Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -37,11 +37,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -49,6 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
@@ -179,7 +178,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOSTINT($key));
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			}
 		}
 
@@ -218,7 +217,7 @@ if (empty($reshook)) {
 	/*
 	 * Action add_paiement
 	 */
-	if ($action == 'add_paiement') {
+	if ($action == 'add_paiement') {	// Test on permission not required
 		if ($error) {
 			$action = 'create';
 		}
@@ -279,7 +278,8 @@ if (empty($reshook)) {
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
+		$paiement->paiementcode = GETPOST('paiementcode', 'alpha');
+		$paiement->paiementid   = dol_getIdFromCode($db, $paiement->paiementcode, 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
 		$paiement->fk_account   = GETPOSTINT('accountid');
@@ -430,15 +430,24 @@ if ($result >= 0) {
 
 							return subJson;
 						}
-						function callForResult(imgId)
+						function callForResult(imgId, multicurrency = 0)
 						{
 							var json = {};
 							var form = $("#payment_form");
+							var keyresult = "result";
 
 							json["invoice_type"] = $("#invoice_type").val();
-            				json["amountPayment"] = $("#amountpayment").attr("value");
-							json["amounts"] = _elemToJson(form.find("input.amount"));
-							json["remains"] = _elemToJson(form.find("input.remain"));
+            				if (multicurrency) {
+							    keyresult = "multicurrency_result";
+							    json["multicurrency"] = 1;
+							    json["multicurrency_amountPayment"] = $("#multicurrency_amountpayment").attr("value");
+							    json["multicurrency_amounts"] = _elemToJson(form.find("input.multicurrency_amount"));
+							    json["multicurrency_remains"] = _elemToJson(form.find("input.multicurrency_remain"));
+							} else {
+							    json["amountPayment"] = $("#amountpayment").attr("value");
+							    json["amounts"] = _elemToJson(form.find("input.amount"));
+							    json["remains"] = _elemToJson(form.find("input.remain"));
+							}
 							json["token"] = "'.currentToken().'";
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
@@ -452,7 +461,7 @@ if ($result >= 0) {
 
 								for (var key in json)
 								{
-									if (key == "result")	{
+									if (key == keyresult)	{
 										if (json["makeRed"]) {
 											$("#"+key).addClass("error");
 										} else {
@@ -473,6 +482,13 @@ if ($result >= 0) {
 						});
 						$("#payment_form").find("input.amount").keyup(function() {
 							callForResult();
+						});
+						// Multicurrency LRR
+						$("#payment_form").find("input.multicurrency_amount").change(function() {
+							callForResult(null, 1);
+						});
+						$("#payment_form").find("input.multicurrency_amount").keyup(function() {
+							callForResult(null, 1);
 						});
 			';
 
@@ -509,7 +525,7 @@ if ($result >= 0) {
 	// Date payment
 	print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 	$datepayment = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
-	$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
+	$datepayment = ($datepayment == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepayment);
 	$adddateof = array(array('adddateof'=>$facture->date));
 	$adddateof[] = array('adddateof'=>$facture->date_lim_reglement, 'labeladddateof'=>$langs->transnoentities('DateDue'));
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_paiement", 1, 1, 0, '', '', $adddateof);
@@ -544,24 +560,24 @@ if ($result >= 0) {
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
+	print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'" spellcheck="false"></td></tr>';
 
 	// Check transmitter
-	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
+	print '<tr><td><span class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter').'</span>';
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 	print '</td>';
-	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
+	print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Bank name
 	print '<tr><td>'.$langs->trans('Bank');
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 	print '</td>';
-	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
+	print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'" spellcheck="false"></td></tr>';
 
 	// Comments
-	print '<tr><td>'.$langs->trans('Comments').'</td>';
-	print '<td class="tdtop">';
-	print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
+	print '<tr><td class="tdtop">'.$langs->trans('Comments').'</td>';
+	print '<td>';
+	print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
 	print '</td></tr>';
 
 	// Go Source Invoice (useful when there are many invoices)
@@ -622,16 +638,16 @@ if ($result >= 0) {
 				$arraytitle = $langs->trans("CreditNotes");
 			}
 			$alreadypayedlabel = $langs->trans('Received');
-			$multicurrencyalreadypayedlabel = $langs->trans('MulticurrencyReceived');
+			$multicurrencyalreadypayedlabel = $langs->trans('Received');
 			if ($facture->type == Facture::TYPE_CREDIT_NOTE) {
 				$alreadypayedlabel = $langs->trans("PaidBack");
-				$multicurrencyalreadypayedlabel = $langs->trans("MulticurrencyPaidBack");
+				$multicurrencyalreadypayedlabel = $langs->trans("PaidBack");
 			}
 			$remaindertopay = $langs->trans('RemainderToTake');
-			$multicurrencyremaindertopay = $langs->trans('MulticurrencyRemainderToTake');
+			$multicurrencyremaindertopay = $langs->trans('RemainderToTake');
 			if ($facture->type == Facture::TYPE_CREDIT_NOTE) {
 				$remaindertopay = $langs->trans("RemainderToPayBack");
-				$multicurrencyremaindertopay = $langs->trans("MulticurrencyRemainderToPayBack");
+				$multicurrencyremaindertopay = $langs->trans("RemainderToPayBack");
 			}
 
 			$i = 0;
@@ -671,12 +687,14 @@ if ($result >= 0) {
 			}
 			print '<td class="center">'.$langs->trans('Date').'</td>';
 			print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-			if (isModEnabled('multicurrency')) {
-				print '<td>'.$langs->trans('Currency').'</td>';
-				print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
-				print '<td class="right">'.$multicurrencyalreadypayedlabel.'</td>';
-				print '<td class="right">'.$multicurrencyremaindertopay.'</td>';
-				print '<td class="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
+			if (isModEnabled("multicurrency")) {
+				$langs->load("multicurrency");
+				$labeltoshow = '<span class="small nowraponall">'.$langs->trans("MulticurrencyOriginalCurrency").'</span>';
+				print '<td>'.$langs->trans('Currency').'</th>';
+				print '<td class="right">'.$langs->trans('AmountTTC').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyalreadypayedlabel.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="right">'.$multicurrencyremaindertopay.' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
+				print '<td class="center">'.$langs->trans('PaymentAmount').' <span class="opacitymedium">('.$labeltoshow.')</span></td>';
 			}
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td class="right">'.$alreadypayedlabel.'</td>';
@@ -693,6 +711,11 @@ if ($result >= 0) {
 			$totalrecu = 0;
 			$totalrecucreditnote = 0;
 			$totalrecudeposits = 0;
+			$multicurrency_total_ttc = 0;
+			$multicurrency_totalrecu = 0;
+			$multicurrency_totalrecucreditnote = 0;
+			$multicurrency_totalrecudeposits = 0;
+			$showtotalmulticurrency = true;
 			$sign = 1;
 
 			print '<tbody>';
@@ -826,9 +849,11 @@ if ($result >= 0) {
 					if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 						if ($action != 'add_paiement') {
 							if (!empty($conf->use_javascript_ajax)) {
-								print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">'.img_picto("Auto fill", 'rightarrow');
+								print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">';
+								print img_picto("Auto fill", 'rightarrow.png');
+								print '</button>';
 							}
-							print '<input '.$min.' '.$max.' type="number" step="any" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount maxwidth100" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 						} else {
 							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
@@ -897,9 +922,11 @@ if ($result >= 0) {
 
 				if ($action != 'add_paiement') {
 					if (!empty($conf->use_javascript_ajax)) {
-						print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">'.img_picto("Auto fill", 'rightarrow').'</button>';
+						print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">';
+						print img_picto("Auto fill", 'rightarrow.png');
+						print '</button>';
 					}
-					print '<input '.$max.' '.$min.' type="number" step="any" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+					print '<input '.$max.' '.$min.' type="text" class="amount maxwidth100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 					print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 				} else {
 					print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
@@ -925,9 +952,19 @@ if ($result >= 0) {
 				$totalrecu += $paiement;
 				$totalrecucreditnote += $creditnotes;
 				$totalrecudeposits += $deposits;
+
+				if (isModEnabled('multicurrency')) {
+					if (empty($objp->multicurrency_code) || $objp->multicurrency_code == getDolCurrency()) {
+						$showtotalmulticurrency = false;
+					}
+					$multicurrency_total_ttc += $objp->multicurrency_total_ttc;
+					$multicurrency_totalrecu += $multicurrency_payment;
+					$multicurrency_totalrecucreditnote += $multicurrency_creditnotes;
+					$multicurrency_totalrecudeposits += $multicurrency_deposits;
+				}
+
 				$i++;
 			}
-			print '</tbody>';
 
 			if ($i > 1) {
 				$colspan = 3;
@@ -939,15 +976,28 @@ if ($result >= 0) {
 
 				// Print total
 
-				print '<tfoot>';
 				print '<tr class="liste_total">';
 				print '<td colspan="'.$colspan.'" class="left">'.$langs->trans('TotalTTC').'</td>';
 				if (isModEnabled('multicurrency')) {
 					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
-					print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+					if ($showtotalmulticurrency) {
+						print '<td class="right"><b>'.price($sign * $multicurrency_total_ttc).'</b></td>';
+						print '<td class="right"><b>'.price($sign * $multicurrency_totalrecu);
+						if ($multicurrency_totalrecucreditnote) {
+							print '+'.price($multicurrency_totalrecucreditnote);
+						}
+						if ($multicurrency_totalrecudeposits) {
+							print '+'.price($multicurrency_totalrecudeposits);
+						}
+						print '</b></td>';
+						print '<td class="right"><b>'.price($sign * (float) price2num($multicurrency_total_ttc - $multicurrency_totalrecu - $multicurrency_totalrecucreditnote - $multicurrency_totalrecudeposits, 'MT')).'</b></td>';
+						print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
+					} else {
+						print '<td></td>';
+						print '<td></td>';
+						print '<td></td>';
+						print '<td></td>';
+					}
 				}
 				print '<td class="right"><b>'.price($sign * $total_ttc).'</b></td>';
 				print '<td class="right"><b>'.price($sign * $totalrecu);
@@ -962,8 +1012,10 @@ if ($result >= 0) {
 				print '<td class="right" id="result" style="font-weight: bold;"></td>'; // Autofilled
 				print '<td align="center">&nbsp;</td>';
 				print "</tr>\n";
-				print '</tfoot>';
 			}
+
+			print '</tbody>';
+
 			print "</table>";
 			print "</div>\n";
 		}
@@ -986,13 +1038,7 @@ if ($result >= 0) {
 		}
 
 		print '<br><div class="center">';
-		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices"><label for="closepaidinvoices"> '.$checkboxlabel.'</label>';
-		/*if (isModEnabled('prelevement')) {
-			$langs->load("withdrawals");
-			if (getDolGlobalString('WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS')) {
-				print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
-			}
-		}*/
+		print '<input type="checkbox" checked name="closepaidinvoices" id="closepaidinvoices" class="marginrightonly"><label for="closepaidinvoices" class="opacitymedium">'.$checkboxlabel.'</label>';
 		print '<br><input type="submit" class="button reposition" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 		print '</div>';
 	}

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Nastavení modulu PayPal
-PaypalDesc=Tento modul umožňuje platby zákazníky prostřednictvím <a href="http://www.paypal.com" target="_blank"> PayPal </a>. To může být použito pro ad hoc platbu nebo pro platbu související s objektem Dolibarr (faktura, objednávka, ...)
+PaypalDesc=Tento modul umožňuje platby zákazníkům prostřednictvím <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Lze jej použít pro jednorázové platby nebo pro platby související s objektem Dolibarr (faktura, objednávka atd.).
 PaypalOrCBDoPayment=Plaťte s PayPal (kartou nebo PayPal)
 PaypalDoPayment=Zaplaťte službou PayPal
 PAYPAL_API_SANDBOX=Testovací/sandbox režim
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Pro všechny akcí pro příspěvky byla prov
 ValidationOfPaymentFailed=Ověření platby selhalo
 CardOwner=Držitel karty
 PayPalBalance=Paypal kredit
+OnlineSubscriptionPaymentLine=Online předplatné zaznamenáno dne %s<br>Zaplaceno prostřednictvím %s<br>Původní IP adresa: %s<br>ID transakce: %s

@@ -32,6 +32,7 @@ PRINTIPP_HOST=প্রিন্ট সার্ভার
 PRINTIPP_PORT=বন্দর
 PRINTIPP_USER=প্রবেশ করুন
 PRINTIPP_PASSWORD=পাসওয়ার্ড
+PRINTIPP_SSL=SSL ব্যবহার করুন
 NoDefaultPrinterDefined=কোন ডিফল্ট প্রিন্টার সংজ্ঞায়িত
 DefaultPrinter=ডিফল্ট প্রিন্টার
 Printer=প্রিন্টার
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=প্রিন্টিং ড্রাইভার 
 PrintingDriverDescprintipp=ড্রাইভার কাপ মুদ্রণের জন্য কনফিগারেশন ভেরিয়েবল।
 PrintTestDescprintgcp=Google ক্লাউড প্রিন্টের জন্য প্রিন্টারের তালিকা।
 PrintTestDescprintipp=কাপের জন্য প্রিন্টারের তালিকা।
+Testbbbb

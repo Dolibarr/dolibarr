@@ -28,11 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,14 +35,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 $langs->loadLangs(array("companies", "mails", "admin", "other", "errors"));
 
 $socid     = GETPOSTINT("socid");
 $action    = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $contactid = GETPOST('contactid', 'alpha'); // May be an int or 'thirdparty'
 $actionid  = GETPOSTINT('actionid');
-$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
 if ($user->socid) {
@@ -56,8 +57,6 @@ if ($user->socid) {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
-
-$result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -80,8 +79,13 @@ $now = dol_now();
 
 // Security check
 $object = new Societe($db);
+if ($socid > 0) {
+	$object->fetch($socid);
+}
 
-$permissiontoadd = $user->hasRight('societe', 'lire');
+$result = restrictedArea($user, 'societe', $object, '');
+
+$permissiontoadd = $user->hasRight('societe', 'write');
 
 
 /*
@@ -154,9 +158,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$object = new Societe($db);
-$result = $object->fetch($socid);
-
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notification");
@@ -186,11 +187,6 @@ if ($result > 0) {
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
-
-	// Prefix
-	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
 
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
@@ -236,15 +232,14 @@ if ($result > 0) {
 	print "\n";
 
 	// Help
-	print '<div class="opacitymedium hideonsmartphone">';
+	print '<div class="info hideonsmartphone">';
 	print $langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser");
 	print '<br>'.$langs->trans("NotificationsDescContact").' - '.$langs->trans("YouAreHere");
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
-	print '<br>';
 	print '</div>';
 
-	print '<br><br>'."\n";
+	print '<br>'."\n";
 
 
 	// Add notification form
@@ -276,10 +271,19 @@ if ($result > 0) {
 		dol_print_error($db);
 	}
 
-	$param = "&socid=".$socid;
+	$param = "&socid=".((int) $socid);
+
+	$listofemails = $object->thirdparty_and_contact_email_array();
+
+	$helptext = '';
+	$buttonstatus = $permissiontoadd ? 1 : 0;
+	if (empty($listofemails)) {
+		$buttonstatus = 2;
+		$helptext = $langs->trans("YouMustCreateContactFirst");
+	}
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight("societe", "creer"));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), $helptext, 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $buttonstatus);
 
 	$titlelist = $form->textwithpicto($langs->trans("ListOfActiveNotifications"), $langs->trans("ListOfActiveNotificationsHelp", $langs->transnoentitiesnoconv("Target"), $langs->transnoentitiesnoconv("Event")));
 
@@ -302,7 +306,6 @@ if ($result > 0) {
 
 	// Line to add a new subscription
 	if ($action == 'create') {
-		$listofemails = $object->thirdparty_and_contact_email_array();
 		if (count($listofemails) > 0) {
 			$actions = array();
 
@@ -417,7 +420,7 @@ if ($result > 0) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}

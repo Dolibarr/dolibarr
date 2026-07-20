@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var ?User $user
  */
 
 // Load translation files required by the page
@@ -84,7 +85,7 @@ $socid = GETPOSTINT('socid');
 $suffix = "";
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 
 
 $backtopage = '';
@@ -106,6 +107,43 @@ if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 
+if (!is_object($user)) {
+	$user = new User($db);
+}
+
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
 
 /*
  * Actions
@@ -169,8 +207,8 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
-			// Chercher un contact existent avec cette address email
-			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
+			// Look for an existing contact with this email address
+			// The first contact found is used to dtermine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
 			if (!is_array($contacts)) {
 				$contacts = array();
@@ -178,7 +216,7 @@ if (empty($reshook)) {
 
 			// Ensure that contact is active and select first active contact
 			foreach ($contacts as $key => $contact) {
-				if ((int) $contact->status == 1) {
+				if ((int) $contact->statut == 1) {
 					$cid = $key;
 					break;
 				}
@@ -224,14 +262,18 @@ if (empty($reshook)) {
 		}
 
 
+		// Check value of input fields
 		$fieldsToCheck = [
 			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
 			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
 			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
 			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
-			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
 		];
-
+		if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+			$fieldsToCheck['message'] = ['check' => 'restricthtml', 'langs' => 'Message'];
+		} else {
+			$fieldsToCheck['message'] = ['check' => 'alphanohtml', 'langs' => 'Message'];
+		}
 		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
@@ -242,9 +284,13 @@ if (empty($reshook)) {
 		}
 
 		// Check Captcha code if is enabled
-		if (getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET')) {
-			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+		$ok = false;
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET') && is_object($captchaobj)) {
+			if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+				$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
+			}
 			if (!$ok) {
 				$error++;
 				array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -286,17 +332,17 @@ if (empty($reshook)) {
 			$object->db->begin();
 
 			$object->subject = GETPOST("subject", "alphanohtml");
-			$object->message = GETPOST("message", "restricthtml");
+			if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+				$object->message = GETPOST("message", "restricthtml");
+			} else {
+				$object->message = GETPOST("message", "alphanohtml");
+			}
 			$object->origin_email = $origin_email;
 			$object->email_from = $origin_email;
 
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
-
-			if (!is_object($user)) {
-				$user = new User($db);
-			}
 
 			// create third-party with contact
 			$usertoassign = 0;
@@ -463,7 +509,7 @@ if (empty($reshook)) {
 							}
 							$message_admin .= '</ul>';
 
-							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.dolPrintText($object->message).'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';

@@ -34,5 +34,6 @@ ResourceTypeCode=Código do tipo de recurso
 ImportDataset_resource_1=Recursos
 ErrorResourcesAlreadyInUse=Algúns recursos están en uso
 ErrorResourceUseInEvent=%s usado en  %s evento
-MaxUsers=Nº máximo de usuarios (prazas, asentos, etc.)
+MaxUsers=Número máximo de usuarios
+MaxUsersResourceDesc=Se o recurso pode ser usado por varias persoas á vez (coche, sala, ...), pode introducir aquí o número máximo de usuarios que poden usar o recurso ao mesmo tempo (número de asentos, prazas, ...).
 MaxUsersLabel=Máximo de usuarios

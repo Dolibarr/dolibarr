@@ -51,10 +51,11 @@ button.dropdown-item.global-search-item {
 	display: block;
 }
 
-
+#topmenu-tool a,
 #topmenu-global-search-dropdown a.login-dropdown-a,
 #topmenu-quickadd-dropdown a.login-dropdown-a,
 #topmenu-bookmark-dropdown a.login-dropdown-a,
+#topmenu-ai-dropdown a.login-dropdown-a,
 #topmenu-uploadfile-dropdown a.login-dropdown-a {
 	color: var(--colortextbackhmenu);
 }
@@ -153,13 +154,17 @@ button.dropdown-item.global-search-item {
 	background-clip: padding-box;
 	border: 1px solid #ccc;
 	border: 1px solid rgba(128, 128, 128, .15);
-	border-radius: 4px;
+	border-radius: 10px;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-ai-dropdown {
 	padding-right: 2px;
 }
 div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
@@ -253,7 +258,7 @@ div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
 	<?php } else { ?>
-		line-height: 50px;
+		line-height: 49px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {
@@ -287,7 +292,7 @@ a.top-menu-dropdown-link {
 
 .dropdown-menu > .user-footer {
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 }
 
 .user-footer:after {
@@ -302,16 +307,20 @@ a.top-menu-dropdown-link {
 	text-align: start;
 }
 
-
+.dropdown-menu > .user-body {
+	padding: 20px;
+}
 .dropdown-menu > .user-body, .dropdown-body{
-	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
+#top-bookmark-search-nothing-found {
+	padding: 15px;
+	display: block;
+}
 
 .dropdown-menu > .bookmark-body, .dropdown-body{
-	padding: 10px 0;
 	overflow-y: auto;
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 110px) ;
@@ -339,11 +348,12 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+#topmenu-tool,
 #topmenu-login-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-global-search-dropdown,
+#topmenu-ai-dropdown,
 #topmenu-uploadfile-dropdown {
 	padding: 0 5px 0 5px;
 }
@@ -368,6 +378,8 @@ a.dropdown-item {
 	text-align: start;
 }
 .dropdown-item.bookmark-item {
+	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 14px;
 	padding-right: 14px;
 }
@@ -465,7 +477,6 @@ li.liinputsearch {
 	position: sticky;
 	display: block;
 	top: 0;
-	background: var(--colorbackbody);
 	z-index: 1;
 }
 
@@ -590,10 +601,11 @@ div.quickaddblock:focus {
 	bottom: 0;
 	transform: translateY(100%);
 
-	background: #fff;
-	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	background: #fff;
+	/* border: 1px solid #bbb; */
+	border-radius: 6px;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 }
 
 /* dropdown --up variant */

@@ -325,7 +325,7 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_M
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<br><a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE').'" />';
 
 		print '<br><br>';
 	} else {

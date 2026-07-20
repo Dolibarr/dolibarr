@@ -102,11 +102,12 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Set content of ->tpl array, to use into template
 	 *
-	 *  @param	string		$action    Type of action
+	 *  @param	string		$action		Type of action
 	 *  @param	int			$id			Id
+	 * 	@param	string		$ref		Object ref (if id not provided) / Unused here
 	 *  @return	void
 	 */
-	public function assign_values(&$action, $id)
+	public function assign_values(&$action, $id, $ref = '')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $canvas;

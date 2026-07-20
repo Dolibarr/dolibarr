@@ -2,7 +2,7 @@
 MailmanSpipSetup=Configuració del mòdul Mailman i SPIP
 MailmanTitle=Sistema de llistes de correu Mailman
 TestSubscribe=Per a provar la subscripció a llistes Mailman
-TestUnSubscribe=Per a provar la cancel·lació de la subscripció a les llistes Mailman
+TestUnSubscribe=Per a provar l'anul·lació de la subscripció a les llistes de Mailman
 MailmanCreationSuccess=La prova de subscripció s'ha executat correctament
 MailmanDeletionSuccess=La prova de baixa de subscripció s'ha executat correctament
 SynchroMailManEnabled=Una actualització de Mailman ha d'efectuar-se

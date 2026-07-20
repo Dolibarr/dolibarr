@@ -21,7 +21,7 @@ CREATE TABLE llx_mymodule_myobject(
 	label VARCHAR(255),
 	qty INTEGER,
 	date_creation DATETIME NOT NULL,
-	tms TIMESTAMP,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_create INTEGER,
 	fk_user_modif INTEGER,
 	status INTEGER,

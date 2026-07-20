@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practive
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practice
 
 	$newstr = '';
 
@@ -105,7 +105,7 @@ function dolKeepOnlyPhpCode($str)
 			}
 		}
 	}
-	return $newstr;
+	return str_replace(array("\r\n", "\r"), array("\n", "\n"), $newstr);
 }
 
 /**
@@ -729,7 +729,7 @@ function getStructuredData($type, $data = array())
 			"offers": {
 				"@type": "Offer",
 				"price": "'.dol_escape_json($data['price']).'",
-				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'"
+				"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'"
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
@@ -864,7 +864,7 @@ function getStructuredData($type, $data = array())
 				"offers": {
 					"@type": "Offer",
 					"url": "https://example.com/anvil",
-					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : $conf->currency).'",
+					"priceCurrency": "'.dol_escape_json($data['currency'] ? $data['currency'] : getDolCurrency()).'",
 					"price": "'.dol_escape_json($data['price']).'",
 					"itemCondition": "https://schema.org/UsedCondition",
 					"availability": "https://schema.org/InStock",
@@ -1066,7 +1066,7 @@ function getNbOfImagePublicURLOfObject($object)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		}
 	}
 
@@ -1227,6 +1227,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	'@phan-var-force Website $website';
+	/** @var Website $website */
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1288,15 +1289,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
-		$searchalgo = '';
+		$sqlsearchalgo = '';
 		if (preg_match('/meta/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'"; // TODO Use a better way to scan keywords
+			// TODO Use a better way to scan keywords
+			$sqlsearchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= ($sqlsearchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
-		$sql .= $searchalgo;
+		$sql .= $sqlsearchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
@@ -1419,7 +1422,7 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 
 	// Check if nb of image is valid
 	if ($imageNumber > 0 && $imageNumber <= $images->length) {
-		// Récupère l'image correspondante (index - 1 car $imageNumber est 1-based)
+		// Get the corresponding image (index - 1 because $imageNumber is 1-based)
 		$img = $images->item($imageNumber - 1);
 		if ($img instanceof DOMElement) {
 			return $img->getAttribute('src');
@@ -1512,9 +1515,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						//print 'Failed to open file '.$filetosave.' for writing.';
+					}
 				}
 			}
 		}

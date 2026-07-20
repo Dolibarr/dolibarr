@@ -17,6 +17,7 @@ AccountancyCodeAsset=會計代碼（資產）
 AccountancyCodeDepreciationAsset=會計代碼（折舊資產帳戶）
 AccountancyCodeDepreciationExpense=會計代碼（折舊費用賬戶）
 AssetsLines=資產
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=刪除
 DeleteAnAssetType=刪除資產模組
 ConfirmDeleteAssetType=您確定要刪除此資產模組嗎？
@@ -70,6 +71,7 @@ AssetDisposal=處置
 AssetConfirmDisposalAsk=您確定要處置該資產嗎 <b>%s</b>？
 AssetConfirmReOpenAsk=您確定要重新開啟這項資產嗎 <b>%s</b>？
 # Asset status
+AssetInDraft=草稿
 AssetInProgress=進行中
 AssetDisposed=經已處置
 AssetRecorded=已入賬

@@ -2,7 +2,7 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2020		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$TSelectedCats = GETPOST('categories', 'array');
+$TSelectedCats = GETPOST('categories', 'array:int');
 $socid = 0;
 
 $mesg = '';
@@ -144,11 +144,11 @@ print '</tr>';
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -162,7 +162,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol(getDolCurrency()).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
@@ -194,17 +194,30 @@ if ($id > 0) {
 if ($id > 0) {
 	$sql .= " f.rowid as facid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut as statut,";
 }
-$sql .= " SUM(d.total_ht) as selling_price,";
-$sql .= " SUM(d.qty) as product_qty,";
-
-// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
-$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
-$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+// Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$delta_pct = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN (d.situation_percent - COALESCE(prev_d.situation_percent, 0)) ELSE d.situation_percent END';
+	$delta_ht = 'CASE WHEN f.type = '.Facture::TYPE_SITUATION.' AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END';
+	$sql .= " SUM($delta_ht) as selling_price,";
+	$sql .= " SUM(d.qty) as product_qty,";
+	// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * d.qty * d.buy_price_ht * ($delta_pct / 100)", "d.qty * d.buy_price_ht * ($delta_pct / 100)").") as buying_price,";
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', "-1 * (abs($delta_ht) - (d.buy_price_ht * d.qty * ($delta_pct / 100)))", "$delta_ht - (d.buy_price_ht * d.qty * ($delta_pct / 100))").") as marge";
+} else {
+	$sql .= " SUM(d.total_ht) as selling_price,";
+	$sql .= " SUM(d.qty) as product_qty,";
+	// Note: qty and buy_price_ht is always positive (if not your database may be corrupted, you can update this)
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * d.qty * d.buy_price_ht * (d.situation_percent / 100)', 'd.qty * d.buy_price_ht * (d.situation_percent / 100)').") as buying_price,";
+	$sql .= " SUM(".$db->ifsql('(d.total_ht < 0 OR (d.total_ht = 0 AND f.type = 2))', '-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)))', 'd.total_ht - (d.buy_price_ht * d.qty * (d.situation_percent / 100))').") as marge";
+}
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = d.fk_product";
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
+}
 if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=p.rowid';
 }

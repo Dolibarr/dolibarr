@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -216,7 +216,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 	 *  @param	int<0,1>		$hidedetails		Do not show line details
 	 *  @param	int<0,1>		$hidedesc			Do not show desc
 	 *  @param	int<0,1>		$hideref			Do not show ref
-	 *  @return int<0,1>           					1=OK, 0=KO
+	 *  @return int<-1,1>           				1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -295,7 +295,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Trips"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Trips"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -545,9 +545,12 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -673,7 +676,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*
-		// ajout du fondu vert en bas de page à droite
+		// add green fade at bottom right of page
 		$image_fondue = $conf->mycompany->dir_output.'/fondu_vert_.jpg';
 		$pdf->Image($image_fondue,20,107,200,190);
 
@@ -713,7 +716,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$pdf->SetFont('', 'B', $default_font_size + 4);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $langs->trans("ExpenseReport"), 0, 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $outputlangs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
