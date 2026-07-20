@@ -401,7 +401,7 @@ class Tickets extends DolibarrApi
 		// Pre-validate contacts (format + type) BEFORE creating the ticket, so a malformed payload
 		// does not create a ticket (and fire its creation triggers) only to roll it back afterwards.
 		$contactsToLink = array();
-		if (is_array($contacts) && !empty($contacts)) {
+		if (!empty($contacts)) {
 			foreach ($contacts as $contact) {
 				$contactsToLink[] = $this->_normalizeAndValidateContact($contact);
 			}
