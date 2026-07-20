@@ -179,3 +179,5 @@ print $langs->trans("Developpers").':';
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+		if (empty($user->rights->accounting->mouvements)) {
+			$user->rights->accounting->mouvements = new stdClass();
