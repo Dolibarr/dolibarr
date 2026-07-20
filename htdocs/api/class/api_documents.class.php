@@ -650,9 +650,11 @@ class Documents extends DolibarrApi
 								$filearray[$i]['note_public'] = $line->note_public;
 							}
 						}
-						if (isset($filearray[$i]['relativename'])) $filearray[$i]['content-type'] = dol_mimetype($filearray[$i]['relativename']);
+						if (isset($filearray[$i]['relativename'])) {
+							$filearray[$i]['content-type'] = dol_mimetype((string) $filearray[$i]['relativename']);
+						}
 						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype($filearray[$i]['relativename']), $arraycontenttype)) {
+						if (!empty($content_type) && isset($filearray[$i]['relativename']) && !in_array(dol_mimetype((string) $filearray[$i]['relativename']), $arraycontenttype)) {
 							unset($filearray[$i]);
 							$countarray -= 1;
 						}
