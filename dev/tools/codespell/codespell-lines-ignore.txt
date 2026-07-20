@@ -1,16 +1,16 @@
 								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
 							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
+						$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 						$reponsesadd = str_split($obj->reponses);
 						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
 						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
 						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+						dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					GETPOSTINT("mouvement"),
-						dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
@@ -46,6 +46,7 @@
 			$sql2 .= " SET reponses = '".$db->escape($newcar)."'";
 			$this->category->childs = array();
 			$tmpcrit = preg_replace('/^.*(:[!<>=\s]+:|:in:|:notin:|:like:|:notlike:)/', '\1', $tmpcrit);	// the condition after the name of the field
+			$user->rights->accounting->mouvements = new stdClass();
 			// mise a jour des reponses utilisateurs dans la base
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 			if (empty($reyear) || empty($remonth) || empty($reday)) {
@@ -66,6 +67,7 @@
 		$head[$tab][1] = $langs->trans("Referers");
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
 		$reday = GETPOSTINT('reday');
+		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
 		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
@@ -78,10 +80,14 @@
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
+		$user->rights->accounting->mouvements->export = $savpermexport;
+		$user->rights->accounting->mouvements->export = 0;
+		$user->rights->accounting->mouvements->export = 1;
 		if (!empty($arrayfields['cs.periode']['checked'])) {
 		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
+		if (empty($user->rights->accounting->mouvements)) {
 	 *  @param  float|string	$selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
