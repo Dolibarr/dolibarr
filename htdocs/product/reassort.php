@@ -300,7 +300,7 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		} else {
 			$sql_having .= " HAVING";
 		}
-		$sql_having .= $natural_search_physique;
+		$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 	}
 }
 

@@ -1086,8 +1086,8 @@ class Account extends CommonObject
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
 		$sql .= ",owner_country_id = ".($this->owner_country_id > 0 ? ((int) $this->owner_country_id) : "null");
-		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND entity = ".((int) $conf->entity);
 
@@ -2605,7 +2605,7 @@ class AccountLine extends CommonObjectLine
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= $this->id;
+				$sql .= ((int) $this->id);
 				$sql .= ", ".((int) $cat);
 				$sql .= ")";
 

@@ -1231,12 +1231,6 @@ parameters:
 			path: ../../../htdocs/comm/action/index.php
 
 		-
-			message: '#^Parameter \#16 \$usergroupid of function print_actions_filter expects array\<int\>\|int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/comm/action/index.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
@@ -3217,12 +3211,6 @@ parameters:
 			path: ../../../htdocs/core/class/openid.class.php
 
 		-
-			message: '#^Parameter \#1 \$content of method SimpleOpenID\:\:HTML2OpenIDServer\(\) expects string, array\<string, int\|string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/openid.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with XMLParser will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -5089,12 +5077,6 @@ parameters:
 			path: ../../../htdocs/fourn/paiement/card.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fourn/paiement/document.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -6357,12 +6339,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\<" between \-1 and 0 is always true\.$#'
 			identifier: smaller.alwaysTrue
-			count: 1
-			path: ../../../htdocs/paypal/lib/paypal.lib.php
-
-		-
-			message: '#^Parameter \#3 \$value of function curl_setopt expects 0\|2, bool given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/paypal/lib/paypal.lib.php
 

@@ -270,12 +270,12 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 	}
 
 	if ($result > 0) {
-		$query_temlate_id = '';
+		$get_param_template_id = '';
 		if (!empty($template_id)) {
-			$query_temlate_id = '&template_id='.$template_id;
+			$get_param_template_id = '&template_id='.$template_id;
 		}
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id.$query_temlate_id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id.$get_param_template_id);
 		exit();
 	}
 	if ($result == 0) {

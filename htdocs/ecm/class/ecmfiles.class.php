@@ -464,7 +464,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -473,7 +473,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -482,7 +482,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -492,7 +492,7 @@ class EcmFiles extends CommonObject
 			} else {
 				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
 			}
-			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
+			//$sql .= " AND t.entity = ".((int) $conf->entity);							// hashforshare already unique
 			$filterfound++;
 		}
 		if ($src_object_type && $src_object_id) {
@@ -500,7 +500,7 @@ class EcmFiles extends CommonObject
 			if (isset($entity)) {
 				$sql .= " AND t.entity = " . (int) $entity;
 			} else {
-				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
+				$sql .= " AND t.entity = " . ((int) $conf->entity); // unique key include the entity so each company has its own index
 			}
 			$filterfound++;
 		}
@@ -684,7 +684,9 @@ class EcmFiles extends CommonObject
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
 				$line->agenda_id = $obj->agenda_id;
+
 				$line->fetch_optionals();
+
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -769,7 +771,7 @@ class EcmFiles extends CommonObject
 		$sql .= " ref = '".$this->db->escape(dol_hash($this->filepath."/".$this->filename, '3'))."',";
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null").',';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : $conf->entity).',';
+		$sql .= ' entity = '.(isset($this->entity) ? ((int) $this->entity) : ((int) $conf->entity)).',';
 		$sql .= ' filename = '.(isset($this->filename) ? "'".$this->db->escape($this->filename)."'" : "null").',';
 		$sql .= ' filepath = '.(isset($this->filepath) ? "'".$this->db->escape($this->filepath)."'" : "null").',';
 		$sql .= ' fullpath_orig = '.(isset($this->fullpath_orig) ? "'".$this->db->escape($this->fullpath_orig)."'" : "null").',';
