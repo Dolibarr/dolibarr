@@ -167,8 +167,8 @@ print '<br>';
 
 $arrayofeinvoiceneed = array(
 	'FR' => array('module' => array('einvoice', 'pdpconnectfr'), 'search' => 'e-invoice'),
-	'ES' => array('search' => 'veri factu'),
-	'BE' => array('search' => 'peppol'),
+	'ES' => array('search' => array('verifactu')),
+	'BE' => array('search' => array('peppol')),
 	'PL' => array('module' => array('ksef'), 'search' => 'ksef')
 );
 
@@ -196,7 +196,7 @@ if ($mysoc->country_code && in_array($mysoc->country_code, array_keys($arrayofei
 	print img_picto('', 'bill', 'class="paddingright valignmiddle double"');
 	print ' ';
 	print '<a class="nounderlineimp fontsize-1-1" href="'.$urleinvoice.'">'.$langs->transnoentities("EInvoice").'</a>';
-	if ($modulefound) {
+	if ($modulefound || getDolGlobalString('MAIN_FAKE_EINVOICE_MODULE_FOUND')) {
 		print '<br><br>'.$langs->trans("AnEInvoiceModuleHasBeenEnabled", $mysoc->country_code);
 	} else {
 		print '<br><br>'.$langs->trans("SetupDescriptionEInvoice", $mysoc->country_code);

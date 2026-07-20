@@ -508,6 +508,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$createok = 0;
 					$nbko++;
 				}
+			} elseif ($feature == 'payment') {
+				if (!$user->hasRight('facture', 'paiement')) {
+					$createok = 0;
+					$nbko++;
+				}
 			} elseif ($feature == 'webhook') {
 				if (empty($user->admin)) {
 					$createok = 0;

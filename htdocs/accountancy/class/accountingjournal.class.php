@@ -169,7 +169,7 @@ class AccountingJournal extends CommonObject
 				$sql .= " rowid = ".((int) $rowid);
 			} elseif ($journal_code) {
 				$sql .= " code = '".$this->db->escape($journal_code)."'";
-				$sql .= " AND entity  = ".$conf->entity;
+				$sql .= " AND entity  = ".((int) $conf->entity);
 			}
 
 			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

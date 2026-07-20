@@ -192,6 +192,9 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$subdirectory = '/commande';
 			break;
 		case 'expedition':
+		case 'shipment':
+		case 'shipping':
+			$module = 'expedition';
 			$subdirectory = '/sending';
 			break;
 		case 'company':
@@ -200,6 +203,14 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		case 'service':
 		case 'produit':
 			$module = 'product';
+			break;
+		case 'project_task':
+			$module = 'projet';
+
+			// Fetch the project to build the correct path
+			$object->fetchProject();
+
+			$subdirectory = '/'.$object->project->ref;
 			break;
 		case 'action':
 		case 'actioncomm':
@@ -220,7 +231,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
 			}
-			return $s;
+			return dol_sanitizePathName($s);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
@@ -229,15 +240,15 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
 			}
-			return $s;
+			return dol_sanitizePathName($s);
 		} else {
 			return 'error-diroutput-not-defined-for-this-object=' . $module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
-			return $conf->$module->dir_temp;
+			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
 			return 'error-dirtemp-not-defined-for-this-object=' . $module;
 		}
@@ -1322,7 +1333,8 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Note: There is no reason to allow the backtopage/backtopageforcancel/backtopagejs, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
 	// @TODO Merge backtopage with backtourl
 	// @TODO Rename backtolist into backtopagelist
-	if (preg_match('/^backto/i', $paramname)) {
+	// @TODO Merge urlfrom into backtourl
+	if (preg_match('/^backto/i', $paramname) || preg_match('/^urlfrom/i', $paramname)) {
 		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
 		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retrieve it after other replacements.
 		do {
@@ -3486,6 +3498,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} else {
+		// $modulepart may have been set previously if Imagick class exists (see before).
 		if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
 			$phototoshow = '';
 			// Check if a preview file is available
@@ -4472,7 +4485,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$type = 'AC_EMAIL';
 			$linktoaddaction = '';
 			if (getDolGlobalString('AGENDA_ADDACTIONFOREMAIL')) {
-				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . urlencode($type) . '&amp;contactid=' . ((int) $contactid) . '&amp;socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=1&actioncode=' . urlencode($type) . '&contactid=' . ((int) $contactid) . '&socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($linktoaddaction) {
 				$newemail = '<div>' . $newemail . ' ' . $linktoaddaction . '</div>';
@@ -5084,7 +5097,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$type = 'AC_FAX';
 			}
 			if (getDolGlobalString('AGENDA_ADDACTIONFORPHONE')) {
-				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&amp;actioncode=' . $type . ($contactid ? '&amp;contactid=' . $contactid : '') . ($socid ? '&amp;socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&actioncode=' . $type . ($contactid ? '&contactid=' . $contactid : '') . ($socid ? '&socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($addlinktoagenda) {
 				$newphone = '<span>' . $newphone . ' ' . $addlinktoagenda . '</span>';
@@ -14990,6 +15003,7 @@ function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDol
 
 	if (!empty($parsedUrl['query'])) {
 		// Use parse_str() function to parse the string passed via URL
+		$urlQuery = '';
 		parse_str($parsedUrl['query'], $urlQuery);
 		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
 			$url .= '&amp;backtopage=' . urlencode($params['backtopage']);
@@ -15143,6 +15157,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 /**
  * Get an array with properties of an element.
+ * We must not have database access in this method.
  *
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
@@ -15296,7 +15311,7 @@ function getElementProperties($elementType)
 		$module = 'propal';
 		$table_element = 'propaldet';
 		$parent_element = 'propal';
-	} elseif ($elementType == 'shipping') {
+	} elseif ($elementType == 'shipping' || $elementType == 'shipment') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
@@ -15649,6 +15664,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
+	//var_dump($element_prop); exit;
 
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
 		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,

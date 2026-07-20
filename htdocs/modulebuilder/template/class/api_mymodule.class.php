@@ -145,7 +145,7 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " WHERE t.entity IN (".getEntity($tmpobject->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $tmpobject->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $tmpobject->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$tmparray[0]." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($tmpobject->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";

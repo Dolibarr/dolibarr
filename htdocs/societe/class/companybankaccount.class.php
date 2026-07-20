@@ -693,7 +693,7 @@ class CompanyBankAccount extends Account
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : $this->id));
+		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : ((int) $this->id)));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
- * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
