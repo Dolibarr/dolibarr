@@ -616,7 +616,9 @@ if ($action == 'confirm_generateinvoice') {
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
 				}
 
+				$pu_ht_saved = $pu_ht;	// Save the base unit price (price of the selected product/service if any, 0 otherwise)
 				foreach ($arrayoftasks as $timespent_id => $value) {
+					$pu_ht = $pu_ht_saved;	// Reset for each line, so a line does not inherit the unit price computed for the previous one
 					$userid = $value['user'];
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 
@@ -625,7 +627,9 @@ if ($action == 'confirm_generateinvoice') {
 
 					// If no unit price known
 					if (empty($pu_ht)) {
-						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+						if ($value['timespent']) {
+							$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
+						}
 					}
 
 					// Add lines
