@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -559,7 +559,7 @@ class Conf extends stdClass
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
 			$sql .= " FROM ".$db->prefix()."const";
-			$sql .= " WHERE entity IN (0,".$this->entity.")";
+			$sql .= " WHERE entity IN (0,".((int) $this->entity).")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
 			$resql = $db->query($sql);

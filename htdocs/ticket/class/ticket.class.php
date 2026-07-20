@@ -6,7 +6,7 @@
  * Copyright (C) 2023-2025  Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026		Jon Bendtsen          	<jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1866,7 +1866,7 @@ class Ticket extends CommonObject
 			if (getDolGlobalString('TICKET_AUTO_READ_WHEN_ASSIGN')) {
 				$newstatus = Ticket::STATUS_READ;
 			}
-			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".$newstatus;
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".((int) $newstatus);
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
@@ -2965,12 +2965,12 @@ class Ticket extends CommonObject
 							$message .= '<br><br>';
 							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>';
 
-							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+							$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
 							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
 
 							// don't try to send email if no recipient
-							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $from, $replyto);
+							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $email_from, $replyto);
 						}
 					}
 				} else {
@@ -3054,13 +3054,13 @@ class Ticket extends CommonObject
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
-							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+							$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
 							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from, $replyto);
+								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
 							}
 						}
 
@@ -3174,11 +3174,11 @@ class Ticket extends CommonObject
 
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+									$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
 									$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
 
-									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from, $replyto);
+									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
 									if ($result) {
 										// update last_msg_sent date of ticket (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
@@ -3189,7 +3189,7 @@ class Ticket extends CommonObject
 										$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
 										$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
 										$sql .= " email_subject = '".$this->db->escape($subject)."',";
-										$sql .= " email_from = '".$this->db->escape($from)."',";
+										$sql .= " email_from = '".$this->db->escape($email_from)."',";
 										$sql .= " email_to = '".$this->db->escape(implode(',', $sendto))."',";
 										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."',";
 										$sql .= " reply_to = '".$this->db->escape($replyto)."'";
@@ -3240,11 +3240,11 @@ class Ticket extends CommonObject
 	 * @param string[]		$mimetype_list      List of MIME type of attached files
 	 * @param string[]		$mimefilename_list  List of attached file name in message
 	 * @param array<string>	$array_receiver_cc	Array of receiver in CC. Example array('john@doe.com')
-	 * @param string		$from				Email from
+	 * @param string		$email_from				Email from
 	 * @param string		$replyto			Reply to
 	 * @return boolean     						True if mail sent to at least one receiver, false otherwise
 	 */
-	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '', $replyto = '')
+	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $email_from = '', $replyto = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -3275,15 +3275,15 @@ class Ticket extends CommonObject
 			$sendtocc .= ($sendtocc ? ',' : '').implode(',', $array_receiver_cc);
 		}
 
-		if (empty($from)) {
-			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		if (empty($email_from)) {
+			$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 		}
 
-		$parameters = array('from' => $from);
+		$parameters = array('from' => $email_from);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('getTicketMessageEmailFrom', $parameters, $this, $action);
 		if ($reshook && !empty($hookmanager->resArray['from'])) {
-			$from = $hookmanager->resArray['from'];
+			$email_from = $hookmanager->resArray['from'];
 		}
 
 		$is_sent = false;
@@ -3338,7 +3338,7 @@ class Ticket extends CommonObject
 			$sendcontext = 'ticket';
 
 			// Send email
-			$mailfile = new CMailFile($subject, $receiverstring, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, $sendcontext, $replyto, $upload_dir_tmp);
+			$mailfile = new CMailFile($subject, $receiverstring, $email_from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, $sendcontext, $replyto, $upload_dir_tmp);
 
 
 			if ($mailfile->error) {
@@ -3347,20 +3347,20 @@ class Ticket extends CommonObject
 				$result = $mailfile->sendfile();
 
 				if ($result) {
-					setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiverstring, 2)), null, 'mesgs');
+					setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($email_from, 2), $mailfile->getValidAddress($receiverstring, 2)), null, 'mesgs');
 					$is_sent = true;
 
 					$this->email_msgid = $mailfile->msgid;
 				} else {
 					$langs->load("other");
 					if ($mailfile->error) {
-						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
-						dol_syslog('ErrorFailedToSendMail from='.$from.' to='.$receiverstring.' : '.$mailfile->error);
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $email_from, $receiverstring), null, 'errors');
+						dol_syslog('ErrorFailedToSendMail from='.$email_from.' to='.$receiverstring.' : '.$mailfile->error);
 					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
 					} else {
-						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiverstring), null, 'errors');
-						dol_syslog('ErrorFailedToSendMail from='.$from.' to='.$receiverstring.' : (no error details)', LOG_WARNING);
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $email_from, $receiverstring), null, 'errors');
+						dol_syslog('ErrorFailedToSendMail from='.$email_from.' to='.$receiverstring.' : (no error details)', LOG_WARNING);
 					}
 				}
 			}

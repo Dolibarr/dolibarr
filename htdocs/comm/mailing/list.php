@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		Jon Bendtsen                <jon.bendtsen.github@jonb.dk>
@@ -197,7 +197,7 @@ if ($filteremail) {
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = m.fk_project";
-	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".$conf->entity;
+	$sql .= " WHERE m.rowid = mc.fk_mailing AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND mc.email = '".$db->escape($filteremail)."'";
 	if ($search_ref) {
 		$sql .= natural_search("m.rowid", $search_ref, 1);

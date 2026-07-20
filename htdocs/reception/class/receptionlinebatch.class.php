@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -403,10 +403,10 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= ", description";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
-		$sql .= $this->fk_reception;
-		$sql .= ", ".(empty($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot);
-		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : $this->fk_elementdet);
-		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : $this->fk_product);
+		$sql .= ((int) $this->fk_reception);
+		$sql .= ", ".(empty($this->fk_entrepot) ? 'NULL' : ((int) $this->fk_entrepot));
+		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : ((int) $this->fk_elementdet));
+		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : ((int) $this->fk_product));
 		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $this->fk_unit);
@@ -579,15 +579,15 @@ class ReceptionLineBatch extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
-		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
-		$sql .= " fk_elementdet=".(isset($this->fk_elementdet) ? $this->fk_elementdet : "null").",";
-		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
-		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").",";
-		$sql .= " fk_user=".(isset($this->fk_user) ? $this->fk_user : "null").",";
+		$sql .= " fk_element=".(isset($this->fk_element) ? ((int) $this->fk_element) : "null").",";
+		$sql .= " fk_product=".(isset($this->fk_product) ? ((int) $this->fk_product) : "null").",";
+		$sql .= " fk_elementdet=".(isset($this->fk_elementdet) ? ((int) $this->fk_elementdet) : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? ((float) $this->qty) : "null").",";
+		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? ((int) $this->fk_entrepot) : "null").",";
+		$sql .= " fk_user=".(isset($this->fk_user) ? ((int) $this->fk_user) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " comment=".(isset($this->comment) ? "'".$this->db->escape($this->comment)."'" : "null").",";
-		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
+		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
 		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate((int) $this->eatby)."'" : 'null').",";

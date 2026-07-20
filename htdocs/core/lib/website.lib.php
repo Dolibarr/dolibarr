@@ -1289,17 +1289,17 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
-		$searchalgo = '';
+		$sqlsearchalgo = '';
 		if (preg_match('/meta/', $algo)) {
 			// TODO Use a better way to scan keywords
-			$searchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
-			$searchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= "wp.title LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.description LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.pageurl LIKE '%".$db->escape($db->escapeforlike($searchstring))."%' OR wp.aliasalt LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= " OR wp.keywords LIKE '".$db->escape($db->escapeforlike($searchstring)).",%' OR wp.keywords LIKE '% ".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
 		if (preg_match('/content/', $algo)) {
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
+			$sqlsearchalgo .= ($sqlsearchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($db->escapeforlike($searchstring))."%'";
 		}
-		$sql .= $searchalgo;
+		$sql .= $sqlsearchalgo;
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}

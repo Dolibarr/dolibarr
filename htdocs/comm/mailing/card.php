@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
@@ -202,7 +202,7 @@ if (empty($reshook)) {
 			$id       = $object->id;
 			$subject  = $object->sujet;
 			$message  = $object->body;
-			$from     = $object->email_from;
+			$email_from     = $object->email_from;
 			$replyto = $object->email_replyto;
 			$errorsto = $object->email_errorsto;
 			// Is the message in html
@@ -382,7 +382,7 @@ if (empty($reshook)) {
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
 						$upload_dir_tmp = $upload_dir;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
+						$mail = new CMailFile($newsubject, $sendto, $email_from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', $replyto, $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;

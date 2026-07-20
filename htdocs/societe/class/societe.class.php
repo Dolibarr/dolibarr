@@ -641,19 +641,19 @@ class Societe extends CommonObject
 
 	/**
 	 * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
-	 * @var int
+	 * @var int<0,3>
 	 */
 	public $client = 0;
 
 	/**
 	 * 0=no prospect, 1=prospect
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $prospect = 0;
 
 	/**
 	 * 0=no supplier, 1=supplier
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $fournisseur;
 
@@ -1650,7 +1650,7 @@ class Societe extends CommonObject
 			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
-			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
+			$sql .= ",parent = ".($this->parent > 0 ? ((int) $this->parent) : "null");
 
 			$sql .= ",note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ",note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -1718,15 +1718,15 @@ class Societe extends CommonObject
 			$sql .= ",fk_shipping_method = ".(!empty($this->shipping_method_id) ? "'".$this->db->escape((string) $this->shipping_method_id)."'" : "null");
 			$sql .= ",fk_account = ".($this->fk_account > 0 ? (int) $this->fk_account : "null");
 
-			$sql .= ",client = ".(!empty($this->client) ? $this->client : 0);
-			$sql .= ",fournisseur = ".(!empty($this->fournisseur) ? $this->fournisseur : 0);
+			$sql .= ",client = ".(!empty($this->client) ? ((int) $this->client) : 0);
+			$sql .= ",fournisseur = ".(!empty($this->fournisseur) ? ((int) $this->fournisseur) : 0);
 			$sql .= ",barcode = ".(!empty($this->barcode) ? "'".$this->db->escape($this->barcode)."'" : "null");
 			$sql .= ",default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 			$sql .= ",logo = ".(!empty($this->logo) ? "'".$this->db->escape($this->logo)."'" : "null");
 			$sql .= ",logo_squarred = ".(!empty($this->logo_squarred) ? "'".$this->db->escape($this->logo_squarred)."'" : "null");
-			$sql .= ",outstanding_limit= ".($this->outstanding_limit != '' ? $this->outstanding_limit : 'null');
-			$sql .= ",order_min_amount= ".($this->order_min_amount != '' ? $this->order_min_amount : 'null');
-			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
+			$sql .= ",outstanding_limit= ".($this->outstanding_limit != '' ? ((float) $this->outstanding_limit) : 'null');
+			$sql .= ",order_min_amount= ".($this->order_min_amount != '' ? ((float) $this->order_min_amount) : 'null');
+			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? ((float) $this->supplier_order_min_amount) : 'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
 			if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
@@ -1755,7 +1755,7 @@ class Societe extends CommonObject
 			if ($supplier) {
 				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
 			}
-			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
+			$sql .= ", fk_user_modif = ".($user->id > 0 ? ((int) $user->id) : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
 			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
@@ -1835,7 +1835,7 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
-					$sql .= $this->id;
+					$sql .= ((int) $this->id);
 					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", ".(empty($this->vat_reverse_charge) ? '0' : '1');
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
@@ -2831,7 +2831,7 @@ class Societe extends CommonObject
 		} else {
 			$sql .= " FROM ".$this->db->prefix()."facture as f";
 		}
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		$sql .= " AND paye = 0 AND fk_statut = 1";
 		$sql .= " AND f.type = ".CommonInvoice::TYPE_CREDIT_NOTE;
 		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."societe_remise_except as rc";
@@ -4081,7 +4081,7 @@ class Societe extends CommonObject
 				}
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? $id : 'null').' WHERE rowid = '.((int) $this->id);
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET parent = '.($id > 0 ? ((int) $id) : 'null').' WHERE rowid = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -4272,7 +4272,7 @@ class Societe extends CommonObject
 		//Verify duplicate entries
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
 		if ($socid) {
-			$sql .= " AND rowid <> ".$socid;
+			$sql .= " AND rowid <> ".((int) $socid);
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {

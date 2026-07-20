@@ -8869,7 +8869,7 @@ function yn($yesno, $format = 1, $color = 0)
  *  @param  int				$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
  *  @param	?CommonObject	$object			Object to use to get ref to forge the path.
  *  @param	string			$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
- *  @return	string							Dir to use ending. Example '' or '1/' or '1/2/'
+ *  @return	string							Sanitized Dir to use ending. Example '' or '1/' or '1/2/'
  *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
@@ -8896,7 +8896,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($num) && is_object($object)) {
-			$num = $object->id;
+			$num = ((int) $object->id);
 		}
 		if (empty($alpha)) {
 			$num = preg_replace('/([^0-9])/i', '', $num);
@@ -8921,7 +8921,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
 			$path = dol_sanitizeFileName((string) $object->id);
 		} else {
-			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? ((int) $object->id) : '') : $object->ref);
 		}
 	}
 
@@ -11855,7 +11855,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		$sql .= " AND entity IN (" . getEntity($tablename) . ")";
 	}
 	if ($filters) {
-		$sql .= $filters;
+		$sql .= $filters;  // @phan-suppress-current-line SqlInjection
 	}
 
 	$resql = $db->query($sql);
@@ -16490,11 +16490,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	$sortfield_list = explode(',', $sortfield);
 	$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');
-	$sortfield_new_list = array();
+	$sanitized_sortfield_new_list = array();
 	foreach ($sortfield_list as $sortfield_value) {
-		$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
+		$sanitized_sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];  //@phan-suppress-current-line SqlInjection
 	}
-	$sortfield_new = implode(',', $sortfield_new_list);
+	$sanitized_sortfield_new = implode(',', $sanitized_sortfield_new_list);
 
 	$sql = null;
 	$sql2 = null;
@@ -16729,7 +16729,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, $sortorder);
+		$sql .= $db->order($sanitized_sortfield_new, $sortorder);
 		if ($limit) {
 			$sql .= $db->plimit($limit + 1, $offset);
 		}

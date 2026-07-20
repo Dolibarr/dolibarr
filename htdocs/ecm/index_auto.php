@@ -185,16 +185,16 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
-	$sqltree = $ecmdirstatic->get_full_arbo(0);
+	$treesqldir = $ecmdirstatic->get_full_arbo(0);
 
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
 	//var_dump($disktree);
-	//var_dump($sqltree);
+	//var_dump($treesqldir);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
-		foreach ($sqltree as $dirsqldesc) {
+		foreach ($treesqldir as $dirsqldesc) {
 			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 				$dirisindatabase = 1;
 				break;
@@ -218,7 +218,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				dol_syslog($txt);
 				//print $txt." -> ";
 				$parentdirisindatabase = 0;
-				foreach ($sqltree as $dirsqldesc) {
+				foreach ($treesqldir as $dirsqldesc) {
 					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 						$parentdirisindatabase = $dirsqldesc['id'];
 						break;
@@ -249,13 +249,13 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
+					$newsqldir = array('id' => $id,
 									 'id_mere' => $ecmdirtmp->fk_parent,
 									 'label' => $ecmdirtmp->label,
 									 'description' => $ecmdirtmp->description,
 									 'fullrelativename' => $relativepathmissing);
-					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
+					$treesqldir[] = $newsqldir; // We complete fulltree for following loops
+					//var_dump($treesqldir);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -269,7 +269,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	}
 
 	// Loop now on each sql tree to check if dir exists
-	foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+	foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 		$dirtotest = $conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (!dol_is_dir($dirtotest)) {
 			$ecmdirtmp->id = $dirdesc['id'];
@@ -285,7 +285,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
 	// it to be sure that fulltree array is not used without reloading it.
 	if ($adirwascreated) {
-		$sqltree = null;
+		$treesqldir = null;
 	}
 }
 
