@@ -3552,7 +3552,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = preg_replace("/payment\//", "", $original_file);	// Because the $conf->fournisseur->payment->dir_output already contains the "payment/"
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
+		$sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'payment') {
 		// Wrapping for report of payments
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3569,6 +3572,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} else {
 			$original_file = $conf->invoice->dir_output.'/payments/'.$original_file;
 		}
+		/*      $sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiement as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
+		var_dump($sqlprotectagainstexternals);exit;*/
 	} elseif ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output)) {
 		// Wrapping for accounting exports
 		if ($fuser->hasRight('accounting', 'bind', 'write') || $fuser->hasRight('accounting', 'mouvements', 'export') || preg_match('/^specimen/i', $original_file)) {
