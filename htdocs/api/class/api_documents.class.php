@@ -616,6 +616,7 @@ class Documents extends DolibarrApi
 
 		$filearray = $filearraytmp;		// We store answer into an array that we will extends with ecm data
 		/** @var $filearray array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,ref:string,label:string,filepath:string,filename:string,fullpath_orig:string,position:int,gen_or_uploaded:int,description:string,keywords:string,cover:int,share:int,date_c:string,agenda_id:int,fk_user_c:int,fk_user_m:int,note_private:string,note_public:string,content-type:string}> */
+		'@phan-var-force $filearray array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,ref:string,label:string,filepath:string,filename:string,fullpath_orig:string,position:int,gen_or_uploaded:int,description:string,keywords:string,cover:int,share:int,date_c:string,agenda_id:int,fk_user_c:int,fk_user_m:int,note_private:string,note_public:string,content-type:string}>';
 		$countarray = count($filearray);
 		$filearray = array_slice($filearray, $limit * $page, $limit);
 		if (empty($filearray)) {
