@@ -2018,7 +2018,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 			$sql = "SELECT count(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-			$sql .= " WHERE ".$this->db->decrypt('transkey')." = '".$this->db->escape($transkey)."'";
+			$sql .= " WHERE ".$this->db->decrypt("transkey")." = '".$this->db->escape($transkey)."'";
 			$sql .= " AND entity = ".((int) $entity);
 
 			$result = $this->db->query($sql);
@@ -2038,7 +2038,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						$err++;
 					}
 				} else {
-					dol_syslog(get_class($this)."::insert_overwrite_translation overwrite trans '".$transkey."' already exists", LOG_DEBUG);
+					dol_syslog(get_class($this)."::insert_overwrite_translation overwrite trans for key $transkey already exists", LOG_DEBUG);
 				}
 			} else {
 				$err++;
