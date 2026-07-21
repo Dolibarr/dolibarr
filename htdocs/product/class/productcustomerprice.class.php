@@ -137,6 +137,45 @@ class ProductCustomerPrice extends CommonObject
 	 * @var float|string|''
 	 */
 	public $discount_percent;
+
+	// Multicurrency selling price fields for customer-specific price (used when PRODUCT_SUPPORT_MULTICURRENCY is enabled)
+
+	/**
+	 * Currency code for customer-specific price in foreign currency.
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?string
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * Customer-specific selling price without tax in foreign currency.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price;
+
+	/**
+	 * Customer-specific selling price with tax in foreign currency.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_ttc;
+
+	/**
+	 * Customer-specific minimum price without tax in foreign currency.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_min;
+
+	/**
+	 * Customer-specific minimum price with tax in foreign currency.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_min_ttc;
+	
 	/**
 	 * @var string|int
 	 */
@@ -348,6 +387,10 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= "fk_user,";
 		$sql .= "price_label,";
 		$sql .= "import_key";
+		// Add multicurrency columns to the INSERT when the feature is active
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+			$sql .= ",multicurrency_code,multicurrency_price,multicurrency_price_ttc,multicurrency_price_min,multicurrency_price_min_ttc";
+		}
 		$sql .= ") VALUES (";
 		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
@@ -372,6 +415,14 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " ".((int) $user->id).",";
 		$sql .=  " ".(!isset($this->price_label) ? 'NULL' : "'".$this->db->escape($this->price_label)."'").",";
 		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
+		// Append multicurrency values if the feature is active
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
+			$sql .= ", " . (isset($this->multicurrency_price) ? (float) price2num($this->multicurrency_price, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_ttc) ? (float) price2num($this->multicurrency_price_ttc, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_min) ? (float) price2num($this->multicurrency_price_min, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_min_ttc) ? (float) price2num($this->multicurrency_price_min_ttc, 'MU') : 'NULL');
+		}
 		$sql .= ")";
 
 		$this->db->begin();
@@ -447,6 +498,10 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.fk_user,";
 		$sql .= " t.price_label,";
 		$sql .= " t.import_key";
+		// Include multicurrency price fields in the SELECT when the feature is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$sql .= ", t.multicurrency_code, t.multicurrency_price, t.multicurrency_price_ttc, t.multicurrency_price_min, t.multicurrency_price_min_ttc";
+		}
 		$sql .= " FROM ".$this->db->prefix()."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -481,6 +536,15 @@ class ProductCustomerPrice extends CommonObject
 				$this->fk_user = $obj->fk_user;
 				$this->price_label = $obj->price_label;
 				$this->import_key = $obj->import_key;
+
+				// Load multicurrency price fields when the feature is enabled
+				if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+					$this->multicurrency_code = $obj->multicurrency_code;
+					$this->multicurrency_price = isset($obj->multicurrency_price) ? (float) $obj->multicurrency_price : null;
+					$this->multicurrency_price_ttc = isset($obj->multicurrency_price_ttc) ? (float) $obj->multicurrency_price_ttc : null;
+					$this->multicurrency_price_min = isset($obj->multicurrency_price_min) ? (float) $obj->multicurrency_price_min : null;
+					$this->multicurrency_price_min_ttc = isset($obj->multicurrency_price_min_ttc) ? (float) $obj->multicurrency_price_min_ttc : null;
+				}
 
 				$this->db->free($resql);
 
@@ -544,6 +608,10 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
 		$sql .= " prod.ref as prodref";
+		// Include multicurrency price fields in the fetchAll SELECT when the feature is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$sql .= ", t.multicurrency_code, t.multicurrency_price, t.multicurrency_price_ttc, t.multicurrency_price_min, t.multicurrency_price_min_ttc";
+		}
 		$sql .= " FROM ".$this->db->prefix()."product_customer_price as t,";
 		$sql .= " ".$this->db->prefix()."product as prod,";
 		$sql .= " ".$this->db->prefix()."societe as soc";
@@ -625,6 +693,14 @@ class ProductCustomerPrice extends CommonObject
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
+				// Load multicurrency price fields in fetchAll lines when the feature is enabled
+				if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+					$line->multicurrency_code = $obj->multicurrency_code ?? null;
+					$line->multicurrency_price = isset($obj->multicurrency_price) ? (float) $obj->multicurrency_price : null;
+					$line->multicurrency_price_ttc = isset($obj->multicurrency_price_ttc) ? (float) $obj->multicurrency_price_ttc : null;
+					$line->multicurrency_price_min = isset($obj->multicurrency_price_min) ? (float) $obj->multicurrency_price_min : null;
+					$line->multicurrency_price_min_ttc = isset($obj->multicurrency_price_min_ttc) ? (float) $obj->multicurrency_price_min_ttc : null;
+				}
 
 				$this->lines[] = $line;
 			}
@@ -951,6 +1027,14 @@ class ProductCustomerPrice extends CommonObject
 		$sql .= " fk_user=".((int) $user->id).",";
 		$sql .= " price_label=".(isset($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		// Include multicurrency price fields in the UPDATE when the feature is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+			$sql .= ", multicurrency_code='" . $this->db->escape($this->multicurrency_code) . "'";
+			$sql .= ", multicurrency_price=" . (isset($this->multicurrency_price) ? (float) price2num($this->multicurrency_price, 'MU') : 'NULL');
+			$sql .= ", multicurrency_price_ttc=" . (isset($this->multicurrency_price_ttc) ? (float) price2num($this->multicurrency_price_ttc, 'MU') : 'NULL');
+			$sql .= ", multicurrency_price_min=" . (isset($this->multicurrency_price_min) ? (float) price2num($this->multicurrency_price_min, 'MU') : 'NULL');
+			$sql .= ", multicurrency_price_min_ttc=" . (isset($this->multicurrency_price_min_ttc) ? (float) price2num($this->multicurrency_price_min_ttc, 'MU') : 'NULL');
+		}
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
