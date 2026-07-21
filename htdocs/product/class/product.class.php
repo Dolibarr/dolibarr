@@ -339,6 +339,48 @@ class Product extends CommonObject
 	 */
 	public $fourn_multicurrency_code;
 
+	// Multicurrency selling price fields (used when PRODUCT_SUPPORT_MULTICURRENCY constant is enabled)
+
+	/**
+	 * Currency code for the selling price in foreign currency (e.g. 'USD').
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?string
+	 */
+	public $multicurrency_code;
+
+	/**
+	 * Selling price without tax in foreign currency.
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price;
+
+	/**
+	 * Selling price with tax in foreign currency.
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_ttc;
+
+	/**
+	 * Minimum selling price without tax in foreign currency.
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_min;
+
+	/**
+	 * Minimum selling price with tax in foreign currency.
+	 * Requires constant PRODUCT_SUPPORT_MULTICURRENCY to be active.
+	 *
+	 * @var ?float
+	 */
+	public $multicurrency_price_min_ttc;
+
 	/**
 	 * @var ?float		The step to floor quantities to next multiple for Sales (Example: if packaging is 10 and quantity entered is 12, we will round to 20)
 	 */
@@ -1151,6 +1193,13 @@ class Product extends CommonObject
 					$sql .= ", price_label";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
+					if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+						$sql .= ", multicurrency_code";
+						$sql .= ", multicurrency_price";
+						$sql .= ", multicurrency_price_ttc";
+						$sql .= ", multicurrency_price_min";
+						$sql .= ", multicurrency_price_min_ttc";
+					}
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 						$sql .= ", accountancy_code_buy";
 						$sql .= ", accountancy_code_buy_intra";
@@ -1186,6 +1235,14 @@ class Product extends CommonObject
 					$sql .= ", ".(!empty($this->price_label) ? "'".$this->db->escape($this->price_label)."'" : "null");
 					$sql .= ", ".((int) $this->status);
 					$sql .= ", ".((int) $this->status_buy);
+					// Append multicurrency values if the feature is active
+					if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+						$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
+						$sql .= ", " . (isset($this->multicurrency_price) ? (float) price2num($this->multicurrency_price, 'MU') : 'NULL');
+						$sql .= ", " . (isset($this->multicurrency_price_ttc) ? (float) price2num($this->multicurrency_price_ttc, 'MU') : 'NULL');
+						$sql .= ", " . (isset($this->multicurrency_price_min) ? (float) price2num($this->multicurrency_price_min, 'MU') : 'NULL');
+						$sql .= ", " . (isset($this->multicurrency_price_min_ttc) ? (float) price2num($this->multicurrency_price_min_ttc, 'MU') : 'NULL');
+					}
 					if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
@@ -2358,10 +2415,24 @@ class Product extends CommonObject
 		}
 
 		// Add new price
-		$sql = "INSERT INTO ".$this->db->prefix()."product_price(price_level,date_price, fk_product, fk_user_author, price_label, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
-		$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression) ";
-		$sql .= " VALUES(".($level ? ((int) $level) : 1).", '".$this->db->idate($now)."', ".((int) $this->id).", ".((int) $user->id).", ".(empty($this->price_label) ? "null" : "'".$this->db->escape($this->price_label)."'").", ".((float) price2num($this->price)).", ".((float) price2num($this->price_ttc)).",'".$this->db->escape($this->price_base_type)."',".((int) $this->status).", ".((float) price2num($this->tva_tx)).", ".($this->default_vat_code ? ("'".$this->db->escape($this->default_vat_code)."'") : "null").", ".((int) $this->tva_npr).",";
-		$sql .= " ".price2num($this->localtax1_tx).", ".price2num($this->localtax2_tx).", '".$this->db->escape($this->localtax1_type)."', '".$this->db->escape($this->localtax2_type)."', ".price2num($this->price_min).", ".price2num($this->price_min_ttc).", ".price2num($this->price_by_qty).", ".((int) $conf->entity).",".($this->fk_price_expression > 0 ? ((int) $this->fk_price_expression) : 'null');
+		// Build column list, including optional multicurrency fields when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+		$logCols = "price_level,date_price, fk_product, fk_user_author, price_label, price, price_ttc, price_base_type,tosell, tva_tx, default_vat_code, recuperableonly,";
+		$logCols .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, price_min,price_min_ttc,price_by_qty,entity,fk_price_expression";
+		// Add multicurrency columns to the price log when the feature is active
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+			$logCols .= ", multicurrency_code, multicurrency_price, multicurrency_price_ttc, multicurrency_price_min, multicurrency_price_min_ttc";
+		}
+		$sql = "INSERT INTO " . $this->db->prefix() . "product_price(" . $logCols . ") ";
+		$sql .= " VALUES(" . ($level ? ((int) $level) : 1) . ", '" . $this->db->idate($now) . "', " . ((int) $this->id) . ", " . ((int) $user->id) . ", " . (empty($this->price_label) ? "null" : "'" . $this->db->escape($this->price_label) . "'") . ", " . ((float) price2num($this->price)) . ", " . ((float) price2num($this->price_ttc)) . ",'" . $this->db->escape($this->price_base_type) . "'," . ((int) $this->status) . ", " . ((float) price2num($this->tva_tx)) . ", " . ($this->default_vat_code ? ("'" . $this->db->escape($this->default_vat_code) . "'") : "null") . ", " . ((int) $this->tva_npr) . ",";
+		$sql .= " " . price2num($this->localtax1_tx) . ", " . price2num($this->localtax2_tx) . ", '" . $this->db->escape($this->localtax1_type) . "', '" . $this->db->escape($this->localtax2_type) . "', " . price2num($this->price_min) . ", " . price2num($this->price_min_ttc) . ", " . price2num($this->price_by_qty) . ", " . ((int) $conf->entity) . "," . ($this->fk_price_expression > 0 ? ((int) $this->fk_price_expression) : 'null');
+		// Append multicurrency values if the feature is active
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+			$sql .= ", '" . $this->db->escape($this->multicurrency_code) . "'";
+			$sql .= ", " . (isset($this->multicurrency_price) ? (float) price2num($this->multicurrency_price, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_ttc) ? (float) price2num($this->multicurrency_price_ttc, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_min) ? (float) price2num($this->multicurrency_price_min, 'MU') : 'NULL');
+			$sql .= ", " . (isset($this->multicurrency_price_min_ttc) ? (float) price2num($this->multicurrency_price_min_ttc, 'MU') : 'NULL');
+		}
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::_log_price", LOG_DEBUG);
@@ -2961,6 +3032,14 @@ class Product extends CommonObject
 			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
+			// Include multicurrency selling price fields in the UPDATE when the feature is enabled
+			if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !empty($this->multicurrency_code)) {
+				$sql .= ", multicurrency_code = '" . $this->db->escape($this->multicurrency_code) . "'";
+				$sql .= ", multicurrency_price = " . (isset($this->multicurrency_price) ? (float) price2num($this->multicurrency_price, 'MU') : 'NULL');
+				$sql .= ", multicurrency_price_ttc = " . (isset($this->multicurrency_price_ttc) ? (float) price2num($this->multicurrency_price_ttc, 'MU') : 'NULL');
+				$sql .= ", multicurrency_price_min = " . (isset($this->multicurrency_price_min) ? (float) price2num($this->multicurrency_price_min, 'MU') : 'NULL');
+				$sql .= ", multicurrency_price_min_ttc = " . (isset($this->multicurrency_price_min_ttc) ? (float) price2num($this->multicurrency_price_min_ttc, 'MU') : 'NULL');
+			}
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
@@ -3103,6 +3182,10 @@ class Product extends CommonObject
 		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
+		// Include multicurrency selling price fields when the feature is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$sql .= " p.multicurrency_code, p.multicurrency_price, p.multicurrency_price_ttc, p.multicurrency_price_min, p.multicurrency_price_min_ttc,";
+		}
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
 		} else {
@@ -3148,6 +3231,10 @@ class Product extends CommonObject
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 			$sql .= " p.price_label";
+			// Include multicurrency selling price fields in GROUP BY when separated stock is used
+			if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+				$sql .= ", p.multicurrency_code, p.multicurrency_price, p.multicurrency_price_ttc, p.multicurrency_price_min, p.multicurrency_price_min_ttc";
+			}
 			// can't be false TODO fix
 			// if (!$separatedStock) {
 			// 	$sql .= ", p.stock";
@@ -3260,6 +3347,15 @@ class Product extends CommonObject
 
 				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 					$this->packaging = (float) $obj->packaging;
+				}
+
+				// Load multicurrency selling price fields when the feature is enabled
+				if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+					$this->multicurrency_code = $obj->multicurrency_code;
+					$this->multicurrency_price = isset($obj->multicurrency_price) ? (float) $obj->multicurrency_price : null;
+					$this->multicurrency_price_ttc = isset($obj->multicurrency_price_ttc) ? (float) $obj->multicurrency_price_ttc : null;
+					$this->multicurrency_price_min = isset($obj->multicurrency_price_min) ? (float) $obj->multicurrency_price_min : null;
+					$this->multicurrency_price_min_ttc = isset($obj->multicurrency_price_min_ttc) ? (float) $obj->multicurrency_price_min_ttc : null;
 				}
 
 				$this->db->free($resql);
