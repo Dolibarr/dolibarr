@@ -116,6 +116,10 @@ if ($action == 'fetch' && !empty($id)) {
 		$outdiscount = 0;
 		$mandatory_period = $object->mandatory_period;
 		$found = false;
+		// product support support multicurrency
+		$outmulticurrency_code = $object->multicurrency_code;
+		$outmulticurrency_price_ht = null;
+		$outmulticurrency_price_ttc = null;
 
 		$price_level = 1;
 		if ($socid > 0) {
@@ -227,6 +231,8 @@ if ($action == 'fetch' && !empty($id)) {
 							$found = true;
 							$outprice_ht = price($custprice_line->price);
 							$outprice_ttc = price($custprice_line->price_ttc);
+							$outmulticurrency_price_ht = price($custprice_line->multicurrency_price);
+							$outmulticurrency_price_ttc = price($custprice_line->multicurrency_price_ttc);
 							$outpricebasetype = $custprice_line->price_base_type;
 							$outtva_tx_formated = price($custprice_line->tva_tx);
 							$outtva_tx = price2num($custprice_line->tva_tx);
@@ -242,6 +248,8 @@ if ($action == 'fetch' && !empty($id)) {
 		if (!$found) {
 			$outprice_ht = price($object->price);
 			$outprice_ttc = price($object->price_ttc);
+			$outmulticurrency_price_ht = price($object->multicurrency_price);
+			$outmulticurrency_price_ttc = price($object->multicurrency_price_ttc);
 			$outpricebasetype = $object->price_base_type;
 			$outtva_tx_formated = price($object->tva_tx);
 			$outtva_tx = price2num($object->tva_tx);
@@ -305,10 +313,8 @@ if ($action == 'fetch' && !empty($id)) {
 		// The objectline JS uses these to auto-fill the multicurrency price inputs when the document currency matches.
 		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
 			$outjson['multicurrency_code'] = !empty($object->multicurrency_code) ? $object->multicurrency_code : null;
-			$outjson['multicurrency_price'] = !empty($object->multicurrency_price) ? price2num($object->multicurrency_price, 'MU') : null;
-			$outjson['multicurrency_price_ttc'] = !empty($object->multicurrency_price_ttc) ? price2num($object->multicurrency_price_ttc, 'MU') : null;
-			$outjson['multicurrency_price_min'] = !empty($object->multicurrency_price_min) ? price2num($object->multicurrency_price_min, 'MU') : null;
-			$outjson['multicurrency_price_min_ttc'] = !empty($object->multicurrency_price_min_ttc) ? price2num($object->multicurrency_price_min_ttc, 'MU') : null;
+			$outjson['multicurrency_price'] = !empty($outmulticurrency_price_ht) ? price2num($outmulticurrency_price_ht, 'MU') : null;
+			$outjson['multicurrency_price_ttc'] = !empty($outmulticurrency_price_ttc) ? price2num($outmulticurrency_price_ttc, 'MU') : null;
 		}
 	}
 
