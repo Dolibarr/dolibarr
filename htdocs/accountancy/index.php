@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -93,14 +101,13 @@ $boxlist .= '</div>';
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-	$helpisexpanded = false;
-	//$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = GETPOSTINT('showtuto');
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
 		$showtutorial  = '<div class="right"><a href="#" id="show_hide">';
-		$showtutorial .= img_picto('', 'chevron-down');
-		$showtutorial .= ' '.$langs->trans("ShowTutorial");
+		$showtutorial .= img_picto('', 'chevron-down', 'class="show_hide_picto pictofixedwidth"');
+		$showtutorial .= $langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
 		$showtutorial .= '<script type="text/javascript">
@@ -109,8 +116,10 @@ if (isModEnabled('accounting')) {
 				console.log("We click on show-hide");
 				if ($(".idfaq2").is(":hidden")) {
 					jQuery( ".idfaq2" ).show();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-up").addClass("fa-chevron-down");
 				} else {
 					jQuery( ".idfaq2" ).hide();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-down").addClass("fa-chevron-up");
 				}
 	            jQuery( ".idfaq" ).toggle({
 	                duration: 400,
@@ -122,12 +131,14 @@ if (isModEnabled('accounting')) {
 
 	print load_fiche_titre($langs->trans("AccountancyArea"), empty($resultboxes['selectboxlist']) ? '' : $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
+	/*
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 		$messagewarning = $langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices");
 		$messagewarning .= ' '.$langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org');
 		print info_admin($messagewarning);
 		print "<br>";
 	}
+	*/
 
 	if (!$helpisexpanded && empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])) {
 		print '<div class="opacitymedium idfaq2"><br>'.$langs->trans("ClickOnUseTutorialForHelp", $langs->transnoentities("ShowTutorial"))."</div>\n";
@@ -135,12 +146,13 @@ if (isModEnabled('accounting')) {
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').' idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
-	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
+	//print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
-		print '<br>';
+		//print '<br>';
+		//print '<br>';
 		print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '', 0, '', 'nomarginbottom')."\n";
-		print '<hr>';
-		print "<br>\n";
+
+		print '<div class="info">';
 
 		// STEPS
 		$step++;
@@ -187,12 +199,14 @@ if (isModEnabled('accounting')) {
 			print $s;
 			print "<br>\n";
 		}
+		print '</div>';
 
 
 		print "<br>\n";
-		print $langs->trans("AccountancyAreaDescActionOnceBis");
+		print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescActionOnceBis").'</span>';
 		print "<br>\n";
-		print "<br>\n";
+
+		print '<div class="info">';
 
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '{s}');
@@ -235,6 +249,8 @@ if (isModEnabled('accounting')) {
 		print $s;
 		print "<br>\n";
 
+		print '</div>';
+
 		print '<br>';
 	}
 
@@ -242,11 +258,12 @@ if (isModEnabled('accounting')) {
 
 	print "<br>\n";
 	print load_fiche_titre('<span class="fa fa-calendar"></span> '.$langs->trans("AccountancyAreaDescActionFreq"), '', '', 0, '', 'nomarginbottom')."\n";
-	print '<hr>';
-	print "<br>\n";
+
 	$step = 0;
 
 	$langs->loadLangs(array('bills', 'trips'));
+
+	print '<div class="info">';
 
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '{s}')."\n";
@@ -280,6 +297,9 @@ if (isModEnabled('accounting')) {
 	$step++;
 	$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescClosePeriod", chr(64 + $step))."<br>\n";
 	print $s;
+
+	print '</div>';
+
 
 	if (!empty($resultboxes['boxlista']) || !empty($resultboxes['boxlistb'])) {
 		print "<br>\n";

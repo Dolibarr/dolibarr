@@ -1,0 +1,5 @@
+# Format of sitemap file is available at
+# https://www.sitemaps.org/protocol.html
+
+# To build a sitemap from urllist-bing.txt, run
+# google-sitemapgen --config=config-bing.xml --testing

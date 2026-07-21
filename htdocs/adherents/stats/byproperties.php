@@ -2,6 +2,7 @@
 /* Copyright (c) 2012		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -36,11 +44,7 @@ $mode = GETPOST('mode') ? GETPOST('mode') : '';
 
 
 // Security check
-if ($user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
@@ -56,12 +60,24 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-$title = $langs->trans("MembersStatisticsByProperties");
+$title = $langs->trans("Members");
 $help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
 
 llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+$param = '';
+
+$newcardbutton = '';
+$queryforbutton = array();
+$queryforbutton['mode'] = 'common';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$queryforbutton['mode'] = 'kanban';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/adherents/list.php', $queryforbutton), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/adherents/stats/index.php', 1).'?objecttype=adherent@adherent'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $memberstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
 
 //dol_mkdir($dir);
 
@@ -75,6 +91,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.row
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql .= " AND d.statut <> ".Adherent::STATUS_DRAFT;
 $sql .= " GROUP BY d.morphy";
+
 $foundphy = $foundmor = 0;
 
 // Define $data array
@@ -146,22 +163,23 @@ print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 // Print title
 if (!count($data)) {
 	print '<span class="opacitymedium">'.$langs->trans("NoValidatedMemberYet").'</span><br>';
-	print '<br>';
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("MembersByNature").'</span><br>';
-	print '<br>';
 }
+print '<span class="opacitymedium">'.$langs->trans("DraftMembersAreExcluded").'</span><br>';
+print '<br>';
 
 // Print array
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="liste centpercent">';
+
+print '<table class="liste centpercent noborder">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("MemberNature").'</td>';
-print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-print '<td class="right">'.$langs->trans("NbOfActiveMembers").'</td>';
-print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '<th>'.$langs->trans("MemberNature").'</th>';
+print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+print '<th class="right">'.$langs->trans("NbOfActiveMembers").'</th>';
+print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+print '<th class="right">'.$langs->trans("NbOfSubscriptions").'</th>';
+print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 print '</tr>';
 
 if (!$foundphy) {
@@ -177,12 +195,15 @@ foreach ($data as $val) {
 	$nbactive = $val['nbactive'];
 
 	print '<tr class="oddeven">';
-	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
+	print '<td>';
+
+	print $memberstatic->getmorphylib($val['label'], 1);
+	print '</td>';
 	print '<td class="right">'.$nb.'</td>';
 	print '<td class="right">'.$nbactive.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '<td class="right">'.$nbsubscriptions.'</td>';
-	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour', 'auto', null, false, 1).'</td>';
 	print '</tr>';
 }
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Florian HENRY           <florian.henry@atm-consulting.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,18 @@ class LoanSchedule extends CommonObject
 	public $table_element = 'loan_schedule';
 
 	/**
-	 * @var int Loan ID
+	 * @var ?int Loan ID
 	 */
 	public $fk_loan;
 
+	/**
+	 * @var int
+	 */
 	public $bank_account;
+
+	/**
+	 * @var int
+	 */
 	public $bank_line;
 
 	/**
@@ -59,39 +66,51 @@ class LoanSchedule extends CommonObject
 	 */
 	public $datep;
 
+	/**
+	 * @var float[]
+	 */
 	public $amounts = array(); // Array of amounts
-	public $amount_capital; // Total amount of payment
+	/**
+	 * @var null|float|string  Total amount of payment
+	 */
+	public $amount_capital;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_insurance;
+	/**
+	 * @var null|float|string
+	 */
 	public $amount_interest;
 
 	/**
-	 * @var int Payment Type ID
+	 * @var ?int Payment Type ID
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string      Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int Loan Payment ID
+	 * @var ?int Loan Payment ID
 	 */
 	public $fk_payment_loan;
 
 	/**
-	 * @var int Bank ID
+	 * @var ?int Bank ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int User ID
+	 * @var ?int User ID
 	 */
 	public $fk_user_modif;
 
@@ -102,12 +121,19 @@ class LoanSchedule extends CommonObject
 	public $lines = array();
 
 	/**
-	 * @deprecated
+	 * @deprecated	Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
 
 
@@ -173,7 +199,7 @@ class LoanSchedule extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			$this->errors[] = 'step1';
+			$this->errors[] = 'Amount must not be "0".';
 			return -1; // Negative amounts are accepted for reject prelevement but not null
 		}
 
@@ -183,7 +209,7 @@ class LoanSchedule extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
 			$sql .= " fk_typepayment, fk_user_creat, fk_bank)";
-			$sql .= " VALUES (".$this->fk_loan.", '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->fk_loan).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($this->amount_capital).",";
 			$sql .= " ".price2num($this->amount_insurance).",";
@@ -195,7 +221,7 @@ class LoanSchedule extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."loan_schedule");
 			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
@@ -331,14 +357,14 @@ class LoanSchedule extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 
-		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
+		$sql .= " fk_loan=".(isset($this->fk_loan) ? ((int) $this->fk_loan) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
-		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
-		$sql .= " amount_interest=".(isset($this->amount_interest) ? $this->amount_interest : "null").",";
-		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " amount_capital=".(isset($this->amount_capital) ? ((float) $this->amount_capital) : "null").",";
+		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? ((float) $this->amount_insurance) : "null").",";
+		$sql .= " amount_interest=".(isset($this->amount_interest) ? ((float) $this->amount_interest) : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
@@ -421,8 +447,12 @@ class LoanSchedule extends CommonObject
 	{
 		$result = '';
 
-		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+		if (!empty($capital) && !empty($nbterm)) {
+			if (!empty($rate)) {
+				$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+			} else {
+				$result = $capital / $nbterm;
+			}
 		}
 
 		return $result;
@@ -561,9 +591,9 @@ class LoanSchedule extends CommonObject
 	/**
 	 *  paimenttorecord
 	 *
-	 *  @param  int        $loanid     Loan id
-	 *  @param  int        $datemax    Date max
-	 *  @return array                  Array of id
+	 *  @param  int		$loanid		Loan id
+	 *  @param  int		$datemax	Date max
+	 *  @return int[]				Array of id
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{

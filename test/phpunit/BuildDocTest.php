@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2023       Alexandre Janniaux  <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/task.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_azur.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/doc/pdf_baleine.modules.php';
@@ -64,7 +65,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -158,67 +159,67 @@ class BuildDocTest extends CommonClassTest
 		// Force without TCPDI
 		$conf->global->MAIN_DISABLE_TCPDI = 1;
 
-		// Crabe (english)
-		$localobject->model_pdf = 'crabe';
+		// sponge (english)
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
-		$this->assertLessThan($result, 0);
-		print __METHOD__." result=".$result." for generation from crabe\n";
+		$this->assertLessThan($result, 0, 'Error during the test of generation of sponge invoice');
+		print __METHOD__." result=".$result." for generation from sponge\n";
 
 		// Restore default usage with TCPDI
 		$conf->global->MAIN_DISABLE_TCPDI = 0;
 
-		// Crabe (english)
-		$localobject->model_pdf = 'crabe';
+		// sponge (english)
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
-		$this->assertLessThan($result, 0);
-		print __METHOD__." result=".$result." for generation from crabe with MAIN_DISABLE_TCPDI and a watermark\n";
+		$this->assertLessThan($result, 0, 'Error during the test of generation of sponge invoice (MAIN_DISABLE_TCPDI=0 + watermark)');
+		print __METHOD__." result=".$result." for generation from sponge with MAIN_DISABLE_TCPDI and a watermark\n";
 
-		// Crabe (japanese)
+		// sponge (japanese)
 		$newlangs1 = new Translate("", $conf);
 		$newlangs1->setDefaultLang('ja_JP');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs1);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ja_JP');
 		print __METHOD__." result=".$result."\n";
 
-		// Crabe (saudiarabia)
+		// sponge (saudiarabia)
 		$newlangs2a = new Translate("", $conf);
 		$newlangs2a->setDefaultLang('sa_SA');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2a);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document sa_SA');
 		print __METHOD__." result=".$result."\n";
 
-		// Crabe (english_saudiarabia)
+		// sponge (english_saudiarabia)
 		$newlangs2b = new Translate("", $conf);
 		$newlangs2b->setDefaultLang('en_SA');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2b);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document en_SA');
 		print __METHOD__." result=".$result."\n";
 
-		// Crabe (greek)
+		// sponge (greek)
 		$newlangs3 = new Translate("", $conf);
 		$newlangs3->setDefaultLang('el_GR');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs3);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document el_GR');
 		print __METHOD__." result=".$result."\n";
 
-		// Crabe (chinese)
+		// sponge (chinese)
 		$newlangs4 = new Translate("", $conf);
 		$newlangs4->setDefaultLang('zh_CN');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs4);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document zh_CN');
 		print __METHOD__." result=".$result."\n";
 
-		// Crabe (russian)
+		// sponge (russian)
 		$newlangs5 = new Translate("", $conf);
 		$newlangs5->setDefaultLang('ru_RU');
-		$localobject->model_pdf = 'crabe';
+		$localobject->model_pdf = 'sponge';
 		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs5);
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error during the test of generation of document ru_RU');
 		print __METHOD__." result=".$result."\n";
 
 		return 0;

@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+BLOCKEDLOG_REGISTRATION_EMAIL=البريد الإلكتروني للشركة
+logBILL_PAYED=تم دفع فاتورة العميل
+logBILL_VALIDATE=تم اعتماد فاتورة العميل
+logPAYMENT_CUSTOMER=مدفوعات العملاء

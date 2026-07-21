@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -47,7 +47,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -58,10 +58,19 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	 */
 	public $name = 'Cactus';
 
+	/**
+	 * @var string
+	 */
 	public $prefixinvoice = 'SI';
 
+	/**
+	 * @var string
+	 */
 	public $prefixcreditnote = 'SA';
 
+	/**
+	 * @var string
+	 */
 	public $prefixdeposit = 'SD';
 
 
@@ -107,10 +116,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -129,10 +138,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$siyymm = '';
 
 		$posindice = strlen($this->prefixcreditnote) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -151,10 +160,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$siyymm = '';
 
 		$posindice = strlen($this->prefixdeposit) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -175,10 +184,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe				$objsoc     Object third party
-	 * @param  	FactureFournisseur	$object		Object invoice
-	 * @param   string				$mode       'next' for next value or 'last' for last value
-	 * @return 	string|-1      					Value if OK, -1 if KO
+	 * @param	?Societe			$objsoc		Object third party
+	 * @param  	?FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode		'next' for next value or 'last' for last value
+	 * @return 	string|int<-1,0>				Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
@@ -193,10 +202,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 		// First, we get the max value
 		$posindice = strlen($prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -213,16 +222,16 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
 		if ($mode == 'last') {
 			if ($max >= (pow(10, 4) - 1)) {
-				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
+				$sql_num = (int) $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04d", $max);
+				$sql_num = sprintf("%04d", (int) $max);
 			}
 
 			$ref = '';
 			$sql = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
-			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$num."'";
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$sql_num."'";
+			$sql .= " AND entity = ".((int) $conf->entity);
 
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			$resql = $db->query($sql);

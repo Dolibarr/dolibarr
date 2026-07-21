@@ -2,7 +2,8 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $id = GETPOST('id', 'intcomma');
 $ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -57,11 +66,38 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 $langs->loadlangs(array('users', 'projects'));
 
 
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
+$permissiontoadd = ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'creer'));
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+$error = 0;
+
 /*
  * Actions
  */
 
-// None
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);
+	$attribute_name = GETPOST('attribute', 'aZ09');
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	if ($ret < 0) {
+		$error++;
+	}
+	if (!$error) {
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 
 /*
@@ -76,12 +112,12 @@ $contactstatic = new Contact($db);
 $task = new Task($db);
 
 $arrayofcss = array('/includes/jsgantt/jsgantt.css');
-
+$arrayofjs = [];
 if (!empty($conf->use_javascript_ajax)) {
-	$arrayofjs = array(
-	'/includes/jsgantt/jsgantt.js',
-	'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
-	);
+	$arrayofjs = [
+		'/includes/jsgantt/jsgantt.js',
+		'/projet/jsgantt_language.js.php?lang='.$langs->defaultlang
+	];
 }
 
 //$title=$langs->trans("Gantt").($object->ref?' - '.$object->ref.' '.$object->name:'');
@@ -92,6 +128,9 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
 llxHeader("", $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-project page-card_ganttview');
+
+$userWrite = 0;
+$param = '';
 
 if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// To verify role of users
@@ -131,7 +170,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -194,7 +233,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Date start - end project
-	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
@@ -252,7 +291,7 @@ if ($user->hasRight('projet', 'all', 'creer') || $user->hasRight('projet', 'cree
 	}
 }
 
-$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', (int) $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 $linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss' => 'reposition'));
 $linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss' => 'reposition marginleftonly btnTitleSelected'));
@@ -264,7 +303,7 @@ print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'proje
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray = $task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
+$tasksarray = $task->getTasksArray(null, null, ($object->id ? $object->id : $id), $socid, 0);
 // We load also tasks limited to a particular user
 //$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(null, $user, $object->id, 0) : '');
 //var_dump($tasksarray);
@@ -305,7 +344,7 @@ if (count($tasksarray) > 0) {
 			$tasks[$taskcursor]['task_css'] = 'ggroupblack';
 			//$tasks[$taskcursor]['task_css'] = 'gtaskblue';
 		}
-		$tasks[$taskcursor]['task_milestone'] = '0';
+		$tasks[$taskcursor]['task_milestone'] = 0;
 		$tasks[$taskcursor]['task_percent_complete'] = $val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
 		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";

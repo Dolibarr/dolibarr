@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  * \file       htdocs/core/modules/mailings/fraise.modules.php
  * \ingroup    mailing
- * \brief      File of class to generate target according to rule Fraise
+ * \brief      Class file to generate targets according to the Fraise rule
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
@@ -29,18 +30,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *    Class to generate target according to rule Fraise
+ *   Class to generate targets according to the Fraise rule
  */
 class mailing_fraise extends MailingTargets
 {
 	public $name = 'FundationMembers'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
 	public $desc = 'Foundation members with emails';
-	// Set to 1 if selector is available for admin users only
+
+	/**
+	 * @var int <0,1> Set to 1 if selector is available for admin users only
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array('adherent');
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("member")';
 
 	/**
@@ -61,9 +71,9 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *    On the main mailing area, there is a box with statistics.
-	 *    If you want to add a line in this report you must provide an
-	 *    array of SQL request that returns two field:
+	 *    In the main mailing area, there is a box with statistics.
+	 *    If you want to add a line in this report, you must provide an
+	 *    array of SQL requests that return two fields:
 	 *    One called "label", One called "nb".
 	 *
 	 *    @return        string[]        Array with SQL requests
@@ -85,12 +95,12 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *    Return here number of distinct emails returned by your selector.
+	 *    Returns the number of distinct emails returned by your selector.
 	 *    For example if this selector is used to extract 500 different
 	 *    emails from a text file, this function must return 500.
 	 *
-	 *    @param      string    	$sql        Requete sql de comptage
-	 *    @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 *    @param      string    	$sql        SQL query for counting
+	 *    @return     int|string      			Number of recipients, or <0 if error, or '' if N/A
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -108,9 +118,9 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *   Displays the filter form that appears on the mailing recipient selection page
 	 *
-	 *   @return     string      Retourne zone select
+	 *   @return     string      Returns the select area
 	 */
 	public function formFilter()
 	{
@@ -172,7 +182,7 @@ class mailing_fraise extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type = 3"; // We keep only categories for members
 		// $sql.= " AND visible > 0";	// We ignore the property visible because member's categories does not use this property (only products categories use it).
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY label";
 
 		//print $sql;
@@ -212,10 +222,10 @@ class mailing_fraise extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provides the URL to the card of the source information of the recipient for the mailing
 	 *
-	 *  @param    int        $id        ID
-	 *  @return     string      Url lien
+	 *  @param	int		$id		ID
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -225,10 +235,10 @@ class mailing_fraise extends MailingTargets
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Ajoute destinataires dans table des cibles
+	 *  Adds recipients to the targets table
 	 *
 	 *  @param    int        $mailing_id        Id of emailing
-	 *  @return int                       Return integer < 0 si erreur, nb ajout si ok
+	 *  @return int                       Returns integer < 0 if error, number added if successful
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -300,7 +310,7 @@ class mailing_fraise extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' =>
@@ -309,7 +319,7 @@ class mailing_fraise extends MailingTargets
 								($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
 								($langs->transnoentities("Company").'='.$obj->societe),
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'member'
 					);
 					$old = $obj->email;

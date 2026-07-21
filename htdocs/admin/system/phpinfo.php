@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +23,18 @@
 
 /**
  *      \file       htdocs/admin/system/phpinfo.php
- *		\brief      Page des infos systeme de php
+ *		\brief      Page of PHP system information
  */
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -44,10 +52,7 @@ if (!$user->admin) {
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_phpinfo');
 
 $title = 'InfoPHP';
-
-if (isset($title)) {
-	print load_fiche_titre($langs->trans($title), '', 'title_setup');
-}
+print load_fiche_titre($langs->trans($title), '', 'title_setup');
 
 
 // Check PHP setup is OK
@@ -87,55 +92,51 @@ if (preg_match('/t$/i', $maxphp2)) {
 }
 if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2) {
 	$langs->load("errors");
-	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, '0', 'warning');
 	print '<br>';
 }
 
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-$ErrorPicturePath = "../../theme/eldy/img/error.png";
-$WarningPicturePath = "../../theme/eldy/img/warning.png";
-$OkayPicturePath = "../../theme/eldy/img/tick.png";
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+$arrayphpminversionerror = array(7, 1, 0);
+$arrayphpminversionwarning = array(7, 1, 0);
 
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {
-	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 } elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
+	print img_picto('Ok', 'tick').' '.versiontostring(versionphparray());
 }
 
 print '</td></tr>';
 print '<tr><td>GET and POST support</td><td>';
 
 if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["mainmenu"])) {	// We must keep $_GET and $_POST here. This is a specific test.
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
+	print img_picto('Warning', 'warning').' '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
 print '</td></tr>';
 print '<tr><td>Sessions support</td><td>';
 if (!function_exists("session_id")) {
-	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
+	print img_picto('Error', 'error').' '.$langs->trans("ErrorPHPDoesNotSupportSessions");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupportSessions");
 }
 print '</td></tr>';
 
 print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode")) {
-	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
+	print img_picto('Warning', 'warning').' '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8");
 } else {
-	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8");
+	print img_picto('Ok', 'tick').' '.$langs->trans("PHPSupport", "UTF8");
 }
 print '</td></tr>';
 
@@ -151,6 +152,16 @@ print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
 print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
+
+if ($db->type == 'mysqli') {
+	$functions = ["mysqli_connect"];
+	$name      = "MySQLi";
+
+	print "<tr>";
+	print "<td>".$name."</td>";
+	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+	print "</tr>";
+}
 
 $functions = ["mb_check_encoding"];
 $name      = "MBString";
@@ -227,8 +238,24 @@ print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions
 print "</tr>";
 
 $functions = array();
-$name      = "xDebug";
+$name = "bz2";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional"));
+print "</tr>";
 
+// bcmath is used only by swiftmailer for NTLM authentication that is not implemented by Dolibarr core for the moment, so i comment this.
+/*
+$functions = array();
+$name = "bcmath";
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions, $langs->trans("Optional").' (NTLM authentication of Swiftmailer)');
+print "</tr>";
+*/
+
+$functions = array();
+$name      = "xDebug";
 print "<tr>";
 print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
@@ -245,7 +272,7 @@ foreach ($phparray as $key => $value) {
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$key.'</td>';
-	print '<td colspan="2">'.$langs->trans("Value").'</td>';
+	print '<td colspan="2"></td>';
 	print "</tr>\n";
 
 	//var_dump($value);
@@ -272,7 +299,7 @@ foreach ($phparray as $key => $value) {
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}
-			print '<td colspan="2" class="wordbreak">';
+			print '<td colspan="2" class="wordbreak minwidth100">';
 			if ($keyparam == 'Path') {
 				$valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			}
@@ -316,13 +343,14 @@ $db->close();
 /**
  * Return a result column with a translated result text
  *
- * @param string $name			The name of the PHP extension
- * @param array $activated		A list with all activated PHP extensions. Deprecated.
- * @param array $loaded			A list with all loaded PHP extensions
- * @param array $functions		A list with all PHP functions to check
- * @return string
+ * @param 	string 		$name			The name of the PHP extension
+ * @param 	string[] 	$activated		A list with all activated PHP extensions. Deprecated.
+ * @param 	string[] 	$loaded			A list with all loaded PHP extensions
+ * @param 	string[] 	$functions		A list with all PHP functions to check
+ * @param	string		$optional		String with message when module is optional
+ * @return 	string
  */
-function getResultColumn($name, array $activated, array $loaded, array $functions)
+function getResultColumn($name, array $activated, array $loaded, array $functions, $optional = '')
 {
 	global $langs;
 
@@ -357,7 +385,11 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		if (strtolower($name) == 'xdebug') {
 			$html .= yn(0).' - ';
 		} else {
-			$html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
+			if ($optional) {
+				$html .= img_picto($langs->trans("NotFound"), 'minus');
+			} else {
+				$html .= img_warning($langs->trans("NotFound"));
+			}
 		}
 		if (in_array(strtolower($name), $loaded)) {
 			$html .= ' '.$langs->trans("Loaded").' - ';
@@ -365,6 +397,9 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 			//$html .= ' '.$langs->trans("NotLoaded").' - ';
 		}
 		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
+		if ($optional) {
+			$html .= ' <span class="opacitymedium">'.$optional.'</span>';
+		}
 	}
 	$html .= "</td>";
 

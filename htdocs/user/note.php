@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +22,21 @@
 /**
  *      \file       htdocs/user/note.php
  *      \ingroup    usergroup
- *      \brief      Fiche de notes sur un utilisateur Dolibarr
+ *      \brief      Tab for notes on dolibarr user
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Get parameters
 $id = GETPOSTINT('id');
@@ -42,7 +52,7 @@ $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
@@ -50,7 +60,11 @@ if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 }
 
 // Permissions
-$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
+if ($object->id == $user->id) {
+	$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
+} else {
+	$permissionnote = $user->hasRight("user", "user", "write"); // Used by the include of actions_setnotes.inc.php
+}
 
 // Security check
 $socid = 0;
@@ -59,16 +73,16 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
+
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 
 /*
  * Actions
  */
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -98,12 +112,12 @@ if ($id) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -124,12 +138,10 @@ if ($id) {
 	} else {
 		print '<td>';
 		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
 		print '</td>';

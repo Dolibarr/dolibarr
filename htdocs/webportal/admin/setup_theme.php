@@ -28,6 +28,14 @@ require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
@@ -67,6 +75,23 @@ $webPortalTheme = new WebPortalTheme();
 $item = $formSetup->newItem('WEBPORTAL_PRIMARY_COLOR');
 $item->setAsColor();
 $item->defaultFieldValue = $webPortalTheme->primaryColorHex;
+
+// Login theme
+$options = [
+	'default' => [
+		'id' => 'default-login-theme',
+		'label' => '<img src="'. DOL_URL_ROOT . '/public/webportal/img/login-tpl/default.svg" alt="'.dolPrintHTMLForAttribute($langs->trans('UseDefaultLoginForm')).'" />',
+		'labelIsHtml' => true
+	],
+	'right' => [
+		'id' => 'right-login-theme',
+		'label' => '<img src="'. DOL_URL_ROOT . '/public/webportal/img/login-tpl/right.svg" alt="'.dolPrintHTMLForAttribute($langs->trans('UseRightLoginForm')).'" />',
+		'labelIsHtml' => true
+	],
+];
+$item = $formSetup->newItem('WEBPORTAL_LOGIN_FORM_THEME')->setAsRadio($options);
+$item->cssClass = 'integrated-radio';
+$item->defaultFieldValue = 'default';
 
 
 // Logo URL
@@ -124,8 +149,6 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = webportalAdminPrepareHead();
 print dol_get_fiche_head($head, 'themesettings', $langs->trans($title), -1, "webportal");
 
-// Setup page goes here
-//print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2016	Jean-François FERRY    <hello@librethic.io>
  * Copyright (C) - 2019     	Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +26,12 @@
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');       // If this page is public (can be called outside logged session)
 }
-
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1');     // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
-
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
@@ -48,7 +46,15 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
@@ -68,13 +74,12 @@ if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket is not enabled');
 }
 
+$object = new Ticket($db);
+
 
 /*
  * View
  */
-
-$form = new Form($db);
-$formticket = new FormTicket($db);
 
 if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print $langs->trans('TicketPublicInterfaceForbidden');
@@ -82,11 +87,11 @@ if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans('Tickets'), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '<div class="ticketpublicarea ticketlargemargin">';
 
 print '<p style="text-align: center">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HOME", '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc")).'</span></p>').'</p>';
 print '<br>';
@@ -99,7 +104,7 @@ print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany') ? '?e
 print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div class="clearboth"></div>';
 print '</div>';  // ends '<div class="ticketform">';
-print '</div>';  // ends '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '</div>';  // ends '<div class="ticketpublicarea ticketlargemargin">';
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page

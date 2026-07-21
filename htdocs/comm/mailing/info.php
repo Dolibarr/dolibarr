@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $id = GETPOSTINT('id');
 
 // Load translation files required by the page
@@ -37,7 +46,7 @@ $langs->load("mails");
 if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mailing');
+//restrictedArea($user, 'mailing');
 
 
 
@@ -54,7 +63,7 @@ $object = new Mailing($db);
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Mailing"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -65,7 +74,7 @@ if ($object->fetch($id) >= 0) {
 	$morehtmlref .= '</div>';
 
 	$morehtmlstatus = '';
-	$nbtry = $nbok = 0;
+	$nbtry = $nbko = 0;
 	if ($object->status == 2 || $object->status == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
@@ -79,11 +88,13 @@ if ($object->fetch($id) >= 0) {
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
-	print '<div class="underbanner clearboth"></div><br>';
+	print '<div class="fichecenter">';
 
-	//print '<table width="100%"><tr><td>';
-	dol_print_object_info($object, 0);
-	//print '</td></tr></table>';
+	print '<div class="underbanner clearboth"></div>';
+
+	dol_print_object_info($object, 1);
+
+	print '</div>';
 
 	print dol_get_fiche_end();
 }

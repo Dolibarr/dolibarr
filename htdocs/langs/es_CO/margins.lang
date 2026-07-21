@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - margins
 MarginRate=Tasa de margen
+ModifyMarginRates=Modificar las tasas de margen
 MarkRate=Tasa de calificación
 DisplayMarginRates=Mostrar tasas de margen
 DisplayMarkRates=Tasas de calificación de la pantalla
@@ -27,7 +28,7 @@ CostPrice=Precio de coste
 UnitCharges=Cargos unitarios
 Charges=Cargos
 AgentContactType=Tipo de contacto del agente comercial
-AgentContactTypeDetails=Defina qué tipo de contacto (vinculado en las facturas) se utilizará para el informe de margen por contacto / dirección. Tenga en cuenta que leer las estadísticas de un contacto no es confiable, ya que en la mayoría de los casos el contacto puede no estar definido explícitamente en las facturas.
+AgentContactTypeDetails=Defina qué tipo de contacto (vinculado en las facturas) se utilizará para el informe de margen por contacto/dirección. Tenga en cuenta que leer las estadísticas de un contacto no es confiable ya que en la mayoría de los casos el contacto puede no estar definido explícitamente en las facturas.
 rateMustBeNumeric=La tarifa debe ser un valor numérico
 markRateShouldBeLesserThan100=La tasa de calificación debe ser inferior a 100
 ShowMarginInfos=Mostrar información de margen

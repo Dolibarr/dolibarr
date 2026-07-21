@@ -5,7 +5,8 @@
  * Copyright (C) 2002-2003 	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ class pdf_standard_member extends CommonStickerGenerator
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -48,7 +49,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $_Avery_Labels;
 
 		// Translations
 		$langs->loadLangs(array("main", "admin"));
@@ -57,6 +58,7 @@ class pdf_standard_member extends CommonStickerGenerator
 		$this->name = "standard";
 		$this->description = $langs->trans('TemplateforBusinessCards');
 		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+		$this->_Avery_Labels = $_Avery_Labels;
 
 		$this->type = 'pdf-various-sizes';
 	}
@@ -66,7 +68,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array<string,string>	$param		Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)
@@ -78,7 +80,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 * - __LOGO__ is replace with company logo
-	 * - __PHOTO__ is replace with photo provided as parameter
+	 * - __MEMBER_PHOTO__ is replace with photo provided as parameter
 	 *
 	 * @param	 TCPDF		$pdf			PDF
 	 * @param	 string		$textleft		Text left
@@ -164,7 +166,6 @@ class pdf_standard_member extends CommonStickerGenerator
 			$pdf->Cell($this->_Width - 2 * $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
 		}
 
-
 		$ytop += (empty($header) ? 0 : (1 + $this->_Line_Height));
 
 		// Define widthtouse and heighttouse
@@ -191,25 +192,25 @@ class pdf_standard_member extends CommonStickerGenerator
 			// Output left area
 			if ($textleft == '__LOGO__' && $logo) {
 				$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			} elseif ($textleft == '__PHOTO__' && $photo) {
+			} elseif (($textleft == '__PHOTO__' || $textleft == '__MEMBER_PHOTO__') && $photo) {
 				$pdf->Image($photo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			} else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
 		} elseif ($textleft != '' && $textright != '') {	//
-			if ($textleft == '__LOGO__' || $textleft == '__PHOTO__') {
+			if ($textleft == '__LOGO__' || $textleft == '__PHOTO__' || $textleft == '__MEMBER_PHOTO__') {
 				if ($textleft == '__LOGO__' && $logo) {
 					$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-				} elseif ($textleft == '__PHOTO__' && $photo) {
+				} elseif (($textleft == '__PHOTO__' || $textright == '__MEMBER_PHOTO__') && $photo) {
 					$pdf->Image($photo, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 				}
 				$pdf->SetXY($_PosX + $xleft + $widthtouse + 1, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $xleft - $xleft - $widthtouse - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
-			} elseif ($textright == '__LOGO__' || $textright == '__PHOTO__') {
+			} elseif ($textright == '__LOGO__' || $textright == '__PHOTO__' || $textright == '__MEMBER_PHOTO__') {
 				if ($textright == '__LOGO__' && $logo) {
 					$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-				} elseif ($textright == '__PHOTO__' && $photo) {
+				} elseif (($textright == '__PHOTO__' || $textright == '__MEMBER_PHOTO__') && $photo) {
 					$pdf->Image($photo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 				}
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
@@ -224,7 +225,7 @@ class pdf_standard_member extends CommonStickerGenerator
 			// Output right area
 			if ($textright == '__LOGO__' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
-			} elseif ($textright == '__PHOTO__' && $photo) {
+			} elseif (($textright == '__PHOTO__' || $textright == '__MEMBER_PHOTO__') && $photo) {
 				$pdf->Image($photo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			} else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
@@ -261,24 +262,29 @@ class pdf_standard_member extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP stream.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent|array	    $object		        Member object. Old usage: Array of record information (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
-	 *	@param	Translate			$outputlangs		Lang object for output language
-	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
-	 *	@param	string				$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         		$nooutput           1=Generate only file on disk and do not return it on response
-	 *  @param	string				$filename			Name of output file (without extension)
-	 *	@return	int								1=OK, 0=KO
+	 *  @param  Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>   $object     Object Adherent for PDF for the same member, Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param  Translate	$outputlangs		Lang object for output language
+	 *  @param  string		$srctemplatepath	file. Example: '5161', 'AVERYC32010', 'CARD', ...
+	 *  @param  string		$mode				Tell if doc module is called
+	 *  @param  string		$nooutput			1=Generate only file on disk and do not return it on response // TODO: Fix not compatible parameter signature.
+	 *  @param  string		$filename			Name of output file (without extension)
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = '', $filename = 'tmp_cards')
 	{
 		// phpcs:enable
-		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
+		global $user, $conf, $langs, $mysoc;
 
 		$this->code = $srctemplatepath;
 
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
+
 		if (is_object($object)) {
+			// If function is called to build the PDF of a sheet for the same member.
 			if ($object->country == '-') {
 				$object->country = '';
 			}
@@ -290,12 +296,38 @@ class pdf_standard_member extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->id,
+				'__MEMBER_ID__' => (string) $object->id,
+				'__MEMBER_REF__' => $object->ref,
+				'__MEMBER_LOGIN__' => empty($object->login) ? '' : $object->login,
+				'__MEMBER_CIVILITY__' => empty($object->civility) ? '' : $outputlangs->trans("Civility".$object->civility),
+				'__MEMBER_FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
+				'__MEMBER_LASTNAME__' => empty($object->lastname) ? '' : $object->lastname,
+				'__MEMBER_FULLNAME__' => $object->getFullName($outputlangs),
+				'__MEMBER_COMPANY__' => empty($object->company) ? '' : $object->company,
+				'__MEMBER_ADDRESS__' => empty($object->address) ? '' : $object->address,
+				'__MEMBER_ZIP__' => empty($object->zip) ? '' : $object->zip,
+				'__MEMBER_TOWN__' => empty($object->town) ? '' : $object->town,
+				'__MEMBER_COUNTRY__' => empty($object->country) ? '' : $object->country,
+				'__MEMBER_COUNTRY_CODE__' => empty($object->country_code) ? '' : $object->country_code,
+				'__MEMBER_EMAIL__' => empty($object->email) ? '' : $object->email,
+				'__MEMBER_BIRTH__' => dol_print_date($object->birth, 'day'),
+				'__MEMBER_TYPE__' => empty($object->type) ? '' : $object->type,
+				'__YEAR__' => $year,
+				'__MONTH__' => $month,
+				'__DAY__' => $day,
+				'__DOL_MAIN_URL_ROOT__' => (string) DOL_MAIN_URL_ROOT,
+				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
+			);
+
+			// Add old values for backward compatibility (need upgrade of member setup to be removed)
+			$substitutionarrayold = array(
+				'__ID__' => (string) $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
+				'__CIVILITY__' => empty($object->civility) ? '' : $outputlangs->trans("Civility".$object->civility),
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
 				'__LASTNAME__' => empty($object->lastname) ? '' : $object->lastname,
-				'__FULLNAME__' => $object->getFullName($langs),
+				'__FULLNAME__' => $object->getFullName($outputlangs),
 				'__COMPANY__' => empty($object->company) ? '' : $object->company,
 				'__ADDRESS__' => empty($object->address) ? '' : $object->address,
 				'__ZIP__' => empty($object->zip) ? '' : $object->zip,
@@ -304,14 +336,19 @@ class pdf_standard_member extends CommonStickerGenerator
 				'__COUNTRY_CODE__' => empty($object->country_code) ? '' : $object->country_code,
 				'__EMAIL__' => empty($object->email) ? '' : $object->email,
 				'__BIRTH__' => dol_print_date($object->birth, 'day'),
-				'__TYPE__' => empty($object->type) ? '' : $object->type,
-				'__YEAR__' => $year,
-				'__MONTH__' => $month,
-				'__DAY__' => $day,
-				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
-				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
+				'__TYPE__' => empty($object->type) ? '' : $object->type
 			);
-			complete_substitutions_array($substitutionarray, $langs);
+
+			// Make substitutions for new variables
+			/*
+			$array_member = $this->getSubstitutionarrayMember($object, $outputlangs);
+			$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+			$array_other = $this->get_substitutionarray_other($outputlangs);
+			*/
+
+			//$substitutionarray = array_merge($substitutionarray, $substitutionarrayold, $array_member, $array_soc, $array_other);
+			$substitutionarray = array_merge($substitutionarray, $substitutionarrayold);
+			complete_substitutions_array($substitutionarray, $outputlangs);
 
 			// For business cards
 			$textleft = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT"), $substitutionarray);
@@ -319,7 +356,7 @@ class pdf_standard_member extends CommonStickerGenerator
 			$textfooter = make_substitutions(getDolGlobalString("ADHERENT_CARD_FOOTER_TEXT"), $substitutionarray);
 			$textright = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT_RIGHT"), $substitutionarray);
 
-			$nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
+			$nb = $this->_Avery_Labels[$this->code]['NX'] * $this->_Avery_Labels[$this->code]['NY'];
 			if ($nb <= 0) {
 				$nb = 1; // Protection to avoid empty page
 			}
@@ -338,11 +375,12 @@ class pdf_standard_member extends CommonStickerGenerator
 
 			$arrayofrecords = $arrayofmembers;
 		} else {
-			// Old usage
+			// If function is called to build a sheet with all members
+			// In such a case, substitution should have been done already
 			$arrayofrecords = $object;
 		}
 
-		$this->Tformat = $_Avery_Labels[$this->code];
+		$this->Tformat = $this->_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
 			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
@@ -352,17 +390,15 @@ class pdf_standard_member extends CommonStickerGenerator
 		$filename .= '.pdf';
 
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
 			$this->format = $resolution;
 		}
 
-		if (!is_object($outputlangs)) {
-			$outputlangs = $langs;
-		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
@@ -390,8 +426,6 @@ class pdf_standard_member extends CommonStickerGenerator
 			$file = $dir.'/'.$filename;
 		}
 
-		//var_dump($file);exit;
-
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
@@ -410,14 +444,14 @@ class pdf_standard_member extends CommonStickerGenerator
 		$pdf->SetTitle($title);
 		$pdf->SetSubject($title);
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
 		$pdf->SetMargins(0, 0);
-		$pdf->SetAutoPageBreak(false);
+		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
 		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service

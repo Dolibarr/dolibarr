@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_prepare_head($object)
 {
@@ -36,7 +36,7 @@ function expensereport_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("ExpenseReport");
 	$head[$h][2] = 'card';
 	$h++;
@@ -52,7 +52,7 @@ function expensereport_prepare_head($object)
 	$upload_dir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -68,7 +68,7 @@ function expensereport_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/expensereport/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -77,7 +77,7 @@ function expensereport_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -94,7 +94,7 @@ function expensereport_prepare_head($object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param	PaymentExpenseReport	$object		Current payment object
- * @return	array								Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
@@ -103,7 +103,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/payment/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("ExpenseReportPayment");
 	$head[$h][2] = 'payment';
 	$h++;
@@ -114,7 +114,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment_expensereport');
 
-	$head[$h][0] = DOL_URL_ROOT.'/expensereport/payment/info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expensereport/payment/info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -127,30 +127,29 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('expensereport');
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/expensereport.php");
 	$head[$h][1] = $langs->trans("ExpenseReports");
 	$head[$h][2] = 'expensereport';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/expensereport_rules.php");
 	$head[$h][1] = $langs->trans("ExpenseReportsRules");
 	$head[$h][2] = 'expenserules';
 	$h++;
 
 	if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
-		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_ik.php";
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/expensereport_ik.php");
 		$head[$h][1] = $langs->trans("ExpenseReportsIk");
 		$head[$h][2] = 'expenseik';
 		$h++;
@@ -162,7 +161,7 @@ function expensereport_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/expensereport_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['expensereport']['count'];
 	if ($nbExtrafields > 0) {
@@ -170,13 +169,6 @@ function expensereport_admin_prepare_head()
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
-
-	/*
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$head[$h][2] = 'attributesdet';
-	$h++;
-	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expensereport_admin', 'remove');
 

@@ -74,3 +74,5 @@ NewPartnershipRequest=Permintaan kemitraan baru
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Halaman ini harus berisi setidaknya satu tautan ke salah satu domain berikut: %s
 IPOfApplicant=IP pemohon
+PartnershipToReopen=Untuk membuka kembali
+PartnershipConfirmReOpenAsk=Apakah Anda yakin ingin membuka kembali kemitraan ini <b> %s</b>?

@@ -2,6 +2,8 @@
 /* Copyright (C) 2010-2011 	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011      	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +31,7 @@
  * Prepare array with list of tabs
  *
  * @param   BonPrelevement	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function prelevement_prepare_head(BonPrelevement $object)
 {
@@ -46,11 +48,17 @@ function prelevement_prepare_head(BonPrelevement $object)
 	if ($object->type == 'bank-transfer') {
 		$titleoftab = "BankTransferReceipts";
 	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
+
+	if (getDolGlobalString('PRELEVEMENT_SEPA_SHOW_REQUESTS') && $object->type != 'bank-transfer' && $object->type != 'salary') {
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/requests.php', ['id' => $object->id]);
+		$head[$h][1] = $langs->trans('Requests');
+		$head[$h][2] = 'requests';
+		$h++;
+	}
 
 	$titleoftab = $langs->trans("Bills");
 	if ($object->type == 'bank-transfer') {
@@ -60,17 +68,17 @@ function prelevement_prepare_head(BonPrelevement $object)
 		$titleoftab = $langs->trans("Salaries");
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/factures.php', ['id' => $object->id]);
 	$head[$h][1] = $titleoftab;
 	$head[$h][2] = 'invoices';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Rejects");
 	$head[$h][2] = 'rejects';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Statistics");
 	$head[$h][2] = 'statistics';
 	$h++;
@@ -116,13 +124,13 @@ function prelevement_check_config($type = 'direct-debit')
 	return 0;
 }
 
-	/**
+/**
  *  Return array head with list of tabs to view object information
  *
  *  @param	BonPrelevement	$object         	Member
  *  @param  int     		$nbOfInvoices   	No of invoices
  *  @param  int     		$nbOfSalaryInvoice  No of salary invoices
- *  @return array           					head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nbOfSalaryInvoice)
 {
@@ -131,14 +139,14 @@ function bon_prelevement_prepare_head(BonPrelevement $object, $nbOfInvoices, $nb
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer']);
 	$head[$h][1] = ($nbOfInvoices <= 0 ? $langs->trans("Invoices") : $langs->trans("Invoices").'<span class="badge marginleftonlyshort">'.$nbOfInvoices.'</span>');
 	$head[$h][2] = 'invoice';
 	$h++;
 
 	// Salaries
 
-	$head[$h][0] = DOL_URL_ROOT."/compta/prelevement/create.php?type=bank-transfer&sourcetype=salary";
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/create.php', ['type' => 'bank-transfer', 'sourcetype' => 'salary']);
 	$head[$h][1] = ($nbOfSalaryInvoice <= 0 ? $langs->trans("Salaries") : $langs->trans("Salaries").'<span class="badge marginleftonlyshort">'.$nbOfSalaryInvoice.'</span>');
 	$head[$h][2] = 'salary';
 	$h++;

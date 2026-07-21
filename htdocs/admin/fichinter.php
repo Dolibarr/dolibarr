@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville         <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio          <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2018 Philippe Grand			    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2003-2004  Rodolphe Quiedeville            <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011  Laurent Destailleur             <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Sebastien Di Cintio             <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier                  <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2014  Regis Houssin                   <regis.houssin@inodbox.com>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic)     <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011-2013  Juanjo Menent                   <jmenent@2byte.es>
+ * Copyright (C) 2011-2018  Philippe Grand                  <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2025  MDW                             <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France                 <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro              <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
@@ -56,12 +65,16 @@ $type = 'ficheinter';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -116,7 +129,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FICHEINTER_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -165,9 +178,8 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS') {
-	$val = GETPOST('FICHINTER_PRINT_PRODUCTS', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterPrintProducts = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS", $setFichInterPrintProducts, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -175,12 +187,11 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
-	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterUseServiceDuration = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", $setFichInterUseServiceDuration, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -188,12 +199,11 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 } elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
-	$val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterWithoutDuration = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", $setFichInterWithoutDuration, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -201,12 +211,11 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 } elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
-	$val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterDateWithoutHour = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", $setFichInterDateWithoutHour, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -214,12 +223,11 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 } elseif ($action == "set_FICHINTER_ALLOW_ONLINE_SIGN") {
-	$val = GETPOST('FICHINTER_ALLOW_ONLINE_SIGN', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterAllowOnlineSign = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_ONLINE_SIGN", $setFichInterAllowOnlineSign, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -227,12 +235,11 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 } elseif ($action == "set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") {
-	$val = GETPOST('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD', 'alpha');
-	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
-
+	$setFichInterAllowExternalDownload = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "FICHINTER_ALLOW_EXTERNAL_DOWNLOAD", $setFichInterAllowExternalDownload, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -240,7 +247,7 @@ if ($action == 'updateMask') {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
@@ -256,7 +263,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fichinter');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("InterventionsSetup"), $linkback, 'title_setup');
 
 
@@ -295,6 +303,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefFicheinter $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -305,7 +315,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -323,7 +333,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->FICHEINTER_ADDON == $classname) {
+						if (getDolGlobalString('FICHEINTER_ADDON') == $classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($classname).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -349,7 +359,7 @@ foreach ($dirmodels as $reldir) {
 							}
 						}
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -379,7 +389,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -432,6 +442,8 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db);
 
+						'@phan-var-force ModelePDFFicheinter $module';
+
 						$modulequalified = 1;
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
@@ -445,7 +457,7 @@ foreach ($dirmodels as $reldir) {
 							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
-								print $module->info($langs);
+								print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 							} else {
 								print $module->description;
 							}
@@ -466,7 +478,7 @@ foreach ($dirmodels as $reldir) {
 
 							// Default
 							print "<td align=\"center\">";
-							if ($conf->global->FICHEINTER_ADDON_PDF == "$name") {
+							if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -486,15 +498,15 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 							$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, -1, 0);
+							print $form->textwithpicto('', $htmltooltip, -1, 'info');
 							print '</td>';
 
 							// Preview
 							print '<td class="center">';
 							if ($module->type == 'pdf') {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+								print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
-								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
 							print '</td>';
 
@@ -521,7 +533,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
@@ -563,101 +575,126 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-// print products on fichinter
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
-print '<tr class="oddeven"><td>';
-print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
-print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
-if (getDolGlobalString("FICHINTER_PRINT_PRODUCTS")) {
-	print 'checked ';
+
+// Print products on fichinter
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_PRINT_PRODUCTS');
+} else {
+	if (getDolGlobalString('FICHINTER_PRINT_PRODUCTS')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_PRINT_PRODUCTS&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_PRINT_PRODUCTS&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
 }
-print '/>';
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td>';
+print '</tr>';
+
 // Use services duration
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_USE_SERVICE_DURATION">';
 print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("UseServicesDurationOnFichinter");
-print '</td>';
+print '<td width="80%">'.$langs->trans("UseServicesDurationOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.(getDolGlobalString("FICHINTER_USE_SERVICE_DURATION") ? ' checked' : '').'>';
-print '</td>';
-print '<td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_USE_SERVICE_DURATION');
+} else {
+	if (getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_USE_SERVICE_DURATION&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_USE_SERVICE_DURATION&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
 print '</td>';
 print '</tr>';
-print '</form>';
+
 // Use duration
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_WITHOUT_DURATION">';
 print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("UseDurationOnFichinter");
-print '</td>';
+print '<td width="80%">'.$langs->trans("UseDurationOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.(getDolGlobalString("FICHINTER_WITHOUT_DURATION") ? ' checked' : '').'>';
-print '</td>';
-print '<td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_WITHOUT_DURATION');
+} else {
+	if (getDolGlobalString('FICHINTER_WITHOUT_DURATION')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_WITHOUT_DURATION&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_WITHOUT_DURATION&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
 print '</td>';
 print '</tr>';
-print '</form>';
-// use date without hour
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_DATE_WITHOUT_HOUR">';
+
+// Use date without hour
 print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("UseDateWithoutHourOnFichinter");
-print '</td>';
+print '<td width="80%">'.$langs->trans("UseDateWithoutHourOnFichinter").'</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.(getDolGlobalString("FICHINTER_DATE_WITHOUT_HOUR") ? ' checked' : '').'>';
-print '</td>';
-print '<td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_DATE_WITHOUT_HOUR');
+} else {
+	if (getDolGlobalString('FICHINTER_DATE_WITHOUT_HOUR')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_DATE_WITHOUT_HOUR&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_DATE_WITHOUT_HOUR&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
 print '</td>';
 print '</tr>';
-print '</form>';
+
 // Allow online signing
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_ALLOW_ONLINE_SIGN">';
 print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("AllowOnlineSign");
-print '</td>';
+print '<td width="80%">'.$langs->trans("AllowOnlineSign").'</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_ALLOW_ONLINE_SIGN"'.(getDolGlobalString("FICHINTER_ALLOW_ONLINE_SIGN") ? ' checked' : '').'>';
-print '</td>';
-print '<td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_ALLOW_ONLINE_SIGN');
+} else {
+	if (getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_ONLINE_SIGN&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_ONLINE_SIGN&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
 print '</td>';
 print '</tr>';
-print '</form>';
+
 // Allow external download
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD">';
 print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("AllowExternalDownload");
-print '</td>';
+print '<td width="80%">'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_ALLOW_EXTERNAL_DOWNLOAD"'.(getDolGlobalString("FICHINTER_ALLOW_EXTERNAL_DOWNLOAD") ? ' checked' : '').'>';
-print '</td>';
-print '<td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD');
+} else {
+	if (getDolGlobalString('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD')) {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD&token=' . newToken() . '&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+	} else {
+		print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=set_FICHINTER_ALLOW_EXTERNAL_DOWNLOAD&token=' . newToken() . '&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+	}
+	print '</a>';
+}
 print '</td>';
 print '</tr>';
-print '</form>';
 
 
 print '</table>';

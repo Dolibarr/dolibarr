@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,13 @@
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -53,19 +57,26 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+/**
+ * The main.inc.php has been included so the following variable are now defined:
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "companies", "other", "mails"));
 
-$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
-$socid  = GETPOST('socid', 'int');
+$lineid = GETPOSTINT('lineid');
+$socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize a technical objects
@@ -81,7 +92,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
@@ -108,7 +119,7 @@ if (!$permissiontoread) {
  */
 
 if ($action == 'addcontact' && $permissiontoadd) {
-	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
@@ -125,7 +136,7 @@ if ($action == 'addcontact' && $permissiontoadd) {
 	}
 } elseif ($action == 'swapstatut' && $permissiontoadd) {
 	// Toggle the status of a contact
-	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+	$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 } elseif ($action == 'deletecontact' && $permissiontoadd) {	// Permission to add on object because this is an update of a link of object, not a deletion of data
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
@@ -185,7 +196,7 @@ if ($object->id) {
 	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -219,9 +230,12 @@ if ($object->id) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

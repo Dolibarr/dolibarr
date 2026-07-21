@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2024	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
+/* Copyright (C) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +29,18 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
 if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
-	// Redirection vers la page de l'utilisateur
+	// Redirect to the user's own page
 	header("Location: card.php?id=".$user->id);
 	exit;
 }
@@ -38,9 +48,9 @@ if (!$user->hasRight('user', 'user', 'lire') && !$user->admin) {
 // Load translation files required by page
 $langs->load("users");
 
-$canreadperms = true;
+$permissiontoreadgroup = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 }
 
 // Security check (for external users)
@@ -73,7 +83,7 @@ if (GETPOST('addbox')) {
 	}
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -98,7 +108,7 @@ $searchbox .= '<tr><td>';
 $searchbox .= $langs->trans("User").':</td><td><input class="flat inputsearch width200" type="text" name="search_user"></td></tr>';
 
 // Search Group
-if ($canreadperms) {
+if ($permissiontoreadgroup) {
 	$searchbox .= '<tr><td>';
 	$searchbox .= $langs->trans("Group").':</td><td><input class="flat inputsearch width200" type="text" name="search_group"></td></tr>';
 }
@@ -147,7 +157,7 @@ if ($resql) {
 	$lastcreatedbox .= '<table class="noborder centpercent">';
 	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3" class="valignmiddle">';
 	$lastcreatedbox .= '<span class="valignmiddle">'.$langs->trans("LastUsersCreated", min($num, $max)).'</span>';
-	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.dolBuildUrl(DOL_URL_ROOT.'/user/list.php', ['sortfield' => 'u.datec', 'sortorder' => 'DESC']).'" title="'.$langs->trans("FullList").'">';
 	$lastcreatedbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
 	$lastcreatedbox .= '</a>';
 	$lastcreatedbox .= '</td>';
@@ -180,9 +190,9 @@ if ($resql) {
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
-			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
+			$lastcreatedbox .= img_picto($langs->trans("SuperAdministratorDesc"), 'superadmin');
 		} elseif ($obj->admin) {
-			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'star');
+			$lastcreatedbox .= img_picto($langs->trans("AdministratorDesc"), 'admin');
 		}
 		$lastcreatedbox .= "</td>";
 		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
@@ -198,7 +208,7 @@ if ($resql) {
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (isModEnabled('multicompany') && is_object($mc)) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -231,13 +241,13 @@ if ($resql) {
  * Last groups created
  */
 $lastgroupbox = '';
-if ($canreadperms) {
+if ($permissiontoreadgroup) {
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
-		$sql .= " WHERE g.entity IN (0, ".$conf->entity.")";
+		$sql .= " WHERE g.entity IN (0, ".((int) $conf->entity).")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
 	$sql .= $db->plimit($max);
@@ -278,10 +288,10 @@ if ($canreadperms) {
 			$lastgroupbox .= '<td>';
 			$lastgroupbox .= $grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
-				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
+				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'superadmin');
 			}
 			$lastgroupbox .= "</td>";
-			if (isModEnabled('multicompany') && is_object($mc)) {
+			if (isModEnabled('multicompany') && isset($mc) && is_object($mc)) {
 				$mc->getInfo($obj->entity);
 				$lastgroupbox .= '<td>';
 				$lastgroupbox .= $mc->label;

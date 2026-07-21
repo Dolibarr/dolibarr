@@ -2,9 +2,10 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2024-2026  Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -43,6 +52,10 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Hook
+$hookmanager->initHooks(array('cabyprodservlist'));
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
@@ -82,12 +95,9 @@ if ($selected_type == '') {
 	$selected_type = -1;
 }
 
-// Hook
-$hookmanager->initHooks(array('cabyprodservlist'));
-
 // Date range
-$year = GETPOST("year");
-$month = GETPOST("month");
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
@@ -103,8 +113,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
@@ -206,13 +216,13 @@ if (!empty($selected_catsoc)) {
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
-if (!empty($selected_type)) {
+if ($selected_type > 0) {
 	$tableparams['search_type'] = $selected_type;
 }
 if (!empty($typent_id)) {
 	$tableparams['typent_id'] = $typent_id;
 }
-$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
+$tableparams['subcat'] = $subcat ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
@@ -244,6 +254,13 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 
 $exportlink = "";
 $namelink = "";
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$period = '';
+$periodlink = '';
+$description = '';
+
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -267,9 +284,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
@@ -283,7 +300,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 
@@ -304,17 +321,16 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-	if ($typent_id >0) {
+	if ($typent_id > 0) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
 	}
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " WHERE l.fk_facture = f.rowid";
-	$sql .= " AND f.fk_statut in (1,2)";
+	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
 	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
@@ -329,7 +345,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategoryProductList is an array of ID)
-	$searchCategoryProductOperator = -1;
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	$searchCategoryProductList = array($selected_cat);
 	if ($subcat) {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
@@ -367,7 +383,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategorySocieteList is an array of ID)
-	$searchCategorySocieteOperator = -1;
+	$searchCategorySocieteOperator = GETPOSTINT('search_category_societe_operator');
 	$searchCategorySocieteList = array($selected_catsoc);
 	if (!empty($searchCategorySocieteList)) {
 		$searchCategorySocieteSqlList = array();
@@ -401,7 +417,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".((int) $selected_soc);
 	}
 
-	if ($typent_id >0) {
+	if ($typent_id > 0) {
 		$sql .= " AND soc.fk_typent = ".((int) $typent_id);
 	}
 
@@ -412,7 +428,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order((string) $sortfield, (string) $sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -420,6 +436,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$amount_ht = array();
 	$amount = array();
 	$qty = array();
+	$type = [];
 	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;
@@ -442,7 +459,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	// Show Array
 	$i = 0;
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value) {
@@ -458,7 +475,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<tr class="liste_titre">';
 	print '<td>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
+	print $formother->select_categories(Categorie::TYPE_PRODUCT, (int) $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
 	print '<input type="checkbox" class="marginleft" id="subcat" name="subcat" value="yes"';
 	if ($subcat) {
@@ -467,12 +484,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '>';
 	print '<label for="subcat" class="marginrightonly">'.$langs->trans("SubCats").'?</label>';
 	// type filter (produit/service)
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
+	$form->select_type_of_lines($selected_type, 'search_type', $langs->trans("Type"), 1, 1);
 
 	// Third party filter
 	print '<br>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
+	print $formother->select_categories(Categorie::TYPE_CUSTOMER, (int) $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
 
 	// Type of third party filter
 	print '&nbsp; &nbsp;';
@@ -487,7 +504,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 
 	print '</tr>';
@@ -573,7 +590,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 			// Quantity
 			print '<td class="right">';
-			print $qty[$key];
+			print price($qty[$key], 1, $langs, 0, 0);
 			print '</td>';
 
 			// Percent;

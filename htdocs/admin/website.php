@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
@@ -43,8 +53,10 @@ $rowid = GETPOST('rowid', 'alpha');
 
 $id = 1;
 
+$acts = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
+$actl = array();
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
@@ -110,7 +122,7 @@ $tabcond[1] = (isModEnabled('website'));
 
 // List of help for fields
 $tabhelp = array();
-$tabhelp[1] = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>'));
+$tabhelp[1] = array('ref' => $langs->trans("EnterAnyCode"), 'virtualhost' => $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -129,6 +141,7 @@ if (!$user->admin) {
 /*
  * Actions
  */
+$error = 0;
 
 // Actions add or modify a website
 if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
@@ -158,12 +171,13 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$websitekey = strtolower(GETPOST('ref'));
 	}
 
-	// Si verif ok et action add, on ajoute la ligne
+	$newid = 0;
+
+	// In case of 'actionadd' and with valid parameters, add the line
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
-			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -180,10 +194,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->create($user); */
 
 		// Add new entry
-		$sql = "INSERT INTO ".$tabname[$id]." (";
+		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $tabrowid[$id].",";
+			$sql .= $db->sanitize($tabrowid[$id]).",";
 		}
 		$sql .= $tabfieldinsert[$id];
 		$sql .= ", status, date_creation)";
@@ -191,7 +205,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 		// List of values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
+			$sql .= ((int) $newid).",";
 		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
@@ -227,7 +241,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 
-	// Si verif ok et action modify, on modifie la ligne
+	// In case of 'actionmodify' and with valid parameters, modify the line
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
 		if ($tabrowid[$id]) {
 			$rowidcol = $tabrowid[$id];
@@ -242,11 +256,11 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$website->fetch($rowid);
 
 		// Modify entry
-		$sql = "UPDATE ".$tabname[$id]." SET ";
-		// Modifie valeur des champs
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
+		// Modify the field values
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $tabrowid[$id]."=";
-			$sql .= "'".$db->escape($rowid)."', ";
+			$sql .= $db->sanitize($tabrowid[$id])." = ";
+			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -264,7 +278,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -349,12 +363,18 @@ if ($action == $acts[0]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 1 WHERE rowid = ".((int) $rowid);
+	} else {
+		$sql = null;
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql !== null) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
+	} else {
+		dol_print_error(null, "No DB entry");
 	}
 }
 
@@ -367,12 +387,18 @@ if ($action == $acts[1]) {
 	}
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET status = 0 WHERE rowid = ".((int) $rowid);
+	} else {
+		$sql = null;
 	}
 
-	$result = $db->query($sql);
-	if (!$result) {
-		dol_print_error($db);
+	if ($sql !== null) {
+		$result = $db->query($sql);
+		if (!$result) {
+			dol_print_error($db);
+		}
+	} else {
+		dol_print_error(null, "No DB entry");
 	}
 }
 
@@ -385,10 +411,12 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans("WebsiteSetup"),  '', '', 0, 0, '', '', '', 'mod-admin page-website');
+llxHeader('', $langs->trans("WebsiteSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-website');
 
 $titre = $langs->trans("WebsiteSetup");
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
@@ -400,10 +428,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'website', '', -1);
 
@@ -412,7 +442,7 @@ print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><
 print "<br>\n";
 
 
-// Confirmation de la suppression de la ligne
+// Generate form to confirm line deletion
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid, $langs->trans('DeleteWebsite'), $langs->trans('ConfirmDeleteWebsite'), 'confirm_delete', '', 0, 1, 220);
 }
@@ -422,7 +452,7 @@ if ($action == 'delete') {
  * Show website list
  */
 if ($id) {
-	// Complete requete recherche valeurs avec critere de tri
+	// Complete the request - lookup values with sort condition
 	$sql = $tabsql[$id];
 	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -432,6 +462,8 @@ if ($id) {
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
@@ -443,16 +475,15 @@ if ($id) {
 				continue;
 			}
 
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
+			// Get the field name based on the names available in the data dictionaries
 			$valuetoshow = ucfirst($fieldlist[$field]); // By default
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			$align = '';
+			$css = '';
 			if ($fieldlist[$field] == 'lang') {
 				$valuetoshow = $langs->trans("Language");
 			}
 			if ($valuetoshow != '') {
-				print '<td class="'.$align.'">';
+				print '<td class="'.$css.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
 					print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
@@ -499,6 +530,8 @@ if ($id) {
 	}
 
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 
@@ -521,8 +554,8 @@ if ($id) {
 			// Title of lines
 			print '<tr class="liste_titre">';
 			foreach ($fieldlist as $field => $value) {
-				// Determine le nom du champ par rapport aux noms possibles
-				// dans les dictionnaires de donnees
+				// Determine the field name based on the possible names
+				// in the data dictionaries.
 				$showfield = 1; // By default
 				$align = "left";
 				$sortable = 1;
@@ -581,7 +614,7 @@ if ($id) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
@@ -597,7 +630,7 @@ if ($id) {
 					print '</td>';
 				} else {
 					$tmpaction = 'view';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error;
@@ -607,15 +640,24 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$fieldname = $fieldlist[$field];
-							$align = "left";
+							$css = "";
+							if ($fieldlist[$field] == 'description') {
+								$css .= ' tdoverflowmax300';
+							}
 							if (in_array($fieldname, array('pageviews_total', 'pageviews_previous_month'))) {
-								$align = 'right';
+								$css = 'right';
+							}
+							if ($fieldlist[$field] == 'date_creation') {
+								$css .= ' nowraponall';
+							}
+							if ($fieldlist[$field] == 'lastaccess') {
+								$css .= ' nowraponall';
 							}
 							$valuetoshow = $obj->$fieldname;
 
 							// Show value for field
 							if ($showfield) {
-								print '<td class="'.$align.'">'.$valuetoshow.'</td>';
+								print '<td class="'.$css.'">'.$valuetoshow.'</td>';
 							}
 						}
 					}
@@ -670,8 +712,8 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
+ * 	@param		string[]	$fieldlist		Array of fields
+ * 	@param		?Object	$obj			If we show a particular record, obj is filled with record fields
  *  @param		string	$tabname		Name of SQL table
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void

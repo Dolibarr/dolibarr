@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2016      Jean-François Ferry  <hello@librethic.io>
+/* Copyright (C) 2016       Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +36,22 @@ class TicketStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
-	public $userid;
 
-	public $from;
-	public $field;
-	public $where;
+	/**
+	 * @var int User ID
+	 */
+	public $userid;
 
 	/**
 	 * Constructor
 	 *
 	 * @param  DoliDB $db     Database handler
 	 * @param  int    $socid  Id third party
-	 * @param  mixed  $userid Id user for filter or array of user ids
+	 * @param  int|int[]  $userid Id user for filter or array of user ids
 	 * @return void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -74,14 +79,14 @@ class TicketStats extends Stats
 	}
 
 	/**
-	 *     Renvoie le nombre de tickets par annee
+	 *	Return the number of tickets per year
 	 *
-	 *    @return array    Array of values
+	 *	@return array<array{0:int,1:int}>		Array of values
 	 */
 	public function getNbByYear()
 	{
 		$sql = "SELECT YEAR(datec) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
 
@@ -93,40 +98,40 @@ class TicketStats extends Stats
 	 *
 	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return array            	Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
 		$sql = "SELECT MONTH(datec) as dm, count(*)";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE YEAR(datec) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
 	/**
-	 *  Return th eamount of tickets for a month and a given year
+	 *  Return the number of tickets for a month and a given year
 	 *
 	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return array               Array of values
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
+		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -134,13 +139,13 @@ class TicketStats extends Stats
 	 *    Return average amount
 	 *
 	 *    @param  int $year Year to scan
-	 *    @return array                Array of values
+	 *    @return array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->field.")";
-		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape($year)."'";
+		$sql = "SELECT date_format(datec,'%m') as dm, avg(".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
+		$sql .= " WHERE date_format(datec,'%Y') = '".$this->db->escape((string) $year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -151,12 +156,12 @@ class TicketStats extends Stats
 	/**
 	 *    Return nb, total and average
 	 *
-	 *    @return array                Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(datec,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(datec,'%Y') as year, count(*) as nb, sum(".$this->db->sanitize($this->field).") as total, avg(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

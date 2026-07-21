@@ -2,8 +2,9 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ class FormWebPortal extends Form
 	public $db;
 
 	/**
-	 * @var array $infofiles Array of file info
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Array of file info
 	 */
 	public $infofiles; // Used to return information by function getDocumentsLink
 
@@ -56,55 +57,23 @@ class FormWebPortal extends Form
 	}
 
 	/**
-	 * Html for input with label
-	 *
-	 * @param	string	$type			Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
-	 * @param	string	$name			Name
-	 * @param	string	$value			[=''] Value
-	 * @param	string	$id				[=''] Id
-	 * @param	string	$morecss		[=''] Class
-	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
-	 * @param	string	$label			[=''] Label
-	 * @param	string	$addInputLabel	[=''] Add label for input
-	 * @return  string	Html for input with label
-	 */
-	public function inputType($type, $name, $value = '', $id = '', $morecss = '', $moreparam = '', $label = '', $addInputLabel = '')
-	{
-		$out = '';
-		if ($label != '') {
-			$out .= '<label for="' . $id . '">';
-		}
-		$out .= '<input type="' . $type . '"';
-		$out .= ($morecss ? ' class="' . $morecss . '"' : '');
-		if ($id != '') {
-			$out .= ' id="' . $id . '"';
-		}
-		$out .= ' name="' . $name . '"';
-		$out .= ' value="' . $value . '"';
-		$out .= ($moreparam ? ' ' . $moreparam : '');
-		$out .= ' />' . $addInputLabel;
-		if ($label != '') {
-			$out .= $label . '</label>';
-		}
-
-		return $out;
-	}
-
-	/**
 	 * Input for date
 	 *
-	 * @param	string	$name			Name of html input
-	 * @param	string	$value			[=''] Value of input (format : YYYY-MM-DD)
-	 * @param	string	$placeholder	[=''] Placeholder for input (keep empty for no label)
-	 * @param	string	$id				[=''] Id
-	 * @param	string	$morecss		[=''] Class
-	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
-	 * @return	string  Html for input date
+	 * @param	string		$name			Name of html input
+	 * @param	string|int	$value			[=''] Value of input (format : YYYY-MM-DD)
+	 * @param	string		$placeholder	[=''] Placeholder for input (keep empty for no label)
+	 * @param	string		$id				[=''] Id
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string  	Html for input date
 	 */
 	public function inputDate($name, $value = '', $placeholder = '', $id = '', $morecss = '', $moreparam = '')
 	{
 		$out = '';
 
+		// Disabled: Use of native browser date input field as it is not compliant with multilanguagedate format,
+		// nor with timezone management.
+		/*
 		$out .= '<input';
 		if ($placeholder != '' && $value == '') {
 			// to show a placeholder on date input
@@ -121,6 +90,9 @@ class FormWebPortal extends Form
 		$out .= ($moreparam ? ' ' . $moreparam : '');
 
 		$out .= '>';
+		*/
+
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder, 'auto', DOL_URL_ROOT . "/theme/common/object_calendarday.png");
 
 		return $out;
 	}
@@ -130,7 +102,7 @@ class FormWebPortal extends Form
 	 * Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param	string				$htmlname				Name of html select area.
-	 * @param	array				$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	array<string,mixed>	$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param	string|string[]		$id						Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param	int|string			$show_empty				0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param	int					$key_in_label			1 to show key into label with format "[key] value"
@@ -209,6 +181,7 @@ class FormWebPortal extends Form
 
 				$out .= '<option value="' . $key . '"';
 				$out .= $disabled;
+				$out .= is_array($tmpvalue) && !empty($tmpvalue['parent']) ? ' parent="' . dolPrintHTMLForAttribute($tmpvalue['parent']) . '"' : '';
 				if (is_array($id)) {
 					if (in_array($key, $id) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
@@ -247,7 +220,7 @@ class FormWebPortal extends Form
 	 * @param string $filedir Full path to directory to scan
 	 * @param string $filter Filter filenames on this regex string (Example: '\.pdf$')
 	 * @param string $morecss Add more css to the download picto
-	 * @param int    $allfiles 0=Only generated docs, 1=All files
+	 * @param int<0,1> $allfiles 0=Only generated docs, 1=All files
 	 * @return    string                Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
@@ -312,15 +285,17 @@ class FormWebPortal extends Form
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
 				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$this->infofiles['extensions'][$ext]++;
 				}
 
 				// Download
 				$url = $context->getControllerUrl('document') . '&modulepart=' . $modulepart . '&entity=' . $entity . '&file=' . urlencode($relativepath) . '&soc_id=' . $context->logged_thirdparty->id;
-				$tmpout .= '<a href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="downloadlink"';
+
+				$tmpout .= '<a href="' . $url . '"  class="btn-download-link ' . $morecss . '" role="downloadlink"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
@@ -406,7 +381,6 @@ class FormWebPortal extends Form
 		$classpath = $InfoFieldList[1];
 		$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
 		$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
-
 		if (!empty($classpath)) {
 			dol_include_once($classpath);
 
@@ -436,201 +410,24 @@ class FormWebPortal extends Form
 	}
 
 	/**
-	 * Output html form to select an object.
-	 * Note, this function is called by selectForForms or by ajax selectobject.php
-	 *
-	 * @param Object 		$objecttmp 			Object to know the table to scan for combo.
-	 * @param string 		$htmlname 			Name of HTML select component
-	 * @param int 			$preselectedvalue 	Preselected value (ID of element)
-	 * @param string 		$showempty 			''=empty values not allowed, 'string'=value show if we allow empty values (for example 'All', ...)
-	 * @param string 		$searchkey 			Search value
-	 * @param string 		$placeholder 		Place holder
-	 * @param string 		$morecss 			More CSS
-	 * @param string 		$moreparams 		More params provided to ajax call
-	 * @param int 			$forcecombo 		Force to load all values and output a standard combobox (with no beautification)
-	 * @param int 			$outputmode 		0=HTML select string, 1=Array
-	 * @param int 			$disabled 			1=Html component is disabled
-	 * @param string 		$sortfield 			Sort field
-	 * @param string 		$filter 			Add more filter (Universal Search Filter)
-	 * @return string|array                     Return HTML string
-	 * @see selectForForms()
-	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
-	{
-		global $conf, $langs, $hookmanager;
-
-		$prefixforautocompletemode = $objecttmp->element;
-		if ($prefixforautocompletemode == 'societe') {
-			$prefixforautocompletemode = 'company';
-		}
-		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode) . '_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
-
-		if (in_array($objecttmp->element, array('adherent_type'))) {
-			$fieldstoshow = 't.libelle';
-		}
-		if (!empty($objecttmp->fields)) {    // For object that declare it, it is better to use declared fields (like societe, contact, ...)
-			$tmpfieldstoshow = '';
-			foreach ($objecttmp->fields as $key => $val) {
-				if (! (int) dol_eval($val['enabled'], 1, 1, '1')) {
-					continue;
-				}
-				if (!empty($val['showoncombobox'])) {
-					$tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '') . 't.' . $key;
-				}
-			}
-			if ($tmpfieldstoshow) {
-				$fieldstoshow = $tmpfieldstoshow;
-			}
-		} elseif (!in_array($objecttmp->element, array('adherent_type'))) {
-			// For backward compatibility
-			$objecttmp->fields['ref'] = array('type' => 'varchar(30)', 'label' => 'Ref', 'showoncombobox' => 1);
-		}
-
-		if (empty($fieldstoshow)) {
-			if (isset($objecttmp->fields['ref'])) {
-				$fieldstoshow = 't.ref';
-			} else {
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
-				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
-			}
-		}
-
-		$out = '';
-		$outarray = array();
-		$tmparray = array();
-
-		$num = 0;
-
-		// Search data
-		$sql = "SELECT t.rowid, " . $fieldstoshow . " FROM " . $this->db->prefix() . $objecttmp->table_element . " as t";
-		if (isset($objecttmp->ismultientitymanaged)) {
-			if (!is_numeric($objecttmp->ismultientitymanaged)) {
-				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
-				$sql .= " INNER JOIN " . $this->db->prefix() . $tmparray[1] . " as parenttable ON parenttable.rowid = t." . $tmparray[0];
-			}
-		}
-
-		// Add where from hooks
-		$parameters = array(
-			'object' => $objecttmp,
-			'htmlname' => $htmlname,
-			'filter' => $filter,
-			'searchkey' => $searchkey
-		);
-
-		$reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
-		if (!empty($hookmanager->resPrint)) {
-			$sql .= $hookmanager->resPrint;
-		} else {
-			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged)) {
-				if ($objecttmp->ismultientitymanaged == 1) {
-					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
-				}
-				if (!is_numeric($objecttmp->ismultientitymanaged)) {
-					$sql .= " AND parenttable.entity = t." . $tmparray[0];
-				}
-			}
-			if ($searchkey != '') {
-				$sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-			}
-
-			if ($filter) {     // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				$errormessage = '';
-				$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
-				if ($errormessage) {
-					return 'Error forging a SQL request from an universal criteria: ' . $errormessage;
-				}
-			}
-		}
-		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
-
-		// Build output string
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// Construct $out and $outarray
-			$out .= '<select id="' . $htmlname . '" class="' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ($moreparams ? ' ' . $moreparams : '') . ' name="' . $htmlname . '">' . "\n";
-
-			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
-			$textifempty = '&nbsp;';
-
-			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (getDolGlobalString($confkeyforautocompletemode)) {
-				if ($showempty && !is_numeric($showempty)) {
-					$textifempty = $langs->trans($showempty);
-				} else {
-					$textifempty .= $langs->trans("All");
-				}
-			}
-			if ($showempty) {
-				$out .= '<option value="-1">' . $textifempty . '</option>' . "\n";
-			}
-
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num) {
-				while ($i < $num) {
-					$obj = $this->db->fetch_object($resql);
-					$label = '';
-					$labelhtml = '';
-					$tmparray = explode(',', $fieldstoshow);
-					$oldvalueforshowoncombobox = 0;
-					foreach ($tmparray as $key => $val) {
-						$val = preg_replace('/t\./', '', $val);
-						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
-						$labelhtml .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
-						$label .= $obj->$val;
-						$labelhtml .= $obj->$val;
-
-						$oldvalueforshowoncombobox = empty($objecttmp->fields[$val]['showoncombobox']) ? 0 : $objecttmp->fields[$val]['showoncombobox'];
-					}
-					if (empty($outputmode)) {
-						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
-							$out .= '<option value="' . $obj->rowid . '" selected data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
-						} else {
-							$out .= '<option value="' . $obj->rowid . '" data-html="' . dol_escape_htmltag($labelhtml, 0, 0, '', 0, 1) . '">' . dol_escape_htmltag($label, 0, 0, '', 0, 1) . '</option>';
-						}
-					} else {
-						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label));
-					}
-
-					$i++;
-					if (($i % 10) == 0) {
-						$out .= "\n";
-					}
-				}
-			}
-
-			$out .= '</select>' . "\n";
-		} else {
-			dol_print_error($this->db);
-		}
-
-		$this->result = array('nbofelement' => $num);
-
-		if ($outputmode) {
-			return $outarray;
-		}
-
-		return $out;
-	}
-
-	/**
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
-	 * @param array|null 	$val 			Array of properties for field to show
-	 * @param string 		$key 			Key of attribute
-	 * @param string|array 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string 		$moreparam 		To add more parameters on html input tag
-	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
+	 * @param Object			$object			Common object
+	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
+	 * @param string 			$key 			Key of attribute
+	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	public function showInputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showInputField($val, $key, $value, '', '', '', 0);
+
 		global $conf, $langs;
 
 		$out = '';
@@ -753,7 +550,7 @@ class FormWebPortal extends Form
 				if (!empty($value)) {
 					$value = price($value); // $value in memory is a php numeric, we format it into user number format.
 				}
-				$addInputLabel = ' ' . $langs->getCurrencySymbol($conf->currency);
+				$addInputLabel = ' ' . $langs->getCurrencySymbol();
 				$out = $this->inputType('text', $htmlName, $value, $htmlId, $morecss, $moreparam, '', $addInputLabel);
 				break;
 
@@ -820,7 +617,11 @@ class FormWebPortal extends Form
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', ' . $parentField;
+					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
+						$keyList .= ', main.'.$parentField;
+					} else {
+						$keyList .= ', '.$parentField;
+					}
 				}
 
 				$filter_categorie = false;
@@ -830,16 +631,16 @@ class FormWebPortal extends Form
 					}
 				}
 
-				if ($filter_categorie === false) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
+				if (!$filter_categorie) {
+					$fields_label = isset($InfoFieldList[1]) ? explode('|', $InfoFieldList[1]) : array();
+					if (!empty($fields_label)) {
 						$keyList .= ', ';
 						$keyList .= implode(', ', $fields_label);
 					}
 
 					$sqlwhere = '';
-					$sql = "SELECT " . $keyList;
-					$sql .= " FROM " . $this->db->prefix() . $InfoFieldList[0];
+					$sql = "SELECT " . $this->db->sanitize($keyList, 0, 0, 1);
+					$sql .= " FROM " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 					if (!empty($InfoFieldList[4])) {
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
@@ -851,8 +652,8 @@ class FormWebPortal extends Form
 
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= " as main, " . $this->db->prefix() . $InfoFieldList[0] . "_extrafields as extra";
-							$sqlwhere .= " WHERE extra.fk_object=main." . $InfoFieldList[2] . " AND " . $InfoFieldList[4];
+							$sql .= " as main, " . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]) . "_extrafields as extra";
+							$sqlwhere .= " WHERE extra.fk_object=main." . $this->db->sanitize($InfoFieldList[2]) . " AND " . $InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE " . $InfoFieldList[4];
 						}
@@ -937,9 +738,12 @@ class FormWebPortal extends Form
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$categorytype = $InfoFieldList[5];
-					if (is_numeric($categorytype)) {
-						$categorytype = Categorie::$MAP_ID_TO_CODE[$categorytype]; // For backward compatibility
+					if (is_numeric($categorytype)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categorytype = $MAP_ID_TO_CODE[(int) $categorytype];
 					}
+
 					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
@@ -953,9 +757,9 @@ class FormWebPortal extends Form
 
 			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
-				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
+				$out = $this->selectForForms($param_list[0], $htmlName, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 				break;
 
@@ -972,18 +776,22 @@ class FormWebPortal extends Form
 	/**
 	 * Return HTML string to show a field into a page
 	 *
-	 * @param CommonObject $object Common object
-	 * @param array $val Array of properties of field to show
-	 * @param string $key Key of attribute
-	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param string $moreparam To add more parameters on html input tag
-	 * @param string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param mixed $morecss Value for css to define size. May also be a numeric.
+	 * @param CommonObject 		$object 		Common object
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
+	 * @param string 			$key 			Key of attribute
+	 * @param string|string[] 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param mixed 			$morecss 		Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
 	public function showOutputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showOutputField($val, $key, $value, '', '', '', 0);
+		// We must just implement different case like output a ref that must not include the link into backoffice
+
 		global $conf, $langs;
 
 		$label = empty($val['label']) ? '' : $val['label'];
@@ -1050,7 +858,7 @@ class FormWebPortal extends Form
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = (string) dol_eval($computed, 1, 0, '2');
+			$value = (string) dol_eval((string) $computed, 1, 0, '2');
 		}
 
 		// Format output value differently according to properties of field
@@ -1059,7 +867,7 @@ class FormWebPortal extends Form
 		//
 		if (in_array($key, array('rowid', 'ref'))) {
 			if (property_exists($object, 'ref')) {
-				$value = $object->ref;
+				$value = (string) $object->ref;
 			} elseif (property_exists($object, 'id')) {
 				$value = $object->id;
 			} else {
@@ -1096,11 +904,17 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value);
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -1118,7 +932,10 @@ class FormWebPortal extends Form
 			$value = dol_print_ip($value, 0);
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
-				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+				$value = price($value, 0, $langs, 0, 0, -1, getDolCurrency());
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
@@ -1147,24 +964,24 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
+			$sql = "SELECT " . $this->db->sanitize($keyList);
 			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
-				$sql .= " WHERE " . $selectkey . " = 0";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = 0";
 			} elseif ($selectkey == 'rowid') {
-				$sql .= " WHERE " . $selectkey . " = " . ((int) $value);
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = " . ((int) $value);
 			} else {
-				$sql .= " WHERE " . $selectkey . " = '" . $this->db->escape($value) . "'";
+				$sql .= " WHERE " . $this->db->sanitize($selectkey) . " = '" . $this->db->escape($value) . "'";
 			}
 
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -1213,7 +1030,7 @@ class FormWebPortal extends Form
 				dol_syslog(__METHOD__ . ' error ' . $this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = (string) $param['options'][$value];
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1255,8 +1072,8 @@ class FormWebPortal extends Form
 				}
 			}
 
-			$sql = "SELECT " . $keyList;
-			$sql .= ' FROM ' . $this->db->prefix() . $InfoFieldList[0];
+			$sql = "SELECT " . $this->db->sanitize($keyList);
+			$sql .= ' FROM ' . $this->db->prefix() . $this->db->sanitize($InfoFieldList[0]);
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1266,8 +1083,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|libelle:rowid)
@@ -1329,15 +1146,19 @@ class FormWebPortal extends Form
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
+						/** @var CommonObject $object */
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;
+								$value = (string) $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;
+								$value = (string) $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;
+								$value = (string) $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
+							} elseif (property_exists($object, 'ref')) {
+								$value = (string) $object->ref;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}
@@ -1357,5 +1178,520 @@ class FormWebPortal extends Form
 		$out = $value;
 
 		return $out;
+	}
+
+	/**
+	 * Html for input with label
+	 *
+	 * @param	string	$type			Type of input : button, checkbox, color, email, hidden, month, number, password, radio, range, tel, text, time, url, week
+	 * @param	string	$name			Name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$id				[=''] Id
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	string	$label			[=''] Label
+	 * @param	string	$addInputLabel	[=''] Add label for input
+	 * @return	string					Html for input with label
+	 */
+	public function inputType($type, $name, $value = '', $id = '', $morecss = '', $moreparam = '', $label = '', $addInputLabel = '')
+	{
+		$out = '';
+		if ($label != '') {
+			$out .= '<label for="' . dolPrintHTMLForAttribute($id) . '">';
+		}
+		$out .= '<input type="' . dolPrintHTMLForAttribute($type) . '"';
+		$out .= ' class="flat valignmiddle maxwidthonsmartphone ' . dolPrintHTMLForAttribute($morecss) . '"';
+		if ($id != '') {
+			$out .= ' id="' . dolPrintHTMLForAttribute($id) . '"';
+		}
+		$out .= ' name="' . dolPrintHTMLForAttribute($name) . '"';
+		$out .= ' value="' . dolPrintHTMLForAttribute($value) . '" ';
+		$out .= ($moreparam ? ' ' . $moreparam : '');
+		$out .= ' />' . $addInputLabel;
+		if ($label != '') {
+			$out .= $label . '</label>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for select with get options by AJAX
+	 *
+	 * @param	string					$htmlName		Name
+	 * @param	array<string,mixed>		$array			Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	string					$id				Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
+	 * @param	string					$ajaxUrl		Ajax page Url
+	 * @param	array<string,string>	$ajaxData		Additional data send to the AJAX page
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input with label
+	 */
+	public function inputSelectAjax($htmlName, $array, $id, $ajaxUrl, $ajaxData = [], $morecss = 'minwidth75', $moreparam = '')
+	{
+		$out = "
+					<script>
+					$(document).ready(function () {
+						$('#" . dol_escape_js($htmlName) . "').select2({
+							ajax: {
+								url: '" . dol_escape_js($ajaxUrl) . "',
+								dataType: 'json',
+								delay: 250, // wait 250 milliseconds before triggering the request
+								data: function (params) {
+									var query = {
+										search: params.term,
+										page: params.page || 1";
+		if (!empty($ajaxData) && is_array($ajaxData)) {
+			foreach ($ajaxData as $key => $value) {
+				$out .= ", " . preg_replace('/[^a-z0-9_]/i', '', $key) . ": '" . dol_escape_js($value) . "'";
+			}
+		}
+		$out .= "
+									}
+									return query;
+								}
+							}
+						})
+					});
+					</script>";
+
+		$out .= $this->selectarray($htmlName, $array, $id, 0, 0, 0, $moreparam, 0, 0, 0, '', $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string	$htmlName		Html name
+	 * @param	string	$value			[=''] Value
+	 * @param	string	$morecss		[=''] Class
+	 * @param	string	$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string					Html for input with label
+	 */
+	public function inputHtml($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
+
+		return (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+	}
+
+	/**
+	 * Html for HTML area
+	 *
+	 * @param	string				$htmlName		Html name
+	 * @param	string				$value			[=''] Value
+	 * @param	string				$morecss		[=''] Class
+	 * @param	string				$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @param	array<string,mixed>	$options		Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @return	string								Html for input with label
+	 */
+	public function inputText($htmlName, $value, $morecss = '', $moreparam = '', $options = array())
+	{
+		global $langs;
+		$out = '';
+		if (!empty($options)) {
+			// If the textarea field has a list of arrayofkeyval into its definition, we suggest a combo with possible values to fill the textarea.
+			$out .= '<div class="text-area-multi-input-add-group" >';
+			$out .= $this->selectarray($htmlName . "_multiinput", $options, '', 1, 0, 0, $moreparam, 0, 0, 0, '', "flat maxwidthonphone" . $morecss);
+			$out .= '<input id="' . $htmlName . '_multiinputadd" type="button" class="button" value="' . $langs->trans("Add") . '">';
+			$out .= '</div>';
+			$out .= "<script>";
+			$out .= '
+					function handlemultiinputdisabling(htmlname){
+						console.log("We handle the disabling of used options for "+htmlname+"_multiinput");
+						multiinput = $("#"+htmlname+"_multiinput");
+						multiinput.find("option").each(function(){
+							tmpval = $("#"+htmlname).val();
+							tmpvalarray = tmpval.split("\n");
+							valtotest = $(this).val();
+							if(tmpvalarray.includes(valtotest)){
+								$(this).prop("disabled",true);
+							} else {
+								if($(this).prop("disabled") == true){
+									console.log(valtotest)
+									$(this).prop("disabled", false);
+								}
+							}
+						});
+					}
+
+					$(document).ready(function () {
+						$("#' . $htmlName . '_multiinputadd").on("click",function() {
+							tmpval = $("#' . $htmlName . '").val();
+							tmpvalarray = tmpval.split(",");
+							valtotest = $("#' . $htmlName . '_multiinput").val();
+							if(valtotest != -1 && !tmpvalarray.includes(valtotest)){
+								console.log("We add the selected value to the text area ' . $htmlName . '");
+								if(tmpval == ""){
+									tmpval = valtotest;
+								} else {
+									tmpval = tmpval + "\n" + valtotest;
+								}
+								$("#' . $htmlName . '").val(tmpval);
+								handlemultiinputdisabling("' . $htmlName . '");
+								$("#' . $htmlName . '_multiinput").val(-1);
+							} else {
+								console.log("We add nothing the text area ' . $htmlName . '");
+							}
+						});
+						$("#' . $htmlName . '").on("change",function(){
+							handlemultiinputdisabling("' . $htmlName . '");
+						});
+						handlemultiinputdisabling("' . $htmlName . '");
+					})';
+			$out .= "</script>";
+			$value = str_replace(',', "\n", $value);
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($htmlName, (string) $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5);
+		$out .= (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
+
+		return $out;
+	}
+
+	/**
+	 * Html for input radio
+	 *
+	 * @param	string					$htmlName		Html name
+	 * @param	array<string,string>	$options		List of option
+	 * @param	string					$selectedValue	Selected value
+	 * @param	string					$morecss		[=''] Class
+	 * @param	string					$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string									Html for input radio
+	 */
+	public function inputRadio($htmlName, $options, $selectedValue, $morecss = '', $moreparam = '')
+	{
+		$out = '';
+		foreach ($options as $optionKey => $optionLabel) {
+			$selected = ((string) $selectedValue) === ((string) $optionKey) ? ' checked="checked"' : '';
+			$optionId = $htmlName . '_' . $optionKey;
+			$out .= '<input class="flat' . $morecss . '" type="radio" name="' . $htmlName . '" id="' . $optionId . '" value="' . dolPrintHTMLForAttribute((string) $optionKey) . '"' . $selected . $moreparam . '/><label for="' . $optionId . '">' . $optionLabel . '</label><br>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input stars
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	int			$size			Number of stars
+	 * @param	int			$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input stars
+	 */
+	public function inputStars($htmlName, $size, $value, $morecss = '', $moreparam = '')
+	{
+		$out = '<input type="hidden" class="flat ' . $morecss . '" name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '"' . $moreparam . '>';
+		$out .= '<div class="star-selection" id="' . $htmlName . '_selection">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+		$out .= '<script>
+				jQuery(function($) {	/* commonobject.class.php 1 */
+					let container = $("#' . $htmlName . '_selection");
+					let selectedStars = parseInt($("#' . $htmlName . '").val()) || 0;
+					container.find(".star").each(function() {
+						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+					});
+					container.find(".star").on("mouseover", function() {
+						let selectedStar = $(this).data("value");
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStar);
+						});
+					});
+					container.on("mouseout", function() {
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+					container.find(".star").off("click").on("click", function() {
+						selectedStars = $(this).data("value");
+						if (selectedStars === 1 && $("#' . $htmlName . '").val() == 1) {
+							selectedStars = 0;
+						}
+						$("#' . $htmlName . '").val(selectedStars);
+						container.find(".star").each(function() {
+							$(this).toggleClass("active", $(this).data("value") <= selectedStars);
+						});
+					});
+				});
+			</script>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for input icon
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$morecss		[=''] Class
+	 * @param	string		$moreparam		[=''] Add attributes (checked, required, etc)
+	 * @return	string						Html for input icon
+	 */
+	public function inputIcon($htmlName, $value, $morecss = '', $moreparam = '')
+	{
+		global $langs;
+
+		/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
+		 Some code must be added into main when MAIN_ADD_ICONPICKER_JS is set to add of lib in html header
+		 $out ='<link rel="stylesheet" href="'.dol_buildpath('/myfield/css/fontawesome-iconpicker.min.css', 1).'">';
+		 $out.='<script src="'.dol_buildpath('/myfield/js/fontawesome-iconpicker.min.js', 1).'"></script>';
+		 */
+		$out = '<input type="text" class="form-control icp icp-auto iconpicker-element iconpicker-input flat ' . $morecss . ' maxwidthonsmartphone"';
+		$out .= ' name="' . $htmlName . '" id="' . $htmlName . '" value="' . dolPrintHTMLForAttribute((string) $value) . '" ' . ((string) $moreparam) . '>';
+		if (getDolGlobalInt('MAIN_ADD_ICONPICKER_JS')) {
+			$out .= '<script>';
+			$options = "{ title: '<b>" . $langs->trans("IconFieldSelector") . "</b>', placement: 'right', showFooter: false, templates: {";
+			$options .= "iconpicker: '<div class=\"iconpicker\"><div style=\"background-color:#EFEFEF;\" class=\"iconpicker-items\"></div></div>',";
+			$options .= "iconpickerItem: '<a role=\"button\" href=\"#\" class=\"iconpicker-item\" style=\"background-color:#DDDDDD;\"><i></i></a>',";
+			// $options.="buttons: '<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm\">".$langs->trans("Cancel")."</button>";
+			// $options.="<button style=\"background-color:#FFFFFF;\" class=\"iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm\">".$langs->trans("Save")."</button>',";
+			$options .= "footer: '<div class=\"popover-footer\" style=\"background-color:#EFEFEF;\"></div>',";
+			$options .= "search: '<input type=\"search\" class\"form-control iconpicker-search\" placeholder=\"" . $langs->trans("TypeToFilter") . "\" />',";
+			$options .= "popover: '<div class=\"iconpicker-popover popover\">";
+			$options .= "   <div class=\"arrow\" ></div>";
+			$options .= "   <div class=\"popover-title\" style=\"text-align:center;background-color:#EFEFEF;\"></div>";
+			$options .= "   <div class=\"popover-content \" ></div>";
+			$options .= "</div>'}}";
+			$out .= "$('#" . $htmlName . "').iconpicker(" . $options . ");";
+			$out .= '</script>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for input geo point
+	 *
+	 * @param	string		$htmlName		Html name
+	 * @param	string		$value			Value
+	 * @param	string		$type			Type (linestrg, multipts, point, polygon)
+	 * @return	string						Html for input geo point
+	 */
+	public function inputGeoPoint($htmlName, $value, $type = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/geomapeditor.class.php';
+		$dolgeophp = new DolGeoPHP($this->db);
+		$geomapeditor = new GeoMapEditor();
+
+		$geojson = '{}';
+		$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
+		if (!empty($value)) {
+			$tmparray = $dolgeophp->parseGeoString($value);
+			$geojson = $tmparray['geojson'];
+			$centroidjson = $tmparray['centroidjson'];
+		}
+
+		return $geomapeditor->getHtml($htmlName, $geojson, $centroidjson, $type);
+	}
+
+	/**
+	 * Html for show selected multiple values
+	 *
+	 * @param	string[]	$values		Values
+	 * @return	string					Html for show selected multiple values
+	 */
+	public function outputMultiValues($values)
+	{
+		$out = '';
+		$toPrint = array();
+		$values = is_array($values) ? $values : array();
+
+		foreach ($values as $value) {
+			$toPrint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $value . '</li>';
+		}
+		if (!empty($toPrint)) {
+			$out = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toPrint) . '</ul></div>';
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Html for show stars
+	 *
+	 * @param	int			$size		Number of stars
+	 * @param	int			$value		Value
+	 * @return	string					Html for show stars
+	 */
+	public function outputStars($size, $value)
+	{
+		$out = '<div class="star-selection" data-value="' . dolPrintHTMLForAttribute((string) $value) . '">';
+		for ($i = 1; $i <= $size; $i++) {
+			$out .= '<span class="star' . ($i <= $value ? ' active' : '') . '" data-value="' . $i . '">' . img_picto('', 'fontawesome_star_fas') . '</span>';
+		}
+		$out .= '</div>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show icon
+	 *
+	 * @param	string		$value		Value
+	 * @return	string					Html for show icon
+	 */
+	public function outputIcon($value)
+	{
+		$out = '<span class="' . dolPrintHTMLForAttribute((string) $value) . '"></span>';
+
+		return $out;
+	}
+
+	/**
+	 * Html for show geo point
+	 *
+	 * @param	string		$value		Value
+	 * @param	string		$type		Type (linestrg, multipts, point, polygon)
+	 * @return	string					Html for show geo point
+	 */
+	public function outputGeoPoint($value, $type)
+	{
+		$out = '';
+
+		if (!empty($value)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
+			if ($type == 'point') {
+				$out = $dolgeophp->getXYString($value);
+			} else { // multipts, linestrg, polygon
+				$out = $dolgeophp->getPointString($value);
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Return link of object
+	 *
+	 * @param	CommonObject	$object					Object handler
+	 * @param	int				$withpicto				Add picto into link
+	 * @param	string			$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int				$maxlength				Maxlength of ref
+	 * @param 	int				$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int				$notooltip				No tooltip
+	 * @param  	string  		$morecss            	''=Add more css on link
+	 * @param	int				$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string			$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @return	string									String with URL
+	 */
+	public function getNomUrl(&$object, $withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
+	{
+		if (is_object($object) && method_exists($object, 'getNomUrl')) {
+			$out = $object->getNomUrl($withpicto, $option, $maxlength, $save_lastsearch_value, $notooltip, $morecss, $add_label, $sep);
+			$out = dol_string_nohtmltag($out);
+			return $out;
+		} else {
+			return '';
+		}
+	}
+
+	/**
+	 * Return HTML code to output a photo
+	 *
+	 * @param string										$modulepart					Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param Societe|Adherent|Contact|User|CommonObject	$object						Object containing data to retrieve file name
+	 * @param int											$width						Width of photo
+	 * @param int											$height						Height of photo (auto if 0)
+	 * @param int<0,1>										$caneditfield				Add edit fields
+	 * @param string										$cssclass					CSS name to use on img for photo
+	 * @param string										$imagesize					'mini', 'small' or '' (original)
+	 * @param int<0,1>										$addlinktofullsize			Add link to fullsize image
+	 * @param int<0,1>										$cache						1=Accept to use image in cache
+	 * @param ''|'user'|'environment'						$forcecapture				'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>										$noexternsourceoverwrite	No overwrite image with extern source (like 'gravatar' or other module)
+	 * @param int<0,1>										$usesharelinkifavailable	Use 1 to use the share=key link if available. This is slower.
+	 * @return string																	HTML code to output photo
+	 * @see getImagePublicURLOfObject()
+	 */
+	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0, $usesharelinkifavailable = 0)
+	{
+		$out = parent::showphoto($modulepart, $object, $width, $height, $caneditfield, $cssclass, $imagesize, $addlinktofullsize, $cache, $forcecapture, $noexternsourceoverwrite, $usesharelinkifavailable);
+		$out = self::convertAllLink($out);
+
+		return $out;
+	}
+
+	/**
+	 * Return HTML code of the cell
+	 *
+	 * @param	string					$key		Field code
+	 * @param	string					$label		Field label
+	 * @param	string					$value		Field value
+	 * @param	array<string,mixed>		$params		More parameters:
+	 *                                              - 'required' : (boolean) If field required
+	 *                                              - 'cell_class' : (string) Additional class for the cell div
+	 *                                              - 'cell_attributes' : (string) Additional attributes for the cell div
+	 *                                              - 'label_class' : (string) Additional class for the label div
+	 *                                              - 'label_attributes' : (string) Additional attributes for the label div
+	 *                                              - 'value_class' : (string) Additional class for the value div
+	 *                                              - 'value_attributes' : (string) Additional attributes for the value div
+	 * @return	string								HTML code
+	 */
+	public function printFieldCell($key, $label, $value, $params = array())
+	{
+		$required = !empty($params['required']) ? ' required' : '';
+		$cell_class = !empty($params['cell_class']) ? ' ' . dolPrintHTMLForAttribute(trim($params['cell_class'])) : '';
+		$cell_attributes = !empty($params['cell_attributes']) ? ' ' . trim($params['cell_attributes']) : '';
+		$label_class = !empty($params['label_class']) ? ' ' . dolPrintHTMLForAttribute(trim($params['label_class'])) : '';
+		$label_attributes = !empty($params['label_attributes']) ? ' ' . trim($params['label_attributes']) : '';
+		$value_class = !empty($params['value_class']) ? ' ' . dolPrintHTMLForAttribute(trim($params['value_class'])) : '';
+		$value_attributes = !empty($params['value_attributes']) ? ' ' . trim($params['value_attributes']) : '';
+
+		$out = '<div class="grid field_' . dolPrintHTMLForAttribute(strtolower($key)) . $cell_class . '"' . $cell_attributes . '>';
+		$out .= '<div class="' . $required . $label_class . '"' . $label_attributes . '>';
+		$out .= $label;
+		$out .= '</div>';
+		$out .= '<div class="' . $value_class . '"' . $value_attributes . '>';
+		$out .= $value;
+		$out .= '</div>';
+		$out .= '</div>';
+
+		return $out;
+	}
+
+	/**
+	 * Convert all link of the provided html output
+	 *
+	 * @param	string		$html						Html output
+	 * @param	string		$additionalViewImageParams	Additional parameters for viewimage link
+	 * @param	string		$additionalDocumentParams	Additional parameters for document link
+	 * @return	string									Html output with all link converted
+	 */
+	public static function convertAllLink($html, $additionalViewImageParams = '', $additionalDocumentParams = '')
+	{
+		require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
+		$context = Context::getInstance();
+
+		$html = str_replace(DOL_URL_ROOT . '/viewimage.php?', $context->getControllerUrl('viewimage') . $additionalViewImageParams . '&', $html);
+		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/viewimage.php?')), urlencode(dol_escape_js($context->getControllerUrl('viewimage') . $additionalViewImageParams . '&')), $html);
+		$html = str_replace(DOL_URL_ROOT . '/document.php?', $context->getControllerUrl('document') . $additionalDocumentParams . '&', $html);
+		$html = str_replace(urlencode(dol_escape_js(DOL_URL_ROOT . '/document.php?')), urlencode(dol_escape_js($context->getControllerUrl('document') . $additionalDocumentParams . '&')), $html);
+
+		return $html;
+	}
+
+	/**
+	 *  Retourne la liste des devises, dans la langue de l'utilisateur
+	 *
+	 * @param 	string 	$selected 		Preselected currency code
+	 * @param 	string 	$htmlname 		Name of HTML select list
+	 * @param 	int	 	$mode 			0 = Add currency symbol into label, 1 = Add 3 letter iso code, 2 = Add both symbol and code
+	 * @param 	string 	$useempty 		'1'=Allow empty value
+	 * @return  string					HTML component
+	 */
+	public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0, $useempty = '')
+	{
+
+		return '<span class="form-select-currency-container">'.parent::selectCurrency($selected, $htmlname, $mode, $useempty).'</span>';
 	}
 }

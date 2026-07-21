@@ -1,6 +1,10 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Jessica Kowal        <jessicakowal69@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +20,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
- require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 
 /**
  * API class for projects
  *
+ * @since	5.0.0	Initial implementation
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class Projects extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -38,12 +43,12 @@ class Projects extends DolibarrApi
 	);
 
 	/**
-	 * @var Project $project {@type Project}
+	 * @var Project {@type Project}
 	 */
 	public $project;
 
 	/**
-	 * @var Task $task {@type Task}
+	 * @var Task {@type Task}
 	 */
 	public $task;
 
@@ -64,6 +69,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int         $id         ID of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -81,7 +87,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$this->project->fetchObjectLinked();
@@ -93,6 +99,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref			Ref of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -106,13 +113,13 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', $ref);
+		$result = $this->project->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$this->project->fetchObjectLinked();
@@ -124,6 +131,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$ref_ext			Ref_Ext of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -137,13 +145,13 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', '', $ref_ext);
+		$result = $this->project->fetch(0, '', $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied ref_ext not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$this->project->fetchObjectLinked();
@@ -155,6 +163,7 @@ class Projects extends DolibarrApi
 	 *
 	 * Return an array with project information
 	 *
+	 * @since	20.0.0	Initial implementation
 	 * @param	string	$email_msgid	Email msgid of project
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -168,13 +177,13 @@ class Projects extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->project->fetch('', '', '', $email_msgid);
+		$result = $this->project->fetch(0, '', '', $email_msgid);
 		if (!$result) {
 			throw new RestException(404, 'Project with supplied email_msgid not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$this->project->fetchObjectLinked();
@@ -186,17 +195,21 @@ class Projects extends DolibarrApi
 	 *
 	 * Get a list of projects
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param  int    $category   Use this param to filter list by category
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of project objects
+	 * @phan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
@@ -205,7 +218,7 @@ class Projects extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -214,35 +227,39 @@ class Projects extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as t";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
+			$sql .= ", " . MAIN_DB_PREFIX . "categorie_project as c";
 		}
-		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
+		$sql .= ' WHERE t.entity IN (' . getEntity('project') . ')';
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+			$sql .= " AND t.fk_soc IN (" . $this->db->sanitize($socids) . ")";
 		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM " . MAIN_DB_PREFIX . "societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = " . ((int) $search_sale) . ")";
 			}
 		}
 		// Select projects of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_categorie = " . ((int) $category) . " AND c.fk_project = t.rowid ";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> ' . $errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -270,7 +287,24 @@ class Projects extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieve project list : ' . $this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -279,13 +313,17 @@ class Projects extends DolibarrApi
 	/**
 	 * Create project object
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   array   $request_data   Request data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 * @return  int     ID of project
 	 */
 	public function post($request_data = null)
 	{
+		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -306,6 +344,49 @@ class Projects extends DolibarrApi
 		  }
 		  $this->project->lines = $lines;
 		}*/
+
+		// Auto-generate the "ref" field if it is set to "auto"
+		if ($this->project->ref == -1 || $this->project->ref === 'auto') {
+			$reldir = '';
+			$defaultref = '';
+			$file = '';
+			$classname = '';
+			$filefound = 0;
+			$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
+
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir . "core/modules/project/" . $modele . '.php', 0);
+				if (file_exists($file)) {
+					$filefound = 1;
+					$classname = $modele;
+					break;
+				}
+			}
+			if ($filefound && !empty($classname)) {
+				$result = dol_include_once($reldir . "core/modules/project/" . $modele . '.php');
+				if ($result !== false && class_exists($classname)) {
+					$modProject = new $classname();
+					'@phan-var-force ModeleNumRefProjects $modProject';
+					$defaultref = $modProject->getNextValue(null, $this->project);
+				} else {
+					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/" . $modele . '.php', LOG_ERR);
+				}
+			} else {
+				dol_syslog("Module file not found or classname is empty: " . $modele, LOG_ERR);
+			}
+
+			if (is_numeric($defaultref) && $defaultref <= 0) {
+				$defaultref = '';
+			}
+
+			if (empty($defaultref)) {
+				$defaultref = 'PJ' . dol_print_date(dol_now(), 'dayrfc');
+			}
+
+			$this->project->ref = $defaultref;
+		}
+
 		if ($this->project->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
 		}
@@ -314,12 +395,101 @@ class Projects extends DolibarrApi
 	}
 
 	/**
+	 * Adds a contact to an project
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param   int		$id					project ID
+	 * @param   int		$fk_socpeople		Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
+	 * @param   string	$type_contact       Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+	 * @param   string  $source				external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param   int     $notrigger          Disable all triggers
+	 *
+	 * @url POST    {id}/contacts
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+		if ($result < 0) {
+			throw new RestException(500, 'Error : ' . $this->project->error);
+		}
+
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Delete a contact type of given project
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param	int    $id             Id of project to update
+	 * @param	int    $contactid      Row key of the contact in the array contact_ids.
+	 * @param	string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return	Object				   Object with cleaned properties
+	 *
+	 * @url	DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteContact($id, $contactid, $type)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->project->liste_contact(-1, $source);
+
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->project->delete_contact($contact['rowid']);
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
+				}
+			}
+		}
+		return $this->_cleanObjectDatas($this->project);
+	}
+	/**
 	 * Get tasks of a project.
 	 * See also API /tasks
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param int   $id                     Id of project
 	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return array
+	 * @phan-return Object[]
+	 * @phpstan-return Object[]
 	 *
 	 * @url	GET {id}/tasks
 	 */
@@ -335,7 +505,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 		$this->project->getLinesArray(DolibarrApiAccess::$user);
 		$result = array();
@@ -355,16 +525,17 @@ class Projects extends DolibarrApi
 	/**
 	 * Get roles a user is assigned to a project with
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
 	 * @return array
+	 * @phan-return string[]
+	 * @phpstan-return string[]
 	 *
 	 * @url	GET {id}/roles
 	 */
 	public function getRoles($id, $userid = 0)
 	{
-		global $db;
-
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
@@ -375,17 +546,17 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 		$userp = DolibarrApiAccess::$user;
 		if ($userid > 0) {
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, (string) $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
@@ -400,6 +571,8 @@ class Projects extends DolibarrApi
 	 *
 	 * @param int   $id             Id of project to update
 	 * @param array $request_data   Projectline data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 *
 	 * @url	POST {id}/tasks
 	 *
@@ -467,6 +640,8 @@ class Projects extends DolibarrApi
 	 * @param int   $id             Id of project to update
 	 * @param int   $taskid         Id of task to update
 	 * @param array $request_data   Projectline data
+	 * @phan-param array<string,mixed> $request_data
+	 * @phpstan-param array<string,mixed> $request_data
 	 *
 	 * @url	PUT {id}/tasks/{taskid}
 	 *
@@ -529,9 +704,14 @@ class Projects extends DolibarrApi
 	/**
 	 * Update project general fields (won't touch lines of project)
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param 	int   	$id             	Id of project to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return 	Object						Updated object
+	 * @phan-return Object|false
+	 * @phpstan-return Object|false
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -545,7 +725,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -558,7 +738,7 @@ class Projects extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->project->array_options[$index] = $this->_checkValForAPI($field, $val, $this->project);
+					$this->project->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->project);
 				}
 				continue;
 			}
@@ -576,9 +756,12 @@ class Projects extends DolibarrApi
 	/**
 	 * Delete project
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int     $id         Project ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -591,11 +774,11 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->project->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete project : '.$this->project->error);
+			throw new RestException(500, 'Error when delete project : ' . $this->project->error);
 		}
 
 		return array(
@@ -611,12 +794,17 @@ class Projects extends DolibarrApi
 	 * You can test this API with the following input message
 	 * { "notrigger": 0 }
 	 *
+	 * @since	5.0.0	Initial implementation
 	 * @param   int $id             Project ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @phan-param int<0,1> $notrigger
+	 * @phpstan-param int<0,1> $notrigger
 	 *
 	 * @url POST    {id}/validate
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -635,7 +823,7 @@ class Projects extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
@@ -643,7 +831,7 @@ class Projects extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Project: '.$this->project->error);
+			throw new RestException(500, 'Error when validating Project: ' . $this->project->error);
 		}
 
 		return array(
@@ -654,13 +842,133 @@ class Projects extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Get all timespent
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param  int    		   $category   		Use this param to filter list by category
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
+	 * @param string    	   $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                               Array of project objects
+	 * @phan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return array{data:Project[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @url	GET /alltimespent
+	 */
+	public function listTimespent($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+
+		$sql = "SELECT et.rowid, et.element_duration, et.element_datehour, et.fk_user, et.note as time_note, et.thm,";
+		$sql .= " u.login as user_login, u.firstname as user_firstname, u.lastname as user_lastname,";
+		$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
+		$sql .= " t.rowid as task_id, t.ref as task_ref, t.label as task_label,";
+		$sql .= " s.rowid as soc_id, s.nom as soc_name";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON (t.fk_projet = p.rowid)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_time as et ON (et.fk_element = t.rowid AND et.elementtype = 'task')";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = p.fk_soc)";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON (u.rowid = et.fk_user)";
+		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
+		}
+		// Select projects of given category
+		if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+		$obj_ret = array();
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($obj), $properties);
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve timestamp list : '.$this->db->lasterror());
+		}
+
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -710,8 +1018,8 @@ class Projects extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param   array<string,mixed>	$data   Array with data to verify
+	 * @return  array<string,mixed>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
@@ -727,6 +1035,193 @@ class Projects extends DolibarrApi
 	}
 
 
+
+
+	/**
+	 * Get contacts of given project
+	 *
+	 * Return an array with contact information
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param int    $id     ID of project
+	 * @param string $type   Type of the contact
+	 * @return array<int,mixed>         Array with cleaned properties
+	 *
+	 * @url GET {id}/contacts
+	 *
+	 * @throws RestException
+	 */
+	public function getContacts($id, $type = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		$contacts = $this->project->liste_contact(-1, 'external', 0, $type);
+		$socpeoples = $this->project->liste_contact(-1, 'internal', 0, $type);
+
+		$contacts = array_merge($contacts, $socpeoples);
+
+		return $contacts;
+	}
+
+	/**
+	 * Adds a contact to a project
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param int    $id             Project ID
+	 * @param int    $fk_socpeople   Id of thirdparty contact (if source = 'external') or id of user (if source = 'internal') to link
+	 * @param string $type_contact   Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+	 * @param string $source         external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+	 * @param int    $notrigger      Disable all triggers
+	 * @param int[]		$affect_to_tasks	Array of task IDs to also add the contact to (empty array = all tasks, null = no tasks)
+	 *
+	 * @url POST {id}/contacts
+	 *
+	 * @return object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function addToContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0, $affect_to_tasks = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		// Ajouter le contact au projet
+		$result = $this->project->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error : ' . $this->project->error . 'result :' . $result);
+		}
+
+		// If requested, add the contact to tasks
+		if ($affect_to_tasks !== null) {
+			$this->project->getLinesArray(DolibarrApiAccess::$user);
+
+			foreach ($this->project->lines as $task) {
+				// If $affect_to_tasks is empty, assign to all tasks
+				// Otherwise, check if the task is in the list
+				if (empty($affect_to_tasks) || in_array($task->id, $affect_to_tasks)) {
+					$task->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
+				}
+			}
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		return $this->_cleanObjectDatas($this->project);
+	}
+	/**
+	 * Delete a contact type of given project
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param int    $id         Id of project to update
+	 * @param int    $contactid  Row key of the contact in the array contact_ids.
+	 * @param string $type       Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	 * @return Object            Object with cleaned properties
+	 *
+	 * @url DELETE {id}/contact/{contactid}/{type}
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function deleteToContact($id, $contactid, $type)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->project->liste_contact(-1, $source);
+
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->project->delete_contact($contact['rowid']);
+					if (!$result) {
+						throw new RestException(500, 'Error when deleted the contact');
+					}
+					break 2;
+				}
+			}
+		}
+
+		return $this->_cleanObjectDatas($this->project);
+	}
+
+	/**
+	 * Get timespent of a project (from all its tasks)
+	 *
+	 * @since	23.0.0	Initial implementation
+	 * @param int   $id         ID of project
+	 * @return array<int,mixed>            Array of timespent objects
+	 *
+	 * @url GET {id}/timespent
+	 *
+	 * @throws RestException
+	 */
+	public function getTimespent($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->project->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Project not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
+			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
+
+
+		$this->project->getLinesArray(DolibarrApiAccess::$user);
+		$allTimespent = array();
+		foreach ($this->project->lines as $task) {
+			$allTimespent[] = $task->getSummaryOfTimeSpent();
+			//var_dump($taskTimespent);
+			//foreach ($taskTimespent as $time) {
+			// $this->_cleanObjectDatas($time);
+
+			//}
+		}
+
+		return $allTimespent;
+	}
 	// TODO
 	// getSummaryOfTimeSpent
 }

@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +32,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "withdrawals"));
@@ -72,7 +82,7 @@ if ($action == "set") {
 		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
-		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->owner_address,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		*/
 	} else {
@@ -143,7 +153,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("WithdrawalsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-prelevement');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
 print '<br>';
@@ -155,7 +165,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>";
 
 
@@ -163,7 +173,7 @@ print "</tr>";
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-print $form->select_comptes(getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'), 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200 widthcentpercentminusxx maxwidth300', 1);
+print $form->select_comptes(getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'), 'PRELEVEMENT_ID_BANKACCOUNT', 0, "(courant:=:1)", 1, '', 0, 'minwidth200 widthcentpercentminusxx maxwidth300', 1);
 // TODO Add plus to add a bank account
 print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&backtopage='.DOL_URL_ROOT.'/admin/prelevement.php"><span class="fa fa-plus-circle"></span></a>';
 print '</td></tr>';
@@ -185,7 +195,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
 print '<td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(getDolGlobalInt('PRELEVEMENT_USER'), 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+print $form->select_dolusers(getDolGlobalInt('PRELEVEMENT_USER'), 'PRELEVEMENT_USER', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 
@@ -237,7 +247,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$db->escape($type)."'";
-$sql.= " AND entity = ".$conf->entity;
+$sql.= " AND entity = ".((int) $conf->entity);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -329,7 +339,7 @@ foreach ($dirmodels as $reldir)
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
+								if (getDolGlobalString('PAYMENTORDER_ADDON_PDF') == $name)
 								{
 									print img_picto($langs->trans("Default"),'on');
 								}
@@ -364,11 +374,11 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								}
 								else
 								{
-									print img_object($langs->trans("PreviewNotAvailable"),'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"),'generic');
 								}
 								print '</td>';
 
@@ -451,7 +461,7 @@ if (isModEnabled('notification') )
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td class="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 
@@ -473,7 +483,7 @@ if (isModEnabled('notification') )
 	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
 	$sql.= " WHERE u.rowid = nd.fk_user";
 	$sql.= " AND nd.fk_action = ad.rowid";
-	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+	$sql.= " AND u.entity IN (0,".((int) $conf->entity).")";
 
 	$resql = $db->query($sql);
 	if ($resql)

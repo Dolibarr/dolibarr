@@ -3,13 +3,14 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Dourseanud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2106  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
@@ -151,14 +161,16 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['customersupplierreportlist']);
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['customersupplierreportlist']);
-
 
 /*
  * View
@@ -173,6 +185,11 @@ $exportlink = '';
 
 $total_ht = 0;
 $total_ttc = 0;
+
+$builddate = '';
+$name = '';
+$period = '';
+$description = '';
 
 // Affiche en-tete de rapport
 if ($modecompta == "CREANCES-DETTES") {
@@ -200,7 +217,7 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-	$arraylist = array('no'=>$langs->trans("CustomerCode"), 'yes'=>$langs->trans("AccountWithNonZeroValues"), 'all'=>$langs->trans("All"));
+	$arraylist = array('no' => $langs->trans("CustomerCode"), 'yes' => $langs->trans("AccountWithNonZeroValues"), 'all' => $langs->trans("All"));
 	$period .= ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("DetailBy").'</span> '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultBookkeepingPredefined");
@@ -227,10 +244,10 @@ if (isModEnabled('accounting')) {
 $calcmode .= '</label>';
 
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta' => $modecompta, 'showaccountdetail' => $showaccountdetail), $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 // Show report array
@@ -258,9 +275,9 @@ print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 
 if ($modecompta == 'BOOKKEEPING') {
-	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, '');
 } else {
-	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'width200 ');
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '');
 }
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING') {
@@ -280,29 +297,32 @@ $total_ht_outcome = $total_ttc_outcome = $total_ht_income = $total_ttc_income = 
 
 
 if ($modecompta == 'BOOKKEEPING') {
-	$predefinedgroupwhere = "(";
-	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
-	$predefinedgroupwhere .= " OR ";
-	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
-	$predefinedgroupwhere .= ")";
+	$sanitizedpredefinedgroupwhere = "(";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
+	$sanitizedpredefinedgroupwhere .= " OR ";
+	$sanitizedpredefinedgroupwhere .= " (pcg_type = 'INCOME')";
+	$sanitizedpredefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
-	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 	$sql = "SELECT -1 as socid, aa.pcg_type, SUM(f.credit - f.debit) as amount";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", f.thirdparty_code as name";
 	}
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
-	$sql .= ", ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE f.numero_compte = aa.account_number";
-	$sql .= " AND ".$predefinedgroupwhere;
-	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
-	$sql .= " AND f.entity = ".$conf->entity;
+	$sql .= " FROM ".$db->prefix()."accounting_bookkeeping as f";
+	$sql .= " INNER JOIN ".$db->prefix()."accounting_account as aa";
+	$sql .= "   ON aa.account_number = f.numero_compte";
+	$sql .= " 	AND aa.entity = f.entity"; // Security prevents duplicate.
+	$sql .= " WHERE 1=1";
+	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($charofaccountstring)."'";
+	$sql .= " AND f.entity = ".((int) $conf->entity);
 	if (!empty($date_start) && !empty($date_end)) {
-		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
+		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."'";
+		$sql .= " AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type";
+	$sql .= " GROUP BY aa.pcg_type";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
 	}
@@ -367,7 +387,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
+						$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;
@@ -430,6 +450,8 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
+	} else {
+		$sql = '';
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
@@ -553,7 +575,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " WHERE p.entity IN (".getEntity('donation').")";
 				$sql .= " AND fk_statut in (1,2)";
 			} else {
-				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(pe.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
@@ -565,17 +587,17 @@ if ($modecompta == 'BOOKKEEPING') {
 			}
 		}
 		$sql .= " GROUP BY p.societe, p.firstname, p.lastname, dm";
-		$newsortfield = $sortfield;
-		if ($newsortfield == 's.nom, s.rowid') {
-			$newsortfield = 'p.societe, p.firstname, p.lastname, dm';
+		$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+		if ($sqlNewSortField == 's.nom, s.rowid') {
+			$sqlNewSortField = 'p.societe, p.firstname, p.lastname, dm';
 		}
-		if ($newsortfield == 'amount_ht') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ht') {
+			$sqlNewSortField = 'amount';
 		}
-		if ($newsortfield == 'amount_ttc') {
-			$newsortfield = 'amount';
+		if ($sqlNewSortField == 'amount_ttc') {
+			$sqlNewSortField = 'amount';
 		}
-		$sql .= $db->order($newsortfield, $sortorder);
+		$sql .= $db->order($sqlNewSortField, $sortorder);
 
 		dol_syslog("get dunning");
 		$result = $db->query($sql);
@@ -755,20 +777,20 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
 	}
-	$sql .= " AND cs.entity = ".$conf->entity;
+	$sql .= " AND cs.entity = ".((int) $conf->entity);
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
-	$newsortfield = $sortfield;
-	if ($newsortfield == 's.nom, s.rowid') {
-		$newsortfield = 'c.libelle, c.id';
+	$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+	if ($sqlNewSortField == 's.nom, s.rowid') {
+		$sqlNewSortField = 'c.libelle, c.id';
 	}
-	if ($newsortfield == 'amount_ht') {
-		$newsortfield = 'amount';
+	if ($sqlNewSortField == 'amount_ht') {
+		$sqlNewSortField = 'amount';
 	}
-	if ($newsortfield == 'amount_ttc') {
-		$newsortfield = 'amount';
+	if ($sqlNewSortField == 'amount_ttc') {
+		$sqlNewSortField = 'amount';
 	}
 
-	$sql .= $db->order($newsortfield, $sortorder);
+	$sql .= $db->order($sqlNewSortField, $sortorder);
 
 	dol_syslog("get social contributions deductible=0", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -846,7 +868,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 		}
-		$sql .= " AND cs.entity = ".$conf->entity;
+		$sql .= " AND cs.entity = ".((int) $conf->entity);
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT c.id, c.libelle as label, c.accountancy_code, sum(p.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -858,20 +880,20 @@ if ($modecompta == 'BOOKKEEPING') {
 		if (!empty($date_start) && !empty($date_end)) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		}
-		$sql .= " AND cs.entity = ".$conf->entity;
+		$sql .= " AND cs.entity = ".((int) $conf->entity);
 	}
 	$sql .= " GROUP BY c.libelle, c.id, c.accountancy_code";
-	$newsortfield = $sortfield;
-	if ($newsortfield == 's.nom, s.rowid') {
-		$newsortfield = 'c.libelle, c.id';
+	$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+	if ($sqlNewSortField == 's.nom, s.rowid') {
+		$sqlNewSortField = 'c.libelle, c.id';
 	}
-	if ($newsortfield == 'amount_ht') {
-		$newsortfield = 'amount';
+	if ($sqlNewSortField == 'amount_ht') {
+		$sqlNewSortField = 'amount';
 	}
-	if ($newsortfield == 'amount_ttc') {
-		$newsortfield = 'amount';
+	if ($sqlNewSortField == 'amount_ttc') {
+		$sqlNewSortField = 'amount';
 	}
-	$sql .= $db->order($newsortfield, $sortorder);
+	$sql .= $db->order($sqlNewSortField, $sortorder);
 
 	dol_syslog("get social contributions deductible=1", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -967,17 +989,17 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
 			}
 
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'u.firstname, u.lastname';
+			$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'u.firstname, u.lastname';
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ht') {
+				$sqlNewSortField = 'amount';
 			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ttc') {
+				$sqlNewSortField = 'amount';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 		}
 
 		dol_syslog("get salaries");
@@ -1073,11 +1095,11 @@ if ($modecompta == 'BOOKKEEPING') {
 			} else {
 				$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
 			}
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'p.ref';
+			$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'p.ref';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 		}
 
 		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("ExpenseReport").'</td></tr>';
@@ -1164,15 +1186,16 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_outcome += $obj->amount;
 				$total_ttc_outcome += $obj->amount;
 			}
+			$debit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven">';
 			print '<td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingDebit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price(-$obj->amount).'</span>';
+				print '<span class="amount">'.price(-$debit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price(-$debit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Credit (payment received from customer for example)
@@ -1184,14 +1207,15 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_income += $obj->amount;
 				$total_ttc_income += $obj->amount;
 			}
+			$credit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingCredit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price($obj->amount).'</span>';
+				print '<span class="amount">'.price($credit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price($credit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Total
@@ -1296,17 +1320,17 @@ if ($modecompta == 'BOOKKEEPING') {
 			}
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " GROUP BY dm";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'dm';
+			$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'dm';
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ht') {
+				$sqlNewSortField = 'amount';
 			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ttc') {
+				$sqlNewSortField = 'amount';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 
 			dol_syslog("get vat to pay", LOG_DEBUG);
 			$result = $db->query($sql);
@@ -1352,19 +1376,19 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND f.entity = ".$conf->entity;
+			$sql .= " AND f.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'dm';
+			$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'dm';
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ht') {
+				$sqlNewSortField = 'amount';
 			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ttc') {
+				$sqlNewSortField = 'amount';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 
 			dol_syslog("get vat received back", LOG_DEBUG);
 			$result = $db->query($sql);
@@ -1406,19 +1430,19 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'dm';
+			$sqlNewSortField = $sortfield;  // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'dm';
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ht') {
+				$sqlNewSortField = 'amount';
 			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ttc') {
+				$sqlNewSortField = 'amount';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 
 			dol_syslog("get vat really paid", LOG_DEBUG);
 			$result = $db->query($sql);
@@ -1461,19 +1485,19 @@ if ($modecompta == 'BOOKKEEPING') {
 			if (!empty($date_start) && !empty($date_end)) {
 				$sql .= " AND t.datev >= '".$db->idate($date_start)."' AND t.datev <= '".$db->idate($date_end)."'";
 			}
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= " GROUP BY dm";
-			$newsortfield = $sortfield;
-			if ($newsortfield == 's.nom, s.rowid') {
-				$newsortfield = 'dm';
+			$sqlNewSortField = $sortfield; // @phan-suppress-current-line SqlInjection
+			if ($sqlNewSortField == 's.nom, s.rowid') {
+				$sqlNewSortField = 'dm';
 			}
-			if ($newsortfield == 'amount_ht') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ht') {
+				$sqlNewSortField = 'amount';
 			}
-			if ($newsortfield == 'amount_ttc') {
-				$newsortfield = 'amount';
+			if ($sqlNewSortField == 'amount_ttc') {
+				$sqlNewSortField = 'amount';
 			}
-			$sql .= $db->order($newsortfield, $sortorder);
+			$sql .= $db->order($sqlNewSortField, $sortorder);
 
 			dol_syslog("get vat really received back", LOG_DEBUG);
 			$result = $db->query($sql);
@@ -1522,6 +1546,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 $action = "balanceclient";
 $object = array(&$total_ht, &$total_ttc);
+$parameters = array();
 $parameters["mode"] = $modecompta;
 $parameters["date_start"] = $date_start;
 $parameters["date_end"] = $date_end;

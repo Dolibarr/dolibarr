@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentjobposition.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "other"));
 
@@ -38,7 +47,7 @@ $langs->loadLangs(array("recruitment", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
@@ -97,7 +106,7 @@ $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruit
  *  Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -152,11 +161,13 @@ if ($object->id > 0) {
 	*/
 	// Project
 	if (isModEnabled('project')) {
+		require_once DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php";
+		$formproject = new FormProjets($db);
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -164,11 +175,11 @@ if ($object->id > 0) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {

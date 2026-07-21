@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +26,12 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function eventorganizationAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('actioncomm');
 	$extrafields->fetch_name_optionals_label('eventorganization_conferenceorboothattendee');
 
@@ -62,6 +62,11 @@ function eventorganizationAdminPrepareHead()
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'conferenceorboothattendee_extrafields';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_public.php';
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'public';
 	$h++;
 
 	// Show more tabs from modules

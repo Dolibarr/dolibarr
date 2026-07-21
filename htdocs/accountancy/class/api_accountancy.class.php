@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2023   Lionel Vessiller		<lvessiller@open-dsi.fr>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
+ * Copyright (C) 2023		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ class Accountancy extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array $FIELDS Mandatory fields, checked when create and update object
+	 * @var string[] $FIELDS Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array();
 
@@ -40,7 +41,7 @@ class Accountancy extends DolibarrApi
 	public $bookkeeping;
 
 	/**
-	 * @var AccountancyExport $accountancy_export {@type AccountancyExport}
+	 * @var AccountancyExport $accountancyexport {@type AccountancyExport}
 	 */
 	public $accountancyexport;
 
@@ -77,7 +78,7 @@ class Accountancy extends DolibarrApi
 	 * @param		int			$alreadyexport			[=0] by default export data only if it's not yet exported or 1 already exported (always export data even if 'date_export" is set)
 	 * @param		int			$notnotifiedasexport	[=0] by default notified as exported or 1 not notified as exported (when the export is done, notified or not the column 'date_export')
 	 *
-	 * @return	string
+	 * @return	array{modulepart:string,relative_path:string,filename:string,mimetype:string}	Generated file metadata
 	 *
 	 * @url		GET exportdata
 	 *
@@ -137,7 +138,7 @@ class Accountancy extends DolibarrApi
 		// set filter for each period available
 		$filter = array();
 		$doc_date_start = null;
-		$doc_date_end= null;
+		$doc_date_end = null;
 		$now = dol_now();
 		$now_arr = dol_getdate($now);
 		$now_month = $now_arr['mon'];
@@ -173,9 +174,9 @@ class Accountancy extends DolibarrApi
 			$prev_month_date_list = array();
 			$prev_month_date_list[] = dol_get_prev_month($now_month, $now_year); // get previous month for index = 0
 			for ($i = 1; $i < $nb_prev_month; $i++) {
-				$prev_month_date_list[] = dol_get_prev_month($prev_month_date_list[$i-1]['month'], $prev_month_date_list[$i-1]['year']); // get i+1 previous month for index=i
+				$prev_month_date_list[] = dol_get_prev_month($prev_month_date_list[$i - 1]['month'], $prev_month_date_list[$i - 1]['year']); // get i+1 previous month for index=i
 			}
-			$doc_date_start = dol_mktime(0, 0, 0, $prev_month_date_list[$nb_prev_month-1]['month'], 1, $prev_month_date_list[$nb_prev_month-1]['year']); // first day of n previous month for index=n-1
+			$doc_date_start = dol_mktime(0, 0, 0, $prev_month_date_list[$nb_prev_month - 1]['month'], 1, $prev_month_date_list[$nb_prev_month - 1]['year']); // first day of n previous month for index=n-1
 			$doc_date_end = dol_get_last_day($prev_month_date_list[0]['year'], $prev_month_date_list[0]['month']); // last day of previous month for index = 0
 		} elseif ($period == 'currentyear' || $period == 'lastyear') {
 			$period_year = $now_year;
@@ -270,7 +271,24 @@ class Accountancy extends DolibarrApi
 				throw new RestException(500, 'Error accountancy export : '.implode(',', $accountancyexport->errors));
 			} else {
 				$this->db->commit();
-				exit();
+
+				$filedata = $accountancyexport->generatedfiledata;
+				if (empty($filedata['downloadFilePath']) || empty($filedata['downloadFileFullName'])) {
+					throw new RestException(500, 'Accounting export generated no downloadable file');
+				}
+
+				$outputdir = !empty($conf->accounting->multidir_output[$conf->entity]) ? $conf->accounting->multidir_output[$conf->entity] : $conf->accounting->dir_output;
+				$outputdir = rtrim($outputdir, '/').'/';
+				if (strpos($filedata['downloadFilePath'], $outputdir) !== 0) {
+					throw new RestException(500, 'Accounting export generated a file outside the accounting output directory');
+				}
+
+				return array(
+					'modulepart' => 'export_compta',
+					'relative_path' => substr($filedata['downloadFilePath'], strlen($outputdir)),
+					'filename' => basename($filedata['downloadFileFullName']),
+					'mimetype' => $filedata['downloadFileMimeType'],
+				);
 			}
 		}
 	}

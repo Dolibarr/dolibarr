@@ -5,8 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2022	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@
  * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
  */
 
-define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
+define('MAIN_SECURITY_FORCECSP', "default-src 'none'; form-action 'none'; frame-ancestors 'self'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -75,8 +76,21 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	}
 }
 
+// For MultiCompany modules, if an entity is set in query parameters (required to point an object because a ref can exists
+// in 2 entities), then if user is not already into a session, the user must be loaded on this entity, so permission will
+// be the one of this entity.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+if ($entity > 0) {
+	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
+	// It has no effect if already logged.
+	define("DOLENTITY", $entity);
+}
+
 /**
  * Header empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
@@ -86,14 +100,15 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
  * @param	string			$target				Target to use on links
  * @param 	int    			$disablejs			More content into html header
  * @param 	int    			$disablehead		More content into html header
- * @param 	array|string  	$arrayofjs			Array of complementary js files
- * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
  * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
  * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
+ * @phan-suppress PhanRedefineFunction
  */
 function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
@@ -101,14 +116,27 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
 /**
  * Footer empty
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @ignore
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
+ * @phan-suppress PhanRedefineFunction
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 }
 
 require 'main.inc.php'; // Load $user and permissions
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
@@ -118,7 +146,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity', $conf->entity);
+$entity = ($entity > 0 ? $entity : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -157,39 +185,64 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
  */
 
 // If we have a hash public (hashp), we guess the original_file.
-$ecmfile='';
+$ecmfile = '';
 if (!empty($hashp)) {
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-	$ecmfile = new EcmFiles($db);
-	$result = $ecmfile->fetch(0, '', '', '', $hashp);
-	if ($result > 0) {
-		$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
-		// filepath can be 'users/X' or 'X/propale/PR11111'
-		if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
-			$tmp = explode('/', $tmp[1], 2);
-		}
-		$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
-
-		if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
-			if ($moduleparttocheck == $modulepart) {
-				// We remove first level of directory
-				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-				//var_dump($original_file); exit;
-			} else {
-				httponly_accessforbidden('Bad link. File is from another module part.', 403);
+	if (GETPOST('type', 'alpha') == 'link') {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+		$link = new Link($db);
+		$result = $link->fetch(0, $hashp);
+		if ($result > 0 && !empty($link->url)) {
+			if (preg_match('/^(http|dav)/', $link->url)) {
+				header('Location: '.$link->url);
+				exit;
 			}
 		} else {
-			$modulepart = $moduleparttocheck;
-			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-		}
-		$entity = $ecmfile->entity;
-		if ($entity != $conf->entity) {
-			$conf->entity = $entity;
-			$conf->setValues($db);
+			$langs->load("errors");
+			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
 		}
 	} else {
-		$langs->load("errors");
-		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+		$ecmfile = new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', '', '', $hashp);
+		if ($result > 0) {
+			$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
+			// filepath can be 'users/X' or 'X/propale/PR11111'
+			if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+				$tmp = explode('/', $tmp[1], 2);
+			}
+			$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
+
+			if ($modulepart) {    // Not required, so often not defined, for link using public hashp parameter.
+				if ($moduleparttocheck == $modulepart) {
+					// We remove first level of directory
+					$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+					//var_dump($original_file); exit;
+				} else {
+					httponly_accessforbidden('Bad link. File is from another module part.', 403);
+				}
+			} else {
+				$modulepart = $moduleparttocheck;
+				$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+			}
+
+			$entity = $ecmfile->entity;
+			if (isModEnabled('multicompany') && !empty($ecmfile->src_object_type) && $ecmfile->src_object_id > 0) {
+				$object = fetchObjectByElement($ecmfile->src_object_id, $ecmfile->src_object_type);
+				if (is_object($object) && $object->id > 0) {
+					$entity = $object->entity;
+				}
+			}
+
+			if ($entity != $conf->entity) {
+				$conf->entity = $entity;
+				$conf->setValues($db);
+				// Multicompany: Here we are switching entity and later we will check the requested object is in this entity but may be that user is not allowed to log/see entity
+				// but we don't mind, we are using the public hash to get file.
+			}
+		} else {
+			$langs->load("errors");
+			httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		}
 	}
 }
 
@@ -199,7 +252,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
 }
 if (isset($_GET["attachment"])) {
-	$attachment = GETPOST("attachment", 'alpha') ?true:false;
+	$attachment = GETPOST("attachment", 'alpha') ? true : false;
 }
 if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;
@@ -224,18 +277,17 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
+$check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, '', 'read');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
+//var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -255,6 +307,16 @@ if (!empty($hashp)) {
 						break;
 					}
 					$i++;
+				}
+			}
+		}
+	} elseif ($modulepart == 'ticket' && !getDolGlobalString('TICKET_EMAIL_MUST_EXISTS')) {
+		if ($sqlprotectagainstexternals) {
+			$resql = $db->query($sqlprotectagainstexternals);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				if ($num > 0) {
+					$accessallowed = 1;
 				}
 			}
 		}
@@ -288,7 +350,7 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
+	print $langs->trans("ErrorFileDoesNotExists") . ' : ' . dol_escape_htmltag($original_file);
 	exit;
 }
 
@@ -306,6 +368,77 @@ if ($reshook < 0) {
 	exit;
 }
 
+// Set this for test
+//$type = 'text/html'; $attachment = -1;
+
+
+// If we show an invoice, we test if we must regenerate the PDF
+if ($modulepart == 'facture') {
+	$refname = basename(dirname($original_file)."/");
+	if ($refname == 'thumbs' || $refname == 'temp') {
+		// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+		$refname = basename(dirname(dirname($original_file))."/");
+	}
+
+	$invoice = fetchObjectByElement(0, $modulepart, $refname);
+
+	if ($original_file == preg_replace('/facture\//', '', $invoice->last_main_doc)) {
+		// We are on the download or print of the main document
+		if ($invoice instanceOf Facture && $invoice->status > Facture::STATUS_DRAFT) {
+			$action = 'DOC_DOWNLOAD';
+			if (GETPOSTISSET('attachement') || GETPOST('preview')) {
+				$action = 'DOC_PREVIEW';
+			}
+
+			dol_syslog("Print for action=".$action.". Current counter of this non draft invoice is already ".$invoice->id.", so file was already printed, so we regenerate the PDF to add mention DUPLICATA", LOG_DEBUG);
+
+			// $object->pos_print_counter is current value. We increase it here.
+			if ($invoice->status == Facture::STATUS_CLOSED) {
+				// Increase counter by 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET pos_print_counter = pos_print_counter + 1";
+				$sql .= " WHERE rowid = ".((int) $invoice->id);
+				$db->query($sql);
+
+				$invoice->pos_print_counter += 1;
+				//$invoice->update($user, 1);	// disabled update, we already did a direct sql update before. We disable trigger here because we already call the trigger $action = DOC_PREVIEW or DOC_DOWNLOAD just after.
+			}
+
+			// When we reach the second print, we must regenerate the document to have the mention duplicata on PDF)
+			// No need if we are at print 3, 4 or more. The PDF was regenerated when counter was 2,
+			if ($invoice->pos_print_counter == 2) {
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(GETPOST('lang'));
+				$outputlangs->loadLangs(array("admin", "blockedlog"));
+
+				$hidedetails = 0;
+				$hidedesc = 0;
+				$hideref = 0;
+				$moreparams = '';
+				$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0); // @phpstan-ignore-line as variable $hidedetails is forced
+				$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0); // @phpstan-ignore-line as variable $hidedesc is forced
+				$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0); // @phpstan-ignore-line as variable $hideref is forced
+				$moreparams = isset($moreparams) ? $moreparams : null; // @phpstan-ignore-line as variable $moreparams is forced
+
+				$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+				if ($result < 0) {
+					dol_syslog("Failed to regenerate PDF", LOG_WARNING);
+				}
+			}
+
+			// Call trigger
+			$result = $invoice->call_trigger($action, $user);
+			if ($result < 0) {
+				top_httphead();
+
+				http_response_code(500);
+				print 'Error in trigger: '.$invoice->errorsToString();
+				exit;
+			}
+		}
+	}
+}
+
+
 
 // Permissions are ok and file found, so we return it
 top_httphead($type);
@@ -316,9 +449,9 @@ if ($encoding) {
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
 
-if ($attachment) {
+if ($attachment > 0) {
 	header('Content-Disposition: attachment; filename="'.$filename.'"');
-} else {
+} elseif (empty($attachment)) {
 	header('Content-Disposition: inline; filename="'.$filename.'"');
 }
 // Ajout directives pour resoudre bug IE

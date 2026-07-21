@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+# Copyright (C) 2010-2026	Laurent Destailleur 	<eldy@users.sourceforge.net>
+
 #------------------------------------------------------
 # Script to extract a database with demo values.
 # Note: "dialog" tool need to be available if no parameter provided.
@@ -11,28 +13,37 @@
 #------------------------------------------------------
 # shellcheck disable=2012,2006,2034,2046,2064,2086,2155,2166,2186,2172,2268
 
-export mydir=`echo "$0" | sed -e 's/savedemo.sh//'`;
-if [ "x$mydir" = "x" ]
+export mydir
+mydir=${0//savedemo.sh/}
+if [ "$mydir" = "" ] || [ "$mydir" = "./" ]
 then
 	export mydir="."
 fi
-export id=`id -u`;
+export id
+id=$(id -u)
 
 
 # ----------------------------- check if root
-if [ "x$id" != "x0" -a "x$id" != "x1001" ]
+if [ "$id" != "0" ] && [ "$id" != "1001" ]
 then
-	echo "Script must be ran as root"
+	echo "Script must be executed as root"
 	exit
 fi
 
 
 # ----------------------------- command line params
 dumpfile=$1;
-base=$2;
-port=$3;
+base="${2:-dolibarrdemo}"
+port="${3:-3306}"
 admin=$4;
 passwd=$5;
+
+
+# ----------------------------- check if dialog available
+command -v dialog >/dev/null 2>&1 || {
+	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
+	exit
+}
 
 
 # ----------------------------- if no params on command line
@@ -47,7 +58,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-		--inputbox "Output dump file :" 16 55 $dumpfile 2> $fichtemp
+		--inputbox "Output dump file :" 16 55 "$dumpfile" 2> $fichtemp
 	valret=$?
 	case $valret in
 		0)
@@ -64,7 +75,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-		--inputbox "Mysql database name :" 16 55 dolibarrdemo 2> $fichtemp
+		--inputbox "Mysql database name :" 16 55 "$base" 2> $fichtemp
 	valret=$?
 	case $valret in
 		0)
@@ -80,7 +91,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-		--inputbox "Mysql port (ex: 3306):" 16 55 3306 2> $fichtemp
+		--inputbox "Mysql port (ex: 3306):" 16 55 "$port" 2> $fichtemp
 
 	valret=$?
 
@@ -165,6 +176,7 @@ fi
 if [ "x$passwd" != "x" ]
 then
 	export passwd="-p$passwd"
+	export passwdshown="-p*****"
 fi
 export list="
 --ignore-table=$base.llx_abonne
@@ -218,6 +230,8 @@ export list="
 --ignore-table=$base.llx_agefodd_stagiaire_extrafields
 --ignore-table=$base.llx_agefodd_stagiaire_type
 --ignore-table=$base.llx_agefodd_training_admlevel
+--ignore-table=$base.llx_alumni_survey
+--ignore-table=$base.llx_alumni_survey_extrafields
 --ignore-table=$base.llx_askpricesupplier
 --ignore-table=$base.llx_askpricesupplier_extrafields
 --ignore-table=$base.llx_askpricesupplierdet
@@ -247,6 +261,7 @@ export list="
 --ignore-table=$base.llx_c_ticketsup_type
 --ignore-table=$base.llx_cabinetmed_c_banques
 --ignore-table=$base.llx_cabinetmed_c_examconclusion
+--ignore-table=$base.llx_cabinetmed_cons
 --ignore-table=$base.llx_cabinetmed_cons_extrafields
 --ignore-table=$base.llx_cabinetmed_diaglec
 --ignore-table=$base.llx_cabinetmed_examaut
@@ -260,6 +275,7 @@ export list="
 --ignore-table=$base.llx_congespayes_events
 --ignore-table=$base.llx_congespayes_logs
 --ignore-table=$base.llx_congespayes_users
+--ignore-table=$base.llx_deplacement
 --ignore-table=$base.llx_dolicloud_customers
 --ignore-table=$base.llx_dolicloud_stats
 --ignore-table=$base.llx_dolicloud_emailstemplates
@@ -326,6 +342,7 @@ export list="
 --ignore-table=$base.llx_sellyoursaas_blacklistip
 --ignore-table=$base.llx_sellyoursaas_blacklistmail
 --ignore-table=$base.llx_sellyoursaas_blacklistto
+--ignore-table=$base.llx_sellyoursaas_clean_dbnotinlist
 --ignore-table=$base.llx_sellyoursaas_deploymentserver
 --ignore-table=$base.llx_sellyoursaas_stats
 --ignore-table=$base.llx_sellyoursaas_whitelistip
@@ -335,20 +352,24 @@ export list="
 --ignore-table=$base.llx_ultimatepdf
 --ignore-table=$base.llx_update_modules
 --ignore-table=$base.llx_ventilation_achat
+--ignore-table=$base.llx_verifactudolibarr_add_tpls
+--ignore-table=$base.llx_verifactudolibarr_facture_log
+--ignore-table=$base.llx_verifactudolibarr_messages
+--ignore-table=$base.llx_verifactudolibarr_tax_type
 --ignore-table=$base.tmp_llx_accouting_account
 --ignore-table=$base.tmp_llx_product_batch
 --ignore-table=$base.tmp_llx_product_batch2
 --ignore-table=$base.tmp_tmp
 --ignore-table=$base.tmp_user
 "
-echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
+echo "mysqldump -P$port -u$admin $passwdshown $list $base > $mydir/$dumpfile"
 mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile
 export res=$?
 
 if [ "x$res" = "x0" ]
 then
-	echo "Success, file successfully loaded."
+	echo "Success, file successfully dumped."
 else
-	echo "Error, load failed."
+	echo "Error, dump failed."
 fi
 echo

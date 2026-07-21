@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,18 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
@@ -56,7 +65,7 @@ if (!$sortfield) {
 }
 
 // Security check
-//$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+//restrictedArea($user, 'agenda', 0, '', 'myactions');
 if (!$user->hasRight("agenda", "allactions", "read")) {
 	accessforbidden();
 }
@@ -66,11 +75,11 @@ if (!$user->hasRight("agenda", "allactions", "read")) {
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $user->hasRight("agenda", "allactions", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
 
 	$cat = new pdf_standard_actions($db, $month, $year);
-	$result = $cat->write_file(0, $langs);
+	$result = $cat->write_file(null, $langs);
 	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
@@ -86,22 +95,19 @@ $formfile = new FormFile($db);
 llxHeader();
 
 $sql = "SELECT count(*) as cc,";
-$sql .= " date_format(a.datep, '%m/%Y') as df,";
-$sql .= " date_format(a.datep, '%m') as month,";
-$sql .= " date_format(a.datep, '%Y') as year";
-$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a,";
-$sql .= " ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE a.fk_user_author = u.rowid";
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+$sql .= " date_format(a.datep, '%Y-%m') as yearmonth";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+//$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON a.fk_user_author = u.rowid";
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 //$sql.= " AND percent = 100";
-$sql .= " GROUP BY year, month, df";
-$sql .= " ORDER BY year DESC, month DESC, df DESC";
+$sql .= " GROUP BY yearmonth";
+$sql .= " ORDER BY yearmonth DESC";
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -120,7 +126,7 @@ if ($resql) {
 		$param .= '&limit='.$limit;
 	}
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -142,8 +148,8 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Period").'</td>';
 	print '<td class="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td class="center">'.$langs->trans("Action").'</td>';
-	print '<td>'.$langs->trans("PDF").'</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '<td class="center">'.$langs->trans("Date").'</td>';
 	print '<td class="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
@@ -152,20 +158,27 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj) {
+			$reg = array();
+			preg_match('/(\d+)\-(\d+)/', $obj->yearmonth, $reg);
+			$year = (int) $reg[1];
+			$month = (int) $reg[2];
+
 			print '<tr class="oddeven">';
 
 			// Date
-			print "<td>".$obj->df."</td>\n";
+			print "<td>".sprintf("%04d", $year)."-".sprintf("%02d", $month)."</td>\n";
 
 			// Nb of events
-			print '<td class="center">'.$obj->cc.'</td>';
+			print '<td class="center">'.($obj->cc ? (int) $obj->cc : '').'</td>';
 
 			// Button to build doc
-			print '<td class="center">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+			print '<td class="right">';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.$month.'&year='.$year.'">';
+			print img_picto($langs->trans('BuildDoc'), 'filenew.png');
+			print '</a>';
 			print '</td>';
 
-			$name = "actions-".$obj->month."-".$obj->year.".pdf";
+			$name = "actions-".sprintf("%04d", $year)."-".sprintf("%02d", $month).".pdf";
 			$relativepath = $name;
 			$file = $conf->agenda->dir_temp."/".$name;
 			$modulepart = 'actionsreport';
@@ -176,13 +189,12 @@ if ($resql) {
 
 			if (file_exists($file)) {
 				print '<td class="tdoverflowmax300">';
-				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
 				$filearray = array('name' => basename($file), 'fullname' => $file, 'type' => 'file');
 				$out = '';
 
 				// Show file name with link to download
-				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
 				$out .= ' target="_blank" rel="noopener noreferrer">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);

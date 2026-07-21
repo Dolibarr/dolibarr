@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +23,14 @@
  *  \brief      Tab of events on Invoices
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -35,7 +45,7 @@ $langs->loadLangs(array("bills", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -69,8 +79,8 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Facture($db);
-$extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->facture->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
+
+$diroutputmassaction = $conf->invoice->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('invoiceagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -78,7 +88,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->facture->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
+	$upload_dir = $conf->invoice->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
 $permissiontoread = $user->hasRight("facture", "lire");
@@ -151,12 +161,12 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -190,7 +200,7 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.urlencode((string) ($object->element.(property_exists($object, 'module') ? '@'.$object->module : ''))).'&originid='.urlencode((string) ($object->id));
+	$out = '&origin='.urlencode((string) ($object->element.(!empty($object->module) ? '@'.$object->module : ''))).'&originid='.urlencode((string) ($object->id));
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
 	$permok = $user->hasRight('paymentbagendaybanktransfer', 'myactions', 'create');
@@ -207,10 +217,10 @@ if ($object->id > 0) {
 
 	$morehtmlright = '';
 
-	//$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-	//$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-	//$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$messagingUrl = DOL_URL_ROOT.'/compta/facture/messaging.php?id='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
@@ -237,8 +247,14 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_facture_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print_barre_liste($langs->trans("ActionsOnBill").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		//print_barre_liste($langs->trans("ActionsOnBill").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 		//print_barre_liste($langs->trans("ActionsOnBill"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		$titlelist = $langs->trans("ActionsOnBill").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+		if (!empty($conf->dol_optimize_smallscreen)) {
+			$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+		}
+
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();
@@ -246,7 +262,7 @@ if ($object->id > 0) {
 		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
+		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
 	}
 }
 

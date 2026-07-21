@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,13 @@ class mod_project_simple extends ModeleNumRefProjects
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PJ';
 
 	/**
@@ -47,7 +50,7 @@ class mod_project_simple extends ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */
@@ -98,10 +101,10 @@ class mod_project_simple extends ModeleNumRefProjects
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -123,9 +126,9 @@ class mod_project_simple extends ModeleNumRefProjects
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe	$objsoc		Object third party
-	 *  @param   Project	$project	Object project
-	 *  @return	string|-1				Value if OK, -1 if KO
+	 *  @param   ?Societe		$objsoc		Object third party
+	 *  @param   Project		$project	Object project
+	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
@@ -133,7 +136,7 @@ class mod_project_simple extends ModeleNumRefProjects
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('projectnumber', 1, $project).")";

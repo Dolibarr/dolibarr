@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Oppsett av Arbeidsflyt-modulen 
+WorkflowSetup=Oppsett av Arbeidsflyt-modulen
 WorkflowDesc=Denne modulen er laget for å sette opp automatiske hendelser i programmet. Som standard er arbeidsflyt-modulen åpen (du kan gjøre ting i de rekkefølgen du ønsker). Du kan aktivere de automatiske hendelsene du vil.
 ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt-modifikasjoner tilgjengelig med aktiverte moduler.
 # Autocreate

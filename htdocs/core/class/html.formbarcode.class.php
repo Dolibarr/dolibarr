@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *      \file       htdocs/core/class/html.formbarcode.class.php
- *      \brief      Fichier de la class des functions predefinie de composants html
+ *      \brief      File for class to manage barcode HTML
  */
 
 
@@ -54,8 +55,8 @@ class FormBarCode
 	/**
 	 *	Return HTML select with list of bar code generators
 	 *
-	 *  @param	int		$selected       Id code pre-selected
-	 *  @param 	array	$barcodelist	Array of barcodes generators
+	 *  @param	int		$selected       Id code preselected
+	 *  @param 	array<string,string>	$barcodelist	Array of barcodes generators
 	 *  @param  int		$code_id        Id du code barre
 	 *  @param  string	$idForm			Id of html form, ex id="idform"
 	 * 	@return	string					HTML select string
@@ -85,6 +86,7 @@ class FormBarCode
 			$disable = 'disabled';
 		}
 
+		$select_encoder = '';
 		if (!empty($conf->use_javascript_ajax)) {
 			$select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
 			$select_encoder .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -112,9 +114,9 @@ class FormBarCode
 	/**
 	 *  Print form to select type of barcode
 	 *
-	 *  @param  int     $selected          Id code pre-selected
+	 *  @param  int     $selected          Id code preselected
 	 *  @param  string  $htmlname          Name of HTML select field
-	 *  @param  int     $useempty          Affiche valeur vide dans liste
+	 *  @param  int     $useempty          Display empty value in list
 	 *  @return void
 	 *  @deprecated
 	 */
@@ -127,7 +129,7 @@ class FormBarCode
 	/**
 	 *  Return html form to select type of barcode
 	 *
-	 *  @param  int     $selected          Id code pre-selected
+	 *  @param  int     $selected          Id code preselected
 	 *  @param  string  $htmlname          Name of HTML select field
 	 *  @param  int     $useempty          Display empty value in select
 	 *  @return string
@@ -141,7 +143,7 @@ class FormBarCode
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY code";
 
 		$result = $this->db->query($sql);
@@ -183,7 +185,7 @@ class FormBarCode
 	 *
 	 *  @param  string		$page        	Page
 	 *  @param  int			$selected    	Id condition preselected
-	 *  @param  string		$htmlname    	Nom du formulaire select
+	 *  @param  string		$htmlname    	Name of the select form
 	 *  @return	void
 	 *  @deprecated
 	 */
@@ -198,7 +200,7 @@ class FormBarCode
 	 *
 	 *  @param  string      $page           Page
 	 *  @param  int         $selected       Id condition preselected
-	 *  @param  string      $htmlname       Nom du formulaire select
+	 *  @param  string      $htmlname       Name of the select form
 	 *  @return string
 	 */
 	public function formBarcodeType($page, $selected = 0, $htmlname = 'barcodetype_id')

@@ -4,12 +4,12 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026 Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -74,19 +82,31 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('bankline'));
+
 $result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
 if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 
-$hookmanager->initHooks(array('bankline'));
 $object = new AccountLine($db);
-$extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$object->id = $id;
+	}
+}
+
 
 /*
  * Actions
  */
+
+$error = 0;
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -118,7 +138,7 @@ if ($user->hasRight('banque', 'consolidate') && $action == 'donext') {
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('banque', 'modifier')) {
 	$cat1 = GETPOSTINT("cat1");
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -128,14 +148,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$error = 0;
-
-	$result = $object->fetch($rowid);
-	if ($result <= 0) {
-		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
-		$object->id = $rowid;
-	}
-
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
 
@@ -159,13 +171,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$db->begin();
 
 		$amount = price2num(GETPOST('amount'));
-		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
-		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$dateop = dol_mktime(12, 0, 0, GETPOSTINT("dateomonth"), GETPOSTINT("dateoday"), GETPOSTINT("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
 		if (GETPOSTISSET('value')) {
-			$sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+			$type = GETPOST('value');
+			$sql .= " fk_type='".$db->escape(empty($type) && $object->fk_type == 'SOLD' ? 'SOLD' : $type)."',";
 		}
 		if (GETPOSTISSET('num_chq')) {
 			$sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
@@ -201,14 +214,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);
@@ -246,7 +259,7 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 	if (!$error) {
 		$db->begin();
-		$object->fetch($rowid);
+
 		$oldNum_rel = $object->num_releve;
 		$id = $object->fk_account;
 
@@ -268,6 +281,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
 
 		// We must not rename the directory of the bank receipt when we change 1 line of bank receipt. Other lines may share the same old ref.
 		// Renaming can be done when we rename globally a bank receipt but not when changing 1 line from one receipt into another one.
+		$filepath = '';
+		$oldfilepath = '';
 		/*
 		if ($result) {
 			if ($oldNum_rel) {
@@ -308,6 +323,8 @@ if ($user->hasRight('banque', 'consolidate') && ($action == 'num_releve' || $act
  * View
  */
 
+$object->fetch($rowid);
+
 $form = new Form($db);
 
 llxHeader('', $langs->trans("BankTransaction"));
@@ -338,7 +355,7 @@ if ($result) {
 	if ($db->num_rows($result)) {
 		$objp = $db->fetch_object($result);
 
-		$total = $total + $objp->amount;
+		$total += $objp->amount;
 
 		$acct = new Account($db);
 		$acct->fetch($objp->fk_account);
@@ -447,13 +464,13 @@ if ($result) {
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
+					print img_object($langs->trans('SalaryPayment'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('LoanPayment'), 'payment').' ';
-					print $langs->trans("PaymentLoan");
+					print $langs->trans("LoanPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
@@ -481,10 +498,17 @@ if ($result) {
 					print $langs->trans("User");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_various') {
+					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+					$paymenttmp = new PaymentVarious($db);
+					$paymenttmp->fetch($links[$key]['url_id']);
+					$paymenttmp->ref = $langs->trans("VariousPayment").' '.$paymenttmp->ref;
+					/*
 					print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('VariousPayment'), 'payment').' ';
 					print $langs->trans("VariousPayment");
 					print '</a>';
+					*/
+					print $paymenttmp->getNomUrl(1);
 				} else {
 					// Example type = 'direct-debit', or 'credit-transfer', ....
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
@@ -627,18 +651,7 @@ if ($result) {
 
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
-
-			$arrayselected = array();
-
-			$c = new Categorie($db);
-			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
+			print $form->selectCategories(Categorie::TYPE_BANK_LINE, 'custcats', $object);
 			print "</td></tr>";
 		}
 
@@ -662,10 +675,10 @@ if ($result) {
 					current.click(function()
 					{
 						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						console.log("We click on ajaxforbankoperationchange url="+url);
 						$.get(url, function(data)
 						{
-							console.log(url)
-							console.log(data)
+							console.log(data);
 							current.parent().prev().replaceWith(data);
 						});
 						return false;

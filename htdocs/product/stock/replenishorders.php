@@ -2,8 +2,9 @@
 /*
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/lib/replenishment.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
@@ -130,7 +139,7 @@ if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
-$sql .= ' AND cf.entity = '.$conf->entity;
+$sql .= ' AND cf.entity = '.((int) $conf->entity);
 if (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
 	$sql .= ' AND cf.fk_statut < 3';
 } elseif (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {

@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ class modHoliday extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user; // Required by some include code
+		global $conf; // Required by some include code
 
 		$this->db = $db;
 
@@ -85,36 +86,33 @@ class modHoliday extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
 		// Constants
-		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
-		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r = 0;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_holiday_madonna";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des congés';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "celebrate";
-		$this->const[$r][3] = 'Name of PDF model of holiday';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/holiday";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		$this->const = [
+			[
+				"HOLIDAY_ADDON",
+				"chaine",
+				"mod_holiday_madonna",
+				'Nom du gestionnaire de numerotation des congés',
+				0,
+			],
+			[
+				"HOLIDAY_ADDON_PDF",
+				"chaine",
+				"celebrate",
+				'Name of PDF model of holiday',
+				0,
+			],
+			[
+				"HOLIDAY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/holiday",
+				"",
+				0,
+			],
+		];
 
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
@@ -149,6 +147,21 @@ class modHoliday extends DolibarrModules
 				'priority' => 50,
 				'status' => 1,
 				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
+			),
+			1 => array(
+				'label' => 'SendPreviousMonthHRInformations:holiday',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'sendPreviousMonthHRInformations',
+				'parameters' => 'emailaddress, HolidayHrInformationsPreviousMonth',
+				'comment' => 'Send HR information to the defined email address in first parameter. Second parameter must be the email template code (can be id or label of emailtemplate to send)',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24 * 31,
+				'priority' => 50,
+				'status' => 0,
+				'test' => 'isModEnabled("holiday")',
 				'datestart' => $datestart
 			)
 		);
@@ -225,7 +238,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "LeaveId", 'd.fk_type' => 'TypeOfLeaveId', 't.code' => 'TypeOfLeaveCode', 't.label' => 'TypeOfLeaveLabel', 'd.fk_user' => 'UserID',
 			'd.date_debut' => 'DateStart', 'd.date_fin' => 'DateEnd', 'd.halfday' => 'HalfDay', 'none.num_open_days' => 'NbUseDaysCP',
 			'd.date_valid' => 'DateApprove', 'd.fk_validator' => "UserForApprovalID",
-			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login",
+			'u.lastname' => 'Lastname', 'u.firstname' => 'Firstname', 'u.login' => "Login", 'u.fk_country' => "CountyID",
 			'ua.lastname' => "UserForApprovalLastname", 'ua.firstname' => "UserForApprovalFirstname",
 			'ua.login' => "UserForApprovalLogin", 'd.description' => 'Description', 'd.statut' => 'Status'
 		);
@@ -233,7 +246,7 @@ class modHoliday extends DolibarrModules
 			'd.rowid' => "Numeric", 't.code' => 'Text', 't.label' => 'Text', 'd.fk_user' => 'Numeric',
 			'd.date_debut' => 'Date', 'd.date_fin' => 'Date', 'none.num_open_days' => 'NumericCompute',
 			'd.date_valid' => 'Date', 'd.fk_validator' => "Numeric",
-			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text",
+			'u.lastname' => 'Text', 'u.firstname' => 'Text', 'u.login' => "Text", 'u.fk_country' => 'Numeric',
 			'ua.lastname' => "Text", 'ua.firstname' => "Text",
 			'ua.login' => "Text", 'd.description' => 'Text', 'd.statut' => 'Numeric'
 		);
@@ -242,7 +255,8 @@ class modHoliday extends DolibarrModules
 		);
 		//$this->export_alias_array[$r] = array('d.rowid'=>"idholiday");
 		$this->export_special_array[$r] = array('none.num_open_days' => 'getNumOpenDays');
-		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('none.num_open_days' => 'u.fk_country'); // To force addition in GUI of u.fk_country when none.num_open_days is included in exported fields
+		//$this->export_dependencies_array[$r] = array();
 
 		$keyforselect = 'holiday';
 		$keyforelement = 'holiday';
@@ -256,7 +270,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type AND t.entity IN (0, '.getEntity('c_holiday_types').')';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';
@@ -289,6 +303,38 @@ class modHoliday extends DolibarrModules
 		// $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $r++;
+
+		// Imports
+		//--------
+		$r = 0;
+
+		// Import list of leave request
+
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeCP"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday');
+		$this->import_fields_array[$r] = array(
+			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
+			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
+			'd.date_create' => 'DateCreation*'
+		);
+
+		// Import of leave balance
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "ListeLB"; // Translation key
+		$this->import_icon[$r] = 'holiday';
+		$this->import_tables_array[$r] = array('d' => MAIN_DB_PREFIX.'holiday_users');
+		$this->import_fields_array[$r] = array(
+			'd.fk_user' => "Employee*", 'd.nb_holiday' => "LeaveBalance*", 'd.fk_type' => "LeaveType*"
+		);
+
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 	}
 
 	/**
@@ -301,14 +347,12 @@ class modHoliday extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 
 		//ODT template
 		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
+		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
 		$dest=$dirodt.'/template_order.odt';
 
 		if (file_exists($src) && ! file_exists($dest))

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,8 @@
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @param	Object	$object         Holiday
- *  @return array           		head
+ *  @param	Holiday	$object         Holiday
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function holiday_prepare_head($object)
 {
@@ -35,7 +36,7 @@ function holiday_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Leave");
 	$head[$h][2] = 'card';
 	$h++;
@@ -43,10 +44,10 @@ function holiday_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->holiday->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'holiday');
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -56,7 +57,7 @@ function holiday_prepare_head($object)
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'add', 'core');
 
-	$head[$h][0] = DOL_URL_ROOT.'/holiday/info.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/holiday/info.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -76,19 +77,18 @@ function holiday_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information
  *
- *  @return array           		head
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function holiday_admin_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('holiday');
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/holiday.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/holiday.php');
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'holiday';
 	$h++;
@@ -99,7 +99,7 @@ function holiday_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/holiday_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/holiday_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['holiday']['count'];
 	if ($nbExtrafields > 0) {

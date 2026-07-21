@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ class PaymentExpenseReport extends CommonObject
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $this->fk_expensereport).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
@@ -338,17 +338,17 @@ class PaymentExpenseReport extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
-		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
+		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? ((int) $this->fk_expensereport) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " amount=".(isset($this->amount) ? ((float) $this->amount) : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? ((int) $this->fk_typepayment) : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null");
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? ((int) $this->fk_user_creat) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -557,6 +557,7 @@ class PaymentExpenseReport extends CommonObject
 
 			//Fix me field
 			$total = $this->amount;
+			$amount = 0;
 
 			if ($mode == 'payment_expensereport') {
 				$amount = $total;
@@ -565,11 +566,11 @@ class PaymentExpenseReport extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
+				(string) $this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$amount,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque
@@ -657,11 +658,11 @@ class PaymentExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlen			Longueur max libelle
-	 *  @return	string					Chaine avec URL
+	 *  @return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
@@ -742,11 +743,11 @@ class PaymentExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

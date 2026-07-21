@@ -1,10 +1,7 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Configuración del módulo ReceiptPrinter
 PrinterAdded=Se agregó la impresora %s
 TestSentToPrinter=Prueba enviada a la impresora %s
 ReceiptPrinter=Impresoras de recibos
-ReceiptPrinterDesc=Configuración de impresoras de recibos
-ReceiptPrinterProfileDesc=Descripción del perfil de la impresora de recibos
 ListPrinters=Lista de impresoras
 SetupReceiptTemplate=Configuración de plantilla
 CONNECTOR_DUMMY=Impresora ficticia
@@ -34,7 +31,7 @@ YearInvoice=Año de la factura
 DOL_VALUE_MONTH_LETTERS=Mes de la factura en letras
 DOL_VALUE_MONTH=Mes de la factura
 DOL_VALUE_DAY=Día de la factura
-DOL_VALUE_DAY_LETTERS=Inovice day en letras
+DOL_VALUE_DAY_LETTERS=Día de factura en letras
 DOL_LINE_FEED_REVERSE=Reversa de avance de línea
 DOL_PRINT_OBJECT_LINES=Líneas de factura
 DOL_VALUE_CUSTOMER_FIRSTNAME=Nombre del cliente

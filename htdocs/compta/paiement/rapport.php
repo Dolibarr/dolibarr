@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
+$fileToRemove = GETPOST('removefile', 'alpha');
 
 $socid = 0;
 if ($user->socid > 0) {
@@ -54,12 +65,14 @@ if (!$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
 
+$permissiontoread = ($user->hasRight('facture', 'lire') == 1);
+
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $permissiontoread) {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
@@ -71,14 +84,29 @@ if ($action == 'builddoc') {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs, GETPOSTINT("cday")) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
-		dol_print_error($db, $obj->error);
+		dol_print_error($db, $rap->error);
 	}
 
 	$year = GETPOSTINT("reyear");
+}
+
+// Delete file from disk
+if ($action == 'removedoc' && $permissiontoread && $fileToRemove) {
+	$fullpathfile = dol_sanitizePathName($dir.'/'.$fileToRemove);
+	$fileDirectory = dirname($fullpathfile);
+	if (dol_delete_file($fullpathfile)) {
+		// Delete empty directory after file deletion
+		if (empty(dol_dir_list($fileDirectory))) {
+			dol_delete_dir($fileDirectory);
+		}
+		setEventMessages($langs->trans("FileWasRemoved", $fileToRemove), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", $fileToRemove), null, 'errors');
+	}
 }
 
 
@@ -94,12 +122,15 @@ llxHeader();
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 print load_fiche_titre($titre, '', 'bill');
 
-// Formulaire de generation
+// Generation form
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
+$cday = GETPOST("cday") ? GETPOST("cday") : date("d", time());
 $cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
 $syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
+
+print $formother->selectDay($cday, 'cday', 1);
 
 print $formother->select_month($cmonth, 'remonth');
 
@@ -128,15 +159,17 @@ if ($year) {
 		print '<td>'.$langs->trans("Reporting").'</td>';
 		print '<td class="right">'.$langs->trans("Size").'</td>';
 		print '<td class="right">'.$langs->trans("Date").'</td>';
+		print '<td class="right"></td>';
 		print '</tr>';
 
-		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', 'DESC', 1));
+		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}(-[0-9]{2})?\.pdf$', '', 'name', SORT_DESC, 1));
 		foreach ($files as $f) {
 			$relativepath = $f['level1name'].'/'.$f['name'];
 			print '<tr class="oddeven">';
-			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$f['name'].'</a>'.$formfile->showPreview($f['name'], 'facture_paiement', $relativepath, 0).'</td>';
+			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_picto('', 'pdf').' '.$f['name'].'</a>'.$formfile->showPreview($f, 'facture_paiement', $relativepath, 0).'</td>';
 			print '<td class="right">'.dol_print_size($f['size']).'</td>';
 			print '<td class="right">'.dol_print_date($f['date'], "dayhour").'</td>';
+			print '<td class="right"><a href="rapport.php?removefile='.urlencode($relativepath).'&action=removedoc&token='.newToken().'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
 		print '</table>';

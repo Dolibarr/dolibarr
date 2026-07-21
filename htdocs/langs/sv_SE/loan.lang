@@ -16,14 +16,14 @@ LoanAccountancyInsuranceCode=Redovisningskonto försäkring
 LoanAccountancyInterestCode=Redovisningskonto ränta
 ConfirmDeleteLoan=Bekräfta radering av lån
 LoanDeleted=Lånet raderat
-ConfirmPayLoan=Bekräfta markeringen av detta lån 
+ConfirmPayLoan=Bekräfta markeringen av detta lån
 LoanPaid=Lånet betalt
 ListLoanAssociatedProject=Förteckning över lån i samband med projektet
 AddLoan=Skapa lån
 FinancialCommitment=Finansiellt engagemang
 InterestAmount=Ränta
 CapitalRemain=Kapital kvarstår
-TermPaidAllreadyPaid = Denna period är redan betald
+TermPaidAllreadyPaid = Denna termin är redan betald
 CantUseScheduleWithLoanStartedToPaid = Det går inte att generera en tidslinje för ett lån med en påbörjad betalning
 CantModifyInterestIfScheduleIsUsed = Du kan inte ändra ränta om du använder ett schema
 # Admin

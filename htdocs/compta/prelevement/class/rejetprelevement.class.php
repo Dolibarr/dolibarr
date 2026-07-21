@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,26 +42,38 @@ class RejetPrelevement
 	 */
 	public $db;
 
+	/**
+	 * @var 'direct-debit'|'bank-transfer'
+	 */
 	public $type; //prelevement or bank transfer
+	/**
+	 * @var int
+	 */
 	public $bon_id;
+	/**
+	 * @var User
+	 */
 	public $user;
+	/**
+	 * @var int|string
+	 */
 	public $date_rejet;
 
 	/**
-	 * @var array	Reason of error
+	 * @var string	Reason of error
 	 */
 	public $motif;
 	/**
-	 * @var array	Label status of invoicing
+	 * @var string	Label status of invoicing
 	 */
 	public $invoicing;
 
 	/**
-	 * @var array	Labels of reason
+	 * @var string[]	Labels of reason
 	 */
 	public $motifs;
 	/**
-	 * @var array	Labels of invoicing status
+	 * @var string[]	Labels of invoicing status
 	 */
 	public $labelsofinvoicing;
 
@@ -69,7 +82,7 @@ class RejetPrelevement
 	 *
 	 *  @param	DoliDB	$db			Database handler
 	 *  @param 	User	$user       Object user
-	 *  @param	string	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
+	 *  @param	'direct-debit'|'bank-transfer'	$type		Type ('direct-debit' for direct debit or 'bank-transfer' for credit transfer)
 	 */
 	public function __construct($db, $user, $type)
 	{
@@ -101,10 +114,10 @@ class RejetPrelevement
 	 *
 	 * @param 	User		$user				User object
 	 * @param 	int			$id					Id
-	 * @param 	string		$motif				Motif
+	 * @param 	int			$motif				Motif
 	 * @param 	int			$date_rejet			Date reject
 	 * @param 	int			$bonid				Bon id
-	 * @param 	int			$facturation		1=Bill the reject
+	 * @param 	int<0,1>	$facturation		1=Bill the reject
 	 * @return	int								Return >=0 if OK, <0 if KO
 	 */
 	public function create($user, $id, $motif, $date_rejet, $bonid, $facturation = 0)
@@ -118,7 +131,7 @@ class RejetPrelevement
 
 		dol_syslog("RejetPrelevement::Create id ".$id);
 
-		$bankaccount = ($this->type == 'bank-transfer' ? getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalString('PRELEVEMENT_ID_BANKACCOUNT'));
+		$bankaccount = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -303,8 +316,9 @@ class RejetPrelevement
 	/**
 	 * Retrieve the list of invoices
 	 *
-	 * @param 	int		$amounts 	If you want to get the amount of the order for each invoice
-	 * @return	array				Array List of invoices related to the withdrawal line
+	 * @param 	int<0,1>	$amounts			If you want to get the amount of the order for each invoice
+	 *
+	 * @return	array<int|array{0:int,1:float}>		Array List of invoices related to the withdrawal line
 	 * @todo	A withdrawal line is today linked to one and only one invoice. So the function should return only one object ?
 	 */
 	private function getListInvoices($amounts = 0)

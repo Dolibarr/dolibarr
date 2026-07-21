@@ -5,6 +5,8 @@
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
@@ -39,6 +49,7 @@ $langs->loadLangs(array('products', 'suppliers'));
 
 // Get Parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
+$massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -68,15 +79,14 @@ if (!$sortorder) {
 }
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
-if ($user->socid) {
-	$fourn_id = $user->socid;
+if ($user->isExternalUser()) {
+	$fourn_id = $user->isExternalUser();
 }
 
 $catid = GETPOST('catid', 'intcomma');
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('supplierpricelist'));
-$extrafields = new ExtraFields($db);
 
 if (!$user->hasRight("produit", "lire") && !$user->hasRight("service", "lire")) {
 	accessforbidden();
@@ -159,7 +169,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND p.entity = ppf.entity";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND ppf.entity IN (".getEntity('productsupplierprice').")";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier) {
@@ -203,7 +213,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -226,7 +236,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 $i = 0;
-
+$help_url = '';
 if ($num == 1 && (GETPOST("mode") == 'search')) {
 	$objp = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
@@ -243,7 +253,7 @@ if (!empty($supplier->id)) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-product page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -263,14 +273,14 @@ if ($optioncss != '') {
 $param = "&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', (int) $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
 
 if (!empty($catid)) {
 	print "<div id='ways'>";
 	$c = new Categorie($db);
-	$ways = $c->print_all_ways(' &gt; ', 'fourn/product/list.php');
+	$ways = $c->print_all_ways('auto', 'fourn/product/list.php');
 	print " &gt; ".$ways[0]."<br>\n";
 	print "</div><br>";
 }
@@ -301,14 +311,15 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
+$moreforfilter = '';
 $topicmail = "Information";
 $modelmail = "product";
 $objecttmp = new Product($db);
-$trackid = 'prod'.$object->id;
+$trackid = 'prod'.$productstatic->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -320,7 +331,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -341,13 +352,13 @@ print '<td></td>';
 print '<td></td>';
 // add filters from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -355,30 +366,34 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
+$totalarray = [
+	'nbfield' => 0
+];
+
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", $param, "", "", $sortfield, $sortorder);
-print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", "", $param, "", $sortfield, $sortorder, 'right ');
+print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", "", $param, "", $sortfield, $sortorder, 'right ');
+print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", "", $param, "", $sortfield, $sortorder, 'right ');
 // add header cells from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -406,17 +421,17 @@ while ($i < $imaxinloop) {
 	$productstatic->barcode = $objp->barcode;
 	$productstatic->barcode_type = $objp->fk_barcode_type;
 
-	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven row-with-select">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($productstatic->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$productstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$productstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -455,14 +470,14 @@ while ($i < $imaxinloop) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($productstatic->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$productstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$productstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -479,19 +494,19 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
+	$colspan = 8;
+	/*foreach ($arrayfields as $key => $val) {
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}
-	}
+	}*/
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
 $db->free($resql);
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $productstatic, $action); // Note that $action and $productstatic may have been modified by hook
 print $hookmanager->resPrint;
 
 print '</table>'."\n";

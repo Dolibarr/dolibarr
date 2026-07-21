@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2009       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function takepos_admin_prepare_head()
 {
@@ -62,10 +63,12 @@ function takepos_admin_prepare_head()
 		$h++;
 	}
 
+	/*
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/other.php';
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'other';
 	$h++;
+	*/
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'takepos_admin');
 

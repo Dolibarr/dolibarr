@@ -5,6 +5,8 @@
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -39,13 +48,13 @@ $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', '
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$batch  	= GETPOST('batch', 'alpha');
-$objectid  = GETPOSTINT('productid');
+$batch = GETPOST('batch', 'alpha');
+$objectid = GETPOSTINT('productid');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$socid = '';
+$socid = 0;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -66,15 +75,15 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
+if (empty($sortorder)) {
 	$sortorder = "DESC";
 }
-if (!$sortfield) {
+if (empty($sortfield)) {
 	$sortfield = "recep.date_creation";
 }
 
-$search_month = GETPOSTINT('search_month');
-$search_year = GETPOSTINT('search_year');
+$search_month = GETPOST('search_month');	// Can be ''
+$search_year = GETPOST('search_year');	// Can be '''
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -122,6 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		$head = productlot_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
+		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -175,7 +185,7 @@ if ($id > 0 || !empty($ref)) {
 		//          print '</tr>';
 		//      }
 		//
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY')) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -188,7 +198,7 @@ if ($id > 0 || !empty($ref)) {
 		//      }
 		//
 		//      // Quality control
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -200,13 +210,18 @@ if ($id > 0 || !empty($ref)) {
 		//      // Other attributes
 		//      include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<br>';
+
+
+		print '<table class="noborder centpercent tableforfield">';
 
 		$nboflines = show_stats_for_batch($object, $socid);
 
 		print "</table>";
 
 		print '</div>';
+
+
 		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
@@ -230,10 +245,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " WHERE recep.entity IN (".getEntity('product').")";
 			$sql .= " AND d.batch = '".($db->escape($object->batch))."'";
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(recep.date_creation) IN ('.$db->sanitize($search_month).')';
+				$sql .= ' AND MONTH(recep.date_creation) IN ('.$db->sanitize((string) $search_month).')';
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(recep.date_creation) IN ('.$db->sanitize($search_year).')';
+				$sql .= ' AND YEAR(recep.date_creation) IN ('.$db->sanitize((string) $search_year).')';
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -260,7 +275,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$object->id;
+				$option = '&id='.$object->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
@@ -274,12 +289,8 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$object->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				if (!empty($sortfield)) {
-					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-				}
-				if (!empty($sortorder)) {
-					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-				}
+				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("Receptions"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
@@ -292,10 +303,10 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear($search_year ? (string) $search_year : '-1', 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';

@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ class box_prospect extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $user;
 
@@ -59,6 +60,9 @@ class box_prospect extends ModeleBoxes
 		}
 
 		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/societe/card.php?action=create&type=p';
+		$this->msgNoRecords = 'NoRecordedProspects';
 	}
 
 	/**
@@ -83,15 +87,16 @@ class box_prospect extends ModeleBoxes
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
-			$sql .= ", s.fk_stcomm";
+			$sql .= ", s.fk_stcomm, st.libelle as stcomm_label, st.picto as stcomm_picto";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (2, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks
@@ -122,6 +127,7 @@ class box_prospect extends ModeleBoxes
 					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
@@ -140,7 +146,7 @@ class box_prospect extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3)),
+						'text' => str_replace('img ', 'img height="14" ', $thirdpartystatic->LibProspCommStatut($objp->fk_stcomm, 3, $objp->stcomm_label, $objp->stcomm_picto)),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -149,13 +155,6 @@ class box_prospect extends ModeleBoxes
 					);
 
 					$line++;
-				}
-
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedProspects").'</span>'
-					);
 				}
 
 				$this->db->free($resql);
@@ -174,12 +173,14 @@ class box_prospect extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

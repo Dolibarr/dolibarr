@@ -23,7 +23,10 @@ AllPropals=Svi prijedlozi
 SearchAProposal=Traži prijedlog
 NoProposal=Nema prijedloga
 ProposalsStatistics=Statistika poslovnog prijedloga
+NumberOfProposals=Broj prijedloga
 NumberOfProposalsByMonth=Broj po mjesecu
+AmountOfProposals=Broj prijedloga
+AmountOfProposalsHT=Broj prijedloga (bez poreza)
 AmountOfProposalsByMonthHT=Iznos po mjesecu (bez poreza)
 NbOfProposals=Broj poslovnih prijedloga
 ShowPropal=Pokažite prijedlog
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 tjedan
 AvailabilityTypeAV_2W=2 sedmice
 AvailabilityTypeAV_3W=3 sedmice
 AvailabilityTypeAV_1M=1 mjesec
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Predstavnički naknadni prijedlog
 TypeContact_propal_external_BILLING=Kontakt za fakturu kupca
 TypeContact_propal_external_CUSTOMER=Sljedeći prijedlog za kontakt sa klijentom
 TypeContact_propal_external_SHIPPING=Kontakt kupca za dostavu
-
 # Document models
 CantBeNoSign=ne može se postaviti nepotpisano
 CaseFollowedBy=Slučaj praćen
@@ -122,3 +123,5 @@ SignSociete_rib=Potpišite mandat
 SignPropal=Prihvatite prijedlog
 Signed=potpisan
 SignedOnly=Samo potpisano
+ExpeditionSigned=Pošiljka potpisana
+SignExpedition=Potpišite pošiljku

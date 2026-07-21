@@ -2,6 +2,7 @@
 IdAgenda=Id. de evento
 Actions=Eventos
 Agenda=Agenda
+AgendaEvents=Eventos da agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Calendário predefinido
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=Orçamento %s recusado
 PropalValidatedInDolibarr=Orçamento %s validado
 PropalBackToDraftInDolibarr=orçamento %s voltar ao status de rascunho
 PropalClassifiedBilledInDolibarr=Orçamento %s classificado como faturado
+InvoiceCreatedInDolibarr=fatura %s criado
 InvoiceValidatedInDolibarr=Fatura %s, validada
 InvoiceValidatedInDolibarrFromPos=Fatura %s, validada a partir do ponto de venda
 InvoiceBackToDraftInDolibarr=Fatura %s, voltou ao estado de rascunho
@@ -134,14 +136,14 @@ AgendaModelModule=Modelos de documento para o evento
 DateActionStart=Data de início
 DateActionEnd=Data de fim
 AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de saída:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída a ações pertencentes a um utilizador <b>%s</b> (use <b>logina=!%s</b> para eventos não pertencentes ao utilizador).
 AgendaUrlOptions4=<b>logint =%s</b> para restringir a saída às ações atribuídas ao utilizador <b>%s</b> (proprietário e outros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para que apenas obtenha eventos vinculados ao projeto <b>__PROJECT_ID__ </b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> para obter eventos automáticos ou manuais
+AgendaUrlOptionsCode=<b>actioncode=%s</b> para obter apenas eventos com um determinado Código
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> para incluir eventos de feriados.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> para limitar a eventos nos últimos %s dias (o padrão é %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> para limitar aos últimos 50 eventos (o padrão e máximo é %s).
 AgendaShowBirthdayEvents=Aniversários dos contactos
 AgendaHideBirthdayEvents=Ocultar aniversários dos contactos
 Busy=Ocupado
@@ -202,6 +204,9 @@ AppointmentDuration = Duração do compromisso: %s
 BookingSuccessfullyBooked=Sua reserva foi salva
 BookingReservationHourAfter=Confirmamos a reserva da nossa reunião no data %s
 BookcalBookingTitle=Consulta on-line
-Transparency = Transparency
-ReadMore = Read more
-ReadLess = Read less
+Transparency = Transparência
+ReadMore = Ler mais
+ReadLess = Leia menos
+RecurringEvent=Evento recorrente
+EventPartOfARecurringSerie=O evento faz parte de uma série recorrente com Id. %s
+BookCalSystem=Reserva online

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,33 @@ class Subscription extends CommonObject
 	public $datef;
 
 	/**
+	 * Alias of $dateh exposed by the REST API GET response so the same payload
+	 * can be sent back to POST /members/{id}/subscriptions without renaming
+	 * client-side. Matches the date_start / date_end naming convention used by
+	 * other Dolibarr objects. Not persisted (see issue #38279).
+	 *
+	 * @var integer
+	 */
+	public $date_start;
+
+	/**
+	 * Alias of $datef exposed by the REST API GET response (see issue #38279).
+	 * Not persisted.
+	 *
+	 * @var integer
+	 */
+	public $date_end;
+
+	/**
+	 * Public note exposed under the documented field name. Already populated by
+	 * fetch() but not declared as a real property; declared here so phpstan and
+	 * phan stop flagging the API setter as touching a dynamic property.
+	 *
+	 * @var string
+	 */
+	public $note_public;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_type;
@@ -98,7 +125,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -113,6 +140,7 @@ class Subscription extends CommonObject
 		'fk_type' => array('type' => 'integer', 'label' => 'MemberType', 'enabled' => 1, 'visible' => -1, 'position' => 55),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 60),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805),
 	);
 
 
@@ -144,6 +172,11 @@ class Subscription extends CommonObject
 
 		$now = dol_now();
 
+		// Clean parameters
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
+
 		// Check parameters
 		if ($this->datef <= $this->dateh) {
 			$this->error = $langs->trans("ErrorBadValueForDate");
@@ -155,8 +188,6 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
-
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$member = new Adherent($this->db);
 		$result = $member->fetch($this->fk_adherent);
@@ -166,11 +197,18 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, note_private, ref_ext, fk_user_creat, import_key)";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape((string) $type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
-		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
+		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
+		$sql .= " '".$this->db->escape($this->note_private)."',";
+		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
+		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ")";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -317,7 +355,7 @@ class Subscription extends CommonObject
 			$result = $member->fetch($this->fk_adherent);
 			$result = $member->update_end_date($user);
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				$this->context = array('member' => $member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
@@ -344,9 +382,9 @@ class Subscription extends CommonObject
 	/**
 	 *	Delete a subscription
 	 *
-	 *	@param	User	$user		User that delete
-	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
+	 *	@param	User		$user		User that delete
+	 *	@param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -357,19 +395,19 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accountline = new AccountLine($this->db);
 			$result = $accountline->fetch($this->fk_bank);
+		} else {
+			$accountline = null;
 		}
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				} // Do also here what you must do to rollback action if trigger fail
-				// End call triggers
-			}
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} // Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -386,17 +424,10 @@ class Subscription extends CommonObject
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
 						$result = $accountline->delete($user); // Return false if refused because line is reconciled
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->error = $accountline->error;
-							$this->db->rollback();
-							return -1;
+						if ($result <= 0) {
+							$this->setErrorsFromObject($accountline);
+							$error++;
 						}
-					} else {
-						$this->db->commit();
-						return 1;
 					}
 				} else {
 					$this->db->commit();
@@ -420,14 +451,14 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *	@param	string	$option						Page for link ('', 'nolink', ...)
 	 *  @param  string  $morecss        			Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $option = '', $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -436,21 +467,22 @@ class Subscription extends CommonObject
 		$result = '';
 
 		$langs->load("members");
+		$langs->load("main");
 
 		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Subscription").'</u>';
 		/*if (isset($this->statut)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}*/
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->note_public;
 		if (!empty($this->dateh)) {
 			$label .= '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->dateh, 'day');
 		}
 		if (!empty($this->datef)) {
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
-
-		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.((int) $this->id);
-
+		$baseurl = DOL_URL_ROOT . '/adherents/subscription/card.php';
+		$query = ['rowid' => $this->id];
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -458,9 +490,10 @@ class Subscription extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query = array_merge($query, ['save_lastsearch_values' => 1]);
 			}
 		}
+		$url = dolBuildUrl($baseurl, $query);
 
 		$linkstart = '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($label, 1).'">';
 		$linkend = '</a>';
@@ -514,10 +547,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec,';
-		$sql .= ' c.tms as datem';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -527,6 +559,8 @@ class Subscription extends CommonObject
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
+
+				$this->user_creation_id = $obj->fk_user_creat;
 			}
 
 			$this->db->free($resql);
@@ -536,11 +570,11 @@ class Subscription extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string					$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array{selected?:int|bool,adherent_type?:AdherentType,member?:Adherent,bank?:Account}	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -559,7 +593,7 @@ class Subscription extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
+		if (!empty($this->dateh) || !empty($this->datef)) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
 
@@ -567,15 +601,14 @@ class Subscription extends CommonObject
 			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
-			if (!empty($arraydata['bank'])) {
-				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
-			}
+		$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
+		if (!empty($arraydata['bank'])) {
+			$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 }

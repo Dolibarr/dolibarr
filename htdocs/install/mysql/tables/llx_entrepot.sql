@@ -33,8 +33,8 @@ create table llx_entrepot
   town            varchar(50),
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
-  phone           varchar(20),                  -- phone number
-  fax             varchar(20),                  -- fax number
+  phone           varchar(30),                  -- phone number
+  fax             varchar(30),                  -- fax number
   barcode         varchar(180) DEFAULT NULL,          -- barcode
   fk_barcode_type integer      DEFAULT NULL,          -- barcode type
   warehouse_usage integer DEFAULT 1,            -- 1=internal, 2=external (virtual warehouse or stock out of company). Need STOCK_USE_WAREHOUSE_USAGE opton.

@@ -3,7 +3,8 @@
  * Copyright (C) 2009-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -34,12 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
-
+if (empty($action)) {
+	$action = 'edit';
+}
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
-	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
+	$currencycode = (!empty($currencycode) ? $currencycode : getDolCurrency());
 }
 
 $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$currencycode : '');
@@ -101,7 +112,7 @@ if ($action == 'update' && !$cancel) {
 	if (! $error && ((float) $valmainmaxdecimalsshown < $valmainmaxdecimalsunit || (float) $valmainmaxdecimalsshown < $valmainmaxdecimalstot)) {
 		$langs->load("errors");
 		$error++;
-		setEventMessages($langs->trans("ErrorValueForTooLow", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
+		setEventMessages($langs->trans("ErrorMaxDecimalsShownTooLowComparedToUnitOrTotal", $valmainmaxdecimalsshown, $valmainmaxdecimalsunit, $valmainmaxdecimalstot), null, 'errors');
 		$action = 'edit';
 	}
 
@@ -112,6 +123,8 @@ if ($action == 'update' && !$cancel) {
 		dolibarr_set_const($db, $mainmaxdecimalsshown, $valmainmaxdecimalsshown, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, $mainroundingruletot, $valmainroundingruletot, 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 		header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(!empty($currencycode) ? '&currencycode='.$currencycode : ''));
 		exit;
@@ -132,14 +145,14 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-limits');
 
 print load_fiche_titre($title, '', 'title_setup');
 
-$aCurrencies = array($conf->currency); // Default currency always first position
+$aCurrencies = array(getDolCurrency()); // Default currency always first position
 
 if (isModEnabled('multicompany') && getDolGlobalString('MULTICURRENCY_USE_LIMIT_BY_CURRENCY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
 	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
 	$sql .= " WHERE entity = " . ((int) $conf->entity);
-	$sql .= " AND code <> '" . $db->escape($conf->currency) . "'"; // Default currency always first position
+	$sql .= " AND code <> '" . $db->escape(getDolCurrency()) . "'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -168,7 +181,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
@@ -193,8 +206,10 @@ if ($action == 'edit') {
 
 	print '<div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	/*
 	print ' &nbsp; ';
 	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	*/
 	print '</div>';
 	print '<br>';
 
@@ -203,11 +218,11 @@ if ($action == 'edit') {
 } else {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalsunit) ? $conf->global->$mainmaxdecimalsunit : $conf->global->MAIN_MAX_DECIMALS_UNIT).'</td></tr>';
+	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalsunit) ? $conf->global->$mainmaxdecimalsunit : getDolGlobalString("MAIN_MAX_DECIMALS_UNIT")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT_LINE"), $langs->trans("ParameterActiveForNextInputOnly"));
@@ -215,14 +230,14 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalstot) ? $conf->global->$mainmaxdecimalstot : $conf->global->MAIN_MAX_DECIMALS_TOT).'</td></tr>';
+	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalstot) ? $conf->global->$mainmaxdecimalstot : getDolGlobalString("MAIN_MAX_DECIMALS_TOT")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td>';
-	print '<td align="right">'.(isset($conf->global->$mainmaxdecimalsshown) ? $conf->global->$mainmaxdecimalsshown : $conf->global->MAIN_MAX_DECIMALS_SHOWN).'</td></tr>';
+	print '<td align="right">'.(isset($conf->global->$mainmaxdecimalsshown) ? $conf->global->$mainmaxdecimalsshown : getDolGlobalString("MAIN_MAX_DECIMALS_SHOWN")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (getDolGlobalString('MAIN_ROUNDING_RULE_TOT') ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'</td></tr>';
+	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -246,12 +261,13 @@ if (empty($mysoc->country_code)) {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
 
-	// LRR totals
-	$tot_ht = 0;
+	print '<div class="small">';
+  
+  $tot_ht = 0;
 	$tot_vat = 0;
 	$tot_ttc = 0;
 
-	print '<span class="opacitymedium">'.$langs->trans("Format").':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("NumberFormatForATotalPrice", '1234.56789').':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
 
 	// Always show vat rates with vat 0
 	$s = 2 / 3;
@@ -320,7 +336,24 @@ if (empty($mysoc->country_code)) {
 				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
 
 				$s = 10 / 3;
-				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
+				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
+				print($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
+				print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ";
+				print $tmparray[0].' / '.$tmparray[1].($tmparray[9] ? '+'.$tmparray[9] : '').($tmparray[10] ? '+'.$tmparray[10] : '').' / '.$tmparray[2];
+				print "<br>\n";
+			}
+
+			if (getDolGlobalString('MAIN_ADD_MORE_EXAMPLE_IN_ACCURANCY_SETUP')) {
+				$qty = 1.234;
+				$vattxt = $vat.($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
+
+				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
+
+				$s = 10 / 3;
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
@@ -344,7 +377,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 1;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -356,7 +389,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 2;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -367,6 +400,7 @@ if (empty($mysoc->country_code)) {
 	}
 	// Total
 	print '<span class="opacitymedium">'.$langs->trans("TotalPrice").":</span> ".price2num($tot_ht, 'MT').' / '.price2num($tot_vat, 'MT').' / '.price2num($tot_ttc, 'MT')."<br>\n";
+	print '</div>';
 }
 
 // End of page

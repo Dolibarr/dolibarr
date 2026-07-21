@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,22 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('expensereportindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('expensereportindex'));
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -59,12 +65,12 @@ if (!$sortfield) {
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'expensereport', '', '');
 
@@ -83,7 +89,9 @@ $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
-$label = $somme = $nb = array();
+$label = [];
+$nb = [];
+$somme = [];
 
 $totalnb = $totalsum = 0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
@@ -96,7 +104,6 @@ if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expenserep
 	$childids[] = $user->id;
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
-
 $sql .= " GROUP BY tf.code, tf.label";
 
 $result = $db->query($sql);
@@ -137,7 +144,7 @@ foreach ($listoftype as $code => $label) {
 }
 
 // Sort array with most important first
-$dataseries = dol_sort_array($dataseries, 1, 'desc');
+$dataseries = dol_sort_array($dataseries, '1', 'desc');
 
 // Merge all entries after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
@@ -224,8 +231,8 @@ if ($result) {
 	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 	print '<th>';
-	print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
-	print img_picto($langs->trans("FullList"), 'expensereport');
+	print '<a class="badge" title="'.$langs->trans("FullList").'" href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+	print '...';
 	print '</a>';
 	print '</th>';
 	print '</tr>';

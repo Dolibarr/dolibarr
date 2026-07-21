@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +25,21 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
-global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
 $langs->loadLangs(array('other','admin'));
@@ -41,7 +49,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'targetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -49,7 +57,6 @@ $lineid   = GETPOSTINT('lineid');
 
 // Initialize a technical objects
 $object = new Target($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('targetcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -77,20 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-	$permissionnote = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = 1;
-	$permissionnote = 1;
-	$permissiondellink = 1;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = $permissionnote = $permissiondellink = (!empty($user->admin) ? 1 : 0);
 
 $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->entity : 1].'/target';
 
@@ -120,14 +114,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/webhook/target_list.php?mode=modulesetup', 1);
+	$backurlforlist = dolBuildUrl('/webhook/target_list.php', ['mode' => 'modulesetup']);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/webhook/target_card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl('/webhook/target_card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -150,12 +144,17 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
-
+	if ($action == 'confirm_statusmanual' && $confirm == "yes" && $permissiontoadd) {
+		$object->setStatusCommon($user, $object::STATUS_MANUAL_TRIGGER, 0, 'TARGET_REOPEN');
+	}
+	if ($action == 'confirm_statusautomatic' && $confirm == "yes" && $permissiontoadd) {
+		$object->setStatusCommon($user, $object::STATUS_AUTOMATIC_TRIGGER, 0, 'TARGET_REOPEN');
+	}
 	if ($action == 'testsendtourl' && $permissiontoadd) {
 		$triggercode = GETPOST("triggercode");
 		$url = GETPOST("url");
@@ -168,11 +167,25 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DataToSendTrigger")), null, 'errors');
 		}
-		$response = getURLContent($url, 'POST', $jsondata, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
+
+		$headers = array(
+			'Content-Type: application/json'
+			//'Accept: application/json'
+		);
+
+		$method = 'POSTALREADYFORMATED';
+		if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
+			$method = 'POST';
+		}
+
+		// TODO Replace this by a call of trigger...
+		global $dolibarr_allow_localurl_for_webhooks;
+		$localurl = empty($dolibarr_allow_localurl_for_webhooks) ? 0 : 2;
+		$response = getURLContent($url, $method, $jsondata, 1, $headers, array('http', 'https'), $localurl, -1);
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
-			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to get URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to do the GET of URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
 			setEventMessages($langs->trans($errormsg), null, 'errors');
 		}
 	}
@@ -201,8 +214,8 @@ $arrayofjs = array(
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
-	//'/includes/ace/src/ext-chromevox.js'
-	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
+	//'/public/includes/ace/src/ext-chromevox.js'
+	//'/public/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();
 
@@ -215,12 +228,11 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-web
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
-		exit;
 	}
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Target")), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -256,7 +268,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Target"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -297,44 +309,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteTarget'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteTarget'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'lineid' => $lineid]), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionTarget', $object->ref);
-		/*if (isModEnabled('notification'))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('TARGET_CLOSE', $object->socid, $object);
-		}*/
-
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
@@ -351,7 +340,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/webhook/target_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_DOCUMENT_ROOT.'/webhook/target_list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -365,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
@@ -425,8 +414,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->table_element_line)) {
 		// Show object lines
 		$result = $object->getLinesArray();
-
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
+		$anchor = (($action == 'editline') ? '' : '#line_'.GETPOSTINT('lineid'));
+		print '<form name="addproduct" id="addproduct" action="'.dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id], false, $anchor).'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
@@ -485,16 +474,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			/*if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}*/
 
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'edit'], true), '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone'], true), '', $permissiontoadd);
 
 			// Webhook send test
-			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=test&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'test'], true), '', $permissiontoadd);
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
@@ -514,16 +503,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Enable
 			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				$arrayforbutactivate = array();
+				$arrayforbutactivate[] = array(
+					'url' => dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_statusautomatic', 'confirm' => 'yes'], true),
+					'label' => 'AutomaticTrigger',
+					'lang' => 'admin',
+					'perm' => true,
+					'enabled' => true,
+				);
+				$arrayforbutactivate[] = array(
+					'url' => dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_statusmanual', 'confirm' => 'yes'], true),
+					'label' => 'ManualTrigger',
+					'lang' => 'admin',
+					'perm' => true,
+					'enabled' => true,
+				);
+				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $arrayforbutactivate, '', $permissiontoadd);
 			}
 
 			// Disable
-			if ($object->status == $object::STATUS_VALIDATED) {
-				print dolGetButtonAction('', $langs->trans('Disable'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			if (in_array($object->status, array($object::STATUS_AUTOMATIC_TRIGGER, $object::STATUS_MANUAL_TRIGGER))) {
+				print dolGetButtonAction('', $langs->trans('Disable'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'confirm_setdraft', 'confirm' => 'yes'], true), '', $permissiontoadd);
 			}
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
+			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'delete'], true), '', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}
@@ -535,7 +539,7 @@ if ($action == "test") {
 	print dol_get_fiche_head(array(), '', '', -1);
 
 	print "\n".'<!-- Begin form test target --><div id="targettestform"></div>'."\n";
-	print '<form method="POST" name="testtargetform" id="testtargetform" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	print '<form method="POST" name="testtargetform" id="testtargetform" enctype="multipart/form-data" action="'.dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="testsendtourl">';
 

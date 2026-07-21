@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2018	    Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 class pdf_squille extends ModelePdfReception
 {
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
 
@@ -82,16 +83,10 @@ class pdf_squille extends ModelePdfReception
 		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
 		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
 		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
-
+		$this->corner_radius = getDolGlobalInt('MAIN_PDF_FRAME_CORNER_RADIUS', 0);
 		$this->option_logo = 1; // Display logo
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 		$this->watermark = '';
-
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
@@ -123,19 +118,30 @@ class pdf_squille extends ModelePdfReception
 			$this->posxpicture += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxqtyordered = $this->posxqtytoship;
 		}
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Reception	$object			Object reception to generate (or id if old method)
-	 *	@param		Translate	$outputlangs		Lang output object
+	 *	@param		Reception	$object				Object reception to generate (or id if old method)
+	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -152,7 +158,7 @@ class pdf_squille extends ModelePdfReception
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "deliveries", "receptions", "productbatch", "sendings"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "receptions", "productbatch", "sendings"));
 
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
@@ -247,7 +253,7 @@ class pdf_squille extends ModelePdfReception
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -265,13 +271,13 @@ class pdf_squille extends ModelePdfReception
 				$pdf->SetDrawColor(128, 128, 128);
 
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Reception"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Reception"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -291,8 +297,8 @@ class pdf_squille extends ModelePdfReception
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;	// position of top tab
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
+				$tab_top = 80 + $this->marge_haute;	// position of top tab
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -311,7 +317,7 @@ class pdf_squille extends ModelePdfReception
 
 						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
-						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
+						$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 3, $this->corner_radius, '1234', 'D');
 
 						$tab_top = $nexY + 6;
 						$height_incoterms += 4;
@@ -356,7 +362,7 @@ class pdf_squille extends ModelePdfReception
 					// Notes
 					if (!empty($object->note_public)) {
 						$pdf->SetFont('', '', $default_font_size - 1); // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
@@ -364,9 +370,9 @@ class pdf_squille extends ModelePdfReception
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->RoundedRect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2, $this->corner_radius, '1234', 'D');
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -383,10 +389,10 @@ class pdf_squille extends ModelePdfReception
 					$barcode_path = '';
 					$result = 0;
 					if ($module->encodingIsSupported($encoding)) {
-						$result = $module->writeBarCode($object->ref, $encoding);
+						$result = $module->writeBarCode((string) $object->ref, $encoding);
 
 						// get path of qrcode image
-						$newcode = $object->ref;
+						$newcode = (string) $object->ref;
 						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
 							$newcode = dol_hash($newcode, 'md5');
 						}
@@ -427,7 +433,7 @@ class pdf_squille extends ModelePdfReception
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -485,7 +491,7 @@ class pdf_squille extends ModelePdfReception
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
@@ -523,7 +529,7 @@ class pdf_squille extends ModelePdfReception
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -559,7 +565,7 @@ class pdf_squille extends ModelePdfReception
 					if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 						$pdf->SetXY($this->posxqtyordered, $curY);
 						if ($object->lines[$i]->fk_commandefourndet != $fk_commandefourndet) {
-							$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
+							$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, (string) $object->lines[$i]->qty_asked, '', 'C');
 							$totalOrdered += $object->lines[$i]->qty_asked;
 						}
 						$fk_commandefourndet = $object->lines[$i]->fk_commandefourndet;
@@ -567,7 +573,7 @@ class pdf_squille extends ModelePdfReception
 
 					// Qty received
 					$pdf->SetXY($this->posxqtytoship, $curY);
-					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty, '', 'C');
+					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, (string) $object->lines[$i]->qty, '', 'C');
 
 					// Amount
 					if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
@@ -606,12 +612,12 @@ class pdf_squille extends ModelePdfReception
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {  // @phan-suppress-current-line PhanUndeclaredProperty
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object);
 						} else {
@@ -642,7 +648,7 @@ class pdf_squille extends ModelePdfReception
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -654,9 +660,12 @@ class pdf_squille extends ModelePdfReception
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -681,12 +690,12 @@ class pdf_squille extends ModelePdfReception
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Reception	$object         Object reception
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  float		$deja_regle     Montant deja regle
+	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param	int			$totalOrdered	Total ordered
-	 *  @param	int			$totalAmount	Total amount
-	 *	@return int							Position pour suite
+	 *  @param	float		$totalOrdered	Total ordered
+	 *  @param	float		$totalAmount	Total amount
+	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered, $totalAmount = 0)
 	{
@@ -747,39 +756,39 @@ class pdf_squille extends ModelePdfReception
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', true);
 
 		$index2 = 0;
 
 		// Total Weight
 		if ($totalWeighttoshow) {
 			$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * ($index + $index2));
-			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', 1);
+			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', true);
 			$index2++;
 		}
 		if ($totalVolumetoshow) {
 			$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * ($index + $index2));
-			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', 1);
+			$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', true);
 			$index2++;
 		}
 
 		// Total qty ordered
 		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', 1);
+			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, (string) $totalOrdered, 0, 'C', true);
 		}
 
 		// Total received
 		$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
+		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, (string) $totalToShip, 0, 'C', true);
 
 		// Amount
 		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 			$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
+			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', true);
 
 			$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($totalAmount, 0, $outputlangs), 0, 'C', 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($totalAmount, 0, $outputlangs), 0, 'C', true);
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -823,7 +832,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height, $this->corner_radius, $hidetop, $hidebottom, 'D'); // Rect takes a length in 3rd parameter and 4th parameter
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -920,8 +929,8 @@ class pdf_squille extends ModelePdfReception
 		// Logo
 		if ($this->emetteur->logo) {
 			$logodir = $conf->mycompany->dir_output;
-			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 			}
 			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -973,12 +982,12 @@ class pdf_squille extends ModelePdfReception
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 
 		$pdf->SetFont('', '', $default_font_size + 3);
-		$Yoff = 25;
+		$Yoff = 25 + $this->marge_haute;
 
 		// Add list of linked orders
 		$origin = $object->origin;
@@ -997,14 +1006,14 @@ class pdf_squille extends ModelePdfReception
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
-				$text = $linkedobject->ref;
+				$text = (string) $linkedobject->ref;
 				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}
-				$Yoff = $Yoff + 8;
+				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff + 3;
+				$Yoff += 3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
 			}
@@ -1023,7 +1032,7 @@ class pdf_squille extends ModelePdfReception
 			if (empty($arrayidcontact)) {
 				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
-			if (count($arrayidcontact) > 0) {
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
@@ -1038,7 +1047,7 @@ class pdf_squille extends ModelePdfReception
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1054,7 +1063,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+			$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'F');
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(255, 255, 255);
 
@@ -1095,7 +1104,7 @@ class pdf_squille extends ModelePdfReception
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
@@ -1106,7 +1115,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
 			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
 
 
 

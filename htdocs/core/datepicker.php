@@ -3,7 +3,8 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -53,6 +54,14 @@ if (!defined('NOREQUIREHTML')) {
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -126,7 +135,7 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	displayBox(GETPOSTINT("sd"), GETPOSTINT("m"), GETPOSTINT("y"));
+	displayBox(GETPOST("sd", 'alpha'), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');
 }
@@ -135,24 +144,25 @@ if ($qualified) {
 print '</body></html>'."\n";
 
 /**
- * 	Convert date to timestamp
+ * 	Convert date string to a Unix timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
  *  @return	integer					Timestamp
  */
 function xyzToUnixTimestamp($mysqldate)
 {
-	$year = substr($mysqldate, 0, 4);
-	$month = substr($mysqldate, 4, 2);
-	$day = substr($mysqldate, 6, 2);
+	$year = (int) substr($mysqldate, 0, 4);
+	$month = (int) substr($mysqldate, 4, 2);
+	$day = (int) substr($mysqldate, 6, 2);
 	$unixtimestamp = dol_mktime(12, 0, 0, $month, $day, $year);
+
 	return $unixtimestamp;
 }
 
 /**
- * Show box
+ * Displays the date picker box
  *
- * @param	string	$selectedDate	Date YYYMMDD
+ * @param	string	$selectedDate	Date YYYYMMDD
  * @param	int		$month			Month
  * @param 	int		$year			Year
  * @return	void
@@ -214,7 +224,7 @@ function displayBox($selectedDate, $month, $year)
 	</tr>
 	<tr class="dpDayNames">
 	<?php
-	$startday = isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1;
+	$startday = getDolGlobalInt('MAIN_START_WEEK', 1);
 	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
 	for ($i = 0; $i < 7; $i++) {
 		echo '<td width="', (int) (($i + 1) * 100 / 7) - (int) ($i * 100 / 7), '%">', $langs->trans($day_names[($i + $startday) % 7]), '</td>', "\n";
@@ -223,7 +233,8 @@ function displayBox($selectedDate, $month, $year)
 	//print "x ".$thedate." y";			// $thedate = first day of month
 	$firstdate = dol_getdate($thedate);
 	//var_dump($firstdateofweek);
-	$mydate = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
+	$mydate_tmp = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
+	$mydate = dol_getdate(dol_mktime(12, 0, 0, $mydate_tmp['first_month'], $mydate_tmp['first_day'], $mydate_tmp['first_year']));
 
 	// Loop on each day of month
 	$stoploop = 0;
@@ -231,7 +242,7 @@ function displayBox($selectedDate, $month, $year)
 	$cols = 0;
 	while (!$stoploop) {
 		//print_r($mydate);
-		if ($mydate < $firstdate) {	// At first run
+		if ($mydate[0] < $firstdate[0]) {	// At first run
 			echo "<tr class=\"dpWeek\">";
 			//echo $conf->global->MAIN_START_WEEK.' '.$firstdate["wday"].' '.$startday;
 			$cols = 0;
@@ -263,7 +274,7 @@ function displayBox($selectedDate, $month, $year)
 			exit;
 		}
 
-		// Sur click dans calendrier, appelle fonction dpClickDay
+		// Upon a click in the calendar, call dpClickDay function
 		echo "<td class=\"".$dayclass."\"";
 		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",tradMonths)\"";
 		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJavaInput")."')\"";
@@ -281,7 +292,7 @@ function displayBox($selectedDate, $month, $year)
 			$stoploop = 1;
 		} else {
 			$mydate = dol_getdate($thedate);
-			if ($firstdate["month"] != $mydate["month"]) {
+			if ($firstdate["mon"] != $mydate["mon"]) {
 				$stoploop = 1;
 			}
 		}

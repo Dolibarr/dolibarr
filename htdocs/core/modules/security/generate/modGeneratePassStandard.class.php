@@ -125,6 +125,8 @@ class modGeneratePassStandard extends ModeleGenPassword
 	{
 		global $langs;
 
+		dol_syslog("modGeneratePassStandard::validatePassword");
+
 		if (dol_strlen($password) < $this->length2) {
 			$langs->load("other");
 			$this->error = $langs->trans("YourPasswordMustHaveAtLeastXChars", $this->length2);

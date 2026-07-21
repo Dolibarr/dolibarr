@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ class modAi extends DolibarrModules
 		$this->descriptionlong = "AiDescriptionLong";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		// Key used in llx_const table to save module status enabled/disabled (where BOOKCAL is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -142,10 +143,9 @@ class modAi extends DolibarrModules
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation = array();
+		$this->warnings_activation_ext = array();
 		//$this->automatic_activation = array('FR'=>'AiWasAutomaticallyActivatedBecauseOfYourCountryChoice');
-		//$this->always_enabled = true;								// If true, can't be disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -198,7 +198,7 @@ class modAi extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'ai@ai',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
@@ -246,7 +246,7 @@ class modAi extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->ai->enabled',
+			//      'test' => 'isModEnabled('ai')',
 			//      'priority' => 50,
 			//  ),
 		);
@@ -260,6 +260,26 @@ class modAi extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
+		// Right to use the AI Assistant chat (read-level access to the AI workflow).
+		//
+		// NOT granted by default: per the GDPR / EU AI Act discussion on
+		// issue #38331 (and feedback by @sonikf and @eldy on this PR),
+		// AI Assistant usage must be attributed explicitly by an admin to
+		// the users/groups who are authorized to send organisational data
+		// to the configured LLM provider. The admin is typically the GDPR
+		// DPO officer who is also the de-facto DPA for the AI module, and
+		// owns the per-user authorization decision.
+		//
+		// Setup access intentionally remains a hard $user->admin check
+		// (technical setup, no dedicated right declared) so that the
+		// API-key configuration of the AI module stays in admin scope,
+		// in line with how every other Dolibarr module is configured.
+		$this->rights[$r][0] = $this->numero + 1;
+		$this->rights[$r][1] = 'Use the AI Assistant';
+		$this->rights[$r][3] = 0;	// default: NOT granted
+		$this->rights[$r][4] = 'assistant';
+		$this->rights[$r][5] = 'use';
+		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add
@@ -352,60 +372,17 @@ class modAi extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		//global $conf, $langs;
 
-		// $result = $this->_load_tables('/install/mysql/', 'ai');
-		// if ($result < 0) {
-		// 	return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
-		// }
-
-		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('ai_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'ai@ai', '$conf->ai->enabled');
-		//$result2=$extrafields->addExtraField('ai_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'ai@ai', '$conf->ai->enabled');
-		//$result3=$extrafields->addExtraField('ai_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'ai@ai', '$conf->ai->enabled');
-		//$result4=$extrafields->addExtraField('ai_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'ai@ai', '$conf->ai->enabled');
-		//$result5=$extrafields->addExtraField('ai_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'ai@ai', '$conf->ai->enabled');
+		$result = $this->_load_tables('/install/mysql/', 'ai');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
-
-		// Document templates
-		$moduledir = dol_sanitizeFileName('ai');
-		$myTmpObjects = array();
-		$myTmpObjects['Availabilities'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
-
-		// foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-		// 	if ($myTmpObjectKey == 'Availabilities') {
-		// 		continue;
-		// 	}
-		// 	if ($myTmpObjectArray['includerefgeneration']) {
-		// 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_availabilitiess.odt';
-		// 		$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
-		// 		$dest = $dirodt.'/template_availabilitiess.odt';
-
-		// 		if (file_exists($src) && !file_exists($dest)) {
-		// 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		// 			dol_mkdir($dirodt);
-		// 			$result = dol_copy($src, $dest, 0, 0);
-		// 			if ($result < 0) {
-		// 				$langs->load("errors");
-		// 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
-		// 				return 0;
-		// 			}
-		// 		}
-
-		// 		$sql = array_merge($sql, array(
-		// 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-		// 			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-		// 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-		// 			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
-		// 		));
-		// 	}
-		// }
 
 		return $this->_init($sql, $options);
 	}

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2017  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +49,12 @@ function dol_getwebuser($mode)
 /**
  *  Return a login if login/pass was successful
  *
- *	@param		string	$usertotest			Login value to test
- *	@param		string	$passwordtotest		Password value to test
- *	@param		string	$entitytotest		Instance of data we must check
- *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
- *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
- *  @return		string						Login or '' or '--bad-login-validity--'
+ *	@param	string		$usertotest		Login value to test
+ *	@param	string		$passwordtotest	Password value to test
+ *	@param	int|string	$entitytotest	Instance of data we must check
+ *	@param	string[]	$authmode		Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
+ *	@param	'api'|'dav'|'ws'|''	$context	Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
+ *  @return	string						Login or '' or '--bad-login-validity--'
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
@@ -151,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -175,6 +182,7 @@ if (!function_exists('dol_loginfunction')) {
 		*/
 
 		// Select templates dir
+		$template_dir = '';
 		if (!empty($conf->modules_parts['tpl'])) {	// Using this feature slow down application
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl/'));
 			foreach ($dirtpls as $reldir) {
@@ -194,24 +202,7 @@ if (!function_exists('dol_loginfunction')) {
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-			if (session_status() != PHP_SESSION_ACTIVE) {
-				if (PHP_VERSION_ID < 70300) {
-					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
-				} else {
-					// Only available for php >= 7.3
-					$sessioncookieparams = array(
-						'lifetime' => 0,
-						'path' => '/',
-						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-						'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
-						'httponly' => true,
-						'samesite' => 'Lax'	// None || Lax  || Strict
-					);
-					session_set_cookie_params($sessioncookieparams);
-				}
-
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', (empty($dolibarr_main_force_https) ? false : true), true);
-			}
+			dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {
@@ -269,22 +260,20 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Security graphical code
-		$captcha = 0;
-		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			$captcha = 1;
-			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+		$captcha = '';
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 		}
 
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 				$helpcenterlink = 1;
 			}
 		}
@@ -394,6 +383,7 @@ function encodedecode_dbpassconf($level = 0)
 			$lineofpass = 0;
 
 			$reg = array();
+			$mode = '';
 			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save encrypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
@@ -417,20 +407,21 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
-				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $val, $reg)) {
 					// method dolEncrypt/dolDecrypt
 					$mode = 'dolcrypt:';
-					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
-					$passwd_crypted = $val;
-					$val = dolDecrypt($buffer);
+					//$val = preg_replace('/dolcrypt:/i', '', $val);
+					$passwd_crypted = $reg[1].':'.$reg[2];
+					$val = dolDecrypt($val);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					/* old method
 					$mode = 'crypted:';
 					$val = dol_encode($val);
-					$passwd_crypted = $val;
-					// TODO replace with dolEncrypt()
-					// ...
+					*/
+					$mode = 'dolcrypt:';
+					$passwd_crypted = preg_replace('/^dolcrypt:/', '', dolEncrypt($val));
 				}
 				$lineofpass = 1;
 			}
@@ -479,10 +470,10 @@ function encodedecode_dbpassconf($level = 0)
 /**
  * Return a generated password using default module
  *
- * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		array		$replaceambiguouschars	Discard ambiguous characters. For example array('I').
- * @param       int         $length                 Length of random string (Used only if $generic is true)
- * @return		string		    					New value for password
+ * @param		bool			$generic				true=Create a generic key (32 chars/numbers), false=Create a password using the configured password generation module.
+ * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example: array('I').
+ * @param       int        		$length                	Length of random string (Used only if $generic is true)
+ * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
@@ -490,6 +481,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	global $db, $conf, $langs, $user;
 
 	$generated_password = '';
+
 	if ($generic) {
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
@@ -514,8 +506,6 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = random_int(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		} else {
 			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
@@ -533,20 +523,29 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = mt_rand(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		}
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($randomCode);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$generated_password = implode('', $passwordArray);
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
-		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+		$nomclass = "modGeneratePass".ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
 		$nomfichier = $nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
 		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 		$genhandler = new $nomclass($db, $conf, $langs, $user);
+		'@phan-var-force ModeleGenPassword $genhandler';
 		$generated_password = $genhandler->getNewGeneratedPassword();
 		unset($genhandler);
 	}
 
-	// Do we have to discard some alphabetic characters ?
+	// Do we have to discard some alphabetic characters ? (usually $replaceambiguouschars is empty)
 	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0) {
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
@@ -583,7 +582,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currentotken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
@@ -601,4 +600,37 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	}
 
 	return $out;
+}
+
+/**
+ * Output the eye picto to show/hide a password HTML field.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofinput	HTML id of input field
+ * @return		string		    				HTML javascript code to set a password
+ */
+function showEyeForField($htmlname, $htmlnameofinput)
+{
+	return '<!-- code to manage the eye hide/show -->
+<span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
+<script nonce="'.getNonce().'">
+	$(document).ready(function () {
+		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on '.$htmlname.'");
+			const $passwordInput = $(\'#'.$htmlnameofinput.'\');
+
+			if ($passwordInput.is(\'[type=password]\')) {
+				$passwordInput.attr(\'type\', \'text\');
+				jQuery(\'#'.$htmlname.' .fa-eye\').attr(\'class\', \'fa fa-eye-slash\');
+			} else {
+				$passwordInput.attr(\'type\', \'password\');
+				jQuery(\'#'.$htmlname.' .fa-eye-slash\').attr(\'class\', \'fa fa-eye\');
+			}
+
+			return false; // This prevents the click from reloading the page
+		});
+	});
+</script>';
 }

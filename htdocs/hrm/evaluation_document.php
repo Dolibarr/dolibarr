@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
@@ -76,6 +85,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity ? $object->entity : $conf->entity]."/evaluation/".get_exdir(0, 0, 0, 1, $object);
 }
@@ -85,16 +95,12 @@ $permissiontoadd  = $user->hasRight('hrm', 'evaluation', 'write'); // Used by th
 $permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');
 
 // Security check (enable the most restrictive one)
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) {
-	accessforbidden();
-}
-if (!$permissiontoread) {
-	accessforbidden();
-}
+
+$isdraft = $object->status == Evaluation::STATUS_DRAFT ? 1 : 0;
+restrictedArea($user, $object->element, $object, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+
+if (!isModEnabled('hrm')) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -115,7 +121,7 @@ $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */

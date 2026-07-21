@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre      <support@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,15 +27,22 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
-$langs->load("companies");
-if (isModEnabled('invoice')) {
-	$langs->load("bills");
-}
+$langs->loadLangs(array("companies", "bills"));
+
+$action = GETPOST('action');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
@@ -42,6 +51,9 @@ if ($user->socid > 0) {
 	$id = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -49,8 +61,6 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -72,7 +82,7 @@ if (!$sortorder) {
 
 
 $arrayfields = array(
-	'f.datef'=>array('label'=>"Date", 'checked'=>1),
+	'f.datef' => array('label' => "Date", 'checked' => 1),
 	//...
 );
 
@@ -113,12 +123,17 @@ if ($id > 0) {
 	if ($id > 0) {
 		$param .= '&socid='.$id;
 	}
+	if ($dol_openinpopup) {
+		$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
+	}
 
-	$head = societe_prepare_head($object);
+	if (empty($dol_openinpopup)) {
+		$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	print dol_get_fiche_end();
+		print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
+		dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
+		print dol_get_fiche_end();
+	}
 
 	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		// Invoice list
@@ -137,6 +152,9 @@ if ($id > 0) {
 		print '<td class="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
+		/**
+		 * @var array<int,array<string,mixed>>	$TData
+		 */
 		$TData = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.total_ttc, f.datef as df,";
@@ -162,7 +180,10 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaid = $fac->getSommePaiement();
+
+				$alreadypaid = $fac->getSommePaiement();
+				$alreadypaid += $fac->getSumDepositsUsed();
+				$alreadypaid += $fac->getSumCreditNotesUsed();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -172,7 +193,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaid),
+					'status' => $fac->getLibStatut(2, $alreadypaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -192,7 +213,7 @@ if ($id > 0) {
 				$sql .= " ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
 				$sql .= " WHERE pf.fk_paiement = p.rowid";
-				$sql .= " AND p.entity = ".$conf->entity;
+				$sql .= " AND p.entity = ".((int) $conf->entity);
 				$sql .= " AND pf.fk_facture = ".((int) $fac->id);
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 
@@ -211,7 +232,7 @@ if ($id > 0) {
 						$userstatic->login = $objp->login;
 
 						$values = array(
-						'fk_paiement' => $objp->rowid,
+							'fk_paiement' => $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
 							'link' => $langs->trans("Payment").' '.$paymentstatic->getNomUrl(1),
@@ -248,12 +269,12 @@ if ($id > 0) {
 
 			// Balance calculation
 			$balance = 0;
-			foreach ($TData as &$data1) {
-				$balance += $data1['amount'];
-				if (!isset($data1['balance'])) {
-					$data1['balance'] = 0;
+			foreach (array_keys($TData) as $key) {
+				$balance += $TData[$key]['amount'];
+				if (!array_key_exists('balance', $TData[$key])) {
+					$TData[$key]['balance'] = 0;
 				}
-				$data1['balance'] += $balance;
+				$TData[$key]['balance'] += $balance;
 			}
 
 			// Resorte array to have elements on the required $sortorder

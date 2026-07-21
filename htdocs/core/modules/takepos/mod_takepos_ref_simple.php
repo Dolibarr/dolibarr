@@ -4,7 +4,7 @@
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	            <support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 {
 	/**
 	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -102,10 +102,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 		// First, we get the max value
 		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
 
-		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -131,10 +131,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'TC' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
 	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
-	 * @param   Societe     $objsoc     Object third party
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string|int     			Next ref value or last ref if $mode is 'last'
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -144,7 +144,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
-		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source."-____-%")."'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";

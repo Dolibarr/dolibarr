@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -40,18 +47,31 @@ $amounts = array();
 $accountid = GETPOSTINT('accountid');
 $cancel = GETPOST('cancel');
 
+$object = new PaymentExpenseReport($db);
+
+if ($id > 0) {
+	$result = $object->fetch($id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
+}
+
 // Security check
 $socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
+
+$result = restrictedArea($user, 'expensereport', $object->fk_expensereport, 'expensereport');
+
+$permissiontoadd = $user->hasRight('expensereport', 'creer');
 
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment') {
+if ($action == 'add_payment' && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -196,7 +216,7 @@ if ($action == 'create' || empty($action)) {
 	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head(null, '0', '', -1);
+	print dol_get_fiche_head([], '0', '', -1);
 
 	$linkback = '';
 	// $linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -215,6 +235,7 @@ if ($action == 'create' || empty($action)) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
 	$sql .= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".((int) $id);
 	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -238,7 +259,7 @@ if ($action == 'create' || empty($action)) {
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = ($datepaid == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepaid);
+	$datepayment = ($datepaid == '' ? (getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1) : $datepaid);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
@@ -304,7 +325,7 @@ if ($action == 'create' || empty($action)) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id; // autofill remainder amount
 			if (!empty($conf->use_javascript_ajax)) { // autofill remainder amount
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->total_ttc - $sumpaid)."'"); // autofill remainder amount
 			}
 			$remaintopay = $objp->total_ttc - $sumpaid; // autofill remainder amount
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">'; // autofill remainder amount

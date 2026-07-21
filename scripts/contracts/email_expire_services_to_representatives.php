@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2013       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,15 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 $mode = $argv[1];
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array('main', 'contracts'));
 
@@ -69,7 +78,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[2]) ? $argv[2] : 'none';
@@ -114,7 +123,7 @@ if ($resql) {
 			if (($obj->email != $oldemail || $obj->uid != $olduid) || $oldemail == 'none') {
 				// Break onto sales representative (new email or uid)
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
-					sendEmailTo($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative, (int) $duration_value);
+					sendEmailToRepresentative($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative, (int) $duration_value);
 				} else {
 					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -141,7 +150,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, getDolCurrency()).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -159,10 +168,10 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
-				sendEmailTo($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative, (int) $duration_value);
+				sendEmailToRepresentative($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative, (int) $duration_value);
 			} else {
 				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -193,7 +202,7 @@ if ($resql) {
  * @param int 		$duration_value			Duration value
  * @return int 								Int <0 if KO, >0 if OK
  */
-function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
+function sendEmailToRepresentative($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -208,9 +217,9 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 
 	if ($duration_value) {
 		if ($duration_value > 0) {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", (string) $duration_value);
 		} else {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", (string) $duration_value);
 		}
 	} else {
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
@@ -241,7 +250,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourExpiredServices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, getDolCurrency()).($usehtml ? "<br>\n" : "\n");
 	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER')) {
 		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER');
 		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER'))) {

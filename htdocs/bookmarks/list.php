@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookmarks', 'admin'));
+$langs->loadLangs(array('other', 'admin'));
 
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09');
@@ -35,7 +45,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $optioncss 	= GETPOST('optioncss', 'alpha');
@@ -65,7 +75,7 @@ if (!$sortorder) {
 
 // Initialize Objects
 $object = new Bookmark($db);
-$extrafields = new ExtraFields($db);
+
 $arrayfields = array();
 $hookmanager->initHooks(array('bookmarklist')); // Note that conf->hooks_modules contains array
 
@@ -189,7 +199,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -283,7 +293,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 $moreforfilter = '';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -297,7 +307,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -313,7 +323,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -331,7 +341,7 @@ print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "b.dateb", "", $pa
 $totalarray['nbfield']++;
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -376,7 +386,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -406,17 +416,16 @@ while ($i < $imaxinloop) {
 		$candelete  = $permissiontodelete;
 
 		// Title
-		print '<td class="tdoverflowmax200" alt="'.dol_escape_htmltag($title).'">';
+		print '<td class="tdoverflowmax250" alt="'.dol_escape_htmltag($title).'">';
 		print dol_escape_htmltag($title);
 		print "</td>\n";
 
 		// Url
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax250">';
 		if (empty($linkintern)) {
 			print img_picto('', 'url', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 		} else {
-			//print img_picto('', 'rightarrow', 'class="pictofixedwidth"');
 			print '<a class="" href="'.$obj->url.'">';
 		}
 		print $link;
@@ -424,7 +433,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Target
-		print '<td class="tdoverflowmax100 center">';
+		print '<td class="tdoverflowmax125 center">';
 		if ($obj->target == 0) {
 			print $langs->trans("BookmarkTargetReplaceWindowShort");
 		}
@@ -434,7 +443,7 @@ while ($i < $imaxinloop) {
 		print "</td>\n";
 
 		// Author
-		print '<td class="tdoverflowmax100 center">';
+		print '<td class="tdoverflowmax125 center">';
 		if ($obj->fk_user > 0) {
 			if (empty($conf->cache['users'][$obj->fk_user])) {
 				$tmpuser = new User($db);
@@ -459,7 +468,7 @@ while ($i < $imaxinloop) {
 		print '<td class="right">'.$obj->position."</td>";
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

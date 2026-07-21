@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020       Maxime Kohlhaas         <maxime@atm-consulting.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +24,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -88,6 +98,7 @@ $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_starty
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // We define date_start and date_end
+$q = 0;
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
 	if (empty($q)) {
@@ -179,10 +190,10 @@ if (!empty($selected_cat)) {
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
-if (!empty($selected_type)) {
+if ($selected_type > 0) {
 	$tableparams['search_type'] = $selected_type;
 }
-$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
+$tableparams['subcat'] = $subcat ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
@@ -225,6 +236,12 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
+$builddate = dol_now();
+$periodlink = '';
+$name = '';
+$calcmode = '';
+$description = '';
+
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("PurchaseTurnover").', '.$langs->trans("ByProductsAndServices");
@@ -243,7 +260,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	// TODO
 }
 
-$builddate = dol_now();
+
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -259,7 +276,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
-		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+		print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 	} else {
 		// Test if there is at least one line in bookkeeping
 		$pcgverid = getDolGlobalInt('CHARTOFACCOUNTS');
@@ -271,9 +288,9 @@ if (isModEnabled('accounting')) {
 		$sql = "SELECT b.rowid ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 		$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+		$sql .= " WHERE b.entity = ".((int) $conf->entity); // In module double party accounting, we never share entities
 		$sql .= " AND b.numero_compte = aa.account_number";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 		$sql .= $db->plimit(1);
 
@@ -281,7 +298,7 @@ if (isModEnabled('accounting')) {
 		$nb = $db->num_rows($resql);
 		if ($nb == 0) {
 			$langs->load("errors");
-			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, 1);
+			print info_admin($langs->trans("WarningNoDataTransferedInAccountancyYet"), 0, 0, '1');
 		}
 	}
 }
@@ -292,6 +309,7 @@ $name = array();
 $amount = array();
 $amount_ht = array();
 $qty = array();
+$type = [];
 
 // SQL request
 $catotal = 0;
@@ -338,7 +356,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order((string) $sortfield, (string) $sortorder);
 
 	dol_syslog("supplier_turnover_by_prodserv", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -366,7 +384,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	// Show array
 	$i = 0;
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	// Extra parameters management
 	foreach ($headerparams as $key => $value) {
@@ -392,16 +410,16 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '>';
 	// type filter (produit/service)
 	print ' &nbsp; ';
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
+	$form->select_type_of_lines($selected_type, 'search_type', $langs->trans("Type"), 1, 1);
 
 	//select thirdparty
 	print '<br>';
 	print img_picto('', 'company', 'class="paddingrightonly"');
-	print $form->select_thirdparty_list($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"), 0, 0, [], '', 0, 0, 'maxwidth250');
+	print $form->select_thirdparty_list((string) $selected_soc, 'search_soc', '', $langs->trans("ThirdParty"), 0, 0, [], '', 0, 0, 'maxwidth250');
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
 	// Array header
@@ -520,7 +538,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="right">100%</td>';
 		print '</tr>';
 
-		$db->free($result);
+		$db->free($resql);
 	} else {
 		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}

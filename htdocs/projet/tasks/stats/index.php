@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2014-2015 Florian HENRY       <florian.henry@open-concept.pro>
  * Copyright (C) 2015      Laurent Destailleur <ldestailleur@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/taskstats.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Security check
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
@@ -36,6 +46,10 @@ if (!$user->hasRight('projet', 'lire')) {
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
+
+$mode = GETPOST('mode', 'alpha');
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
@@ -67,7 +81,33 @@ llxHeader('', $langs->trans('Tasks'), '', '', 0, 0, '', '', '', 'mod-project pro
 $title = $langs->trans("TasksStatistics");
 $dir = $conf->project->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'projecttask');
+$page = 0;
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$param = '';
+$limit = 0;
+
+$newcardbutton = '';
+
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/tasks/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/projet/tasks/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/tasks/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/projet/tasks/list.php'), '', $user->hasRight('projet', 'creer'));
+
+
+// Show description of content
+$htmltooltip = '';
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
+	$htmltooltip .= $langs->trans("TasksOnProjectsDesc");
+} else {
+	$htmltooltip .= $langs->trans("TasksOnProjectsPublicDesc");
+}
+
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
@@ -147,7 +187,7 @@ print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
@@ -170,6 +210,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
@@ -190,7 +231,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data_all_year as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > (int) $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven">';

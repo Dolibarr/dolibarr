@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,15 @@
 
 
 /**
- *      Superclass for incoterm classes
+ *      Trait for incoterm classes
+ *
+ * Properties expected on the host class:
+ *
+ * @property DoliDB $db
+ * @property int $id
+ * @property string[] $errors
+ * @property string $table_element
+ *
  */
 trait CommonIncoterm
 {
@@ -82,6 +91,8 @@ trait CommonIncoterm
 	 */
 	public function getIncotermsForPDF()
 	{
+		global $langs;
+
 		$sql = "SELECT code FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -89,7 +100,7 @@ trait CommonIncoterm
 			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
 				if ($res) {
-					return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+					return $langs->trans("IncotermLabel").': '.$res->code.' - '.$this->location_incoterms;
 				} else {
 					return $res;
 				}

@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
- * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2003     	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004     	Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -40,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
@@ -48,18 +57,12 @@ $massaction  = GETPOST('massaction', 'alpha');
 $show_files  = GETPOSTINT('show_files');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect    = GETPOST('toselect', 'array');
+$toselect    = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist';
 $mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
 $id = GETPOSTINT('id');
 // If we are on the view of a specific user
 if ($id > 0) {
@@ -85,10 +88,11 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -100,7 +104,7 @@ if (!$sortfield) {
 }
 
 
-$search_all			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all			= trim(GETPOST('search_all', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'intcomma');
@@ -136,9 +140,16 @@ if ($search_user == '') {
 	$search_user = -1;
 }
 
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
+}
+$hookmanager->initHooks(array('expensereportlist'));
+$result = restrictedArea($user, 'expensereport', '', '');
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ExpenseReport($db);
-$hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -160,18 +171,18 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
-	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'user' => array('label' => $langs->trans("User"), 'checked' => 1),
-	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => 1),
-	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => 1),
-	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
-	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
-	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
-	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
-	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'user' => array('label' => $langs->trans("User"), 'checked' => '1'),
+	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => '1'),
+	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1'),
+	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1'),
+	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => '1'),
+	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => '1'),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => '-1'),
+	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => '1'),
+	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -196,7 +207,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('arrayfields' => &$arrayfields, 'socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -269,9 +280,9 @@ $min_year = 10;
 $user_id = $user->id;
 
 if ($id > 0) {
-	// Charge utilisateur edite
+	// Load editing user
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_user = $user_id;
@@ -365,7 +376,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -387,11 +398,18 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
+// Direct jump if only one record found
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".DOL_URL_ROOT.'/expensereport/card.php?id='.$id);
+	exit;
+}
 
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-expensereport page-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -516,7 +534,7 @@ if ($id > 0) {		// For user tab
 		$childids = $user->getAllChildIds(1);
 
 		$canedit = ((in_array($user_id, $childids) && $user->hasRight('expensereport', 'creer'))
-			|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->hasRight('expensereport', 'writeall_advance')));
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
 
 		// Buttons for actions
 		if ($canedit) {
@@ -539,6 +557,7 @@ if ($id > 0) {		// For user tab
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/expensereport/stats/index.php?mode=statistics&objecttype=expensereport@expensereport'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('expensereport', 'creer'));
 
@@ -575,14 +594,11 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -593,22 +609,22 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
 if (!empty($arrayfields['d.ref']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_ref" value="'.dolPrintHTMLForAttribute($search_ref).'">';
 	print '</td>';
 }
 // User
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
-		print '<td class="liste_titre maxwidthonspartphone" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -685,7 +701,7 @@ if (!empty($arrayfields['d.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -700,7 +716,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -744,7 +760,7 @@ if (!empty($arrayfields['d.total_ttc']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['d.date_create']['checked'])) {
 	print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
@@ -758,7 +774,7 @@ if (!empty($arrayfields['d.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -836,10 +852,10 @@ if ($num > 0) {
 		} else {
 			// Show line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+			print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -855,14 +871,10 @@ if ($num > 0) {
 			}
 			// Ref
 			if (!empty($arrayfields['d.ref']['checked'])) {
-				print '<td>';
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">';
+				print '<td class="tdoverflowmax150">';
 				print $expensereportstatic->getNomUrl(1);
-				print '</td>';
 				// Warning late icon and note
-				print '<td class="nobordernopadding nowrap">';
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
+				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
 					print img_warning($langs->trans("Late"));
 				}
 				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
@@ -873,14 +885,10 @@ if ($num > 0) {
 					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 					print '</span>';
 				}
-				print '</td>';
-				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
-				print '</td>';
-				print '</tr></table>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -961,7 +969,7 @@ if ($num > 0) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			// Date creation
@@ -990,7 +998,7 @@ if ($num > 0) {
 				}
 			}
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
@@ -1008,9 +1016,9 @@ if ($num > 0) {
 			print '</tr>'."\n";
 		}
 
-		$total_total_ht = $total_total_ht + $obj->total_ht;
-		$total_total_tva = $total_total_tva + $obj->total_tva;
-		$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+		$total_total_ht += $obj->total_ht;
+		$total_total_tva += $obj->total_tva;
+		$total_total_ttc += $obj->total_ttc;
 
 		$i++;
 	}

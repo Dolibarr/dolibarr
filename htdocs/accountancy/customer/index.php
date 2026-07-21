@@ -4,6 +4,8 @@
  * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry <jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -28,6 +29,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -39,17 +48,6 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $validatemonth = GETPOSTINT('validatemonth');
 $validateyear = GETPOSTINT('validateyear');
-
-// Security check
-if (!isModEnabled('accounting')) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->hasRight('accounting', 'bind', 'write')) {
-	accessforbidden();
-}
 
 $accountingAccount = new AccountingAccount($db);
 
@@ -75,7 +73,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -84,7 +82,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -94,6 +92,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  */
 
 if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
+	$error = 0;
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
 	$sql1 = "UPDATE ".$db->prefix()."facturedet as fd";
@@ -118,7 +117,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('acc
 	// End clean database
 }
 
-if ($action == 'validatehistory') {
+if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write')) {
 	$error = 0;
 	$nbbinddone = 0;
 	$nbbindfailed = 0;
@@ -157,15 +156,15 @@ if ($action == 'validatehistory') {
 	}
 	$alias_societe_perentity = !getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED') ? "s" : "spe";
 	$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON ".$db->sanitize($alias_societe_perentity).".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa  ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa2 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa3 ON ".$db->sanitize($alias_product_perentity).".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa4 ON ".$db->sanitize($alias_societe_perentity).".accountancy_code_sell = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".((int) $conf->entity);
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
-	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	if ($validatemonth && $validateyear) {
 		$sql .= dolSqlDateFilter('f.datef', 0, $validatemonth, $validateyear);
@@ -179,10 +178,6 @@ if ($action == 'validatehistory') {
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$num_lines = $db->num_rows($result);
-
-		$facture_static = new Facture($db);
-
-		$isSellerInEEC = isInEEC($mysoc);
 
 		$thirdpartystatic = new Societe($db);
 		$facture_static = new Facture($db);
@@ -239,9 +234,6 @@ if ($action == 'validatehistory') {
 				'export' => $objp->aarowid_export,
 				'thirdparty' => $objp->aarowid_thirdparty);
 
-			$code_sell_p_notset = '';
-			$code_sell_t_notset = '';
-
 			$suggestedid = 0;
 
 			$return = $accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
@@ -259,7 +251,7 @@ if ($action == 'validatehistory') {
 			}
 
 			if ($suggestedid > 0) {
-				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+				$sqlupdate = "UPDATE ".$db->prefix()."facturedet";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $suggestedid);
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $facture_static_det->id);
 
@@ -299,6 +291,7 @@ if ($action == 'validatehistory') {
 /*
  * View
  */
+
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
 llxHeader('', $langs->trans("CustomersVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-index');
@@ -309,20 +302,22 @@ $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current +
 
 print load_fiche_titre($langs->trans("CustomersVentilation")." ".$textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, '', 'title_accountancy');
 
-print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer").'</span><br>';
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
-print '</span><br>';
+print '<div class="info">';
+print '<span class="">'.$langs->trans("DescVentilCustomer").'</span><br>';
+print '<span class="hideonsmartphone">'.$langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")).'<br>';
+print '</span>';
+print '</div>';
 
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
-	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+	print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"), 0, 0, 'warning');
 	print "<br>";
 }
 
 $y = $year_current;
 
-$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="button small" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto($langs->trans("ValidateHistory"), 'link', 'class="pictofixedwidth fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
-print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
+print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1, 0, $buttonbind);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -361,17 +356,18 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((string) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "1", "0").") AS nbmonth".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
-$sql .= "  SUM(fd.total_ht) as total";
+$sql .= "  SUM(fd.total_ht) as total, COUNT(fd.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND f.fk_statut > 0";
 $sql .= " AND fd.product_type <= 2";
@@ -420,6 +416,7 @@ if ($resql) {
 			print $row[1];
 		}
 		print '</td>';
+
 		for ($i = 2; $i <= 13; $i++) {
 			$cursormonth = (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) + $i - 2);
 			if ($cursormonth > 12) {
@@ -428,17 +425,19 @@ if ($resql) {
 			$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
 			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
 
-			print '<td class="right nowraponall amount">';
-			print price($row[$i]);
+			print '<td class="right nowraponall amount" title="'.price($row[2 * $i - 2]).' - '.$row[2 * $i - 1].' lines">';
+			print price($row[2 * $i - 2]);
 			// Add link to make binding
-			if (!empty(price2num($row[$i]))) {
+			if (!empty(price2num($row[2 * $i - 2])) || !empty($row[2 * $i - 1])) {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
 				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad((string) $cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
 				print '</a>';
 			}
 			print '</td>';
 		}
-		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
+
+		print '<td class="right nowraponall amount"><b>'.price($row[26]).'</b></td>';
+
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -458,7 +457,7 @@ print '</div>';
 print '<br>';
 
 
-print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesBound"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -497,7 +496,7 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -506,8 +505,8 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 $sql .= " AND f.fk_statut > 0";
@@ -579,12 +578,12 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 	print '<br>';
 	print '<br>';
 
-	print_barre_liste($langs->trans("OtherInfo"), '', '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
+	print_barre_liste($langs->trans("OtherInfo"), 0, '', '', '', '', '', -1, '', '', 0, '', '', 0, 1, 1);
 	//print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td lass="left">'.$langs->trans("TotalVente").'</td>';
+	print '<tr class="liste_titre"><td class="left">'.$langs->trans("TotalVente").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 		if ($j > 12) {
@@ -600,16 +599,19 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		if ($j > 12) {
 			$j -= 12;
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) $j, 2, "0", STR_PAD_LEFT).",";
+		$sql .= "  SUM(".$db->ifsql("MONTH(f.datef) = ".((int) $j), "fd.total_ht", "0").") AS month".str_pad((string) ((int) $j), 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_fd ON prev_fd.rowid = fd.fk_prev_id";
+	}
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 	// Define begin binding date
-	if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+	if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+		$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 	$sql .= " AND f.fk_statut > 0";
@@ -666,16 +668,16 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 					"MONTH(f.datef) = ".((int) $j),
 					" (".$db->ifsql(
 						"fd.total_ht < 0",
-						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-						"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+						" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+						"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 					).")",
-					0
-				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
+					'0'
+				).") AS month".str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
-				" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100))))",	// TODO This is bugged, we must use the percent for the invoice and fd.situation_percent is cumulated percent !
-				"  (fd.total_ht - (fd.buy_price_ht * fd.qty * (fd.situation_percent / 100)))"
+				" (-1 * (abs(fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent)) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100))))",
+				"  (fd.total_ht * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / fd.situation_percent) - (fd.buy_price_ht * fd.qty * ((fd.situation_percent - COALESCE(prev_fd.situation_percent, 0)) / 100)))"
 			).") as total";
 		} else {
 			$sql = "SELECT '".$db->escape($langs->trans("Vide"))."' AS marge,";
@@ -691,8 +693,8 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 						" (-1 * (abs(fd.total_ht) - (fd.buy_price_ht * fd.qty)))",
 						"  (fd.total_ht - (fd.buy_price_ht * fd.qty))"
 					).")",
-					0
-				).") AS month".str_pad((string) $j, 2, '0', STR_PAD_LEFT).",";
+					'0'
+				).") AS month".str_pad((string) ((int) $j), 2, '0', STR_PAD_LEFT).",";
 			}
 			$sql .= "  SUM(".$db->ifsql(
 				"fd.total_ht < 0",
@@ -705,8 +707,8 @@ if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This pa
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 		$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
 		// Define begin binding date
-		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-			$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+		if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+			$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 		}
 		$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 		$sql .= " AND f.fk_statut > 0";

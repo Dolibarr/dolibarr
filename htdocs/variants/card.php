@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
- * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2022       Open-Dsi			<support@open-dsi.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,16 @@ require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';
 require 'lib/variants.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products'));
 
@@ -40,7 +51,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productattribute'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'alpha');
+$lineid = GETPOSTINT('lineid');
 
 // Security check
 if (!isModEnabled('variants')) {
@@ -49,15 +60,20 @@ if (!isModEnabled('variants')) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-$result = restrictedArea($user, 'variants');
-
-$object = new ProductAttribute($db);
-
-// Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productattributecard', 'globalcard'));
+
+$result = restrictedArea($user, 'variants');
+
+$object = new ProductAttribute($db);
+$extrafields = new ExtraFields($db);
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 $permissiontoread = $user->hasRight('variants', 'read');
 $permissiontoadd = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -82,14 +98,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/variants/list.php', 1);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/variants/list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/variants/card.php', 1).'?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/variants/card.php', ['id' => ((!empty($id) && $id > 0) ? $id : '__ID__')]);
 			}
 		}
 	}
@@ -109,14 +125,14 @@ if (empty($reshook)) {
 
 	// Action to move up and down lines of object
 	if ($action == 'up' && $permissiontoedit) {
-		$object->line_up(GETPOST('rowid'), false);
+		$object->line_up(GETPOSTINT('rowid'), false);
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOSTINT('rowid'));
 		exit();
 	} elseif ($action == 'down' && $permissiontoedit) {
-		$object->line_down(GETPOST('rowid'), false);
+		$object->line_down(GETPOSTINT('rowid'), false);
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOSTINT('rowid'));
 		exit();
 	}
 
@@ -162,7 +178,7 @@ llxHeader('', $title, $help_url);
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ProductAttribute")), '', 'object_' . $object->picto);
 
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -178,6 +194,9 @@ if ($action == 'create') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>' . "\n";
 
@@ -196,7 +215,7 @@ if ($action == 'create') {
 	// Part to edit record
 	print load_fiche_titre($langs->trans("ProductAttribute"), '', 'object_' . $object->picto);
 
-	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<form method="POST" action="' . dolBuildUrl($_SERVER["PHP_SELF"]) . '">';
 	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -213,6 +232,9 @@ if ($action == 'create') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -237,7 +259,7 @@ if ($action == 'create') {
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ProductAttributeDeleteDialog'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id]), $langs->trans('DeleteMyObject'), $langs->trans('ProductAttributeDeleteDialog'), 'confirm_delete', '', 0, 1);
 	} elseif ($action == 'ask_deleteline') {
 		// Confirmation to delete line
 		$object_value = new ProductAttributeValue($db);
@@ -272,6 +294,9 @@ if ($action == 'create') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 	print '</div>';
@@ -309,7 +334,7 @@ if ($action == 'create') {
 
 		print load_fiche_titre($langs->trans("PossibleValues") . (!empty($object->lines) ? '<span class="opacitymedium colorblack paddingleft">(' . count($object->lines) . ')</span>' : ''));
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
+		print '<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">

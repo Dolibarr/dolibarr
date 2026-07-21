@@ -17,8 +17,9 @@ Module4100Name = Политика за приватност на податоц�
 Module4100Desc = Модул за управување со приватноста на податоците (согласност со GDPR)
 # Administration page
 datapolicySetup = Поставување политика за приватност на податоците на модулот
-Deletion = Бришење на податоци
-datapolicySetupPage = Во зависност од законите на вашите земји (Пример <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">член 5</a> од GDPR), личните податоци мора да се чуваат одреден период не надминувајќи го времетраењето, податоците се потребни за целта за која се собрани, освен за архивски цели.<br>Бришењето ќе се изврши автоматски по одредено времетраење без настани (времетраењето кои ќе ги имате наведено подолу).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s месеци
 ONE_YEAR = 1 година
 NB_YEARS = %s години
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Проспект/клиент
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ниту потенцијален/ниту клиент
 DATAPOLICY_CONTACT_FOURNISSEUR = Добавувачот
 DATAPOLICY_ADHERENT = Член
-DATAPOLICY_Tooltip_SETUP = Вид на контакт - Наведете ги вашите избори за секој тип.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Можете да испратите е-пошта за GDPR до сите ваши релевантни контакти (кои сè уште немаат добиено е-пошта и за кои не сте регистрирале ништо за нивниот договор за GDPR). За да го направите ова, користете го следното копче.
 SendAgreement = Испратете е-пошта
 AllAgreementSend = Сите пораки се испратени
 TXTLINKDATAPOLICYACCEPT = Текст за врската „договор“
 TXTLINKDATAPOLICYREFUSE = Текст за врската „несогласување“
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Обработка на лични податоци
 DATAPOLICY_consentement = Добиена согласност за обработка на лични податоци

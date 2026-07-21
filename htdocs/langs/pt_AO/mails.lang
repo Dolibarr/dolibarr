@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - mails
+EMailings=EMailings
+AllEMailings=All eMailings
+ShowEMailing=Show emailing
+ListOfEMailings=List of emailings
+NewMailing=New emailing
+EditMailing=Edit emailing
+ResetMailing=Resend emailing
+ConfirmResetMailingTargetMassaction=Confirmation of the reset of targets statusin error
+DeleteMailing=Delete emailing
+PreviewMailing=Preview emailing
+CreateMailing=Create emailing
+ValidMailing=Valid emailing
+MailingArea=EMailings area
+LastMailings=Latest %s emailings
+SearchAMailing=Search mailing
+SendMailing=Send emailing
+LimitSendingEmailing=Note: Sending of emailings from web interface is done in several times for security and timeout reasons, <b>%s</b> recipients at a time for each sending session.
+NbOfEMailingsReceived=Mass emailings received
+NbOfEMailingsSend=Mass emailings sent

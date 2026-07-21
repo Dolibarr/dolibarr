@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,16 +40,38 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ */
+
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
+ * @var string  $dolibarr_main_document_root
+ */
+'
+@phan-var-force string $dolibarr_main_db_type
+';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
-$grant_query = '';
-$step = 2;
 $ok = 0;
 
 
@@ -68,16 +91,6 @@ $dirmodule = ((GETPOST("dirmodule", 'alpha', 3) && GETPOST("dirmodule", 'alpha',
 $ignoredbversion = (GETPOST('ignoredbversion', 'alpha', 3) == 'ignoredbversion') ? GETPOST('ignoredbversion', 'alpha', 3) : ((empty($argv[3]) || $argv[3] != 'ignoredbversion') ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "other", "errors"));
-
-if ($dolibarr_main_db_type == "mysqli") {
-	$choix = 1;
-}
-if ($dolibarr_main_db_type == "pgsql") {
-	$choix = 2;
-}
-if ($dolibarr_main_db_type == "mssql") {
-	$choix = 3;
-}
 
 
 dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
@@ -107,36 +120,39 @@ if (!$versionfrom && !$versionto) {
 pHeader('', "upgrade2", GETPOST('action', 'aZ09'), 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 $actiondone = 0;
+$db = null;
 
 // Action to launch the migrate script
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	$actiondone = 1;
 
-	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
-	print '<span class="inline-block">'.$langs->trans("DatabaseMigration").'</span></h3>';
+	print '<h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/database.svg" width="20" alt="Database"> ';
+	print '<span class="inline-block valignmiddle">'.$langs->trans("DatabaseMigration").'</span></h3>';
 
-	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
-	$error = 0;
+	print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 
 	// If password is encoded, we decode it
-	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', (string) $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', (string) $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', (string) $dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dol_decode((string) $dolibarr_main_db_pass);
+		} elseif (preg_match('/dolcrypt:/i', (string) $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dolDecrypt((string) $dolibarr_main_db_pass);
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
 	}
 
 	// $conf is already instantiated inside inc.php
-	$conf->db->type = $dolibarr_main_db_type;
-	$conf->db->host = $dolibarr_main_db_host;
-	$conf->db->port = $dolibarr_main_db_port;
-	$conf->db->name = $dolibarr_main_db_name;
-	$conf->db->user = $dolibarr_main_db_user;
-	$conf->db->pass = $dolibarr_main_db_pass;
+	$conf->db->type = (string) $dolibarr_main_db_type;
+	$conf->db->host = (string) $dolibarr_main_db_host;
+	$conf->db->port = (string) $dolibarr_main_db_port;
+	$conf->db->name = (string) $dolibarr_main_db_name;
+	$conf->db->user = (string) $dolibarr_main_db_user;
+	$conf->db->pass = (string) $dolibarr_main_db_pass;
 
 	// Load type and crypt key
 	if (empty($dolibarr_main_db_encryption)) {
@@ -150,14 +166,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
+
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);
 
 	if ($db->connected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right"><span class="neutral">'.$langs->trans("OK").'</span></td></tr>'."\n";
-		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("OK"));
+		print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right"><span class="neutral">'.$langs->trans("Success").'</span></td></tr>'."\n";
+		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("Success"));
 		$ok = 1;
 	} else {
 		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="error">'.$langs->transnoentities("Error")."</span></td></tr>\n";
@@ -168,17 +185,18 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	if ($ok) {
 		if ($db->database_selected) {
 			print '<tr><td class="nowrap">';
-			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right"><span class="neutral">'.$langs->trans("OK")."</span></td></tr>\n";
+			print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right"><span class="neutral">'.$langs->trans("Success")."</span></td></tr>\n";
 			dolibarr_install_syslog("upgrade: Database connection successful: ".$dolibarr_main_db_name);
 			$ok = 1;
 		} else {
-			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="ok">'.$langs->trans("Error")."</span></td></tr>\n";
+			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right"><span class="neutral">'.$langs->trans("Error")."</span></td></tr>\n";
 			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 			$ok = 0;
 		}
 	}
 
 	// Affiche version
+	$versionarray = array();
 	if ($ok) {
 		$version = $db->getVersion();
 		$versionarray = $db->getVersionArray();
@@ -209,8 +227,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		// Test database version is not forbidden for migration
 		if (empty($ignoredbversion)) {
 			$dbversion_disallowed = array(
-				array('type'=>'mysql', 'version'=>array(5, 5, 40)),
-				array('type'=>'mysqli', 'version'=>array(5, 5, 40)) //,
+				array('type' => 'mysql', 'version' => array(5, 5, 40)),
+				array('type' => 'mysqli', 'version' => array(5, 5, 40)) //,
 				//array('type'=>'mysql','version'=>array(5,5,41)),
 				//array('type'=>'mysqli','version'=>array(5,5,41))
 			);
@@ -255,11 +273,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		&& versioncompare($versioncommande, $versionarray) <= 0) {	// Si mysql >= 4.0
 			dolibarr_install_syslog("Clean database from bad named constraints");
 
-			// Suppression vieilles contraintes sans noms et en doubles
-			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
+			// Delete old name constraints and duplicates
+			// The undesired constraint have a name starting with '0_' or defined by ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
-								MAIN_DB_PREFIX.'bank_class',
+								MAIN_DB_PREFIX.'category_bankline',
 								MAIN_DB_PREFIX.'c_ecotaxe',
 								MAIN_DB_PREFIX.'c_methode_commande_fournisseur', // table renamed
 								MAIN_DB_PREFIX.'c_input_method'
@@ -271,7 +289,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				// Database prefix filter
 				if (preg_match('/^'.MAIN_DB_PREFIX.'/', $val)) {
 					//print "x".$val."<br>";
-					$sql = "SHOW CREATE TABLE ".$val;
+					$sql = "SHOW CREATE TABLE ".$db->sanitize($val);
 					$resql = $db->query($sql);
 					if ($resql) {
 						$values = $db->fetch_array($resql);
@@ -358,7 +376,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").'</td><td class="right">'.$file.'</td></tr>'."\n";
 
 				// Run sql script
-				$ok = run_sql($dir.$file, 0, '', 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
+				$ok = run_sql($dir.$file, 0, 0, 1, '', 'default', 32768, 0, 0, 2, 0, $db->database_name);
 				$listoffileprocessed[$dir.$file] = $dir.$file;
 
 
@@ -384,18 +402,26 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				}
 
 				if (count($modulesfile)) {
+					$conf->setValues($db);	// Load conf so we knowmodules that are enabled
+
 					print '<tr><td colspan="2"><hr style="border-color: #ccc; border-top-style: none;"></td></tr>';
 
 					foreach ($modulesfile as $modulefilelong => $modulefileshort) {
 						if (in_array($modulefilelong, $listoffileprocessed)) {
 							continue;
 						}
+						$dirofmodule = preg_replace('/\//', '', preg_replace('/\/sql\/[a-z0-8_]+\.sql$/', '', $modulefileshort));
 
-						print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules)</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+						if (!is_null($dirofmodule) && isModEnabled($dirofmodule)) {
+							print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules '.$dirofmodule.')</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
 
-						// Run sql script
-						$okmodule = run_sql($modulefilelong, 0, '', 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
-						$listoffileprocessed[$modulefilelong] = $modulefilelong;
+							// Run sql script
+							$okmodule = run_sql($modulefilelong, 0, 0, 1); // Note: Result of migration of external module should not decide if we continue migration of Dolibarr or not.
+							$listoffileprocessed[$modulefilelong] = $modulefilelong;
+						} else {
+							print '<tr><td class="nowrap">'.$langs->trans("ChoosedMigrateScript").' (external modules '.$dirofmodule.')</td><td class="right">'.$modulefileshort.'</td></tr>'."\n";
+							print '<tr><td class="nowrap">'.$langs->trans("ProcessMigrateScript").'</td><td class="right"><span class="opacitymedium">Ignored (module not enabled)</span></td></tr>'."\n";
+						}
 					}
 				}
 			}
@@ -428,7 +454,7 @@ if ($dirmodule) {
 }
 pFooter($nonext, $setuplang);
 
-if ($db->connected) {
+if ($db !== null && $db->connected) {
 	$db->close();
 }
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+/* Copyright (C) 2017-2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
-
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "other"));
@@ -38,7 +45,7 @@ $langs->loadLangs(array("agenda", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -73,7 +80,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Availabilities($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('availabilitiesagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -85,16 +91,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bookcal->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-// There is several ways to check permission.
-// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
-	$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-}
+$permissiontoread = $user->hasRight('bookcal', 'availabilities', 'read');
+$permissiontoadd = $user->hasRight('bookcal', 'availabilities', 'write');
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -144,9 +142,9 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities_agenda');
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = availabilitiesPrepareHead($object);
@@ -171,7 +169,7 @@ if ($object->id > 0) {
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}
 			$morehtmlref.=' : ';
 			if ($action == 'classify') {

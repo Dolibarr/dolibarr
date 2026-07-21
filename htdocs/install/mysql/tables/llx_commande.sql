@@ -36,16 +36,17 @@ create table llx_commande
   date_valid				datetime,						-- date de validation
   date_cloture				datetime,						-- date de cloture
   date_commande				date,							-- date de la commande
-  fk_user_author			integer,						-- user making creation
+  fk_user_author			integer,						-- user making creation, may be null if created by automated process
   fk_user_modif				integer,						-- user making last change
   fk_user_valid				integer,						-- user validating
   fk_user_cloture			integer,						-- user closing
   source					smallint,						-- not used, except by setting this to 42 for orders coming for replenishment and 0 in other case ?
   fk_statut					smallint  DEFAULT 0,
   amount_ht					double(24,8) DEFAULT 0,
-  remise_percent			real      DEFAULT 0,
-  remise_absolue			real      DEFAULT 0,
-  remise					real      DEFAULT 0,
+
+  remise_percent			real      DEFAULT 0,            -- deprecated (not used)
+  remise_absolue			real      DEFAULT 0,            -- deprecated (not used)
+  remise					real      DEFAULT 0,            -- deprecated (not used)
 
   total_tva                 double(24,8)     DEFAULT 0,		-- total tax
   localtax1					double(24,8)     DEFAULT 0,		-- total local tax 2
@@ -53,6 +54,8 @@ create table llx_commande
   revenuestamp              double(24,8)     DEFAULT 0,		-- amount total revenuestamp (usefull for proforma that must match invoice)
   total_ht					double(24,8)     DEFAULT 0,		-- total without tax
   total_ttc					double(24,8)     DEFAULT 0,		-- total with tax
+
+  signed_status				smallint DEFAULT NULL,			-- signed status NULL, 0 or 1
 
   note_private				text,
   note_public				text,
@@ -84,5 +87,8 @@ create table llx_commande
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+
+  ip 						varchar(250),
+  user_agent				varchar(255)
 )ENGINE=innodb;

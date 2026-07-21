@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007 	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005      	Brice Davoleau      	<brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2012 	Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2019 	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007      	Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2010      	Juanjo Menent       	<jmenent@2byte.es>
+ * Copyright (C) 2015      	Marcos García       	<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
  */
 
 /**
- *  \file       htdocs/societe/messaging.php
+ *  \file       htdocs/product/messaging.php
  *  \ingroup    societe
  *  \brief      Page of third party events
  */
@@ -35,15 +37,26 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
@@ -79,10 +92,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
+$hookmanager->initHooks(array('productagenda', 'globalcard'));
 
 // Security check
-$socid =0;
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -148,7 +161,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-messagi
 if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
-	$type = $langs->trans('Product');
+$type = $langs->trans('Product');
 if ($object->isService()) {
 	$type = $langs->trans('Service');
 }
@@ -160,7 +173,7 @@ $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 print dol_get_fiche_head($head, 'agenda', $titre, -1, $picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 $shownav = 1;
 if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -218,13 +231,13 @@ if (isModEnabled('agenda')) {
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if (!empty($object->id) && $permok) {
 		if (get_class($object) == 'Product') {
-			$out .= '&amp;prodid='.$object->id.'&origin=product&originid='.$id;
+			$out .= '&prodid='.$object->id.'&origin=product&originid='.$id;
 		}
-		$out .= '&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
+		$out .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	}
 
 	$linktocreatetimeBtnStatus = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', (int) $linktocreatetimeBtnStatus);
 }
 
 if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

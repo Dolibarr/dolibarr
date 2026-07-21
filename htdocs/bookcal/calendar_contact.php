@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/bookcal/class/calendar.class.php');
-dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "companies", "other", "mails"));
@@ -37,12 +45,11 @@ $langs->loadLangs(array("agenda", "companies", "other", "mails"));
 $id     = (GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOSTINT('lineid');
-$socid  = GETPOSTINT('socid');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize a technical objects
 $object = new Calendar($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('calendarcontact', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -118,7 +125,7 @@ if ($action == 'addcontact' && $permission) {
 $title = $langs->trans('Calendar')." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -156,7 +163,7 @@ if ($object->id) {
 	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -190,9 +197,12 @@ if ($object->id) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

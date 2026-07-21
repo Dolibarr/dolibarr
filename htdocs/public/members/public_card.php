@@ -4,6 +4,8 @@
  * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,15 +44,19 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // $entity is casted to int
+define("DOLENTITY", $entity);
+// }
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // Security check
 if (!isModEnabled('member')) {
@@ -78,6 +84,10 @@ $extrafields = new ExtraFields($db);
  * View
  */
 
+if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
+	httponly_accessforbidden('Public access of list of members is not enabled. See setup of module membership to enable it.');
+}
+
 $morehead = '';
 if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
@@ -103,18 +113,18 @@ if ($id > 0) {
 	if (empty($object->public)) {
 		print $langs->trans("ErrorThisMemberIsNotPublic");
 	} else {
-		print '<table class="public_border" width="100%" cellpadding="3">';
+		print '<table class="public_border centpercent" cellpadding="3">';
 
-		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
-		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';
-		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$object->firstname.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Gender").'</td><td class="valeur">'.$object->gender.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
+		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.dolPrintHTML($object->type)."</td></tr>\n";
+		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.dolPrintHTML($object->morphy).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.dolPrintHTML($object->firstname).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.dolPrintHTML($object->lastname).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Gender").'</td><td class="valeur">'.dolPrintHTML($object->gender).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dolPrintHTML($object->company).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.dolPrintHTML(dol_nl2br($object->address)).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.dolPrintHTML($object->zip.' '.$object->town).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.dolPrintHTML($object->country).'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dolPrintHTML($object->email).'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		if (isset($object->photo) && $object->photo != '') {
@@ -127,7 +137,7 @@ if ($id > 0) {
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 
-		print '<tr><td class="tdtop">'.$langs->trans("Comments").'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlcleanlastbr($object->note_public)).'</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("Comments").'</td><td class="valeur sensiblehtmlcontent">'.dolPrintHTML($object->note_public).'</td></tr>';
 
 		print '</table>';
 	}
@@ -143,11 +153,18 @@ $db->close();
 /**
  * Show header for card member
  *
- * @param 	string		$title		Title
- * @param 	string		$head		More info into header
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "")
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	top_htmlhead($head, $title);
 
@@ -155,11 +172,13 @@ function llxHeaderVierge($title, $head = "")
 }
 
 /**
-* Show footer for card member
-*
-* @return	void
-*/
-function llxFooterVierge()
+ * Show footer for card member
+ *
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @return	void
+ */
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	printCommonFooter('public');
 

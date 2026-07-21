@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +28,8 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @param   Propal	$object		Object related to tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function propal_prepare_head($object)
 {
@@ -37,16 +39,16 @@ function propal_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/card.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Proposal');
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("shipping") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
+	if ((!isModEnabled('order') && ((isModEnabled("shipping") && getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire'))
 		|| (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'lire'))))) {
 		$langs->load("sendings");
 		$text = '';
-		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/expedition/propal.php', ['id' => $object->id]);
 		if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 			$text = $langs->trans("Shipment");
 		}
@@ -63,7 +65,7 @@ function propal_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/contact.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -86,7 +88,7 @@ function propal_prepare_head($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -97,10 +99,10 @@ function propal_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->propal->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/document.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
@@ -109,9 +111,9 @@ function propal_prepare_head($object)
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/agenda.php?id='.$object->id;
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/propal/agenda.php', ['id' => $object->id]);
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -153,20 +155,19 @@ function propal_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function propal_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('propal');
 	$extrafields->fetch_name_optionals_label('propaldet');
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/propal.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/propal.php');
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -177,7 +178,7 @@ function propal_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'propal_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/admin/propal_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['propal']['count'];
 	if ($nbExtrafields > 0) {
@@ -186,7 +187,7 @@ function propal_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php');
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
 	if ($nbExtrafields > 0) {
@@ -210,9 +211,9 @@ function propal_admin_prepare_head()
  */
 function getCustomerProposalPieChart($socid = 0)
 {
-	global $conf, $db, $langs, $user;
+	global $conf, $db, $langs, $user, $hookmanager;
 
-	$result= '';
+	$result = '';
 
 	if (!isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 		return '';
@@ -221,11 +222,11 @@ function getCustomerProposalPieChart($socid = 0)
 	$listofstatus = array(Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED);
 
 	$propalstatic = new Propal($db);
-
+	if ($user->socid > 0) $socid = $user->socid;
 	$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if ($user->socid == 0 && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
@@ -233,10 +234,14 @@ function getCustomerProposalPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND p.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if ($user->socid == 0 && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
+	// Add where from hooks
+	$parameters = array('socid' => $user->socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $propalstatic); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_statut";
 	$resql = $db->query($sql);
 	if ($resql) {

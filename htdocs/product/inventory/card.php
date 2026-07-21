@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,23 +31,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
 
+$hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
+
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$result = restrictedArea($user, 'stock', $id);
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock');
 } else {
-	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
+	$result = restrictedArea($user, 'stock', $id, 'inventory&stock', 'inventory_advance');
 }
 
 // Initialize a technical objects
@@ -55,7 +68,6 @@ $extrafields = new ExtraFields($db);
 $includedocgeneration = false;
 $diroutputmassaction = null;
 // $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -81,7 +93,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $id);
+//restrictedArea($user, 'mymodule', $id);
 
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = $user->hasRight('stock', 'lire');
@@ -186,7 +198,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-invento
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewInventory"), '', 'product');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -223,7 +235,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Inventory"), '', 'product');
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -261,6 +273,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
+	$text = '';
 
 
 	// Confirmation of action xxxx
@@ -279,23 +292,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		 $forcecombo=0;
-		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		 $formquestion = array(
-		 // 'text' => $langs->trans("ConfirmClone"),
-		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		 );
-		 */
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 
 	if ($action == 'validate') {
 		$form = new Form($db);
@@ -341,7 +337,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -403,7 +399,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 			}
 
 			// Back to draft
@@ -440,9 +436,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			if ($permissiontoadd) {
-				//print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=inventory', 'clone', $permissiontoadd);
-			}
+			//if ($permissiontoadd) {
+			//print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=inventory', 'clone', $permissiontoadd);
+			//}
 
 			// Delete
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
@@ -472,7 +468,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('inventory'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

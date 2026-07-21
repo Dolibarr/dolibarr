@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2019 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
@@ -73,7 +84,8 @@ $help_url = 'EN:Module_DAV';
 
 llxHeader('', $langs->trans("DAVSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-dav');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
 
 
@@ -85,12 +97,12 @@ $head = dav_admin_prepare_head();
 print dol_get_fiche_head($head, 'webdav', '', -1, '');
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent nomarginbottom">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
 		if (isset($val['enabled']) && empty($val['enabled'])) {
@@ -102,7 +114,7 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= $langs->trans("RESTRICT_ON_IPHelp").'<br>'.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
@@ -126,7 +138,7 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent nomarginbottom">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
 		if (isset($val['enabled']) && empty($val['enabled'])) {

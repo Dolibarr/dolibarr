@@ -4,6 +4,8 @@
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015 Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2024		MDW								<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +32,13 @@
  * Prepare array with list of tabs
  *
  * @param   Reception	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function reception_prepare_head(Reception $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 
-	$langs->loadLangs(array("sendings", "deliveries"));
+	$langs->loadLangs(array("sendings"));
 
 	$h = 0;
 	$head = array();
@@ -113,14 +115,13 @@ function reception_prepare_head(Reception $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ *  @return	array<array{0:string,1:string,2:string}>	head array with tabs
  */
 function reception_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $user, $extrafields;
 	$langs->load("receptions");
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('reception');
 	$extrafields->fetch_name_optionals_label('receptiondet_batch');
 

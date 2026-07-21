@@ -3,6 +3,8 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +47,17 @@ if (!isset($argv[1]) || !$argv[1]) {
 $now = $argv[1];
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Global variables
 $version = DOL_VERSION;
@@ -61,7 +72,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 /*
  * if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {

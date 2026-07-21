@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -172,6 +172,7 @@ class Utils
 						$tmpcountdeleted = 0;
 
 						$result = dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
+
 						$excluded = [
 							$conf->user->dir_temp,
 						];
@@ -218,8 +219,9 @@ class Utils
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}
 
-		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
+		// Recreate temp dir that are not automatically recreated by core code, we need them
 		if (isModEnabled('api')) {
+			// We should create also dir x/api/temp for multicompany dirs, but this has become useless because dir is now recreated by constructor of api.class.php
 			dol_mkdir($conf->api->dir_temp);
 		}
 		dol_mkdir($conf->user->dir_temp);
@@ -410,6 +412,8 @@ class Utils
 					$handle = fopen($outputfile, 'w');
 				}
 			} else {
+				// TODO Add a pipe into script to decrypt dolCrypted values
+
 				if ($compression == 'none') {
 					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
@@ -441,7 +445,7 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod.", lowmemorydump=".$lowmemorydump.", command=".$fullcommandcrypted, LOG_INFO);
 
 
 				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
@@ -455,7 +459,7 @@ class Utils
 					$output_arr = array();
 					$retval = null;
 
-					exec($fullcommandclear, $output_arr, $retval);
+					exec($fullcommandclear, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 					// TODO Replace this exec with Utils->executeCLI() function.
 					// We must check that the case for $lowmemorydump works too...
 					//$utils = new Utils($db);
@@ -478,6 +482,8 @@ class Utils
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
+									// TODO decrypt dolCrypted values from $read
+
 									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
 									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 										$ok = 1;
@@ -506,9 +512,9 @@ class Utils
 								continue;
 							}
 							fwrite($handle, $read);
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+							if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 								$ok = 1;
-							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
 								$ok = 1;
 							}
 						}
@@ -560,7 +566,7 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*!999999/', $errormsg)) {	// Start of file is ok, NOT an error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*M?!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
 					// Rename file out into a file error
@@ -705,19 +711,19 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
-	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
-	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
-	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
-	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string		$command			Command line to execute.
+	 * 											Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string		$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int<0,2>	$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	?string		$redirectionfile	If defined, a redirection of output to this file is added.
+	 * @param	int<0,1>	$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you already have sanitized the $command parameter. If not, it will lead to security vulnerability.
+	 * 											This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	?string		$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
+	 * @return	array{result:int,output:string,error:string}	array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
 	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$output = '';
@@ -750,7 +756,7 @@ class Utils
 
 		if ($execmethod == 1) {
 			$retval = null;
-			exec($command, $output_arr, $retval);
+			exec($command, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 			$result = $retval;
 			if ($retval != 0) {
 				$langs->load("errors");
@@ -811,6 +817,7 @@ class Utils
 		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($this->db);
@@ -825,7 +832,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion = explode('.', $moduleobj->version, 3);
+		$arrayversion = $moduleobj === null ? array() : explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';
@@ -853,16 +860,16 @@ class Utils
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', '0', 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', '0', 1);
 
 				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
 				$arrayreplacement = array();
 				$arrayreplacement['/^#\s.*/m'] = ''; // Remove first level of title into .md files
 				$arrayreplacement['/^#/m'] = '##'; // Add on # to increase level
 
-				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', 0, 0, 1);
-				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', 0, 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/README.md', $arrayreplacement, '', '0', 0, 1);
+				dolReplaceInFile($dirofmoduletmp.'/ChangeLog.md', $arrayreplacement, '', '0', 0, 1);
 
 
 				$destfile = $dirofmoduletmp.'/'.$FILENAMEASCII;
@@ -1054,7 +1061,7 @@ class Utils
 					if ($numsave >= $nbSaves) {
 						dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz', 0, 0, 0, null, false, 0);
 					} else {
-						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', 0, 1, 0, 0);
+						dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave + 1).'.gz', '0', 1, 0, 0);
 					}
 				}
 
@@ -1303,13 +1310,15 @@ class Utils
 		global $dolibarr_main_url_root;
 
 		$filepath = '';
+		$filesize = -1;
 		$output = '';
 		$error = 0;
+		$mimetype = '';
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+		} elseif (getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));
 		} else {
 			$error++;
 		}
@@ -1317,7 +1326,7 @@ class Utils
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
 		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
-			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+			$sendto = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
@@ -1360,7 +1369,7 @@ class Utils
 			if ($filesize > $sizelimit) {
 				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
 				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$message .= '<br><a href='.$documenturl.'>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1370,9 +1379,11 @@ class Utils
 			$error++;
 		}
 
+		$mailfile = null;
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
+			// $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, 1);
 			if ($mailfile->error) {
 				$error++;
 				$output = $mailfile->error;
@@ -1380,7 +1391,8 @@ class Utils
 		}
 
 		$result = false;
-		if (!$error) {
+		$output = '';
+		if (!$error && $mailfile !== null) {
 			$result = $mailfile->sendfile();
 			if (!$result) {
 				$error++;
@@ -1390,7 +1402,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = "Error sending backup file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {

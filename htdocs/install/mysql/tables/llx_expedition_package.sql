@@ -4,7 +4,7 @@ create table llx_expedition_package
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,
   description       varchar(255),    --Description of goods in the package (required by the custom)
-  value             double(24,8)     DEFAULT 0,--Value (Price of the content, for insurance & custom)
+  value             double(24,8)     DEFAULT 0, --Value (Price of the content, for insurance & custom)
   fk_package_type    integer,           -- Type or package, linked to llx_c_shipment_parcel_type (eg: 1=enveloppe, 2=package, 3=palette, 4=other)
   height            float,	       -- height
   width             float,	       -- width

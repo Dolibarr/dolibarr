@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,15 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "companies"));
 
@@ -35,13 +46,12 @@ $langs->loadLangs(array("assets", "companies"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize a technical objects
 $object = new Asset($db);
 $assetdepreciationoptions = new AssetDepreciationOptions($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('assetdepreciation', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -50,7 +60,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
+	$upload_dir = $conf->asset->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id;
 }
 
 // Security check (enable the most restrictive one)
@@ -86,8 +96,11 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
+
+/*
 if (empty($reshook)) {
 }
+*/
 
 
 /*
@@ -129,7 +142,8 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
-			$lines = $object->depreciation_lines[$mode_key];
+			$lines = isset($object->depreciation_lines[$mode_key]) ? $object->depreciation_lines[$mode_key] : '';
+
 			if (!empty($lines)) {
 				$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
 				$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);
@@ -189,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 						print price($line['cumulative_depreciation_ht']);
 						print '</td>';
 						print '<td class="right">';
-						print price(price2num($depreciation_info['base_depreciation_ht'] - $line['cumulative_depreciation_ht'], 'MT'));
+						print price(price2num((float) $depreciation_info['base_depreciation_ht'] - (float) $line['cumulative_depreciation_ht'], 'MT'));
 						print '</td>';
 						print "</tr>\n";
 					}

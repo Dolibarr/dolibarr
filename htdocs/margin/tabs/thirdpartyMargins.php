@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +25,21 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->loadLangs(array("companies", "bills", "products", "margins"));
+
+$action = GETPOST('action');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -105,8 +117,8 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 		$search_invoice_date_start = strtotime($fiscalYear->date_start);
 		$search_invoice_date_end = strtotime($fiscalYear->date_end);
 	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
@@ -121,6 +133,7 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 	}
 }
 
+
 /*
  * View
  */
@@ -133,11 +146,14 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', 
 	$title = $object->name.' - '.$langs->trans("Files");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-margin page-tabs_thirdpartymargins');
 
 $param = "&socid=".$socid;
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($dol_openinpopup) {
+	$param .= '&dol_openinpopup='.urlencode($dol_openinpopup);
 }
 if ($search_invoice_date_start) {
 	$param .= '&search_invoice_date_start_day='.dol_print_date($search_invoice_date_start, '%d').'&search_invoice_date_start_month='.dol_print_date($search_invoice_date_start, '%m').'&search_invoice_date_start_year='.dol_print_date($search_invoice_date_start, '%Y');
@@ -154,92 +170,102 @@ if ($socid > 0) {
 	$object = new Societe($db);
 	$object->fetch($socid);
 
-	/*
-	 * Affichage onglets
-	 */
+	if (empty($dol_openinpopup)) {
+		// Show tabs
 
-	$head = societe_prepare_head($object);
+		$head = societe_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+		dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-	print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield centpercent">';
 
-	// Type Prospect/Customer/Supplier
-	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
-	print $object->getTypeUrl(1);
-	print '</td></tr>';
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $object->getTypeUrl(1);
+		print '</td></tr>';
 
-	if ($object->client) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-		$tmpcheck = $object->check_codeclient();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+		if ($object->client) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('CustomerCode').'</td><td colspan="3">';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+			$tmpcheck = $object->check_codeclient();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
-	}
 
-	if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
-		$tmpcheck = $object->check_codefournisseur();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+		if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
+			print '<tr><td class="titlefield">';
+			print $langs->trans('SupplierCode').'</td><td colspan="3">';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+			$tmpcheck = $object->check_codefournisseur();
+			if ($tmpcheck != 0 && $tmpcheck != -5) {
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+			}
+			print '</td></tr>';
 		}
+
+		// Total Margin
+		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+		print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 		print '</td></tr>';
+
+		// Margin Rate
+		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
+			print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+			print '<span id="marginRate"></span>'; // set by jquery (see below)
+			print '</td></tr>';
+		}
+
+		// Mark Rate
+		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
+			print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+			print '<span id="markRate"></span>'; // set by jquery (see below)
+			print '</td></tr>';
+		}
+
+		print "</table>";
+
+		print '</div>';
+		print '<div class="clearboth"></div>';
+
+		print dol_get_fiche_end();
+
+		print '<br>';
 	}
 
-	// Total Margin
-	print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-	print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
-	print '</td></tr>';
-
-	// Margin Rate
-	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-		print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
-		print '<span id="marginRate"></span>'; // set by jquery (see below)
-		print '</td></tr>';
-	}
-
-	// Mark Rate
-	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-		print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
-		print '<span id="markRate"></span>'; // set by jquery (see below)
-		print '</td></tr>';
-	}
-
-	print "</table>";
-
-	print '</div>';
-	print '<div class="clearboth"></div>';
-
-	print dol_get_fiche_end();
-
-	print '<br>';
-
-	$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
+	$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
 	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
-	$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
-	$sql .= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // always positive
+	// Special case for old situation mode: total_ht is stored cumulatively, use delta percent to avoid cumulating margins
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent) ELSE d.total_ht END) as selling_price,"; // may be negative or positive
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN d.qty * d.buy_price_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / 100) ELSE d.qty * d.buy_price_ht * (d.situation_percent / 100) END) as buying_price,"; // always positive
+		$sql .= " sum(CASE WHEN f.type = ".Facture::TYPE_SITUATION." AND d.situation_percent > 0 THEN (d.total_ht * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / d.situation_percent)) - (d.buy_price_ht * d.qty * ((d.situation_percent - COALESCE(prev_d.situation_percent, 0)) / 100)) ELSE abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100)) END) as marge"; // always positive
+	} else {
+		$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
+		$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
+		$sql .= " sum(abs(d.total_ht) - (d.buy_price_ht * d.qty * (d.situation_percent / 100))) as marge"; // always positive
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS prev_d ON prev_d.rowid = d.fk_prev_id";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut > 0";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	$sql .= " AND d.fk_facture = f.rowid";
-	$sql .= " AND f.fk_soc = $socid";
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 	$sql .= " AND d.buy_price_ht IS NOT NULL";
 	// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 	// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
@@ -253,6 +279,7 @@ if ($socid > 0) {
 		$sql .= " AND f.datef <= '".$db->idate($search_invoice_date_end)."'";
 	}
 	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
+
 
 	// TODO: calculate total to display then restore pagination
 
@@ -268,6 +295,7 @@ if ($socid > 0) {
 
 		print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?socid='.$socid.'" name="search_form">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		if (!empty($sortfield)) {
 			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 		}
@@ -276,7 +304,7 @@ if ($socid > 0) {
 		}
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+		print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', 'margin');
 
 		$moreforfilter = '';
 
@@ -298,74 +326,74 @@ if ($socid > 0) {
 
 		$i = 0;
 		print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print "<table class=\"noborder\" width=\"100%\">";
+		print '<table class="noborder centpercent">';
 
 		// Fields title search
 		// --------------------------------------------------------------------
-		print '<tr class="liste_titre_filter">';
+		print '<tr class="liste_titre liste_titre_filter">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="liste_titre center maxwidthsearch">';
+		if ($conf->main_checkbox_left_column) {
+			print '<th class="liste_titre center maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
-			print '</td>';
+			print '</th>';
 		}
 
 		// invoice ref
-		print '<td class="liste_titre">';
-		print '</td>';
+		print '<th class="liste_titre">';
+		print '</th>';
 
 		// invoice date
-		print '<td class="liste_titre center">';
+		print '<th class="liste_titre center">';
 		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_invoice_date_start ?: -1, 'search_invoice_date_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_invoice_date_end ?: -1, 'search_invoice_date_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
-		print '</td>';
+		print '</th>';
 
 		// selling price
-		print '<td class="liste_titre">';
-		print '</td>';
+		print '<th class="liste_titre">';
+		print '</th>';
 
 		// buying price
-		print '<td class="liste_titre">';
-		print '</td>';
+		print '<th class="liste_titre">';
+		print '</th>';
 
 		// margin
-		print '<td class="liste_titre">';
-		print '</td>';
+		print '<th class="liste_titre">';
+		print '</th>';
 
 		// margin rate
 		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-			print '<td class="liste_titre">';
-			print '</td>';
+			print '<th class="liste_titre">';
+			print '</th>';
 		}
 
 		// mark rate
 		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-			print '<td class="liste_titre">';
-			print '</td>';
+			print '<th class="liste_titre">';
+			print '</th>';
 		}
 
 		// status
-		print '<td class="liste_titre">';
-		print '</td>';
+		print '<th class="liste_titre">';
+		print '</th>';
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="liste_titre center maxwidthsearch">';
+		if (!$conf->main_checkbox_left_column) {
+			print '<th class="liste_titre center maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
-			print '</td>';
+			print '</th>';
 		}
 
 		print '</tr>'."\n";
 
 		print '<tr class="liste_titre">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 		}
 		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -381,7 +409,7 @@ if ($socid > 0) {
 		}
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 		}
 		print "</tr>\n";
@@ -404,7 +432,7 @@ if ($socid > 0) {
 
 				print '<tr class="oddeven">';
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					print '</td>';
 				}
@@ -412,6 +440,7 @@ if ($socid > 0) {
 				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
+				$invoicestatic->type = $objp->type;
 				print $invoicestatic->getNomUrl(1);
 				print "</td>\n";
 				print "<td class=\"center\">";
@@ -420,15 +449,15 @@ if ($socid > 0) {
 				print "<td class=\"right amount\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
 				print "<td class=\"right amount\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
+					print "<td class=\"right\">".(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+					print "<td class=\"right\">".(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center">';
 					print '</td>';
 				}
@@ -453,24 +482,23 @@ if ($socid > 0) {
 		// Total
 		print '<tr class="liste_total">';
 		$colspan = 2;
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			$colspan++; // add action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td></td>';
 		}
 		print '<td colspan="'.$colspan.'">'.$langs->trans('TotalMargin')."</td>";
 		print "<td class=\"right\">".price(price2num($cumul_vente, 'MT'))."</td>\n";
 		print "<td class=\"right\">".price(price2num($cumul_achat, 'MT'))."</td>\n";
 		print "<td class=\"right\">".price(price2num($totalMargin, 'MT'))."</td>\n";
 		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-			print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+			print "<td class=\"right\">".(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 		}
 		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-			print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+			print "<td class=\"right\">".(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 		}
 		print '<td class="right">&nbsp;</td>';
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			// add action column
-			print '<td class="center">';
-			print '</td>';
+			print '<td></td>';
 		}
 		print "</tr>\n";
 	} else {
@@ -490,9 +518,9 @@ if ($socid > 0) {
 print '
     <script type="text/javascript">
     $(document).ready(function() {
-        $("#totalMargin").html("'. price(price2num($totalMargin, 'MT')).'");
-        $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
-        $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
+        $("#totalMargin").html(\''. price(price2num($totalMargin, 'MT')).'\');
+        $("#marginRate").html(\''.(($marginRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($marginRate, 'MT'))."%").'\');
+        $("#markRate").html(\''.(($markRate === '') ? '<span class="opacitymedium">'.$langs->trans("NA").'</span>' : price(price2num($markRate, 'MT'))."%").'\');
     });
     </script>
 ';

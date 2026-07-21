@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,17 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -42,21 +53,14 @@ $lineid   = GETPOSTINT('lineid');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
-
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
-}
 
 // Initialize a technical objects
 $object = new Calendar($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('calendarcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -81,7 +85,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
-$object->entity					= (GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity);
+$object->entity	= ((GETPOSTISSET('entity') && GETPOST('entity') != '') ? GETPOSTINT('entity') : $conf->entity);
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
@@ -114,6 +118,8 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -126,8 +132,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$error = 0;
-
 	$backurlforlist = dol_buildpath('/bookcal/calendar_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
@@ -158,7 +162,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -184,7 +188,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Calendar");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -210,7 +214,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Calendar")), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -218,9 +222,6 @@ if ($action == 'create') {
 	}
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	}
-	if ($backtopagejsfields) {
-		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	}
 	if ($dol_openinpopup) {
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
@@ -252,7 +253,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Calendar"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -321,7 +322,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/bookcal/calendar_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/bookcal/calendar_list.php', 1).'?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -330,7 +331,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
@@ -340,7 +341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -360,6 +361,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -376,8 +380,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Link to public page
-	print '<tr><td>Link</td>';
-	print '<td><a href="'. DOL_URL_ROOT.'/public/bookcal/index.php?id='.$object->id.'" target="_blank">Public page</a>';
+	print '<tr><td>'.$langs->trans("PublicLinkForBooking").'</td>';
+	print '<td>';
+
+	$linktobook = $urlwithroot.'/public/bookcal/index.php?id='.$object->id;
+	$encodedsecurekey = dol_hash(getDolGlobalString('BOOKCAL_SECUREKEY').'bookcal'.((int) $object->id), 'md5');
+	$linktobook .= '&securekey='.urlencode($encodedsecurekey);
+
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linktobook.'" class="quatrevingtpercent">'.$linktobook.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$linktobook.'">'.img_picto('', 'globe').'</a>';
+
 	print '</td></tr>';
 
 	print '</table>';
@@ -429,7 +441,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $mysoc, $mysoc);
 				}
 			}
 		}
@@ -456,7 +468,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			/*if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}*/
 
 			// Back to draft
@@ -478,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			/*
@@ -530,7 +542,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('calendar'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('calendar'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

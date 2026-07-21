@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -74,6 +75,38 @@ class AdminLibTest extends CommonClassTest
 		$result = versioncompare(array(3,1,0), array(3,1,0));
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result);
+
+		// Upgrade required
+		$v1 = '21.0.0-beta'; $v2 = '21.0.0-rc';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.0.0-beta'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.1.1'; $v2 = '21.0.1';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '22.0.1'; $v2 = '21.0.1';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(true, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		// Upgrade not required
+		$v1 = '21.0.0'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(false, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
+
+		$v1 = '21.0.1'; $v2 = '21.0.0';
+		$versioncompared = abs(versioncompare(preg_split('/[\.\-]/', $v1), preg_split('/[\.\-]/', $v2)));
+		$upgraderequired = in_array($versioncompared, array(-4, -2, -1, 1, 2, 4));
+		$this->assertEquals(false, $upgraderequired, 'Error with v1='.$v1.' v2='.$v2.' versioncompared='.$versioncompared);
 
 		return $result;
 	}

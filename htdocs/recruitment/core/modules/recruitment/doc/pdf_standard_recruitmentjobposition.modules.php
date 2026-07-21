@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
@@ -8,8 +9,8 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -98,17 +99,17 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	public $tabTitleHeight;
 
 	/**
-	 * @var array defaultContentsFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultContentsFieldsStyle
 	 */
 	public $defaultContentsFieldsStyle = array();
 
 	/**
-	 * @var array defaultTitlesFieldsStyle
+	 * @var array{align?:'R'|'C'|'L',padding?:array<float|int>} defaultTitlesFieldsStyle
 	 */
 	public $defaultTitlesFieldsStyle = array();
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document tablecolumns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols = array();
 
@@ -151,12 +152,6 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
-		// Get source company
-		$this->emetteur = $mysoc;
-		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
-		}
-
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1; // used for notes and other stuff
 
@@ -171,6 +166,17 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		// $this->atleastoneratenotnull = 0;
 		// $this->atleastonediscount = 0;
 		$this->situationinvoice = false;
+
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Get source company
+		$this->emetteur = $mysoc;
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		}
 	}
 
 
@@ -178,13 +184,13 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		RecruitmentJobPosition		$object				RecruitmentJobPosition to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *	@param	RecruitmentJobPosition	$object				Object source to build document
+	 *	@param	Translate				$outputlangs		Lang output object
+	 *	@param	string					$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>				$hidedetails		Do not show line details
+	 *	@param	int<0,1>				$hidedesc			Do not show desc
+	 *	@param	int<0,1>				$hideref			Do not show ref
+	 *	@return	int<-1,1>									1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -205,8 +211,9 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
+		global $outputlangsbis;
+		$outputlangsbis = null;
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
-			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
@@ -219,16 +226,16 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
 
-		if ($conf->recruitment->dir_output.'/recruitmentjobposition') {
+		$dir = getMultidirOutput($object);
+		if ($dir) {
 			$object->fetch_thirdparty();
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->recruitment->dir_output.'/recruitmentjobposition';
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
-				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$objectref;
+				$objectref = dol_sanitizeFileName((string) $object->ref);
+				$dir .= '/'.$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
@@ -250,7 +257,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 50; // Height reserved to output the info and total part and payment part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -265,8 +272,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -279,7 +286,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($object->label);
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$object->label." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -295,7 +302,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, ''),
 						'Reason' => 'MYOBJECT',
 						'ContactInfo' => $this->emetteur->email
 					);
@@ -317,8 +324,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalString('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top = 80 + $top_shift + $this->marge_haute;	// position of top tab
+				$tab_top_newpage = (!getDolGlobalString('MAIN_PDF_DONOTREPEAT_HEAD') ? 30 + $this->marge_haute + $top_shift : $this->marge_haute);
 				$tab_height = 130 - $top_shift;
 				$tab_height_newpage = 150;
 				if (!getDolGlobalString('MAIN_PDF_DONOTREPEAT_HEAD')) {
@@ -371,12 +378,12 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 						}
 
 						// back to start
 						$pdf->setPage($pageposbeforenote);
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 						$pageposafternote = $pdf->getPage();
@@ -390,7 +397,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 							$pdf->setPage($pageposafternote);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							//$posyafter = $tab_top_newpage;
 						}
 
@@ -412,7 +419,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 							}
 
 							// Add footer
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
 							$i++;
@@ -451,7 +458,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -476,7 +483,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -490,7 +497,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
@@ -523,7 +530,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -555,7 +562,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalString('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -609,7 +616,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -621,9 +628,12 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -645,9 +655,9 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -659,28 +669,26 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		tcpdf		$pdf     		Object PDF
-	 *   @param		float|int	$tab_top		Top position of table
-	 *   @param		float|int	$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y (not used)
+	 *   @param		TCPDI|TCPDF	$pdf     		Object PDF
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
+	 *   @param		float		$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		int<0,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
-	 *   @param		Translate	$outputlangsbis	Langs object bis
+	 *   @param		?Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
-		global $conf;
-
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
 		if ($hidetop) {
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
+		$currency = !empty($currency) ? $currency : getDolCurrency();
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
@@ -690,7 +698,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		if (empty($hidetop)) {
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -711,12 +719,12 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf     		Object PDF
 	 *  @param  RecruitmentJobPosition		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int                   Return topshift value
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
+	 *  @return	float						Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -748,8 +756,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -800,17 +808,17 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->projet->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
 			}
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -820,7 +828,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 3;
@@ -844,7 +852,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		$posy += 1;
@@ -862,7 +870,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posy += $top_shift;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -880,7 +888,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
+			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', true);
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender name
@@ -918,10 +926,10 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			// Show recipient
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) $widthrecbox = 84; // To work with US executive format
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 30 + $this->marge_haute : 32 + $this->marge_haute;
 			$posy += $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->marge_gauche;
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) $posx = $this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -953,10 +961,10 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 * Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	TCPDF					$pdf     			PDF
+	 *  @param	TCPDI|TCPDF				$pdf     			PDF
 	 *  @param	RecruitmentJobPosition	$object				Object to show
 	 *  @param	Translate				$outputlangs		Object lang for output
-	 *  @param	int						$hidefreetext		1=Hide free text
+	 *  @param	int<0,1>				$hidefreetext		1=Hide free text
 	 *  @return	int											Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
@@ -969,16 +977,16 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	object			$object    		common object
+	 *  @param	CommonObject	$object    		common object
 	 *  @param	Translate		$outputlangs    langs
-	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @param	int			   $hidedesc		Do not show desc
-	 *  @param	int			   $hideref			Do not show ref
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
+	 *  @param	int<0,1>		$hidedesc		Do not show desc
+	 *  @param	int<0,1>		$hideref		Do not show ref
 	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -1017,7 +1025,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label
@@ -1029,7 +1037,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
@@ -1045,7 +1053,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$this->cols['vat']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1056,7 +1064,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1067,7 +1075,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1083,7 +1091,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$this->cols['progress']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
 			'width' => 11, // in mm
@@ -1093,11 +1101,11 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			),
 			'border-left' => true, // add left line separator
 		);
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
 			'width' => 13, // in mm
@@ -1111,7 +1119,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			$this->cols['discount']['status'] = true;
 		}
 
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm

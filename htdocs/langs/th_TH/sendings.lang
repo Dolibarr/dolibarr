@@ -8,13 +8,12 @@ Shipments=การจัดส่ง
 ShowSending=แสดงการจัดส่ง
 Receivings=ใบเสร็จรับเงินการจัดส่ง
 SendingsArea=พื้นที่การจัดส่ง
-ListOfSendings=รายชื่อของการจัดส่ง
 SendingMethod=วิธีการจัดส่งสินค้า
 LastSendings=การจัดส่ง %s ล่าสุด
 StatisticsOfSendings=สถิติสำหรับการจัดส่ง
 NbOfSendings=จำนวนการจัดส่ง
 NumberOfShipmentsByMonth=จำนวนการจัดส่งโดย
-SendingCard=การจัดส่งบัตร
+SendingCard=การส่งสินค้า
 NewSending=การจัดส่งใหม่
 CreateShipment=สร้างการจัดส่ง
 QtyShipped=จำนวนการจัดส่ง
@@ -44,13 +43,14 @@ ConfirmCancelSending=คุณแน่ใจหรือไม่ว่าต�
 DocumentModelMerou=Merou A5 รูปแบบ
 WarningNoQtyLeftToSend=คำเตือนผลิตภัณฑ์ไม่มีการรอคอยที่จะส่ง
 StatsOnShipmentsOnlyValidated=สถิติมีไว้สำหรับการจัดส่งที่ผ่านการตรวจสอบแล้วเท่านั้น วันที่ที่ใช้คือวันที่ตรวจสอบความถูกต้องของการจัดส่ง (วันที่จัดส่งตามแผนไม่เป็นที่รู้จักเสมอไป)
+DateShipping=วันที่ส่ง
 DateDeliveryPlanned=วันที่มีการวางแผนในการส่งสินค้า
 RefDeliveryReceipt=อ้างอิงใบเสร็จรับเงินการจัดส่ง
 StatusReceipt=ใบเสร็จรับเงินการจัดส่งสถานะ
 DateReceived=วันที่ได้รับการส่งมอบ
 ClassifyReception=จำแนกประเภทที่ได้รับ
 SendShippingByEMail=ส่งของทางอีเมล์ครับ
-SendShippingRef=การส่งของการขนส่ง% s
+SendShippingRef=การส่งของการขนส่ง %s
 ActionsOnShipping=เหตุการณ์ที่เกิดขึ้นในการจัดส่ง
 LinkToTrackYourPackage=เชื่อมโยงไปยังติดตามแพคเกจของคุณ
 ShipmentCreationIsDoneFromOrder=ในขณะนี้ การสร้างการจัดส่งใหม่เสร็จสิ้นจากบันทึกใบสั่งขาย
@@ -63,6 +63,50 @@ NoProductToShipFoundIntoStock=ไม่พบผลิตภัณฑ์ที�
 WeightVolShort=น้ำหนัก/ปริมาตร
 ValidateOrderFirstBeforeShipment=คุณต้องตรวจสอบความถูกต้องของคำสั่งซื้อก่อนจึงจะสามารถดำเนินการจัดส่งได้
 NoLineGoOnTabToAddSome=ไม่มีบรรทัด ไปที่แท็บ "%s" เพื่อเพิ่ม
+CreateInvoiceForThisCustomerFromSendings=สร้างบิล
+IfValidateInvoiceIsNoSendingStayUnbilled=หากการตรวจสอบใบแจ้งหนี้เป็น "ไม่" การส่งจะคงอยู่ในสถานะ "ยังไม่ได้เรียกเก็บเงิน" จนกว่าใบแจ้งหนี้จะได้รับการตรวจสอบ
+OptionToSetSendingBilledNotEnabled=ตัวเลือกจากโมดูลเวิร์กโฟลว์ เพื่อตั้งค่าการส่งเป็น 'เรียกเก็บเงิน' โดยอัตโนมัติเมื่อใบแจ้งหนี้ได้รับการตรวจสอบ ไม่ได้เปิดใช้งาน ดังนั้นคุณจะต้องตั้งสถานะการส่งเป็น 'เรียกเก็บเงิน' ด้วยตนเองหลังจากที่สร้างใบแจ้งหนี้แล้ว
+NoWarehouseInBase=ไม่มีโกดังในฐาน
+ShipmentUpdated=อัปเดตการจัดส่งเรียบร้อยแล้ว
+ShipmentIncrementStockOnDelete = เพิ่มสต๊อกสินค้าเมื่อลบออก
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=การจัดส่งสินค้า
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=วันที่ส่งมอบ
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=ตั้งวันที่จัดส่ง
+ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=ลบใบเสร็จรับเงินการจัดส่ง
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=วิธีการจัดส่ง
+TrackingNumber=ติดตามจำนวน
+DeliveryNotValidated=การจัดส่งสินค้าไม่ได้ผ่านการตรวจสอบ
+StatusDeliveryCanceled=ยกเลิก
+StatusDeliveryDraft=ร่าง
+StatusDeliveryValidated=ที่ได้รับ
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ บน ____ / _____ / __________
+GoodStatusDeclaration=ได้รับสินค้าดังกล่าวข้างต้นอยู่ในสภาพดี
+Deliverer=Deliverer:
+Sender=ผู้ส่ง
+Recipient=ผู้รับ
+ErrorStockIsNotEnough=มีไม่มากพอที่หุ้น
+Shippable=shippable
+NonShippable=ไม่ shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -71,16 +115,22 @@ DocumentModelStorm=แบบจำลองเอกสารที่สมบ�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER คงที่ไม่ได้กำหนดไว้
 SumOfProductVolumes=ผลรวมของปริมาณสินค้า
 SumOfProductWeights=ผลรวมของน้ำหนักสินค้า
-
 # warehouse details
 DetailWarehouseNumber= รายละเอียดคลังสินค้า
 DetailWarehouseFormat= W:%s (จำนวน: %d)
+DetailChildrenFormat=%s : %s (จำนวน: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=แสดงวันที่ล่าสุดของสินค้าในสต็อกระหว่างการสร้างการจัดส่งสำหรับหมายเลขซีเรียลหรือชุดงาน
 CreationOptions=ตัวเลือกที่มีให้ระหว่างการสร้างการจัดส่ง
-
 ShipmentDistribution=การกระจายสินค้า
-
 ErrorTooManyCombinationBatchcode=ไม่มีการจัดส่งสำหรับบรรทัด %s เนื่องจากพบคลังสินค้า ผลิตภัณฑ์ รหัสชุดงานมากเกินไป (%s)
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
 ErrorTooMuchShipped=ปริมาณที่จัดส่งไม่ควรมากกว่าปริมาณที่สั่งซื้อสำหรับบรรทัด %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=แทนการจัดส่งสินค้าต่อไปนี้ขึ้น
+TypeContact_shipping_external_BILLING=ติดต่อใบแจ้งหนี้ของลูกค้า
+TypeContact_shipping_external_CUSTOMER=ติดต่อลูกค้าติดตามการจัดส่ง
+TypeContact_shipping_external_SHIPPING=ติดต่อลูกค้าเพื่อการจัดส่งสินค้า
+TypeContact_shipping_external_DELIVERY=ติดต่อลูกค้าเพื่อส่งสินค้า
+CloseShipment=การจัดส่งแบบปิด
+ConfirmCloseShipment=ยืนยันการปิดการจัดส่ง
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=เลือกหมายเลขชุด/หมายเลขซีเรียลที่มีวันที่จำหน่าย/รับประทานเร็วที่สุดไว้ล่วงหน้าเมื่อสร้างการจัดส่ง

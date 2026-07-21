@@ -46,7 +46,7 @@ MakeBankTransferOrder=Направете барање за трансфер на
 WithdrawRequestsDone=%s евидентирани барања за директно задолжување
 BankTransferRequestsDone=%s евидентирани барања за кредитен трансфер
 ThirdPartyBankCode=Шифра на трета банка
-NoInvoiceCouldBeWithdrawed=Ниту една фактура не е успешно обработена. Проверете дали фактурите се на компании со важечки IBAN и дали IBAN има UMR (Единствена референца за мандат) со режим <strong>%s</span span class='notranslate'></strong>.
+NoInvoiceCouldBeWithdrawed=No invoice processed successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
 NoInvoiceCouldBeWithdrawedSupplier=Ниту една фактура не е успешно обработена. Проверете дали фактурите се на фирми со важечки IBAN.
 NoSalariesCouldBeWithdrawed=Ниту една плата не е успешно обработена. Проверете дали платата е на корисници со важечки IBAN.
 WithdrawalCantBeCreditedTwice=Оваа потврда за повлекување е веќе означена како кредитирана; ова не може да се направи двапати, бидејќи тоа потенцијално би создало дупликати плаќања и банкарски записи.
@@ -151,12 +151,12 @@ ADDDAYS=Додадете денови до датумот на извршува�
 NoDefaultIBANFound=Не е пронајден стандарден IBAN за оваа трета страна
 ### Notifications
 InfoCreditSubject=Плаќање на налог за плаќање со директно задолжување %s од банката
-InfoCreditMessage=Налогот за плаќање со директно задолжување %s е платен од банката<br>Податоци за плаќање: b0ecb2ec87f4 
+InfoCreditMessage=Налогот за плаќање со директно задолжување %s е платен од банката<br>Податоци за плаќање: b0ecb2ec87f4
 InfoTransSubject=Пренос на налог за плаќање со директно задолжување %s до банка
-InfoTransMessage=Налогот за плаќање со директно задолжување %s е испратен до банката од %s %s</s .<span class='notranslate'><br><br>
-InfoTransData=Износ: %s<br>Метод: %s</spanno><span' class='notranslate' ><br>Датум: %s
+InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %s.<br><br>
+InfoTransData=Amount: %s<br>Method: %s<br>Date: %s
 InfoRejectSubject=Одбиен налог за директно задолжување
-InfoRejectMessage=Здраво,<br><br>налогот за директно плаќање на фактурата %s е поврзан со</s компанијата <span class='notranslate'>%s, со износ од %s е одбиена од банката.b0342fccfda19bz /span><span class='notranslate'><br>--<br>%s
+InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Опцијата за реален режим не беше поставена, застануваме по оваа симулација
 ErrorCompanyHasDuplicateDefaultBAN=Компанијата со ид %s има повеќе од една стандардна банкарска сметка. Нема начин да се знае кој да се користи.
 ErrorICSmissing=Недостасува ICS на банкарска сметка %s

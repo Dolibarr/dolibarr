@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016	    Francis Appels          <francis.appels@yahoo.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class Entrepot extends CommonObject
 
 	/**
 	 * @var string	Label
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
@@ -63,10 +63,23 @@ class Entrepot extends CommonObject
 	public $label;
 
 	/**
+	 * @var string  barcode
+	 */
+	public $barcode;
+
+	/**
 	 * @var string description
 	 */
 	public $description;
 
+	/**
+	 * @var int
+	 */
+	public $fk_departement;
+
+	/**
+	 * @var int
+	 */
 	public $statut;
 
 	/**
@@ -126,7 +139,7 @@ class Entrepot extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -135,7 +148,7 @@ class Entrepot extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -155,7 +168,7 @@ class Entrepot extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
@@ -164,7 +177,7 @@ class Entrepot extends CommonObject
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -2, 'position' => 35, 'searchall' => 1),
 		'lieu' => array('type' => 'varchar(64)', 'label' => 'LocationSummary', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'showoncombobox' => 2, 'searchall' => 1),
 		'fk_parent' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php:1:((statut:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ParentWarehouse', 'enabled' => 1, 'visible' => -2, 'position' => 41),
-		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => '$conf->project->enabled', 'visible' => -1, 'position' => 42),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 42),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -2, 'position' => 45, 'searchall' => 1),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'searchall' => 1),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -2, 'position' => 55, 'searchall' => 1),
@@ -172,10 +185,10 @@ class Entrepot extends CommonObject
 		'fk_pays' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -2, 'position' => 70, 'searchall' => 1),
 		'fax' => array('type' => 'varchar(20)', 'label' => 'Fax', 'enabled' => 1, 'visible' => -2, 'position' => 75, 'searchall' => 1),
-		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
+		//'fk_user_author' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 301),
-		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")', 'visible' => 1, 'position' => 400, 'default' => 1, 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
+		'warehouse_usage' => array('type' => 'integer', 'label' => 'WarehouseUsage', 'enabled' => 'getDolGlobalInt("STOCK_USE_WAREHOUSE_USAGE")', 'visible' => 1, 'position' => 400, 'default' => '1', 'arrayofkeyval' => array(1 => 'InternalWarehouse', 2 => 'ExternalWarehouse')),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'position' => 500, 'css' => 'minwidth50'),
@@ -208,7 +221,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse that must be excluded for stock calculation (scrapping stock, virtual warehouses, ...)
 	 */
-	const USAGE_EXTTERNAL = 2;
+	const USAGE_EXTERNAL = 2;
 
 
 
@@ -252,6 +265,10 @@ class Entrepot extends CommonObject
 			$this->error = "ErrorFieldRequired";
 			return 0;
 		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
 
 		$now = dol_now();
 
@@ -266,12 +283,9 @@ class Entrepot extends CommonObject
 			$id = $this->db->last_insert_id($this->db->prefix()."entrepot");
 			if ($id > 0) {
 				$this->id = $id;
-
-				if (!$error) {
-					$result = $this->update($id, $user);
-					if ($result <= 0) {
-						$error++;
-					}
+				$result = $this->update($id, $user);
+				if ($result <= 0) {
+					$error++;
 				}
 
 				// Actions on extra fields
@@ -322,6 +336,11 @@ class Entrepot extends CommonObject
 	 */
 	public function update($id, $user, $notrigger = 0)
 	{
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		if (empty($id)) {
@@ -339,6 +358,8 @@ class Entrepot extends CommonObject
 		}
 
 		$this->label = trim($this->label);
+		$this->barcode = trim($this->barcode);
+		$this->model_pdf = trim($this->model_pdf);
 
 		$this->description = trim($this->description);
 
@@ -351,8 +372,8 @@ class Entrepot extends CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
-		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
-		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
+		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? ((int) $this->fk_parent) : "NULL");
+		$sql .= ", fk_project = ".(($this->fk_project > 0) ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
 		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
@@ -362,6 +383,13 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
+		$sql .= ", barcode = '".$this->db->escape($this->barcode)."'";
+		$sql .= ", fk_departement = ".((int) $this->fk_departement);
+		$sql .= ", fk_barcode_type = ".((int) $this->barcode_type);
+		$sql .= ", warehouse_usage = ".((int) $this->warehouse_usage);
+		$sql .= ", fk_user_author = ".((int) $this->user_creation_id);
+		$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
+		$sql .= ", import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
@@ -418,7 +446,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && empty($notrigger)) {
+		if (empty($notrigger)) {
 			// Call trigger
 			$result = $this->call_trigger('WAREHOUSE_DELETE', $user);
 			if ($result < 0) {
@@ -453,7 +481,7 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		// Removed extrafields
+		// Remove extrafields
 		if (!$error) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
@@ -515,7 +543,7 @@ class Entrepot extends CommonObject
 		}
 
 		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
-		$sql .= " model_pdf, import_key";
+		$sql .= " model_pdf, import_key, datec as date_creation, tms as date_modification, fk_departement, barcode, fk_barcode_type, warehouse_usage, fk_user_author as user_creation_id";
 		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -539,6 +567,7 @@ class Entrepot extends CommonObject
 				$this->label          = $obj->label;
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
+				$this->status         = $obj->statut;
 				$this->lieu           = $obj->lieu;
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
@@ -546,6 +575,16 @@ class Entrepot extends CommonObject
 				$this->country_id     = $obj->country_id;
 				$this->phone          = $obj->phone;
 				$this->fax            = $obj->fax;
+
+				$this->date_creation  = $obj->date_creation;
+				$this->barcode		  = $obj->barcode;
+				$this->fk_departement = $obj->fk_departement;
+				$this->barcode_type   = $obj->fk_barcode_type;
+				$this->warehouse_id   = $obj->rowid;
+
+				$this->warehouse_usage = $obj->warehouse_usage;
+				$this->user_creation_id = $obj->user_creation_id;
+				$this->date_modification = $obj->date_modification;
 
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
@@ -608,7 +647,7 @@ class Entrepot extends CommonObject
 	 *  Return list of all warehouses
 	 *
 	 *	@param	int		$status		Status
-	 * 	@return array				Array list of warehouses
+	 * 	@return array<int,string>	Array list of warehouses
 	 */
 	public function list_array($status = 1)
 	{
@@ -638,7 +677,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return number of unique different product into a warehouse
 	 *
-	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return		array{nb:int}|int<-1,-1>		Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_different_products()
 	{
@@ -667,9 +706,9 @@ class Entrepot extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return stock and value of warehosue
+	 *	Return stock and value of warehouse
 	 *
-	 * 	@return		array|int		Array('nb'=>Nb, 'value'=>Value)
+	 * 	@return	array{nb:int,value:float}|int<-1,-1>	Array('nb'=>Nb, 'value'=>Value)
 	 */
 	public function nb_products()
 	{
@@ -716,7 +755,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of status of object
 	 *
-	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param      int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -729,7 +768,7 @@ class Entrepot extends CommonObject
 	 *	Return label of a given status
 	 *
 	 *	@param	int		$status     Id status
-	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param  int<0,5>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -751,10 +790,9 @@ class Entrepot extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array 	$params 	Params to construct tooltip data
-	 * @since 	v18
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -771,7 +809,7 @@ class Entrepot extends CommonObject
 			return ['optimize' => $langs->trans("Warehouse")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
-		if (isset($this->statut)) {
+		if (!empty($this->statut)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? $this->label : $this->ref);
@@ -846,9 +884,9 @@ class Entrepot extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Warehouse");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -953,17 +991,15 @@ class Entrepot extends CommonObject
 	/**
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
-	 * @param   int         $id					id parent warehouse
-	 * @param   integer[]	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return  integer[]   $TChildWarehouses	array which will contain all children
+	 * @param   int     $id					id parent warehouse
+	 * @param   int[]	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return  int[]   $TChildWarehouses	array which will contain all children
 	 */
 	public function get_children_warehouses($id, &$TChildWarehouses)
 	{
 		// phpcs:enable
 
-		$sql = "SELECT rowid
-				FROM ".$this->db->prefix()."entrepot
-				WHERE fk_parent = ".((int) $id);
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."entrepot WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1025,14 +1061,16 @@ class Entrepot extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -1041,19 +1079,21 @@ class Entrepot extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</div>';
 		$return .= '<div class="info-box-content" >';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
+		if (!empty($this->lieu)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}
-		if (property_exists($this, 'sellvalue') && $this->sellvalue != 0) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->sellvalue).'</span>';
+		if ($arraydata['sellvalue'] != 0) {
+			if ($arraydata['isMultiPrices']) {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Variable").' '.$langs->trans('EstimatedStockValueSell').'</span>';
+			} else {
+				$return .= '<br><span class="info-box-label amount">'.price($arraydata['sellvalue']).'</span>';
+			}
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

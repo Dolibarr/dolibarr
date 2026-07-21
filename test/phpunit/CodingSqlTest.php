@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if (! defined("NOLOGIN")) {
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -156,7 +157,7 @@ class CodingSqlTest extends CommonClassTest
 				// Allow ` for 'rank' column name only
 				$filecontent = str_replace('`rank`', '_rank_', $filecontent);
 
-				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")'), '__OKSTRING__', $filecontent);
+				$filecontent = str_replace(array('["', '"]', '{"', '"}', '("', '")', 'href="', '">'), '__OKSTRING__', $filecontent);
 				// To accept " after the comment tag
 				//$filecontent = preg_replace('/^--.*$/', '', $filecontent);
 				$filecontent = preg_replace('/--.*?\n/', '', $filecontent);
@@ -191,7 +192,7 @@ class CodingSqlTest extends CommonClassTest
 
 				$result = strpos($filecontent, 'timestamp,');
 				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result === false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
+				$this->assertTrue($result === false, 'Found type timestamp without option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
 
 				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
 					// Test for migration files only
@@ -238,6 +239,13 @@ class CodingSqlTest extends CommonClassTest
 
 			print 'Check sql file '.$file."\n";
 			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdemo/'.$file);
+
+			// We protect this string key that is legitimate into the init of demo file
+			$filecontent = str_replace("BLOCKEDLOG_HMAC_KEY',0,'dolcrypt:", "__STRINGOK__", $filecontent);
+
+			$result = strpos($filecontent, 'dolcrypt:');
+			print __METHOD__." Result for checking we don't have a crypted value that could not be decrypted on a restored instance with other key = ".$result."\n";
+			$this->assertTrue($result === false, 'Found a "dolcrypt:" into file '.$file);
 
 			$result = strpos($filecontent, '@gmail.com');
 			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";

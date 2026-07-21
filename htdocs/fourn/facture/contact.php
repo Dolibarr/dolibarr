@@ -3,8 +3,10 @@
  * Copyright (C) 2005-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023       Christian Foellmann  <christian@foellmann.de>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Serhii Bondarenko    <serhiilabs@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,15 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -39,16 +50,17 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
-$ref	= GETPOST('ref', 'alpha');
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercardcontact','invoicesuppliercontactcard', 'globalcard'));
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
 
@@ -59,7 +71,7 @@ $permissiontoadd = $usercancreate;
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -74,8 +86,8 @@ if (empty($reshook)) {
 		$result = $object->fetch($id, $ref);
 
 		if ($result > 0 && $id > 0) {
-			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOSTINT('typecontact') : GETPOSTINT('type'));
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
 
@@ -139,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$head = facturefourn_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, $object->picto);
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -150,18 +162,18 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -202,13 +214,15 @@ if ($id > 0 || !empty($ref)) {
 			print ' '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 		}
 
-		$facidavoir = $object->getListIdAvoirFromInvoice();
-		if (count($facidavoir) > 0) {
+		// Retrieve credit note ids
+		$object->getListIdAvoirFromInvoice();
+
+		if (!empty($object->creditnote_ids)) {
 			$invoicecredits = array();
-			foreach ($facidavoir as $facid) {
-				$facavoir = new FactureFournisseur($db);
-				$facavoir->fetch($facid);
-				$invoicecredits[] = $facavoir->getNomUrl(1);
+			foreach ($object->creditnote_ids as $invoiceid) {
+				$creditnote = new FactureFournisseur($db);
+				$creditnote->fetch($invoiceid);
+				$invoicecredits[] = $creditnote->getNomUrl(1);
 			}
 			print ' '.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 		}
@@ -260,10 +274,16 @@ if ($id > 0 || !empty($ref)) {
 		//print '<div class="clearboth"></div>';
 		//print '<br>';
 
-		// Contacts lines
-		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+		foreach ($dirtpls as $reldir) {
+			$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
+			if ($res) {
+				break;
+			}
+		}
 	} else {
-		print "ErrorRecordNotFound";
+		recordNotFound('', 0);
 	}
 }
 

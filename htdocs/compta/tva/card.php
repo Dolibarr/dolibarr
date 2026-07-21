@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -47,8 +56,8 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$cancel = GETPOST('cancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tvacard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -68,7 +77,6 @@ $datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), 
 
 // Initialize a technical objects
 $object = new Tva($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
 
@@ -97,6 +105,8 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'tax', $object->id, 'tva', 'charges');
 
 
+$resteapayer = 0;
+
 /*
  * Actions
  */
@@ -115,7 +125,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
-		$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+		$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', null, 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -169,11 +179,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'add' && !$cancel) {
+	if ($action == 'add' && !$cancel && $permissiontoadd) {
 		$error = 0;
 
 		$object->fk_account = GETPOSTINT("accountid");
-		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
+		$object->type_payment = GETPOSTINT("type_payment");
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
 		$object->datev = $datev;
@@ -261,7 +271,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 		$result = $object->fetch($id);
 		$totalpaid = $object->getSommePaiement();
 
@@ -270,6 +280,7 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
@@ -283,7 +294,7 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 					exit;
 				} else {
-					$object->error = $accountline->error;
+					$object->error = $accountline !== null ? $accountline->error : 'No account line (no bank)';
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -318,11 +329,11 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('tax', 'charges', 'creer'))) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'creer')) {
 		$db->begin();
 
 		$originalId = $id;
@@ -458,7 +469,7 @@ if ($action == 'create') {
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", 'alphanohtml', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate((GETPOSTINT("datevmonth") ? $datev : -1), "datev", 0, 0, 0, 'add', 1, 1);
@@ -480,7 +491,7 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
-	print $form->select_types_paiements(GETPOSTINT("type_payment"), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((string) GETPOSTINT("type_payment"), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print "</tr>";
 
@@ -488,7 +499,7 @@ if ($action == 'create') {
 		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes(GETPOSTINT("accountid"), "accountid", 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // List of bank account available
+		$form->select_comptes(GETPOSTINT("accountid"), "accountid", 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // List of bank account available
 		print '</td></tr>';
 	}
 
@@ -514,7 +525,8 @@ if ($action == 'create') {
 
 	print '<div class="center">';
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
-	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
+	print '<input type="checkbox" checked value="1" id="closepaidtva" name="closepaidtva" class="marginrightonly">';
+	print '<label for="closepaidtva">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
 	print '<br>';
 	print '</div>';
 
@@ -544,7 +556,7 @@ if ($id > 0) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_period', 'label' => $langs->trans("PeriodEndDate"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVAT', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 0);
 	}
 
 	if ($action == 'paid') {
@@ -604,7 +616,7 @@ if ($id > 0) {
 	print '</td></tr>';*/
 
 	print '<tr><td>';
-	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', (string) $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	print '</td><td>';
 	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	//print dol_print_date($object->datev,'day');
@@ -627,9 +639,9 @@ if ($id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 	}
 	print '</td></tr>';
 
@@ -645,9 +657,9 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -812,7 +824,7 @@ if ($id > 0) {
 
 		// Clone
 		if ($user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
@@ -844,11 +856,12 @@ if ($id > 0) {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = 0;
 			$delallowed = $user->hasRight('tax', 'charges', 'creer'); // If you can create/edit, you can remove a file on card
+
 			print $formfile->showdocuments('tax-vat', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

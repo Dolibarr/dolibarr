@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +38,41 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var ?User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "recruitment"));
+$langs->loadLangs(array("companies", "other", "recruitment", "mails"));
 
 // Get parameters
-$action   = GETPOST('action', 'aZ09');
-$cancel   = GETPOST('cancel', 'alpha');
-$email    = GETPOST('email', 'alpha');
-$backtopage = '';
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$email = GETPOST('email', 'alpha');
+$firstname = GETPOST('firstname', 'alpha');
+$lastname = GETPOST('lastname', 'alpha');
+$birthday = GETPOST('birthday', 'alpha');
+$phone = GETPOST('phone', 'alpha');
+$message = GETPOST('message', 'alpha');
+$SECUREKEY = GETPOST("securekey");
+$requestedremuneration = GETPOST('requestedremuneration', 'alpha');
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -62,25 +85,65 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new RecruitmentJobPosition($db);
 
-if (!$action) {
-	if (!$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	} else {
-		$object->fetch('', $ref);
-	}
+if (!$ref) {
+	print $langs->trans('ErrorBadParameters')." - ref missing";
+	exit;
 }
 
+
 // Define $urlwithroot
-//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+// $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+// $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+$backtopage = $urlwithroot.'/public/recruitment/index.php';
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
+if (!isModEnabled("recruitment")) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
+$object->fetch(0, $ref);
+if (!is_object($user)) {
+	$user = new User($db);
+}
+$user->loadDefaultValues();
+$errmsg = "";
+
+$extrafields = new ExtraFields($db);
+
+$captchaobj = null;
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
+	// List of directories where we can find captcha handlers
+	$dirModCaptcha = array_merge(
+		array(
+			'main' => '/core/modules/security/captcha/'
+		),
+		is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array()
+	);
+	$fullpathclassfile = '';
+	foreach ($dirModCaptcha as $dir) {
+		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
+		if ($fullpathclassfile) {
+			break;
+		}
+	}
+	if ($fullpathclassfile) {
+		include_once $fullpathclassfile;
+		// Charging the numbering class
+		$classname = "modCaptcha".ucfirst($captcha);
+		if (class_exists($classname)) {
+			$captchaobj = new $classname($db, $conf, $langs, $user);
+			'@phan-var-force ModeleCaptcha $captchaobj';
+			/** @var ModeleCaptcha $captchaobj */
+		} else {
+			print 'Error, the captcha handler class '.$classname.' was not found after the include';
+		}
+	} else {
+		print 'Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha);
+	}
+}
 
 /*
  * Actions
@@ -91,56 +154,121 @@ if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	}
-	$action = 'view';
 }
 
-if ($action == "view" || $action == "presend" || $action == "dosubmit") {
+if ($action == "dosubmit") {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
-	$display_ticket = false;
+	$db->begin();
 	if (!strlen($ref)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
-		$action = '';
+		$action = 'view';
 	}
 	if (!strlen($email)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
-		$action = '';
+		$action = 'view';
 	} else {
 		if (!isValidEmail($email)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
-			$action = '';
+			$action = 'view';
+		}
+	}
+	if (!strlen($lastname)) {
+		$error++;
+		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Lastname")));
+		$action = 'view';
+	}
+
+	// Check Captcha code if is enabled
+	$ok = false;
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT') && is_object($captchaobj)) {
+		if (method_exists($captchaobj, 'validateCodeAfterLoginSubmit')) {
+			$ok = $captchaobj->validateCodeAfterLoginSubmit();  // @phan-suppress-current-line PhanUndeclaredMethod
+		} else {
+			print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method validateCodeAfterLoginSubmit()';
+		}
+		if (!$ok) {
+			$error++;
+			$langs->load('errors');
+			array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
+			$action = 'view';
+		}
+	}
+	if (!$error) {
+		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
+		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
+		$sql .= " AND rrc.entity IN (". getEntity($object->element, 0).")";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				$error++;
+				setEventMessages($langs->trans("ErrorRecruitmmentCandidatureAlreadyExists", $email), null, 'errors');
+			}
+		} else {
+			dol_print_error($db);
+			$error++;
+		}
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	if (!$error) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+		$candidature = new RecruitmentCandidature($db);
+
+		$candidature->firstname = GETPOST('firstname', 'alpha');
+		$candidature->lastname = GETPOST('lastname', 'alpha');
+		$candidature->email = GETPOST('email', 'alpha');
+		$candidature->phone = GETPOST('phone', 'alpha');
+		$candidature->date_birth = GETPOST('birthday', 'alpha');
+		$candidature->requestedremuneration = GETPOST('requestedremuneration', 'alpha');
+		$candidature->description = GETPOST('message', 'alpha');
+		$candidature->fk_recruitmentjobposition = $object->id;
+
+		$candidature->ip = getUserRemoteIP();
+
+		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($candidature, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $candidature->errors);
+		}
+
+		// Fill array 'array_options' with data from add form
+		$extrafields->fetch_name_optionals_label($candidature->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $candidature);
+		if ($ret < 0) {
+			$error++;
+			$errmsg .= $candidature->error;
+		}
+
+		if (!$error) {
+			$result = $candidature->create($user);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $candidature->errors);
+			}
+		}
+		if (!$error) {
+			$candidature->validate($user);
+			if ($result <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $candidature->errors);
+			}
 		}
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', $ref);
-	}
-
-	/*
-	if (!$error && $action == "dosubmit")
-	{
-		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
-
-		// TODO Create job application
-
-
-
-		if (!$error)
-		{
-			$action = 'view';
-		}
-	}
-	*/
-
-	if ($error || $errors) {
-		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "dosubmit") {
-			$action = 'presend';
-		} else {
-			$action = '';
-		}
+		$db->commit();
+		setEventMessages($langs->trans("RecruitmentCandidatureSaved"), null);
+		header("Location: " . $backtopage);
+		exit;
+	} else {
+		$db->rollback();
+		$action = "view";
 	}
 }
 
@@ -157,6 +285,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  * View
  */
 
+$form = new Form($db);
 $now = dol_now();
 
 $head = '';
@@ -167,7 +296,7 @@ if (getDolGlobalString('MAIN_RECRUITMENT_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
+if (!getDolGlobalInt('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
 	$langs->load("errors");
 	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
@@ -179,7 +308,7 @@ $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
-
+dol_htmloutput_errors($errmsg);
 
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
@@ -253,16 +382,16 @@ if (getDolGlobalString('RECRUITMENT_NEWFORM_TEXT')) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
+	$text .= '<tr><td class="textpublicpayment" colspan=2><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
 	$text .= '</td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment" colspan=2><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
 }
 print $text;
 
 // Output payment summary form
-print '<tr><td class="left">';
+print '<tr><td class="left" colspan=2>';
 
 print '<div with="100%" id="tablepublicpayment">';
 print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
@@ -299,22 +428,22 @@ $tmpuser->fetch($object->fk_user_recruiter);
 print  $langs->trans("ContactForRecruitment").' : ';
 $emailforcontact = $object->email_recruiter;
 if (empty($emailforcontact)) {
-	$emailforcontact = $tmpuser->email;
+	$emailforcontact = $tmpuser->email ?? '';
 	if (empty($emailforcontact)) {
-		$emailforcontact = $mysoc->email;
+		$emailforcontact = $mysoc->email ?? '';
 	}
 }
 print '<b class="wordbreak">';
-print $tmpuser->getFullName(-1);
+print $tmpuser->getFullName($langs);
 print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 print '</b>';
 print '</b><br>';
 
 if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 }
 if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 }
 
 print '<br>';
@@ -332,6 +461,55 @@ print "\n";
 if ($action != 'dosubmit') {
 	if ($found && !$error) {
 		// We are in a management option and no error
+		print '</td></tr>'."\n";
+		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Lastname").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth400 --success" name="lastname" maxlength="128" value="'.$lastname.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Firstname").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth400 --success" name="firstname" maxlength="128" value="'.$firstname.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate fieldrequired left">'.$langs->trans("Email").'</td><td class="left">';
+		print img_picto("", "email", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="email" value="'.$email.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Phone").'</td><td class="left">';
+		print img_picto("", "phone", 'class="pictofixedwidth"').'<input type="text" class="flat minwidth100 --success" name="phone" value="'.$phone.'">';
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left minwidth300">'.$langs->trans("DateOfBirth").'</td><td class="left">';
+		print $form->selectDate($birthday, 'birthday', 0, 0, 1, "", 1, 0);
+		print '</td></tr>'."\n";
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("RequestedRemuneration").'</td><td class="left">';
+		print '<input type="text" class="flat minwidth100 --success" name="requestedremuneration" value="'.$requestedremuneration.'">';
+		print '</td></tr>'."\n";
+
+		// Other attributes
+		$object = new RecruitmentCandidature($db);
+		$parameters['tpl_context'] = 'public';	// define template context to public
+		$parameters['tdclass'] = 'left';
+		$extrafields->fetch_name_optionals_label("recruitment_recruitmentcandidature");
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+		print '<tr><td class="titlefieldcreate left">'.$langs->trans("Message").'</td><td class="left">';
+		print '<textarea class="flat quatrevingtpercent" rows="'.ROWS_5.'" name="message">'.$message.'</textarea>';
+		print '</td></tr>'."\n";
+
+		// Display Captcha code if is enabled
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_RECRUITMENT') && is_object($captchaobj)) {
+			print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans($captchaobj->getFieldInputTitle()).'</span></label></td><td><br>';
+			if (method_exists($captchaobj, 'getCaptchaCodeForForm')) {
+				print $captchaobj->getCaptchaCodeForForm('');  // @phan-suppress-current-line PhanUndeclaredMethod
+			} else {
+				print 'Error, the captcha handler '.get_class($captchaobj).' does not have any method getCaptchaCodeForForm()';
+			}
+			print '<br></td></tr>';
+		}
+		print '<tr><td colspan=2>';
+		print $form->buttonsSaveCancel('Submit', 'Cancel');
+		print '</td></tr>'."\n";
 	} else {
 		dol_print_error_email('ERRORSUBMITAPPLICATION');
 	}

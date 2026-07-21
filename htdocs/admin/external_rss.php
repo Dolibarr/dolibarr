@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 /**
  *      \file       htdocs/admin/external_rss.php
  *      \ingroup    external_rss
- *      \brief      Page to setupe module ExternalRss
+ *      \brief      Page to setup the ExternalRss module
  */
 
 // Load Dolibarr environment
@@ -35,6 +35,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -51,8 +59,9 @@ if (!$user->admin) {
 /*
  * Actions
  */
+$error = 0;
 
-// positionne la variable pour le nombre de rss externes
+// Set the variable for the number of external RSS
 $sql = "SELECT ".$db->decrypt('name')." as name FROM ".MAIN_DB_PREFIX."const";
 $sql .= " WHERE ".$db->decrypt('name')." LIKE 'EXTERNAL_RSS_URLRSS_%'";
 //print $sql;
@@ -80,10 +89,10 @@ if ($action == 'add' || GETPOST("modify")) {
 		$db->begin();
 
 		if (GETPOST("modify")) {
-			// Supprime boite box_external_rss de definition des boites
+			// Remove box_external_rss from the definition of boxes
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
-			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape(GETPOST("norss"))." %'";
+			$sql.= " WHERE file ='box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -93,7 +102,7 @@ if ($action == 'add' || GETPOST("modify")) {
 			}
 			*/
 		} else {
-			// Ajoute boite box_external_rss dans definition des boites
+			// Add box_external_rss to the definition of boxes
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql .= " VALUES ('box_external_rss.php', '".$db->escape(GETPOSTINT("norss")." (".GETPOST($external_rss_title)).")')";
 			if (!$db->query($sql)) {
@@ -104,6 +113,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		}
 
 		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), GETPOST($external_rss_title), 'chaine', 0, '', $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss");
 			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
@@ -128,7 +138,7 @@ if (GETPOST("delete")) {
 
 		// Supprime boite box_external_rss de definition des boites
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
-		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape(GETPOSTINT("norss"))." %'";
+		$sql .= " WHERE file = 'box_external_rss.php' AND note LIKE '".$db->escape((string) GETPOSTINT("norss"))." %'";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -138,7 +148,7 @@ if (GETPOST("delete")) {
 				$obj = $db->fetch_object($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-				$sql .= " WHERE entity = ".$conf->entity;
+				$sql .= " WHERE entity = ".((int) $conf->entity);
 				$sql .= " AND box_id = ".((int) $obj->rowid);
 				$resql = $db->query($sql);
 
@@ -164,6 +174,7 @@ if (GETPOST("delete")) {
 
 
 		$result1 = dolibarr_del_const($db, "EXTERNAL_RSS_TITLE_".GETPOSTINT("norss"), $conf->entity);
+		$result2 = 0;
 		if ($result1) {
 			$result2 = dolibarr_del_const($db, "EXTERNAL_RSS_URLRSS_".GETPOSTINT("norss"), $conf->entity);
 		}
@@ -187,11 +198,12 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ExternalRSSSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-external_rss');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
 print '<br>';
 
-// Formulaire ajout
+// From to add
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -212,7 +224,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
-print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
+print '<td>https://news.google.com/news?ned=us&topic=h&output=rss<br>https://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
 
@@ -298,7 +310,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Logo
-		if ($result > 0 && empty($rss->error)) {
+		if ($result > 0 && empty($rssparser->error)) {
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';
@@ -346,11 +358,11 @@ llxFooter();
 $db->close();
 
 /**
- * Check if the given RSS feed if inside the list of boxes/widgets
+ * Check if the given RSS feed is inside the list of boxes/widgets
  *
- * @param	int		$idrss		The id of the RSS feed
- * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
+ * @param	int				$idrss		The id of the RSS feed
+ * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets
+ * @return	bool						true if the rss feed is inside the box/widget list, otherwise false
  */
 function _isInBoxList($idrss, array $boxlist)
 {

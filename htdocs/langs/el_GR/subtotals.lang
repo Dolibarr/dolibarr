@@ -1,0 +1,54 @@
+# Dolibarr language file - Source file is en_US - subtotal
+
+#
+# Global
+#
+Subtotal=Υποσύνολα
+SubTotalModuleDesc=Υποσύνολα και  γραμμές τίτλου για ορισμένα έγγραφα
+#
+# Admin
+#
+SubtotalSetup=Ρύθμιση ενότητας υποσυνόλων
+MaxSubtotalLevel=Μέγιστο επίπεδο
+SubtotalLineBackColor=Χρώμα φόντου γραμμών επιπέδου %s
+NotSupportedByAllPDF=Λειτουργεί με νεότερα πρότυπα PDF αλλά όχι με παλιά %s
+
+#
+# Card
+#
+AddTitleLine=Προσθήκη γραμμής τίτλου
+AddSubtotalLine=Προσθήκη γραμμής υποσυνόλου
+TitleNeedDesc=Πρέπει να εισαγάγετε μια έγκυρη περιγραφή για να δημιουργήσετε έναν τίτλο.
+TitleAddedLevelTooHigh=Προστέθηκε πάρα πολύ υψηλό επίπεδο τίτλου(αντ 'αυτού προστέθηκε με επίπεδο %s).
+TitleEditedLevelTooHigh=Το επίπεδο τίτλου που τροποποιήθηκε είναι πολύ υψηλό (αντ' αυτού, τροποποιήθηκε με επίπεδο %s).
+DeleteSubtotalLine=Διαγραφή γραμμής υποσυνόλου
+ConfirmDeleteSubtotalLine=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη γραμμή υποσυνόλου;
+DeleteTitleLine=Διαγραφή γραμμής τίτλου
+ConfirmDeleteTitleLine=Είστε σίγουροι ότι θέλετε να διαγραφεί αυτή η γραμμή τίτλου;
+DeleteCorrespondingSubtotalLine=Διαγραφή της αντίστοιχης γραμμής υποσυνόλου;
+SubtotalLevel=Επίπεδο %s
+SubtotalLineDesc=Περιγραφή γραμμής
+SubtotalLineLevel=Επίπεδο γραμμής
+ShowUPOnPDF=Εμφάνιση τιμής μονάδας στο PDF
+ShowTotalExludingVATOnPDF=Εμφάνιση συνόλου χωρίς ΦΠΑ στο PDF
+ForcePageBreak=Επιβολή αλλαγής σελίδας πριν από τον τίτλο
+NoTitleError=Δεν έχετε γραμμή τίτλου ή όλες έχουν ήδη μια αντίστοιχη γραμμή υποσυνόλου
+CorrespondingTitleLine=Αντίστοιχη γραμμή τίτλου
+SelectVATRate=Επιλογή συντελεστή ΦΠΑ
+EnterRemisePercent=Εισαγωγή ποσοστού έκπτωσης
+ApplyVATForBlock=Εφαρμογή ΦΠΑ για αυτό το μπλοκ
+ApplyDiscountForBlock=Εφαρμογή έκπτωσης για αυτό το μπλοκ
+TitleUnderSameLevelSTLine=Ο τίτλος του ίδιου επιπέδου πρέπει να βρίσκεται κάτω από τη γραμμή υποσυνόλου του προηγούμενου τίτλου.
+TitleUnderSameLevelOrGreater=Ο τίτλος πρέπει να είναι κάτω από έναν τίτλο του ίδιου επιπέδου ή ανώτερου.
+TitleAfterStLineOfSameLevelTitle=Ο τίτλος πρέπει να βρίσκεται μετά τη γραμμή του υποσυνόλου του προηγούμενου τίτλου.
+PreviousTitleLevelTooHigh=Ο προηγούμενος τίτλος είναι δύο επίπεδα ή περισσότερο παραπάνω από τη γραμμή που μετακινήθηκε.
+STLineUnderCorrespondingTitleDesc=Η γραμμή υποσυνόλου πρέπει να βρίσκεται κάτω από έναν τίτλο με το ίδιο επίπεδο που έχει την ίδια περιγραφή.
+STLineUnderCorrespondingTitle=Η γραμμή υποσυνόλου πρέπει να βρίσκεται κάτω από έναν τίτλο του ίδιου επιπέδου και με την ίδια περιγραφή.
+STLineUnderTitle=Η γραμμή υποσυνόλου πρέπει να βρίσκεται κάτω από τον τίτλο της
+UnsupportedModuleError=Δεν μπορείτε να προσθέσετε μια γραμμή υποσυνόλου σε μη υποστηριζόμενη ενότητα
+CorrespondingTitleNotFound=Ο αντίστοιχος τίτλος δεν βρέθηκε
+
+#
+# PDF
+#
+SubtotalOf=Υποσύνολο του %s:

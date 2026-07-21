@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,9 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class Lettering extends BookKeeping
 {
+	/**
+	 * @var array<string,array{payment_table:string,payment_table_fk_bank:string,doc_payment_table:string,doc_payment_table_fk_payment:string,doc_payment_table_fk_doc:string,linked_info:array<array{table:string,fk_doc:string,fk_link:string,prefix:string,fk_line_link?:string,table_link_line?:string,fk_table_link_line?:string,fk_table_link_line_parent?:string,is_fk_link_is_also_fk_doc?:bool}>}>
+	 */
 	public static $doc_type_infos = array(
 		'customer_invoice' => array(
 			'payment_table' => 'paiement',
@@ -154,8 +158,8 @@ class Lettering extends BookKeeping
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON (bk.fk_doc = payf.fk_bank AND bk.code_journal='".$this->db->escape($obj->code_journal)."')";
 					$sql .= " WHERE payfacf.fk_paiementfourn = '".$this->db->escape($obj->url_id)."' ";
-					$sql .= " AND facf.entity = ".$conf->entity;
-					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
+					$sql .= " AND facf.entity = " . (int) $conf->entity;
+					$sql .= " AND code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=" . (int) $conf->entity . ") ";
 					$sql .= " AND ( ";
 					if ($object->code_compta_client != "") {
 						$sql .= "  bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
@@ -183,8 +187,8 @@ class Lettering extends BookKeeping
 						$sql = 'SELECT bk.rowid, facf.ref, facf.ref_supplier ';
 						$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn facf ";
 						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (".$this->db->sanitize(implode(',', $ids_fact))."))";
-						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
-						$sql .= " AND facf.entity = ".$conf->entity;
+						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=". (int) $conf->entity.") ";
+						$sql .= " AND facf.entity = " . (int) $conf->entity;
 						$sql .= " AND ( ";
 						if ($object->code_compta_client != "") {
 							$sql .= " bk.subledger_account = '".$this->db->escape($object->code_compta_client)."'  ";
@@ -215,7 +219,7 @@ class Lettering extends BookKeeping
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiement as pay ON  payfac.fk_paiement=pay.rowid";
 					$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='".$this->db->escape($obj->code_journal)."')";
 					$sql .= " WHERE payfac.fk_paiement = '".$this->db->escape($obj->url_id)."' ";
-					$sql .= " AND bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
+					$sql .= " AND bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=4 AND entity=". (int) $conf->entity.") ";
 					$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 					$sql .= " AND ( ";
 					if ($object->code_compta_client != "") {
@@ -243,7 +247,7 @@ class Lettering extends BookKeeping
 						$sql = 'SELECT bk.rowid, fac.ref, fac.ref_supplier ';
 						$sql .= " FROM ".MAIN_DB_PREFIX."facture fac ";
 						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (".$this->db->sanitize(implode(',', $ids_fact))."))";
-						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
+						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2 AND entity=". (int) $conf->entity.") ";
 						$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 						$sql .= " AND ( ";
 						if ($object->code_compta_client != "") {
@@ -288,14 +292,15 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
-	 * @param	array		$ids			ids array
+	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @param	bool		$partial		Partial lettering
 	 * @return	int
 	 */
 	public function updateLettering($ids = array(), $notrigger = 0, $partial = false)
 	{
+		global $langs;
+
 		$now = dol_now();
 		$error = 0;
 		$affected_rows = 0;
@@ -306,9 +311,10 @@ class Lettering extends BookKeeping
 		$this->db->begin();
 
 		// Check partial / normal lettering case
+		$idlist = implode(',', array_map('intval', $ids));
 		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
 		$sql .= " GROUP BY ab.lettering_code";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
@@ -316,15 +322,20 @@ class Lettering extends BookKeeping
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($obj->lettering_code)) continue;
+				if (empty($obj->lettering_code)) {
+					continue;
+				}
 
 				// Remove normal lettering code if set partial lettering
 				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
-					if (!empty($obj->bookkeeping_ids)) $ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					if (!empty($obj->bookkeeping_ids)) {
+						$ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					}
 				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
 					// Delete partial lettering code if set normal lettering
 					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-					$sql2 .= " lettering_code = NULL";
+					$sql2 .= " matching_general = 0";
+					$sql2 .= ", lettering_code = NULL";
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
@@ -346,11 +357,13 @@ class Lettering extends BookKeeping
 
 		if (!$error && !empty($ids)) {
 			// Get next code
+			$idlist = implode(',', array_map('intval', $ids));
 			$sql = "SELECT DISTINCT ab2.lettering_code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
-			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
 			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " AND ab2.matching_general = 0";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
 
 			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
@@ -374,31 +387,39 @@ class Lettering extends BookKeeping
 
 			// Test amount integrity
 			if (!$error && !$partial) {
-				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-				$sql .= " rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+				$idlist = implode(',', array_map('intval', $ids));
+				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
+				$sql .= " AND subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					if ($obj = $this->db->fetch_object($resql)) {
 						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
-							$this->errors[] = 'Total not exacts ' . round(abs($obj->deb), 2) . ' vs ' . round(abs($obj->cred), 2);
+							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs($obj->deb), 'MT')), price(price2num(abs($obj->cred), 'MT')));
 							$error++;
 						}
 					}
 					$this->db->free($resql);
 				} else {
-					$this->errors[] = 'Erreur sql' . $this->db->lasterror();
+					$this->errors[] = 'SQL Error message: ' . $this->db->lasterror();
 					$error++;
 				}
 			}
 
 			// Update lettering code
 			if (!$error) {
+				$idlist = implode(',', array_map('intval', $ids));
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
 				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
-				$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
+				$sql .= ", matching_general = 0";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
+				$sql .= " AND subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Update lettering code", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -426,19 +447,20 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
-	 * @param	array		$ids			ids array
+	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
-	 * @return	int
+	 * @return	int							Nb of affectd rows or <0 if error
 	 */
 	public function deleteLettering($ids, $notrigger = 0)
 	{
 		$error = 0;
 
+		$idlist = implode(',', array_map('intval', $ids));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql .= " lettering_code = NULL";
+		$sql .= " matching_general = 0";
+		$sql .= ", lettering_code = NULL";
 		$sql .= ", date_lettering = NULL";
-		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
+		$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
 		$sql .= " AND subledger_account != ''";
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -463,7 +485,7 @@ class Lettering extends BookKeeping
 	/**
 	 * Lettering bookkeeping lines all types
 	 *
-	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
+	 * @param	int[]		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
 	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
@@ -493,9 +515,323 @@ class Lettering extends BookKeeping
 	}
 
 	/**
+	 * Update the matching on general account
+	 *
+	 * @param	int[]		$ids			ids array
+	 * @param   bool        $partial        Partial lettering
+	 * @return	int
+	 */
+	public function updateGeneralMatching(array $ids = [], $partial = false)
+	{
+		global $conf, $langs;
+
+		$now = dol_now();
+		$error = 0;
+		$affected_rows = 0;
+
+		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
+		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
+
+		// Check for unreconcilable accounts
+		$pcgId = getDolGlobalInt('CHARTOFACCOUNTS');
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql = "SELECT DISTINCT numero_compte";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .=	" LEFT JOIN (";
+		$sql .= "   SELECT aa.rowid, aa.account_number";
+		$sql .= "   FROM " . $this->db->prefix() . "accounting_account AS aa";
+		$sql .= "   INNER JOIN " . $this->db->prefix() . "accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version";
+		$sql .= "   WHERE asys.rowid = ".(int) $pcgId." AND aa.reconcilable";
+		$sql .= " ) AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " AND reconciliable_accounts.rowid IS NULL";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->errors[] = $langs->trans(
+					'ErrorAccountNotReconcilable',
+					$obj->numero_compte,
+					dol_buildpath('accountancy/admin/account.php', 1) . '?search_account=' . $obj->numero_compte,
+					$langs->transnoentitiesnoconv('Chartofaccounts')
+				);
+				return -1;
+			}
+			$this->db->free($resql);
+		} else {
+			$this->errors[] = 'Error' . $this->db->lasterror();
+			return -1;
+		}
+
+		// Get fiscal year & verify all selected rows belong to the same fiscal year
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql = "SELECT fy.rowid, fy.date_start, fy.date_end, COUNT(DISTINCT fy.rowid) AS nb_fiscalyears";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
+		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
+		$sql .= "   AND fy.entity = " . (int) $conf->entity;
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " GROUP BY fy.rowid, fy.date_start, fy.date_end";
+
+		dol_syslog(__METHOD__ . " - Get fiscal year", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			return -1;
+		}
+
+		$fiscalYearRows = [];
+		while ($obj = $this->db->fetch_object($resql)) {
+			$fiscalYearRows[] = $obj;
+		}
+		$this->db->free($resql);
+
+		// No fiscal year found for any of the selected rows
+		if (empty($fiscalYearRows)) {
+			$this->errors[] = $langs->trans('ErrorFiscalYearNotFound');
+			return -1;
+		}
+
+		// Cross-fiscal-year matching is forbidden
+		if (count($fiscalYearRows) > 1) {
+			$periods = array_map(
+				/**
+				 * @param object $row
+				 * @return string
+				 */
+				function ($row) {
+					return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
+				},
+				$fiscalYearRows
+			);
+			$this->errors[] = $langs->transnoentitiesnoconv('ErrorMatchingCrossFiscalYear', implode(', ', $periods));
+			return -1;
+		}
+
+		$fiscalYear     = $fiscalYearRows[0];
+		$fiscalYearStart = $this->db->jdate($fiscalYear->date_start);
+		$fiscalYearEnd   = $this->db->jdate($fiscalYear->date_end);
+
+		$this->db->begin();
+
+		// Check partial / normal lettering case
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " ORDER BY ab.lettering_code DESC";
+
+		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (empty($obj->lettering_code)) {
+					continue;
+				}
+
+				// Remove normal lettering code if set partial lettering
+				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
+					if (!empty($obj->bookkeeping_ids)) {
+						$ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+					}
+				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
+					// Delete partial lettering code if set normal lettering
+					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+					$sql2 .= " matching_general = 1";
+					$sql2 .= ", lettering_code = NULL";
+					$sql2 .= ", date_lettering = NULL";
+					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+
+					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
+					$resql2 = $this->db->query($sql2);
+					if (!$resql2) {
+						$this->errors[] = 'Error' . $this->db->lasterror();
+						$error++;
+						break;
+					}
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			$this->errors[] = 'Error' . $this->db->lasterror();
+			$error++;
+		}
+
+		if (!$error && !empty($ids)) {
+			// Get next code
+			$idlist = implode(',', array_map('intval', $ids));
+			$sql = "SELECT DISTINCT ab2.lettering_code";
+			$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
+			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " AND ab2.matching_general = 1";
+			$sql .= " AND ab2.doc_date BETWEEN '" . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
+			$sql .= " ORDER BY ab2.lettering_code DESC";
+
+			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (!empty($obj->lettering_code) &&
+						(($partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) ||
+							(!$partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)))
+					) {
+						$letter = $obj->lettering_code;
+						$letter++;
+						break;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				$this->errors[] = 'Error' . $this->db->lasterror();
+				$error++;
+			}
+
+			// Test amount integrity
+			if (!$error && !$partial) {
+				$idlist = implode(',', array_map('intval', $ids));
+				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
+
+				dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					if ($obj = $this->db->fetch_object($resql)) {
+						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
+							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs($obj->deb), 'MT')), price(price2num(abs($obj->cred), 'MT')));
+							$error++;
+						}
+					}
+					$this->db->free($resql);
+				} else {
+					$this->errors[] = 'SQL Error message: ' . $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			// Update matching code
+			if (!$error) {
+				$idlist = implode(',', array_map('intval', $ids));
+				$sql = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
+				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
+				$sql .= ", matching_general = 1";
+				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
+				$sql .= " AND lettering_code IS NULL";
+
+				dol_syslog(__METHOD__ . " - Update general lettering code", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = "Error " . $this->db->lasterror();
+				} else {
+					$affected_rows = $this->db->affected_rows($resql);
+				}
+			}
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $affected_rows;
+		}
+	}
+
+	/**
+	 * Delete matching code on general account
+	 * Deletes all lines sharing the same lettering_code+numero_compte in the same fiscal year
+	 *
+	 * @param int[] $ids ids array
+	 * @return int Nb of affected rows or -1 if error
+	 */
+	public function deleteGeneralMatching(array $ids = [])
+	{
+		global $conf;
+
+		$error = 0;
+
+		// Step 1: collect all (lettering_code, numero_compte, fiscal year) from selected ids
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql  = "SELECT DISTINCT ab.lettering_code, ab.numero_compte, fy.date_start, fy.date_end";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
+		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
+		$sql .= "   AND fy.entity = " . (int) $conf->entity;
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " AND ab.matching_general = 1";
+		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
+
+		dol_syslog(__METHOD__ . " - Collect lettering groups to delete", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			return -1;
+		}
+
+		$groups = [];
+		while ($obj = $this->db->fetch_object($resql)) {
+			$groups[] = [
+				'code'       => $obj->lettering_code,
+				'compte'     => $obj->numero_compte,
+				'date_start' => $obj->date_start,
+				'date_end'   => $obj->date_end,
+			];
+		}
+		$this->db->free($resql);
+
+		if (empty($groups)) {
+			return 0; // Nothing to delete (lines not matched or already unmatched)
+		}
+
+		// Step 2: for each group, delete all lines sharing the same code+account+fiscal year
+		$affected = 0;
+		foreach ($groups as $group) {
+			$sql  = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+			$sql .= "  lettering_code = NULL";
+			$sql .= ", date_lettering = NULL";
+			$sql .= ", matching_general = 0";
+			$sql .= " WHERE numero_compte = '" . $this->db->escape($group['compte']) . "'";
+			$sql .= " AND lettering_code = '" . $this->db->escape($group['code']) . "'";
+			$sql .= " AND matching_general = 1";
+			$sql .= " AND doc_date BETWEEN '" . $this->db->escape($group['date_start']) . "' AND '" . $this->db->escape($group['date_end']) . "'";
+
+			dol_syslog(__METHOD__ . " - Delete gl matching group " . $group['code'] . "/" . $group['compte'], LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				break;
+			}
+			$affected += $this->db->affected_rows($resql);
+		}
+
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this) . "::deleteGeneralMatching " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
+			return -1 * $error;
+		}
+
+		return $affected;
+	}
+
+	/**
 	 * Lettering bookkeeping lines
 	 *
-	 * @param	array		$bookkeeping_ids		Lettering specific list of bookkeeping id
+	 * @param	int[]		$bookkeeping_ids		Lettering specific list of bookkeeping id
 	 * @param	bool		$unlettering			Do unlettering
 	 * @return	int									Return integer <0 if error (nb lettered = result -1), 0 if noting to lettering, >0 if OK (nb lettered)
 	 */
@@ -551,7 +887,7 @@ class Lettering extends BookKeeping
 				$group_error++;
 			}
 
-			// Lettering/Unlettering the group of bookkeeping lines
+			// Matching/Unmatching the group of bookkeeping lines
 			if (!$group_error && $do_it) {
 				if ($unlettering) {
 					$result = $this->deleteLettering($bookkeeping_lines);
@@ -581,9 +917,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Lettering bookkeeping lines
 	 *
-	 * @param	array			$bookkeeping_ids				Lettering specific list of bookkeeping id
+	 * @param	int[]			$bookkeeping_ids				Lettering specific list of bookkeeping id
 	 * @param	bool			$only_has_subledger_account		Get only lines who have subledger account
-	 * @return	array|int										Return integer <0 if error otherwise all linked lines by block
+	 * @return	int<-1,-1>|array<array<int,array{id:int,piece_num:int,debit:int|float,credit:int|float,lettering_code:string}>>	Return integer <0 if error otherwise all linked lines by block
 	 */
 	public function getLinkedLines($bookkeeping_ids, $only_has_subledger_account = true)
 	{
@@ -643,7 +979,7 @@ class Lettering extends BookKeeping
 
 		$grouped_lines = array();
 		foreach (self::$doc_type_infos as $doc_type => $doc_type_info) {
-			if (!is_array($bookkeeping_lines_by_type[$doc_type])) {
+			if (empty($bookkeeping_lines_by_type[$doc_type]) || !is_array($bookkeeping_lines_by_type[$doc_type])) {
 				continue;
 			}
 
@@ -719,8 +1055,8 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all fk_doc by doc_type from list of bank ids
 	 *
-	 * @param	array			$bank_ids		List of bank ids
-	 * @return	array|int						Return integer <0 if error otherwise all fk_doc by doc_type
+	 * @param	int[]			$bank_ids		List of bank ids
+	 * @return	array<string,array<int,int>>|int						Return integer <0 if error otherwise all fk_doc by doc_type
 	 */
 	public function getDocTypeAndFkDocFromBankLines($bank_ids)
 	{
@@ -761,9 +1097,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all bank ids from list of document ids of a type
 	 *
-	 * @param	array			$document_ids	List of document id
-	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						Return integer <0 if error otherwise all all bank ids from list of document ids of a type
+	 * @param	int[]		$document_ids	List of document id
+	 * @param	string		$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
+	 * @return	array<int,int>|int<-1,-1>	Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
 	{
@@ -794,6 +1130,7 @@ class Lettering extends BookKeeping
 		$sql = "SELECT DISTINCT p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " AS fk_doc";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['payment_table']) . " AS p";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($doc_type_info['doc_payment_table']) . " AS dp ON dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_payment']) . " = p.rowid";
+		// Implode used on array of int @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$sql .= " WHERE dp." . $this->db->sanitize($doc_type_info['doc_payment_table_fk_doc']) . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
 		$sql .= " AND p." . $this->db->sanitize($doc_type_info['payment_table_fk_bank']) . " > 0";
 
@@ -815,9 +1152,9 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all linked document ids by group and type
 	 *
-	 * @param	array			$document_ids	List of document id
+	 * @param	int[]			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
+	 * @return	array<int,array<int,int>>|int<-1,-1>	Return integer <0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
 	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
@@ -855,14 +1192,14 @@ class Lettering extends BookKeeping
 				$sql = "SELECT DISTINCT tl2.fk_link, tl2.fk_doc";
 				$sql .= " FROM (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);
 				$sql .= ") AS tl";
 				$sql .= " LEFT JOIN (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);
@@ -882,12 +1219,12 @@ class Lettering extends BookKeeping
 			while ($obj = $this->db->fetch_object($resql)) {
 				$current_document_ids[$obj->fk_doc] = $obj->fk_doc;
 
-				$link_key = $linked_info['prefix'] . $obj->fk_link;
+				$link_key = (string) $linked_info['prefix'] . (string) $obj->fk_link;
 				$element_by_link[$link_key][$obj->fk_doc] = $obj->fk_doc;
-				$link_by_element[$obj->fk_doc][$link_key] = $link_key;
+				$link_by_element[(int) $obj->fk_doc][$link_key] = $link_key;
 				if ($is_fk_link_is_also_fk_doc) {
 					$element_by_link[$link_key][$obj->fk_link] = $obj->fk_link;
-					$link_by_element[$obj->fk_link][$link_key] = $link_key;
+					$link_by_element[(int) $obj->fk_link][$link_key] = $link_key;
 				}
 			}
 			$this->db->free($resql);
@@ -903,11 +1240,11 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array	$link_by_element	List of payment ids by link key
-	 * @param	array	$element_by_link	List of element ids by link key
-	 * @param	string	$link_key			Link key (used for recursive function)
-	 * @param	array	$current_group		Current group (used for recursive function)
-	 * @return	array						List of element ids grouped by link or element in common
+	 * @param	array<int,array<string,int|string>>	$link_by_element	List of payment ids by link key
+	 * @param	array<string,array<int,int>>	$element_by_link	List of element ids by link key
+	 * @param	string							$link_key			Link key (used for recursive function)
+	 * @param	array<int,int>					$current_group		Current group (used for recursive function)
+	 * @return	array<int,array<int,int>>							List of element ids grouped by link or element in common
 	 */
 	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
 	{
@@ -917,10 +1254,15 @@ class Lettering extends BookKeeping
 			return $grouped_elements;
 		}
 
+
 		if (empty($link_key)) {
-			// Save list when is the begin of recursive function
+			// Save list when is the first step of the recursive recursive function
 			$save_link_by_element = $link_by_element;
 			$save_element_by_link = $element_by_link;
+		} else {
+			// To satisfy static analysis (phpstan)
+			$save_link_by_element = null;
+			$save_element_by_link = null;
 		}
 
 		do {
@@ -944,7 +1286,7 @@ class Lettering extends BookKeeping
 
 				// Set element id on the current group for each link key of the element
 				foreach ($link_keys as $key) {
-					$this->getGroupElements($link_by_element, $element_by_link, $key, $current_group);
+					$this->getGroupElements($link_by_element, $element_by_link, (string) $key, $current_group);
 				}
 			}
 
@@ -957,8 +1299,8 @@ class Lettering extends BookKeeping
 
 		if (empty($link_key)) {
 			// Restore list when is the begin of recursive function
-			$link_by_element = $save_link_by_element;
-			$element_by_link = $save_element_by_link;
+			$link_by_element = $save_link_by_element;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$element_by_link = $save_element_by_link;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 		}
 
 		return $grouped_elements;

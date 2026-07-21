@@ -5,11 +5,8 @@ RefReception=المرجع. استقبال
 Reception=على عملية
 Receptions=حفلات الاستقبال
 AllReceptions=كل الاستقبالات
-Reception=على عملية
-Receptions=حفلات الاستقبال
 ShowReception=عرض حفلات الاستقبال
 ReceptionsArea=منطقة الاستقبالات
-ListOfReceptions=قائمة حفلات الاستقبال
 ReceptionMethod=طريقة الاستقبال
 LastReceptions=أحدث حفلات استقبال %s
 StatisticsOfReceptions=إحصائيات حفلات الاستقبال
@@ -56,3 +53,4 @@ RestoreWithCurrentQtySaved=تعبئة الكميات بأحدث القيم ال�
 ReceptionsRecorded=تم تسجيل الاستقبالات
 ReceptionUpdated=تم تحديث الاستقبال بنجاح
 ReceptionDistribution=توزيع الاستقبال
+AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=لا يمكن التحقق التلقائي في حال انخفاض المخزون عند التحقق من الفاتورة

@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - compta
-OptionModeTrue=Option Eingang-Ausgang
-OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) berechnet. \nDie Aussagekraft der Zahlen ist nur gewährleistet, wenn die Pflege der Konten (Ein-/Ausgang) nachhaltig korrekt ist.
 OptionModeVirtualDesc=In dieser Option berechnet sich der Umsatz über Zahlungen (Zahlungsdatum).<br> Die Gültigkeit der Zahlen ist nur bei Überprüfung der Zu- und Abgänge auf den Konten über Rechnungen gewährleistet.
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
 MenuReportInOut=Ergebnis / Geschäftsjahr
@@ -39,3 +37,4 @@ InvoiceLinesToDispatch=versandbereite Rechnungszeilen
 CalculationRuleDesc=Zur Berechnung der Gesamt-MwSt. gibt es zwei Methoden: <br>Methode 1 rundet die Steuer in jeder Zeile und addiert zum Schluss. <br>Methode 2 summiert alle Steuer-Zeilen und rundet am Ende. <br>Das endgültige Ergebnis kann sich in wenigen Cent unterscheiden. Standardmodus ist <b>Modus %s.</b>
 LinkedFichinter=Mit einem Eingriff verknüpfen
 ImportDataset_tax_contrib=Sozialabgaben/Steuern
+FiscalYearClosedShort=Inaktiv

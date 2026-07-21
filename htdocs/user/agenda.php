@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->load("users");
 
@@ -40,10 +49,12 @@ if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
+	} else {
+		$actioncode = implode(',', $actioncode);
 	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
@@ -72,7 +83,10 @@ if (!$sortorder) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	if ($result <= 0) {
+		accessforbidden('User not found');
+	}
+	$object->loadRights();
 }
 
 // Security check
@@ -88,6 +102,11 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
+
+
+/*
+ *	Actions
+ */
 
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -129,15 +148,15 @@ print dol_get_fiche_head($head, 'info', $title, -1, 'user');
 $linkback = '';
 
 if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/list.php', ['restore_lastsearch_values' => 1]).'">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/vcard.php', ['id' => $object->id, 'output' => 'file', 'file' => dol_sanitizeFileName($object->getFullName($langs).'.vcf')]).'" class="refid" rel="noopener">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -160,26 +179,31 @@ print dol_get_fiche_end();
 $objUser = $object;
 $objcon = new stdClass();
 
-$out = '';
+$query = [];
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 	if (is_object($objUser) && get_class($objUser) == 'User') {
-		$out .= '&amp;originid='.$objUser->id.($objUser->id > 0 ? '&amp;userid='.$objUser->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
+		$query = [
+			'originid' => $objUser->id,
+			'assignedtouser' => ($objUser->id > 0 ? $objUser->id : ''),
+			'backtopage' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => ($objUser->id > 0 ? $objUser->id : '')])
+		];
 	}
-	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$query += ['contactid' => (!empty($objcon->id) ? $objcon->id : '')];
+	$query += ['datep' => dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel')];
 }
 
 $morehtmlright = '';
 
-$messagingUrl = DOL_URL_ROOT.'/user/messaging.php?userid='.$object->id;
+$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/user/messaging.php', ['userid' => $object->id]);
 $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
-$messagingUrl = DOL_URL_ROOT.'/user/agenda.php?id='.$object->id;
+$messagingUrl = dolBuildUrl(DOL_URL_ROOT.'/user/agenda.php', ['id' => $object->id]);
 $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 if (isModEnabled('agenda')) {
 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+		$query = array_merge(['action' => 'create'], $query);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/comm/action/card.php', $query));
 	}
 }
 
@@ -197,7 +221,7 @@ if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') ||
 	$cachekey = 'count_events_user_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+	$titlelist = $langs->trans("ActionsOnUser").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 	}

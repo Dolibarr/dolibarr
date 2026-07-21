@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +18,10 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
- *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       \file      htdocs/core/ajax/objectonoff.php
+ *       \brief     File to set status for an object. Called when ajax_object_onoff() is used.
+ *       			This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			TODO Rename into updatestatus.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -39,6 +42,13 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
@@ -55,6 +65,7 @@ $object = fetchObjectByElement($id, $element);
 if (!is_object($object)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
+'@phan-var-force CommonObject $object';
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
@@ -70,20 +81,27 @@ if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	if (!empty($object->socid) && $socid != $object->socid) {
+	if (!empty($object->socid) && $socid != $object->socid) {  // @phan-suppress-current-line PhanUndeclaredProperty
 		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
 	}
 }
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
-} elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
+} elseif ($element == 'product' && in_array($field, array('status', 'status_buy', 'status_batch', 'tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
+
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -92,10 +110,10 @@ if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $objec
 
 top_httphead();
 
-print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering new values
-if (($action == 'set') && !empty($id)) {
+if (($action == 'set') && !empty($id)) {	// Test on permission already done in header according to object and field.
 	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {
@@ -108,13 +126,23 @@ if (($action == 'set') && !empty($id)) {
 	$result = $object->setValueFrom($field, $value, $object->table_element, $id, $format, '', $user, $triggerkey);
 
 	if ($result < 0) {
-		print $object->error;
+		print $object->error."\n";
+		foreach ($object->errors as $msg) {
+			print $msg."\n";
+		}
+
+		$db->close();
+
 		http_response_code(500);
 		exit;
 	}
 
 	if ($backtopage) {
+		$db->close();
+
 		header('Location: '.$backtopage);
 		exit;
 	}
 }
+
+$db->close();

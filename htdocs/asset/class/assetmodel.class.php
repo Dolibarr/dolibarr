@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2021  Open-Dsi  			<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017       Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       Open-Dsi  			    <support@open-dsi.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class AssetModel extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -70,7 +70,7 @@ class AssetModel extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -89,13 +89,14 @@ class AssetModel extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => '2', 'validate' => 1,),
-		'asset_type' => array('type' => 'smallint', 'label' => 'AssetType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array('0' => 'AssetTypeIntangible', '1' => 'AssetTypeTangible', '2' => 'AssetTypeInProgress', '3' => 'AssetTypeFinancial'), 'validate' => 1,),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'position' => 25, 'notnull' => 0, 'visible' => 0),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
+		'asset_type' => array('type' => 'smallint', 'label' => 'AssetType', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetTypeIntangible', 1 => 'AssetTypeTangible', 2 => 'AssetTypeInProgress', 3 => 'AssetTypeFinancial'), 'validate' => 1,),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 300, 'notnull' => 0, 'visible' => 0, 'validate' => 1,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 301, 'notnull' => 0, 'visible' => 0, 'validate' => 1,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
@@ -103,21 +104,63 @@ class AssetModel extends CommonObject
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '1', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Enabled', '9' => 'Disabled'), 'validate' => 1,),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '1', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Enabled', 9 => 'Disabled'), 'validate' => 1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $asset_type;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var ?string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var ?int
+	 */
 	public $status;
+	/**
+	 * @var ?AssetDepreciationOptions
+	 */
 	public $asset_depreciation_options;
+	/**
+	 * @var ?AssetAccountancyCodes
+	 */
 	public $asset_accountancy_codes;
 
 	// /**
@@ -143,7 +186,7 @@ class AssetModel extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -221,13 +264,6 @@ class AssetModel extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) {
-			$object->fetchLines();
-		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
 
 		// Reset some properties
 		unset($object->id);
@@ -236,9 +272,11 @@ class AssetModel extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'label')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -268,23 +306,13 @@ class AssetModel extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
 			// copy internal contacts
 			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
-			}
-		}
-
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
 			}
 		}
 
@@ -310,24 +338,9 @@ class AssetModel extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		return 1;
-	}
-
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -339,7 +352,7 @@ class AssetModel extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return AssetModel[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -444,8 +457,6 @@ class AssetModel extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		// Protection
@@ -464,12 +475,13 @@ class AssetModel extends CommonObject
 		if (!empty($this->fields['date_validation'])) {
 			$sql .= ", date_validation = '" . $this->db->idate($now) . "'";
 		}
-		if (!empty($this->fields['fk_user_valid'])) {
+		if (!empty($this->fields['fk_user_valid'] ?? null)) {
 			$sql .= ", fk_user_valid = " . ((int) $user->id);
 		}
 		$sql .= " WHERE rowid = " . ((int) $this->id);
 
 		dol_syslog(get_class($this) . "::validate()", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			dol_print_error($this->db);
@@ -596,9 +608,9 @@ class AssetModel extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAssetModel");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -765,47 +777,5 @@ class AssetModel extends CommonObject
 		// $this->property2 = ...
 
 		return $this->initAsSpecimenCommon();
-	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		return $this->lines;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		//global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }

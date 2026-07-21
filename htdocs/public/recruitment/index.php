@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,16 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
@@ -47,8 +58,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
 // Get parameters
-$action   = GETPOST('action', 'aZ09');
-$cancel   = GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $SECUREKEY = GETPOST("securekey");
 $entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $backtopage = '';
@@ -81,7 +92,7 @@ $object = new RecruitmentJobPosition($db);
 $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 // Security check
-if (empty($conf->recruitment->enabled)) {
+if (!isModEnabled('recruitment')) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
@@ -173,6 +184,7 @@ if (getDolGlobalString('RECRUITMENT_IMAGE_PUBLIC_INTERFACE')) {
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
 $now = dol_now();
+$params = array();
 
 if (is_array($results)) {
 	if (empty($results)) {
@@ -186,6 +198,7 @@ if (is_array($results)) {
 
 		foreach ($results as $job) {
 			$object = $job;
+			$arrayofpostulatebutton = array();
 
 			print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
@@ -193,7 +206,7 @@ if (is_array($results)) {
 			$text = '';
 			if (getDolGlobalString('RECRUITMENT_NEWFORM_TEXT')) {
 				$reg = array();
-				if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
+				if (preg_match('/^\((.*)\)$/', getDolGlobalString('RECRUITMENT_NEWFORM_TEXT'), $reg)) {
 					$text .= $langs->trans($reg[1])."<br>\n";
 				} else {
 					$text .= getDolGlobalString('RECRUITMENT_NEWFORM_TEXT') . "<br>\n";
@@ -247,9 +260,9 @@ if (is_array($results)) {
 			print  $langs->trans("ContactForRecruitment").' : ';
 			$emailforcontact = $object->email_recruiter;
 			if (empty($emailforcontact)) {
-				$emailforcontact = $tmpuser->email;
+				$emailforcontact = $tmpuser->email ?? '';
 				if (empty($emailforcontact)) {
-					$emailforcontact = $mysoc->email;
+					$emailforcontact = $mysoc->email ?? '';
 				}
 			}
 			print '<b class="wordbreak">';
@@ -259,10 +272,10 @@ if (is_array($results)) {
 			print '</b><br>';
 
 			if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
-				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, '0', 'warning');
 			}
 			if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
-				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+				print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, '0', 'warning');
 			}
 
 			print '<br>';
@@ -273,6 +286,17 @@ if (is_array($results)) {
 			print $text;
 			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
+			$arrayofpostulatebutton[] = array(
+				'url' => '/public/recruitment/view.php?ref='.$object->ref,
+				'label' => $langs->trans('ApplyJobCandidature'),
+				'lang' => 'recruitment',
+				'perm' => true,
+				'enabled' => true,
+			);
+
+			print '<div class="center">';
+			print dolGetButtonAction('', $langs->trans("ApplyJobCandidature"), 'default', $arrayofpostulatebutton, 'applicate_'.$object->ref, true, $params);
+			print '</div>';
 			print '</div>'."\n";
 			print "\n";
 

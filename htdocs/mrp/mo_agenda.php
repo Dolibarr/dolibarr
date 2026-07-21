@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -34,7 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 
-
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
 
@@ -42,8 +50,15 @@ $langs->loadLangs(array("mrp", "other"));
 $id 		= GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action 	= GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moagenda'; // To manage different context of search
+
+// Protection
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -59,7 +74,7 @@ $search_agenda_label = GETPOST('search_agenda_label');
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -75,7 +90,6 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Mo($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('moagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -85,7 +99,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = (empty($conf->mrp->multidir_output[$object->entity ?? $conf->entity]) ? $conf->mrp->dir_output : $conf->mrp->multidir_output[$object->entity ?? $conf->entity])."/".$object->id;
 }
 
 // Security check - Protection if external user
@@ -99,7 +113,7 @@ $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'row
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -156,7 +170,7 @@ if ($object->id > 0) {
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 	// Project
@@ -165,12 +179,12 @@ if ($object->id > 0) {
 		if (is_object($object->thirdparty)) {
 			$morehtmlref .= '<br>';
 		}
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -230,7 +244,10 @@ if ($object->id > 0) {
 	print '</div>';
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
-		$param = '&id='.$object->id.'&socid='.$socid;
+		$param = '&id='.$object->id;
+		if (!empty($socid)) {
+			$param .= '&socid='.$socid;
+		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}

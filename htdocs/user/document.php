@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
@@ -44,29 +54,28 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'us
 if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
+'@phan-var-force int<1,max> $id';
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
-$canreadgroup = $canreaduser;
-$caneditgroup = $canedituser;
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontoread = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$permissiontoreadgroup = $permissiontoread;
+$permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 // Define value to know what current user can do on properties of edited user
 if ($id) {
-	// $user est le user qui edite, $id est l'id de l'utilisateur edite
-	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password"))
-	|| (($user->id != $id) && $user->hasRight("user", "user", "password")));
+	// $user is the user doing the edit, $id is the id of the user being edited
+	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
+	$permissiontoeditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
-$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permtoedit = $caneditfield;
+$permissiontoadd = $permissiontoedit;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permtoedit = $permissiontoedit;
 
 // Security check
 $socid = 0;
@@ -75,9 +84,12 @@ if ($user->socid > 0) {
 }
 $feature2 = 'user';
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id != $id && !$canreaduser) {
+if ($user->id != $id && !$permissiontoread) {
 	accessforbidden();
 }
 
@@ -100,24 +112,20 @@ if (!$sortfield) {
 }
 
 $object = new User($db);
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
-	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
+	$object->loadRights();
+	// $upload_dir = $conf->user->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id ;
 	// For users, the upload_dir is always $conf->user->entity for the moment
 	$upload_dir = $conf->user->dir_output."/".$object->id;
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
-
-
 
 /*
  * Actions
  */
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -140,28 +148,28 @@ $title = $person_name." - ".$langs->trans('Documents');
 $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_document');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = user_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user', 0, '', '', 0, '', 1);
 
 	$linkback = '';
 	if ($user->hasRight("user", "user", "read") || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -180,19 +188,17 @@ if ($object->id) {
 
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
+	if (!empty($object->ldap_sid) && $object->status == 0) {
 		print '<td class="error">';
 		print $langs->trans("LoginAccountDisableInDolibarr");
 		print '</td>';
 	} else {
 		print '<td>';
 		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
 		print '</td>';

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020	Tobias Sekan	<tobias.sekan@startmail.com>
+/* Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,15 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -33,13 +43,14 @@ $langs->loadLangs(['bills', 'boxes']);
 
 // Filter to show only result of one supplier
 $socid = GETPOSTINT('socid');
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
 // Maximum elements of the tables
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $maxLatestEditCount = 5;
 $maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);

@@ -3,6 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -299,7 +300,7 @@ class FilesLibTest extends CommonClassTest
 		// Again to test there is error when deleting a non existing file with option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3.csv', 1, 1);
 		print __METHOD__." result=".$result."\n";
-		$this->assertFalse($result, 'delete file that does not exists with disableglo must return ko');
+		$this->assertFalse($result, 'delete file that does not exists with disabling glob must return ko');
 
 		// Again to test there is no error when deleting a non existing file without option disableglob
 		$result = dol_delete_file($conf->admin->dir_temp.'/file3csv', 0, 1);
@@ -488,6 +489,45 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check that a user allowed to export the ledger can download the generated accounting export.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessAccountingExport()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savpermbindwrite = $user->hasRight('accounting', 'bind', 'write');
+		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
+
+		if (empty($user->rights->accounting)) {
+			$user->rights->accounting = new stdClass();
+		}
+		if (empty($user->rights->accounting->bind)) {
+			$user->rights->accounting->bind = new stdClass();
+		}
+		if (empty($user->rights->accounting->mouvements)) {
+			$user->rights->accounting->mouvements = new stdClass();
+		}
+
+		$user->rights->accounting->bind->write = 0;
+		$user->rights->accounting->mouvements->export = 1;
+		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
+		$this->assertEquals(1, $result['accessallowed']);
+
+		$user->rights->accounting->mouvements->export = 0;
+		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
+		$this->assertEquals(0, $result['accessallowed']);
+
+		$user->rights->accounting->bind->write = $savpermbindwrite;
+		$user->rights->accounting->mouvements->export = $savpermexport;
+	}
+
+	/**
 	 * testDolDirMove
 	 *
 	 * @return void
@@ -554,5 +594,41 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
+	}
+
+	/**
+	 * testDolConvertFile
+	 *
+	 * @return void
+	 */
+	public function testDolConvertFile()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// If imagick not installed, you can install it with
+		// apt install imagemagick php7.4-imagick
+		if (class_exists('Imagick')) {
+			$filepdf = dirname(__FILE__).'/imgsvgwithjs.svg';
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(-4, $result, 'Convert of PDF file '.$filepdf.' into image should have return an error because it is not a real PDF, but this did not happen.');
+
+			$filepdf = dirname(__FILE__).'/file_pdf_with_js.pdf.jpg';
+			$result = dol_copy($filepdf, $conf->admin->dir_temp.'/testdolconvert.pdf');
+
+			$fileimage = $conf->admin->dir_temp.'/testdolconvert.png';
+
+			$result = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals(1, $result, 'Failed to convert PDF file into '.$fileimage.', error '.$result);
+		} else {
+			print __METHOD__." skipped because Imagick is not installed.\n";
+		}
 	}
 }

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class KnowledgeRecord extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:SortField]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
@@ -69,7 +69,7 @@ class KnowledgeRecord extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -88,35 +88,61 @@ class KnowledgeRecord extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'visible' => 5, 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", "csslist" => "nowraponall", "showoncombobox" => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
 		'question' => array('type' => 'text', 'label' => 'Question', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax300 small', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
-		'lang' => array('type' => 'varchar(6)', 'label' => 'Language', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'tdcss' => 'titlefieldcreate nowraponall', "csslist" => "minwidth100 maxwidth200"),
+		'lang' => array('type' => 'varchar(6)', 'label' => 'Language', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'tdcss' => 'titlefieldcreate nowraponall', "csslist" => "tdoverflowmax100"),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => 2,),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
-		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
-		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'position' => 512, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2, 'csslist' => 'tdoverflowmax100'),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'position' => 512, 'notnull' => 0, 'visible' => -2, 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
-		'fk_c_ticket_category' => array('type' => 'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label' => 'SuggestedForTicketsInGroup', 'enabled' => 'isModEnabled("ticket")', 'position' => 520, 'notnull' => 0, 'visible' => -1, 'help' => 'YouCanLinkArticleToATicketCategory', 'csslist' => 'minwidth200 tdoverflowmax250'),
+		'fk_c_ticket_category' => array('type' => 'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label' => 'SuggestedForTicketsInGroup', 'enabled' => 'isModEnabled("ticket")', 'position' => 520, 'notnull' => 0, 'visible' => -1, 'help' => 'YouCanLinkArticleToATicketCategory', 'csslist' => 'minwidth150 tdoverflowmax200'),
 		'answer' => array('type' => 'html', 'label' => 'Solution', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 3, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Obsolete'),),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Obsolete'),),
 	);
+
+	/**
+	 * @var int
+	 */
 	public $rowid;
+
+	/**
+	 * @var string
+	 */
 	public $ref;
-	public $entity;
+
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_user_valid;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
 
 	/**
@@ -128,8 +154,19 @@ class KnowledgeRecord extends CommonObject
 	 * @var string answer to question
 	 */
 	public $answer;
+	/**
+	 * @var string
+	 */
 	public $url;
+
+	/**
+	 * @var ?int
+	 */
 	public $status;
+
+	/**
+	 * @var string
+	 */
 	public $lang;
 	// END MODULEBUILDER PROPERTIES
 
@@ -257,9 +294,11 @@ class KnowledgeRecord extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'question')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->question = empty($this->fields['question']['default']) ? $langs->trans("CopyOf")." ".$object->question : $this->fields['question']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -359,9 +398,9 @@ class KnowledgeRecord extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int        		$limit        	Limit
 	 * @param  int         		$offset       	Offset
-	 * @param  string|array     $filter       	Filter USF.
-	 * @param  string      		$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 		int <0 if KO, array of pages if OK
+	 * @param  string|array<string,string>     $filter       	Filter USF.
+	 * @param  'AND'|'OR'  		$filtermode   	Filter mode (AND or OR)
+	 * @return self[]|int                 		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -386,7 +425,7 @@ class KnowledgeRecord extends CommonObject
 					if ($key == 't.rowid') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} elseif (strpos($value, '%') === false) {
 						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 					} else {
@@ -463,6 +502,8 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_knowledgemanagement = ".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -490,8 +531,20 @@ class KnowledgeRecord extends CommonObject
 			}
 		}
 
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$result = $this->deleteCommon($user, $notrigger);
+
+		// Remove the linked files directory (uploads attached to the article)
+		if ($result > 0 && !empty($conf->knowledgemanagement->dir_output) && !empty($this->ref)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($this->ref);
+			if (file_exists($dir)) {
+				if (!@dol_delete_dir_recursive($dir)) {
+					$this->errors[] = 'ErrorFailToDeleteDir';
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -550,7 +603,7 @@ class KnowledgeRecord extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -562,7 +615,7 @@ class KnowledgeRecord extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -592,14 +645,14 @@ class KnowledgeRecord extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'knowledgerecord/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'knowledgerecord/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -720,10 +773,9 @@ class KnowledgeRecord extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -735,7 +787,7 @@ class KnowledgeRecord extends CommonObject
 		$nofetch = !empty($params['nofetch']);
 
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -805,9 +857,9 @@ class KnowledgeRecord extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowKnowledgeRecord");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -928,9 +980,10 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, kef.tms) as datem,';
+		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as kef ON kef.fk_object = t.rowid";
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -941,7 +994,7 @@ class KnowledgeRecord extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
@@ -964,27 +1017,28 @@ class KnowledgeRecord extends CommonObject
 		return $this->initAsSpecimenCommon();
 	}
 
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
+	// /**
+	//  * 	Create an array of lines
+	//  *
+	//  * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
+	//  */
+	// public function getLinesArray()
+	// {
+	// 	$this->lines = array();
 
-		$objectline = new KnowledgeRecordLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
+	// 	$objectline = new KnowledgeRecordLine($this->db);
+	// 	$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_knowledgerecord:=:'.((int) $this->id).')');
 
-		if (is_numeric($result)) {
-			$this->error = $objectline->error;
-			$this->errors = $objectline->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
+	// 	if (is_numeric($result)) {
+	// 		$this->error = $objectline->error;
+	// 		$this->errors = $objectline->errors;
+	// 		return $result;
+	// 	} else {
+	// 		$this->lines = $result;
+	// 		// @phpstan-ignore-next-line
+	// 		return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
+	// 	}
+	// }
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.
@@ -1015,13 +1069,14 @@ class KnowledgeRecord extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefKnowledgeRecord $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1046,10 +1101,10 @@ class KnowledgeRecord extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1127,11 +1182,11 @@ class KnowledgeRecord extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1162,28 +1217,58 @@ class KnowledgeRecord extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
-}
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
-/**
- * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class KnowledgeRecordLine extends CommonObjectLine
-{
-	// To complete with content of an object KnowledgeRecordLine
-	// We should have a field rowid, fk_knowledgerecord and position
 
 	/**
-	 * Constructor
+	 *  Load indicators into this->nb for board
 	 *
-	 * @param DoliDB $db Database handler
+	 *  @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function __construct(DoliDB $db)
+	public function loadStateBoard()
 	{
-		$this->db = $db;
+		global $user;
 
-		$this->isextrafieldmanaged = 0;
+		$this->nb = array();
+		$clause = "WHERE";
+
+		$sql = "SELECT count(t.rowid) as nb";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["knowledgebase"] = $obj->nb;
+			}
+
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 }
+
+
+// require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
+// /**
+//  * Class KnowledgeRecordLine. You can also remove this and generate a CRUD class for lines objects.
+//  */
+// class KnowledgeRecordLine extends CommonObjectLine
+// {
+// 	// To complete with content of an object KnowledgeRecordLine
+// 	// We should have a field rowid, fk_knowledgerecord and position
+
+// 	/**
+// 	 * Constructor
+// 	 *
+// 	 * @param DoliDB $db Database handler
+// 	 */
+// 	public function __construct(DoliDB $db)
+// 	{
+// 		$this->db = $db;
+
+// 		$this->isextrafieldmanaged = 0;
+// 	}
+// }

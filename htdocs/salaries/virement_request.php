@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
- * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+
+/* Copyright (C) 2005-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/salaries/info.php
+ *	\file       htdocs/salaries/virement_request.php
  *	\ingroup    salaries
- *	\brief      Page with info about salaries contribution
+ *	\brief      Page to request payment of a salary
  */
 
 // Load Dolibarr environment
@@ -56,6 +58,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
@@ -74,7 +85,6 @@ if ($user->socid) {
 }
 
 
-
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
@@ -87,8 +97,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 
 	// Check current user can read this salary
 	$canread = 0;
@@ -116,8 +126,8 @@ if ($type == 'bank-transfer') {
 }
 
 // Load object
-if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref);
+if ($id > 0) {
+	$ret = $object->fetch($id);
 	$isdraft = (($obj->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
@@ -152,24 +162,43 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// payment mode
+if ($action == 'setmode' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
-if ($action == "new") {
+// bank account
+if ($action == 'setbankaccount' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setBankAccount(GETPOSTINT('fk_account'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
 	if ($object->id > 0) {
 		$db->begin();
 
 		$sourcetype = 'salaire';
 		$newtype = 'salaire';
-		$paymentservice = GETPOST('paymentservice');
-		$result = $object->demande_prelevement($user, price2num(GETPOST('request_transfer', 'alpha')), $newtype, $sourcetype);
+
+		$paymentservice = GETPOST('paymentservice');	// value can be 'stripesepa'. not used yet.
+
+		$result = $object->demande_prelevement($user, GETPOSTFLOAT('request_transfer'), $newtype, $sourcetype);
 
 		if ($result > 0) {
 			$db->commit();
 
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		} else {
-			dol_print_error($db, $error);
 			$db->rollback();
+
 			setEventMessages($obj->error, $obj->errors, 'errors');
 		}
 	}
@@ -187,15 +216,11 @@ if ($action == "delete" && $permissiontodelete) {
 }
 
 
-
-
 /*
  * View
  */
 
-if (isModEnabled('project')) {
-	$formproject = new FormProjets($db);
-}
+$form = new Form($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";
@@ -241,9 +266,9 @@ if (isModEnabled('project')) {
 	if ($usercancreate) {
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
@@ -258,6 +283,11 @@ if (isModEnabled('project')) {
 
 $morehtmlref .= '</div>';
 
+$totalpaid = $object->getSommePaiement();
+
+$object->totalpaid = $totalpaid;
+$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
+
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
 print '<div class="fichecenter">';
@@ -269,12 +299,12 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 if ($action == 'edit') {
-	print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 	print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 	print "</td></tr>";
 } else {
 	print "<tr>";
-	print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+	print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 	print dol_print_date($object->datesp, 'day');
 	print '</td></tr>';
 }
@@ -307,9 +337,9 @@ print '</tr></table>';
 print '</td><td>';
 
 if ($action == 'editmode') {
-	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 } else {
-	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+	$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 }
 print '</td></tr>';
 
@@ -325,9 +355,9 @@ if (isModEnabled("bank")) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 	}
 	print '</td>';
 	print '</tr>';
@@ -360,6 +390,7 @@ $sql .= " AND p.fk_salary = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('tax').")";
 $sql .= " ORDER BY dp DESC";
 
+$resteapayer = 0;
 //print $sql;
 $resql = $db->query($sql);
 if ($resql) {
@@ -427,7 +458,7 @@ if ($resql) {
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-	$resteapayer = $object->amount - $totalpaid;
+	$resteapayer = (float) $object->amount - $totalpaid;
 	// $cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 	// print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -475,7 +506,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 			print '<input type="hidden" name="token" value="'.newToken().'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
 			print '<input type="hidden" name="type" value="'.$type.'" />';
-			print '<input type="hidden" name="action" value="new" />';
+			print '<input type="hidden" name="action" value="add" />';
 			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 			print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
 			print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
@@ -490,7 +521,7 @@ if ($object->paye == 0 && $hadRequest == 0) {
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
-				print '<input type="hidden" name="action" value="new" />';
+				print '<input type="hidden" name="action" value="add" />';
 				print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 				print '<input type="text" id="withdraw_request_amount" name="request_transfer" value="'.price($resteapayer, 0, $langs, 1, -1, -1).'" size="9" />';
@@ -520,21 +551,15 @@ print '</div>';
 print '<div>';
 
 
-/*
- * Withdraw receipts
- */
 $bprev = new BonPrelevement($db);
 
-/*
-	 * Withdrawals
-	 */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '<td class="left">'.$langs->trans("DateRequest").'</td>';
@@ -548,7 +573,7 @@ if ($type == 'bank-transfer') {
 }
 print '<td>&nbsp;</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td>&nbsp;</td>';
 }
 print '</tr>';
@@ -559,7 +584,7 @@ if ($resql) {
 
 	$tmpuser = new User($db);
 
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 	if ($num > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -576,7 +601,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -637,7 +662,7 @@ if ($resql) {
 			print '<td class="center">-</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.urlencode($type).'">';
 				print img_delete();
@@ -672,6 +697,7 @@ $sql .= " AND pfd.traite = 1";
 $sql .= " AND pfd.type = 'ban'";
 $sql .= " ORDER BY pfd.date_demande DESC";
 
+$numOfBp = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$numOfBp = $db->num_rows($resql);
@@ -693,7 +719,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Action column
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 
@@ -750,7 +776,7 @@ if ($resql) {
 			print '<td>&nbsp;</td>';
 
 			// Action column
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td>&nbsp;</td>';
 			}
 

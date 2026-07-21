@@ -2,6 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +44,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $error = '';
 
 	/**
-	 * @var array of errors
+	 * @var string[] of errors
 	 */
 	public $errors;
 
@@ -72,7 +74,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $sql;
 
 
-	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
+	/**
+	 * @var int<0,1>	Set this to 1 if you want to flag you also want to include email in target that has opt-out.
+	 */
+	public $evenunsubscribe = 0;
 
 
 	/**
@@ -107,7 +112,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		if ($this->tooltip && is_object($form)) {
-			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 1);
+			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 'help');
 		}
 		return $s;
 	}
@@ -115,7 +120,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 *	Return number of records for email selector
 	 *
-	 *  @return     integer      Example
+	 *  @return     int      Example
 	 */
 	public function getNbOfRecords()
 	{
@@ -123,10 +128,10 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Retourne nombre de destinataires
+	 * Return the number of recipients
 	 *
-	 * @param      string		$sql        Sql request to count
-	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 * @param      string		$sql    Sql request to count
+	 * @return     int<-1,max> 			Nb of recipients, or <0 if error
 	 */
 	public function getNbOfRecipients($sql)
 	{
@@ -134,7 +139,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		if ($result) {
 			$total = 0;
 			while ($obj = $this->db->fetch_object($result)) {
-				$total += $obj->nb;
+				$total += (int) $obj->nb;
 			}
 			return $total;
 		} else {
@@ -144,10 +149,9 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Affiche formulaire de filtre qui apparait dans page de selection
-	 * des destinataires de mailings
+	 * Displays filter form that appears on the mailing recipient selection page
 	 *
-	 * @return     string      Retourne zone select
+	 * @return     string      Returns select area
 	 */
 	public function formFilter()
 	{
@@ -156,23 +160,23 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Met a jour nombre de destinataires
+	 * Update the number of recipients
 	 *
-	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
+	 * @param	int		$mailing_id			Id of emailing
+	 * @return  int							Return integer < 0 if error, otherwise number of recipients
 	 */
 	public function update_nb($mailing_id)
 	{
 		// phpcs:enable
-		// Mise a jour nombre de destinataire dans table des mailings
-		$sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		// Update the number of recipients in the mailing table
+		$sql = "SELECT COUNT(*) nb FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+			$sql = "UPDATE ".$this->db->prefix()."mailing";
 			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
@@ -189,7 +193,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
-	 * @param   array	$cibles        Array with targets
+	 * @param	array<array{fk_contact?:int,lastname:string,firstname:string,email:string,other:string,source_url:string,source_id?:int,source_type:string,id?:int}>		$cibles		Array with targets
 	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
@@ -198,12 +202,13 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		$this->db->begin();
 
+
 		// Insert emailing targets from array into database
 		$j = 0;
 		$num = count($cibles);
 		foreach ($cibles as $targetarray) {
 			if (!empty($targetarray['email'])) { // avoid empty email address
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql = "INSERT INTO ".$this->db->prefix()."mailing_cibles";
 				$sql .= " (fk_mailing,";
 				$sql .= " fk_contact,";
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
@@ -216,7 +221,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
-				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
+				$sql .= (empty($targetarray['source_id']) ? 'null' : (int) $targetarray['source_id']).",";
 				$sql .= "'".$this->db->escape(dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
@@ -238,28 +243,28 @@ class MailingTargets // This can't be abstract as it is used for some method
 		dol_syslog(__METHOD__.": mailing ".$j." targets added");
 
 		/*
-		//Update the status to show thirdparty mail that don't want to be contacted anymore'
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		//Update the status to show third-party emails that no longer wish to be contacted'
+		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".$this->db->prefix()."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
-		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
+		dol_syslog(__METHOD__.": mailing update status to display third-party emails that no longer wish to be contacted");
 		$result=$this->db->query($sql);
 
-		//Update the status to show contact mail that don't want to be contacted anymore'
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		//Update the status to show contact emails that no longer wish to be contacted'
+		$sql = "UPDATE ".$this->db->prefix()."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
-		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".$this->db->prefix()."socpeople AS sc ";
+		$sql .= " INNER JOIN ".$this->db->prefix()."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
+		dol_syslog(__METHOD__.": mailing update status to display contact emails that no longer wish to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
 		*/
 
 		if (empty($this->evenunsubscribe)) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles as mc";
-			$sql .= " SET mc.statut = 3";
-			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
-			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
+			$sql = "UPDATE ".$this->db->prefix()."mailing_cibles as mc";
+			$sql .= " SET statut = 3";
+			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
+			$sql .= " AND EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -278,7 +283,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Supprime tous les destinataires de la table des cibles
+	 *  Deletes all recipients from the targets table
 	 *
 	 *  @param  int		$mailing_id        Id of emailing
 	 *  @return	void
@@ -286,7 +291,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public function clear_target($mailing_id)
 	{
 		// phpcs:enable
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "DELETE FROM ".$this->db->prefix()."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 
 		if (!$this->db->query($sql)) {
@@ -301,8 +306,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
 	 *  List is sorted by widget filename so by priority to run.
 	 *
-	 *  @param	array	$forcedir			null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array						Array list of widget
+	 *  @param	?array<string>	$forcedir	null=All default directories. This parameter is used by modulebuilder module only.
+	 *  @return array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
 	 */
 	public static function getEmailingSelectorsList($forcedir = null)
 	{
@@ -390,6 +395,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 			$objMod = new $modName($db);
 			if (is_object($objMod)) {
+				'@phan-var-force ModeleBoxes $objMod';
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
 				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
@@ -400,14 +406,14 @@ class MailingTargets // This can't be abstract as it is used for some method
 					$disabledbyname = 1;
 				}
 
-				// We set info of modules
+				// We set info of modules @phan-suppress-next-line PhanUndeclaredProperty
 				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
 				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
-				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick', 'class="pictofixedwidth"');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) {
 					$widget[$j]['status'] = '';
 				}
@@ -425,5 +431,38 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		return $widget;
+	}
+
+
+	/**
+	 *  On the main mailing area, there is a box with statistics.
+	 *  If you want to add a line in this report you must provide an
+	 *  array of SQL request that returns two field:
+	 *  One called "label", One called "nb".
+	 *
+	 *	@return		string[]		Array with SQL requests
+	 */
+	public function getSqlArrayForStats()
+	{
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return array();
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Add destinations in the targets table
+	 *
+	 *  @param  int     $mailing_id     Id of emailing
+	 *  @return int                     Return integer < 0 on error, count of added when ok
+	 */
+	public function add_to_target($mailing_id)
+	{
+		// phpcs:enable
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return -1;
 	}
 }

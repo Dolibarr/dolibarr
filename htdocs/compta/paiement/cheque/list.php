@@ -4,7 +4,8 @@
  * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -35,6 +43,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills'));
+
+$contextpage = GETPOST('contextpage');
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -48,6 +58,7 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -85,20 +96,20 @@ foreach ($arrayofpaymentmodetomanage as $key => $val) {
 }
 
 $arrayfields = array(
-	'bc.ref'            => array('label' => "Ref", 'checked' => 1, 'position' => 10),
-	'bc.type'			=> array('label' => "Type", 'checked' => 1, 'position' => 20),
-	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => 1, 'position' => 30),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 40),
-	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => 1, 'position' => 50),
-	'bc.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 60),
-	'bc.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 70)
+	'bc.ref'            => array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'bc.type'			=> array('label' => "Type", 'checked' => '1', 'position' => 20),
+	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => '1', 'position' => 30),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 40),
+	'bc.nbcheque'		=> array('label' => "NbOfCheques", 'checked' => '1', 'position' => 50),
+	'bc.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 60),
+	'bc.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 70)
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Security check
 $result = restrictedArea($user, 'banque', '', '');
@@ -197,7 +208,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -258,7 +269,7 @@ if ($resql) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('banque', 'cheque'));
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -275,7 +286,7 @@ if ($resql) {
 	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 	$massactionbutton = '';
 	if ($massactionbutton) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -290,7 +301,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -352,7 +363,7 @@ if ($resql) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -367,11 +378,12 @@ if ($resql) {
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['bc.ref']['checked'])) {
+		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['bc.ref']['label'], $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
@@ -405,7 +417,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -439,7 +451,7 @@ if ($resql) {
 
 			$account = new Account($db);
 			$account->fetch($objp->bid);
-			$checkdepositstatic->account_id = $account->getNomUrl(1);
+			$checkdepositstatic->account_id = $account->id;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -456,7 +468,7 @@ if ($resql) {
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center"></td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
@@ -536,7 +548,7 @@ if ($resql) {
 				}
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center"></td>';
 					if (!$i) {
 						$totalarray['nbfield']++;

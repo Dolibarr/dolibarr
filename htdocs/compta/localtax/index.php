@@ -2,8 +2,8 @@
 /* Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
@@ -47,8 +56,8 @@ if (empty($year)) {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
 	if (empty($q)) {
@@ -105,7 +114,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param		string	$date	Date
  * @return		void
  */
-function pt($db, $sql, $date)
+function localtax_pt($db, $sql, $date)
 {
 	global $conf, $bc, $langs;
 
@@ -148,11 +157,11 @@ function pt($db, $sql, $date)
 
 			if ($obj->mode == 'claimed') {
 				$amountclaimed = $obj->mm;
-				$totalclaimed = $totalclaimed + $amountclaimed;
+				$totalclaimed += $amountclaimed;
 			}
 			if ($obj->mode == 'paid') {
 				$amountpaid = $obj->mm;
-				$totalpaid = $totalpaid + $amountpaid;
+				$totalpaid += $amountpaid;
 			}
 
 			if ($obj->mode == 'paid') {
@@ -199,7 +208,6 @@ function pt($db, $sql, $date)
 
 if (empty($localTaxType)) {
 	accessforbidden('Parameter localTaxType is missing');
-	exit;
 }
 
 
@@ -436,6 +444,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 	$action = "tva";
 	$object = array(&$x_coll, &$x_paye, &$x_both);
+	$parameters = array();
 	$parameters["mode"] = $modetax;
 	$parameters["year"] = $y;
 	$parameters["month"] = $m;
@@ -447,7 +456,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 
 	print '<tr class="oddeven">';
-	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y").'</a></td>';
+	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'&localTaxType='.$localTaxType.'">'.dol_print_date(dol_mktime(0, 0, 0, (int) $m, 1, (int) $y), "%b %Y").'</a></td>';
 
 	$x_coll_sum = 0;
 	foreach (array_keys($x_coll) as $rate) {
@@ -461,8 +470,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -480,7 +488,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				}
 			}
 			//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-			$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+			$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 			$temp_vat = $fields['localtax'.$localTaxType] * $ratiopaymentinvoice;
 			$subtot_coll_total_ht += $temp_ht;
 			$subtot_coll_vat      += $temp_vat;
@@ -501,8 +509,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -529,11 +536,11 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	}
 	print '<td class="nowrap right">'.price(price2num($x_paye_sum, 'MT')).'</td>';
 
-	$subtotalcoll = $subtotalcoll + $x_coll_sum;
-	$subtotalpaid = $subtotalpaid + $x_paye_sum;
+	$subtotalcoll += $x_coll_sum;
+	$subtotalpaid += $x_paye_sum;
 
 	$diff = $x_coll_sum - $x_paye_sum;
-	$total = $total + $diff;
+	$total += $diff;
 	$subtotal = price2num($subtotal + $diff, 'MT');
 
 	print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>'."\n";
@@ -575,7 +582,7 @@ $sql = '';
 
 $sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " WHERE f.entity = ".((int) $conf->entity);
 $sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
 $sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";
@@ -584,7 +591,7 @@ $sql .= " UNION ";
 
 $sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " WHERE f.entity = ".((int) $conf->entity);
 $sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
 $sql .= " AND localtaxtype=".((int) $localTaxType);
 $sql .= " GROUP BY dm";
@@ -592,7 +599,7 @@ $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
-pt($db, $sql, $langs->trans("Month"));
+localtax_pt($db, $sql, $langs->trans("Month"));
 
 
 print '</div></div>';

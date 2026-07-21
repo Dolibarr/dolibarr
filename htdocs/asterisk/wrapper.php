@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2009-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ if (!defined('NOREQUIREAJAX')) {
 /**
  * Empty header
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
  * @param	string			$help_url			Url links to help page
@@ -58,8 +61,8 @@ if (!defined('NOREQUIREAJAX')) {
  * @param	string			$target				Target to use on links
  * @param 	int    			$disablejs			More content into html header
  * @param 	int    			$disablehead		More content into html header
- * @param 	array|string  	$arrayofjs			Array of complementary js files
- * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param 	string[]|string $arrayofjs			Array of complementary js files
+ * @param 	string[]|string $arrayofcss			Array of complementary css files
  * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
  * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
@@ -67,7 +70,7 @@ if (!defined('NOREQUIREAJAX')) {
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html>'."\n";
 	print '<head>'."\n";
@@ -78,60 +81,43 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
 /**
  * Empty footer
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page
  * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
  * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print "\n".'</html>'."\n";
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 
 // Security check
 if (!isModEnabled('clicktodial')) {
 	accessforbidden();
-	exit;
 }
 
 
 // Define Asterisk setup
-if (!getDolGlobalString('ASTERISK_HOST')) {
-	$conf->global->ASTERISK_HOST = "127.0.0.1";
-}
-if (!getDolGlobalString('ASTERISK_TYPE')) {
-	$conf->global->ASTERISK_TYPE = "SIP/";
-}
-if (!getDolGlobalString('ASTERISK_INDICATIF')) {
-	$conf->global->ASTERISK_INDICATIF = "0";
-}
-if (!getDolGlobalString('ASTERISK_PORT')) {
-	$conf->global->ASTERISK_PORT = 5038;
-}
 if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
-if (!getDolGlobalString('ASTERISK_CONTEXT')) {
-	$conf->global->ASTERISK_CONTEXT = "from-internal";
-}
-if (!getDolGlobalString('ASTERISK_WAIT_TIME')) {
-	$conf->global->ASTERISK_WAIT_TIME = "30";
-}
-if (!getDolGlobalString('ASTERISK_PRIORITY')) {
-	$conf->global->ASTERISK_PRIORITY = "1";
-}
-if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
-	$conf->global->ASTERISK_MAX_RETRY = "2";
-}
-
 
 $login = GETPOST('login', 'alphanohtml');
-$password = GETPOST('password', 'none');
+$password = GETPOST('password', 'password');
 $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 
@@ -142,36 +128,36 @@ $caller = preg_replace('/[\n\r]/', '', $caller);
 $called = preg_replace('/[\n\r]/', '', $called);
 
 // IP address of Asterisk server
-$strHost = getDolGlobalString('ASTERISK_HOST');
+$strHost = getDolGlobalString('ASTERISK_HOST', '127.0.0.1');
 
 // Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
-$channel = getDolGlobalString('ASTERISK_TYPE');
+$channel = getDolGlobalString('ASTERISK_TYPE', 'SIP/');
 
 // Outgoing call sign
-$prefix = getDolGlobalString('ASTERISK_INDICATIF');
+$prefix = getDolGlobalString('ASTERISK_INDICATIF', '0');
 
 // Asterisk Port
-$port = getDolGlobalString('ASTERISK_PORT');
+$port = getDolGlobalInt('ASTERISK_PORT', 5038);
 
 // Context ( generalement from-internal )
-$strContext = getDolGlobalString('ASTERISK_CONTEXT');
+$strContext = getDolGlobalString('ASTERISK_CONTEXT', 'from-internal');
 
 // Waiting time before hanging up
-$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME');
+$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME', '30');
 
 // Priority
-$strPriority = getDolGlobalString('ASTERISK_PRIORITY');
+$strPriority = getDolGlobalString('ASTERISK_PRIORITY', '1');
 
 // Number of call attempts
-$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
+$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY', "2");
 
 
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-asterisk page-wrapper');
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";

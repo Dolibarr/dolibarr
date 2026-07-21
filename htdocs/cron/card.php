@@ -2,8 +2,9 @@
 /* Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concpt.pro>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron', 'members', 'bills'));
 
@@ -47,14 +56,14 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $securitykey = GETPOST('securitykey', 'alpha');
 
-if (!$user->hasRight('cron', 'create')) {
-	accessforbidden();
-}
-
 $permissiontoadd = $user->hasRight('cron', 'create');
 $permissiontoexecute = $user->hasRight('cron', 'execute');
 $permissiontodelete = $user->hasRight('cron', 'delete');
 
+if (!$permissiontoadd) {
+	accessforbidden();
+}
+// after this test $permissiontoadd is always true and never can't be false
 
 /*
  * Actions
@@ -96,7 +105,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
+	if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	} else {
 		$now = dol_now(); // Date we start
@@ -122,7 +131,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 }
 
 
-if ($action == 'add' && $permissiontoadd) {
+if ($action == 'add'/*  && $permissiontoadd */) {
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
 	$object->command = GETPOST('command');
@@ -158,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 }
 
 // Save parameters
-if ($action == 'update' && $permissiontoadd) {
+if ($action == 'update'/*  && $permissiontoadd */) {
 	$object->id = $id;
 	$object->jobtype = GETPOST('jobtype');
 	$object->label = GETPOST('label');
@@ -192,7 +201,7 @@ if ($action == 'update' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'activate' && $permissiontoadd) {
+if ($action == 'activate'/*  && $permissiontoadd */) {
 	$object->status = 1;
 
 	// Add cron task
@@ -208,7 +217,7 @@ if ($action == 'activate' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'inactive' && $permissiontoadd) {
+if ($action == 'inactive'/*  && $permissiontoadd */) {
 	$object->status = 0;
 	$object->processing = 0;
 
@@ -226,8 +235,9 @@ if ($action == 'inactive' && $permissiontoadd) {
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+if ($action == 'confirm_clone' && $confirm == 'yes'/*  && $permissiontoadd */) {
+	// @phpstan-ignore-next-line
+	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
 		$objectutil = dol_clone($object, 1); // We clone to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use the native clone to keep this->db valid.
@@ -248,7 +258,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 		}
 	}
 }
-
 
 
 /*
@@ -334,14 +343,14 @@ if (($action == "create") || ($action == "edit")) {
 	if ($action == "edit") {
 		print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'cron');
 	} else {
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head([]);
 	}
 
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -357,7 +366,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -366,7 +375,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -375,7 +384,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -384,7 +393,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -393,7 +402,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.dol_escape_htmltag($object->params).'" spellcheck="false"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -402,7 +411,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
+	print '<input type="text" class="minwidth150" name="command" value="'.dol_escape_htmltag($object->command).'"  spellcheck="false" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -430,7 +439,8 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
-	print '<select name="nbfrequency">';
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
+	print '<select name="nbfrequency" id="nbfrequency" class="width50 maxwidth50imp">';
 	for ($i = 1; $i <= 60; $i++) {
 		if ($object->frequency == $i) {
 			print "<option value='".$i."' selected>".$i."</option>";
@@ -439,7 +449,8 @@ if (($action == "create") || ($action == "edit")) {
 		}
 	}
 	print "</select>";
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
+	print ajax_combobox('nbfrequency');
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
 	if ($object->unitfrequency == "60") {
 		$input .= ' checked />';
 	} else {
@@ -448,7 +459,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_minute\">".$langs->trans('Minutes')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if ($object->unitfrequency == "3600") {
 		$input .= ' checked />';
 	} else {
@@ -457,7 +468,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_heures\">".$langs->trans('Hours')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if ($object->unitfrequency == "86400") {
 		$input .= ' checked />';
 	} else {
@@ -466,7 +477,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_jours\">".$langs->trans('Days')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if ($object->unitfrequency == "604800") {
 		$input .= ' checked />';
 	} else {
@@ -475,7 +486,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
 	if ($object->unitfrequency == "2678400") {
 		$input .= ' checked />';
 	} else {
@@ -560,9 +571,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print "</form>\n";
 } else {
-	/*
-	 * view card
-	 */
+	// view card
 	$now = dol_now();
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
@@ -632,7 +641,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	if (!is_null($object->note_private) && $object->note_private != '') {
-		print '<span class="small">'.$langs->trans($object->note_private).'</small>';
+		print '<div class="small lineheightsmall">'.$langs->trans($object->note_private).'</div>';
 	}
 	print "</td></tr>";
 
@@ -641,7 +650,7 @@ if (($action == "create") || ($action == "edit")) {
 	print dol_escape_htmltag($object->email_alert);
 	print "</td></tr>";
 
-	if (isModEnabled('multicompany')) {
+	if (isModEnabled('multicompany') && isset($mc)) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {
@@ -664,6 +673,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="titlefieldmiddle">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
+	print img_picto('', 'recurring', 'class="pictofixedwidth"');
 	if ($object->unitfrequency == "60") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Minutes');
 	}
@@ -792,11 +802,7 @@ if (($action == "create") || ($action == "edit")) {
 
 
 	print "\n\n".'<div class="tabsAction">'."\n";
-	if (!$user->hasRight('cron', 'create')) {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
-	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
-	}
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 
 	if ((!$user->hasRight('cron', 'execute'))) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronExecute").'</a>';
@@ -806,17 +812,15 @@ if (($action == "create") || ($action == "edit")) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey='.urlencode(getDolGlobalString('CRON_KEY'))).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
-	if (!$user->hasRight('cron', 'create')) {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
-	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
-		if (empty($object->status)) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
-		} else {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
-		}
+	print '<a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+
+	if (empty($object->status)) {
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';
+	} else {
+		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=inactive&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	}
+
 
 	if (!$user->hasRight('cron', 'delete')) {
 		print '<a class="butActionDeleteRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';

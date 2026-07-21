@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 /**
  * Show indent and picto of a tree line. Return array with information of line.
  *
- * @param	array	$fulltree		Array of entries in correct order
- * @param 	string	$key			Key of entry into fulltree to show picto
- * @param	int		$silent			Do not output indent and picto, returns only value
+ * @param	array<int,array{rowid:?int,id:int,fk_parent?:int,label:string,description:string,color?:string,position?:string,visible?:int,ref_ext?:string,picto?:string,fullpath:string,fulllabel:string,level:int,cachenbofdoc?:int}>	$fulltree		Array of entries in correct order
+ * @param 	int	$key			Key of entry into fulltree to show picto
+ * @param	int<0,1>		$silent			Do not output indent and picto, returns only value
  * @return	array{0:int,1:int,2:int}	array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
 function tree_showpad(&$fulltree, $key, $silent = 0)
@@ -103,17 +103,17 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
  *  Recursive function to output a tree. <ul id="iddivjstree"><li>...</li></ul>
  *  It is also used for the tree of categories.
  *  Note: To have this function working, check you have loaded the js and css for treeview.
- *  $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
- *                   '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
- *	$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+ *  $arrayofjs=array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+ *                   '/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+ *	$arrayofcss=array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
  *  TODO Replace with jstree plugin instead of treeview plugin.
  *
- *  @param	array	$tab    					Array of all elements
- *  @param  array   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
+ *  @param	array<array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}>	$tab    			Array of all elements
+ *  @param  array{rowid:int,module?:string,fk_menu?:int,title?:string,mainmenu?:string,leftmenu?:string,fk_mainmenu?:string,fk_leftmenu?:string,statut?:int,entry?:string,buttons?:string}   $pere   					Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu'=>,'fk_leftmenu'=>)
  *  @param  int	    $rang   					Level of element
  *  @param	string	$iddivjstree				Id to use for parent ul element
- *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
- *  @param  int     $showfk         			1=show fk_links to parent into label  (used by menu editor only)
+ *  @param  int<0,1>     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an already processed record
+ *  @param  int<0,1>     $showfk         			1=show fk_links to parent into label  (used by menu editor only)
  *  @param	string	$moreparam					Add more param on url of elements
  *  @return	void
  */

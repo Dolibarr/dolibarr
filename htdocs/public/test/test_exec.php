@@ -37,11 +37,19 @@ if (!defined("NOSESSION")) {
 }
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+@include '../../main.inc.php';
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_prod
+ * @var string $dolibarr_main_test
+ */
 
 // Security
-if ($dolibarr_main_prod) {
-	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
+if (!empty($dolibarr_main_prod) || empty($dolibarr_main_test)) {
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1 or $dolibarr_main_test is NOT set to 1 into conf.php');
 }
 
 
@@ -55,7 +63,7 @@ header("Content-type: text/html; charset=UTF8");
 header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
 header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
-print "*** TEST READ OF /tmp/test.txt FILE<br>\n";
+print "*** TEST READ OF /tmp/test.txt FILE (Example: if file exists and owned by apache process owner + PrivateTmp is false + apparmor rules allows read of owned files in /tmp/, then you should see the file)<br>\n";
 
 $out='';
 $ret=0;

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2018	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2021	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,18 @@
  * $elementtype
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Form $form
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var string $elementtype
+ * @var string $textobject
+ * @var string[] $type2label
+ */
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
@@ -66,7 +78,7 @@ print '<div class="div-table-responsive">';
 print '<table summary="listofattributes" class="noborder centpercent small">';
 
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td width="80">&nbsp;</td>';
 }
 print '<td class="left">'.$langs->trans("Position");
@@ -75,7 +87,7 @@ print img_picto('A-Z', '1downarrow.png');
 print '</span>';
 print '</td>';
 print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
-print '<td>'.$langs->trans("TranslationString").'</td>';
+//print '<td>'.$langs->trans("TranslationString").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td class="right">'.$langs->trans("Size").'</td>';
@@ -83,6 +95,8 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td class="center">'.$langs->trans("Unique").'</td>';
 print '<td class="center">'.$langs->trans("Mandatory").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("IsPersonalData"), $langs->trans("IsPersonalDataDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
@@ -93,14 +107,14 @@ if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td width="80">&nbsp;</td>';
 }
 print "</tr>\n";
 
 if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
 	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
-		/*if (! (int) dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
+		/*if (! (int) dol_eval((string) $extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
 			// continue;
 		}*/
@@ -112,7 +126,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 
 		print '<tr class="oddeven">';
 		// Actions
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
 			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
 			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
@@ -122,11 +136,18 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			print '</td>'."\n";
 		}
 		// Position
-		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
-		// Label
-		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key])."</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
+		print "<td>".dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
+		// Label and label translated
+		print '<td title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]).'" class="tdoverflowmax150 subtitle">';
+		print dol_escape_htmltag($extrafields->attributes[$elementtype]['label'][$key]);
+		if ($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]) != $extrafields->attributes[$elementtype]['label'][$key]) {
+			print '<br><span class="subtitle small opacitymedium inline-block" title="'.dolPrintHTMLForAttribute($langs->trans("LabelTranslatedInCurrentLanguage")).'">';
+			print $langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]);
+		}
+		print '</span>';
+		print "</td>\n"; // We don't translate here, we want admin to know what is the key not translated value
 		// Label translated
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
+		//print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key])).'">'.dol_escape_htmltag($langs->transnoentitiesnoconv($extrafields->attributes[$elementtype]['label'][$key]))."</td>\n";
 		// Key
 		print '<td title="'.dol_escape_htmltag($key).'" class="tdoverflowmax100">'.dol_escape_htmltag($key)."</td>\n";
 		// Type
@@ -145,10 +166,14 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		// Can always be editable ?
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
+		// Personal data ?
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['personal_data'][$key])."</td>\n";
+		// Will be emptied on clone ?
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['emptyonclone'][$key])."</td>\n";
 		// Visible
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['list'][$key])."</td>\n";
 		// Print on PDF
-		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag((string) $extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
 		// Summable
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		// CSS
@@ -159,7 +184,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['csslist'][$key])."</td>\n";
 		// Multicompany
 		if (isModEnabled('multicompany')) {
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax100">';
 			if (empty($extrafields->attributes[$elementtype]['entityid'][$key])) {
 				print $langs->trans("All");
 			} else {
@@ -179,7 +204,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			print '</td>';
 		}
 		// Actions
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="right nowraponall">';
 			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
 			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
@@ -191,12 +216,12 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print "</tr>";
 	}
 } else {
-	$colspan = 17;
+	$colspan = 18;
 	if (isModEnabled('multicompany')) {
 		$colspan++;
 	}
 
-	print '<tr class="oddeven">';
+	print '<tr class="">';
 	print '<td colspan="'.$colspan.'"><span class="opacitymedium">';
 	print $langs->trans("None");
 	print '</span></td>';

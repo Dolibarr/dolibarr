@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,13 +49,13 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(['cabyuserreportlist']);
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['cabyuserreportlist']);
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {
@@ -80,8 +89,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q") ? GETPOST("q") : 0;
@@ -189,6 +198,10 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 
 $exportlink = "";
 $namelink = "";
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$description = '';
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -233,14 +246,14 @@ if (!empty($modecompta)) {
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 
 $name = array();
 
 // Show array
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {
@@ -249,6 +262,7 @@ foreach ($headerparams as $key => $value) {
 
 $catotal = 0;
 $catotal_ht = 0;
+$sql = '';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
@@ -277,9 +291,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 		$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);

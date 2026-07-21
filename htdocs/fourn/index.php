@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,16 +27,24 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOSTINT("socid");
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, 'societe', $socid, '');
 
@@ -68,7 +78,7 @@ $sql .= " WHERE cf.fk_soc = s.rowid ";
 if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
-$sql .= " AND cf.entity = ".$conf->entity;
+$sql .= " AND cf.entity = ".((int) $conf->entity);
 $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
@@ -114,7 +124,7 @@ if (isModEnabled("supplier_order")) {
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
-	$sql .= " AND cf.entity = ".$conf->entity;
+	$sql .= " AND cf.entity = ".((int) $conf->entity);
 	$sql .= " AND cf.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND cf.fk_soc = ".((int) $socid);
@@ -170,7 +180,7 @@ if (isModEnabled("supplier_invoice") && ($user->hasRight('fournisseur', 'facture
 	if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
-	$sql .= " AND ff.entity = ".$conf->entity;
+	$sql .= " AND ff.entity = ".((int) $conf->entity);
 	$sql .= " AND ff.fk_statut = 0";
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -301,7 +311,7 @@ if (count($companystatic->SupplierCategories)) {
 	foreach ($companystatic->SupplierCategories as $rowid => $label) {
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
-		$categstatic->id = $rowid;
+		$categstatic->id = (int) $rowid;
 		$categstatic->ref = $label;
 		$categstatic->label = $label;
 		print $categstatic->getNomUrl(1);

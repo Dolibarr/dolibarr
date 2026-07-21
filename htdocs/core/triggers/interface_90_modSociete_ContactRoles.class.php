@@ -6,7 +6,7 @@
  * Copyright (C) 2013 Cedric GROSS <c.gross@kreiz-it.fr>
  * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015 Bahfir Abbes <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +58,12 @@ class InterfaceContactRoles extends DolibarrTriggers
 	 * $object->socid or $object->fk_soc(id of thirdparty)
 	 * $object->element (element type of object)
 	 *
-	 * @param string $action	Event action code
-	 * @param Object $object	Object
-	 * @param User $user		Object user
-	 * @param Translate $langs	Object langs
-	 * @param conf $conf		Object conf
-	 * @return int Return integer <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @param string		$action		Event action code
+	 * @param CommonObject	$object		Object
+	 * @param User			$user		Object user
+	 * @param Translate		$langs		Object langs
+	 * @param Conf			$conf		Object conf
+	 * @return int						Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -72,6 +72,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 			|| $action === 'CONTRACT_CREATE' || $action === 'FICHINTER_CREATE' || $action === 'PROJECT_CREATE' || $action === 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
+			'@phan-var-force Propal|Commande|Facture|CommandeFournisseur|FactureFournisseur|SupplierProposal|Contrat|Fichinter|Project|Ticket $object';
 			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
 			if (!empty($socid) && $socid > 0) {

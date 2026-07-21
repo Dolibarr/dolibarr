@@ -41,12 +41,12 @@
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
--- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_civility ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_civility ALTER COLUMN rowid SET DEFAULT nextval('llx_c_civility_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_civility_rowid_seq', MAX(rowid)) FROM llx_c_civility;
 
--- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
@@ -105,7 +105,7 @@ ALTER TABLE llx_c_units MODIFY COLUMN label varchar(128);
 
 UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
 
--- Insert company legal forms of Mexico   
+-- Insert company legal forms of Mexico
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15401', '601 - General de Ley Personas Morales', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15402', '603 - Personas Morales con Fines no Lucrativos', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15403', '605 - Sueldos y Salarios e Ingresos Asimilados a Salarios', 1);
@@ -146,7 +146,7 @@ ALTER TABLE llx_societe_contacts DROP FOREIGN KEY fk_societe_contacts_fk_c_type_
 -- VMYSQL4.3 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_type_contact CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
--- VPGSQL8.2 CREATE SEQUENCE __DATABASE__.llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
 -- VPGSQL8.2 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY (rowid);
 -- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
@@ -450,7 +450,7 @@ CREATE TABLE llx_c_asset_disposal_type
     entity 			integer 	NOT NULL  DEFAULT 1,
     code 			varchar(16) 	NOT NULL,
     label 			varchar(50) 	NOT NULL,
-    active 			integer 	NOT NULL  DEFAULT 1 
+    active 			integer 	NOT NULL  DEFAULT 1
 ) ENGINE=innodb;
 
 
@@ -749,7 +749,7 @@ ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(lang, transk
 
 
 -- Bank Thirdparty
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,'isModEnabled("societe") && isModEnabled("banque") && isModEnabled("prelevement")',0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null, 0);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,'isModEnabled("societe") && isModEnabled("bank") && isModEnabled("prelevement")',0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null, 0);
 
 -- Members
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'adherent','member','',0,null,null,'(SendingEmailOnAutoSubscription)'       ,10, 'isModEnabled("adherent")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourMembershipRequestWasReceived)__','__(Hello)__ __MEMBER_FULLNAME__,<br><br>\n\n__(ThisIsContentOfYourMembershipRequestWasReceived)__<br>\n<br>__ONLINE_PAYMENT_TEXT_AND_URL__<br>\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
@@ -762,7 +762,7 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 -- Recruiting
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, enabled, active, topic, content, content_lines, joinfiles) VALUES (0, 'recruitment','recruitmentcandidature_send','',0,null,null,'(AnswerCandidature)'       ,100,'isModEnabled("recruitment")',1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(YourCandidature)__',       '__(Hello)__ __CANDIDATE_FULLNAME__,<br><br>\n\n__(YourCandidatureAnswerMessage)__<br>__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__\n<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 0);
 
--- Event organization 
+-- Event organization
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskConf)',       10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__,<br /><br />__(OrganizationEventConfRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'conferenceorbooth', '', 0, null, null, '(EventOrganizationEmailAskBooth)',      20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__,<br /><br />__(OrganizationEventBoothRequestWasReceived)__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 -- TODO Add message for registration only to event  __ONLINE_PAYMENT_TEXT_AND_URL__

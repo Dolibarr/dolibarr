@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+KoCheckFingerprintValidity=Archived log entry is not valid. It means someone (a hacker?) has modified some data of this record after it was recorded, or has erased the previous archived record (check that line with previous # exists) or has modified checksum of the previous record.
+DataOfArchivedEvent=Full data of archived event

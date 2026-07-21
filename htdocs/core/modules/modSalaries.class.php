@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014-2019  Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,6 @@ class modSalaries extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 		$this->numero = 510; // Perms from 501..519
 
@@ -61,10 +60,17 @@ class modSalaries extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'payment';
+		$this->picto = 'salary';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/salaries/temp");
+
+		// Parts of module
+		$this->module_parts = array(
+			'models' => 1,
+			'triggers' => 0,
+			'substitutions' => 0,
+		);
 
 		// Config pages
 		$this->config_page_url = array('salaries.php@salaries');
@@ -78,17 +84,22 @@ class modSalaries extends DolibarrModules
 		$this->langfiles = array("salaries", "bills");
 
 		// Constants
-		$this->const = array();
-		$this->const[0] = array(
+		$this->const = [
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_PAYMENT",
 				"chaine",
-				"421"
-		);
-		$this->const[1] = array(
+				"421",
+				"",
+				0,
+			],
+			[
 				"SALARIES_ACCOUNTING_ACCOUNT_CHARGE",
 				"chaine",
-				"641"
-		);
+				"641",
+				"",
+				0,
+			]
+		];
 
 		// Boxes
 		$this->boxes = array();
@@ -100,7 +111,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 511;
-		$this->rights[$r][1] = 'Read employee salaries and payments (yours and your subordinates)';
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours only)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
@@ -108,6 +119,14 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 512;
+		$this->rights[$r][1] = 'Read employee salaries and payments (yours and of your subordinates)';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'readchild';
+		$this->rights[$r][5] = '';
+
+		$r++;
+		$this->rights[$r][0] = 513;
 		$this->rights[$r][1] = 'Create/modify payments of empoyee salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -124,7 +143,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 517;
-		$this->rights[$r][1] = 'Read salaries and payments of all employees';
+		$this->rights[$r][1] = 'Read salaries and payments (of all employees)';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'readall';
@@ -151,26 +170,27 @@ class modSalaries extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'SalariesAndPayments';
+		$this->export_icon[$r] = 'salary';
 		$this->export_permission[$r] = array(array("salaries", "export"));
-		$this->export_fields_array[$r] = array('u.firstname'=>"Firstname", 'u.lastname'=>"Lastname", 'u.login'=>"Login", 'u.salary'=>'CurrentSalary', 'p.datep'=>'DatePayment', 'p.datesp'=>'DateStartPeriod', 'p.dateep'=>'DateEndPeriod', 'p.amount'=>'AmountPayment', 'p.num_payment'=>'Numero', 'p.label'=>'Label', 'p.note'=>'Note');
-		$this->export_TypeFields_array[$r] = array('u.firstname'=>"Text", 'u.lastname'=>"Text", 'u.login'=>'Text', 'u.salary'=>"Numeric", 'p.datep'=>'Date', 'p.datesp'=>'Date', 'p.dateep'=>'Date', 'p.amount'=>'Numeric', 'p.num_payment'=>'Numeric', 'p.label'=>'Text');
+		$this->export_fields_array[$r] = array('s.rowid' => 'SalaryID', 's.label'=>'Label', 's.datesp'=>'DateStartPeriod', 's.dateep'=>'DateEndPeriod', 's.amount' => 'SalaryAmount', 's.paye' => 'Status', 'u.firstname'=>"Firstname", 'u.lastname'=>"Lastname", 'u.login'=>"Login", 'u.salary'=>'CurrentSalary', 'p.datep'=>'DatePayment', 'p.amount'=>'AmountPayment', 'p.num_payment'=>'Numero', 'p.note'=>'Note');
+		$this->export_TypeFields_array[$r] = array('s.rowid' => 'Numeric', 's.label'=>'Text', 's.amount' => 'Numeric', 's.paye' => 'Numeric', 'u.firstname'=>"Text", 'u.lastname'=>"Text", 'u.login'=>'Text', 'u.salary'=>"Numeric", 'p.datep'=>'Date', 's.datesp'=>'Date', 's.dateep'=>'Date', 'p.amount'=>'Numeric', 'p.num_payment'=>'Numeric');
 		$this->export_entities_array[$r] = array('u.firstname'=>'user', 'u.lastname'=>'user', 'u.login'=>'user', 'u.salary'=>'user', 'p.datep'=>'payment', 'p.datesp'=>'payment', 'p.dateep'=>'payment', 'p.amount'=>'payment', 'p.label'=>'payment', 'p.note'=>'payment', 'p.num_payment'=>'payment');
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'salary as s';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON s.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_salary = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
-		$this->export_sql_end[$r] .= ' AND u.entity IN ('.getEntity('user').')';
+		$this->export_sql_end[$r] .= ' AND s.entity IN ('.getEntity('salary').')';
 	}
-
 
 	/**
 	 *  Function called when module is enabled.
-	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *  It also creates data directories
+	 *  The init function adds constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories and runs upgrade tasks if needed.
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
+	 *  @return     int                 1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -179,7 +199,22 @@ class modSalaries extends DolibarrModules
 		// Clean before activation
 		$this->remove($options);
 
+		// Ensure data directory exists
+		$dirSalary = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/salaries/temp';
+		if (!is_dir($dirSalary)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirSalary);
+		}
+
+		// Register the PDF model
 		$sql = array();
+		$sql[] = "DELETE FROM ".MAIN_DB_PREFIX."document_model
+			WHERE nom = 'standard_salary'
+			AND type = 'salary'
+			AND entity = ".((int) $conf->entity);
+
+		$sql[] = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity)
+			VALUES ('standard_salary', 'salary', ".((int) $conf->entity).")";
 
 		return $this->_init($sql, $options);
 	}

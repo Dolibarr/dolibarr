@@ -7,6 +7,8 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +43,18 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers', 'other'));
+
+$hookmanager->initHooks(array('paymentsupplierdocument', 'globalcard'));
 
 
 // Get Parameters
@@ -52,10 +63,18 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+// Load object
+$object = new PaiementFourn($db);
+$upload_dir = null;
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$ref = dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+}
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
@@ -77,14 +96,6 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-// Load object
-$object = new PaiementFourn($db);
-if ($object->fetch($id, $ref)) {
-	$object->fetch_thirdparty();
-	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-}
-
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
 
 
@@ -99,55 +110,19 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$form = new	Form($db);
+$form = new Form($db);
 
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
 
-if ($object->id > 0) {
+if ($object->id > 0 && $upload_dir !== null) {
 	$head = payment_supplier_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans("SupplierPayment"), -1, 'payment');
 
 	// Supplier order card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
-
-	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, 3).': ';
-	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
-
-	// Payment mode
-	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
-	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
-	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
-
-	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
-
-	// Amount
-	$morehtmlref .= '<br>'.$langs->trans('Amount').' : '. price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
-
-	$allow_delete = 1;
-	// Bank account
-	if (isModEnabled("bank")) {
-		if ($object->fk_account) {
-			$bankline = new AccountLine($db);
-			$bankline->fetch($object->bank_line);
-			if ($bankline->rappro) {
-				$allow_delete = 0;
-				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-			}
-
-			$morehtmlref .= '<br>'.$langs->trans('BankAccount').' : ';
-			$accountstatic = new Account($db);
-			$accountstatic->fetch($bankline->fk_account);
-			$morehtmlref .= $accountstatic->getNomUrl(1);
-
-			$morehtmlref .= '<br>'.$langs->trans('BankTransactionLine').' : ';
-			$morehtmlref .= $bankline->getNomUrl(1, 0, 'showconciliated');
-		}
-	}
+	$morehtmlref = '';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -169,6 +144,9 @@ if ($object->id > 0) {
 	print "</div>\n";
 
 	print dol_get_fiche_end();
+
+	print '<br>';
+
 
 	$modulepart = 'supplier_payment';
 	// TODO: get the appropriate permission

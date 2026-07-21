@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
- * \file       htdocs/webportal/class/controller.class.php
- * \ingroup    webportal
- * \brief      File of controller class for WebPortal
- */
+/**
+* \file       htdocs/webportal/class/controller.class.php
+* \ingroup    webportal
+* \brief      File of controller class for WebPortal
+*/
 
 /**
  *  Class to manage pages
  */
 class Controller
 {
-
 	/**
 	 * if this controller need logged user or not
 	 * @var bool
@@ -55,6 +55,11 @@ class Controller
 	 * @var string Tpl path will use default context->tplPath if empty
 	 */
 	public $tplPath;
+
+	/**
+	 * @var FormListWebPortal Form for list
+	 */
+	public $formList;
 
 
 	/**
@@ -92,12 +97,21 @@ class Controller
 	 */
 	public function checkAccess()
 	{
+		global $hookmanager;
 		$context = Context::getInstance();
 
 		if ($this->accessNeedLoggedUser) {
 			if (!$context->userIslog()) {
 				return false;
 			}
+		}
+
+		// Hooks for security access
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array('controller' => $context->controller);
+		$reshook = $hookmanager->executeHooks('checkAccess', $parameters, $context, $context->action);
+		if ($reshook > 0) {
+			$this->accessRight = !empty($hookmanager->resArray['accessRight']);
 		}
 
 		if (!$this->accessRight) {
@@ -142,7 +156,7 @@ class Controller
 	/**
 	 * Execute hook doActions
 	 *
-	 * @param	array		$parameters		Parameters
+	 * @param	array<string,mixed>	$parameters		Parameters
 	 * @return  int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookDoAction($parameters = array())
@@ -165,7 +179,7 @@ class Controller
 	/**
 	 * Execute hook PrintPageView
 	 *
-	 * @param	array		$parameters		Parameters
+	 * @param	array<string,mixed>	$parameters	Parameters
 	 * @return	int							Return integer < 0 on error, 0 on success, 1 to replace standard code
 	 */
 	public function hookPrintPageView($parameters = array())
@@ -196,7 +210,9 @@ class Controller
 	{
 		global $conf, $langs, $hookmanager, $db; // may be used into the tpl
 
-		$context = Context::getInstance(); // load for tpl
+		// load for tpl
+		// This set $context->rootUrl
+		$context = Context::getInstance();
 
 		if (!preg_match('/^[0-9\.A-ZaZ_\-]*$/ui', $templateName)) {
 			return false;

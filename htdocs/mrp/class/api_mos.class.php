@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  * Copyright (C) 2019       Maxime Kohlhaas             <maxime@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 class Mos extends DolibarrApi
 {
 	/**
-	 * @var Mo $mo {@type Mo}
+	 * @var Mo {@type Mo}
 	 */
 	public $mo;
 
@@ -81,6 +82,40 @@ class Mos extends DolibarrApi
 		return $this->_cleanObjectDatas($this->mo);
 	}
 
+	/**
+	 * Get categories for a MO
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param int    $id        ID of MO
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int    $limit     Limit for list
+	 * @param int    $page      Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET {id}/categories
+	 *
+	 * @throws RestException
+	 */
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, Categorie::TYPE_MO, $sortfield, $sortorder, $limit, $page);
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : ' . implode(',', array_merge(array($categories->error), $categories->errors)));
+		}
+
+		return $result;
+	}
+
 
 	/**
 	 * List Mos
@@ -91,9 +126,11 @@ class Mos extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return Mo[]
+	 * @phpstan-return Mo[]
 	 *
 	 * @throws RestException
 	 */
@@ -106,7 +143,7 @@ class Mos extends DolibarrApi
 		$obj_ret = array();
 		$tmpobject = new Mo($this->db);
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -154,9 +191,10 @@ class Mos extends DolibarrApi
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new Mo($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -175,7 +213,11 @@ class Mos extends DolibarrApi
 	 * Create MO object
 	 *
 	 * @param array $request_data   Request datas
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of MO
+	 *
+	 * @throws	RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -197,9 +239,12 @@ class Mos extends DolibarrApi
 
 		$this->checkRefNumbering();
 
-		if (!$this->mo->create(DolibarrApiAccess::$user)) {
+		$result = $this->mo->create(DolibarrApiAccess::$user);
+		//var_dump($result);exit;
+		if ($result < 0) {
 			throw new RestException(500, "Error creating MO", array_merge(array($this->mo->error), $this->mo->errors));
 		}
+
 		return $this->mo->id;
 	}
 
@@ -208,6 +253,8 @@ class Mos extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of MO to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -235,6 +282,13 @@ class Mos extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->mo->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->mo);
+				}
+				continue;
+			}
+
 			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 
@@ -248,10 +302,53 @@ class Mos extends DolibarrApi
 	}
 
 	/**
+	 * Validate MO
+	 *
+	 * @param   int $id             MO ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->mo->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating MO: '.$this->mo->error);
+		}
+		$result = $this->mo->fetch($id);
+
+		return $this->_cleanObjectDatas($this->mo);
+	}
+
+	/**
 	 * Delete MO
 	 *
 	 * @param   int     $id   MO ID
 	 * @return  array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -305,6 +402,8 @@ class Mos extends DolibarrApi
 	 *
 	 * @param int       $id				ID of state
 	 * @param array		$request_data   Request datas
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url     POST {id}/produceandconsumeall
 	 *
@@ -376,7 +475,7 @@ class Mos extends DolibarrApi
 
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
-			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+			$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
 				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
@@ -411,11 +510,11 @@ class Mos extends DolibarrApi
 								$moline->fk_mo = $this->mo->id;
 								$moline->position = $pos;
 								$moline->fk_product = $value["objectid"];
-								$moline->fk_warehouse = $value["fk_warehouse"];
+								$moline->fk_warehouse = (int) $value["fk_warehouse"];
 								$moline->qty = $qtytoprocess;
 								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toproduce';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -424,7 +523,7 @@ class Mos extends DolibarrApi
 									$error++;
 									throw new RestException(500, $moline->error);
 								}
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
@@ -434,7 +533,7 @@ class Mos extends DolibarrApi
 								$moline->qty = $qtytoprocess;
 								$moline->batch = (string) $tmpproduct->status_batch;
 								$moline->role = 'toconsume';
-								$moline->fk_mrp_production = "";
+								$moline->fk_mrp_production = 0;
 								$moline->fk_stock_movement = $idstockmove;
 								$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -443,7 +542,7 @@ class Mos extends DolibarrApi
 									$error++;
 									throw new RestException(500, $moline->error);
 								}
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $value["objectid"], $value["fk_warehouse"], $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -464,7 +563,7 @@ class Mos extends DolibarrApi
 							} else {
 								$moline->role = 'produced';
 							}
-							$moline->fk_mrp_production = "";
+							$moline->fk_mrp_production = 0;
 							$moline->fk_stock_movement = $idstockmove;
 							$moline->fk_user_creat = DolibarrApiAccess::$user->id;
 
@@ -497,12 +596,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -512,9 +611,9 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -557,12 +656,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -572,9 +671,9 @@ class Mos extends DolibarrApi
 							$stockmove->origin_type = 'mo';
 							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, (int) $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -681,6 +780,8 @@ class Mos extends DolibarrApi
 	 *
 	 * @param int       $id				ID of state
 	 * @param array		$request_data   Request datas
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url     POST {id}/produceandconsume
 	 *
@@ -746,7 +847,7 @@ class Mos extends DolibarrApi
 		$this->db->begin();
 
 		$pos = 0;
-		$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+		$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 		foreach ($arrayofarrayname as $arrayname) {
 			foreach (${$arrayname} as $value) {
 				if (empty($value["objectid"])) {
@@ -796,15 +897,15 @@ class Mos extends DolibarrApi
 					$stockmove->origin_id = $this->mo->id;
 					if ($arrayname == "arraytoconsume") {
 						if ($qtytoprocess >= 0) {
-							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 						} else {
-							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 						}
 					} else {
 						if ($qtytoprocess >= 0) {
-							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, $pricetoproduce, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, $pricetoproduce, $labelmovement, '', '', (string) $tmpproduct->status_batch, dol_now(), $id_product_batch, $codemovement);
 						} else {
-							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $molinetoprocess->fk_product, $fk_warehousetoprocess, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', (string) $tmpproduct->status_batch, $id_product_batch, $codemovement);
 						}
 					}
 					if ($idstockmove <= 0) {
@@ -895,9 +996,12 @@ class Mos extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object			Object to clean
 	 * @return  Object					Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -955,10 +1059,10 @@ class Mos extends DolibarrApi
 	}
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating or updating an object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param ?array<null|int|float|string> $data   Data to validate
+	 * @return array<string,null|int|float|string>
 	 *
 	 * @throws	RestException
 	 */
@@ -966,7 +1070,7 @@ class Mos extends DolibarrApi
 	{
 		$myobject = array();
 		foreach ($this->mo->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {

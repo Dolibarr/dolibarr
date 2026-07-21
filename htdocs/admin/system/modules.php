@@ -2,7 +2,8 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 if (empty($user->admin)) {
@@ -34,14 +42,16 @@ if (empty($user->admin)) {
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
-$search_name		= GETPOST("search_name", 'alpha');
+$search_name = GETPOST("search_name", 'alpha');
 $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
+$page = GETPOSTINT('page');
 $sortfield			= GETPOST('sortfield', 'aZ09comma');
 $sortorder			= GETPOST('sortorder', 'aZ09comma');
 
@@ -59,18 +69,18 @@ $object = new stdClass();
 
 // Definition of fields for lists
 $arrayfields = array(
-	'name' => array('label' => $langs->trans("Modules"), 'checked' => 1, 'position' => 10),
-	'version' => array('label' => $langs->trans("Version"), 'checked' => 1, 'position' => 20),
-	'id' => array('label' => $langs->trans("IdModule"), 'checked' => 1, 'position' => 30),
-	'module_position' => array('label' => $langs->trans("Position"), 'checked' => 1, 'position' => 35),
-	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => 1, 'position' => 40)
+	'name' => array('label' => $langs->trans("Modules"), 'checked' => '1', 'position' => 10),
+	'version' => array('label' => $langs->trans("Version"), 'checked' => '1', 'position' => 20),
+	'id' => array('label' => $langs->trans("IdModule"), 'checked' => '1', 'position' => 30),
+	'module_position' => array('label' => $langs->trans("Position"), 'checked' => '1', 'position' => 35),
+	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => '1', 'position' => 40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
 
 $param = '';
 $info_admin = '';
+
 
 /*
  * Actions
@@ -86,7 +96,6 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
-
 
 // Load list of modules
 $moduleList = array();
@@ -107,7 +116,7 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					//print 'xx'.$dir.$file.'<br>';
 					if (in_array($file, $modules_files)) {
-						// File duplicate
+						// File duplicate @phan-suppress-next-line PhanTypeInvalidDimOffset
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
 					} else {
 						// File to load
@@ -124,7 +133,11 @@ foreach ($modulesdir as $dir) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
 						} else {
-							$info_admin .= info_admin("Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							// Skip warning for modules being refactored (class split in progress)
+							$silentModules = array('modSupplierOrder', 'modSupplierInvoice', 'modFournisseur');
+							if (!in_array($modName, $silentModules)) {
+								$info_admin .= info_admin("admin/modules.php Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)", 0, 0, '1', 'warning');
+							}
 						}
 					}
 				}
@@ -220,17 +233,19 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
+if (!GETPOSTINT('hidetitle')) {
+	print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
 
-print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
-print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
+	print '<br>';
+}
 print '<br>';
 
 $mode = '';
 $arrayofmassactions = array();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -242,38 +257,38 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Lines with input filters
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 }
 if ($arrayfields['name']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 if ($arrayfields['version']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_version" size="6" value="'.dol_escape_htmltag($search_version).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width50" type="text" name="search_version" value="'.dol_escape_htmltag($search_version).'">';
 	print '</td>';
 }
 if ($arrayfields['id']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="6" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
-	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_permission" size="8" value="'.dol_escape_htmltag($search_permission).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat width100" type="text" name="search_permission" value="'.dol_escape_htmltag($search_permission).'">';
 	print '</td>';
 }
 if ($arrayfields['module_position']['checked']) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre">';
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -283,7 +298,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn');
 }
 if ($arrayfields['name']['checked']) {
@@ -293,13 +308,13 @@ if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['id']['checked']) {
-	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall ');
+	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall center ');
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['module_position']['checked']) {
-	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder, "right ");
 }
 
 // Fields from hook
@@ -307,7 +322,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print '</tr>';
@@ -354,29 +369,29 @@ if ($sortfield == "name" && $sortorder == "asc") {
 } elseif ($sortfield == "permission" && $sortorder == "desc") {
 	usort($moduleList, "comparePermissionIdsDesc");
 } else {
-	$moduleList = dol_sort_array($moduleList, 'module_position');
+	$moduleList = dol_sort_array($moduleList, 'module_position', $sortorder);
 }
 
 foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 
 	if ($arrayfields['name']['checked']) {
 		print '<td width="300" class="nowrap">';
 		print $module->picto;
-		print ' '.$module->name;
+		print ' '.dolPrintHTML($module->name);
 		print "</td>";
 	}
 
 	if ($arrayfields['version']['checked']) {
-		print '<td class="nowraponall">'.$module->version.'</td>';
+		print '<td class="nowraponall">'.dolPrintHTML($module->version).'</td>';
 	}
 
 	if ($arrayfields['id']['checked']) {
-		print '<td class="center">'.$module->id.'</td>';
+		print '<td class="center">'.dolPrintHTML($module->id).'</td>';
 	}
 
 	if ($arrayfields['permission']['checked']) {
@@ -390,7 +405,7 @@ foreach ($moduleList as $module) {
 
 			if (getDolGlobalString('MAIN_SHOW_PERMISSION')) {
 				if (empty($langs->tab_translate[$translationKey])) {
-					$tooltip = 'Missing translation (key '.$translationkey.' not found in admin.lang)';
+					$tooltip = 'Missing translation (key '.$translationKey.' not found in admin.lang)';
 					$idperms .= ' <img src="../../theme/eldy/img/warning.png" alt="Warning" title="'.$tooltip.'">';
 				}
 			}
@@ -400,11 +415,11 @@ foreach ($moduleList as $module) {
 	}
 
 	if ($arrayfields['module_position']['checked']) {
-		print '<td class="center">'.$module->module_position.'</td>';
+		print '<td class="right">'.dolPrintHTML($module->module_position).'</td>';
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td></td>';
 	}
 	print '</tr>';

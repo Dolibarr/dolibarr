@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 trait CommonSocialNetworks
 {
 	/**
-	 * @var array array of socialnetworks
+	 * @var array<string,string>
 	 */
 	public $socialnetworks;
 
@@ -36,13 +37,15 @@ trait CommonSocialNetworks
 	/**
 	 * Show social network part if the module is enabled with hiding functionality
 	 *
-	 * @param	array	$socialnetworks		Array of social networks
+	 * @param	array<string,array{active:int<0,1>,icon:string,label:string}>	$socialnetworks		Array of social networks
 	 * @param	int		$colspan			Colspan
 	 * @return 	void
 	 */
 	public function showSocialNetwork($socialnetworks, $colspan = 4)
 	{
 		global $object, $form, $langs;
+
+		'@phan-var-force CommonSocialNetworks $object';
 
 		$nbofnetworks = count($socialnetworks);
 		$nbactive = 0;
@@ -54,10 +57,8 @@ trait CommonSocialNetworks
 
 		if ($nbofnetworks > 1) {
 			print '<tr><td colspan="'.$colspan.'"><br><a class="paddingtop paddingbottom socialnetworklnk onreposition" id="socialnetworklnk" href="#"></a>';
-			//print '</td>';
-			//print '<td'.($colspan ? ' colspan="'.($colspan-1).'"' : '').'>';
-			//print '<br>';
 			print ' <a class="paddingtop paddingbottom socialnetworklnk onreposition" href="#"><span class="badge badge-secondary socialnetworklnk">'.$nbactive.'</span></a>';
+			print ' <span class="soc_network">'.$form->textwithpicto("", $langs->transnoentitiesnoconv("YouCanChangeValuesForThisListFromModuleSetup", $langs->transnoentitiesnoconv("SocialNetworks"))).'</span>';
 			print '</td>';
 			print '</tr>';
 		}

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,20 +34,40 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$type = GETPOST('type', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+if (empty($backtopage)) {
+	$backtopage = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php';
+}
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
-$piece_num = GETPOSTINT("piece_num"); // id of transaction (several lines share the same transaction id)
+$piece_num = GETPOSTINT("piece_num") ? GETPOSTINT("piece_num") : GETPOST('ref'); 	// id of transaction (several lines share the same transaction id)
+$clonedate = (int) GETPOSTINT('clonedate');
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -78,6 +99,9 @@ if (!empty($update)) {
 	$action = 'confirm_update';
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('bookkeepingcard', 'globalcard'));
+
 $object = new BookKeeping($db);
 
 // Security check
@@ -92,7 +116,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 }
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
-
+$permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
+$numRefModel = getDolGlobalString('BOOKKEEPING_ADDON', 'mod_bookkeeping_neon');
 
 /*
  * Actions
@@ -104,14 +129,14 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$error = 0;
+
 	if ($cancel) {
-		header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php');
+		header("Location: ". $backtopage . (!empty($type) ? '?type=sub' : ''));
 		exit;
 	}
 
 	if ($action == "confirm_update" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -150,7 +175,7 @@ if (empty($reshook)) {
 					$object->sens = 'C';
 				}
 
-				$result = $object->update($user, false, $mode);
+				$result = $object->update($user, 0, $mode);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
@@ -166,8 +191,6 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == "add" && $permissiontoadd) {
-		$error = 0;
-
 		if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 			$error++;
 			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
@@ -178,8 +201,19 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
 			$action = '';
 		}
+		$subledger_account_str = is_array($subledger_account) ? reset($subledger_account) : (string) $subledger_account;
+		if (!checkGeneralAccountAllowsAuxiliary($db, $accountingaccount_number, $subledger_account_str)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorAccountNotCentralized"). ". " . $langs->trans("RemoveSubsidiaryAccountOrAdjustTheGeneralAccount"), null, 'errors');
+		}
 
 		if (!$error) {
+			if (GETPOSTINT('doc_datemonth') && GETPOSTINT('doc_dateday') && GETPOSTINT('doc_dateyear')) {
+				$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			} else {
+				$datedoc = (int) GETPOSTINT('doc_date');	// TODO Use instead the mode day-month-year
+			}
+
 			$object = new BookKeeping($db);
 
 			$object->numero_compte = $accountingaccount_number;
@@ -189,10 +223,11 @@ if (empty($reshook)) {
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
-			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_date = $datedoc;
 			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 			$object->piece_num = $piece_num;
 			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
+			$object->ref = (string) GETPOST('ref', 'alpha');
 			$object->code_journal = $journal_code;
 			$object->journal_label = $journal_label;
 			$object->fk_doc = GETPOSTINT('fk_doc');
@@ -210,7 +245,8 @@ if (empty($reshook)) {
 				$object->sens = 'C';
 			}
 
-			$result = $object->createStd($user, false, $mode);
+			$result = $object->createStd($user, 0, $mode);
+
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -224,17 +260,16 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} elseif ($action == "confirm_delete" && $permissiontoadd) {
+	} elseif ($action == "confirm_delete" && $permissiontoadd) {	// Delete line
 		$object = new BookKeeping($db);
 
 		$result = $object->fetch($id, null, $mode);
 		$piece_num = (int) $object->piece_num;
-
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 
 			$action = 'create';
-		} else {
+		} elseif ($result > 0) {
 			$result = $object->delete($user, 0, $mode);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -242,8 +277,6 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	} elseif ($action == "confirm_create" && $permissiontoadd) {
-		$error = 0;
-
 		$object = new BookKeeping($db);
 
 		if (!$journal_code || $journal_code == '-1') {
@@ -258,10 +291,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object->label_compte = '';
 			$object->debit = 0;
 			$object->credit = 0;
-			$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			$object->doc_date = $date_start;
 			$object->doc_type = GETPOST('doc_type', 'alpha');
 			$object->piece_num = GETPOSTINT('next_num_mvt');
 			$object->doc_ref = GETPOST('doc_ref', 'alpha');
@@ -269,23 +304,90 @@ if (empty($reshook)) {
 			$object->journal_label = $journal_label;
 			$object->fk_doc = 0;
 			$object->fk_docdet = 0;
+			$object->ref = (GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->getNextNumRef());
 			$object->montant = 0; // deprecated
 			$object->amount = 0;
 
 			$result = $object->createStd($user, 0, $mode);
+
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 
 				$action = 'create';
 			} else {
-				$reshook = $hookmanager->executeHooks('afterCreateBookkeeping', $parameters, $object, $action);
+				// Transaction created successfully
+				$piece_num = $object->piece_num;
 
-				if ($mode != '_tmp') {
-					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				// Check if a template was selected
+				$template_id = GETPOSTINT('template_id');
+
+				if ($template_id > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplateline.class.php';
+
+					$template = new BookkeepingTemplate($db);
+					$result_template = $template->fetch($template_id);
+
+					if ($result_template > 0 && !empty($template->lines)) {
+						$db->begin();
+						$error_template = 0;
+
+						foreach ($template->lines as $templateline) {
+							$bookkeeping = new BookKeeping($db);
+
+							// Set common fields from the form
+							$bookkeeping->doc_date = $date_start;
+							$bookkeeping->doc_type = GETPOST('doctype', 'alpha');
+							$bookkeeping->piece_num = $piece_num;
+							$bookkeeping->doc_ref = GETPOST('docref', 'alpha');
+							$bookkeeping->code_journal = $journal_code;
+							$bookkeeping->journal_label = $journal_label;
+							$bookkeeping->fk_doc = 0;
+							$bookkeeping->fk_docdet = 0;
+							$bookkeeping->ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : $object->ref;
+
+							// Set fields from template line
+							$bookkeeping->numero_compte = $templateline->general_account;
+							$bookkeeping->label_compte = $templateline->general_label;
+							$bookkeeping->subledger_account = $templateline->subledger_account;
+							$bookkeeping->subledger_label = $templateline->subledger_label;
+							$bookkeeping->label_operation = $templateline->operation_label;
+							$bookkeeping->debit = (float) $templateline->debit;
+							$bookkeeping->credit = (float) $templateline->credit;
+
+							// Backward compatibility
+							if ((float) $bookkeeping->debit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->debit;
+								$bookkeeping->amount = $bookkeeping->debit;
+								$bookkeeping->sens = 'D';
+							}
+							if ((float) $bookkeeping->credit != 0.0) {
+								$bookkeeping->montant = $bookkeeping->credit;
+								$bookkeeping->amount = $bookkeeping->credit;
+								$bookkeeping->sens = 'C';
+							}
+
+							$result_line = $bookkeeping->createStd($user, 0, '_tmp');
+
+							if ($result_line < 0) {
+								$error_template++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+								break;
+							}
+						}
+
+						if (!$error_template) {
+							$db->commit();
+							setEventMessages($langs->trans('TemplateLinesLoaded', count($template->lines)), null, 'mesgs');
+						} else {
+							$db->rollback();
+						}
+					}
 				}
-				$action = '';
-				$id = $object->id;
-				$piece_num = (int) $object->piece_num;
+
+				// Redirect to the transaction
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".$piece_num."&mode=_tmp");
+				exit;
 			}
 		}
 	}
@@ -329,14 +431,126 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
+		$newref = GETPOST('ref', 'alpha');
+		$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			if ($mode != '_tmp') {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			}
+			$action = '';
+		}
+	}
+
 	// Validate transaction
 	if ($action == 'valid' && $permissiontoadd) {
 		$result = $object->transformTransaction(0, $piece_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-			header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
+			// Retrieve the actual final part number (not the temporary number)
+			$piece_num = $object->piece_num;
+
+			$linkEntry = '<a href="'.$_SERVER["PHP_SELF"].'?piece_num='.(int) $piece_num.'">'.$langs->trans('NumMvts').': '.(int) $piece_num.'</a>';
+			setEventMessages($langs->trans('RecordSaved').' - '.$linkEntry, null, 'mesgs', '', 1);
+
+			if (getDolGlobalInt('ACCOUNTANCY_VALID_REDIRECT_TO_CARD')) {
+				// Redirection to the validated entry record
+				header("Location: ".$_SERVER["PHP_SELF"]."?piece_num=".(int) $piece_num);
+			} else {
+				// Default behavior: return on journal view
+				header("Location: ".$backtopage."?sortfield=t.piece_num&sortorder=asc".($type ? '&type='.$type : ''));
+			}
 			exit;
+		}
+	}
+
+	// Delete all lines into the transaction
+	$toselect_str = explode(',', GETPOST('toselect', 'alphanohtml'));
+	$toselect = array();
+	foreach ($toselect_str as $i) {
+		$toselect[] = (int) $i;
+	}
+
+	if ($action == 'deletebookkeepingwriting' && $confirm == "yes" && $permissiontodelete) {
+		$db->begin();
+
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+			$lettering = new Lettering($db);
+			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
+			if ($nb_lettering < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+				$error++;
+			}
+		}
+
+		$nbok = 0;
+		$result = 0;
+		if (!$error) {
+			foreach ($toselect as $toselectid) {
+				$result = $object->fetch($toselectid);
+				if ($result >= 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
+					$result = $object->deleteMvtNum($object->piece_num);
+					if ($result >= 0) {
+						$nbok += $result;
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+						break;
+					}
+				} elseif ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+					break;
+				} elseif (isset($object->date_validation) && $object->date_validation != '') {
+					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
+					$error++;
+					break;
+				}
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			// Message for elements well deleted
+			if ($nbok > 1) {
+				setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+			} elseif ($nbok > 0) {
+				setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
+			}
+
+			header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?noreset=1');
+			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'clonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		// Reread the values sent by the validated form
+		$piece_num = GETPOST('piece_num', 'alpha');
+		$journal_code = GETPOST('code_journal', 'alpha');
+
+		// Reconstruct the selected date
+		$clonedate = dol_mktime(0, 0, 0, GETPOSTINT('clonedatemonth'), GETPOSTINT('clonedateday'), GETPOSTINT('clonedateyear'));
+
+		$result = $object->newClone($piece_num, $journal_code, $clonedate);
+
+		if ($result == -1) {
+			$error++;
+		}
+
+		if (!$error) {
+			$db->commit();
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . ($object->getNextNumMvt() - 1));
+			exit();
+		} else {
+			$db->rollback();
 		}
 	}
 }
@@ -352,12 +566,52 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-card');
 
 // Confirmation to delete the command
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id.'&mode='.$mode, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
+}
+
+// Update fields properties in realtime
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n" . '<script type="text/javascript">';
+	print '$(document).ready(function () {
+			function toggleSubledger() {
+			    var isCentral = $("#accountingaccount_number option:selected").data("centralized");
+			    console.log("the selected general ledger account is centralised?", isCentral);
+
+			    var isAjaxMode = $("#search_subledger_account").length > 0;
+			    var $visibleSubledger = isAjaxMode
+			        ? $("#search_subledger_account")
+			        : $("#subledger_account");
+
+			    if (isCentral) {
+			        $visibleSubledger.prop("disabled", false);
+			        if (!isAjaxMode) {
+			            $("#subledger_account").prop("disabled", false).trigger("change");
+			        }
+			        $("#subledger_label").prop("disabled", false);
+			    } else {
+			        $visibleSubledger.prop("disabled", true).val("");
+			        if (!isAjaxMode) {
+			            $("#subledger_account").val("").prop("disabled", true).trigger("change");
+			        } else {
+			            $("#subledger_account").val("");
+			        }
+			        $("#subledger_label").val("").prop("disabled", true);
+			    }
+			}
+
+			toggleSubledger();
+
+			$("#accountingaccount_number").on("change", toggleSubledger);
+			$("#accountingaccount_number").on("select2:select", toggleSubledger);
+		';
+	print '	});' . "\n";
+	print '	</script>' . "\n";
 }
 
 if ($action == 'create') {
@@ -377,19 +631,16 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="confirm_create">'."\n";
 	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<input type="hidden" name="mode" value="_tmp">'."\n";
 
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
-	/*print '<tr>';
-	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("NumPiece") . '</td>';
-	print '<td>' . $next_num_mvt . '</td>';
-	print '</tr>';*/
-
 	print '<tr>';
-	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
+	print '<td class="fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
 	print $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	print '</td>';
@@ -401,16 +652,60 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
+	print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Piece"), $langs->trans("PieceDesc")).'</td>';
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
-	/*
+	// Piece number
 	print '<tr>';
-	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
+	print '<td>'.$form->textwithpicto($langs->trans("Ref"), $langs->trans("BankTransactionRef")).'</td>';
+	print '<td>';
+	if ($numRefModel === 'mod_bookkeeping_neon') {
+		print '<input type="text" class="minwidth200" name="ref" value="">';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("Automatic").'</span>';
+	}
+	print '</td>';
+
+	// Template
+	print '<tr>';
+	print '<td>'.$langs->trans("BookkeepingTemplate").'</td>';
+	print '<td>';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeepingtemplate.class.php';
+
+	$sql = "SELECT rowid, code, label";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_transaction_template";
+	$sql .= " WHERE entity IN (".getEntity('accounting').")";
+	$sql .= " ORDER BY code ASC";
+
+	$resql = $db->query($sql);
+	$templates = array();
+
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			$templates[$obj->rowid] = $obj->code.' - '.$obj->label;
+			$i++;
+		}
+		$db->free($resql);
+	}
+
+	if (count($templates) > 0) {
+		print '<select class="flat minwidth300" name="template_id" id="template_id">';
+		print '<option value=""></option>';
+		foreach ($templates as $key => $label) {
+			print '<option value="'.$key.'">'.dol_escape_htmltag($label).'</option>';
+		}
+		print '</select>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoTemplateAvailable").'</span>';
+	}
+
+	print '</td>';
 	print '</tr>';
-	*/
+
 	$reshookAddLine = $hookmanager->executeHooks('bookkeepingAddLine', $parameters, $object, $action);
 
 	print '</table>';
@@ -431,33 +726,180 @@ if ($action == 'create') {
 	if (!empty($object->piece_num)) {
 		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
 
-		if ($mode == '_tmp') {
+		/*if ($mode == '_tmp') {
 			print load_fiche_titre($langs->trans("CreateMvts"), $backlink);
 		} else {
 			print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
-		}
+		}*/
 
-		$head = array();
-		$h = 0;
-		$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.((int) $object->piece_num).($mode ? '&mode='.$mode : '');
-		$head[$h][1] = $langs->trans("Transaction");
-		$head[$h][2] = 'transaction';
-		$h++;
+		$head = accounting_transaction_prepare_head($object, $mode, $type, $backtopage);
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
-		//dol_banner_tab($object, '', $backlink);
+		//$object->label = $object->doc_ref;
+		if ($mode == '_tmp') {
+			$object->context['mode'] = $mode;
+			$object->next_prev_filter = '1=0';	// Add a test always false to disable navigation into the dol_banner_tab. In tmp mode, we just want to create/edit lines of bank transaction.
+		}
+		$object->label = $object->ref;
+
+		$morehtmlref = '<div style="clear: both;"></div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">';
+		$morehtmlref .= $object->label;
+		$morehtmlref .= '</div>';
+
+		dol_banner_tab($object, 'ref', $backlink, 1, 'piece_num', 'piece_num', $morehtmlref);
+
+
+		if ($action == 'clonebookkeepingwriting' && $confirm != 'yes' && $permissiontoadd) {
+			$piece_num = GETPOST('piece_num', 'alpha');
+			$formaccounting = new FormAccounting($db);
+
+			$form = new Form($db);
+			$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "", 1, 1);
+			$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1);
+
+			$formquestion = array(
+				array(
+					'type' => 'other',
+					'name' => 'clonedate',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+					'value' => $input1
+				)
+			);
+
+			$formquestion[] = array('type' => 'hidden', 'name' => 'piece_num', 'value' => $piece_num);
+
+			if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+				$formquestion[] = array(
+					'type' => 'text',
+					'name' => 'code_journal',
+					'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+					'value' => $input2
+				);
+			}
+
+			print $form->formconfirm(
+				$_SERVER["PHP_SELF"],
+				$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+				$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", 1),
+				"clonebookkeepingwriting",
+				$formquestion,
+				'', 0, 300, 1000, 0
+			);
+		}
+
 
 		print '<div class="fichecenter">';
+
 		print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Account movement
+		/*
 		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
+		print '<td class="titlefieldmiddle">'.$langs->trans("NumMvts").'</td>';
 		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
+		print '</tr>';
+		*/
+
+		// Account movement ref. Edit allowed only for free ref num model.
+		print '<tr><td class="titlefieldmiddle">';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('Ref');
+		print '</td>';
+		if ($action != 'editref' && empty($object->date_validation)) {
+			print '<td class="right">';
+			if ($permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+			}
+			print '</td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editref' && empty($object->date_validation)) {
+			print '<form name="setref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
+			if ($optioncss != '') {
+				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			}
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setref">';
+			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print '<input type="text" size="20" name="ref" value="'.dol_escape_htmltag($object->ref).'">';
+			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		} else {
+			print $object->ref;
+		}
+		print '</td>';
+		print '</tr>';
+
+		// Ref document
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $form->textwithpicto($langs->trans('Piece'), $langs->trans('PieceDesc'));
+		print '</td>';
+		if ($action != 'editdocref') {
+			print '<td class="right">';
+			if ($permissiontoadd && empty($object->date_validation)) {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+			}
+			print '</td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editdocref' && empty($object->date_validation)) {
+			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
+			if ($optioncss != '') {
+				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			}
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setdocref">';
+			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
+			print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		} else {
+			// Get information of an element
+			if ($object->doc_type === 'customer_invoice' && !empty($object->fk_doc)) {
+				$invoicestatic = new Facture($db);
+				$result = $invoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $invoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'supplier_invoice' && !empty($object->fk_doc)) {
+				$supplierinvoicestatic = new FactureFournisseur($db);
+				$result = $supplierinvoicestatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $supplierinvoicestatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} elseif ($object->doc_type === 'expense_report' && !empty($object->fk_doc)) {
+				$expensereportstatic = new ExpenseReport($db);
+				$result = $expensereportstatic->fetch($object->fk_doc);
+
+				if ($result > 0) {
+					$label_element = $expensereportstatic->getNomUrl(1);
+				} else {
+					$label_element = $object->doc_ref;
+				}
+			} else {
+				$label_element = $object->doc_ref;
+			}
+			print $label_element;
+		}
+		print '</td>';
 		print '</tr>';
 
 		// Date
@@ -467,14 +909,14 @@ if ($action == 'create') {
 		print '</td>';
 		if ($action != 'editdate') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($action == 'editdate') {
+		if ($action == 'editdate' && empty($object->date_validation)) {
 			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -482,7 +924,9 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print $form->selectDate($object->doc_date ? $object->doc_date : -1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -493,19 +937,19 @@ if ($action == 'create') {
 
 		// Journal
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal') {
 			print '<td class="right">';
-			if ($permissiontoadd) {
+			if ($permissiontoadd && empty($object->date_validation)) {
 				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 			}
 			print '</td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editjournal') {
+		if ($action == 'editjournal' && empty($object->date_validation)) {
 			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
 			if ($optioncss != '') {
 				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -513,42 +957,19 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setjournal">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, '');
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
-			print $object->code_journal;
-		}
-		print '</td>';
-		print '</tr>';
+			// Get information of a journal
+			$accountingjournalstatic = new AccountingJournal($db);
+			$accountingjournalstatic->fetch(0, $object->code_journal);
+			$journal = $accountingjournalstatic->code;
+			$journal_label = $accountingjournalstatic->label;
 
-		// Ref document
-		print '<tr><td>';
-		print '<table class="nobordernopadding centpercent"><tr><td>';
-		print $langs->trans('Piece');
-		print '</td>';
-		if ($action != 'editdocref') {
-			print '<td class="right">';
-			if ($permissiontoadd) {
-				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
-			}
-			print '</td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editdocref') {
-			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setdocref">';
-			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			print $object->doc_ref;
+			print $accountingjournalstatic->getNomUrl(1, 1, 1);
 		}
 		print '</td>';
 		print '</tr>';
@@ -556,6 +977,7 @@ if ($action == 'create') {
 		print '</table>';
 
 		print '</div>';
+
 
 		print '<div class="fichehalfright">';
 
@@ -578,13 +1000,23 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
+		// Due date (if invoice)
+		//if (in_array($object->doc_type, array('customer_invoice', 'supplier_invoice'))) {
+		print '<tr>';
+		print '<td class="titlefield">' . $form->textwithpicto($langs->trans('DateDue'), $langs->trans("IfTransactionHasDueDate")) . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+		//}
+
 		// Don't show in tmp mode, inevitably empty
 		if ($mode != "_tmp") {
 			// Date document export
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
 			print '<td>';
-			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print $object->date_export ? img_picto($langs->trans("TransactionExportDesc"), 'fa-file-export', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -592,7 +1024,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
 			print '<td>';
-			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print $object->date_validation ? img_picto($langs->trans("TransactionBlockedLockedDesc"), 'fa-lock', 'class="pictofixedwidth opacitymedium"').dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
 
@@ -606,14 +1038,6 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 		}
-
-		// Due date
-		print '<tr>';
-		print '<td class="titlefield">' . $langs->trans('DateDue') . '</td>';
-		print '<td>';
-		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
 
 		// Validate
 		/*
@@ -659,32 +1083,71 @@ if ($action == 'create') {
 
 		print '</div>';
 
-		print dol_get_fiche_end();
-
+		print '</div>';
 		print '<div class="clearboth"></div>';
 
-		print '<br>';
+
+		print dol_get_fiche_end();
+
 
 		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
 
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			// Variable that contains all transaction lines
+			$tmptoselect = array();
+			$atleastonevalidated = 0;
+			$atleastoneexported = 0;
+			foreach ($object->linesmvt as $line) {
+				$tmptoselect[] = $line->id;
+				if (!empty($line->date_validation)) {
+					$atleastonevalidated = 1;
+				}
+				if (!empty($line->date_export) || !empty($line->date_validation)) {
+					$atleastoneexported = 1;
+				}
+			}
+
+			if ($mode != '_tmp' && !$atleastonevalidated) {
+				print "\n".'<div class="tabsAction">'."\n";
+
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					if ($permissiontodelete) {
+						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
+							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
+						}
+					}
+					if ($permissiontoadd) {
+						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
+					}
+				}
+
+				print '</div>';
+			}
+
 			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="post">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			if (empty($object->date_validation)) {
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . ((int) $object->piece_num) . '" method="POST">';
+				if ($optioncss != '') {
+					print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
+				}
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				print '<input type="hidden" name="doc_date" value="' . $object->doc_date . '">' . "\n";
+				print '<input type="hidden" name="doc_type" value="' . $object->doc_type . '">' . "\n";
+				print '<input type="hidden" name="doc_ref" value="' . $object->doc_ref . '">' . "\n";
+				print '<input type="hidden" name="ref" value="' . $object->ref . '">' . "\n";
+				print '<input type="hidden" name="code_journal" value="' . $object->code_journal . '">' . "\n";
+				print '<input type="hidden" name="fk_doc" value="' . $object->fk_doc . '">' . "\n";
+				print '<input type="hidden" name="fk_docdet" value="' . $object->fk_docdet . '">' . "\n";
+				print '<input type="hidden" name="mode" value="' . $mode . '">' . "\n";
+				print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
+				print '<input type="hidden" name="type" value="' . $type . '">';
 			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
-			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
-			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
 
 			if (count($object->linesmvt) > 0) {
 				print '<div class="div-table-responsive-no-min">';
@@ -709,7 +1172,7 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				// Add an empty line if there is not yet
-				if (!empty($object->linesmvt[0])) {
+				if (!empty($object->linesmvt[0]) && empty($object->date_validation)) {
 					$tmpline = $object->linesmvt[0];
 					if (!empty($tmpline->numero_compte)) {
 						$line = new BookKeepingLine($db);
@@ -721,24 +1184,16 @@ if ($action == 'create') {
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
-					if ($action == 'update' && $line->id == $id) {
+					if ($action == 'update' && $line->id == $id && empty($object->date_validation)) {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
 						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// - It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// - Also, it is not possible to use a value that is not in the list.
-						// - Also, the label is not automatically filled when a value is selected.
-						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
-						}
+						print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						// Add also input for subledger label
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" class="right width50" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -748,24 +1203,16 @@ if ($action == 'create') {
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
 						print "</tr>\n";
-					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+					} elseif ((empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) && empty($object->date_validation)) {
 						if (($action == "" || $action == 'add') && $permissiontoadd) {
 							print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 							print '<!-- td columns in add mode -->';
 							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
+							print $formaccounting->select_account($action == 'add' ? GETPOST('accountingaccount_number') : '', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
-							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-							// Also, it is not possible to use a value that is not in the list.
-							// Also, the label is not automatically filled when a value is selected.
-							if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
-								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-							} else {
-								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" id="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . dol_escape_htmltag($label_operation) . '"/></td>';
 							print '<td class="right"><input type="text" class="right width50" name="debit" value=""/></td>';
@@ -776,7 +1223,7 @@ if ($action == 'create') {
 					} else {
 						print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 						print '<!-- td columns in display mode -->';
-						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
+						$resultfetch = $accountingaccount->fetch(0, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
 							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
@@ -838,14 +1285,16 @@ if ($action == 'create') {
 				if ($mode == '_tmp' && $action == '' && $permissiontoadd) {
 					print '<br>';
 					print '<div class="center">';
-					if ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+					if (empty($total_debit) && empty($total_credit)) {
+						print '<a class="button disabled cursornotallowed" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'">'.dol_escape_htmltag($langs->trans("ValidTransaction")).'</a>';
+					} elseif ($total_debit == $total_credit) {
+						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
 					} else {
-						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+						print '<a class="button disabled cursornotallowed" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $total_debit, $total_credit)).'">'.dol_escape_htmltag($langs->trans("ValidTransaction")).'</a>';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type) ? '?type=sub' : '').'">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}
@@ -854,7 +1303,7 @@ if ($action == 'create') {
 			print '</form>';
 		}
 	} else {
-		print load_fiche_titre($langs->trans("NoRecords"));
+		print $langs->trans("NoRecordFound");
 	}
 }
 

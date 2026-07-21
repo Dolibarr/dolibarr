@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2017-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022	    Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2022	    Charlene Benke           <charlene@patas-monkey.com>
  * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +21,38 @@
  * or see https://www.gnu.org/
  */
 
-/*
- * Code to output content when action is presend
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
  *
- * $trackid must be defined
- * $modelmail
- * $defaulttopic and $defaulttopiclang
- * $diroutput
- * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
+ * @var string $action
+ * @var string $trackid
+ * @var string $modelmail
+ * @var string $defaulttopic
+ * @var string $defaulttopiclang
+ * @var int<0,1> $diroutput
+ * @var string[] $arrayoffamiliestoexclude	Example: array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
+ * @var string $file
+ * @var ?string $inreplyto
+ * @var int $hidedetails
+ * @var int $hidedesc
+ * @var int $hideref
+ * @var string $recruitername
+ * @var string $recruitermail
  */
+'
+@phan-var-force int<0,1> $diroutput
+@phan-var-force string $defaulttopic
+@phan-var-force string $defaulttopiclang
+@phan-var-force string[] $arrayoffamiliestoexclude
+@phan-var-force string $file
+@phan-var-force string $modelmail
+@phan-var-force CommonObject $object
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -36,16 +61,18 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 $fileparams = array();
+$file = null;
+if (!isset($modelmail)) {
+	$modelmail = '';
+}
 
 if ($action == 'presend') {
 	$langs->load("mails");
 
 	$titreform = 'SendMail';
 
-	$object->fetch_projet();
-	if (!isset($file)) {
-		$file = null;
-	}
+	$object->fetchProject();
+
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
@@ -69,11 +96,19 @@ if ($action == 'presend') {
 	$outputlangs = $langs;
 	$newlang = '';
 	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (!is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+			$object->fetch_thirdparty();
+		}
 		if (is_object($object->thirdparty)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		// When the email form is resubmitted (e.g. Apply button to select a template),
+		// lang_id is not in POST but langsmodels is. Use it to preserve the language selection.
+		if (empty($newlang) && GETPOST('langsmodels', 'aZ09')) {
+			$newlang = GETPOST('langsmodels', 'aZ09');
 		}
 	}
 
@@ -94,31 +129,45 @@ if ($action == 'presend') {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
 	}
 
-	// Build document if it not exists
+	// Build document if it does not exists
 	$forcebuilddoc = true;
+	// except for some cases where it can not exists
 	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && !getDolGlobalString('INVOICE_SUPPLIER_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
+	if ($object->element == 'project' && !getDolGlobalString('PROJECT_ADDON_PDF')) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'project_task' && !getDolGlobalString('PROJECT_TASK_ADDON_PDF')) {
+		$forcebuilddoc = false;
+	}
 	if ($object->element == 'societe' && !getDolGlobalString('COMPANY_ADDON_PDF')) {
 		$forcebuilddoc = false;
 	}
+
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
 		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument')) {
+			$hidedetails = empty($hidedetails) ? '' : $hidedetails;
+			$hidedesc = empty($hidedesc) ? '' : $hidedesc;
+			$hideref = empty($hideref) ? '' : $hideref;
+
 			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
-				dol_print_error($db, $object->error, $object->errors);
-				exit();
+				dol_syslog(__FILE__.' generateDocument failed for '.$object->element.' id='.(empty($object->id) ? 0 : $object->id).' error='.$object->error, LOG_ERR);
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
-			if ($object->element == 'invoice_supplier') {
-				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			} else {
-				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
-			}
+			if ($result >= 0) {
+				if ($object->element == 'invoice_supplier') {
+					$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+				} else {
+					$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+				}
 
-			$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+				$file = isset($fileparams['fullname']) ? $fileparams['fullname'] : null;
+			}
 		}
 	}
 
@@ -127,14 +176,14 @@ if ($action == 'presend') {
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	print dol_get_fiche_head('', '', '', -1);
+	print dol_get_fiche_head([], '', '', -1);
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE', 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
@@ -189,34 +238,42 @@ if ($action == 'presend') {
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
-	$formmail->withlayout = 1;
+	$formmail->withlayout = 'email';
 	$formmail->withaiprompt = 'html';
+
 
 	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
+		'@phan-var-force ExpenseReport $object';
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} elseif ($object->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		'@phan-var-force Partnership $object';
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
 		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
 	} elseif ($object->element == 'societe') {
+		'@phan-var-force Societe $object';
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
 	} elseif ($object->element == 'contact') {
+		'@phan-var-force Contact $object';
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'user' || $object->element == 'member') {
+		'@phan-var-force User|Adherent $object';
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
 	} elseif ($object->element == 'salary') {
+		'@phan-var-force Salary $object';
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} else {
 		// For example if element is project
-		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (property_exists($object, 'socid') && !empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
 		if (is_object($object->thirdparty)) {
@@ -251,10 +308,11 @@ if ($action == 'presend') {
 	// Make substitution in email content
 	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
-		$formmail->setSubstitFromObject($object, $langs);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 
+	$emailsendersignature = null;
 	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
 	if ($formmail->fromtype) {
 		$reg = array();
@@ -279,6 +337,7 @@ if ($action == 'presend') {
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		// @phan-suppress-next-line PhanUndeclaredProperty;
 		$checkRead .= '?tag='.(!empty($object->thirdparty->tag) ? urlencode($object->thirdparty->tag) : "");
 		$checkRead .= '&securitykey='.(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY') ? urlencode(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) : "");
 		$checkRead .= '" width="1" height="1" style="width:1px;height:1px" border="0"/>';
@@ -298,6 +357,13 @@ if ($action == 'presend') {
 
 		if (!empty($origin) && !empty($origin_id)) {
 			$element = $subelement = $origin;
+
+			if ($element == 'order_supplier') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.commande';
+				$origin = 'CommandeFournisseur';
+			}
+
 			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 				$element = $regs[1];
@@ -315,14 +381,10 @@ if ($action == 'presend') {
 				$element = $subelement = 'contrat';
 			}
 			if ($element == 'inter') {
-				$element = $subelement = 'ficheinter';
+				$element = $subelement = 'fichinter';
 			}
 			if ($element == 'shipping') {
 				$element = $subelement = 'expedition';
-			}
-			if ($element == 'order_supplier') {
-				$element = 'fourn';
-				$subelement = 'fournisseur.commande';
 			}
 			if ($element == 'project') {
 				$element = 'projet';
@@ -331,6 +393,7 @@ if ($action == 'presend') {
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 			$classname = ucfirst($origin);
 			$objectsrc = new $classname($db);
+			'@phan-var-force Commande|Facture $objectsrc';
 			$objectsrc->fetch($origin_id);
 
 			$tmpobject = $objectsrc;

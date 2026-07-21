@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,8 +59,17 @@ class ProductStockEntrepot extends CommonObject
 	 */
 	public $fk_entrepot;
 
+	/**
+	 * @var null|float|string
+	 */
 	public $seuil_stock_alerte;
+	/**
+	 * @var null|float|string
+	 */
 	public $desiredstock;
+	/**
+	 * @var null|string
+	 */
 	public $import_key;
 
 
@@ -116,10 +125,10 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= 'desiredstock,';
 		$sql .= 'import_key';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
-		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
-		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
-		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
+		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : (int) $this->fk_product).',';
+		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : (int) $this->fk_entrepot).',';
+		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : (float) $this->seuil_stock_alerte).',';
+		$sql .= ' '.(!isset($this->desiredstock) ? '0' : (float) $this->desiredstock).',';
 		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ')';
 
@@ -235,9 +244,9 @@ class ProductStockEntrepot extends CommonObject
 	 * @param string 		$sortfield  	Sort field
 	 * @param int    		$limit      	Limit
 	 * @param int    		$offset     	Offset limit
-	 * @param string|array  $filter     	Filter USF.
+	 * @param string|array<string,mixed>	$filter		Filter USF.
 	 * @param string 		$filtermode 	Filter mode (AND or OR)
-	 * @return int|array 					Return integer <0 if KO, array if OK
+	 * @return int<-1,-1>|array<int,array{id:int,fk_product:int,fk_entrepot:int,seuil_stock_alerte:float,desiredstock:float}>		Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = 0, $fk_entrepot = 0, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -354,11 +363,11 @@ class ProductStockEntrepot extends CommonObject
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
-		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';
-		$sql .= ' desiredstock = '.(isset($this->desiredstock) ? $this->desiredstock : "null").',';
+		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' fk_product = '.(isset($this->fk_product) ? (int) $this->fk_product : "null").',';
+		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? (int) $this->fk_entrepot : "null").',';
+		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? (float) $this->seuil_stock_alerte : "null").',';
+		$sql .= ' desiredstock = '.(isset($this->desiredstock) ? (float) $this->desiredstock : "null").',';
 		$sql .= ' import_key = '.(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 

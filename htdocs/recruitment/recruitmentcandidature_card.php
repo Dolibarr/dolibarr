@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "other", "users"));
 
@@ -39,7 +49,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -87,6 +97,17 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
 
+if (GETPOST("action", "aZ09") == 'create') {
+	$reg = array();
+	preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $object->fields['fk_recruitmentjobposition']['type'], $reg);
+	if (!empty($reg)) {
+		$object->fields['fk_recruitmentjobposition']['type'] .= " AND (t.status:=:1)";
+	} else {
+		$object->fields['fk_recruitmentjobposition']['type'] .= ":(t.status:=:1)";
+	}
+}
+
+
 /*
  * Actions
  */
@@ -107,7 +128,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/recruitment/recruitmentcandidature_card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -264,6 +285,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
+$text = '';
 
 if ($action == 'create') {
 	$title    = $langs->trans('NewCandidature');
@@ -277,9 +299,9 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("RecruitmentCandidature")), '', 'object_'.$object->picto);
+	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -289,7 +311,7 @@ if ($action == 'create') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	print dol_get_fiche_head(array(), '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -314,7 +336,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("RecruitmentCandidature"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -349,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = recruitmentCandidaturePrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 	$formconfirm = '';
 
@@ -398,7 +420,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if ($action == 'close') {
 		$langs->load("propal");
-
+		$formquestion = array();
 		//Form to close proposal (signed or not)
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ConfirmClose'), $langs->trans('ConfirmCloseAsk'), 'confirm_close', $formquestion, '', 1, 250);
 	}
@@ -441,7 +463,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	$morehtmlref.= $object->getFullName('', 1);
+	$morehtmlref .= $object->getFullName(null, 1);
 	/*
 	 // Ref customer
 	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -455,7 +477,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd)
 	 {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
+	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 	 $morehtmlref .= ' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
@@ -534,7 +556,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&sendto='.urlencode($object->email).'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 			}
 
 			// Back to draft
@@ -579,7 +601,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&object=recruitmentcandidature', 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&object=recruitmentcandidature', 'clone', $permissiontoadd);
 			}
 
 			// Button to convert into a user
@@ -587,7 +609,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($user->hasRight('user', 'user', 'creer')) {
 					$useralreadyexists = $object->fk_user;
 					if (empty($useralreadyexists)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
 					}
@@ -635,7 +657,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('recruitmentcandidature'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('recruitmentcanidature'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -672,7 +698,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$recruiter = new User($db);
 	$recruiter->fetch($job->fk_user_recruiter);
 
-	$recruitername = $recruiter->getFullName('');
+	$recruitername = $recruiter->getFullName($langs);
 	$recruitermail = (!empty($job->email_recruiter) ? $job->email_recruiter : $recruiter->email);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

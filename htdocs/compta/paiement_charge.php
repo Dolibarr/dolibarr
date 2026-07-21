@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -32,10 +40,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
 
-$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
+$chid = GETPOSTINT("id");
 $amounts = array();
 
 // Security check
@@ -51,7 +60,7 @@ $charge = new ChargeSociales($db);
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('tax', 'charges', 'creer')) {
 	$error = 0;
 
 	if ($cancel) {
@@ -89,7 +98,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 		}
 
-		if (count($amounts) <= 0) {
+		if (empty($amounts)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
 			$action = 'create';
@@ -112,16 +121,16 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 				$paymentid = $paiement->create($user, (GETPOST('closepaidcontrib') == 'on' ? 1 : 0));
 				if ($paymentid < 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOSTINT('accountid'), '', '');
-				if (!($result > 0)) {
+				if ($result <= 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}
@@ -178,20 +187,21 @@ if ($action == 'create') {
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->period, 'day')."</td></tr>\n";
 	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 	$sql .= " WHERE p.fk_charge = ".((int) $chid);
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -203,7 +213,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOSTISSET("remonth") ? $datepaye : -1) : '';
+	$datepayment = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : (GETPOSTISSET("remonth") ? $datepaye : -1);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
 	print "</td>";
 	print '</tr>';
@@ -218,7 +228,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opend bank account list
+	print $form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $charge->accountid, "accountid", 0, '', 2, '', 0, 'maxwidth500 widthcentpercentminusx', 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number
@@ -238,9 +248,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	/*
-	  * Other unpaid charges
-	 */
+	print '<br>';
+
+
+	// List of unpaid taxes
+
 	$num = 1;
 	$i = 0;
 
@@ -281,7 +293,7 @@ if ($action == 'create') {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			}
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
@@ -312,7 +324,8 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Save payment button
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib" id="closepaidcontrib" class="marginrightonly">';
+	print '<label for="closepaidcontrib" class="opacitymedium">'.$langs->trans("ClosePaidContributionsAutomatically").'</label>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

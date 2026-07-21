@@ -47,7 +47,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Is the logger active ?
 	 *
-	 * @return int		1 if logger enabled
+	 * @return int<0,1>		1 if logger enabled
 	 */
 	public function isActive()
 	{
@@ -62,7 +62,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array		Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -86,7 +86,7 @@ class mod_syslog_syslog extends LogHandler
 	{
 		global $langs;
 
-		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
+		$facility = defined(getDolGlobalString('SYSLOG_FACILITY')) ? constant(getDolGlobalString('SYSLOG_FACILITY')) : null;
 
 		if ($facility) {
 			// Only LOG_USER supported on Windows
@@ -97,7 +97,7 @@ class mod_syslog_syslog extends LogHandler
 			dol_syslog("admin/syslog: facility ".$facility);
 			return true;
 		} else {
-			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", getDolGlobalString('SYSLOG_FACILITY'));
 			return false;
 		}
 	}
@@ -105,7 +105,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Export the message
 	 *
-	 * @param   array   $content            Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
 	 * @return  void
 	 */
@@ -117,8 +117,8 @@ class mod_syslog_syslog extends LogHandler
 			return; // Global option to disable output of this handler
 		}
 
-		if (getDolGlobalString('SYSLOG_FACILITY')) {  // Example LOG_USER
-			$facility = constant($conf->global->SYSLOG_FACILITY);
+		if (getDolGlobalString('SYSLOG_FACILITY') && defined(getDolGlobalString('SYSLOG_FACILITY'))) {  // Example LOG_USER
+			$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 		} else {
 			$facility = constant('LOG_USER');
 		}

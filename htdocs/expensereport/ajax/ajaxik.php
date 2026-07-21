@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017 Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +40,17 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
-$res = 0;
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
@@ -68,9 +77,9 @@ $rep->errorMessage = '';
 
 
 if (empty($fk_expense) || $fk_expense < 0) {
-	$rep->errorMessage =   $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense');
+	$rep->errorMessage =   $langs->transnoentitiesnoconv('ErrorBadValueForParameter', (string) $fk_expense, 'fk_expense');
 } elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) {
-	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
+	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', (string) $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
 
 	$rep->response_status = 'error';
 } else {

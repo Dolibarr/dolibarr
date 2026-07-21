@@ -5,7 +5,8 @@
  * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
@@ -144,6 +153,7 @@ if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
 if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banque', 'cheque')) {
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
+		$object->date_bordereau = dol_now();
 		$arrayofid = GETPOST('toRemise', 'array:int');
 
 		$result = $object->create($user, GETPOSTINT("accountid"), 0, $arrayofid);
@@ -153,7 +163,7 @@ if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banqu
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
@@ -168,6 +178,7 @@ if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banqu
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'new';
 		}
 	} else {
 		setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'mesgs');
@@ -193,7 +204,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('banque'
 		header("Location: index.php");
 		exit;
 	} else {
-		setEventMessages($paiement->error, $paiement->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -204,7 +215,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banqu
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
@@ -222,7 +233,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('banqu
 }
 
 if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->hasRight('banque', 'cheque')) {
-	$reject_date = dol_mktime(0, 0, 0, GETPOST('rejectdate_month'), GETPOST('rejectdate_day'), GETPOST('rejectdate_year'));
+	$reject_date = dol_mktime(0, 0, 0, GETPOSTINT('rejectdate_month'), GETPOSTINT('rejectdate_day'), GETPOSTINT('rejectdate_year'));
 	$rejected_check = GETPOSTINT('bankid');
 
 	$object->fetch($id);
@@ -246,7 +257,7 @@ if ($action == 'builddoc' && $user->hasRight('banque', 'cheque')) {
 
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->client->default_lang;
@@ -321,7 +332,7 @@ if ($action == 'new') {
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 
 	print load_fiche_titre($title, '', 'bank_account');
@@ -336,7 +347,7 @@ if ($action == 'new') {
 	$head = array();
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?id='.$object->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
-	$hselected = $h;
+	$hselected = (string) $h;
 	$h++;
 	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$object->id;
 	//  $head[$h][1] = $langs->trans("Info");
@@ -420,11 +431,12 @@ if ($action == 'new') {
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start, 'search_date_start_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrapfordate">';
+	print '<div class="nowrapfordate marginleftonly">';
 	print $form->selectDate($search_date_end, 'search_date_end_', 0, 0, 1, '', 1, 1, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
+	print img_picto('', 'account', 'class="pictofixedwidth"');
 	$form->select_comptes($filteraccountid, 'accountid', 0, 'courant <> 2', 1);
 	print '</td></tr>';
 	print '</table>';
@@ -439,7 +451,7 @@ if ($action == 'new') {
 	}
 	print '</div>';
 	print '</form>';
-	print '<br>';
+	print '<br><br>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, ba.label,";
@@ -517,11 +529,20 @@ if ($action == 'new') {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="accountid" value="'.$bid.'">';
 
+		print load_fiche_titre($account_label, '', '');
+
 		$moreforfilter = '';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="center">'.$langs->trans("Select")."<br>";
+			if ($conf->use_javascript_ajax) {
+				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+			}
+			print '</td>';
+		}
 		print '<td>';
 		if ($type == 'CHQ') {
 			print $langs->trans("DateChequeReceived");
@@ -535,47 +556,51 @@ if ($action == 'new') {
 		print '<td class="right">'.$langs->trans("Amount")."</td>\n";
 		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
 		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
-		print '<td class="center">'.$langs->trans("Select")."<br>";
-		if ($conf->use_javascript_ajax) {
-			print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+		if (empty($conf->main_checkbox_left_column)) {
+			print '<td class="center">'.$langs->trans("Select")."<br>";
+			if ($conf->use_javascript_ajax) {
+				print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
+			}
+			print '</td>';
 		}
-		print '</td>';
 		print "</tr>\n";
 
 		if (count($lines[$bid])) {
 			foreach ($lines[$bid] as $lid => $value) {
 				print '<tr class="oddeven">';
-				print '<td>'.dol_print_date($value["date"], 'day').'</td>';
-				print '<td>'.$value["numero"]."</td>\n";
-				print '<td>'.$value["emetteur"]."</td>\n";
-				print '<td>'.$value["banque"]."</td>\n";
-				print '<td class="right"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
+				if ($conf->main_checkbox_left_column) {
+					print '<td class="center">';
+					print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+					print '</td>';
+				}
+				print '<td>'.dol_print_date($value["paymentdate"], 'day').'</td>';
+				print '<td>'.dolPrintHTML($value["numero"])."</td>\n";
+				print '<td class="tdoverflowmax125" title="'.dolPrintHTML($value["emetteur"]).'">'.dolPrintHTML($value["emetteur"])."</td>\n";
+				print '<td>'.dolPrintHTML($value["banque"])."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Link to payment
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				$paymentstatic->id = $value["paymentid"];
 				$paymentstatic->ref = $value["paymentref"];
 				$paymentstatic->date = $value["paymentdate"];
 				if ($paymentstatic->id) {
 					print $paymentstatic->getNomUrl(1);
-				} else {
-					print '&nbsp;';
 				}
 				print '</td>';
 				// Link to bank transaction
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				$accountlinestatic->id = $value["id"];
 				$accountlinestatic->ref = $value["ref"];
 				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
-				} else {
-					print '&nbsp;';
 				}
 				print '</td>';
-
-				print '<td class="center">';
-				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
-				print '</td>';
+				if (empty($conf->main_checkbox_left_column)) {
+					print '<td class="center">';
+					print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
+					print '</td>';
+				}
 				print '</tr>';
 			}
 		}
@@ -584,9 +609,9 @@ if ($action == 'new') {
 
 		print '<div class="tabsAction">';
 		if ($user->hasRight('banque', 'cheque')) {
-			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn', $account_label).'">';
+			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn').'">';
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn', $account_label).'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn').'</a>';
 		}
 		print '</div><br>';
 		print '</form>';

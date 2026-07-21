@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +33,24 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'CO';
 
 	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 10;
 
 	/**
 	 * @var string name
@@ -55,9 +63,9 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	public function __construct()
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+		if ((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL') >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefix = 'SO'; // We use correct standard code "SO = Sale Order"
 		}
 	}
@@ -101,10 +109,10 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -128,7 +136,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Commande	$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -136,7 +144,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('ordernumber', 1, $object).")";

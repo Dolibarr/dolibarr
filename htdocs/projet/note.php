@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010 Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2012 Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024 MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2026 Juan Pablo Farber     <jfarber55@hotmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +27,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
@@ -35,8 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
-$mine = (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'mine') ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+$mine = (GETPOST('mode', 'alpha') == 'mine') ? 1 : 0;
 
 $object = new Project($db);
 
@@ -46,12 +54,12 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 }
 
 // Security check
-$socid = 0;
+//$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $hookmanager->initHooks(array('projetnote'));
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
+$result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
-$permissionnote = $user->hasRight('projet', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('project', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -117,7 +125,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

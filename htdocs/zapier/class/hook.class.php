@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -71,7 +72,7 @@ class Hook extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array(
@@ -190,11 +191,6 @@ class Hook extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string label
 	 */
 	public $label;
@@ -237,7 +233,7 @@ class Hook extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 
 		$this->db = $db;
 
@@ -271,9 +267,9 @@ class Hook extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User 	$user       User that creates
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -289,7 +285,7 @@ class Hook extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $hookmanager, $extrafields;
+		global $langs, $extrafields;
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -307,7 +303,7 @@ class Hook extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
@@ -328,8 +324,7 @@ class Hook extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		unset($object->context['createfromclone']);
@@ -354,25 +349,9 @@ class Hook extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			//$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	/*public function fetchLines()
-	{
-		$this->lines=array();
-
-		// Load lines with object MyObjectLine
-
-		return count($this->lines)?1:0;
-	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -384,7 +363,7 @@ class Hook extends CommonObject
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return Hook[]|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -443,9 +422,9 @@ class Hook extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User 	$user      	User that modifies
+	 * @param  int<0,1>	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -455,9 +434,9 @@ class Hook extends CommonObject
 	/**
 	 *  Delete object in database
 	 *
-	 * @param User 	$user       User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User 		$user       User that deletes
+	 * @param int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -509,9 +488,9 @@ class Hook extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -550,7 +529,7 @@ class Hook extends CommonObject
 	/**
 	 *  Return label of the status
 	 *
-	 *  @param  int     $mode       0 = long label
+	 *  @param  int<0,6>    $mode   0 = long label
 	 *                              1 = short label
 	 *                              2 = Picto + short label
 	 *                              3 = Picto, 4=Picto + long label
@@ -567,10 +546,10 @@ class Hook extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param  int     $status     Id status
-	 *  @param  int     $mode       0 = long label,
-	 *                              1 = short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string              Label of status
+	 *  @param  int     	$status     Id status
+	 *  @param  int<0,6>	$mode       0 = long label,
+	 *                              	1 = short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string              	Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

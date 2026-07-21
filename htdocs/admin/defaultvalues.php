@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -42,6 +51,7 @@ if (!$user->admin) {
 
 $id = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
@@ -141,13 +151,13 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 
 	if (!$error) {
 		if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
-			$object->type=$mode;
-			$object->user_id=0;
-			$object->page=$defaulturl;
-			$object->param=$defaultkey;
-			$object->value=$defaultvalue;
-			$object->entity=$conf->entity;
-			$result=$object->create($user);
+			$object->type = $mode;
+			$object->user_id = 0;
+			$object->page = $defaulturl;
+			$object->param = $defaultkey;
+			$object->value = $defaultvalue;
+			$object->entity = $conf->entity;
+			$result = $object->create($user);
 			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -160,14 +170,14 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			}
 		}
 		if (GETPOST('actionmodify')) {
-			$object->id=$id;
-			$object->type=$mode;
-			$object->page=$urlpage;
-			$object->param=$key;
-			$object->value=$value;
-			$object->entity=$conf->entity;
-			$result=$object->update($user);
-			if ($result<0) {
+			$object->id = $id;
+			$object->type = $mode;
+			$object->page = $urlpage;
+			$object->param = $key;
+			$object->value = $value;
+			$object->entity = $conf->entity;
+			$result = $object->update($user);
+			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -183,9 +193,9 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 
 // Delete line from delete picto
 if ($action == 'delete') {
-	$object->id=$id;
-	$result=$object->delete($user);
-	if ($result<0) {
+	$object->id = $id;
+	$result = $object->delete($user);
+	if ($result < 0) {
 		$action = '';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -205,23 +215,26 @@ llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 $param = '&mode='.$mode;
 
-$enabledisablehtml = $langs->trans("EnableDefaultValues").' ';
+$enabledisablehtml = '<span class="divfilteralone">';
 if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
-	$enabledisablehtml .= '</a>';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
-	$enabledisablehtml .= '</a>';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
 }
+$enabledisablehtml .= '<span class="hideonsmartphone">'.$langs->trans("EnableDefaultValues").'</span>';
+if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
+	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off', 'class="paddingleft valignmiddle"');
+} else {
+	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on', 'class="paddingleft valignmiddle"');
+}
+$enabledisablehtml .= '</a>';
+$enabledisablehtml .= '</span>';
 
 print load_fiche_titre($langs->trans("DefaultValues"), $enabledisablehtml, 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("DefaultValuesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info hideonsmartphone">'.$langs->trans("DefaultValuesDesc")."</div>\n";
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
@@ -259,10 +272,10 @@ $head = defaultvalues_prepare_head();
 print dol_get_fiche_head($head, $mode, '', -1, '');
 
 if ($mode == 'sortorder') {
-	print info_admin($langs->trans("WarningSettingSortOrder")).'<br>';
+	print info_admin($langs->trans("WarningSettingSortOrder"), 0, 0, 'warning').'<br>';
 }
 if ($mode == 'mandatory') {
-	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly")).'<br>';
+	print info_admin($langs->trans("FeatureSupportedOnTextFieldsOnly"), 0, 0, 'warning').'<br>';
 }
 
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -301,7 +314,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 		foreach ($substitutionarray as $key => $val) {
 			$texthelp .= $key.' -> '.$val.'<br>';
 		}
-		$textvalue = $form->textwithpicto($langs->trans("Value"), $texthelp, 1, 'help', '', 0, 2, 'subsitutiontooltip');
+		$textvalue = $form->textwithpicto($langs->trans("Value"), $langs->trans("DefaultValuesHelpText"));
 	} else {
 		$texthelp = 'ASC or DESC';
 		$textvalue = $form->textwithpicto($langs->trans("SortOrder"), $texthelp);
@@ -334,8 +347,11 @@ print '</td>';
 // Value
 if ($mode != 'focus' && $mode != 'mandatory') {
 	print '<td>';
-	print '<input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
-	print '</td>';
+	print '<span class="nowraponall"><input type="text" class="flat maxwidth100onsmartphone" name="defaultvalue" value="'.dol_escape_htmltag($defaultvalue).'">';
+	if ($mode != 'sortorder') {
+		print $form->textwithpicto('', $texthelp, 1, 'list-alt', 'paddingleftimp cursorpointer', 0, 2, 'subsitutiontooltip');
+	}
+	print '</span></td>';
 }
 // Limit to superadmin
 if (isModEnabled('multicompany') && !$user->entity) {
@@ -355,8 +371,8 @@ if (!getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
 print '</td>'."\n";
 print '</tr>'."\n";
-
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
+//"(t.type:=:".$mode.") AND (t.entity:in:("((int)$user->entity).", ".((int)$conf->entity)."))"
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, "(t.type:=:'".$mode."') AND (t.entity:in:".((int) $user->entity).", ".((int) $conf->entity).")");
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -396,7 +412,7 @@ if (!is_array($result) && $result < 0) {
 		// Multicompany
 		print '<td>';
 		if (isModEnabled('multicompany')) {
-			print dol_escape_htmltag($defaultvalue->entity);
+			print dol_escape_htmltag((string) $defaultvalue->entity);
 		}
 		print '</td>';
 

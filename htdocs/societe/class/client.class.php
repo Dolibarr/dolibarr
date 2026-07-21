@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +35,10 @@ class Client extends Societe
 	/**
 	 * @var string Used to add a filter in Form::showrefnav method
 	 */
-	public $next_prev_filter = "te.client in (1,2,3)";
+	public $next_prev_filter = "(te.client:in:1,2,3)";
 
 	/**
-	 * @var array
+	 * @var array<int,array{id:int,code:string,label:string,picto:string}>
 	 */
 	public $cacheprospectstatus = array();
 
@@ -114,10 +115,10 @@ class Client extends Societe
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if ($obj->client == 1 || $obj->client == 3) {
-					$this->nb["customers"] += $obj->nb;
+					$this->nb["customers"] += (int) $obj->nb;
 				}
 				if ($obj->client == 2 || $obj->client == 3) {
-					$this->nb["prospects"] += $obj->nb;
+					$this->nb["prospects"] += (int) $obj->nb;
 				}
 			}
 			$this->db->free($resql);
@@ -151,7 +152,7 @@ class Client extends Societe
 		$i = 0;
 		while ($i < $num) {
 			$obj = $this->db->fetch_object($resql);
-			$this->cacheprospectstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>($langs->trans("ST_".strtoupper($obj->code)) == "ST_".strtoupper($obj->code)) ? $obj->label : $langs->trans("ST_".strtoupper($obj->code)), 'picto'=>$obj->picto);
+			$this->cacheprospectstatus[$obj->id] = array('id' => $obj->id, 'code' => $obj->code, 'label' => ($langs->trans("ST_".strtoupper($obj->code)) == "ST_".strtoupper($obj->code)) ? $obj->label : $langs->trans("ST_".strtoupper($obj->code)), 'picto' => $obj->picto);
 			$i++;
 		}
 		return 1;

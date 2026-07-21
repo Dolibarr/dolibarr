@@ -1,10 +1,29 @@
-<!-- file menu.tpl.php -->
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		sebastien schaffhauser	<sebastien@webmaster67.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
+
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'@phan-var-force Context $context';
 
 global $conf, $hookmanager, $langs;
 
@@ -23,7 +42,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu orders
 	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
@@ -34,7 +52,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu invoices
 	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
 		$navMenu['invoice_list'] = array(
@@ -45,7 +62,46 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
+	// menu interventions
+	if (isModEnabled('intervention') && getDolGlobalInt('WEBPORTAL_FICHEINTER_LIST_ACCESS')) {
+		$navMenu['ficheinter_list'] = array(
+			'id' => 'ficheinter_list',
+			'rank' => 35,
+			'url' => $context->getControllerUrl('ficheinterlist'),
+			'name' => $langs->trans('WebPortalFicheinterListMenu'),
+			'group' => 'administrative'
+		);
+	}
+	// menu tickets
+	if (isModEnabled('ticket') && getDolGlobalInt('WEBPORTAL_TICKET_LIST_ACCESS')) {
+		$navMenu['ticket_list'] = array(
+			'id' => 'ticket_list',
+			'rank' => 36,
+			'url' => $context->getControllerUrl('ticketlist'),
+			'name' => $langs->trans('WebPortalTicketListMenu'),
+			'group' => 'administrative'
+		);
+	}
+	// menu documents (GED)
+	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
+		$navMenu['document_list'] = array(
+			'id' => 'document_list',
+			'rank' => 40,
+			'url' => $context->getControllerUrl('documentlist'),
+			'name' => $langs->trans('MyDocuments'),
+			'group' => 'administrative' // group identifier for the group if necessary
+		);
+	}
+	// Shared documents menu
+	if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
+		$navMenu['shared_documents'] = array(
+			'id' => 'shared_documents',
+			'rank' => 50,
+			'url' => $context->getControllerUrl('shareddocuments'),
+			'name' => $langs->trans('SharedDocuments'),
+			'group' => 'administrative'
+		);
+	}
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
 	if (isModEnabled('member')
@@ -61,7 +117,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu partnership
 	$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
 	if (isModEnabled('partnership')
@@ -78,15 +133,25 @@ if ($context->userIsLog()) {
 		);
 	}
 
+	// menu user
+	if ($context->logged_thirdparty) {
+		$navUserMenu['user'] = array(
+			'id' => 'user_account',
+			'rank' => 99998,
+			'url' => false,
+			'name' => '<img class="top-nav-icon user-account" src="' . WebPortalTheme::getIconImagesUrl() . 'user.svg" aria-hidden="true" /> <span class="user-account-name">'.$context->logged_thirdparty->getFullName($langs).'</span>',
+		);
+	}
+
+
 	// menu user with logout
 	$navUserMenu['user_logout'] = array(
 		'id' => 'user_logout',
 		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
-		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
+		'name' => '<img class="top-nav-icon log-out-img" src="'.WebPortalTheme::getIconImagesUrl() . 'logout.svg" title="'.dol_escape_htmltag($langs->trans('Logout')).'"  />',
 	);
 }
-
 // GROUP MENU
 $navGroupMenu = array(
 	'administrative' => array(
@@ -108,6 +173,7 @@ $navGroupMenu = array(
 $parameters = array(
 	'controller' => $context->controller,
 	'Tmenu' => & $navMenu,
+	'TUserMenu' => & $navUserMenu,
 	'TGroupMenu' => & $navGroupMenu,
 	'maxTopMenu' => & $maxTopMenu
 );
@@ -140,11 +206,10 @@ if (empty($reshook)) {
 					// apply rank
 					if (!empty($navGroupMenu[$goupId]['rank']) && $navGroupMenu[$goupId]['rank'] > 0) {
 						// minimum rank of group determine rank of group
-						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
+						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank'])); // @phpstan-ignore-line
 					}
 				}
 			}
-
 			// add grouped items to this menu
 			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
@@ -152,7 +217,7 @@ if (empty($reshook)) {
 					// ajout du group au menu
 					$navMenu[$groupId] = $groupItem;
 
-					// suppression des items enfant du group du menu
+					// remove child item of the group of the menu
 					foreach ($groupItem['children'] as $menuId => $menuItem) {
 						if (isset($navMenu[$menuId])) {
 							unset($navMenu[$menuId]);
@@ -168,11 +233,25 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
+	<ul class="menu-entries-alt">
+		<?php
+		// show menu
+		print '<li data-deep="0" class="nav-item">';
+		print '	<details class="main-nav-dropdown dropdown">';
+		print '		<summary><img class="top-nav-icon menu-icon-dropdown" src="' . WebPortalTheme::getIconImagesUrl() . 'menu.svg" alt="'.dol_escape_htmltag($langs->trans("Menu")).'" /></summary>';
+		print '		<ul >';
+		print 			getNav($navMenu);
+		print '		</ul>';
+		print '	</details>';
+		print '</li>';
+		?>
+	</ul>
+
 	<ul class="brand">
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
+		print '<a class="brand__logo-link" href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
 			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
@@ -190,12 +269,7 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul class="menu-entries-alt">
-	<?php
-		// show menu
-	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
-	?>
-	</ul>
+
 	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {

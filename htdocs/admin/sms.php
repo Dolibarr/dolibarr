@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2020-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +21,26 @@
 
 /**
  *       \file       htdocs/admin/sms.php
- *       \brief      Page to setup emails sending
+ *       \brief      Page to set up SMS sending
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -75,10 +84,10 @@ if ($action == 'send' && !$cancel) {
 	}
 	$sendto     = GETPOST("sendto", 'alphanohtml');
 	$body       = GETPOST('message', 'alphanohtml');
-	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
-	$deferred   = GETPOST('deferred', 'alphanohtml');
-	$priority   = GETPOST('priority', 'alphanohtml');
-	$class      = GETPOST('class', 'alphanohtml');
+	$deliveryreceipt = GETPOSTINT("deliveryreceipt");
+	$deferred   = GETPOSTINT('deferred');
+	$priority   = GETPOSTINT('priority');
+	$class      = GETPOSTINT('class');
 	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object
@@ -114,16 +123,21 @@ if ($action == 'send' && !$cancel) {
 		try {
 			$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class); // This define OvhSms->login, pass, session and account
 		} catch (Exception $e) {
+			$error++;
 			setEventMessages($e->getMessage(), null, 'error');
 		}
-		$result = $smsfile->sendfile(); // This send SMS
+		if (!$error) {
+			$result = $smsfile->sendfile(); // This send SMS
+			if (!$result) {
+				$error++;
+				setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
+			}
+		}
 
-		if ($result) {
+		if (!$error) {
 			setEventMessages($langs->trans("SmsSuccessfulySent", $smsfrom, $sendto), null, 'mesgs');
-			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("ResultKo"), null, 'errors');
-			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
 		$action = '';
@@ -161,19 +175,19 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/index.php?controller=search&orderby=position&orderway=desc&website=marketplace&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
@@ -199,7 +213,7 @@ if ($action == 'edit') {
 
 	print '</table>';
 
-	print '<br><div class="center">';
+	print '<div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods) ? ' disabled' : '').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -209,7 +223,7 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_SMS')).'</td></tr>';
@@ -241,21 +255,25 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	if ($action != 'test') {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 
-	if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init&token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		}
 	}
+
 	print '</div>';
 
-	// Affichage formulaire de TEST simple
+
+	// Display simple test form
 	if ($action == 'test') {
 		print '<br>';
 		print load_fiche_titre($langs->trans("DoTestSend"));
 
-		// Cree l'objet formulaire mail
+		// Create SMS form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';

@@ -21,12 +21,12 @@ DeleteAUser=Избришете корисник
 EnableAUser=Овозможи корисник
 DeleteGroup=Delete
 DeleteAGroup=Избришете група
-ConfirmDisableUser=Дали сте сигурни дека сакате да го оневозможите корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteUser=Дали сте сигурни дека сакате да го избришете корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteGroup=Дали сте сигурни дека сакате да ја избришете групата <b>%s<span class='notranslate'></b></s>?
-ConfirmEnableUser=Дали сте сигурни дека сакате да го овозможите корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmReinitPassword=Дали сте сигурни дека сакате да генерирате нова лозинка за корисникот <b>%s<span class='notranslate'>b09a4b739f17f80 >?
-ConfirmSendNewPassword=Дали сте сигурни дека сакате да генерирате и испратите нова лозинка за корисникот <b>%s<span class='notranslate'>b09a4b739f17f8z распон>?
+ConfirmDisableUser=Are you sure you want to disable user <b>%s</b>?
+ConfirmDeleteUser=Are you sure you want to delete user <b>%s</b>?
+ConfirmDeleteGroup=Are you sure you want to delete group <b>%s</b>?
+ConfirmEnableUser=Are you sure you want to enable user <b>%s</b>?
+ConfirmReinitPassword=Are you sure you want to generate a new password for user <b>%s</b>?
+ConfirmSendNewPassword=Are you sure you want to generate and send new password for user <b>%s</b>?
 NewUser=Нов корисник
 CreateUser=Креирај корисник
 LoginNotDefined=Најавата не е дефинирана.
@@ -35,8 +35,8 @@ ListOfUsers=Список на корисници
 SuperAdministrator=Администратор на повеќе компании
 SuperAdministratorDesc=Системски администратор на повеќе компании (може да ги промени поставките и корисниците)
 DefaultRights=Стандардни дозволи
-DefaultRightsDesc=Овде дефинирајте ги <u>стандардните</u> дозволите кои автоматски се доделуваат на b0b5ba1a823> нов<span class='notranslate'></u> корисник (за да ги измените дозволите за постоечките корисници, одете на корисничката картичка).
-DolibarrUsers=Корисници на Dolibarr
+DefaultRightsDesc=Define here the <u>default</u> permissions that are automatically granted to a <u>new</u> user (to modify permissions for existing users, go to the user card).
+DolibarrUsers=Application users
 LastName=Презиме
 FirstName=Име
 ListOfGroups=Список на групи
@@ -69,9 +69,10 @@ LoginAccountDisableInDolibarr=Сметката е оневозможена во 
 PASSWORDInDolibarr=Лозинката е изменета во Dolibarr
 UsePersonalValue=Користете лична вредност
 ExportDataset_user_1=Корисниците и нивните својства
+ExportDataset_user_2=List of security events
 DomainUser=Корисник на домен %s
 Reactivate=Повторно активирај
-CreateInternalUserDesc=Овој формулар ви овозможува да креирате внатрешен корисник во вашата компанија/организација. За да креирате надворешен корисник (клиент, продавач итн. ..), користете го копчето „Креирај корисник на Dolibarr“ од контактната картичка на таа трета страна.
+CreateInternalUserDesc=This form allows you to create an internal user in your company/organization. To create an external user (customer, vendor etc.  ..), use the button '%s' from the third-party's contact card.
 InternalExternalDesc=Корисникот <b>внатрешна</b> е корисник кој е дел од вашата компанија/организација или е партнер-корисник надвор од вашата организација можеби ќе треба да види повеќе податоци отколку податоци поврзани со неговата компанија (системот за дозволи ќе дефинира што може или што не може да гледа или прави).<br>А <b>надворешен</b> корисникот е клиент, продавач или друг што мора да гледа САМО податоци поврзани со него (Создавањето надворешен корисник за трета страна може да биде направено од записот за контакт на третата страна).<br><br>Во двата случаи, мора да дадете дозволи за карактеристиките што потребата на корисникот.
 PermissionInheritedFromAGroup=Дозволата е дадена затоа што е наследена од еден од групата на корисници.
 Inherited=Наследен
@@ -89,8 +90,8 @@ UserDeleted=Корисникот %s е отстранет
 NewGroupCreated=Групата %s создадена
 GroupModified=Групата %s е изменета
 GroupDeleted=Групата %s е отстранета
-ConfirmCreateContact=Дали сте сигурни дека сакате да креирате сметка на Dolibarr за овој контакт?
-ConfirmCreateLogin=Дали сте сигурни дека сакате да креирате сметка на Dolibarr за овој член?
+ConfirmCreateContact=Are you sure you want to create an External user account for this contact?
+ConfirmCreateLogin=Are you sure you want to create an External user account for this member?
 ConfirmCreateThirdParty=Дали сте сигурни дека сакате да создадете трета страна за овој член?
 LoginToCreate=Најавете се за да креирате
 NameToCreate=Име на трета страна за креирање
@@ -109,9 +110,10 @@ ExpectedWorkedHours=Очекувани работни часови неделн�
 ColorUser=Боја на корисникот
 DisabledInMonoUserMode=Оневозможено во режим на одржување
 UserAccountancyCode=Кориснички сметководствен код
-UserLogoff=Одјавување на корисникот: %s
-UserLogged=Најавен корисник: %s
-UserLoginFailed=Најавата на корисникот не успеа: %s
+UserLogoff=User logout
+UserLogged=User logged
+UserLoginFailed=User login failed
+UserPasswordChange=User password change
 DateOfEmployment=Датум на вработување
 DateEmployment=Вработување
 DateEmploymentStart=Датум на започнување со вработување
@@ -136,3 +138,9 @@ ExcludedByFilter=Не е квалификуван според филтри, н�
 UserEnabledDisabled=Статусот на корисникот е променет: %s
 AlternativeEmailForOAuth2=Алтернативна е-пошта за најавување на OAuth2
 ErrorUpdateCanceledDueToDuplicatedUniqueValue=Грешка, ажурирањето беше откажано затоа што еден од податоците, кој треба да биде единствен, веќе постои
+NewNameUserClone=Full name of the new user
+CloneUserRights=Clone the user's permissions
+CloneCategoriesUser=Clone the user's categories
+ConfirmUserClone=Are you sure you want to clone the user: <b>%s</b>?
+NewEmailUserClone=Email address of the new user
+SocialNetworksUser=Social networks for user

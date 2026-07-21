@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies'));
 
@@ -47,6 +58,7 @@ if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
 }
+$hookmanager->initHooks(array('thirdpartyprice', 'globalcard'));
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
@@ -57,7 +69,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
 if ($action == 'setpricelevel' && $user->hasRight('societe', 'creer')) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->setPriceLevel(GETPOST("price_level"), $user);
+	$soc->setPriceLevel(GETPOSTINT("price_level"), $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;

@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2013-2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -122,9 +122,10 @@ abstract class DoliDB implements Database
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
+	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex)
+	public function hintindex($nameofindex, $mode = 1)
 	{
 		return '';
 	}
@@ -152,8 +153,8 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
-	 *	 @param		mixed	$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 *   @param	    int|''	$param      Date TMS to convert
+	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	public function idate($param, $gm = 'tzserver')
@@ -175,8 +176,9 @@ abstract class DoliDB implements Database
 	/**
 	 * Sanitize a string for SQL forging
 	 *
-	 * @param   string 	$stringtosanitize 	String to escape
-	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param   string 	$stringtosanitize 	String to sanitize
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string around val separated by "," but only when string is used as a list of SQL string "'aa', 'bb', 'cc', ..."). Can be used for IN ...
+	 * 										2=Allow all simple quotes. If you use this value, the return MUST be escaped to forge SQL strings.
 	 * @param	int		$allowsequals		1=Allow equals sign
 	 * @param	int		$allowsspace		1=Allow space char
 	 * @param	int		$allowschars		1=Allow a-z chars
@@ -184,7 +186,25 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		return preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+
+		if ($allowsimplequote == 1) {
+			// Remove all quotes that are inside a string and not around
+			$tmpchars = explode(',', $result);
+			$newstringarray = array();
+			foreach ($tmpchars as $tmpchar) {
+				$reg = array();
+				if (preg_match('/^\'(.*)\'$/', $tmpchar, $reg)) {
+					$newstringarray[] = "'".str_replace("'", "", $reg[1])."'";
+				} else {
+					$newstringarray[] = str_replace("'", "", $tmpchar);
+				}
+			}
+			$result = implode(',', $newstringarray);
+		}
+
+		return $result;
 	}
 
 	/**
@@ -302,7 +322,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb' or 't1.fielda,concat(a,b,c) as abc,t2.fieldb'
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity for sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
@@ -311,17 +331,30 @@ abstract class DoliDB implements Database
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
+
+			// If text is "field1, f(a,b,c) as xxx, field2", we must convert string into 'field1,xxx,field2'
+			$sortfield = preg_replace('/[a-z_]+\([^\)]*\) as ([\w]+)/i', '\1', $sortfield);
+
 			$fields = explode(',', $sortfield);
 			$orders = (!empty($sortorder) ? explode(',', $sortorder) : array());
 			$i = 0;
+
+
 			foreach ($fields as $val) {
+				// Sanitized fieldname
+				$fieldname = preg_replace('/[^0-9a-z_\.]/i', '', $val);
+				if (!$fieldname) {
+					continue;
+				}
+
 				if (!$return) {
 					$return .= ' ORDER BY ';
 				} else {
 					$return .= ', ';
 				}
 
-				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
+				// Add field
+				$return .= $fieldname;
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
@@ -357,21 +390,24 @@ abstract class DoliDB implements Database
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
-	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
+	 * 	19700101020000 -> 7200 whatever is server TZ if $gm='gmt'
 	 *
-	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	mixed				$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
+	 * 	@param	?string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	bool|int|string		$gm			'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|''							Date TMS or ''
 	 */
 	public function jdate($string, $gm = 'tzserver')
 	{
 		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
-		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+
+		$string = (string) $string;
+		if ($string == '' || $string == '0' || $string == "0000-00-00 00:00:00") {
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 		return $date;
 	}
 
@@ -417,11 +453,11 @@ abstract class DoliDB implements Database
 	 * just means this function is not what you need. Do not use it.
 	 *
 	 * @param 	string 			$sql 	The sql query string. Must end with "... LIMIT x"
-	 * @return  bool|array              Result
+	 * @return  false|Object[]          Result
 	 */
 	public function getRows($sql)
 	{
-		if (!preg_match('/LIMIT \d+$/', $sql)) {
+		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
 			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
@@ -436,6 +472,34 @@ abstract class DoliDB implements Database
 			$this->free($resql);
 			return $results;
 		}
+
+		return false;
+	}
+
+	/**
+	 * Get the last ID of an auto-increment field of a table
+	 *
+	 * @param 	string 		$table 	Name of table
+	 * @return 	int		 			Next ID or -1 if error
+	 */
+	public function getNextAutoIncrementId($table)
+	{
+		$this->lasterror = 'getNextAutoIncrementId() not implemented for this driver. Failed to get next ID for table '.$table;
+
+		return -1;
+	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * This method must be implemented by subclasses.
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return mixed Driver-specific prepared statement object or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
 
 		return false;
 	}

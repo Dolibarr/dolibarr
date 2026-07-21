@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2014  Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +44,29 @@ class Productbatch extends CommonObject
 	 */
 	public $element = 'productbatch';
 
+	/**
+	 * @var string
+	 */
 	private static $_table_element = 'product_batch'; //!< Name of table without prefix where object is stored
 
+	/**
+	 * @var ?int
+	 */
 	public $fk_product_stock;
 
+	/**
+	 * @var null|string batch number
+	 */
 	public $batch = '';
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+
+	/**
+	 * @var int warehouse ID
+	 */
 	public $warehouseid;
 
 	/**
@@ -61,16 +74,20 @@ class Productbatch extends CommonObject
 	 */
 	public $fk_product;
 
-	// Properties of the lot
-	public $lotid;			// ID in table of the details of properties of each lots
+	/**
+	 * @var int Properties of the lot
+	 *          ID in table of the details of properties of each lots
+	 */
+	public $lotid;
 
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $sellby = '';	// dlc
+
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 * @deprecated
 	 */
 	public $eatby = '';		// dmd/dluo
@@ -90,9 +107,9 @@ class Productbatch extends CommonObject
 	/**
 	 *  Create object into database
 	 *
-	 *  @param	User	$user        User that creates
-	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
+	 *  @param	User		$user		User that creates
+	 *  @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int						Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -113,11 +130,11 @@ class Productbatch extends CommonObject
 		$sql .= "qty,";
 		$sql .= "import_key";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : $this->fk_product_stock).",";
+		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : ((int) $this->fk_product_stock)).",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";		// no more used
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";			// no more used
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
-		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
+		$sql .= " ".(!isset($this->qty) ? 'NULL' : ((float) $this->qty)).",";
 		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ")";
 
@@ -211,16 +228,18 @@ class Productbatch extends CommonObject
 		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
+		/*
 		if ($this->qty < 0) {
 		}
+		*/
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().self::$_table_element." SET";
-		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
+		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? ((int) $this->fk_product_stock) : "null").",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
-		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? ((float) $this->qty) : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -317,8 +336,7 @@ class Productbatch extends CommonObject
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -349,7 +367,7 @@ class Productbatch extends CommonObject
 		$this->id = 0;
 
 		$this->tms = dol_now();
-		$this->fk_product_stock = '';
+		$this->fk_product_stock = 0;
 		$this->sellby = '';
 		$this->eatby = '';
 		$this->batch = '';
@@ -366,7 +384,7 @@ class Productbatch extends CommonObject
 	private function cleanParam()
 	{
 		if (isset($this->fk_product_stock)) {
-			$this->fk_product_stock = (int) trim($this->fk_product_stock);
+			$this->fk_product_stock = (int) trim((string) $this->fk_product_stock);
 		}
 		if (isset($this->batch)) {
 			$this->batch = trim($this->batch);
@@ -380,16 +398,18 @@ class Productbatch extends CommonObject
 	}
 
 	/**
-	 *  Find first detailed record that match either eat-by, sell-by or batch within the warehouse
+	 *  Load first detailed record that match batch within the warehouse (for a given product or not). Can also retrieve the detailed record
+	 *  from the rowid in product_stock directly.
 	 *
 	 *  @param	int			$fk_product_stock   id product_stock for object
-	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+	 *  @param	int|''		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
 	 *  @param	string		$batch_number   	batch number for object
 	 *  @param	int			$fk_warehouse		filter on warehouse (use it if you don't have $fk_product_stock)
+	 *  @param	int			$fk_product			filter on product (use it if you don't have $fk_product_stock)
 	 *  @return int          					Return integer <0 if KO, >0 if OK
 	 */
-	public function find($fk_product_stock = 0, $eatby = null, $sellby = null, $batch_number = '', $fk_warehouse = 0)
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '', $fk_warehouse = 0, $fk_product = 0)
 	{
 		$where = array();
 
@@ -408,6 +428,9 @@ class Productbatch extends CommonObject
 		} else {
 			$sql .= ", ".$this->db->prefix()."product_stock as ps";
 			$sql .= " WHERE t.fk_product_stock = ps.rowid AND ps.fk_entrepot = ".((int) $fk_warehouse);
+			if ($fk_product > 0) {
+				$sql .= " AND ps.fk_product = ".((int) $fk_product);
+			}
 		}
 		if (!empty($eatby)) {
 			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
@@ -423,8 +446,10 @@ class Productbatch extends CommonObject
 		if (!empty($where)) {
 			$sql .= " AND (".$this->db->sanitize(implode(" OR ", $where), 1, 1, 1).")";
 		}
+		// Take the first one found
+		$sql .= $this->db->order("t.tms,t.rowid");
+		$sql .= $this->db->plimit(1);
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -434,7 +459,7 @@ class Productbatch extends CommonObject
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
-				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do no tuse this data.
+				$this->sellby = $this->db->jdate($obj->sellby);	// deprecated. do not use this data.
 				$this->eatby = $this->db->jdate($obj->eatby);	// deprecated. do not use this data.
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
@@ -453,9 +478,9 @@ class Productbatch extends CommonObject
 	 *
 	 * @param	DoliDB		$dbs    			database object
 	 * @param	int			$fk_product_stock	id product_stock for object
-	 * @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+	 * @param	int<0,1>	$with_qty    		1 = doesn't return line with 0 quantity
 	 * @param  	int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-	 * @return 	array|int         				Return integer <0 if KO, array of batch
+	 * @return 	Productbatch[]|int         				Return integer <0 if KO, array of batch
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
@@ -558,7 +583,7 @@ class Productbatch extends CommonObject
 	 * @param	int			$qty_min            [=NULL] Minimum quantity
 	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
-	 * @return  int|array   Return integer <0 if KO, array of batch
+	 * @return  int<-1,-1>|Productbatch[]   Return integer <0 if KO, array of batch
 	 *
 	 * @throws  Exception
 	 */

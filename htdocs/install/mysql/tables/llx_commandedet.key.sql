@@ -29,4 +29,3 @@ ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FO
 --ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_multicurrency FOREIGN KEY (fk_multicurrency) REFERENCES llx_multicurrency (rowid);
 --ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_product_fournisseur_price FOREIGN KEY (fk_product_fournisseur_price) REFERENCES llx_product_fournisseur_price (rowid);
 --ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_remise_except FOREIGN KEY (fk_remise_except) REFERENCES llx_societe_remise_except (rowid);
-

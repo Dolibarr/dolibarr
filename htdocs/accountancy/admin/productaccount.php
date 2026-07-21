@@ -5,8 +5,8 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr) <github@accedinfo.com>
  * Copyright (C) 2021       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,14 @@
  * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -87,10 +95,11 @@ if (empty($accounting_product_mode)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -189,20 +198,18 @@ if ($action == 'update' && $permissiontobind) {
 	}
 
 	if (!empty($toselect) && $massaction === 'changeaccount') {
-		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		$ok = 0;
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {
+		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span class="accountingprocessing">' . count($toselect) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;
 			foreach ($toselect as $productid) {
-				$accounting_account_id = GETPOST('codeventil_'.$productid);
+				$accounting_account_id = GETPOSTINT('codeventil_'.$productid);
 
 				$result = 0;
 				if ($accounting_account_id > 0) {
@@ -274,6 +281,7 @@ if ($action == 'update' && $permissiontobind) {
  */
 
 $form = new FormAccounting($db);
+'@phan-var-force string[] $toselect';  // For some reason typing is lost at this point
 
 // Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
@@ -341,7 +349,7 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $db->sanitize($accountancy_field_name) . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 if (!empty($searchCategoryProductList)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
@@ -413,7 +421,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -458,9 +466,9 @@ if ($resql) {
 	if ($search_current_account_valid && $search_current_account_valid != '-1') {
 		$param .= "&search_current_account_valid=".urlencode($search_current_account_valid);
 	}
-	if ($accounting_product_mode) {
-		$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
-	}
+	// if ($accounting_product_mode) { // can't be empty see line 91-93
+	$param .= '&accounting_product_mode='.urlencode($accounting_product_mode);
+	// }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	if ($optioncss != '') {
@@ -474,15 +482,13 @@ if ($resql) {
 	print '<input type="hidden" name="page_y" value="">';
 
 	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
-	print '<br>';
 
-	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc").'</span><br>';
-	print '<br>';
+	print '<div class="info">'.$langs->trans("InitAccountancyDesc").'</div><br>';
 
-	// Select mode
+	// Select usage
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td>'.$langs->trans('AccountancyCodeToSet').'...</td><td></td>';
 	print "</tr>\n";
 	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode1" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> <label for="accounting_product_mode1">'.$langs->trans('OptionModeProductSell').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
@@ -507,8 +513,10 @@ if ($resql) {
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Refresh').'" name="changetype"></div>';
 
-	print "<br>\n";
+	print "<br><br>\n";
 
+
+	$object = new Product($db);
 
 	// Filter on categories
 	$moreforfilter = '';
@@ -517,7 +525,7 @@ if ($resql) {
 
 	$massactionbutton = '';
 
-	$nbselected = is_array($toselect) ? count($toselect) : 0;
+	$nbselected = count($toselect);
 	if ($massaction == 'set_default_account') {
 		if ($nbselected <= 0) {
 			$langs->load("errors");
@@ -539,14 +547,16 @@ if ($resql) {
 	//print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 	if ($massaction == 'set_default_account') {
 		$formquestion = array();
-		$formquestion[] = array('type' => 'other',
+		$formquestion[] = array(
+			'type' => 'other',
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
-			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone')
+		);
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", $nbselected), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
 	}
 
@@ -554,7 +564,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductOperator : 0);
 	}
 
 	// Show/hide child products. Hidden by default
@@ -566,7 +576,7 @@ if ($resql) {
 	}
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -584,7 +594,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="center liste_titre">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -608,11 +618,11 @@ if ($resql) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="6" name="search_current_account" id="search_current_account" value="'.dol_escape_htmltag($search_current_account).'">';
 	$listofvals = array('withoutvalidaccount' => $langs->trans("WithoutValidAccount"), 'withvalidaccount' => $langs->trans("WithValidAccount"));
-	print ' '.$langs->trans("or").' '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
+	print ' <span class="opacitymedium">'.$langs->trans("or").'</span> '.$form->selectarray('search_current_account_valid', $listofvals, $search_current_account_valid, 1);
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="center liste_titre">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -622,7 +632,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	}
@@ -641,7 +651,7 @@ if ($resql) {
 	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 		print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
 	}
@@ -653,7 +663,7 @@ if ($resql) {
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
-		// Ref produit as link
+		// Product ref as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;
 		$product_static->type = $obj->product_type;
@@ -726,16 +736,14 @@ if ($resql) {
 		}
 
 		$selected = 0;
-		if (!empty($toselect)) {
-			if (in_array($product_static->id, $toselect)) {
-				$selected = 1;
-			}
+		if (in_array($product_static->id, $toselect)) {
+			$selected = 1;
 		}
 
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
 			print '</td>';
@@ -889,7 +897,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			print '<input type="checkbox" class="checkforselect productforselectcodeventil_'.$product_static->id.'" name="chk_prod[]" '.($selected ? "checked" : "").' value="'.$obj->rowid.'"/>';
 			print '</td>';
@@ -900,49 +908,48 @@ if ($resql) {
 	}
 	print '</table>';
 	print '</div>';
+	?>
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			function init_savebutton() {
+				console.log("We check if at least one line is checked")
 
-	print '<script type="text/javascript">
-        jQuery(document).ready(function() {
-        	function init_savebutton()
-        	{
-	            console.log("We check if at least one line is checked")
+				atleastoneselected = 0;
+				jQuery(".checkforselect").each(function(index) {
+					/* console.log( index + ": " + $( this ).text() ); */
+					if ($(this).is(':checked')) atleastoneselected++;
+				});
 
-    			atleastoneselected=0;
-	    		jQuery(".checkforselect").each(function( index ) {
-	  				/* console.log( index + ": " + $( this ).text() ); */
-	  				if ($(this).is(\':checked\')) atleastoneselected++;
-	  			});
+				if (atleastoneselected) jQuery("#changeaccount").removeAttr('disabled');
+				else jQuery("#changeaccount").attr('disabled', 'disabled');
+				if (atleastoneselected) jQuery("#changeaccount").attr('class', 'button');
+				else jQuery("#changeaccount").attr('class', 'button');
+			}
 
-	            if (atleastoneselected) jQuery("#changeaccount").removeAttr(\'disabled\');
-	            else jQuery("#changeaccount").attr(\'disabled\',\'disabled\');
-	            if (atleastoneselected) jQuery("#changeaccount").attr(\'class\',\'button\');
-	            else jQuery("#changeaccount").attr(\'class\',\'button\');
-        	}
-
-        	jQuery(".checkforselect").change(function() {
-        		init_savebutton();
-        	});
-        	jQuery(".productforselect").change(function() {
-				console.log($(this).attr("id")+" "+$(this).val());
+			jQuery(".checkforselect").change(function() {
+				init_savebutton();
+			});
+			jQuery(".productforselect").change(function() {
+				console.log($(this).attr("id") + " " + $(this).val());
 				if ($(this).val() && $(this).val() != -1) {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', true);
+					$(".productforselect"+$(this).attr("id")).prop('checked', true);
 				} else {
-					$(".productforselect"+$(this).attr("id")).prop(\'checked\', false);
+					$(".productforselect"+$(this).attr("id")).prop('checked', false);
 				}
-        		init_savebutton();
-        	});
+				init_savebutton();
+			});
 
-        	init_savebutton();
+			init_savebutton();
 
-            jQuery("#search_current_account").keyup(function() {
-        		if (jQuery("#search_current_account").val() != \'\')
-                {
-                    console.log("We set a value of account to search "+jQuery("#search_current_account").val()+", so we disable the other search criteria on account");
-                    jQuery("#search_current_account_valid").val(-1);
-                }
-        	});
-        });
-        </script>';
+			jQuery("#search_current_account").keyup(function() {
+				if (jQuery("#search_current_account").val() != '') {
+					console.log("We set a value of account to search " + jQuery("#search_current_account").val() + ", so we disable the other search criteria on account");
+					jQuery("#search_current_account_valid").val(-1);
+				}
+			});
+		});
+	</script>
+	<?php
 
 	print '</form>';
 

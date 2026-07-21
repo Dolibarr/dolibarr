@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'users', 'other'));
 
@@ -49,14 +58,14 @@ if (!$user->admin) {
 if ($action == 'add') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
 	$sql .= " WHERE id = ".GETPOSTINT("pid");
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$db->query($sql);
 }
 
 if ($action == 'remove') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
 	$sql .= " WHERE id = ".GETPOSTINT('pid');
-	$sql .= " AND entity = ".$conf->entity;
+	$sql .= " AND entity = ".((int) $conf->entity);
 	$db->query($sql);
 }
 
@@ -90,6 +99,8 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {

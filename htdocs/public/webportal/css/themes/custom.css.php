@@ -48,18 +48,22 @@ session_cache_limiter('public');
 require_once __DIR__.'/../../webportal.main.inc.php';
 dol_include_once('/webportal/class/webPortalTheme.class.php');
 
+/**
+ * @var Conf					$conf
+ * @var HookManager				$hookmanager
+ * @var Translate				$langs
+ * @var Context					$context
+ */
+
 // Define css type
-// top_httphead('text/css');
+top_httphead('text/css');
+/*
 header("Content-Type: text/css");
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: SAMEORIGIN");
-
+*/
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-// if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-/* } else {
-	header('Cache-Control: no-cache');
-} */
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 $webPortalTheme = new WebPortalTheme();
 
@@ -84,5 +88,10 @@ $webPortalTheme = new WebPortalTheme();
 }
 <?php
 
-print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS'."*/\n";
+$hookmanager->initHooks(array('webPortalCustomCss'));
+$parameters = array();
+$hookmanager->executeHooks('webPortalCustomCss', $parameters, $webPortalTheme);
+print $hookmanager->resPrint;
+
+print '/* Here, the content of the common custom CSS defined into Home - Setup - Display - CSS */'."\n";
 print getDolGlobalString('WEBPORTAL_CUSTOM_CSS');

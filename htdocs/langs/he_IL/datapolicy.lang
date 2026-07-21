@@ -17,8 +17,9 @@ Module4100Name = מדיניות פרטיות נתונים
 Module4100Desc = מודול לניהול פרטיות נתונים (תאימות ל-GDPR)
 # Administration page
 datapolicySetup = הגדרת מדיניות פרטיות של נתוני מודול
-Deletion = מחיקת נתונים
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s חודשים
 ONE_YEAR = 1 שנה
 NB_YEARS = %s שנים
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = פרוספקט/לקוח
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = גם לא לקוח פוטנציאלי/לא לקוח
 DATAPOLICY_CONTACT_FOURNISSEUR = ספק
 DATAPOLICY_ADHERENT = חבר
-DATAPOLICY_Tooltip_SETUP = סוג איש קשר - ציין את הבחירות שלך עבור כל סוג.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = אתה יכול לשלוח דוא"ל GDPR לכל אנשי הקשר הרלוונטיים שלך (שעדיין לא קיבלו דוא"ל ועבורם לא רשמת שום דבר על הסכם ה-GDPR שלהם). לשם כך, השתמש בכפתור הבא.
 SendAgreement = לשלוח מיילים
 AllAgreementSend = כל המיילים נשלחו
 TXTLINKDATAPOLICYACCEPT = טקסט לקישור "הסכם"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: עיבוד נתונים אישיים
 DATAPOLICY_consentement = הסכמה שהתקבלה לעיבוד נתונים אישיים

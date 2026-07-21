@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +30,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
@@ -55,6 +65,7 @@ $object = new SupplierProposal($db);
 
 $usercancreate = $user->hasRight("supplier_propal", "write");
 
+$now = dol_now();
 
 
 /*
@@ -79,12 +90,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
-	if ($mesg) {
-		print $mesg;
-	}
-
-	$now = dol_now();
-
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
@@ -115,9 +120,9 @@ if ($id > 0 || !empty($ref)) {
 				if ($usercancreate) {
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);

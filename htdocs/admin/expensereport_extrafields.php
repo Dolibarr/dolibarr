@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +29,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -38,7 +47,6 @@ if (!$user->admin) {
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
-$extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
@@ -47,10 +55,6 @@ $type2label = ExtraFields::getListOfTypesLabels();
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'expensereport'; //Must be the $table_element of the class that manage extrafield
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -69,7 +73,8 @@ $textobject = $langs->transnoentitiesnoconv("ExpenseReports");
 
 llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_extrafields');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
 
 $head = expensereport_admin_prepare_head();

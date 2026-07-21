@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010           Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013-2016      Jean-François Ferry  <hello@librethic.io>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -74,11 +83,15 @@ $hookmanager->initHooks(array('documentticketcard', 'globalcard'));
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
 
+$upload_dir = null;
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 } else {
 	$upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
+
+$permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
 
 // Security check - Protection if external user
 $result = restrictedArea($user, 'ticket', $object->id);
@@ -88,11 +101,10 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id && !$user->hasRight('ticket', 'manage')) {
+if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id && !$permissiontomanage) {
 	accessforbidden();
 }
 
-$permissiontoadd = $user->hasRight('ticket', 'write');	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -127,7 +139,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_documents');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */
@@ -140,9 +152,9 @@ if ($object->id) {
 	}
 
 	if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-		$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
+		$object->next_prev_filter = "te.fk_user_assign:=:".((int) $user->id); // usf filter
 	} elseif ($user->socid > 0) {
-		$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+		$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid); // usf filter
 	}
 
 	$head = ticket_prepare_head($object);
@@ -153,17 +165,20 @@ if ($object->id) {
 	$morehtmlref .= $object->subject;
 	// Author
 	if ($object->fk_user_create > 0) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_create);
 		$morehtmlref .= $fuser->getNomUrl(-1);
 	} elseif (!empty($object->email_msgid)) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 	} elseif (!empty($object->origin_email)) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= '<br>';
+		//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 	}
@@ -175,19 +190,19 @@ if ($object->id) {
 		if ($action != 'editcustomer' && $permissiontoadd) {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 		}
-		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 	}
 
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= '<br>';
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$morehtmlref .= '<br>';
@@ -211,24 +226,6 @@ if ($object->id) {
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
-	// same as above for every messages
-	$sql = 'SELECT id FROM '.MAIN_DB_PREFIX.'actioncomm';
-	$sql .= " WHERE fk_element = ".(int) $object->id." AND elementtype = 'ticket'";
-	$resql = $db->query($sql);
-	if ($resql) {
-		$file_msg_array = array();
-		$numrows = $db->num_rows($resql);
-		for ($i=0; $i < $numrows; $i++) {
-			$upload_msg_dir = $conf->agenda->dir_output.'/'.$db->fetch_row($resql)[0];
-			$file_msg = dol_dir_list($upload_msg_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
-			if (count($file_msg)) {
-				$file_msg_array = array_merge($file_msg, $file_msg_array);
-			}
-		}
-		if (count($file_msg_array)) {
-			$filearray = array_merge($filearray, $file_msg_array);
-		}
-	}
 
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
