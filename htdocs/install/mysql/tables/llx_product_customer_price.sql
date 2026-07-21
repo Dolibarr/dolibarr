@@ -46,5 +46,10 @@ create table llx_product_customer_price
   discount_percent		real DEFAULT 0,
   fk_user				integer,
   price_label           varchar(255),
-  import_key			varchar(14)                  -- Import key
+  import_key			varchar(14),                  -- Import key
+  multicurrency_code	varchar(3) DEFAULT NULL,
+  multicurrency_price	double(24,8) DEFAULT NULL,
+  multicurrency_price_ttc	double(24,8) DEFAULT NULL,
+  multicurrency_price_min	double(24,8) DEFAULT NULL,
+  multicurrency_price_min_ttc	double(24,8) DEFAULT NULL
 )ENGINE=innodb;
