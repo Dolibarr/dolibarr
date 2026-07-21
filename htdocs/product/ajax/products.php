@@ -300,6 +300,16 @@ if ($action == 'fetch' && !empty($id)) {
 
 			'default_unit' => $default_unit
 		);
+
+		// Include multicurrency selling price fields in the JSON response when PRODUCT_SUPPORT_MULTICURRENCY is enabled.
+		// The objectline JS uses these to auto-fill the multicurrency price inputs when the document currency matches.
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$outjson['multicurrency_code'] = !empty($object->multicurrency_code) ? $object->multicurrency_code : null;
+			$outjson['multicurrency_price'] = !empty($object->multicurrency_price) ? price2num($object->multicurrency_price, 'MU') : null;
+			$outjson['multicurrency_price_ttc'] = !empty($object->multicurrency_price_ttc) ? price2num($object->multicurrency_price_ttc, 'MU') : null;
+			$outjson['multicurrency_price_min'] = !empty($object->multicurrency_price_min) ? price2num($object->multicurrency_price_min, 'MU') : null;
+			$outjson['multicurrency_price_min_ttc'] = !empty($object->multicurrency_price_min_ttc) ? price2num($object->multicurrency_price_min_ttc, 'MU') : null;
+		}
 	}
 
 	echo json_encode($outjson);
