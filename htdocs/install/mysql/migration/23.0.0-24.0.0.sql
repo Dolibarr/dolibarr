@@ -580,14 +580,14 @@ ALTER TABLE llx_product ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT 
 ALTER TABLE llx_product ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
 
--- Add multicurrency selling price fields to llx_product_price (multiprices log)
-ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(3) DEFAULT NULL;
-ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
-ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+-- Add multicurrency selling price fields to llx_product_price
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
 
 -- Add multicurrency selling price fields to llx_product_customer_price
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_code varchar(3) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
 ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
 
