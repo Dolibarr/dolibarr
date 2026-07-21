@@ -573,4 +573,25 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
+-- Add multicurrency selling price fields to llx_product
+ALTER TABLE llx_product ADD COLUMN multicurrency_code varchar(3) DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
+
+-- Add multicurrency selling price fields to llx_product_price (multiprices log)
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(3) DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_price ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
+
+-- Add multicurrency selling price fields to llx_product_customer_price
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_code varchar(3) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_ttc double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_min double(24,8) DEFAULT NULL;
+ALTER TABLE llx_product_customer_price ADD COLUMN multicurrency_price_min_ttc double(24,8) DEFAULT NULL;
+
 -- end of migration
