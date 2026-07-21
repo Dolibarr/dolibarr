@@ -568,6 +568,33 @@ if (empty($reshook)) {
 				$object->price_min = GETPOSTFLOAT('price_min');
 			}
 
+			// Capture multicurrency selling price fields when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+			if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'aZ09');
+				if (!empty($object->multicurrency_code)) {
+					if ($object->price_base_type == 'TTC') {
+						$object->multicurrency_price_ttc = GETPOSTFLOAT('multicurrency_price');
+						$object->multicurrency_price_min_ttc = GETPOSTFLOAT('multicurrency_price_min');
+						// Compute HT from TTC for the foreign currency price
+						$tva_tx_tmp = GETPOSTFLOAT('tva_tx');
+						if ($tva_tx_tmp > 0) {
+							$object->multicurrency_price = (float) price2num($object->multicurrency_price_ttc / (1 + ($tva_tx_tmp / 100)), 'MU');
+							$object->multicurrency_price_min = (float) price2num($object->multicurrency_price_min_ttc / (1 + ($tva_tx_tmp / 100)), 'MU');
+						} else {
+							$object->multicurrency_price = $object->multicurrency_price_ttc;
+							$object->multicurrency_price_min = $object->multicurrency_price_min_ttc;
+						}
+					} else {
+						$object->multicurrency_price = GETPOSTFLOAT('multicurrency_price');
+						$object->multicurrency_price_min = GETPOSTFLOAT('multicurrency_price_min');
+						// Compute TTC from HT for the foreign currency price
+						$tva_tx_tmp = GETPOSTFLOAT('tva_tx');
+						$object->multicurrency_price_ttc = (float) price2num($object->multicurrency_price * (1 + ($tva_tx_tmp / 100)), 'MU');
+						$object->multicurrency_price_min_ttc = (float) price2num($object->multicurrency_price_min * (1 + ($tva_tx_tmp / 100)), 'MU');
+					}
+				}
+			}
+
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 			// We must define tva_tx, npr and local taxes
@@ -1876,6 +1903,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print $form->load_tva("tva_tx", $defaultva, $mysoc, $mysoc, 0, 0, '', false, 1);
 					print ajax_combobox("tva_tx");
 					print '</td></tr>';
+
+					// Multicurrency selling price fields shown when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+					if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+						// Load the currency list for the selector
+						require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+						print '<tr><td class="titlefieldcreate">' . $langs->trans("Currency") . ' (' . $langs->trans("Optional") . ')</td>';
+						print '<td>';
+						$default_currency = (GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'aZ09') : getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY_DEFAULT_CURRENCY'));
+						print $form->selectMultiCurrency($default_currency, 'multicurrency_code', 1);
+
+						print '</td></tr>';
+
+						// Price in foreign currency
+						print '<tr><td>' . $langs->trans("SellingPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+						print '<td><input name="multicurrency_price" class="maxwidth50" value="' . (GETPOSTISSET('multicurrency_price') ? GETPOST('multicurrency_price') : '') . '">';
+						print '</td></tr>';
+
+						// Min price in foreign currency
+						print '<tr><td>' . $langs->trans("MinPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+						print '<td><input name="multicurrency_price_min" class="maxwidth50" value="' . (GETPOSTISSET('multicurrency_price_min') ? GETPOST('multicurrency_price_min') : '') . '">';
+						print '</td></tr>';
+					}
 
 					print '</table>';
 
