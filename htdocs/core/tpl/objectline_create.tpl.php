@@ -698,6 +698,7 @@ $jsConf = [
 		'token' => currentToken(),
 		'currency' => $conf->currency,
 		'prod_entry_mode_is_predef' => GETPOST('prod_entry_mode') == 'predef',
+		'PRODUCT_SUPPORT_MULTICURRENCY' => (bool) getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY'), // Include PRODUCT_SUPPORT_MULTICURRENCY so the JS auto-fill can check it without extra AJAX
 		'noGetPostType' => !GETPOSTISSET("type")
 	],
 	'modules' => [
@@ -1057,6 +1058,38 @@ if (!empty($object->thirdparty)) {
 							} else {
 								console.log("objectline_create.tpl set content of price_ht");
 								jQuery("#price_ht").val(data.price_ht);
+							}
+
+							// Auto-fill the multicurrency price input when PRODUCT_SUPPORT_MULTICURRENCY is enabled.
+							// If the product has a stored foreign-currency price and it matches the current document currency,
+							// we pre-fill #multicurrency_price_ht (or #multicurrency_price_ttc) to avoid manual entry.
+							if (jsConf.conf.PRODUCT_SUPPORT_MULTICURRENCY &&
+								typeof data.multicurrency_code !== 'undefined' &&
+								data.multicurrency_code !== null &&
+								data.multicurrency_code !== '' &&
+								typeof jsConf.docObject !== 'undefined' &&
+								typeof jsConf.docObject.multicurrency_code !== 'undefined' &&
+								data.multicurrency_code === jsConf.docObject.multicurrency_code) {
+								// Product has a stored price in the same currency as the document
+								let multicurrency_tx = <?php echo $this->multicurrency_tx ? $this->multicurrency_tx : 1;  ?>;
+								if (data.pricebasetype === 'TTC') {
+									// Document uses TTC as base: fill multicurrency_price_ttc if available, fallback to ht input
+									if (typeof data.multicurrency_price_ttc !== 'undefined' && data.multicurrency_price_ttc !== null) {
+										jQuery("#multicurrency_price_ttc").val(data.multicurrency_price_ttc);
+										let tmpmulticurrency_price_ht = Math.round10(parseFloat(data.multicurrency_price_ttc) / (1 + (parseFloat(data.tva_tx) / 100)), -8);
+										let tmpprice_ht = parseFloat(tmpmulticurrency_price_ht) / parseFloat(multicurrency_tx);
+										jQuery("#multicurrency_price_ht").val(tmpmulticurrency_price_ht);
+										jQuery("#price_ht").val(tmpprice_ht);
+										console.log("objectline_create.tpl set multicurrency_price_ttc (TTC) from product stored value: " + data.multicurrency_price_ttc);
+									}
+								} else {
+									// Document uses HT as base: fill multicurrency_price_ht
+									if (typeof data.multicurrency_price !== 'undefined' && data.multicurrency_price !== null) {
+										jQuery("#multicurrency_price_ht").val(data.multicurrency_price);
+										jQuery("#price_ht").val(Math.round10(data.multicurrency_price / multicurrency_tx, -8));
+										console.log("objectline_create.tpl set multicurrency_price_ht from product stored value: " + data.multicurrency_price);
+									}
+								}
 							}
 
 							// useful to retrieve percent from customer specific price
