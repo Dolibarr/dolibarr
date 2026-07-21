@@ -421,6 +421,30 @@ if (empty($reshook)) {
 			$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 			$price_label = GETPOST('price_label', 'alpha');
 
+			// Capture multicurrency selling price from POST when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+			if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+				$object->multicurrency_code = GETPOST('multicurrency_code', 'aZ09');
+				if (!empty($object->multicurrency_code)) {
+					$mc_price_raw = price2num(GETPOST('multicurrency_price', 'alpha'), 'MU');
+					$mc_price_min_raw = price2num(GETPOST('multicurrency_price_min', 'alpha'), 'MU');
+					// tva_tx is captured later in this block so we read it directly here for the computation
+					$tva_tx_for_mc = (float) price2num(preg_replace('/\*/', '', preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))));
+					if ($newpricebase == 'TTC') {
+						// Entered as TTC: compute HT counterpart for the foreign currency price
+						$object->multicurrency_price_ttc = (float) $mc_price_raw;
+						$object->multicurrency_price = $tva_tx_for_mc > 0 ? (float) price2num($mc_price_raw / (1 + ($tva_tx_for_mc / 100)), 'MU') : (float) $mc_price_raw;
+						$object->multicurrency_price_min_ttc = (float) $mc_price_min_raw;
+						$object->multicurrency_price_min = $tva_tx_for_mc > 0 ? (float) price2num($mc_price_min_raw / (1 + ($tva_tx_for_mc / 100)), 'MU') : (float) $mc_price_min_raw;
+					} else {
+						// Entered as HT: compute TTC counterpart for the foreign currency price
+						$object->multicurrency_price = (float) $mc_price_raw;
+						$object->multicurrency_price_ttc = (float) price2num($mc_price_raw * (1 + ($tva_tx_for_mc / 100)), 'MU');
+						$object->multicurrency_price_min = (float) $mc_price_min_raw;
+						$object->multicurrency_price_min_ttc = (float) price2num($mc_price_min_raw * (1 + ($tva_tx_for_mc / 100)), 'MU');
+					}
+				}
+			}
+
 			$tva_tx = $tva_tx_txt;
 			$vatratecode = '';
 			$reg = array();
@@ -724,6 +748,27 @@ if (empty($reshook)) {
 		$prodcustprice->date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
 		$prodcustprice->date_end = dol_mktime(0, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 
+		// Capture multicurrency selling price fields for the new customer-specific price
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$prodcustprice->multicurrency_code = GETPOST('multicurrency_code', 'aZ09');
+			if (!empty($prodcustprice->multicurrency_code)) {
+				$mc_add_price_raw = price2num(GETPOST('multicurrency_price', 'alpha'), 'MU');
+				$mc_add_min_raw = price2num(GETPOST('multicurrency_price_min', 'alpha'), 'MU');
+				$tva_tx_mc_add = (float) price2num(preg_replace('/\*/', '', preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))));
+				if (GETPOST('price_base_type', 'alpha') == 'TTC') {
+					$prodcustprice->multicurrency_price_ttc = (float) $mc_add_price_raw;
+					$prodcustprice->multicurrency_price = $tva_tx_mc_add > 0 ? (float) price2num($mc_add_price_raw / (1 + ($tva_tx_mc_add / 100)), 'MU') : (float) $mc_add_price_raw;
+					$prodcustprice->multicurrency_price_min_ttc = (float) $mc_add_min_raw;
+					$prodcustprice->multicurrency_price_min = $tva_tx_mc_add > 0 ? (float) price2num($mc_add_min_raw / (1 + ($tva_tx_mc_add / 100)), 'MU') : (float) $mc_add_min_raw;
+				} else {
+					$prodcustprice->multicurrency_price = (float) $mc_add_price_raw;
+					$prodcustprice->multicurrency_price_ttc = (float) price2num($mc_add_price_raw * (1 + ($tva_tx_mc_add / 100)), 'MU');
+					$prodcustprice->multicurrency_price_min = (float) $mc_add_min_raw;
+					$prodcustprice->multicurrency_price_min_ttc = (float) price2num($mc_add_min_raw * (1 + ($tva_tx_mc_add / 100)), 'MU');
+				}
+			}
+		}
+		
 		$extralabels = $extrafields->fetch_name_optionals_label("product_customer_price");
 		$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
 
@@ -880,6 +925,27 @@ if (empty($reshook)) {
 		$prodcustprice->date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
 		$prodcustprice->date_end = dol_mktime(0, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 
+		// Capture multicurrency selling price fields for the customer-specific price update
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			$prodcustprice->multicurrency_code = GETPOST('multicurrency_code', 'aZ09');
+			if (!empty($prodcustprice->multicurrency_code)) {
+				$mc_upd_price_raw = price2num(GETPOST('multicurrency_price', 'alpha'), 'MU');
+				$mc_upd_min_raw = price2num(GETPOST('multicurrency_price_min', 'alpha'), 'MU');
+				$tva_tx_mc_upd = (float) price2num(preg_replace('/\*/', '', preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))));
+				if (GETPOST('price_base_type', 'alpha') == 'TTC') {
+					$prodcustprice->multicurrency_price_ttc = (float) $mc_upd_price_raw;
+					$prodcustprice->multicurrency_price = $tva_tx_mc_upd > 0 ? (float) price2num($mc_upd_price_raw / (1 + ($tva_tx_mc_upd / 100)), 'MU') : (float) $mc_upd_price_raw;
+					$prodcustprice->multicurrency_price_min_ttc = (float) $mc_upd_min_raw;
+					$prodcustprice->multicurrency_price_min = $tva_tx_mc_upd > 0 ? (float) price2num($mc_upd_min_raw / (1 + ($tva_tx_mc_upd / 100)), 'MU') : (float) $mc_upd_min_raw;
+				} else {
+					$prodcustprice->multicurrency_price = (float) $mc_upd_price_raw;
+					$prodcustprice->multicurrency_price_ttc = (float) price2num($mc_upd_price_raw * (1 + ($tva_tx_mc_upd / 100)), 'MU');
+					$prodcustprice->multicurrency_price_min = (float) $mc_upd_min_raw;
+					$prodcustprice->multicurrency_price_min_ttc = (float) price2num($mc_upd_min_raw * (1 + ($tva_tx_mc_upd / 100)), 'MU');
+				}
+			}
+		}
+		
 		$extralabels = $extrafields->fetch_name_optionals_label("product_customer_price");
 		$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
 
@@ -1442,6 +1508,38 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 	print $object->price_label;
 	print '</td></tr>';
 
+	if (getDolGlobalString("PRODUCT_SUPPORT_MULTICURRENCY")) {
+		// Multicurrency code
+		print '<tr class="field_selling_price"><td>' . $langs->trans("Currency") . '</td><td>';
+		print $object->multicurrency_code;
+		print '</td></tr>';
+
+		// Price
+		print '<tr class="field_selling_price"><td>' . $langs->trans("SellingPrice") . ' (' . $langs->trans("Currency") . ')</td><td>';
+		if ($object->price_base_type == 'TTC') {
+			print price($object->multicurrency_price_ttc) . ' ' . $langs->trans($object->price_base_type);
+		} else {
+			print price($object->multicurrency_price) . ' ' . $langs->trans($object->price_base_type);
+			if (getDolGlobalString('PRODUCT_DISPLAY_VAT_INCL_PRICES') && !empty($object->multicurrency_price_ttc)) {
+				print '<i class="opacitymedium"> - ' . price($object->multicurrency_price_ttc) . ' ' . $langs->trans('TTC') . '</i>';
+			}
+		}
+
+		print '</td></tr>';
+
+		// Price minimum
+		print '<tr class="field_min_price"><td>' . $langs->trans("MinPrice") . ' (' . $langs->trans("Currency") . ')</td><td>';
+		if ($object->price_base_type == 'TTC') {
+			print price($object->multicurrency_price_min_ttc) . ' ' . $langs->trans($object->price_base_type);
+		} else {
+			print price($object->multicurrency_price_min) . ' ' . $langs->trans($object->price_base_type);
+			if (getDolGlobalString('PRODUCT_DISPLAY_VAT_INCL_PRICES') && !empty($object->multicurrency_price_min_ttc)) {
+				print '<i class="opacitymedium"> - ' . price($object->multicurrency_price_min_ttc) . ' ' . $langs->trans('TTC') . '</i>';
+			}
+		}
+		print '</td></tr>';
+	}
+
 	$ii = 0;
 	// Price by quantity
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {    // TODO Fix the form inside tr instead of td
@@ -1741,6 +1839,37 @@ if (($action == 'edit_price' || $action == 'edit_level_price') && $object->getRi
 		print '<input name="price_label" maxlength="255" class="minwidth300 maxwidth400onsmartphone" value="'.$object->price_label.'">';
 		print '</td>';
 		print '</tr>';
+
+		// Multicurrency selling price fields shown in edit_price form when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY') && !getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			print '<!-- Multicurrency selling price fields -->' . "\n";
+
+			// Currency selector for the foreign-currency price
+			print '<tr><td>' . $langs->trans("Currency") . ' (' . $langs->trans("Optional") . ')</td>';
+			print '<td>';
+			print $form->selectMultiCurrency(!empty($object->multicurrency_code) ? $object->multicurrency_code : '', 'multicurrency_code', 1);
+			print '</td></tr>';
+
+			// Selling price in foreign currency (follows price_base_type)
+			print '<tr><td>' . $langs->trans("SellingPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+			print '<td>';
+			if ($object->price_base_type == 'TTC') {
+				print '<input name="multicurrency_price" size="10" value="' . (!empty($object->multicurrency_price_ttc) ? price($object->multicurrency_price_ttc) : '') . '">';
+			} else {
+				print '<input name="multicurrency_price" size="10" value="' . (!empty($object->multicurrency_price) ? price($object->multicurrency_price) : '') . '">';
+			}
+			print '</td></tr>';
+
+			// Minimum selling price in foreign currency
+			print '<tr><td>' . $langs->trans("MinPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+			print '<td>';
+			if ($object->price_base_type == 'TTC') {
+				print '<input name="multicurrency_price_min" size="10" value="' . (!empty($object->multicurrency_price_min_ttc) ? price($object->multicurrency_price_min_ttc) : '') . '">';
+			} else {
+				print '<input name="multicurrency_price_min" size="10" value="' . (!empty($object->multicurrency_price_min) ? price($object->multicurrency_price_min) : '') . '">';
+			}
+			print '</td></tr>';
+		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2043,6 +2172,31 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		print '<input name="price_label" maxlength="255" class="minwidth300 maxwidth400onsmartphone" value="'.$object->price_label.'">';
 		print '</td>';
 		print '</tr>';
+
+		// Multicurrency selling price fields for customer-specific price when PRODUCT_SUPPORT_MULTICURRENCY is enabled
+		if (getDolGlobalString('PRODUCT_SUPPORT_MULTICURRENCY')) {
+			print '<!-- Multicurrency customer price fields -->' . "\n";
+
+			// Currency selector for the customer-specific foreign-currency price
+			print '<tr><td>' . $langs->trans("Currency") . ' (' . $langs->trans("Optional") . ')</td>';
+			print '<td>';
+			print $form->selectMultiCurrency(!empty($prodcustprice->multicurrency_code) ? $prodcustprice->multicurrency_code : (!empty($object->multicurrency_code) ? $object->multicurrency_code : ''), 'multicurrency_code', 1);
+			print '</td></tr>';
+
+			// Selling price in foreign currency
+			print '<tr><td>' . $langs->trans("SellingPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+			print '<td>';
+			$mc_cust_val = !empty($prodcustprice->id) ? ($object->price_base_type == 'TTC' ? $prodcustprice->multicurrency_price_ttc : $prodcustprice->multicurrency_price) : ($object->price_base_type == 'TTC' ? $object->multicurrency_price_ttc : $object->multicurrency_price);
+			print '<input name="multicurrency_price" size="10" value="' . (!empty($mc_cust_val) ? price($mc_cust_val) : '') . '">';
+			print '</td></tr>';
+
+			// Minimum selling price in foreign currency
+			print '<tr><td>' . $langs->trans("MinPrice") . ' (' . $langs->trans("Currency") . ')</td>';
+			print '<td>';
+			$mc_cust_min_val = !empty($prodcustprice->id) ? ($object->price_base_type == 'TTC' ? $prodcustprice->multicurrency_price_min_ttc : $prodcustprice->multicurrency_price_min) : ($object->price_base_type == 'TTC' ? $object->multicurrency_price_min_ttc : $object->multicurrency_price_min);
+			print '<input name="multicurrency_price_min" size="10" value="' . (!empty($mc_cust_min_val) ? price($mc_cust_min_val) : '') . '">';
+			print '</td></tr>';
+		}
 
 		// Discount
 		$discount_percent = price2num(GETPOST("discount_percent"));
