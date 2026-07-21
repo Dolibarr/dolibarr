@@ -51,5 +51,7 @@ create table llx_product_price
   multicurrency_code	varchar(3),
   multicurrency_tx		double(24,8) DEFAULT 1,
   multicurrency_price	double(24,8) DEFAULT NULL,
-  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  multicurrency_price_ttc	double(24,8) DEFAULT NULL,
+  multicurrency_price_min	double(24,8) DEFAULT NULL,
+  multicurrency_price_min_ttc	double(24,8) DEFAULT NULL
 )ENGINE=innodb;
