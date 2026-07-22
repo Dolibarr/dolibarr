@@ -489,6 +489,45 @@ class FilesLibTest extends CommonClassTest
 	}
 
 	/**
+	 * Check that a user allowed to export the ledger can download the generated accounting export.
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessAccountingExport()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savpermbindwrite = $user->hasRight('accounting', 'bind', 'write');
+		$savpermexport = $user->hasRight('accounting', 'mouvements', 'export');
+
+		if (empty($user->rights->accounting)) {
+			$user->rights->accounting = new stdClass();
+		}
+		if (empty($user->rights->accounting->bind)) {
+			$user->rights->accounting->bind = new stdClass();
+		}
+		if (empty($user->rights->accounting->mouvements)) {
+			$user->rights->accounting->mouvements = new stdClass();
+		}
+
+		$user->rights->accounting->bind->write = 0;
+		$user->rights->accounting->mouvements->export = 1;
+		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
+		$this->assertEquals(1, $result['accessallowed']);
+
+		$user->rights->accounting->mouvements->export = 0;
+		$result = dol_check_secure_access_document('export_compta', 'export/1/general_ledger.csv', 0, $user, '', 'read');
+		$this->assertEquals(0, $result['accessallowed']);
+
+		$user->rights->accounting->bind->write = $savpermbindwrite;
+		$user->rights->accounting->mouvements->export = $savpermexport;
+	}
+
+	/**
 	 * testDolDirMove
 	 *
 	 * @return void

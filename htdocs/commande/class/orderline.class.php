@@ -469,7 +469,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' fk_unit,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_commande.",";
+		$sql .= " VALUES (".((int) $this->fk_commande).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
@@ -481,15 +481,15 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->localtax2_tx)."',";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
-		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
+		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " ".((int) $this->info_bits).",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
@@ -653,14 +653,14 @@ class OrderLine extends CommonOrderLine
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null");
+		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null");
 		$sql .= " , buy_price_ht='".price2num($this->pa_ht)."'";
 		$sql .= " , info_bits=".((int) $this->info_bits);
 		$sql .= " , special_code=".((int) $this->special_code);
 		$sql .= " , date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= " , date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= " , product_type = ".((int) $this->product_type);
-		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? $this->fk_parent_line : "null");
+		$sql .= " , fk_parent_line=".(!empty($this->fk_parent_line) ? ((int) $this->fk_parent_line) : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
 		}

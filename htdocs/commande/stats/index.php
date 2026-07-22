@@ -109,12 +109,12 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 $picto = 'order';
-$title = $langs->trans("OrdersStatistics");
-$dir = $conf->commande->dir_temp;
+$title = $langs->trans("Orders");
+$dir = $conf->order->dir_temp;
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_order';
-	$title = $langs->trans("OrdersStatisticsSuppliers");
+	$title = $langs->trans("SuppliersOrders");
 	$dir = $conf->fournisseur->commande->dir_temp;
 }
 

@@ -5,7 +5,7 @@
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +219,7 @@ if (function_exists('posix_kill') && function_exists('posix_get_last_error')) {
 
 					$sqlu = "UPDATE ".MAIN_DB_PREFIX."cronjob";
 					$sqlu .= " SET processing = 0, pid = NULL, datelastresult = '".$db->idate($nowcleanup)."', lastresult = '-1', lastoutput = '".$db->escape($msg)."'";
-					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".$pid." AND datelastresult IS NULL";
+					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".((int) $pid)." AND datelastresult IS NULL";
 					$db->query($sqlu);
 
 					dol_syslog("cron_run_jobs.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")", LOG_WARNING);
