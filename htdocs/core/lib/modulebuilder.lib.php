@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -333,7 +333,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -392,9 +392,9 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= "\t".'-- END MODULEBUILDER FIELDS';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsqlfile);
 
-	$result = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
@@ -407,7 +407,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -429,11 +429,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= '-- END MODULEBUILDER INDEXES';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsqlfile);
 
 	dol_mkdir(dirname($pathoffiletoedittarget));
 
-	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result2 = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result2) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {

@@ -1213,7 +1213,7 @@ class FormTicket
 				if (!empty($arrayidused)) {
 					$sql .= " AND ctc.fk_parent IN ( ";
 					foreach ($arrayidused as $idused) {
-						$sql .= $idused.", ";
+						$sql .= ((int) $idused).", ";
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";

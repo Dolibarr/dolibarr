@@ -1885,66 +1885,55 @@ class Expedition extends CommonObject
 			}
 		}
 
+		// No delete expedition
 		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			// No delete expedition
-			if (!$error) {
-				$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
-				$sql .= " WHERE rowid = ".((int) $this->id);
-
-				if ($this->db->query($sql)) {
-					if (!empty($this->origin) && $this->origin_id > 0) {
-						$this->fetch_origin();
-						$origin_object = $this->origin_object;
-						'@phan-var-force Facture|Commande $origin_object';
-						/** @var Commande $origin_object */
-						if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
-							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-							$origin_object->loadExpeditions();
-							if (count($origin_object->expeditions) <= 0) {
-								$origin_object->setStatut(Commande::STATUS_VALIDATED);
-							}
+			if ($this->db->query($sql)) {
+				if (!empty($this->origin) && $this->origin_id > 0) {
+					$this->fetch_origin();
+					$origin_object = $this->origin_object;
+					'@phan-var-force Facture|Commande $origin_object';
+					/** @var Commande $origin_object */
+					if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+						// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						$origin_object->loadExpeditions();
+						if (count($origin_object->expeditions) <= 0) {
+							$origin_object->setStatut(Commande::STATUS_VALIDATED);
 						}
 					}
-
-					$this->db->commit();
-
-					// We delete PDFs
-					$ref = dol_sanitizeFileName($this->ref);
-					if (!empty($conf->expedition->dir_output)) {
-						$dir = $conf->expedition->dir_output.'/sending/'.$ref;
-						$file = $dir.'/'.$ref.'.pdf';
-						if (file_exists($file)) {
-							if (!dol_delete_file($file)) {
-								return 0;
-							}
-						}
-						if (file_exists($dir)) {
-							if (!dol_delete_dir_recursive($dir)) {
-								$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
-								return 0;
-							}
-						}
-					}
-
-					return 1;
-				} else {
-					$this->error = $this->db->lasterror()." - sql=$sql";
-					$this->db->rollback();
-					return -3;
 				}
+
+				$this->db->commit();
+
+				// We delete PDFs
+				$ref = dol_sanitizeFileName($this->ref);
+				if (!empty($conf->expedition->dir_output)) {
+					$dir = $conf->expedition->dir_output.'/sending/'.$ref;
+					$file = $dir.'/'.$ref.'.pdf';
+					if (file_exists($file)) {
+						if (!dol_delete_file($file)) {
+							return 0;
+						}
+					}
+					if (file_exists($dir)) {
+						if (!dol_delete_dir_recursive($dir)) {
+							$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+							return 0;
+						}
+					}
+				}
+
+				return 1;
 			} else {
+				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
-				return -2;
+				return -3;
 			}
 		} else {
 			$this->db->rollback();
-			return -1;
+			return -2;
 		}
 	}
 
