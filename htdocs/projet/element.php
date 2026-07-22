@@ -216,6 +216,9 @@ $othermessage = '';
 $tmpprojtime = array();
 $nbAttendees = 0;
 
+$extrafields->fetch_name_optionals_label($object->table_element);
+$object->fetch_optionals();
+
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php

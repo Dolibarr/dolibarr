@@ -73,7 +73,7 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = getMultidirOutput($object).'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('stocktransferlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels

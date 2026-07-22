@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '', $obfusc
 	}
 
 	$reg = array();
-	if (preg_match('/^(dolobfuscationv1[^:]+|dolcrypt):([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^(dolobfuscation|dolcrypt)[^:]*:([^:]+):(.+)$/', $chain, $reg)) {
 		// The $chain is already an encrypted string
 		return $chain;
 	}
@@ -157,17 +158,17 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 	}
 
 	// New method
-	if (preg_match('/^dol[^:]+:([^:]+):(.+)$/', $chain, $reg)) {
+	if (preg_match('/^(dolobfuscation|dolcrypt)[^:]*:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
 		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
 
-		$ciphering = $reg[1];
+		$ciphering = $reg[2];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
 				dol_syslog("Error dolDecrypt decrypt key is empty", LOG_WARNING);
 				return $chain;
 			}
-			$tmpexplode = explode(':', $reg[2]);
+			$tmpexplode = explode(':', $reg[3]);
 			if (!empty($tmpexplode[1])) {
 				$data = $tmpexplode[1];
 				$iv = $tmpexplode[0];
@@ -177,6 +178,8 @@ function dolDecrypt($chain, $key = '', $patterntotest = '')
 			}
 
 			$keys = explode(',', $key);
+
+			$newchain = '';
 
 			// Loop on each possible keys (usually one, but can be more in future if we have a list of keys)
 			foreach ($keys as $tmpkey) {

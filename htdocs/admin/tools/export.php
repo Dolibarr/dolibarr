@@ -127,7 +127,8 @@ $lowmemorydump = (int) (GETPOSTISSET("lowmemorydump") ? GETPOSTINT("lowmemorydum
 // MYSQL
 if ($what == 'mysql') {
 	$cmddump = GETPOST("mysqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
-	$cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
+	$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
 	$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
 
 	// Add a fallback when we detect something wrong with the path of the dump command
@@ -177,6 +178,7 @@ if ($what == 'mysqlnobin') {
 if ($what == 'postgresql') {
 	$cmddump = GETPOST("postgresqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
 	$cmddump = dol_sanitizePathName($cmddump);
+	$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
 
 	/* Not required, the command is output on screen but not ran for pgsql
 	if (!empty($dolibarr_main_restrict_os_commands))

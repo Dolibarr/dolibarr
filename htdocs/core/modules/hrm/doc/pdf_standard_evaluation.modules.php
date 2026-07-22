@@ -276,14 +276,15 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 65;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 35 : 10);
+				$top_margin = 55 + $this->marge_haute;
+				$tab_top = $top_margin;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $top_margin + 32 : $top_margin);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				if (!empty($object->note_public)) {
-					$tab_top = 65;
+					$tab_top = $top_margin;
 
 					$pdf->SetFont('', 'B', $default_font_size);
 					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
@@ -664,7 +665,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 
 			// Show sender
-			$posy = 40;
+			$posy = $this->marge_haute + 30;
 			$posx = $this->marge_gauche;
 			$hautcadre = 20;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {

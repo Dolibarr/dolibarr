@@ -153,7 +153,7 @@ if ($action == 'add' && $permissiontoadd) {
 		$error++;
 	}
 
-	// gestion des fréquences et des échéances
+	// frequency and due date management
 	$frequency = GETPOSTINT('frequency');
 	$rec_year = GETPOST('rec_year');
 	$rec_month = GETPOST('rec_month');
@@ -840,7 +840,7 @@ if ($action == 'create') {
 
 			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
 
-			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
+			print '<div class="info"><span class="">'.$langs->trans("ToCreateAPredefinedIntervention").'</span></div><br>';
 
 			$i = 0;
 			print '<table class="noborder centpercent">';

@@ -904,7 +904,7 @@ class Cronjob extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob SET";
-		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : $conf->entity).",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : ((int) $conf->entity)).",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " jobtype=".(isset($this->jobtype) ? "'".$this->db->escape($this->jobtype)."'" : "null").",";
 		$sql .= " command=".(isset($this->command) ? "'".$this->db->escape($this->command)."'" : "null").",";
@@ -925,13 +925,13 @@ class Cronjob extends CommonObject
 		$sql .= " unitfrequency=".(isset($this->unitfrequency) ? "'".$this->db->escape($this->unitfrequency)."'" : "null").",";
 		$sql .= " frequency=".(isset($this->frequency) ? ((int) $this->frequency) : "null").",";
 		$sql .= " status=".(isset($this->status) ? ((int) $this->status) : "null").",";
-		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
+		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? ((int) $this->processing) : "0").",";
 		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
 		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
 		$sql .= " fk_user_mod = ".((int) $user->id).",";
 		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
-		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
+		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? ((int) $this->nbrun) : "null").",";
+		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? ((int) $this->maxrun) : "0").",";
 		$sql .= " libname=".(isset($this->libname) ? "'".$this->db->escape($this->libname)."'" : "null").",";
 		$sql .= " test=".(isset($this->test) ? "'".$this->db->escape($this->test)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -1354,7 +1354,7 @@ class Cronjob extends CommonObject
 
 			try {
 				// Ensure we are not trapped into a transaction left open by the job.
-				$dbs->rollback();
+				$dbs->rollback('cron register_shutdown_function');
 			} catch (Throwable $e) {
 				// Ignore
 			}

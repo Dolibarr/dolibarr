@@ -5,7 +5,7 @@
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2026      Joachim Küter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -438,8 +438,8 @@ function dol_stringtotime($string, $gm = 1)
 	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
 	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
-		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
-		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
+		// Date is in format 'DD/MM/YY' or 'DD/MM/YY HH:MM:SS'
+		// Date is in format 'DD/MM/YYYY' or 'DD/MM/YYYY HH:MM:SS'
 		$sday = (int) $reg[1];
 		$smonth = (int) $reg[2];
 		$syear = (int) $reg[3];
@@ -632,7 +632,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 		$month += 1;
 	}
 
-	// On se deplace au debut du mois suivant, et on retire un jour
+	// Move to the start of the next month, then subtract one day
 	$datelim = dol_mktime(23, 59, 59, $month, 1, $year, $gm);
 	$datelim -= (3600 * 24);
 
@@ -909,7 +909,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1006,8 +1006,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		}
 
 		// Increase number of days (on go up into loop)
+		// Advance by exactly one GMT day. We can use += instead of dol_time_plus_duree() here because
+		// inputs of this function are GMT dates (checked above), so a day
+		// is always exactly 86400 seconds.
 		//var_dump("before ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
-		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
+		$timestampStart += 86400;
 		//var_dump("after ".$jour.' '.$mois.' '.$annee.' '.$timestampStart);
 
 		$i++;
@@ -1200,7 +1203,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
-				// Calcul du jour de l'ascension (39 days after easter day)
+				// Calculation of Ascension day (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
@@ -1477,7 +1480,7 @@ function getWeekNumbersOfMonth($month, $year)
 {
 	$nb_days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 	$TWeek = array();
-	for ($day = 1; $day < $nb_days; $day++) {
+	for ($day = 1; $day <= $nb_days; $day++) {
 		$week_number = getWeekNumber($day, $month, $year);
 		$TWeek[$week_number] = $week_number;
 	}
@@ -1494,11 +1497,20 @@ function getWeekNumbersOfMonth($month, $year)
 function getFirstDayOfEachWeek($TWeek, $year)
 {
 	$TFirstDayOfWeek = array();
+	// When a month overlaps 2 years, the weeks 52/53 of previous year and the week 01 of next year are present together in $TWeek.
+	// If $TWeek starts with week 52 or 53 (a January), these first weeks belong to previous year.
+	// If $TWeek ends with week 01 (a December), this last week belongs to next year.
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
-			$year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
 		}
-		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb));
+		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb));
 	}
 	return $TFirstDayOfWeek;
 }
@@ -1513,8 +1525,18 @@ function getFirstDayOfEachWeek($TWeek, $year)
 function getLastDayOfEachWeek($TWeek, $year)
 {
 	$TLastDayOfWeek = array();
+	// Same rule as in getFirstDayOfEachWeek() to find the year each week belongs to
+	$startwithweeksofpreviousyear = ((int) reset($TWeek) >= 52 && in_array('01', $TWeek));
 	foreach ($TWeek as $weekNb) {
-		$TLastDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb.'+6 days'));
+		$yeartouse = $year;
+		if ($startwithweeksofpreviousyear) {
+			if ((int) $weekNb >= 52) {
+				$yeartouse = $year - 1;
+			}
+		} elseif ($weekNb == '01' && in_array('52', $TWeek)) {
+			$yeartouse = $year + 1;
+		}
+		$TLastDayOfWeek[$weekNb] = date('d', strtotime($yeartouse.'W'.$weekNb.'+6 days'));
 	}
 	return $TLastDayOfWeek;
 }

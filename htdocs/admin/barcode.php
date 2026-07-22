@@ -84,7 +84,7 @@ if ($action == 'setcoder') {
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);
-	$sqlp .= " AND entity = ".$conf->entity;
+	$sqlp .= " AND entity = ".((int) $conf->entity);
 
 	$resql = $db->query($sqlp);
 	if (!$resql) {
@@ -106,7 +106,7 @@ if ($action == 'setcoder') {
 } elseif ($action == 'updateengine') {
 	$sql = "SELECT rowid, coder";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY code";
 
 	$resql = $db->query($sql);
@@ -124,7 +124,7 @@ if ($action == 'setcoder') {
 				$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 				$sqlp .= " SET coder = '".$db->escape($coder)."'";
 				$sqlp .= " WHERE rowid = ".((int) $code_id);
-				$sqlp .= " AND entity = ".$conf->entity;
+				$sqlp .= " AND entity = ".((int) $conf->entity);
 
 				$upsql = $db->query($sqlp);
 				if (!$upsql) {
@@ -413,7 +413,7 @@ if (getDolGlobalString('BARCODE_USE_ON_PRODUCT') || getDolGlobalString('BARCODE_
 
 	$sql = "SELECT rowid, code as encoding, libelle as label, coder, example";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-	$sql .= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".((int) $conf->entity);
 	$sql .= " ORDER BY code";
 
 	dol_syslog("admin/barcode.php", LOG_DEBUG);
