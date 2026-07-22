@@ -1363,7 +1363,7 @@ function migrate_links_transfert($db, $langs, $conf)
 				$sql .= "fk_bank, url_id, url, label, type";
 				$sql .= ")";
 				$sql .= " VALUES (";
-				$sql .= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
+				$sql .= ((int) $obj->barowid).",".((int) $obj->bbrowid).", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
 				$sql .= ")";
 
 				//print $sql.'<br>';
@@ -1654,9 +1654,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 						print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
 						$insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
-						$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
-						$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-						$insert_sql .= ' amount           = \''.$select_obj->amount.'\'';
+						$insert_sql .= ' fk_paiementfourn = \''.((int) $select_obj->rowid).'\',';
+						$insert_sql .= ' fk_facturefourn  = \''.((int) $select_obj->fk_facture_fourn).'\',';
+						$insert_sql .= ' amount           = \''.((float) $select_obj->amount).'\'';
 						$insert_resql = $db->query($insert_sql);
 
 						if ($insert_resql) {
@@ -2838,9 +2838,9 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->rowid;
+					$sql2 .= ", ".((int) $obj->rowid);
 					$sql2 .= ", '160'";
-					$sql2 .= ", ".$obj->fk_user_resp;
+					$sql2 .= ", ".((int) $obj->fk_user_resp);
 					$sql2 .= ")";
 
 					if ($obj->fk_user_resp > 0) {
@@ -2917,9 +2917,9 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->fk_project_task;
+					$sql2 .= ", ".((int) $obj->fk_project_task);
 					$sql2 .= ", '180'";
-					$sql2 .= ", ".$obj->fk_user;
+					$sql2 .= ", ".((int) $obj->fk_user);
 					$sql2 .= ")";
 
 					$resql2 = $db->query($sql2);
@@ -3269,9 +3269,9 @@ function migrate_shipping_delivery($db, $langs, $conf)
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->fk_expedition;
+					$sqlInsert .= ((int) $obj->fk_expedition);
 					$sqlInsert .= ", 'shipping'";
-					$sqlInsert .= ", ".$obj->rowid;
+					$sqlInsert .= ", ".((int) $obj->rowid);
 					$sqlInsert .= ", 'delivery'";
 					$sqlInsert .= ")";
 
@@ -3953,7 +3953,7 @@ function migrate_remise_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
 				$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
@@ -5658,7 +5658,7 @@ function migrate_blockedlog_add_hmac_key()
 
 		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
 
-		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 
 		if ($result < 0) {
 			dol_print_error($db);

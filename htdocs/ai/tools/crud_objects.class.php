@@ -2,6 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,22 @@ class ToolCrudObjects extends McpTool
 	/**
 	 * 	Constructor
 	 *
+	 * 	Aligned with McpHandler's instantiation contract: new $className($db, $user, $conf).
+	 * 	Accepting $user via DI allows this tool to work in HTTP MCP context where no PHP
+	 * 	web session exists. Some sibling tool classes (ToolThirdParty, ToolCategories,
+	 * 	ToolProducts) already use this signature; this aligns ToolCrudObjects with them.
+	 *
 	 * 	@param	DoliDB		$db			Database handler
+	 * 	@param	User|null	$user		Service user provided by McpHandler (from AI_MCP_USER_ID)
+	 * 	@param	Conf|null	$conf		Dolibarr config (optional)
 	 */
-	public function __construct(DoliDB  $db)
+	public function __construct(DoliDB $db, $user = null, $conf = null)
 	{
 		$this->db = $db;
+		$this->user = $user;
+		if ($conf !== null) {
+			$this->conf = $conf;
+		}
 	}
 
 
@@ -322,13 +334,20 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	public function execute(string $name, array $args)
 	{
-		global $user, $langs, $conf, $mysoc;
+		global $langs, $conf, $mysoc;
 
-		// Ensure $this->user is the authenticated global user
-		$this->user = $user;
-
-		if (!$user->id) {
-			return ["error" => "User not authenticated."];
+		// Use the user injected via constructor (McpHandler). Fall back to global $user
+		// when running in a web session context (e.g. AI Assistant) where DI is not used.
+		// is_object() is used instead of empty() because the parent McpTool declares $user
+		// with a non-nullable type hint, which makes PHPStan flag empty($this->user) as
+		// unreachable code.
+		if (!is_object($this->user) || empty($this->user->id)) {
+			global $user;
+			if (is_object($user) && !empty($user->id)) {
+				$this->user = $user;
+			} else {
+				return ["error" => "User not authenticated."];
+			}
 		}
 
 		if (!is_object($mysoc) || empty($mysoc->id)) {

@@ -167,7 +167,7 @@ class CommandeFournisseur extends CommonOrder
 	public $date_approve2;
 
 	/**
-	 * @var int|'' Date of the purchase order ordering
+	 * @var int|''|null 	Date of the purchase order ordering
 	 */
 	public $date_commande;
 
@@ -872,7 +872,7 @@ class CommandeFournisseur extends CommonOrder
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -1561,7 +1561,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
-			$sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
+			$sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".((int) $methode).", date_commande='".$this->db->idate($date)."', ";
 			$sql .= " note_private='".$this->db->escape((string) $newnoteprivate)."'";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1682,10 +1682,10 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", ".self::STATUS_DRAFT;
 		$sql .= ", ".((int) $this->source);
 		$sql .= ", '".$this->db->escape(getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF'))."'";
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'null');
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'" . $this->db->escape($this->deposit_percent) . "'" : "null");
-		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'null');
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->fk_multicurrency;
@@ -1745,7 +1745,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
-				$sql .= " SET ref='(PROV".$this->id.")'";
+				$sql .= " SET ref='(PROV".((int) $this->id).")'";
 				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1857,24 +1857,24 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
-		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
+		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : "null").",";
+		$sql .= " fk_user_author=".(isset($this->user_author_id) ? ((int) $this->user_author_id) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? ((int) $this->user_validation_id) : "null").",";
+		$sql .= " fk_projet=".((!empty($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? ((float) $this->deposit_percent) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		//$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
-		$sql .= " fk_account=".($this->fk_account > 0 ? $this->fk_account : "null").",";
+		$sql .= " fk_account=".($this->fk_account > 0 ? ((int) $this->fk_account) : "null").",";
 		//$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
@@ -1973,7 +1973,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
-		$this->date_commande      = 0;
+		$this->date_commande      = null;
 		$this->ref_supplier       = '';
 		$this->user_approve_id    = 0;
 		$this->user_approve_id2   = 0;
@@ -2399,7 +2399,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$sql = "INSERT INTO ".$this->db->prefix()."receptiondet_batch";
 			$sql .= " (fk_element, fk_product, qty, fk_entrepot, fk_user, datec, fk_elementdet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
-			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+			$sql .= " ('".((int) $this->id)."','".((int) $product)."','".((float) $qty)."',".($entrepot > 0 ? "'".((int) $entrepot)."'" : "null").",'".((int) $user->id)."','".$this->db->idate($now)."','".((int) $fk_commandefourndet)."', ".((int) $dispatchstatus).", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape((string) $fk_reception)."'" : "null");
 			$sql .= ")";
 
@@ -3518,7 +3518,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($user->socid) && !$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " JOIN ".$this->db->prefix()."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		$sql .= " WHERE c.entity = ".$conf->entity;
+		$sql .= " WHERE c.entity = ".((int) $conf->entity);
 		if ($mode === 'awaiting') {
 			$sql .= " AND c.fk_statut IN (".self::STATUS_ORDERSENT.", ".self::STATUS_RECEIVED_PARTIALLY.")";
 		} else {

@@ -122,7 +122,7 @@ llxHeader();
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 print load_fiche_titre($titre, '', 'bill');
 
-// Formulaire de generation
+// Generation form
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';

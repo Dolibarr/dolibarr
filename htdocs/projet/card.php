@@ -1815,7 +1815,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				print '</td></tr></table>';
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<table class="centpercent noborder'.(!empty($morecss) ? ' '.$morecss : '').'">';
 				print '<tr class="liste_titre">';
 				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
 				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);

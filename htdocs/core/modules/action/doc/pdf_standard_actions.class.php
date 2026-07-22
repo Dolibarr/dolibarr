@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					   <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -310,7 +310,7 @@ class pdf_standard_actions
 		$sql .= " WHERE c.id=a.fk_action AND a.fk_user_author = u.rowid";
 		$sql .= " AND a.datep BETWEEN '".$this->db->idate(dol_get_first_day($this->year, $this->month, false))."'";
 		$sql .= " AND '".$this->db->idate(dol_get_last_day($this->year, $this->month, false))."'";
-		$sql .= " AND a.entity = ".$conf->entity;
+		$sql .= " AND a.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY a.datep DESC";
 
 		$eventstatic = new ActionComm($this->db);

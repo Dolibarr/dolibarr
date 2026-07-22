@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -335,7 +335,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	}
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
-		$sql .= $filter;
+		$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 	}
 	$sql .= " ORDER BY obj.rowid, obj.fk_product";
 

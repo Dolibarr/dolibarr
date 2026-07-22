@@ -206,7 +206,7 @@ class Subscription extends CommonObject
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
 		$sql .= " '".$this->db->escape($this->note_private)."',";
 		$sql .= " ".(empty($this->ref_ext) ? "null" : "'".$this->db->escape($this->ref_ext)."'").",";
-		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : ((int) $user->id)));
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
@@ -547,9 +547,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

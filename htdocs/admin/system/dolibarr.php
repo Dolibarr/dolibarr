@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -595,11 +595,11 @@ $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
-	$sql .= " WHERE entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

@@ -523,7 +523,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->escape($this->title)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(is_numeric($this->status) ? ((int) $this->status) : '0');
 		$sql .= ", ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'NULL');
@@ -636,10 +636,10 @@ class Project extends CommonObject
 			$sql .= ", fk_project=".($this->fk_project ? ((int) $this->fk_project) : "null");
 			$sql .= ", title = '".$this->db->escape($this->title)."'";
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : "null");
+			$sql .= ", fk_soc = ".($this->socid > 0 ? ((int) $this->socid) : "null");
 			$sql .= ", fk_statut = ".((int) $this->status);
-			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
-			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
+			$sql .= ", fk_opp_status = ".((is_numeric($this->opp_status) && $this->opp_status > 0) ? ((int) $this->opp_status) : 'null');
+			$sql .= ", opp_percent = ".((is_numeric($this->opp_percent) && $this->opp_percent != '') ? ((float) $this->opp_percent) : 'null');
 			$sql .= ", public = ".($this->public ? 1 : 0);
 			$sql .= ", datec = ".($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
 			$sql .= ", dateo = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
@@ -647,7 +647,7 @@ class Project extends CommonObject
 			$sql .= ", date_close = ".($this->date_close != '' ? "'".$this->db->idate($this->date_close)."'" : 'null');
 			$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 			$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
-			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? $this->fk_user_close : "null");
+			$sql .= ", fk_user_close = ".($this->fk_user_close > 0 ? ((int) $this->fk_user_close) : "null");
 			$sql .= ", opp_amount = ".(strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
 			$sql .= ", budget_amount = ".(strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : "null");
 			$sql .= ", fk_user_modif = ".((int) $user->id);
@@ -917,7 +917,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate((int) $date_start)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." >= '".$this->db->idate((int) $date_start)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		if (isDolTms($date_end) && $type == 'loan') {
@@ -929,7 +929,7 @@ class Project extends CommonObject
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate((int) $date_end)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$this->db->sanitize($datefieldname)." <= '".$this->db->idate((int) $date_end)."' OR ".$this->db->sanitize($datefieldname)." IS NULL)";
 		}
 
 		$parameters = array(
@@ -1712,7 +1712,7 @@ class Project extends CommonObject
 		if ($errormessage) {
 			$this->errors[] = $errormessage;
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
-			$sql .= $filter;
+			$sql .= $filter;  // @phan-suppress-current-line SqlInjection
 		}
 
 		$resql = $this->db->query($sql);
