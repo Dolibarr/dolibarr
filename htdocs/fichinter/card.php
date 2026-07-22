@@ -881,7 +881,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->ficheinter->dir_output;
+	$upload_dir = getMultidirOutput($object);
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras' && $permissiontoeditextra) {
@@ -2040,11 +2040,11 @@ if ($action == 'create') {
 		 * Built documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->ficheinter->dir_output."/".$filename;
+		$filedir = getMultidirOutput($object)."/".$filename;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('ficheinter', 'lire');
 		$delallowed = $permissiontoadd;
-		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		print $formfile->showdocuments('ficheinter', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('fichinter'), 1);
@@ -2091,7 +2091,7 @@ if ($action == 'create') {
 	// Presend form
 	$modelmail = 'fichinter_send';
 	$defaulttopic = 'SendInterventionRef';
-	$diroutput = $conf->ficheinter->dir_output;
+	$diroutput = $conf->ficheinter->multidir_output[$object->entity];
 	$trackid = 'int'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
