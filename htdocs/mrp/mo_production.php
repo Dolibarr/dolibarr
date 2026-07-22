@@ -1097,7 +1097,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', '', 1);
 						}
 						print '</td>';
 
@@ -1187,7 +1187,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', '', 1);
 						}
 						print '</td>';
 
