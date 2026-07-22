@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -521,7 +521,7 @@ if ($action == 'encrypt') {
 									$newpassword = dolEncrypt($pass);
 
 									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields';
-									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
+									$sqlupdate .= " SET ".$db->sanitize($attributekey)." = '".$db->escape($newpassword)."'";
 									$sqlupdate .= " WHERE rowid = ".((int) $id);
 
 									$resupdate = $db->query($sqlupdate);

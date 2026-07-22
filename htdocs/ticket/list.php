@@ -884,7 +884,7 @@ foreach ($object->fields as $key => $val) {
 			print '<input type="text" class="flat maxwidth50" name="search_'.$key.'" value="'.dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]).'">';
 			print '</td>';
 		} elseif ($key == 'type_code') {
-			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+			print '<td class="liste_titre">';
 			$formTicket->selectTypesTickets(empty($search[$key]) ? '' : $search[$key], 'search_'.$key, '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'), 1);
 			print '</td>';
 		} elseif ($key == 'category_code') {

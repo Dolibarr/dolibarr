@@ -716,7 +716,7 @@ if (empty($reshook)) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-			$newlang = $reception->thirdparty->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);

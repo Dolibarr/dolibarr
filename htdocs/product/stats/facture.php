@@ -137,13 +137,17 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 $toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicelist';
 $massaction = GETPOST('massaction', 'alpha');
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
+if (!isModEnabled('invoice')) {
+	// The mass actions of this page rely on the invoice module (objects, permissions, upload directory)
 	$massaction = '';
 }
 $arrayfields = array(
@@ -164,9 +168,10 @@ $formother = new FormOther($db);
 
 
 
-$arrayofmassactions = array(
-	'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-);
+$arrayofmassactions = array();
+if (isModEnabled('invoice')) {
+	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -180,7 +185,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-if (empty($reshook)) {
+if (empty($reshook) && isModEnabled('invoice')) {
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
 	$permissiontoread = $user->hasRight("facture", "lire");

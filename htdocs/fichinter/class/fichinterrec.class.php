@@ -9,7 +9,7 @@
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -570,16 +570,16 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".((int) $duration);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
 			//$sql.= ", ".price2num($txtva);
-			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
+			$sql .= ", ".(!empty($fk_product) ? ((int) $fk_product) : "null");
 			$sql .= ", ".((int) $product_type);
-			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
+			$sql .= ", ".(!empty($remise_percent) ? ((float) $remise_percent) : "null");
 			$sql .= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";
 			$sql .= ", '".price2num($total_tva)."'";
 			$sql .= ", '".price2num($total_ttc)."'";
 			$sql .= ", ".(int) $rang;
 			//$sql.= ", ".$special_code;
-			$sql .= ", ".(!empty($fk_unit) ? $fk_unit : "null");
+			$sql .= ", ".(!empty($fk_unit) ? ((int) $fk_unit) : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::addLineRec", LOG_DEBUG);
