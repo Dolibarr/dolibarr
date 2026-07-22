@@ -13,7 +13,7 @@
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Mélina Joum				<melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -761,7 +761,7 @@ if (empty($reshook)) {
 			$price = price2num($newprice, 'MU');
 			$unitPrice = price2num((float) $price / (float) $quantity, 'MU');
 
-			// Add / update
+			// Update or add
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
 				$sql .= " price=".((float) $price).",";

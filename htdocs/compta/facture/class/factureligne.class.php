@@ -515,8 +515,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_source, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
 		$sql .= ' batch, fk_warehouse';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_facture.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
+		$sql .= " VALUES (".((int) $this->fk_facture).",";
+		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".price2num($this->qty).",";
@@ -526,7 +526,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".price2num($this->subprice).",";
@@ -771,7 +771,7 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		$sql .= ", fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht = ".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
-		$sql .= ", fk_parent_line = ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", fk_parent_line = ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang = ".((int) $this->rang);
 		}

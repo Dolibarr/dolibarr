@@ -3101,7 +3101,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>' . $soc->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $soc->id > 0) {
-		$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?socid=' . $soc->id . '&search_societe=' . urlencode($soc->name) . '">' . $langs->trans("OtherProposals") . '</a>)';
+		$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?socid=' . ((int) $soc->id) . '">' . $langs->trans("OtherProposals") . '</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {

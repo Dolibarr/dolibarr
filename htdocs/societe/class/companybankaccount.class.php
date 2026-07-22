@@ -405,7 +405,7 @@ class CompanyBankAccount extends Account
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec, model_pdf)";
-		$sql .= " VALUES (".((int) $this->socid).", '".$this->type."', '".$this->db->idate($this->datec)."',";
+		$sql .= " VALUES (".((int) $this->socid).", '".$this->db->escape($this->type)."', '".$this->db->idate($this->datec)."',";
 		$sql .= " '".$this->db->escape(getDolGlobalString("BANKADDON_PDF"))."'";
 		$sql .= ")";
 		$resql = $this->db->query($sql);
@@ -543,24 +543,26 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-		$sql .= " currency_code, fk_country, state_id, status, domiciliation as address,";
-		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
-		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
-		$sql .= " last_main_doc, model_pdf";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql = "SELECT sr.rowid, sr.label, sr.type, sr.fk_soc as socid, sr.bank, sr.number, sr.code_banque, sr.code_guichet, sr.cle_rib, sr.bic, sr.iban_prefix as iban,";
+		$sql .= " sr.currency_code, sr.fk_country, sr.state_id, sr.status, sr.domiciliation as address,";
+		$sql .= " sr.proprio as owner_name, sr.owner_address, sr.default_rib, sr.datec, sr.tms as datem, sr.rum, sr.frstrecur, sr.date_rum,";
+		$sql .= " sr.stripe_card_ref, sr.stripe_account, sr.ext_payment_site,";
+		$sql .= " sr.last_main_doc, model_pdf,";
+		$sql .= " cc.code as country_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sr";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = sr.fk_country";
 
 		if ($id) {
-			$sql .= " WHERE rowid = ".((int) $id);
+			$sql .= " WHERE sr.rowid = ".((int) $id);
 		} elseif ($ref) {
-			$sql .= " WHERE rowid = ".((int) $ref);
+			$sql .= " WHERE sr.rowid = ".((int) $ref);
 		} elseif ($socid > 0) {
-			$sql .= " WHERE fk_soc  = ".((int) $socid);
+			$sql .= " WHERE sr.fk_soc  = ".((int) $socid);
 			if ($default > -1) {
-				$sql .= " AND default_rib = ".((int) $default);
+				$sql .= " AND sr.default_rib = ".((int) $default);
 			}
 			if ($type) {
-				$sql .= " AND type = '".$this->db->escape($type)."'";
+				$sql .= " AND sr.type = '".$this->db->escape($type)."'";
 			}
 		}
 
@@ -583,10 +585,14 @@ class CompanyBankAccount extends Account
 				$this->iban            = dolDecrypt($obj->iban);
 
 				$this->currency_code   = $obj->currency_code;
-				$this->fk_country      = $obj->fk_country;
+
+				$this->fk_country      = $obj->fk_country;			// deprecated
+				$this->country_id      = $obj->fk_country;
+				$this->country_code    = $obj->country_code;
 				$this->state_id        = $obj->state_id;
-				$this->status          = $obj->status;
 				$this->address         = $obj->address;
+
+				$this->status          = $obj->status;
 
 				$this->owner_name      = $obj->owner_name;
 				$this->proprio = $obj->owner_name;
@@ -687,7 +693,7 @@ class CompanyBankAccount extends Account
 	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
 		$sql1 = "SELECT rowid as id, fk_soc as socid FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : $this->id));
+		$sql1 .= " WHERE rowid = ".((int) ($rib ? $rib : ((int) $this->id)));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

@@ -1019,6 +1019,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->set_reopen(DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(405, $this->commande->error);
@@ -1056,18 +1060,13 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->commande->classifyBilled(DolibarrApiAccess::$user);
 		if ($result < 0) {
 			throw new RestException(400, $this->commande->error);
-		}
-
-		$result = $this->commande->fetch($id);
-		if (!$result) {
-			throw new RestException(404, 'Order not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->commande->fetchObjectLinked();

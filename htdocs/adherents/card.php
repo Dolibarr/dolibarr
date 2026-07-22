@@ -8,7 +8,7 @@
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 			if ($socid != $object->socid) {	// If link differs from currently in database
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
 				$sql .= " WHERE socid = ".((int) $socid);
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".((int) $conf->entity);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);

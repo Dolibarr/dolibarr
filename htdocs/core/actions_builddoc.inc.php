@@ -50,6 +50,8 @@
  * @var ?array<string,mixed> $moreparams
  */
 '
+@phan-var-force int $id
+@phan-var-force int $permissiontoadd
 @phan-var-force ?array<string,mixed> $moreparams
 @phan-var-force CommonObject|Societe $object
 @phan-var-force int $id

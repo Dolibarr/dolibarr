@@ -126,6 +126,57 @@ function fail($message)
 	die($message);
 }
 
+/**
+ * Delete an invoice line and the TakePOS supplement lines attached to it.
+ *
+ * @param	Facture	$invoice	Invoice object
+ * @param	int		$lineid		Line id to delete
+ * @return	int					Return integer <0 if KO, >0 if OK
+ */
+function takeposDeleteLineWithChildren($invoice, $lineid)
+{
+	$lineid = (int) $lineid;
+	if ($lineid <= 0) {
+		return 0;
+	}
+
+	$childrenbyparent = array();
+	if (is_array($invoice->lines)) {
+		foreach ($invoice->lines as $line) {
+			$parentid = (int) $line->fk_parent_line;
+			if ($parentid > 0) {
+				$childrenbyparent[$parentid][] = (int) $line->id;
+			}
+		}
+	}
+
+	$linestodelete = array();
+	$stack = array($lineid);
+	while (!empty($stack)) {
+		$currentlineid = array_pop($stack);
+		if (in_array($currentlineid, $linestodelete, true)) {
+			continue;
+		}
+
+		$linestodelete[] = $currentlineid;
+		if (!empty($childrenbyparent[$currentlineid])) {
+			foreach ($childrenbyparent[$currentlineid] as $childlineid) {
+				$stack[] = $childlineid;
+			}
+		}
+	}
+
+	// Delete supplements before their parent line so no orphan line remains visible on receipts.
+	foreach (array_reverse($linestodelete) as $deletelineid) {
+		$result = $invoice->deleteLine($deletelineid);
+		if ($result < 0) {
+			return $result;
+		}
+	}
+
+	return 1;
+}
+
 
 
 $number = (float) GETPOST('number', 'alpha');
@@ -207,6 +258,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+
 $sectionwithinvoicelink = '';
 $CUSTOMER_DISPLAY_line1 = '';
 $CUSTOMER_DISPLAY_line2 = '';
@@ -214,6 +266,16 @@ $headerorder = '';
 $footerorder = '';
 $printer = null;
 $idoflineadded = 0;
+
+// Enforce the "edit lines" permission on every action that modifies an existing line
+// (delete, quantity, price, discount). Adding a line, a free zone or a note is gated by
+// the "run" permission elsewhere and must stay available to a plain cashier (#38949).
+if (in_array($action, array('deleteline', 'updateqty', 'updateprice', 'updatereduction', 'update_reduction_global')) && !$user->hasRight('takepos', 'editlines')) {
+	dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), array(), 1);
+	$action = '';
+}
+
+
 if (empty($reshook)) {
 	// Test that period is not close
 	$tmpcurrentday = dol_getdate(dol_now());
@@ -1038,7 +1100,10 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if ($idline > 0 && $placeid > 0) { 	// If invoice exists and a line is selected.
-			$invoice->deleteLine($idline);
+			$result = takeposDeleteLineWithChildren($invoice, $idline);
+			if ($result < 0) {
+				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+			}
 			$invoice->fetch($placeid);
 		} elseif ($placeid > 0) {           // If invoice exists but no line selected (delete from another device or with no line selected), proceed to delete the last line.
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture = ".((int) $placeid)." ORDER BY rowid DESC";
@@ -1046,7 +1111,10 @@ if (empty($reshook)) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$deletelineid = $obj->rowid;
-				$invoice->deleteLine($deletelineid);
+				$result = takeposDeleteLineWithChildren($invoice, $deletelineid);
+				if ($result < 0) {
+					dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				}
 			}
 			$invoice->fetch($placeid);
 		}

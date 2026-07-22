@@ -1003,7 +1003,7 @@ class ModeleImports
 	{
 		global $langs, $conf, $user;
 		global $thirdparty_static; // Specific to thirdparty import
-		global $tablewithentity_cache; // Cache to avoid to call  desc at each rows on tables
+		global $tablewithentity_cache; // Cache to avoid to call entity desc at each rows on tables
 
 		if (is_array($arrayrecord) && !empty($recordpositionbase)) {
 			$arrayrecord = array_values($arrayrecord);
@@ -1020,7 +1020,6 @@ class ModeleImports
 
 		//var_dump($array_match_file_to_database);
 		//var_dump($arrayrecord); exit;
-
 		$array_match_database_to_file = array_flip($array_match_file_to_database);
 		$sort_array_match_file_to_database = $array_match_file_to_database;
 		ksort($sort_array_match_file_to_database);
@@ -1527,8 +1526,8 @@ class ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-										$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
-										$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
+									$computedFieldPos = isset($arrayfield[$fieldname]) ? ((int) $arrayfield[$fieldname]) : 0;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $arrayfield, $computedFieldPos));
 									if (empty($classinstance->error) && empty($classinstance->errors)) {
 										$fieldArr = explode('.', $fieldname);
 										if (count($fieldArr) > 0) {
@@ -1574,38 +1573,63 @@ class ModeleImports
 						$where = array();
 
 						$is_table_category_link = false;
-						$fname = 'rowid';
+						$sanitizedfname = 'rowid';
 						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
-							$fname = '*';
+							$sanitizedfname = '*';
 						}
 
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
+								$sqlSelect = "SELECT ".$sanitizedfname." FROM ".$this->db->sanitize($tablename);
 								$data = array_combine($listfields, $listvalues);
 								$where = array();	// filters to forge SQL request
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
-									$col = $objimport->array_import_updatekeys[0][$key];
-									$key = preg_replace('/^.*\./i', '', $key);
-									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
-										$tmp = explode("_", $key);
-										$key = $tmp[0];
+									if (! array_key_exists($key, $objimport->array_import_updatekeys[0])) {
+										$this->errors[$error]['lib'] = 'You try to search duplicates on field '.dol_string_nohtmltag($key).' that is not an allowed field.';
+										$this->errors[$error]['type'] = 'UPDATEKEYBADCOLUMN';
+										$error++;
+										break;
+									}
+									$col = $objimport->array_import_updatekeys[0][$key];				// Label for field name
+									$keyfordata = preg_replace('/^.*\./i', '', $key);					// Keep only field name without table name
+									$keyfordata = preg_replace('/[^a-zA-Z0-9\._]/', '', $keyfordata);	// Sanitize field name
+
+									if (isModEnabled("socialnetworks") && strpos($keyfordata, "socialnetworks") !== false) {
+										$tmp = explode("_", $keyfordata);
+										$keyfordata = $tmp[0];
 										$socialnetwork = $tmp[1];
-										$jsondata = $data[$key];
+										$jsondata = $data[$keyfordata];
 										$json = json_decode($jsondata);
 										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
 										//var_dump($stringtosearch);
 										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
-										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$where[] = $this->db->sanitize($keyfordata)." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
-										$where[] = $key.' = '.$data[$key];
-										$filters[] = $col.' = '.$data[$key];
+										$sanitizedvalue = $data[$keyfordata];
+										/* Not required, the value in $data[$key] seems already sanitized
+										$type = $objimport->array_import_types[0][$key]['type'] ?? 'string';
+										if ($type == 'int') {
+											$sanitizedvalue = (int) $data[$key];
+										} elseif ($type == 'double') {
+											$sanitizedvalue = (float) $data[$key];
+										} else {
+											$sanitizedvalue = "'".$this->db->escape($data[$key])."'";
+										}
+										*/
+										if ((string) $sanitizedvalue === '') {
+											$this->errors[$error]['lib'] = 'You request to search duplicates on field '.$keyfordata.' but no value was provided for this field on this line.';
+											$this->errors[$error]['type'] = 'UPDATEKEYBADVALUE';
+											$error++;
+										} else {
+											$where[] = $this->db->sanitize($keyfordata)." = ".$sanitizedvalue;
+											$filters[] = $col." = ".$sanitizedvalue;
+										}
 									}
 								}
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1614,29 +1638,31 @@ class ModeleImports
 								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
-								$resql = $this->db->query($sqlSelect);
-								if ($resql) {
-									$num_rows = $this->db->num_rows($resql);
-									if ($num_rows == 1) {
-										$res = $this->db->fetch_object($resql);
-										$lastinsertid = $res->rowid;
-										$keyfield = 'rowid';
-										if ($is_table_category_link) {
-											$lastinsertid = 'linktable';
-										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
-										$last_insert_id_array[$tablename] = $lastinsertid;
-									} elseif ($num_rows > 1) {
-										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
+								if (!$error) {
+									$resql = $this->db->query($sqlSelect);
+									if ($resql) {
+										$num_rows = $this->db->num_rows($resql);
+										if ($num_rows == 1) {
+											$res = $this->db->fetch_object($resql);
+											$lastinsertid = $res->rowid;
+											$keyfield = 'rowid';
+											if ($is_table_category_link) {
+												$lastinsertid = 'linktable';
+											} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+											$last_insert_id_array[$tablename] = $lastinsertid;
+										} elseif ($num_rows > 1) {
+											$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
+											$this->errors[$error]['type'] = 'SQL';
+											$error++;
+										} else {
+											// No record found with filters, insert will be tried below
+										}
+									} else {
+										//print 'E';
+										$this->errors[$error]['lib'] = $this->db->lasterror();
 										$this->errors[$error]['type'] = 'SQL';
 										$error++;
-									} else {
-										// No record found with filters, insert will be tried below
 									}
-								} else {
-									//print 'E';
-									$this->errors[$error]['lib'] = $this->db->lasterror();
-									$this->errors[$error]['type'] = 'SQL';
-									$error++;
 								}
 							} else {
 								// We have a last INSERT ID (got by previous pass), so we check if we have a row referencing this foreign key.
@@ -1808,11 +1834,11 @@ class ModeleImports
 	 *
 	 *	@param	array<string,array{val:mixed,type:int<-1,1>}>|boolean	$arrayrecord                    Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 *	@param	array<int|string,string>	$array_match_file_to_database   Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 *	@param	Object		$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
-	 *	@param	int	$maxfields					Max number of fields to use
-	 *	@param	string		$importid			Import key
-	 *	@param	string[]	$updatekeys			Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
-	 *	@return	int								Return integer <0 if KO, >0 if OK
+	 *	@param	Object						$objimport                      Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 *	@param	int							$maxfields						Max number of fields to use
+	 *	@param	string						$importid						Import key
+	 *	@param	string[]					$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 *	@return	int															Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{

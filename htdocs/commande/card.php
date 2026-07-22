@@ -2983,7 +2983,7 @@ if ($action == 'create' && $usercancreate) {
 		// Thirdparty
 		$morehtmlref .= '<br>' . $soc->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/commande/list.php?socid=' . $object->thirdparty->id . '&search_societe=' . urlencode($object->thirdparty->name) . '">' . $langs->trans("OtherOrders") . '</a>)';
+			$morehtmlref .= ' (<a href="' . DOL_URL_ROOT . '/commande/list.php?socid=' . ((int) $object->thirdparty->id) . '">' . $langs->trans("OtherOrders") . '</a>)';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -3538,15 +3538,15 @@ if ($action == 'create' && $usercancreate) {
 				// Valid
 				if ($object->status == Commande::STATUS_DRAFT && ($object->total_ttc >= 0 || getDolGlobalString('ORDER_ENABLE_NEGATIVE')) && $usercanvalidate) {
 					if ($numlines > 0) {
-						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&amp;token=' . newToken() . '&amp;id=' . $object->id, (string) $object->id, 1);
+						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&token=' . newToken() . '&id=' . $object->id, (string) $object->id, 1);
 					} else {
 						$langs->load("errors");
-						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&amp;token=' . newToken() . '&amp;id=' . $object->id, (string) $object->id, -1);
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&token=' . newToken() . '&id=' . $object->id, (string) $object->id, -1);
 					}
 				}
 				// Edit
 				if (($object->status == Commande::STATUS_VALIDATED || ($object->status == Commande::STATUS_SHIPMENTONPROCESS && getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS'))) && $usercancreate) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"] . '?action=modif&amp;token=' . newToken() . '&amp;id=' . $object->id, '');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"] . '?action=modif&token=' . newToken() . '&id=' . $object->id, '');
 				}
 
 				// Create a purchase order

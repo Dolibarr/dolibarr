@@ -1433,7 +1433,7 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+		$sql .= " WHERE re.rowid IN (".$this->db->sanitize(((int) $newid1).",".((int) $newid2)).") AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
 
 		$sql .= $this->db->order("f.type", "ASC");
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -921,7 +921,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.fk_user_approve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as f";
 		$sql .= " WHERE f.rowid = ".((int) $id);
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 
 
 
@@ -1405,7 +1405,7 @@ class ExpenseReport extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'expensereport/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -1467,7 +1467,7 @@ class ExpenseReport extends CommonObject
 	public function set_save_from_refuse($fuser)
 	{
 		// phpcs:enable
-		// Sélection de la date de début de la NDF
+		// Select the start date of the expense report
 		$sql = 'SELECT date_debut';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -2107,7 +2107,7 @@ class ExpenseReport extends CommonObject
 					$this->error = 'ExpenseReportConstraintViolationError';
 					$this->errors[] = $this->error;
 
-					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
+					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex: entered 16 EUR, limit 12 EUR, subtracts 4 EUR
 					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				} else {
 					$this->error = 'ExpenseReportConstraintViolationWarning';

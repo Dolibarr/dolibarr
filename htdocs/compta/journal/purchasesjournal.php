@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -166,7 +166,7 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		// contrôles
+		// checks
 		$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour);
 		$compta_prod = $obj->accountancy_code_buy;
 		if (empty($compta_prod)) {
