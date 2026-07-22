@@ -240,7 +240,7 @@ class CommonSellistField extends CommonField
 					$sql .= " FROM " . $this->db->sanitize($this->db->prefix() . $optionsParams['tableName']);
 					if ($hasExtra) {
 						$sql .= " AS main";
-						$sql .= " LEFT JOIN " . $this->db->sanitize($this->db->prefix() . $optionsParams['tableName']) . "_extrafields AS extra ON extra.fk_object = " . $keyField;
+						$sql .= " LEFT JOIN " . $this->db->sanitize($this->db->prefix() . $optionsParams['tableName']) . "_extrafields AS extra ON extra.fk_object = " . $this->db->sanitize($keyField);
 					}
 
 					// Add filter from 4th field
@@ -311,9 +311,9 @@ class CommonSellistField extends CommonField
 
 					// Note: $InfoFieldList can be 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:Sortfield]]]]]]'
 					if (preg_match('/^[a-z0-9_\-,]+$/i', $optionsParams['sortField'])) {
-						$sql .= $this->db->order($optionsParams['sortField']);
+						$sql .= $this->db->order($optionsParams['sortField']);  // @phan-suppress-current-line SqlInjection
 					} else {
-						$sql .= $this->db->order(implode(', ', $optionsParams['labelFields']));
+						$sql .= $this->db->order(implode(', ', $optionsParams['labelFields']));  // @phan-suppress-current-line SqlInjection
 					}
 
 					$limit = getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', $fieldInfos->optionsSqlLimit ?? 1000);
