@@ -133,7 +133,7 @@ if (empty($reshook)) {
 
 llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
@@ -298,11 +298,11 @@ if (function_exists("ldap_connect")) {
 			if (getDolGlobalString('LDAP_ADMIN_DN') && getDolGlobalString('LDAP_ADMIN_PASS')) {
 				if ($result == 2) {
 					print img_picto('', 'info').' ';
-					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="ok">'.$langs->trans("LDAPBindOK", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', getDolGlobalString("LDAP_ADMIN_PASS"))).'</span>';
 					print '<br>';
 				} else {
 					print img_picto('', 'error').' ';
-					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)).'</span>';
+					print '<span class="error">'.$langs->trans("LDAPBindKO", $ldap->connectedServer, getDolGlobalString('LDAP_SERVER_PORT'), getDolGlobalString('LDAP_ADMIN_DN'), preg_replace('/./i', '*', getDolGlobalString("LDAP_ADMIN_PASS"))).'</span>';
 					print '<br>';
 					print $langs->trans("Error").' '.$ldap->error;
 					print '<br>';

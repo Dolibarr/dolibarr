@@ -3,7 +3,9 @@
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,48 +70,48 @@ class Export
 	/**
 	 * @var array<int,string>
 	 */
-	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code = array(); // Array of "idmodule_numexportprofile"
 	/**
 	 * @var string[]
 	 */
-	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code_for_sort = array(); // Array of "idmodule_numexportprofile"
 	/**
 	 * @var DolibarrModules[]
 	 */
-	public $array_export_module = array(); // Tableau de "nom de modules"
+	public $array_export_module = array(); // Array of Module Names
 	/**
 	 * @var string[]
 	 */
-	public $array_export_label = array(); // Tableau de "libelle de lots"
+	public $array_export_label = array(); // Array of "Translation key" to use for each export profile
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_start = array(); // Tableau des "requetes sql"
+	public $array_export_sql_start = array(); // Array of SQL queries ("start")
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_end = array(); // Tableau des "requetes sql"
+	public $array_export_sql_end = array(); // Array of SQL queries ("end")
 	/**
 	 * @var string[]
 	 */
-	public $array_export_sql_order = array(); // Tableau des "requetes sql"
+	public $array_export_sql_order = array(); // Array of SQL queries ("order")
 
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_fields = array(); // Tableau des listes de champ+libelle a exporter
+	public $array_export_fields = array(); // Array of lists of fields and labels to export
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_TypeFields = array(); // Tableau des listes de champ+Type de filtre
+	public $array_export_TypeFields = array(); // Array of lists of fields & filter types
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_FilterValue = array(); // Tableau des listes de champ+Valeur a filtrer
+	public $array_export_FilterValue = array(); // Array of lists of fields & values to filter
 	/**
 	 * @var array<int,array<string,string>>
 	 */
-	public $array_export_entities = array(); // Tableau des listes de champ+alias a exporter
+	public $array_export_entities = array(); // Array of lists of fields & aliases to export
 	/**
 	 * @var array<int,array<string,string>>
 	 */
@@ -117,7 +119,7 @@ class Export
 	/**
 	 * @var array<array<array{rule:string,file:string,classfile:string,class:string,method:string,method_params:string[]}>>
 	 */
-	public $array_export_special = array(); // array of special operations to do on field
+	public $array_export_special = array(); // array of special operations to do on fields
 	/**
 	 * @var array<array<string,string>>
 	 */
@@ -194,6 +196,11 @@ class Export
 			if (is_resource($handle)) {
 				// Search module files
 				while (($file = readdir($handle)) !== false) {
+					// Ignore Module Builder backup files (*.php.back)
+					if (preg_match('/\.back$/i', $file)) {
+						continue;
+					}
+
 					$reg = array();
 					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg)) {
 						$modulename = $reg[1];
@@ -269,21 +276,21 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code of the export dataset / Code du dataset export
+									// Code of the export dataset
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
 									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
-									// Export Dataset Label / Libelle du dataset export
+									// Export Dataset Label
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
-									$this->array_export_fields[$i] = $module->export_fields_array[$r];
+									// Table of fields to export
+									$this->array_export_fields[$i] = (isset($module->export_fields_array[$r]) ? $module->export_fields_array[$r] : []);
 									// Table of fields to be filtered (key=field, value1=data type) Verifies that the module has filters
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
 									// Table of entities to export (key=field, value=entity)
-									$this->array_export_entities[$i] = $module->export_entities_array[$r];
+									$this->array_export_entities[$i] = (isset($module->export_entities_array[$r]) ? $module->export_entities_array[$r] : '');
 									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Table of special field operations / Tableau des operations speciales sur champ
+									// Table of special field operations
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
@@ -327,7 +334,7 @@ class Export
 	{
 		// phpcs:enable
 		// Build the sql request
-		$sql = $this->array_export_sql_start[$indice];
+		$sql = $this->array_export_sql_start[$indice];  // @phan-suppress-current-line SqlInjection
 		$i = 0;
 
 		//print_r($array_selected);
@@ -336,7 +343,7 @@ class Export
 				continue; // Field not selected
 			}
 			if (preg_match('/^none\./', $key)) {
-				continue; // A field that must not appears into SQL
+				continue; // A field that must not appear into SQL
 			}
 			if ($i > 0) {
 				$sql .= ', ';
@@ -350,9 +357,9 @@ class Export
 				$newfield = $key;
 			}
 
-			$sql .= $newfield;
+			$sql .= $newfield;  // @phan-suppress-current-line SqlInjection
 		}
-		$sql .= $this->array_export_sql_end[$indice];
+		$sql .= $this->array_export_sql_end[$indice];  // @phan-suppress-current-line SqlInjection
 
 		// Add the WHERE part. Filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue)) {
@@ -363,21 +370,21 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);  // @phan-suppress-current-line SqlInjection
 				}
 			}
 			$sql .= $sqlWhere;
 		}
 
 		// Add the sort order
-		$sql .= $this->array_export_sql_order[$indice];
+		$sql .= $this->array_export_sql_order[$indice];  // @phan-suppress-current-line SqlInjection
 
 		// Add the HAVING part.
 		if (is_array($array_filterValue) && !empty($array_filterValue)) {
 			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value) {
 				if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') {
-					$sql .= " HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sql .= " HAVING ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);  // @phan-suppress-current-line SqlInjection
 				}
 			}
 		}
@@ -385,18 +392,17 @@ class Export
 		return $sql;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Build the conditional string from filter the query
+	 *      Build the conditional string from filter the query.
+	 *      More simple and limited function than forgeSQLFromUniversalSearchCriteria
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
-	 *      @return		string					SQL string of then field ex : "field='xxx'"
+	 *      @return		string					SQL string of the field ex : "field='xxx'"
 	 */
-	public function build_filterQuery($TypeField, $NameField, $ValueField)
+	public function buildFilterQuery($TypeField, $NameField, $ValueField)
 	{
-		// phpcs:enable
 		$NameField = sanitizeVal($NameField, 'aZ09');
 		$szFilterQuery = '';
 
@@ -427,26 +433,26 @@ class Export
 				break;
 			case 'Duree':
 			case 'Numeric':
-				// if there is a signe +
+				// if there is a sign +
 				if (strpos($ValueField, "+") > 0) {
-					// mode plage
+					// mode range
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery = "(".$NameField." >= ".((float) $ValueArray[0]);
-					$szFilterQuery .= " AND ".$NameField." <= ".((float) $ValueArray[1]).")";
+					$szFilterQuery = "(".$this->db->sanitize($NameField)." >= ".((float) $ValueArray[0]);
+					$szFilterQuery .= " AND ".$this->db->sanitize($NameField)." <= ".((float) $ValueArray[1]).")";
 				} else {
 					if (is_numeric(substr($ValueField, 0, 1))) {
-						$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
-					} else {
-						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).((float) substr($ValueField, 1));
+						$szFilterQuery = " ".$this->db->sanitize($NameField)." = ".((float) $ValueField);
+					} else {	// Example '<100' o' < 100'
+						$szFilterQuery = " ".$this->db->sanitize($NameField).substr($ValueField, 0, 1).((float) substr($ValueField, 1));
 					}
 				}
 				break;
 			case 'Boolean':
-				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
+				$szFilterQuery = " ".$this->db->sanitize($NameField)." = ".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
 				break;
 			case 'FormSelect':
 				if (is_numeric($ValueField) && $ValueField > 0) {
-					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." = ".((float) $ValueField);
 				} else {
 					$szFilterQuery = " 1=1";	// Test always true
 				}
@@ -454,12 +460,12 @@ class Export
 			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField)) {
-					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." = ".((float) $ValueField);
 				} else {
 					if (!(strpos($ValueField, '%') === false)) {
-						$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
+						$szFilterQuery = " ".$this->db->sanitize($NameField)." LIKE '".$this->db->escape($ValueField)."'";
 					} else {
-						$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
+						$szFilterQuery = " ".$this->db->sanitize($NameField)." = '".$this->db->escape($ValueField)."'";
 					}
 				}
 				break;
@@ -568,14 +574,14 @@ class Export
 				} else {
 					$keyList = 'rowid';
 				}
-				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
+				$sql = "SELECT ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label".(empty($InfoFieldList[3]) ? "" : ", ".$this->db->sanitize($InfoFieldList[3])." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
+					$sql = "SELECT id as id, ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label".(empty($InfoFieldList[3]) ? "" : ", ".$this->db->sanitize($InfoFieldList[3]).' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
-					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
+					$sql = "SELECT ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label, code as code";
 				}
-				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
+				$sql .= " FROM ".MAIN_DB_PREFIX.$this->db->sanitize($InfoFieldList[1]);
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}
@@ -697,10 +703,10 @@ class Export
 		$classname = "Export".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
+		/** @var ModeleExports $objmodel */
 		'@phan-var-force ModeleExports $objmodel';
 
-		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && property_exists($objmodel, 'separator')) {
-			// @phan-suppress-next-line PhanUndeclaredProperty
+		if (in_array($model, array('csvutf8', 'csviso')) && !empty($separator) && empty($objmodel->separator)) {
 			$objmodel->separator = $separator;
 		}
 
@@ -721,7 +727,7 @@ class Export
 				$this->error = "ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
-			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);
+			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);  // @phan-suppress-current-line SqlInjection
 		}
 
 		// Run the SQL
@@ -754,7 +760,14 @@ class Export
 				// Generate title line
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
+				//$MAXFORTEST = getDolGlobalInt('MAX_FOR_TEST_EXPORT');	// For test on large database, we can set it to a non zero value and uncomment code that use it later to limit the export size
+				$counterlineexported = 0;
 				while ($obj = $this->db->fetch_object($resql)) {
+					$counterlineexported++;
+					/*if ($MAXFORTEST && $counterlineexported >= $MAXFORTEST) {
+						break;
+					}*/
+
 					// Process special operations
 					if (!empty($this->array_export_special[$indice])) {
 						foreach ($this->array_export_special[$indice] as $key => $value) {
@@ -781,9 +794,15 @@ class Export
 							} elseif (is_string($item) && $item == 'getNumOpenDays') {
 								// Operation GETNUMOPENDAYS (for Holiday module)
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
-								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
+								$country_id = $mysoc->country_id;
+								if ($obj->u_fk_country > 0) {				// When special field getNumOpenDays is set, we must have a u.fk_country in field list.
+									$country_id = $obj->u_fk_country;
+								}
+
+								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $country_id);
 							} elseif (is_string($item) && $item == 'getRemainToPay') {
 								// Operation INVOICEREMAINTOPAY
 								//$alias=$this->array_export_alias[$indice][$key];
@@ -846,13 +865,13 @@ class Export
 								$obj->$alias = $value;
 							} else {
 								// TODO FIXME
-								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
+								// Export of computed extra field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								//$computestring = is_string($item) ? $item : json_encode($item);
-								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
+								//$tmp = (string) dol_eval((string) $computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
-								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";
+								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." computed extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}
@@ -1018,7 +1037,7 @@ class Export
 				print '<td>';
 				print img_object($this->array_export_module[$keyModel]->getName(), $this->array_export_icon[$keyModel]).' ';
 				print $this->array_export_module[$keyModel]->getName().' - ';
-				// recover export name / recuperation du nom de l'export
+				// Recover export name
 
 				$string = $langs->trans($this->array_export_label[$keyModel]);
 				print($string != $this->array_export_label[$keyModel] ? $string : $this->array_export_label[$keyModel]);
@@ -1030,7 +1049,7 @@ class Export
 					print '<td>'.str_replace(',', ' , ', $filter['field']).'</td>';
 					print '<td>'.str_replace(',', ' , ', $filter['value']).'</td>';
 				}
-				// remove export / suppression de l'export
+				// Remove export
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteprof&token='.newToken().'&id='.$obj->rowid.'">';
 				print img_delete();

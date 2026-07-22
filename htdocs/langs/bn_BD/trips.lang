@@ -121,7 +121,6 @@ ValideTrip=ব্যয় প্রতিবেদন অনুমোদন ক
 ExpenseReportPayments=ব্যয়ের প্রতিবেদন প্রদান
 TaxUndefinedForThisCategory = এই বিভাগের জন্য কর অনির্ধারিত
 errorComputeTtcOnMileageExpense=মাইলেজ খরচ গণনা করার সময় ত্রুটি
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=গণ-অ্যাকশনে শুধুমাত্র খসড়া স্ট্যাটাসের উপাদানগুলি মুছে ফেলা যাবে
 
 ## Dictionary
 EX_BRE=সকালের নাস্তা
@@ -159,3 +158,4 @@ TF_TRAIN=ট্রেন
 TF_TRIP=পরিবহন
 FailedToSetPaid=পেমেন্ট হিসেবে সেট করা যায়নি
 FailedToSetToCancel=বাতিল করতে ব্যর্থ হয়েছে
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

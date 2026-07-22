@@ -102,3 +102,4 @@ SignedReceiverOnline=Üçüncü parti tarafından çevrimiçi olarak imzalandı
 SignedAll=Tüm taraflarca imzalandı
 SignStatus=İmza durumu
 DocumentSigned=Belge imzalandı
+DocumentUnsigned=Belge imzalanmamış

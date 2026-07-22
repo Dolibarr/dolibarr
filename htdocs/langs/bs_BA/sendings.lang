@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Opcija iz modula Workflow, za automatsko post
 NoWarehouseInBase=Nema skladišta u bazi
 ShipmentUpdated=Pošiljka uspješno ažurirana
 ShipmentIncrementStockOnDelete = Povećanje zaliha prilikom brisanja
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Dostava
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Datum dostave
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Postavi datum otpremanja
+ValidateDeliveryReceipt=Potvrdi dostavnicu
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Obriši dostavnicu
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Način dostave
+TrackingNumber=Broj za praćenje
+DeliveryNotValidated=Dostava nije potvrđena
+StatusDeliveryCanceled=Otkazan
+StatusDeliveryDraft=Nacrt
+StatusDeliveryValidated=Primljeno
+NameAndSignature=Name and Signature:
+ToAndDate=Za ___________________________________ na ____/____/__________
+GoodStatusDeclaration=Primio sam robu navedenu gore u dobrom stanju.
+Deliverer=Deliverer:
+Sender=Od
+Recipient=Primalac
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument

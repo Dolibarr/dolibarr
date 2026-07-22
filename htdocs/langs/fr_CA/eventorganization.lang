@@ -53,7 +53,6 @@ ConferenceIsNotConfirmed=Inscription non disponible, la conférence n'est pas en
 EventRegistrationAreClosed=Les inscriptions à l'événement sont fermées
 OrganizationEventBoothRequestWasReceived=Votre demande de stand a été reçue
 OrganizationEventPaymentOfBoothWasReceived=Votre paiement pour votre stand a bien été enregistré
-OrganizationEventPaymentOfRegistrationWasReceived=Votre paiement pour votre inscription à l'événement a été enregistré
 OrganizationEventBulkMailToAttendees=Ceci est un rappel de votre participation à l'événement en tant que participant
 OrganizationEventBulkMailToSpeakers=Ceci est un rappel sur votre participation à l'événement en tant qu'intervenant
 OrganizationEventLinkToThirdParty=Lien vers un tiers (client, fournisseur ou partenaire)

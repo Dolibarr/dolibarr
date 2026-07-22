@@ -12,10 +12,10 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,9 +120,16 @@ class SupplierInvoiceLine extends CommonObjectLine
 	/**
 	 * Unit price included taxes
 	 * @var float
+	 * @deprecated Use $subprice_ttc
+	 * @see $subprice_ttc
 	 */
 	public $pu_ttc;
 
+	/**
+	 * Unit price including taxes
+	 * @var float
+	 */
+	public $subprice_ttc;
 
 	/**
 	 * Id of the corresponding supplier invoice
@@ -145,11 +152,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $description;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
+
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 
@@ -264,8 +272,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * List of cumulative options:
-	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
-	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
+	 * Bit 0:	0 if TVA normal - 1 if TVA NPR
+	 * Bit 1:	0 if normal line - 1 if bit discount (link to line into llx_remise_except)
 	 * @var int
 	 */
 	public $info_bits;
@@ -356,8 +364,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
 
-		$this->subprice = $obj->pu_ht;
-		$this->pu_ht = $this->subprice;
+		$this->subprice 		= $obj->pu_ht;
+		$this->pu_ht 			= $obj->pu_ht;
+		$this->subprice_ttc		= $obj->pu_ttc;
 		$this->pu_ttc			= $obj->pu_ttc;
 		$this->tva_tx			= $obj->tva_tx;
 		$this->localtax1_tx		= $obj->localtax1_tx;
@@ -430,7 +439,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		if (!$error) {
-			// Supprime ligne
+			// Delete line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -513,7 +522,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", date_start = ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end = ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", pu_ht = ".price2num($this->subprice);
-		$sql .= ", pu_ttc = ".price2num($this->pu_ttc);
+		$sql .= ", pu_ttc = ".price2num($this->subprice_ttc);
 		$sql .= ", qty = ".price2num($this->qty);
 		$sql .= ", remise_percent = ".price2num($this->remise_percent);
 		if ($this->fk_remise_except > 0) {
@@ -682,7 +691,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Insertion dans base de la ligne
+		// Insert line into database
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' (fk_facture_fourn, fk_parent_line, label, description, ref, qty,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
@@ -691,7 +700,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ' info_bits, total_ht, tva, total_ttc, total_localtax1, total_localtax2, fk_unit';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_facture_fourn.",";
+		$sql .= " VALUES (".((int) $this->fk_facture_fourn).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$product_label
 			= !empty($this->product_label)
@@ -708,7 +717,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
@@ -716,7 +725,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".(!empty($this->qty) ? price2num($this->total_ttc / $this->qty) : price2num($this->total_ttc)).",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= ' '.(!empty($this->fk_code_ventilation) ? $this->fk_code_ventilation : 0).',';
+		$sql .= ' '.(!empty($this->fk_code_ventilation) ? ((int) $this->fk_code_ventilation) : 0).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= " ".((int) $this->info_bits).",";
@@ -725,7 +734,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
-		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice);
@@ -816,7 +825,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour de l'objet ligne de commande en base
+	 *  Update invoice supplier line into database
 	 *
 	 *  @return		int		Return integer <0 si ko, >0 si ok
 	 */
@@ -825,7 +834,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql .= "  total_ht = ".price2num($this->total_ht);
 		$sql .= ", tva= ".price2num($this->total_tva);

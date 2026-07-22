@@ -3,7 +3,7 @@
  * Copyright (c) 2005-2013  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2011       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +97,7 @@ class ExpeditionStats extends Stats
 		$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= " AND c.entity = ".$conf->entity;
+		$this->where .= " AND c.entity = ".((int) $conf->entity);
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
@@ -119,7 +119,7 @@ class ExpeditionStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
-		$sql .= " FROM ".$this->from;
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -136,14 +136,13 @@ class ExpeditionStats extends Stats
 	 * Return shipments number per year
 	 *
 	 * @return	array<array{0:int,1:int}>				Array of nb each year
-	 *
 	 */
 	public function getNbByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -165,8 +164,8 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -189,8 +188,8 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->db->sanitize($this->field).")";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
@@ -205,14 +204,14 @@ class ExpeditionStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
+	 *  @return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
-		$sql .= " FROM ".$this->from;
+		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->db->sanitize($this->field).") as total, AVG(".$this->db->sanitize($this->field).") as avg";
+		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}

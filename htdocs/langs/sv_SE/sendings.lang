@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Alternativet från modulen Arbetsflöde, att 
 NoWarehouseInBase=Inget lager i basen
 ShipmentUpdated=Leveransen har uppdaterats
 ShipmentIncrementStockOnDelete = Öka lagret vid radering
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Leverans
+DeliveryRef=Er referens
+DeliveryCard=Leveranskvitto
+DeliveryOrder=Leveranskvitto
+DeliveryDate=Leveransdatum
+CreateDeliveryOrder=Skapa orderbekräftelse
+DeliveryStateSaved=Leveransstatus sparad
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Ställ in leveransdatum
+ValidateDeliveryReceipt=Bekräfta leveranskvitto
+ValidateDeliveryReceiptConfirm=Är du säker att du vill bekräfta denna leverans?
+DeleteDeliveryReceipt=Radera leverans
+DeleteDeliveryReceiptConfirm=Är du säker att du vill ta bort orderbekräftelse <b>%s</b>?
+DeliveryMethod=Leveranssätt
+TrackingNumber=Spårnummer
+DeliveryNotValidated=Leverans är inte bekräftad
+StatusDeliveryCanceled=Avbruten
+StatusDeliveryDraft=Utkast
+StatusDeliveryValidated=Mottagen
+NameAndSignature=Namn och signatur:
+ToAndDate=Till___________________________________ den ____ / _____ / __________
+GoodStatusDeclaration=Har tagit emot varan ovan i gott skick,
+Deliverer=Speditör:
+Sender=Avsändare
+Recipient=Mottagare
+ErrorStockIsNotEnough=Det finns inte tillräckligt i lager
+Shippable=Sändbara
+NonShippable=Inte sändbara
+ShowShippableStatus=Visa leveransstatus
+ShowReceiving=Visa orderbekräftelse
+NonExistentOrder=Icke-existerande ordning
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagerantal som redan tilldelats på tidigare rader
 
 # Sending methods
 # ModelDocument

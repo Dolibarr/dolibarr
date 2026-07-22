@@ -69,6 +69,7 @@ if (GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser-
 <script>
 function openDialog() {
 	jQuery(function() {
+		console.log("open dialog");
 		jQuery("#notification-message").dialog({
 			resizable: false,
 			modal: true,
@@ -85,17 +86,18 @@ function init(){
 	$(".imgupforline").hide();
 	$(".imgdownforline").hide();
 	$(".lineupdown").removeAttr('href');
-	console.log($(".tdlineupdown"));
+
+	console.log("init() Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
+
 	$(".tdlineupdown").each(function (tdindex, tdline) {
 		var gripimg = tdline.dataset.gripimg ?? 'grip.png';
-		console.log(gripimg);
+
 		$(tdline).css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'; ?>' + gripimg + ')');
 		$(tdline).css("background-repeat","no-repeat");
 		$(tdline).css("background-position","center center");
-		console.log($(".tdlineupdown")[tdindex], tdline);
+		/* console.log($(".tdlineupdown")[tdindex], tdline); */
 	})
 
-	console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
 	var inital_table = $("#<?php echo $tagidfortablednd; ?> .drag").map((_, el) => $(el)[0]).get();
 	var rowsToMove = [];
 	$("#<?php echo $tagidfortablednd; ?>").tableDnD({

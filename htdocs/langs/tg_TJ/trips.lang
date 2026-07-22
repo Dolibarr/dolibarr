@@ -121,7 +121,6 @@ ValideTrip=Ҳисоботи хароҷотро тасдиқ кунед
 ExpenseReportPayments=Ҳисоботи пардохтҳои хароҷот
 TaxUndefinedForThisCategory = Андоз барои ин категория муайян нест
 errorComputeTtcOnMileageExpense=Хатогӣ дар ҳисоб кардани хароҷоти километр
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Дар амалиёти оммавӣ танҳо унсурҳои дар ҳолати лоиҳа бударо нест кардан мумкин аст
 
 ## Dictionary
 EX_BRE=Субҳона
@@ -159,3 +158,4 @@ TF_TRAIN=Поезд
 TF_TRIP=Нақлиёт
 FailedToSetPaid=Муваффақият танзим ҳамчун пардохт
 FailedToSetToCancel=Бекор карда нашуд
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

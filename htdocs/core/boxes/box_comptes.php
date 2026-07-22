@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class box_comptes extends ModeleBoxes
 	 *  @param  DoliDB	$db      	Database handler
 	 *  @param	string	$param		More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $conf, $user;
 
@@ -90,7 +90,7 @@ class box_comptes extends ModeleBoxes
 			$sql .= ', aj.code as accountancy_journal';
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid = b.fk_accountancy_journal';
-			$sql .= " WHERE b.entity = ".$conf->entity;
+			$sql .= " WHERE b.entity = ".((int) $conf->entity);
 			$sql .= " AND clos = 0";
 			$sql .= " ORDER BY label";
 

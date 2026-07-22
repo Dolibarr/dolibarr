@@ -121,7 +121,6 @@ ValideTrip=Godkänn kostnadsrapport
 ExpenseReportPayments=Betalningar för utgiftsrapporter
 TaxUndefinedForThisCategory = Skatt är odefinierad för denna kategori
 errorComputeTtcOnMileageExpense=Fel vid beräkning av körsträcka
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Endast element i utkaststatus kan tas bort i massåtgärden
 
 ## Dictionary
 EX_BRE=Frukost
@@ -159,3 +158,4 @@ TF_TRAIN=Tåg
 TF_TRIP=Transport
 FailedToSetPaid=Kunde inte ställa in som betald
 FailedToSetToCancel=Misslyckades med att avbryta
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

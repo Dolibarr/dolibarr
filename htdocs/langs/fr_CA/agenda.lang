@@ -8,7 +8,6 @@ NewCompanyToDolibarr=Le tiers %s a été créé
 COMPANY_MODIFYInDolibarr=Tierce partie %s modifiée
 COMPANY_DELETEInDolibarr=Tierce partie %s supprimée
 PropalBackToDraftInDolibarr=La proposition %s revient au statut de brouillon
-InvoiceCreatedInDolibarr=Facture %s créée
 InvoicePaidInDolibarr=La facture %s a changé en payé
 MemberValidatedInDolibarr=Membre %s validé
 MemberModifiedInDolibarr=Membre %s modifié

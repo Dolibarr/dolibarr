@@ -1,11 +1,11 @@
 #!/bin/bash
-# @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
-# @copyright  GPL License 2013 - Florian HEnry - florian.henry@open-concept.pro
-# @copyright  GPL License 2017 - Laurent Destailleur - eldy@users.sourceforge.net
-# @copyright  GPL License 2019 - Camille Lafitte - cam.lafit@azerttyu.net
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2010	Vikas Mahajan			http://vikasmahajan.wordpress.com
+# Copyright (C) 2013	Florian HEnry			florian.henry@open-concept.pro
+# Copyright (C) 2017	Laurent Destailleur		eldy@users.sourceforge.net
+# Copyright (C) 2019	Camille Lafitte			cam.lafit@azerttyu.net
+# Copyright (C) 2024 	MDW						<mdeweerd@users.noreply.github.com>
 #
-# Convert an ODT into a PDF using "native" or "jodconverter" or "pyodconverter" or "unoconv" tool.
+# Convert an ODT into a PDF using "native" or "jodconverter" or "pyodconverter".
 # Dolibarr variable MAIN_ODT_AS_PDF must be defined ...
 #  to value "libreoffice" to call soffice native exporter feature (in such a case, this script is useless)
 #  or value "unoconv" to call unoconv CLI tool after ODT generation.
@@ -21,8 +21,7 @@
 
 if [ "$1" = "" ] || [ "$2" = "" ]
 then
-	echo "Usage:   odt2pdf.sh fullfilename [native|unoconv|jodconverter|pyodconverter|pathtojodconverterjar|pandoc]"
-	echo "Example: odt2pdf.sh myfile unoconv"
+	echo "Usage:   odt2pdf.sh fullfilename [native|jodconverter|pyodconverter|pathtojodconverterjar|pandoc]"
 	echo "Example: odt2pdf.sh myfile ~/jodconverter/jodconverter-cli-2.2.2.jar"
 	exit
 fi

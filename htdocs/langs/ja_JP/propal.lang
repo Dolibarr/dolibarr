@@ -125,3 +125,5 @@ Signed=署名
 SignedOnly=署名のみ
 ExpeditionSigned=発送署名済み
 SignExpedition=出荷に署名する
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=一部の国では表示が義務付けられていマスる (フランス, ...)

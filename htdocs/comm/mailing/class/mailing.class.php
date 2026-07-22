@@ -2,8 +2,9 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing_targets.class.php';
 
 /**
  *	Class to manage emailings module
@@ -46,12 +47,12 @@ class Mailing extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'email';
+	public $picto = 'mail-bulk';
 
 	/**
 	 * @var string Type of message ('email', 'sms')
 	 */
-	public $messtype;
+	public $messtype = 'email';
 
 	/**
 	 * @var string title
@@ -174,6 +175,22 @@ class Mailing extends CommonObject
 	 */
 	public $substitutionarrayfortest;
 
+	/**
+	 * @var MailingTarget[]
+	 */
+	public $targets = array();
+
+	/**
+	 * @var ?int 			The related project ID
+	 * @see setProject(), project
+	 */
+	public $fk_project;
+
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 10),
+	);
+
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_SENTPARTIALY = 2;
@@ -221,7 +238,9 @@ class Mailing extends CommonObject
 
 		$this->title = trim($this->title);
 		$this->email_from = trim($this->email_from);
-
+		if (empty($this->messtype)) {
+			$this->messtype = 'email';
+		}
 		if (!$this->email_from) {
 			if ($this->messtype !== 'sms') {
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailFrom"));
@@ -237,8 +256,8 @@ class Mailing extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
-		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
+		$sql .= " (messtype, date_creat, fk_user_creat, entity)";
+		$sql .= " VALUES ('".$this->db->escape($this->messtype)."', '".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
 			$this->title = $langs->trans("NoTitle");
@@ -296,10 +315,14 @@ class Mailing extends CommonObject
 			return -1;
 		}
 
+		if (empty($this->messtype)) {
+			$this->messtype = 'email';
+		}
+
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", messtype = '".$this->db->escape($this->messtype)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
@@ -312,6 +335,7 @@ class Mailing extends CommonObject
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
+		$sql .= ", fk_project = '".((int) $this->fk_project)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -355,15 +379,27 @@ class Mailing extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.entity, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
 		$sql .= ", m.note_public, m.note_private";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
+		$sql .= ", m.tms as date_modification";
 		$sql .= ", m.date_creat";
 		$sql .= ", m.date_valid";
 		$sql .= ", m.date_envoi";
 		$sql .= ", m.extraparams";
+		$sql .= ", m.tag";
+		$sql .= ", m.name_from";
+		$sql .= ", m.fk_user_modif";
+		$sql .= ", m.fk_user_appro";
+		$sql .= ", m.date_appro";
+		$sql .= ", m.cible";
+		$sql .= ", m.joined_file1";
+		$sql .= ", m.joined_file2";
+		$sql .= ", m.joined_file3";
+		$sql .= ", m.joined_file4";
+		$sql .= ", m.fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 		$sql .= " WHERE entity IN (".getEntity('mailing').")";
 		if ($ref) {
@@ -379,6 +415,7 @@ class Mailing extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->rowid;
 				$this->title = $obj->title;
 				$this->messtype = $obj->messtype;
@@ -411,8 +448,21 @@ class Mailing extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creat);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
+				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				$this->tag = $obj->tag;
+				$this->name_from = $obj->name_from;
+				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->fk_user_appro = $obj->fk_user_appro;
+				$this->date_appro = $obj->date_appro;
+				$this->cible = $obj->cible;
+				$this->joined_file1 = $obj->joined_file1;
+				$this->joined_file2 = $obj->joined_file2;
+				$this->joined_file3 = $obj->joined_file3;
+				$this->joined_file4 = $obj->joined_file4;
+				$this->fk_project = $obj->fk_project;
 
 				if ($this->messtype == 'sms') {
 					$this->picto = 'phone';
@@ -429,6 +479,100 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 * Load list of objects in memory from the database.
+	 * (almost direct copy from htdocs/eventorganization/class/conferenceorboothattendee.class.php)
+	 *
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string|array<string,mixed>	$filter		Filter as an Universal Search string.
+	 *                                                  Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return Mailing[]|int<-1,-1>		int <0 if KO, array of pages if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList('t');
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
+
+		// Manage filter
+		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project') {
+						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
+					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
+					} elseif ($key == 'customsql') {
+						$sqlwhere[] = $value;
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
+		}
+
+		// Manage filter
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
+		}
+
+		if (!empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < ($limit ? min($limit, $num) : $num)) {
+				$obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
 
 	/**
 	 *	Load an object from its id and create a new one in database
@@ -437,9 +581,10 @@ class Mailing extends CommonObject
 	 *	@param  int		$fromid     	Id of object to clone
 	 *	@param	int		$option1		1=Clone content, 0=Forget content
 	 *	@param	int		$option2		1=Clone recipients
+	 * 	@param	int		$notrigger		Disable triggers
 	 *	@return	int						New id of clone
 	 */
-	public function createFromClone(User $user, $fromid, $option1, $option2)
+	public function createFromClone(User $user, $fromid, $option1, $option2, $notrigger = 0)
 	{
 		global $langs;
 
@@ -482,12 +627,11 @@ class Mailing extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result = $object->create($user);
+		$result = $object->create($user, $notrigger);
 
 		// Other options
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
@@ -559,7 +703,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -571,6 +715,28 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  SetDraft emailing
+	 *
+	 *  @param	User	$user      	Object user that makes it draft
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setDraft($user)
+	{
+		$now = dol_now();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		dol_syslog("Mailing::valid", LOG_DEBUG);
+		if ($this->db->query($sql)) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Delete emailing
@@ -720,7 +886,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Count number of target with status
 	 *
-	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error)
+	 *  @param  string	$mode   Mode ('alreadysent' = Sent success or error, 'alreadysentok' = Sent success, 'alreadysentko' = Sent error, 'all' = Just return all no matter status)
 	 *  @return int        		Nb of target with status
 	 */
 	public function countNbOfTargets($mode)
@@ -733,6 +899,8 @@ class Mailing extends CommonObject
 			$sql .= " AND statut > 0";
 		} elseif ($mode == 'alreadysentko') {
 			$sql .= " AND statut = -1";
+		} elseif ($mode == 'all') {
+			// just want to return all possible recipients
 		} else {
 			$this->error = 'BadValueForParameterMode';
 			return -2;

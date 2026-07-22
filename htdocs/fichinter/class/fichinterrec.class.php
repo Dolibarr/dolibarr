@@ -8,8 +8,8 @@
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class FichinterRec extends Fichinter
 	{
 		$this->db = $db;
 
-		//status dans l'ordre de l'intervention
+		// status in intervention order
 		$this->labelStatus[0] = 'Draft';
 		$this->labelStatus[1] = 'Closed';
 
@@ -325,7 +325,7 @@ class FichinterRec extends Fichinter
 				$this->fk_contrat = $obj->fk_contrat;
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
-				$this->user_author = $obj->fk_user_author;
+				$this->user_author_id = $obj->fk_user_author;
 				$this->model_pdf = empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
@@ -525,10 +525,9 @@ class FichinterRec extends Fichinter
 				$pu = $pu_ttc;
 			}
 
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			// Calculation of the gross total (TTC) and VAT for the line from qty, pu, remise_percent and txtva
+			// VERY IMPORTANT: It's at the time of line insertion that we must store the net, VAT, and gross amounts,
+			// and this is done at the line level, which has its own VAT rate
 			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
 
 			$total_ht  = $tabprice[0];
@@ -568,19 +567,19 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", ".(!empty($desc) ? "'".$this->db->escape($desc)."'" : "null");
 			$sql .= ", ".(!empty($date) ? "'".$this->db->idate($date)."'" : "null");
-			$sql .= ", ".$duration;
+			$sql .= ", ".((int) $duration);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
 			//$sql.= ", ".price2num($txtva);
-			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
-			$sql .= ", ".$product_type;
-			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
+			$sql .= ", ".(!empty($fk_product) ? ((int) $fk_product) : "null");
+			$sql .= ", ".((int) $product_type);
+			$sql .= ", ".(!empty($remise_percent) ? ((float) $remise_percent) : "null");
 			$sql .= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";
 			$sql .= ", '".price2num($total_tva)."'";
 			$sql .= ", '".price2num($total_ttc)."'";
 			$sql .= ", ".(int) $rang;
 			//$sql.= ", ".$special_code;
-			$sql .= ", ".(!empty($fk_unit) ? $fk_unit : "null");
+			$sql .= ", ".(!empty($fk_unit) ? ((int) $fk_unit) : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::addLineRec", LOG_DEBUG);
@@ -876,7 +875,7 @@ class FichinterRec extends Fichinter
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
-		// si on et arrivé à la fin des génération
+		// if we have reached the end of the generation cycle
 		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
 			$sql .= ' , status = 1';
 		}

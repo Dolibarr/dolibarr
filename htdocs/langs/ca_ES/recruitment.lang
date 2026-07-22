@@ -68,3 +68,4 @@ ApplyJobCandidature=Sol·licita aquesta feina
 ErrorRecruitmmentCandidatureAlreadyExists= La candidatura de contractació ja existeix amb el correu electrònic %s
 RecruitmentCandidatureSaved=La candidatura de contractació s'ha desat correctament
 NoOpenJobOffer=No hi ha ofertes de feina obertes de moment
+ShowPositionToBeFilled=Mostra la posició a cobrir

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022 Thibault FOUCART  <support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ class Recruitments extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
@@ -152,7 +153,7 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -205,7 +206,8 @@ class Recruitments extends DolibarrApi
 		$i = 0;
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new RecruitmentJobPosition($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -246,7 +248,7 @@ class Recruitments extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
@@ -268,7 +270,7 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -321,7 +323,8 @@ class Recruitments extends DolibarrApi
 		$i = 0;
 		if ($result) {
 			$num = $this->db->num_rows($result);
-			while ($i < $num) {
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new RecruitmentCandidature($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
@@ -372,7 +375,7 @@ class Recruitments extends DolibarrApi
 		}
 
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$result = $this->_validate($request_data, $this->jobposition);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -411,17 +414,19 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields. Validate against the candidature model so the API
+		// rejects with the actual missing candidature fields (e.g. email) instead of
+		// the unrelated job position fields (see issue #38429).
+		$result = $this->_validate($request_data, $this->candidature);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->jobposition->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				$this->candidature->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+			$this->candidature->$field = $this->_checkValForAPI($field, $value, $this->candidature);
 		}
 
 		// Clean data
@@ -616,9 +621,12 @@ class Recruitments extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -680,25 +688,26 @@ class Recruitments extends DolibarrApi
 	 * Validate fields before create or update object
 	 *
 	 * @param	?array<string,mixed>		$data   Array of data to validate
+	 * @param	CommonObject				$object Object to validate against
 	 * @return	array<string,mixed>
 	 *
 	 * @throws	RestException
 	 */
-	private function _validate($data)
+	private function _validate($data, $object)
 	{
 		if ($data === null) {
 			$data = array();
 		}
-		$jobposition = array();
-		foreach ($this->jobposition->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
+		$result = array();
+		foreach ($object->fields as $field => $propfield) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'ref')) || empty($propfield['notnull']) || $propfield['notnull'] != 1 || !empty($propfield['noteditable']) || isset($propfield['default'])) {
+				continue; // Not a mandatory field or auto-generated field or has default value
 			}
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-			$jobposition[$field] = $data[$field];
+			$result[$field] = $data[$field];
 		}
-		return $jobposition;
+		return $result;
 	}
 }

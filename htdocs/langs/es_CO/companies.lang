@@ -132,7 +132,6 @@ PaymentTypeBoth=Tipo de pago - Cliente y proveedor
 MulticurrencyUsed=Usar multidivisa
 MulticurrencyCurrency=Moneda
 CurrentOutstandingBillLate=Factura por pagar: Atrasada
-BecarefullChangeThirdpartyBeforeAddProductToInvoice=Tenga cuidado, dependiendo de la configuración del precio de su producto, debe cambiar el tercero antes de agregar el producto al POS.
 EmailAlreadyExistsPleaseRewriteYourCompanyName=el E-mail ya existe, vuelva a escribir el nombre de su empresa
 TwoRecordsOfCompanyName=Existe más de un registro para esta empresa, por favor contáctenos para completar su solicitud de asociación
 ExternalSystemID=Identificación del sistema externo

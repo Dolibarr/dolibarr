@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,11 @@ function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages =
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 $error = 0;
 $websitekey = GETPOST('website', 'alpha');
@@ -180,7 +184,7 @@ if (empty($pageref)) {
 	$objectpage = new WebsitePage($db);
 	$result = $objectpage->fetch($pageid);
 	if ($result > 0) {
-		$pageref = $objectpage->ref;
+		$pageref = (string) $objectpage->ref;
 	}
 }
 if (preg_match('/^_(library|service)_page_/', $pageref)) {
@@ -207,8 +211,7 @@ global $dolibarr_main_data_root;
 if ($pageid == 'css') {   // No more used ?
 	header('Content-type: text/css');
 	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	//if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-	//else
+	//header('Cache-Control: max-age=3600, public, must-revalidate');
 	header('Cache-Control: no-cache');
 	$original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/styles.css.php';
 } else {

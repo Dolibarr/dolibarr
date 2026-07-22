@@ -152,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -196,9 +202,7 @@ if (!function_exists('dol_loginfunction')) {
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-			if (session_status() != PHP_SESSION_ACTIVE) {
-				dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
-			}
+			dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 		}
 
 		if (GETPOST('urlfrom', 'alpha')) {
@@ -477,6 +481,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	global $db, $conf, $langs, $user;
 
 	$generated_password = '';
+
 	if ($generic) {
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
@@ -501,8 +506,6 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = random_int(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		} else {
 			// Old platform, non cryptographic random
 			$max = strlen($lowercase) - 1;
@@ -520,11 +523,19 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 				$tmp = mt_rand(0, $max);
 				$randomCode .= $numbers[$tmp];
 			}
-
-			$generated_password = str_shuffle($randomCode);
 		}
+
+		// Use the Fisher-Yate to shake (this replace str_shuffle)
+		$passwordArray = str_split($randomCode);
+		for ($i = count($passwordArray) - 1; $i > 0; $i--) {
+			$j = random_int(0, $i);
+			$tmp = $passwordArray[$i];
+			$passwordArray[$i] = $passwordArray[$j];
+			$passwordArray[$j] = $tmp;
+		}
+		$generated_password = implode('', $passwordArray);
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
-		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+		$nomclass = "modGeneratePass".ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
 		$nomfichier = $nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
 		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
@@ -534,7 +545,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		unset($genhandler);
 	}
 
-	// Do we have to discard some alphabetic characters ?
+	// Do we have to discard some alphabetic characters ? (usually $replaceambiguouschars is empty)
 	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0) {
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
@@ -571,7 +582,7 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		$out .= 'jQuery(document).ready(function () {
             jQuery("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
 				var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
-				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
+				console.log("dolJSToSetRandomPassword: We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. anti-csrf-currenttoken is "+currenttoken+". We will fill '.dol_escape_js($htmlname).'");
 				jQuery.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
             		generic: '.($generic ? '1' : '0').',
@@ -602,7 +613,7 @@ function showEyeForField($htmlname, $htmlnameofinput)
 {
 	return '<!-- code to manage the eye hide/show -->
 <span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
-<script nonce="<?php echo getNonce(); ?>">
+<script nonce="'.getNonce().'">
 	$(document).ready(function () {
 		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
 			e.preventDefault();

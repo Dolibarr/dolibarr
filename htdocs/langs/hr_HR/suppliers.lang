@@ -2,9 +2,9 @@
 Suppliers=Dobavljači
 SuppliersInvoice=Ulazni račun
 SupplierInvoices=Ulazni računi
-ShowSupplierInvoice=Prikaži fakturu dobavljača
+ShowSupplierInvoice=Prikaži račun dobavljača
 NewSupplier=Novi dobavljač
-NewSupplierInvoice = Nova faktura dobavljača
+NewSupplierInvoice = Novi račun dobavljača
 History=Povijest
 ListOfSuppliers=Popis dobavljača
 ShowSupplier=Prikaži prodavača

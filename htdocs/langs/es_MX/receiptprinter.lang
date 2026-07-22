@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
 TestSentToPrinter=Prueba enviada a la impresora %s
-ReceiptPrinterDesc=Configuración de impresoras de recibos
 CONNECTOR_DUMMY=Impresora ficticia
 CONNECTOR_FILE_PRINT=Impresora local
 CONNECTOR_DUMMY_HELP=Impresora falsa para la prueba, no hace nada
 CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
 CONNECTOR_FILE_PRINT_HELP=/dev/usb /lp0, /dev/ usb/lp1
-CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser: secret@computername/grupo de trabajo/ impresoraderecibos
 DOL_ALIGN_LEFT=Alinea el texto a la izquierda
 DOL_ALIGN_CENTER=Texto del centro
 DOL_ALIGN_RIGHT=Alinea el texto a la derecha

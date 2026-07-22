@@ -121,7 +121,6 @@ ValideTrip=Kinnita kuluaruanne
 ExpenseReportPayments=Kuluaruannete maksed
 TaxUndefinedForThisCategory = Selle kategooria jaoks on maks määratlemata
 errorComputeTtcOnMileageExpense=Läbisõidukulu arvutamise viga
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Masstoimingus saab kustutada ainult mustandi staatuses elemente
 
 ## Dictionary
 EX_BRE=Hommikusöök
@@ -159,3 +158,4 @@ TF_TRAIN=Rong
 TF_TRIP=Transport
 FailedToSetPaid=Makstuks määramine ebaõnnestus
 FailedToSetToCancel=Tühistamine ebaõnnestus
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

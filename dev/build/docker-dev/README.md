@@ -1,9 +1,9 @@
-# How to use it ?
+# How to use or run Dolibarr with Docker (for a development environment) ?
 
-The docker-compose.yml file is a sample of a config file to use to build and run
-Dolibarr in the current workspace with Docker. This docker image is intended for
-**development usage**. For production usage you should consider other
-contributor reference like https://hub.docker.com/r/dolibarr/dolibarr.
+The docker-compose.yml file is a sample of a config file to use to build and run Dolibarr in the 
+current workspace with Docker. This docker image is intended for **development usage**. 
+For a production usage you should consider official packages on https://hub.docker.com/r/dolibarr/dolibarr.
+
 
 Before build/run, define the variable HOST_USER_ID as following:
 
@@ -22,17 +22,12 @@ or
 
         docker compose -f docker-compose.yml -f postgres.yml up
 
-This will run 4 containers Docker : Dolibarr, MariaDB, PhpMyAdmin and MailDev.
-In the case of PostgreSQL, only Dolibarr, MailDev and the PostgreSQL database
-will be running.
+This will run the following Docker containers : Dolibarr, MariaDB, MailDev.
+In the case of PostgreSQL, only Dolibarr, MailDev and the PostgreSQL database will be running.
 
-The URL to go to the Dolibarr is :
+The URL to go to the installed Dolibarr is :
 
         http://0.0.0.0
-
-The URL to go to PhpMyAdmin is (login/password is root/root) :
-
-        http://0.0.0.0:8080
 
 In Dolibarr configuration Email let PHP mail function, To see all mail send by
 Dolibarr go to maildev
@@ -41,6 +36,7 @@ Dolibarr go to maildev
 
 Setup the database connection during the installation process, please use
 mariadb or postgres (name of the database container) as database host.
+
 
 ## Setup your custom modules
 
@@ -61,8 +57,4 @@ will automatically be synced with your development environment.
 Then, you can start by extending one of the commands above, for instance for
 mariadb:
 
-        docker compose \
-            -f docker-compose.yml \
-            -f postgres.yml \
-            -f yourmodule.yml \
-            up
+        docker compose -f docker-compose.yml -f postgres.yml -f yourmodule.yml up

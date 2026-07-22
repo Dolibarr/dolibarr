@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +42,10 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../../main.inc.php'; // Load $user and permissions
 }
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ */
 $id = GETPOSTINT('id');
 $w = GETPOSTINT('w');
 $h = GETPOSTINT('h');
@@ -62,7 +67,7 @@ if ($query == "cat") {
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 
-	$upload_dir = $conf->categorie->multidir_output[$object->entity];
+	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 
@@ -83,7 +88,7 @@ if ($query == "cat") {
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
-	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity ?? $conf->entity], 'small', 1);
 
 	$match = array();
 	preg_match('@src="([^"]+)"@', $image, $match);
@@ -101,21 +106,5 @@ if ($query == "cat") {
 		}
 	}
 } else {
-	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resized when downloaded.
-
-	// The file
-	$filename = $query.".jpg";
-
-	// Dimensions
-	list($width, $height) = getimagesize($filename);
-	$new_width = $w;
-	$new_height = $h;
-
-	// Resample
-	$image_p = imagecreatetruecolor($new_width, $new_height);
-	$image = imagecreatefromjpeg($filename);
-	imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-
-	// Output
-	imagejpeg($image_p, null, 100);
+	print 'Invalid param query. Must be "cat" or "pro"';
 }

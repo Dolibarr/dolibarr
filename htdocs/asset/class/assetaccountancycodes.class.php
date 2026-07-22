@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW			<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +69,8 @@ class AssetAccountancyCodes extends CommonObject
 		'economic' => array(
 			'label' => 'AssetAccountancyCodeDepreciationEconomic',
 			'table'	=> 'asset_accountancy_codes_economic',
-			'depreciation_debit' => 'depreciation_asset',
-			'depreciation_credit' => 'depreciation_expense',
+			'depreciation_debit' => 'depreciation_expense',
+			'depreciation_credit' => 'depreciation_asset',
 			'fields' => array(
 				'asset' => array('label' => 'AssetAccountancyCodeAsset'),
 				'depreciation_asset' => array('label' => 'AssetAccountancyCodeDepreciationAsset'),
@@ -84,8 +85,8 @@ class AssetAccountancyCodes extends CommonObject
 		'accelerated_depreciation' => array(
 			'label' => 'AssetAccountancyCodeDepreciationAcceleratedDepreciation',
 			'table'	=> 'asset_accountancy_codes_fiscal',
-			'depreciation_debit' => 'accelerated_depreciation',
-			'depreciation_credit' => 'endowment_accelerated_depreciation',
+			'depreciation_debit' => 'endowment_accelerated_depreciation',
+			'depreciation_credit' => 'accelerated_depreciation',
 			'fields' => array(
 				'accelerated_depreciation' => array('label' => 'AssetAccountancyCodeAcceleratedDepreciation'),
 				'endowment_accelerated_depreciation' => array('label' => 'AssetAccountancyCodeEndowmentAcceleratedDepreciation'),
@@ -202,8 +203,8 @@ class AssetAccountancyCodes extends CommonObject
 
 		$accountancy_codes = array();
 		foreach ($this->accountancy_codes_fields as $mode_key => $mode_info) {
-			$sql = "SELECT " . implode(',', array_keys($mode_info['fields']));
-			$sql .= " FROM " . MAIN_DB_PREFIX . $mode_info['table'];
+			$sql = "SELECT " . implode(',', array_keys($mode_info['fields']));  // From safe table @phan-suppress-current-line SqlInjection
+			$sql .= " FROM " . MAIN_DB_PREFIX . $mode_info['table'];  // From safe table @phan-suppress-current-line SqlInjection
 			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id);
 
 			$resql = $this->db->query($sql);
@@ -272,7 +273,7 @@ class AssetAccountancyCodes extends CommonObject
 
 		foreach ($this->accountancy_codes_fields as $mode_key => $mode_info) {
 			// Delete old accountancy codes
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . $mode_info['table'];  // From safe table @phan-suppress-current-line SqlInjection
 			$sql .= " WHERE " . ($asset_id > 0 ? " fk_asset = " . (int) $asset_id : " fk_asset_model = " . (int) $asset_model_id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -282,17 +283,17 @@ class AssetAccountancyCodes extends CommonObject
 
 			if (!$error && !empty($this->accountancy_codes[$mode_key])) {
 				// Insert accountancy codes
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $mode_info['table'] . "(";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $mode_info['table'] . "(";  // From safe table @phan-suppress-current-line SqlInjection
 				$sql .= $asset_id > 0 ? "fk_asset," : "fk_asset_model,";
-				$sql .= implode(',', array_keys($mode_info['fields']));
+				$sql .= implode(',', array_keys($mode_info['fields']));  // From safe table @phan-suppress-current-line SqlInjection
 				$sql .= ", tms, fk_user_modif";
 				$sql .= ") VALUES(";
-				$sql .= $asset_id > 0 ? $asset_id : $asset_model_id;
+				$sql .= $asset_id > 0 ? ((int) $asset_id) : ((int) $asset_model_id);
 				foreach ($mode_info['fields'] as $field_key => $field_info) {
 					$sql .= ', ' . (empty($this->accountancy_codes[$mode_key][$field_key]) ? 'NULL' : "'" . $this->db->escape($this->accountancy_codes[$mode_key][$field_key]) . "'");
 				}
 				$sql .= ", '" . $this->db->idate($now) . "'";
-				$sql .= ", " . $user->id;
+				$sql .= ", " . ((int) $user->id);
 				$sql .= ")";
 
 				$resql = $this->db->query($sql);

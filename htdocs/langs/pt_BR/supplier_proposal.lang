@@ -39,7 +39,6 @@ SendAskRef=Enviando a solicitação de preço %s
 SupplierProposalCard=Ficha da solicitação
 ConfirmDeleteAsk=Você tem certeza que deseja excluir a solicitação de preço <b>%s</b>?
 ActionsOnSupplierProposal=Eventos na solicitação de preço
-DocModelAuroreDescription=Um modelo completo para uma solicitação de cotação de fornecedor (implementação antiga do modelo Sponge)
 DocModelZenithDescription=Um modelo completo para uma solicitação de cotação de fornecedor
 CommercialAsk=Solicitação de preço
 DefaultModelSupplierProposalCreate=Criação de modelo padrão

@@ -1,8 +1,29 @@
 <?php
-/* Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  * @var int $colspan
+ * @var string $action
+ * @var string $filenamelinked
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var CommonObject $object
+ * @var Translate $langs
  */
 '
 @phan-var-force int $colspan
@@ -118,7 +139,7 @@ if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 			//var_dump($file['relativename']);
 			//var_dump($_FILES['userfile']['name']);
 			// If a file was just uploaded, we check to preselect it
-			if (is_array($_FILES['userfile']) && is_array($_FILES['userfile']['name'])) {
+			if (isset($_FILES['userfile']) && is_array($_FILES['userfile']['name'])) {
 				foreach ($_FILES['userfile']['name'] as $tmpfile) {
 					if ($file['relativename'] == (GETPOST('savingdocmask', 'alpha') ? dol_sanitizeFileName($object->ref.'-') : '').$tmpfile) {
 						$checked = ' checked';
