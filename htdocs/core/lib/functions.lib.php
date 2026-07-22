@@ -192,6 +192,9 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			$subdirectory = '/commande';
 			break;
 		case 'expedition':
+		case 'shipment':
+		case 'shipping':
+			$module = 'expedition';
 			$subdirectory = '/sending';
 			break;
 		case 'company':
@@ -200,6 +203,14 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 		case 'service':
 		case 'produit':
 			$module = 'product';
+			break;
+		case 'project_task':
+			$module = 'projet';
+
+			// Fetch the project to build the correct path
+			$object->fetchProject();
+
+			$subdirectory = '/'.$object->project->ref;
 			break;
 		case 'action':
 		case 'actioncomm':
@@ -220,7 +231,7 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
 			}
-			return $s;
+			return dol_sanitizePathName($s);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_output')) {
 			$s = '';
 			if ($mode != 'outputrel') {
@@ -229,15 +240,15 @@ function getMultidirOutput($object, $module = '', $forobject = 0, $mode = 'outpu
 			if ($forobject && $object->id > 0) {
 				$s .= ($mode != 'outputrel' ? '/' : '') . get_exdir(0, 0, 0, 0, $object);
 			}
-			return $s;
+			return dol_sanitizePathName($s);
 		} else {
 			return 'error-diroutput-not-defined-for-this-object=' . $module;
 		}
 	} elseif ($mode == 'temp') {
 		if (isset($conf->$module) && property_exists($conf->$module, 'multidir_temp')) {
-			return $conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)];
+			return dol_sanitizePathName($conf->$module->multidir_temp[(empty($object->entity) ? $conf->entity : $object->entity)]);
 		} elseif (isset($conf->$module) && property_exists($conf->$module, 'dir_temp')) {
-			return $conf->$module->dir_temp;
+			return dol_sanitizePathName($conf->$module->dir_temp);
 		} else {
 			return 'error-dirtemp-not-defined-for-this-object=' . $module;
 		}
@@ -948,11 +959,12 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *
  *  @param  string		$paramname	Name of the $_GET or $_POST parameter
  *  @param  int<0,3>	$method		Type of method (0 = $_GET then $_POST, 1 = only $_GET, 2 = only $_POST, 3 = $_POST then $_GET)
+ *  @param	int 		$nodefault	Force disable of default values set from the admin setup page
  *  @return int						Value converted into integer
  */
-function GETPOSTINT($paramname, $method = 0)
+function GETPOSTINT($paramname, $method = 0, $nodefault = 0)
 {
-	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
+	return (int) GETPOST($paramname, 'int', $method, null, null, 0, $nodefault);
 }
 
 /**
@@ -1073,6 +1085,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *  @param  ?int	$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for details)
  *  @param  mixed	$options     Options to pass to filter_var when $check is set to 'custom'
  *  @param	int 	$noreplace	 Force disable of replacement of __xxx__ strings.
+ *  @param	int 	$nodefault	 Force disable of default values set from the admin setup page
  *  @return string|array<mixed>  Value found (string or array), or '' if check fails
  *  @phpstan-return (
  *      $check is 'int' ? numeric-string|'' :
@@ -1081,7 +1094,7 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
  *      $check is 'alpha' | 'aZ' | 'aZ09' | 'aZ09arobase' | 'aZ09comma' | 'password' | 'email' | 'url' | 'alphanohtml' |'nohtml' | 'restricthtml' | 'alphawithlgt' | 'intcomma' | 'restricthtmlallowclass' | 'restricthtmlallowunvalid' | 'restricthtmlallowiframe' | 'restricthtmlallowlinkscript' ? string : string|array<mixed>
  *  )
  */
-function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0)
+function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null, $options = null, $noreplace = 0, $nodefault = 0)
 {
 	global $langs, $mysoc, $user, $conf;
 
@@ -1188,7 +1201,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						}
 					}
-				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]) && empty($nodefault)) {
 					// Management of default search_filters and sort order
 					if (!empty($user->default_values)) {
 						// $user->default_values defined from menu 'Setup - Default values'
@@ -1320,7 +1333,8 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Note: There is no reason to allow the backtopage/backtopageforcancel/backtopagejs, backtolist or backtourl parameter to contains an external URL. Only relative URLs are allowed.
 	// @TODO Merge backtopage with backtourl
 	// @TODO Rename backtolist into backtopagelist
-	if (preg_match('/^backto/i', $paramname)) {
+	// @TODO Merge urlfrom into backtourl
+	if (preg_match('/^backto/i', $paramname) || preg_match('/^urlfrom/i', $paramname)) {
 		$out = str_replace('\\', '/', $out);								// Can be before the loop because only 1 char is replaced. No risk to get it after other replacements.
 		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retrieve it after other replacements.
 		do {
@@ -3484,6 +3498,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} else {
+		// $modulepart may have been set previously if Imagick class exists (see before).
 		if ($modulepart != 'unknown' || method_exists($object, 'getDataToShowPhoto')) {
 			$phototoshow = '';
 			// Check if a preview file is available
@@ -4470,7 +4485,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 			$type = 'AC_EMAIL';
 			$linktoaddaction = '';
 			if (getDolGlobalString('AGENDA_ADDACTIONFOREMAIL')) {
-				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode=' . urlencode($type) . '&amp;contactid=' . ((int) $contactid) . '&amp;socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$linktoaddaction = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=1&actioncode=' . urlencode($type) . '&contactid=' . ((int) $contactid) . '&socid=' . ((int) $socid) . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($linktoaddaction) {
 				$newemail = '<div>' . $newemail . ' ' . $linktoaddaction . '</div>';
@@ -5082,7 +5097,7 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$type = 'AC_FAX';
 			}
 			if (getDolGlobalString('AGENDA_ADDACTIONFORPHONE')) {
-				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&amp;actioncode=' . $type . ($contactid ? '&amp;contactid=' . $contactid : '') . ($socid ? '&amp;socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
+				$addlinktoagenda = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&backtopage=' . urlencode($_SERVER['REQUEST_URI']) . '&actioncode=' . $type . ($contactid ? '&contactid=' . $contactid : '') . ($socid ? '&socid=' . $socid : '') . '">' . img_object($langs->trans("AddAction"), "calendar") . '</a>';
 			}
 			if ($addlinktoagenda) {
 				$newphone = '<span>' . $newphone . ' ' . $addlinktoagenda . '</span>';
@@ -8867,7 +8882,7 @@ function yn($yesno, $format = 1, $color = 0)
  *  @param  int				$withoutslash   0=With slash at end (except if '/', we return ''), 1=without slash at end
  *  @param	?CommonObject	$object			Object to use to get ref to forge the path.
  *  @param	string			$modulepart		Type of object ('invoice_supplier, 'donation', 'invoice', ...'). Use '' for autodetect from $object.
- *  @return	string							Dir to use ending. Example '' or '1/' or '1/2/'
+ *  @return	string							Sanitized Dir to use ending. Example '' or '1/' or '1/2/'
  *  @see getMultidirOutput()
  */
 function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '')
@@ -8894,7 +8909,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($num) && is_object($object)) {
-			$num = $object->id;
+			$num = ((int) $object->id);
 		}
 		if (empty($alpha)) {
 			$num = preg_replace('/([^0-9])/i', '', $num);
@@ -8919,7 +8934,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
 			$path = dol_sanitizeFileName((string) $object->id);
 		} else {
-			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? ((int) $object->id) : '') : $object->ref);
 		}
 	}
 
@@ -9093,9 +9108,9 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		$temp = str_replace(array("\r\n", "\r", "\n"), " ", $temp);
 	}
 
-	// And double quotes
+	// And double spaces
 	if ($removedoublespaces) {
-		while (strpos($temp, "  ")) {
+		while (strpos($temp, "  ") !== false) {
 			$temp = str_replace("  ", " ", $temp);
 		}
 	}
@@ -11853,7 +11868,7 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 		$sql .= " AND entity IN (" . getEntity($tablename) . ")";
 	}
 	if ($filters) {
-		$sql .= $filters;
+		$sql .= $filters;  // @phan-suppress-current-line SqlInjection
 	}
 
 	$resql = $db->query($sql);
@@ -11927,7 +11942,7 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 
 		// On string syntax error, dol_eval may return a string that start with 'Bad call of ...' or 'Bad string syntax to evaluate...' !!!
 		//var_dump($strToEvaluate, $rep);
-		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad call of') === false || strpos($rep, 'Bad string syntax to evaluate') === false);
+		$rights = (bool) $rep && (!is_string($rep) || (strpos($rep, 'Exception during') === false && strpos($rep, 'Bad call of') === false && strpos($rep, 'Bad string syntax to evaluate') === false));
 		//var_dump($rights);
 	}
 	return $rights;
@@ -14988,6 +15003,7 @@ function dolCompletUrlForDropdownButton(string $url, array $params, bool $addDol
 
 	if (!empty($parsedUrl['query'])) {
 		// Use parse_str() function to parse the string passed via URL
+		$urlQuery = '';
 		parse_str($parsedUrl['query'], $urlQuery);
 		if (!isset($urlQuery['backtopage']) && isset($params['backtopage'])) {
 			$url .= '&amp;backtopage=' . urlencode($params['backtopage']);
@@ -15141,6 +15157,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 /**
  * Get an array with properties of an element.
+ * We must not have database access in this method.
  *
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
@@ -15294,7 +15311,7 @@ function getElementProperties($elementType)
 		$module = 'propal';
 		$table_element = 'propaldet';
 		$parent_element = 'propal';
-	} elseif ($elementType == 'shipping') {
+	} elseif ($elementType == 'shipping' || $elementType == 'shipment') {
 		$classpath = 'expedition/class';
 		$classfile = 'expedition';
 		$classname = 'Expedition';
@@ -15647,6 +15664,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 	$ret = 0;
 
 	$element_prop = getElementProperties($element_type);
+	//var_dump($element_prop); exit;
 
 	if ($element_prop['module'] == 'product' || $element_prop['module'] == 'service') {
 		// For example, for an extrafield 'product' (shared for both product and service) that is a link to an object,
@@ -16488,11 +16506,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	$sortfield_list = explode(',', $sortfield);
 	$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');
-	$sortfield_new_list = array();
+	$sanitized_sortfield_new_list = array();
 	foreach ($sortfield_list as $sortfield_value) {
-		$sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];
+		$sanitized_sortfield_new_list[] = $sortfield_label_list[trim($sortfield_value)];  //@phan-suppress-current-line SqlInjection
 	}
-	$sortfield_new = implode(',', $sortfield_new_list);
+	$sanitized_sortfield_new = implode(',', $sanitized_sortfield_new_list);
 
 	$sql = null;
 	$sql2 = null;
@@ -16727,7 +16745,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$limit = $MAXWITHOUTPAGINATION;
 
 		// Complete request and execute it with limit
-		$sql .= $db->order($sortfield_new, $sortorder);
+		$sql .= $db->order($sanitized_sortfield_new, $sortorder);
 		if ($limit) {
 			$sql .= $db->plimit($limit + 1, $offset);
 		}
