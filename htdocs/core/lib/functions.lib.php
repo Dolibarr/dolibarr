@@ -2217,21 +2217,26 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 				$tmp = preg_replace('/<'.preg_quote($tagtoreplace, '/').' \/>/', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 
-				// For case of tag with attributes
-				do {
-					$tmpold = $tmp;
-
-					if (preg_match('/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)>/', $tmp, $reg)) {
+				// For case of tag with attributes.
+				// All the occurrences are protected in a single pass: the replacement string contains no '<', so it
+				// can never build a new tag to protect (a loop replacing one distinct attribute string per round was
+				// rescanning the whole content for each of them, so the cost was quadratic on large contents).
+				$tmp = preg_replace_callback(
+					'/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)>/',
+					/**
+					 * @param string[] $reg
+					 * @return string
+					 */
+					static function ($reg) use ($tagtoreplace) {
 						// We want to protect the attribute part ... in '<xxx ...>' to avoid transformation by htmlentities() later
 						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[2]);	// We must never have [ ] inside the attribute string
 						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE__', $tmpattributes);
 						$tmpattributes = preg_replace('/[^a-z0-9_%,\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
 						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content
-						$tmp = str_replace('<'.$tagtoreplace.$reg[1].$reg[2].'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__', $tmp);
-					}
-
-					$diff = strcmp($tmpold, $tmp);
-				} while ($diff);
+						return '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__';
+					},
+					$tmp
+				) ?? $tmp;
 			}
 
 			$tmp = str_ireplace('&quot', '__DOUBLEQUOTENOSEMICOLON__', $tmp);
