@@ -74,14 +74,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					var autoselect = '.((int) $autoselect).';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
-					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid losing the product id. This is needed only for select of predefined product */
+					/* Disable the "ENTER" key on the search field (useful for barcode readers) to avoid submitting the form */
 					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
-						if (e.keyCode != 9)		/* If not "Tab" key */
-						{
-							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
-							console.log("Clear id previously selected for field '.$htmlname.'");
-							$("#'.$htmlnamejquery.'").val("");
-						}
+						if (e.keyCode == 13) { return false; }
+					});
+
+					/* Remove selected id as soon as the input content really changes (typing, deleting, cutting or pasting a char), because the old selection is then wrong.
+					   We use the "input" event instead of "keydown" so that copying (Ctrl+C), selecting all (Ctrl+A) or moving the caret (arrow/Home/End keys) does not clear the previously selected id. */
+					$("input#search_'.$htmlnamejquery.'").on("input", function() {
+						console.log("Clear id previously selected for field '.$htmlname.'");
+						$("#'.$htmlnamejquery.'").val("");
 					});
 
 					// Check options for secondary actions when keyup
