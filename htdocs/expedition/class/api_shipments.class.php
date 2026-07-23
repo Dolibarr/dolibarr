@@ -466,20 +466,23 @@ class Shipments extends DolibarrApi
 	}
 
 	/**
-	 * Delete a line to given shipment
+	 * Delete a line of a given shipment
 	 *
+	 * A line can only be deleted while the shipment is still a draft: once
+	 * validated the stock has already been moved, so removing the line would
+	 * desync the stock.
 	 *
 	 * @param int   $id             Id of shipment to update
 	 * @param int   $lineid         Id of line to delete
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return array
-	 * @phan-return array{success:array{code:int,message:string}}
-	 * @phpstan-return array{success:array{code:int,message:string}}
+	 * @return Object					Updated shipment
 	 *
-	 * @throws RestException 401
+	 * @throws RestException 403
 	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 500
 	 */
 	public function deleteLine($id, $lineid)
 	{
@@ -496,19 +499,26 @@ class Shipments extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of object
-
-		$updateRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
-		if ($updateRes > 0) {
-			return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'line ' .$lineid. ' deleted'
-			)
-			);
-		} else {
-			throw new RestException(405, $this->shipment->error);
+		// A line can only be deleted while the shipment is a draft (no stock movement yet).
+		if ((int) $this->shipment->status != Expedition::STATUS_DRAFT) {
+			throw new RestException(405, 'Only draft shipment lines can be deleted');
 		}
+
+		$line = new ExpeditionLigne($this->db);
+		$resline = $line->fetch($lineid);
+		if ($resline <= 0) {
+			throw new RestException(404, 'Shipment line not found');
+		}
+		if ((int) $line->fk_expedition != (int) $this->shipment->id) {
+			throw new RestException(404, 'Line '.((int) $lineid).' is not a line of shipment '.((int) $id));
+		}
+
+		$deleteRes = $this->shipment->deleteLine(DolibarrApiAccess::$user, $lineid);
+		if ($deleteRes > 0) {
+			return $this->get($id);
+		}
+
+		throw new RestException(500, $this->shipment->error ? $this->shipment->error : 'Error while deleting shipment line');
 	}
 
 	/**
