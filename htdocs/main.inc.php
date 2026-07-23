@@ -2700,7 +2700,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
             jQuery(document).on("click", function(event) {
 				if (jQuery("#topmenu-login-dropdown").hasClass("open")) {
 	                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-						/* console.log("click close login - we click outside"); // disabled because too verbose */
+						console.log("click close login - we click outside");
 	                    // Hide the dropdown.
 						closeTopMenuLoginDropdown();
 	                }
@@ -2791,6 +2791,18 @@ function top_menu_ai()
 	$aijsurl = DOL_URL_ROOT.'/ai/js/ai_assistant.js?v='.urlencode((string) ($aijsver ? $aijsver : DOL_VERSION));
 
 	$html .= '<script nonce="'.getNonce().'">
+        jQuery(document).ready(function() {
+	        jQuery(document).on("click", function(event) {
+				if (jQuery("#topmenu-ai-popover").hasClass("open")) {
+		    		if (!$(event.target).closest("#topmenu-ai-toggle").length && !$(event.target).closest("#topmenu-ai-popover").length) {
+						console.log("click close ai dropdown - we click outside");
+		                // Hide the dropdown.
+						jQuery("#topmenu-ai-popover").removeClass("open");
+		            }
+				}
+	        });
+		});
+
 	(function () {
 		var toggle = document.getElementById("topmenu-ai-toggle");
 		var popover = document.getElementById("topmenu-ai-popover");
@@ -2836,6 +2848,7 @@ function top_menu_ai()
 		}
 
 		toggle.addEventListener("click", function (event) {
+			console.log("Click on #topmenu-ai-toggle");
 			event.preventDefault();
 			// position:fixed can be hijacked by a transformed ancestor: hosting the
 			// panel directly under <body> guarantees viewport coordinates.
@@ -2849,6 +2862,7 @@ function top_menu_ai()
 		});
 
 		popover.addEventListener("click", function (event) {
+			console.log("Click on #topmenu-ai-popover");
 			var closeBtn = event.target.closest("#ai-close-btn");
 			var expandBtn = event.target.closest("#ai-expand-btn");
 			if (closeBtn) {
@@ -2898,14 +2912,16 @@ function top_menu_quickadd()
 		if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {    // This may be set by some pages that use different jquery version to avoid errors
 			$html .= '
         <!-- Code to show/hide the user drop-down for the quick add -->
-        <script>
+        <script nonce="'.getNonce().'">
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
-                if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
-                    /* console.log("click close quick add - we click outside"); // disabled because too verbose */
-					// Hide the dropdown.
-                    $("#topmenu-quickadd-dropdown").removeClass("open");
-                }
+				if (jQuery("#topmenu-quickadd-dropdown").hasClass("open")) {
+	                if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
+	                    console.log("click close quick add - we click outside");
+						// Hide the dropdown.
+	                    $("#topmenu-quickadd-dropdown").removeClass("open");
+	                }
+				}
             });
             $("#topmenu-quickadd-dropdown .dropdown-toggle").on("click", function(event) {
 				console.log("Click on #topmenu-quickadd-dropdown .dropdown-toggle");
@@ -3210,11 +3226,13 @@ function top_menu_bookmark()
 	        <script>
 	        jQuery(document).ready(function() {
 	            jQuery(document).on("click", function(event) {
-	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-						/* console.log("close bookmark dropdown - we click outside"); */
-	                    // Hide the menus.
-	                    $("#topmenu-bookmark-dropdown").removeClass("open");
-	                }
+					if (jQuery("#topmenu-bookmark-dropdown").hasClass("open")) {
+		                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+							console.log("close bookmark dropdown - we click outside");
+		                    // Hide the menus.
+		                    $("#topmenu-bookmark-dropdown").removeClass("open");
+		                }
+					}
 	            });
 
 	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
@@ -3264,7 +3282,7 @@ function top_menu_search()
 
 	$html = '';
 
-	$usedbyinclude = 1;
+	$usedbyinclude = 1;		// Used by selectsearchbox.php
 	$arrayresult = array();
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php'; // This sets $arrayresult
 
@@ -3363,13 +3381,15 @@ function top_menu_search()
             jQuery("#top-menu-action-search").submit();
         });
 
-        // close drop down
+        // Close drop down
         jQuery(document).on("click", function(event) {
-			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
-				/* console.log("click close search - we click outside"); // disabled because too verbose */
-                // Hide the dropdown.
-                jQuery("#topmenu-global-search-dropdown").removeClass("open");
-            }
+			if (jQuery("#topmenu-global-search-dropdown").hasClass("open")) {
+				if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+					console.log("click close search - we click outside");
+	                // Hide the dropdown.
+	                jQuery("#topmenu-global-search-dropdown").removeClass("open");
+	            }
+			}
         });
 
         // Open drop down
