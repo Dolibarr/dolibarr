@@ -279,7 +279,7 @@ class MoLine extends CommonObjectLine
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array<string,string> $filter       	Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string|array<string,string|int> $filter       	Filter array. Example array('field'=>'valueforlike', ...)
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return MoLine[]|int                 	int <0 if KO, array of pages if OK
 	 */
