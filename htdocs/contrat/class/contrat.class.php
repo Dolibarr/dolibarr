@@ -3615,7 +3615,7 @@ class ContratLigne extends CommonObjectLine
 		if ($this->date_end > 0) {
 			$sql .= ",date_fin_validite";
 		}
-		$sql .= ") VALUES ($this->fk_contrat, '', '".$this->db->escape($this->description)."',";
+		$sql .= ") VALUES (".((int) $this->fk_contrat).", '', '".$this->db->escape($this->description)."',";
 		$sql .= ($this->fk_product > 0 ? $this->fk_product : "null").",";
 		$sql .= " '".$this->db->escape($this->qty)."',";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
