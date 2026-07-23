@@ -386,7 +386,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;
