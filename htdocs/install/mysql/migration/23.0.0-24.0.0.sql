@@ -573,4 +573,11 @@ UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELE
 
 ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
+-- Add per entity payment terms/modes and bank account (issue #39146)
+ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement tinyint DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement_supplier tinyint DEFAULT NULL;
+ALTER TABLE llx_societe_perentity ADD COLUMN cond_reglement_supplier tinyint DEFAULT NULL;
+
 -- end of migration
