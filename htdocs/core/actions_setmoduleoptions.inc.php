@@ -29,42 +29,47 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 // $formSetup may be defined
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var FormSetup $formSetup
  * @var Translate $langs
  * @var User $user
+ *
  * @var string $action
  * @var int $error
  * @var ?int $nomessageinupdate
  * @var ?int $nomessageinsetmoduleoptions
+ * @var ?string $modulepart
+ * @var ?string $websitetemplateconf
+ * @var ?array<string,mixed> $arrayofparameters
  */
 
 '
 @phan-var-force FormSetup $formSetup
 ';
 
-if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
 
 $upload_dir = null;
 
-if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (!empty($val['type']) && preg_match('/category:/', $val['type'])) {
+			if (isset($val['type']) && preg_match('/category:/', $val['type'])) {
 				if (GETPOSTINT($key) == '-1') {
 					$val_const = '';
 				} else {
 					$val_const = GETPOSTINT($key);
 				}
-			} elseif ($val['type'] == 'html') {
+			} elseif (isset($val['type']) && $val['type'] == 'html') {
 				$val_const = GETPOST($key, 'restricthtml');
 			} else {
 				$val_const = GETPOST($key, 'alpha');

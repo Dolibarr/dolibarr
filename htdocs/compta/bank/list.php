@@ -5,9 +5,9 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -46,14 +54,6 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
@@ -61,7 +61,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 $mode = GETPOST('mode', 'aZ');
 
@@ -104,7 +104,7 @@ if (!$sortorder) {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
-$extrafields = new ExtraFields($db);
+
 $hookmanager->initHooks(array('bankaccountlist'));
 
 // fetch optionals attributes and labels
@@ -119,25 +119,24 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => 1, 'position' => 10),
-	'b.label' => array('label' => $langs->trans("Label"), 'checked' => 1, 'position' => 12),
-	'accountype' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 14),
-	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => 1, 'position' => 16),
-	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (isModEnabled('accounting')), 'position' => 18),
-	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (isModEnabled('accounting')), 'position' => 20),
-	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => 1, 'position' => 50),
-	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => 0, 'position' => 22),
-	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 1010),
+	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => '1', 'position' => 10),
+	'b.label' => array('label' => $langs->trans("Label"), 'checked' => '1', 'position' => 12),
+	'accountype' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 14),
+	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => '1', 'position' => 16),
+	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 18),
+	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 20),
+	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => '1', 'position' => 50),
+	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => '0', 'position' => 22),
+	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => '1', 'position' => 1010),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'configurer');
@@ -184,7 +183,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Account';
 	$objectlabel = 'FinancialAccount';
-	$uploaddir = $conf->banque->dir_output;
+	$uploaddir = $conf->bank->dir_output;
 	include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 }
 
@@ -289,7 +288,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -302,6 +301,7 @@ if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
 
+$num = 0;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -433,7 +433,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -444,7 +444,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -525,7 +525,7 @@ if (!empty($arrayfields['balance']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -540,7 +540,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -600,7 +600,7 @@ if (!empty($arrayfields['balance']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -659,10 +659,10 @@ foreach ($accounts as $key => $type) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$objecttmp->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -713,12 +713,16 @@ foreach ($accounts as $key => $type) {
 		// Account number
 		if (!empty($arrayfields['b.account_number']['checked'])) {
 			print '<td class="tdoverflowmax250">';
-			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
-				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
-				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
-				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
-				print '</span>';
+			if (isModEnabled('accounting')) {
+				if (empty($objecttmp->account_number)) {
+					print img_warning($langs->trans("Mandatory"));
+				} else {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $objecttmp->account_number, 1);
+					print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
+					print '</span>';
+				}
 			} else {
 				print '<span title="'.dol_escape_htmltag($objecttmp->account_number).'">'.$objecttmp->account_number.'</span>';
 			}
@@ -730,18 +734,19 @@ foreach ($accounts as $key => $type) {
 
 		// Accountancy journal
 		if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
-			print '<td class="tdoverflowmax125">';
 			if (isModEnabled('accounting')) {
 				if (empty($objecttmp->fk_accountancy_journal)) {
-					print img_warning($langs->trans("Mandatory"));
+					$s = img_warning($langs->trans("Mandatory"));
 				} else {
 					$accountingjournal = new AccountingJournal($db);
 					$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
-					print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+					$s = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 				}
 			} else {
-				print '';
+				$s = '';
 			}
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute(dol_string_nohtmltag($s)).'">';
+			print $s;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -771,25 +776,25 @@ foreach ($accounts as $key => $type) {
 				$labeltoshow = $langs->trans("ConciliationDisabled");
 			}
 
-			print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dol_escape_htmltag($labeltoshow).'"' : '').'>';
+			print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dolPrintHTML($labeltoshow).'"' : '').'>';
 			if ($conciliate == -2) {
-				print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("CashAccount").'">'.$langs->trans("Never").'</span>';
 			} elseif ($conciliate == -3) {
-				print '<span class="opacitymedium">'.$langs->trans("Closed").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("Closed").'">'.$langs->trans("Never").'</span>';
 			} elseif (empty($objecttmp->rappro)) {
-				print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
+				print '<span class="opacitymedium" title="'.$langs->trans("ConciliationDisabled").'">'.$langs->trans("Never").'</span>';
 			} else {
 				$result = $objecttmp->load_board($user, $objecttmp->id);
 				if (is_numeric($result) && $result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				} else {
-					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.((int) $objecttmp->id).'&search_account='.((int) $objecttmp->id).'&search_conciliated=0&contextpage=banktransactionlist">';
 					print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 					print $result->nbtodo;
 					print '</span>';
 					print '</a>';
 					if ($result->nbtodolate) {
-						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-warning marginleftonlyshort">';
 						print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
 						print '</span>';
 					}
@@ -860,7 +865,7 @@ foreach ($accounts as $key => $type) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

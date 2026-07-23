@@ -16,21 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
 
 /**
+ * @var Conf $conf
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
- * @var AssetDepreciationOptions $assetdepreciationoptions
  * @var Translate $langs
+ *
+ * @var Object $object		Asset, AssetModel, ...
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ * @var AssetDepreciationOptions $assetdepreciationoptions
  */
 '
 @phan-var-force ?Form $form
@@ -68,7 +67,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$class_type = get_class($object) == 'Asset' ? 0 : 1;
-	print '<br>';
+
 	foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $mode_info) {
 		if (!empty($mode_info['enabled_field'])) {
 			$info = explode(':', $mode_info['enabled_field']);

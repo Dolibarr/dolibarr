@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,11 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var Form $form
  * @var Translate $langs
  * @var User $user
+ * @var Societe $object
  *
  * @var string $action
  */
@@ -38,7 +42,7 @@ print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
 	print '<td class="right">';
-	print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editsalesrepresentatives&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+	print '<a class="editfielda reposition" href="' . dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'editsalesrepresentatives', 'socid' => $object->id], true) . '">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 	print '</td>';
 }
 print '</tr></table>';
@@ -55,14 +59,14 @@ if ($action == 'editsalesrepresentatives') {
 	if (empty($arrayselected)) {
 		$arrayselected = $object->getSalesRepresentatives($user, 1);
 	}
-	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
+	print $form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, '', 0, "90%");
 	print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
 
-	$nbofsalesrepresentative = count($listsalesrepresentatives);
-	if ($nbofsalesrepresentative > 0 && is_array($listsalesrepresentatives)) {
+	$nbofsalesrepresentative = is_array($listsalesrepresentatives) ? count($listsalesrepresentatives) : 0;
+	if ($nbofsalesrepresentative > 0) {
 		$userstatic = new User($db);
 		foreach ($listsalesrepresentatives as $val) {
 			$userstatic->id = $val['id'];
@@ -81,7 +85,7 @@ if ($action == 'editsalesrepresentatives') {
 			print ' ';
 		}
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+		//print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
 	}
 	print '</td></tr>';
 }

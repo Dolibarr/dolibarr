@@ -6,9 +6,9 @@ ProductStatusNotOnBatch=ไม่ (ล๊อต / Serial ไม่ได้ใ�
 ProductStatusOnBatchShort=ล็อต
 ProductStatusOnSerialShort=ซีเรียล
 ProductStatusNotOnBatchShort=ไม่
-BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryList=%s หรือ %s เป็นข้อบังคับ
 BatchSellOrEatByMandatoryNone=ไม่
-BatchSellOrEatByMandatoryAll=%s and %s
+BatchSellOrEatByMandatoryAll=%s และ %s
 Batch=ล็อต/Serial
 atleast1batchfield=กินตามวันที่หรือขายโดยวันที่หรือ ล๊อต / หมายเลข Serial
 batch_number=ล๊อต / หมายเลข Serial
@@ -50,3 +50,5 @@ ToReplace=แทนที่
 CantMoveNonExistantSerial=ข้อผิดพลาด. คุณขอให้ย้ายระเบียนสำหรับซีเรียลที่ไม่มีอยู่อีกต่อไป คุณอาจใช้ซีเรียลเดียวกันในคลังสินค้าเดียวกันหลายครั้งในการจัดส่งเดียวกัน หรือใช้โดยการจัดส่งอื่น นำการจัดส่งนี้ออกและเตรียมการจัดส่งอีกครั้ง
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=การซ่อมแซมการรันตารางล็อตที่ไม่สมบูรณ์ด้วยพารามิเตอร์ '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= จำเป็นต้องแก้ไขสต็อคเนื่องจากมีหมายเลขซีเรียลเฉพาะ
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

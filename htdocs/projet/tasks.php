@@ -2,8 +2,8 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,14 +57,13 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 //$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-//$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $optioncss  = GETPOST('optioncss', 'aZ');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -98,6 +97,7 @@ $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_task_billable = GETPOST('search_task_billable');
+$search_status = GETPOST('search_status');
 
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
@@ -117,8 +117,6 @@ $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
 $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields = new ExtraFields($db);
@@ -131,10 +129,14 @@ if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($obj
 if ($id > 0 || !empty($ref)) {
 	// fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
+	$object->fetch_optionals();
 }
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
+// Default to no permission
+$permissiontoread = 0;
+$permissiontodelete = 0;
 
 // Default sort order (if not yet defined by previous GETPOST)
 /* if (!$sortfield) {
@@ -154,6 +156,12 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
+$permissiontoadd = $user->hasRight('projet', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 $diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
 $progress = GETPOSTINT('progress');
@@ -171,23 +179,25 @@ if (GETPOSTISSET('planned_workloadhour') || GETPOSTISSET('planned_workloadmin'))
 
 // Definition of fields for list
 $arrayfields = array(
-	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 1),
-	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 2),
-	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 3),
-	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 4),
-	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 5),
-	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 6),
-	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 7),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 8),
-	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 9),
-	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 10),
-	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 11),
-	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 12),
+	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 1),
+	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 2),
+	't.description' => array('label' => "Description", 'checked' => '0', 'position' => 3),
+	't.dateo' => array('label' => "DateStart", 'checked' => '1', 'position' => 4),
+	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 5),
+	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 6),
+	't.duration_effective' => array('label' => "TimeSpent", 'checked' => '1', 'position' => 7),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '-1', 'position' => 8),
+	't.progress' => array('label' => "ProgressDeclared", 'checked' => '1', 'position' => 9),
+	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => '1', 'position' => 10),
+	't.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 11),
+	't.budget_amount' => array('label' => "Budget", 'checked' => '0', 'position' => 12),
+	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => '1', 'position' => 13),
+
 );
 if ($object->usage_bill_time) {
-	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
-	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
-	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => 1, 'position' => 13);
+	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => '0', 'position' => 11);
+	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => '0', 'position' => 12);
+	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => '1', 'position' => 13);
 }
 
 // Extra fields
@@ -196,7 +206,6 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
@@ -228,6 +237,25 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($action == 'update_extras' && ($id > 0 || !empty($ref)) && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'aZ09');
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -248,6 +276,7 @@ if (empty($reshook)) {
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
 		$search_task_billable = '';
+		$search_status = -1;
 		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -326,6 +355,9 @@ if (!empty($search_progresscalc)) {
 	$morewherefilterarray[] = '(planned_workload IS NULL OR planned_workload = 0 OR '.natural_search('ROUND(100 * duration_effective / planned_workload, 2)', $search_progresscalc, 1, 1).')';
 	//natural_search('round(100 * $line->duration_effective / $line->planned_workload,2)', $filterprogresscalc, 1, 1).' {return 1;} else {return 0;}';
 }
+if ($search_status > -1 && $search_status != '') {
+	$morewherefilterarray[] = " t.fk_statut = ".((int) $search_status);
+}
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
@@ -380,6 +412,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$task->progress = $progress;
 			$task->budget_amount = $budget_amount;
 			$task->billable = $billable;
+			$task->status = Task::STATUS_VALIDATED;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -387,7 +420,21 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				$userid = GETPOSTINT("userid");
+				if ($userid == -4) {
+					if (empty($object->id)) {
+						$object->fetch($projectid);
+					}
+					$contactlist = array();
+					foreach (array('internal', 'external') as $source) {
+						$contactlist = array_merge($contactlist, $object->liste_contact(-1, $source));
+					}
+					foreach ($contactlist as $key => $contact) {
+						$result = $task->add_contact(((int) $contact["id"]), ($contact["code"] == "PROJECTLEADER" ? 'TASKEXECUTIVE' : "TASKCONTRIBUTOR"), $contact["source"]);
+					}
+				} else {
+					$result = $task->add_contact(GETPOSTINT("userid"), 'TASKEXECUTIVE', 'internal');
+				}
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
@@ -423,7 +470,6 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 	}
 }
 
-
 /*
  * View
  */
@@ -449,6 +495,8 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_ta
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
+$userWrite = 0;
+$massactionbutton = '';
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -521,7 +569,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_start_startday='.urlencode((string) ($search_date_start_startday));
 	}
 	if ($search_date_start_start) {
-		$param .= '&search_date_start_start='.urlencode($search_date_start_start);
+		$param .= '&search_date_start_start='.urlencode((string) $search_date_start_start);
 	}
 	if ($search_date_start_endmonth) {
 		$param .= '&search_date_start_endmonth='.urlencode((string) ($search_date_start_endmonth));
@@ -533,7 +581,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_start_endday='.urlencode((string) ($search_date_start_endday));
 	}
 	if ($search_date_start_end) {
-		$param .= '&search_date_start_end='.urlencode($search_date_start_end);
+		$param .= '&search_date_start_end='.urlencode((string) $search_date_start_end);
 	}
 	if ($search_date_end_startmonth) {
 		$param .= '&search_date_end_startmonth='.urlencode((string) ($search_date_end_startmonth));
@@ -545,7 +593,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_end_startday='.urlencode((string) ($search_date_end_startday));
 	}
 	if ($search_date_end_start) {
-		$param .= '&search_date_end_start='.urlencode($search_date_end_start);
+		$param .= '&search_date_end_start='.urlencode((string) $search_date_end_start);
 	}
 	if ($search_date_end_endmonth) {
 		$param .= '&search_date_end_endmonth='.urlencode((string) ($search_date_end_endmonth));
@@ -557,7 +605,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_end_endday='.urlencode((string) ($search_date_end_endday));
 	}
 	if ($search_date_end_end) {
-		$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
+		$param .= '&search_date_end_end=' . urlencode((string) $search_date_end_end);
 	}
 	if ($search_planedworkload) {
 		$param .= '&search_planedworkload='.urlencode($search_planedworkload);
@@ -570,6 +618,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_progressdeclare) {
 		$param .= '&search_progressdeclare='.urlencode($search_progressdeclare);
+	}
+	if ($search_status) {
+		$param .= '&search_status='.urlencode((string) ($search_status));
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
@@ -593,7 +644,7 @@ if ($id > 0 || !empty($ref)) {
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
-	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions) ?? '';
 
 	// Project card
 
@@ -800,9 +851,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project', 'class="pictofixedwidth"');
 	if ($projectoktoentertime) {
-		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
+		$formother->selectProjectTasks(GETPOSTINT('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	} else {
-		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '', 'maxwidth500 widthcentpercentminusxx');
+		$formother->selectProjectTasks(GETPOSTINT('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '', 'maxwidth500 widthcentpercentminusxx');
 	}
 	print '</td></tr>';
 
@@ -812,12 +863,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+		print $form->select_dolusers('-4', 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+			print $form->select_dolusers('-4', 'userid', 0, null, 0, '', '', '0', 0, 0, '(statut:=:1)', 4, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
@@ -889,7 +940,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 	// Projet card in view mode
 
@@ -932,7 +983,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
+	$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $filteronthirdpartyid, 0, '', '-1', $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
@@ -940,7 +991,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		$tmpuser->fetch($search_user_id);
 	}
 
-	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(null, $tmpuser, $object->id, 0) : '');
+	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(null, $tmpuser, (string) $object->id, 0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 
@@ -960,8 +1011,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</div>';
 	}
 
-	// Show the massaction checkboxes only when this page is not opend from the Extended POS
-	if ($massactionbutton && $contextpage != 'poslist') {
+	// Show the massaction checkboxes only when this page is not opened from the Extended POS
+	if (!empty($massactionbutton) && $contextpage != 'poslist') {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
@@ -972,7 +1023,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1054,6 +1105,16 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '<td class="liste_titre right"></td>';
 	}
 
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print '<td class="liste_titre center">';
+		$arrayofstatus = array();
+		foreach ($taskstatic->labelStatusShort as $key => $val) {
+			$arrayofstatus[$key] = $langs->trans($val);
+		}
+		print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+		print '</td>';
+	}
+
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print '<td class="liste_titre right">';
@@ -1093,7 +1154,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1104,7 +1165,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '<tr class="liste_titre nodrag nodrop">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	// print '<td>'.$langs->trans("Project").'</td>';
@@ -1139,6 +1200,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if (!empty($arrayfields['t.progress_summary']['checked'])) {
 		print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '', 1);
 	}
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print_liste_field_titre($arrayfields['t.fk_statut']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
+	}
 	if ($object->usage_bill_time) {
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "t.tobill", '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1159,6 +1223,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	if (!empty($arrayfields['t.billable']['checked'])) {
 		print_liste_field_titre($arrayfields['t.billable']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 	}
+
 	// Extra fields
 	$disablesortlink = 1;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1168,7 +1233,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print $hookmanager->resPrint;
 	print '<td></td>';
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	print "</tr>\n";

@@ -60,11 +60,7 @@ require_once '../../main.inc.php';
 
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
-}
+header('Cache-Control: max-age=10800, public, must-revalidate');
 
 
 print "jQuery(document).ready(function () {\n";
@@ -159,7 +155,7 @@ function check_events() {
 						print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 					}
 					?>
-					var icon = '<?php print DOL_URL_ROOT.'/theme/common/octicons/build/svg/bell.svg'; ?>';
+					var icon = '<?php print DOL_URL_ROOT.'/public/theme/common/bell.svg'; ?>';
 					var listofreminderids = '';
 					var noti = []
 

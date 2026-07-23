@@ -24,14 +24,14 @@
 }
 
 #compare li {
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   overflow: auto;
-  border-bottom: 2px solid #98b880;
+  border-bottom: 2px solid #ccc;
 }
 #compare ul.competence li,#compare ul.note li {
   height:48px;
   overflow: hidden;
-  border-bottom: 2px solid #6C286C;
 }
 
 #compare li:hover {
@@ -41,7 +41,7 @@
 
 #compare li.disabled {
   color:#999;
-  border-bottom: 2px solid #ff0000;
+  border-bottom: 2pt dashed #aaa !important;
 }
 
 #compare li.disabled img,#compare li.disabled p {
@@ -49,7 +49,6 @@
 }
 
 span.note {
-	font: bold Helvetica, Verdana, sans-serif;
 	background: #eee none repeat scroll 0 0;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -86,39 +85,20 @@ span.diffnote.little {
 	height: 25px;
 	border-width:3px;
 }
-span.toohappy {
-	background: #3097D1;
-	border:5px solid #3097D1;
+
+/* Must be same colors than into the pdf_standard_evaluation.modules.php */
+span.happy {
+	background: rgb(169, 236, 201);
 }
 span.veryhappy {
-	border:5px solid #3097D1;
-}
-span.toosad {
-	background: #ccc;
-	border:5px solid #ccc;
+	background: rgb(20, 129, 111);
 }
 span.sad {
-	background:#bd4147;
-}
-/*span.diffnote {
-	display: inline-block;
-	background: url(img/smiley.png);
-	width:42px;
-	height: 42px;
-	overflow: hidden;
-}
-span.toohappy {
-	background-position: -105px 0px;
-}
-span.veryhappy {
-	background-position: -53px 0px;
+	background:rgb(205, 92, 92);
 }
 span.toosad {
-	background-position: -105px -52px;
+	background: rgb(205, 92, 92);
 }
-span.sad {
-	background-position: 0px -52px;
-}*/
 
 span.bubble {
 	background-color: #ccc;

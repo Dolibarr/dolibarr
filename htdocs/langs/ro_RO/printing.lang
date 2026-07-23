@@ -46,6 +46,10 @@ IPP_Color=Color
 IPP_Device=Dispozitiv
 IPP_Media=Imprimantă media
 IPP_Supported=Tip media
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=Niciunul
+IPP_COLOR_print-black=Alb negru
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Această pagină afișează listele cu joburi de imprimare pentru imprimantele disponibile.
 GoogleAuthNotConfigured=Google OAuth nu a fost configurat. Activați modulul OAuth și setați un ID/Secret Google.
 GoogleAuthConfigured=Acreditările Google OAuth au fost găsite în configurarea modulului OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Configurare variabile pentru driverul imprimanta Goog
 PrintingDriverDescprintipp=Variabilele de configurare pentru driverele de imprimare Cups
 PrintTestDescprintgcp=Lista imprimantelor pentru Google Cloud Print
 PrintTestDescprintipp=Lista imprimantelor pentru Cups.
-Testbbbb
+PrinterLocation=Locație imprimantă

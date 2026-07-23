@@ -1,8 +1,10 @@
 <?php
+
 /* Copyright (C) 2010-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +48,11 @@ class HookManager
 	public $errors = array();
 
 	/**
+	 * @var string[] Warning codes (or messages)
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var string[] Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
 	 */
 	public $contextarray = array();
@@ -83,8 +90,8 @@ class HookManager
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDB		$db		Database handler
-	 * @return void
+	 * @param	DoliDB|null		$db		Database handler
+	 * @return 	void
 	 */
 	public function __construct($db)
 	{
@@ -135,35 +142,37 @@ class HookManager
 					$arrayhooks = explode(':', $hooks); // Old system (for backward compatibility)
 				}
 
-				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks)) {    // We instantiate action class only if initialized hook is handled by the module
-					// Include actions class overwriting hooks
-					if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
-						$path = '/'.$module.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
+				if (!in_array($context, $arrayhooks) && !in_array('all', $arrayhooks)) {
+					// We instantiate action class only if initialized hook is handled by the module
+					// Hook was already initialized for this context and module
+					continue;
+				}
 
-						$resaction = dol_include_once($path.$actionfile);
-						if ($resaction) {
-							$controlclassname = 'Actions'.ucfirst($module);
+				// Include actions class overwriting hooks
+				if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
+					$path = '/'.$module.'/class/';
+					$actionfile = 'actions_'.$module.'.class.php';
 
-							$actionInstance = new $controlclassname($this->db);
-							'@phan-var-force CommonHookActions $actionInstance';
+					$resaction = dol_include_once($path.$actionfile);
+					if ($resaction) {
+						$controlclassname = 'Actions'.ucfirst($module);
 
+						$actionInstance = new $controlclassname($this->db);
+						'@phan-var-force CommonHookActions $actionInstance';
 
-							$priority = empty($actionInstance->priority) ? 50 : $actionInstance->priority;
+						// @phan-suppress-next-line PhanUndeclaredProperty
+						$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
 
-							$this->hooks[$context][$module] = $actionInstance;
-							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
+						$this->hooks[$context][$module] = $actionInstance;
+						$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
 
-							$foundcontextmodule = true;
+						$foundcontextmodule = true;
 
-							// Hook has been initialized with another couple $context/$module
-							$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
-							dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
-						} else {
-							dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
-						}
+						// Hook has been initialized with another couple $context/$module
+						$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
+						dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
 					} else {
-						// Hook was already initialized for this context and module
+						dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
 					}
 				}
 			}
@@ -186,14 +195,18 @@ class HookManager
 	/**
 	 *  Execute hooks (if they were initialized) for the given method
 	 *
-	 *  @param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
+	 *  @phpstan-template T
+	 *
+	 *  @param		string				$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
-	 *  @param		object	$object			Object to use hooks on
-	 *  @param		string	$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
-	 *  @return		int<-1,1>				For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
-	 *                                      All types can also return some values into an array ->results that will be merged into this->resArray for caller.
-	 *                                      $this->error or this->errors are also defined by class called by this function if error.
+	 *  @phpstan-param T $object
+	 *  @param		null|Object|array<int|string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
+	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
+	 *                                  			    All types can also return some values into an array ->results that will be merged into this->resArray for caller.
+	 * 													$this->error or this->errors are also defined by class called by this function if error.
+	 * 													$this->warnings is also defined by class called by this function if warning.
 	 */
 	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
@@ -304,9 +317,10 @@ class HookManager
 					// Clean class (an error may have been set from a previous call of another method for same module/hook)
 					$actionclassinstance->error = '';
 					$actionclassinstance->errors = array();
+					$actionclassinstance->warnings = array();
 
 					if (getDolGlobalInt('MAIN_HOOK_DEBUG')) {
-						// This his too much verbose, enabled if const enabled only
+						// This is too verbose, enabled if const enabled only // False positive about id & element: @phan-suppress-next-line PhanUndeclaredProperty
 						dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', object id='.$object->id : '').((is_object($object) && property_exists($object, 'element')) ? ', object element='.$object->element : ''), LOG_DEBUG);
 					}
 
@@ -326,6 +340,11 @@ class HookManager
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
+						if (!empty($actionclassinstance->warnings) && count($actionclassinstance->warnings) > 0) {
+							$this->warnings = array_merge($this->warnings, (array) $actionclassinstance->warnings);
+							dol_syslog("Warning on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->warnings) ? '' : " ".implode(",", $this->warnings)), LOG_DEBUG);
+						}
+
 						if (isset($actionclassinstance->results) && is_array($actionclassinstance->results)) {
 							if ($resactiontmp > 0) {
 								$localResArray = $actionclassinstance->results;
@@ -342,10 +361,10 @@ class HookManager
 							}
 						}
 					} else {
-						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
+						// Generic old hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 
-						// TODO. this test should be done into the method of hook by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset
-						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
+						// TODO. this test should be done in the hook method by returning nothing @phan-suppress-next-line PhanTypeInvalidDimOffset,PhanUndeclaredProperty
+						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && (property_exists($actionclassinstance, 'module_number') && ($parameters['special_code'] != $actionclassinstance->module_number))) {
 							continue;
 						}
 
@@ -370,7 +389,7 @@ class HookManager
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".implode(",", $this->errors)), LOG_ERR);
 						}
 
-						// TODO dead code to remove (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
+						// Test old code (do not disable this, but fix your hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {

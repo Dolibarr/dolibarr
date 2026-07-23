@@ -6,7 +6,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Ahmad Jamaly Rabib		<rabib@metroworks.co.jp>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ class modPropale extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		$this->db = $db;
 		$this->numero = 20;
@@ -53,7 +54,7 @@ class modPropale extends DolibarrModules
 		$this->module_position = '10';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des propositions commerciales";
+		$this->description = "Management of quotes or commercial proposals";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -71,46 +72,54 @@ class modPropale extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
-		$this->langfiles = array("propal", "bills", "companies", "deliveries", "products");
+		$this->langfiles = array("propal", "bills", "companies", "sendings", "products");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "PROPALE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "cyan";
-		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_propale_marbre";
-		$this->const[$r][3] = 'Name of proposal numbering manager';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_VALIDITY_DURATION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "15";
-		$this->const[$r][3] = 'Duration of validity of business proposals';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPALE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "PROPOSAL_ALLOW_ONLINESIGN";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$this->const = [
+			[
+				"PROPALE_ADDON_PDF",
+				"chaine",
+				"cyan",
+				'Name of the proposal generation manager in PDF format',
+				0,
+			],
+			[
+				"PROPALE_ADDON",
+				"chaine",
+				"mod_propale_marbre",
+				'Name of proposal numbering manager',
+				0,
+			],
+			[
+				"PROPALE_VALIDITY_DURATION",
+				"chaine",
+				"15",
+				'Duration of validity of business proposals',
+				0,
+			],
+			[
+				"PROPALE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/proposals",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ALLOW_ONLINESIGN",
+				"chaine",
+				"1",
+				"",
+				0,
+			],
+			[
+				"PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN",
+				"chaine",
+				getRandomPassword(true),
+				"",
+				0,
+			],
+		];
 
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";
@@ -181,6 +190,13 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'export';
 
+		$r++;
+		$this->rights[$r][0] = 29; // id de la permission
+		$this->rights[$r][1] = 'Reopen commercial proposals'; // Set proposal to signed or refused
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'propal_advance';
+		$this->rights[$r][5] = 'reopen';
 
 		// Menus
 		//-------
@@ -299,6 +315,9 @@ class modPropale extends DolibarrModules
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
+		$parameters = array();
+		$hookmanager->executeHooks('printExportWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$this->export_sql_end[$r] .= $hookmanager->resPrint;
 
 		// Imports
 		//--------
@@ -484,6 +503,11 @@ class modPropale extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
+		$result = $this->_load_tables('/install/mysql/', 'propal');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Remove permissions and default values
 		$this->remove($options);

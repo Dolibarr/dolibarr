@@ -4,7 +4,7 @@
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,18 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -42,15 +51,6 @@ if (GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha')) {
 	$_POST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Security check
 if (!$user->admin) {
@@ -77,6 +77,7 @@ $terminaltouse = $terminal;
 /*
  * Actions
  */
+
 $error = 0;
 
 if (GETPOST('action', 'alpha') == 'set') {
@@ -179,7 +180,8 @@ $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_terminal');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1, 'cash-register');
@@ -221,7 +223,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "(courant:=:2)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse)) {
 		$atleastonefound++;
@@ -230,7 +232,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse)) {
 		$atleastonefound++;
@@ -239,7 +241,7 @@ if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+	print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 	print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse)) {
 		$atleastonefound++;
@@ -251,14 +253,14 @@ if (isModEnabled("bank")) {
 		print '<td>';
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+		if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
 		global $stripearrayofkeysbyenv;
 		$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 		\Stripe\Stripe::setApiKey($site_account);
-		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
@@ -269,9 +271,9 @@ if (isModEnabled("bank")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();
@@ -287,7 +289,7 @@ if (isModEnabled("bank")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+		print $form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "(courant:=:1)", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
 		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 		if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse)) {
 			$atleastonefound++;
@@ -295,6 +297,7 @@ if (isModEnabled("bank")) {
 		print '</td></tr>';
 	}
 
+	// Payment mode other than 'LIQ', 'CB', 'CHQ' are not supported by the cash control feature so we must disallow them
 	foreach ($paiements as $modep) {
 		if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) {
 			continue; // Already managed before
@@ -306,9 +309,13 @@ if (isModEnabled("bank")) {
 			$atleastonefound++;
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
-		print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
+		if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+			print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+		} else {
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+			print $form->select_comptes(getDolGlobalInt($name), $name, 0, "(courant:=:".((int) $cour).")", 1, '', 0, 'maxwidth500 widthcentpercentminusxx', 1);
+			print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewBankAccount").'"></span></a>';
+		}
 		print '</td></tr>';
 	}
 }
@@ -323,7 +330,7 @@ if (isModEnabled('stock')) {
 	print '</td></tr>';
 
 
-	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
+	$disabled = getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>';
@@ -334,7 +341,7 @@ if (isModEnabled('stock')) {
 	if (!$disabled) {
 		print '</span>';
 	}
-	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
+	if (!$disabled && !getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}
 	print '</td>'; // Force warehouse (this is not a default value)
@@ -364,63 +371,8 @@ if (isModEnabled('project')) {
 	print img_picto('', 'project', 'class="pictofixedwidth"');
 	// select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	$projectid = getDolGlobalInt('CASHDESK_ID_PROJECT'.$terminaltouse);
-	print $formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
+	print $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
-}
-
-if (isModEnabled('receiptprinter')) {
-	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-	$printer = new dolReceiptPrinter($db);
-
-	$printer->listprinters();
-	$printers = array();
-	foreach ($printer->listprinters as $key => $value) {
-		$printers[$value['rowid']] = $value['name'];
-	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse");
-	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
-	print '</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
-	print '</td></tr>';
-	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
-		print '</td></tr>';
-	}
-}
-
-if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-	// Select printer to use with terminal
-	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
-	$printer = new dolReceiptPrinter($db);
-	$printer->listPrintersTemplates();
-	$templates = array();
-	foreach ($printer->listprinterstemplates as $key => $value) {
-		$templates[$value['rowid']] = $value['name'];
-	}
-	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse");
-	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
-	print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
-	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
-	print '</td></tr>';
-	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
-		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1);
-		print '</td></tr>';
-	}
 }
 
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
@@ -428,7 +380,7 @@ print '<td>';
 print '<input type="text" class="width50" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse).'" />';
 print '</td></tr>';
 
-// Numbering module
+// Numbering module (TODO When this is used ?)
 if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BillsNumberingModule");
@@ -450,6 +402,7 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 							$classname = "mod_facture_".$file;
 						}
 						// Check if there is a filter on country
+						$reg = array();
 						preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 						if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 							continue;
@@ -483,15 +436,93 @@ if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 	}
 	print $form->selectarray('TAKEPOS_ADDON'.$terminaltouse, $array, getDolGlobalString('TAKEPOS_ADDON'.$terminaltouse, '0'), 0);
 	print "</td></tr>\n";
-	print '</table>';
-	print '</div>';
 }
+
+
+// Options when using a special printer in TakePOS
+$customprinterallowed = true;
+$orderprinterallowed = (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS'));
+$customprinttemplateallowed = true;
+include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+if (isALNERunningVersion()) {		// No need to show the custom template when isALNERunningVersion is true because it has no effect (disabled by receipt.php).
+	$customprinterallowed = false;
+	$customprinttemplateallowed = false;	// Custom printer may be allowed if mandatory information in template are guaranteed. For the moment, we prefer not allow this.
+}
+
+if (isModEnabled('receiptprinter')) {
+	// Select printer to use with terminal
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+
+	$printer->listprinters();
+	$printers = array();
+	foreach ($printer->listprinters as $key => $value) {
+		$printers[$value['rowid']] = $value['name'];
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse");
+	print ' <span class="opacitymedium">('.$langs->trans("MainPrinterToUseMore").')</span>';
+	print '</td>';
+	print '<td>';
+	if (!$customprinterallowed) {	// @phpstan-ignore-line
+		print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
+	}
+	print '</td></tr>';
+
+	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT') && getDolGlobalInt('TAKEPOS_ORDER_PRINTERS') && $orderprinterallowed) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 1</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 2</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("KitchenPrinter").' 3</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
+		print '</td></tr>';
+	}
+}
+
+if (isModEnabled('receiptprinter') || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+	// Select printer to use with terminal
+	require_once DOL_DOCUMENT_ROOT.'/takepos/class/dolreceiptprinter.class.php';
+	$printer = new dolReceiptPrinter($db);
+	$printer->listPrintersTemplates();
+	$templates = array();
+	foreach ($printer->listprinterstemplates as $key => $value) {
+		$templates[$value['rowid']] = $value['name'];
+	}
+	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse");
+	print ' <span class="opacitymedium">('.$langs->trans("MainTemplateToUseMore").')</span>';
+	if ($customprinttemplateallowed) {
+		print ' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
+	}
+	print '<td>';
+	if (!$customprinttemplateallowed) {
+		print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("NotAvailableForCountryWhenModuleIsOn", $mysoc->country_code, $langs->transnoentitiesnoconv('Module3200Name'))).'</span>';
+	} else {
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150');
+	}
+	print '</td></tr>';
+
+	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS') && $orderprinterallowed) {
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150');
+		print '</td></tr>';
+	}
+}
+
 
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
 
 print '</div>';
+
 
 // add free text on each terminal of cash desk
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);

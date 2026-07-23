@@ -74,3 +74,5 @@ NewPartnershipRequest=Yêu cầu hợp tác mới
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Trang này phải chứa ít nhất một liên kết đến một trong các tên miền sau: %s
 IPOfApplicant=IP của người nộp đơn
+PartnershipToReopen=Để mở lại
+PartnershipConfirmReOpenAsk=Bạn có chắc chắn muốn mở lại quan hệ đối tác này không <b> %s</b>?

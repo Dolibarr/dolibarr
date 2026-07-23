@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +72,14 @@ $endyear = $year;
 $object = new Ticket($db);
 
 // Security check
-//$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
+//restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enough permissions');
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'ticket', 'manage_advance')));	// What is this permission for ?
 
 
 /*
@@ -110,6 +113,8 @@ $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
 $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+$showtot = 0;
+$shownb = 0;
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -179,12 +184,13 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// For internals users,
-	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+	if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= " GROUP BY t.fk_statut";
 
+$dataseries = array();
 $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
@@ -215,9 +221,18 @@ if ($result) {
 		}
 	}
 
+	/**
+	 * @var string $badgeStatus0
+	 * @var string $badgeStatus1
+	 * @var string $badgeStatus3
+	 * @var string $badgeStatus4
+	 * @var string $badgeStatus5
+	 * @var string $badgeStatus6
+	 * @var string $badgeStatus8
+	 * @var string $badgeStatus9
+	 */
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
-	$dataseries = array();
 	$colorseries = array();
 
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
@@ -250,7 +265,7 @@ $stringtoshow = '<script type="text/javascript">
     });
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
-$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
@@ -262,14 +277,14 @@ $stringtoshow .= '</div>';
 if ($user->hasRight('ticket', 'read')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
+	print '<tr class="liste_titre"><th  colspan=2>'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
 
-	print '<tr><td class="center">';
+	print '<tr><td class="center" colspan=2>';
 	print $stringtoshow;
 
 	// don't display graph if no series
+	$totalnb = 0;
 	if (!empty($dataseries) && count($dataseries) > 1) {
-		$totalnb = 0;
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
@@ -309,7 +324,7 @@ if ($user->hasRight('ticket', 'read')) {
 		}
 	}
 	print '</td></tr>';
-
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$totalnb.'</td></tr>';
 	print '</table>';
 	print '</div>';
 }
@@ -354,7 +369,7 @@ if ($user->hasRight('ticket', 'read')) {
 		$sql .= " AND t.fk_soc= ".((int) $user->socid);
 	} else {
 		// Restricted to assigned user only
-		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$user->hasRight('ticket', 'manage')) {
+		if (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && !$permissiontomanage) {
 			$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 		}
 	}

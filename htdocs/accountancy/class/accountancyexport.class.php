@@ -5,16 +5,16 @@
  * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
- * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
- * Copyright (C) 2017-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2017-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2017		André Schild				<a.schild@aarboard.ch>
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ class AccountancyExport
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
 	/** @var int */
 	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	/** @var int */
+	public static $EXPORT_TYPE_ISTEA = 205;
 	// Generic FEC after that
 	/** @var int */
 	public static $EXPORT_TYPE_FEC = 1000;
@@ -161,6 +163,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
+			self::$EXPORT_TYPE_ISTEA => $langs->trans('Modelcsv_ISTEA'),
 		);
 
 		$listofgenericformatexport = array(
@@ -223,6 +226,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
+			self::$EXPORT_TYPE_ISTEA => 'istea',
 		);
 
 		global $hookmanager;
@@ -317,6 +321,10 @@ class AccountancyExport
 					'label' => 'iSuite Expert',
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
+				self::$EXPORT_TYPE_ISTEA => array(
+					'label' => 'ISTEA',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
 			),
 			'cr' => array(
 				'1' => $langs->trans("Unix"),
@@ -374,12 +382,12 @@ class AccountancyExport
 	 */
 	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 1, $outputMode = 1, $noouput = 1)
 	{
-		global $db, $conf, $langs;	// The tpl file use $db
-		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
+		global $db, $conf, $langs;				// Used into /accountancy/tpl/export_journal.tpl.php
+		global $search_date_end, $hookmanager;	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
-		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
-		$type_export = 'general_ledger';
+		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);		// Used into /accountancy/tpl/export_journal.tpl.php
+		$type_export = 'general_ledger';											// Used into /accountancy/tpl/export_journal.tpl.php
 
 		$completefilename = '';
 		$exportFile = null;
@@ -414,7 +422,8 @@ class AccountancyExport
 			top_httphead($mimetype, 1);
 		}
 
-		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+		// Set var $completefilename and add HTTP header.
+		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';	// TODO Fix this: A tpl is for rendering data on output. For including common code, we must use .inc.php
 
 		if ($outputMode == 1 || $outputMode == 2) {
 			if ($outputMode == 1) {
@@ -539,9 +548,12 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_ISUITEEXPERT:
 				$this->exportiSuiteExpert($TData, $exportFile);
 				break;
+			case self::$EXPORT_TYPE_ISTEA:
+				$this->exportISTEA($TData, $exportFile);
+				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);
+				$parameters = array('format' => $formatexportset, 'exportFile' => $exportFile);
 				// file contents will be created in the hooked function via print
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
@@ -873,7 +885,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2025/12/21 Alexandre Spangaro (alexandre@inovea-conseil.com)
 	 *
 	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
@@ -891,8 +903,13 @@ class AccountancyExport
 
 		$end_line = "\r\n";
 
+		$conf->cache['archiveFileList_notfound'] = array();
+
 		// We should use dol_now function not time however this is wrong date to transfer in accounting
+		$i = 0;
 		foreach ($objectLines as $line) {
+			$i++;
+
 			// Clean some data
 			$line->doc_ref = dol_string_unaccent($line->doc_ref);
 
@@ -920,11 +937,11 @@ class AccountancyExport
 				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
 				if ($line->doc_type == 'customer_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
@@ -933,7 +950,15 @@ class AccountancyExport
 				}
 
 				$tab['filler2'] = str_repeat(' ', 110);
-				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				// Field "Maj" (static position 1 char):
+				// blank = no update if account already exists
+				// 2 = partial update (alpha key, label, address, collectif, RIB)
+				if (getDolGlobalString('ACCOUNTING_EXPORT_QUADRATUS_DISABLE_THIRDPARTY_UPDATE')) {
+					$tab['Maj'] = ' ';
+				} else {
+					$tab['Maj'] = 2;
+				}
 
 				if ($line->doc_type == 'customer_invoice') {
 					$tab['type_compte'] = 'C';
@@ -956,7 +981,7 @@ class AccountancyExport
 
 			$tab = array();
 			$tab['type_ligne'] = 'M';
-			$tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
+			$tab['num_compte'] = str_pad(self::trunc((string) $code_compta, 8), 8);
 			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab['folio'] = '000';
 
@@ -1005,7 +1030,7 @@ class AccountancyExport
 			$tab['affaire'] = str_repeat(' ', 10);
 			$tab['quantity1'] = str_repeat(' ', 10);
 			$tab['num_piece2'] = str_pad(self::trunc((string) $line->piece_num, 8), 8);
-			$tab['devis'] = str_pad($conf->currency, 3);
+			$tab['devis'] = str_pad(getDolCurrency(), 3);
 			$tab['code_journal2'] = str_pad(self::trunc($line->code_journal, 3), 3);
 			$tab['filler3'] = str_repeat(' ', 3);
 
@@ -1023,12 +1048,14 @@ class AccountancyExport
 			$tab['num_piece3'] = str_pad(substr(self::trunc($line->doc_ref, 20), -10), 10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
 			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
+
 			// get document file
 			$attachmentFileName = '';
 			if ($withAttachment == 1) {
 				$attachmentFileKey = trim((string) $line->piece_num);
 
 				if (!isset($archiveFileList[$attachmentFileKey])) {
+					// We complete the $archiveFileList to add the file to the existing list (first entry was filled when function was called, we add here the next one)
 					$objectDirPath = '';
 					$objectFileName = dol_sanitizeFileName($line->doc_ref);
 					if ($line->doc_type == 'customer_invoice') {
@@ -1042,32 +1069,44 @@ class AccountancyExport
 						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 						$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 					}
-					$arrayofinclusion = array();
-					// If it is a supplier invoice, we want to use last uploaded file
-					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
-					if (!empty($fileFoundList)) {
-						$attachmentFileNameTrunc = str_pad(self::trunc((string) $line->piece_num, 8), 8, '0', STR_PAD_LEFT);
-						foreach ($fileFoundList as $fileFound) {
-							if (strstr($fileFound['name'], $objectFileName)) {
-								// skip native invoice pdfs (canelle)
-								// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
-								if ($line->doc_type == 'supplier_invoice') {
-									if ($fileFound['name'] === $objectFileName.'.pdf') {
+
+					if ($objectDirPath && empty($conf->cache['archiveFileList_notfound'][$attachmentFileKey])) {
+						$arrayofinclusion = array();
+						// If it is a supplier invoice, we want to use last uploaded file
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+
+						$fileFoundPath = '';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = str_pad(self::trunc((string) $line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									// skip native invoice pdfs (canelle)
+									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+									if ($line->doc_type == 'supplier_invoice') {
+										if ($fileFound['name'] === $objectFileName.'.pdf') {
+											continue;
+										}
+									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 										continue;
 									}
-								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
-									continue;
-								}
-								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
-								if (file_exists($fileFoundPath)) {
-									$archiveFileList[$attachmentFileKey] = array(
-										'path' => $fileFoundPath,
-										'name' => $attachmentFileNameTrunc.'.pdf',
-									);
-									break;
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
 								}
 							}
+						}
+
+						if (empty($fileFoundPath)) {
+							// Use also a cache if no file were found
+							$conf->cache['archiveFileList_notfound'][$attachmentFileKey] = 1;
 						}
 					}
 				}
@@ -1076,7 +1115,8 @@ class AccountancyExport
 					$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
 				}
 			}
-			if (dol_strlen($attachmentFileName) == 12) {
+
+			if (dol_strlen((string) $attachmentFileName) == 12) {
 				$tab['attachment'] = $attachmentFileName; // position 182
 			} else {
 				$tab['attachment'] = str_repeat(' ', 12); // position 182
@@ -1134,7 +1174,7 @@ class AccountancyExport
 
 			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
-			$tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
+			$tab['num_compte'] = str_pad(dol_trunc((string) $code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
 			if ($line->sens == 'D') {
 				$tab['montant_debit']  = str_pad(number_format($line->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -1148,7 +1188,7 @@ class AccountancyExport
 
 			$tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($line->doc_ref).' '.dol_string_unaccent($line->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
+			$tab['lettrage'] = str_repeat(dol_trunc((string) $line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
 			$tab['code_piece'] = str_pad(dol_trunc((string) $line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
@@ -1172,7 +1212,12 @@ class AccountancyExport
 
 			$tab['end_line'] = $end_line;
 
-			print implode('|', $tab);
+			$output = implode('|', $tab);
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			$index++;
 		}
@@ -1346,6 +1391,63 @@ class AccountancyExport
 	}
 
 	/**
+	 * Export format : ISTEA
+	 *
+	 * @param 	BookKeepingLine[] 		$objectLines 			data
+	 * @param 	?resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
+	 */
+	public function exportISTEA($objectLines, $exportFile = null)
+	{
+		global $conf;
+
+		$separator = ';';
+		$end_line = "\n";
+
+		// Extract the Third party account numbers from the table to provide the correct line for ISTEA
+		$tiers = [];
+		foreach ($objectLines as $line) {
+			if ($line->subledger_account && substr($line->subledger_account, 0, 1) == '4') {
+				$tiers[$line->piece_num] = $line->subledger_label;
+			}
+		}
+
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			/*** preparation du champ label operation pour istea ***/
+			// retrecissement du champs car ISTEA n'affiche pas bcp de caract�re.
+			$search = array('Paiement fournisseur ', 'Virement ', 'Paiement ');
+			$replace = array('Paiemt fourn ','Virt ','Paiemt ');
+			$label_operation = str_replace($search, $replace, $line->label_operation);
+			// encadrement par des ' si le champs contient le separateur
+			$label_operation = preg_match('/'.$separator.'/', $label_operation) ? "'".$label_operation."'" : $label_operation;
+
+			$tab = array();
+			// export configurable
+			$tab[] = $line->piece_num;	// colonne 1 : numero de piece	ISTEA
+			$tab[] = $date_document;	// colonne 2 : date				ISTEA
+			$tab[] = $line->doc_ref;	// colonne 3 : reference piece 	ISTEA
+			$tab[] = array_key_exists($line->piece_num, $tiers) ? $tiers[$line->piece_num] : '';	// colonne 4 : nom tiers	ISTEA
+			$tab[] = length_accountg(($line->subledger_account && (substr($line->subledger_account, 0, 2) == substr($line->numero_compte, 0, 2))) ? $line->subledger_account : $line->numero_compte);	// colonne 5 : numero de compte	ISTEA
+			$tab[] = length_accountg($line->subledger_account ? $line->subledger_account : $line->numero_compte);	// colonne 6 : numero de compte
+			$tab[] = length_accountg($line->subledger_account ? $line->numero_compte : '');	// G					// colonne 7 : numero de compte principal (divers paiement ou 40100000 ou 41100000)
+			$tab[] = ($line->doc_type == 'bank') ? $label_operation : ($line->subledger_account ? $line->subledger_label : $line->label_compte);	// colonne 8 : label de l'operation		ISTEA
+			$tab[] = $label_operation;	// colonne 9 : label de l'operation (semble non prise en compte par ISTEA)
+			$tab[] = price2num($line->debit);	// colonne 10 : debit		ISTEA
+			$tab[] = price2num($line->credit);	// colonne 11 : credit		ISTEA
+			$tab[] = $line->code_journal;		// colonne 12 : journal		ISTEA
+
+			$output = mb_convert_encoding('"'.implode('"'.$separator.'"', $tab).'"'.$this->end_line, 'ISO-8859-1');
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
+		}
+	}
+
+	/**
 	 * Export format : FEC
 	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
@@ -1394,11 +1496,16 @@ class AccountancyExport
 			print $output;
 		}
 
+		$conf->cache['archiveFileList_notfound'] = array();
+
+		$i = 0;
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
 				//var_dump($line->id);
 				//unset($array[$line]);
 			} else {
+				$i++;
+
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
@@ -1406,20 +1513,23 @@ class AccountancyExport
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$refInvoice = '';
+				$invoice = null;
+				// TODO The fetch of invoice is just to get the ->id, ->ref (and ->ref_supplier for supplier invoice) so
+				// may be we can get them into the $objectLines and reuse a generic static objectinstead ?
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1498,6 +1608,7 @@ class AccountancyExport
 					$attachmentFileKey = trim((string) $line->piece_num);
 
 					if (!isset($archiveFileList[$attachmentFileKey])) {
+						// We complete the $archiveFileList to add the file to the existing list (first entry was filled when function was called, we add here the next one)
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
@@ -1508,40 +1619,51 @@ class AccountancyExport
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
-						} elseif ($line->doc_type == 'supplier_invoice') {
+						} elseif ($line->doc_type == 'supplier_invoice' && $invoice instanceof FactureFournisseur) {
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
-								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 							}
 						}
-						$arrayofinclusion = array();
-						// If it is a supplier invoice, we want to use last uploaded file
-						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
-						if (!empty($fileFoundList)) {
-							$attachmentFileNameTrunc = $line->doc_ref;
-							foreach ($fileFoundList as $fileFound) {
-								if (strstr($fileFound['name'], $objectFileName)) {
-									// skip native invoice pdfs (canelle)
-									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
-									if ($line->doc_type == 'supplier_invoice') {
-										if ($fileFound['name'] === $objectFileName.'.pdf') {
+
+						if ($objectDirPath && empty($conf->cache['archiveFileList_notfound'][$attachmentFileKey])) {
+							$arrayofinclusion = array();
+							// If it is a supplier invoice, we want to use last uploaded file
+							$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+
+							$fileFoundPath = '';	// The path of last file found
+							$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+
+							if (!empty($fileFoundList)) {
+								$attachmentFileNameTrunc = $line->doc_ref;
+
+								foreach ($fileFoundList as $fileFound) {
+									if (strstr($fileFound['name'], $objectFileName)) {
+										// skip native invoice pdfs (canelle)
+										// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+										if ($line->doc_type == 'supplier_invoice') {
+											if ($fileFound['name'] === $objectFileName.'.pdf') {
+												continue;
+											}
+										} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 											continue;
 										}
-									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
-										continue;
-									}
-									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
-									if (file_exists($fileFoundPath)) {
-										$archiveFileList[$attachmentFileKey] = array(
-											'path' => $fileFoundPath,
-											'name' => $attachmentFileNameTrunc.'.pdf',
-										);
-										break;
+										$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+										if (file_exists($fileFoundPath)) {
+											$archiveFileList[$attachmentFileKey] = array(
+												'path' => $fileFoundPath,
+												'name' => $attachmentFileNameTrunc.'.pdf',
+											);
+											break;
+										}
 									}
 								}
+							}
+
+							if (empty($fileFoundPath)) {
+								// Use also a cache if no file were found
+								$conf->cache['archiveFileList_notfound'][$attachmentFileKey] = 1;
 							}
 						}
 					}
@@ -1615,10 +1737,15 @@ class AccountancyExport
 			print $output;
 		}
 
+		$conf->cache['archiveFileList_notfound'] = array();
+
+		$i = 0;
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
 				//unset($array[$line]);
 			} else {
+				$i++;
+
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
@@ -1626,20 +1753,23 @@ class AccountancyExport
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$refInvoice = '';
+				$invoice = null;
+				// TODO The fetch of invoice is just to get the ->id, ->ref (and ->ref_supplier for supplier invoice) so
+				// may be we can get them into the $objectLines and reuse a generic static objectinstead ?
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 					$invoice = new Facture($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref;
+					$refInvoice = (string) $invoice->ref;
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$invoice = new FactureFournisseur($this->db);
 					$invoice->fetch($line->fk_doc);
 
-					$refInvoice = $invoice->ref_supplier;
+					$refInvoice = (string) $invoice->ref_supplier;
 				}
 
 				$tab = array();
@@ -1718,6 +1848,7 @@ class AccountancyExport
 					$attachmentFileKey = trim((string) $line->piece_num);
 
 					if (!isset($archiveFileList[$attachmentFileKey])) {
+						// We complete the $archiveFileList to add the file to the existing list (first entry was filled when function was called, we add here the next one)
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
@@ -1728,40 +1859,51 @@ class AccountancyExport
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
 								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
 							}
-						} elseif ($line->doc_type == 'supplier_invoice') {
+						} elseif ($line->doc_type == 'supplier_invoice' && $invoice instanceof FactureFournisseur) {
 							if (!getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
 								'@phan-var-force FactureFournisseur $invoice';
-								/** @var FactureFournisseur $invoice */
 								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
 								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
 							}
 						}
-						$arrayofinclusion = array();
-						// If it is a supplier invoice, we want to use last uploaded file
-						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
-						if (!empty($fileFoundList)) {
-							$attachmentFileNameTrunc = $line->doc_ref;
-							foreach ($fileFoundList as $fileFound) {
-								if (strstr($fileFound['name'], $objectFileName)) {
-									// skip native invoice pdfs (canelle)
-									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
-									if ($line->doc_type == 'supplier_invoice') {
-										if ($fileFound['name'] === $objectFileName.'.pdf') {
+
+						if ($objectDirPath && empty($conf->cache['archiveFileList_notfound'][$attachmentFileKey])) {
+							$arrayofinclusion = array();
+							// If it is a supplier invoice, we want to use last uploaded file
+							$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+
+							$fileFoundPath = '';	// The path of last file found
+							$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+
+							if (!empty($fileFoundList)) {
+								$attachmentFileNameTrunc = $line->doc_ref;
+
+								foreach ($fileFoundList as $fileFound) {
+									if (strstr($fileFound['name'], $objectFileName)) {
+										// skip native invoice pdfs (canelle)
+										// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+										if ($line->doc_type == 'supplier_invoice') {
+											if ($fileFound['name'] === $objectFileName.'.pdf') {
+												continue;
+											}
+										} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
 											continue;
 										}
-									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
-										continue;
-									}
-									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
-									if (file_exists($fileFoundPath)) {
-										$archiveFileList[$attachmentFileKey] = array(
-											'path' => $fileFoundPath,
-											'name' => $attachmentFileNameTrunc.'.pdf',
-										);
-										break;
+										$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+										if (file_exists($fileFoundPath)) {
+											$archiveFileList[$attachmentFileKey] = array(
+												'path' => $fileFoundPath,
+												'name' => $attachmentFileNameTrunc.'.pdf',
+											);
+											break;
+										}
 									}
 								}
+							}
+
+							if (empty($fileFoundPath)) {
+								// Use also a cache if no file were found
+								$conf->cache['archiveFileList_notfound'][$attachmentFileKey] = 1;
 							}
 						}
 					}
@@ -2100,7 +2242,7 @@ class AccountancyExport
 		foreach ($objectLines as $line) {
 			// TYPE C
 			if ($last_codeinvoice != $line->doc_ref) {
-				//recherche societe en fonction de son code client
+				//search company by customer code
 				$sql = "SELECT code_client, fk_forme_juridique, nom, address, zip, town, fk_pays, phone, siret FROM ".MAIN_DB_PREFIX."societe";
 				$sql .= " WHERE code_client = '".$this->db->escape($line->thirdparty_code)."'";
 				$resql = $this->db->query($sql);
@@ -2415,7 +2557,7 @@ class AccountancyExport
 			} else {
 				$account = $line->numero_compte;
 			}
-			$tab[] = self::trunc($account, 15); //Account number
+			$tab[] = self::trunc((string) $account, 15); //Account number
 
 			$tab[] = self::trunc($line->label_compte, 60); //Account label
 			$tab[] = self::trunc($line->doc_ref, 20); //Piece
@@ -2520,22 +2662,22 @@ class AccountancyExport
 				} else {
 					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
-				//Libellé Auto
+				//Auto label
 				$tab[] = "";
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
-				//Libellé manual
+				//Manual label
 				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
-				//Numéro de pièce
+				//Document number
 				$tab[] = dol_trunc(str_replace('"', '', (string) $line->piece_num), 10, 'right', 'UTF-8', 1);
-				//Devise
+				//Currency
 				$tab[] = 'EUR';
 				//Amount
 				$tab[] = price2num(abs($line->debit - $line->credit));
-				//Sens
+				//Direction
 				$tab[] = $line->sens;
-				//Code lettrage
+				//Matching code
 				$tab[] = "";
-				//Date Echéance
+				//Due date
 				$tab[] = $date_echeance;
 
 				$output = implode($separator, $tab).$end_line;
@@ -2598,14 +2740,14 @@ class AccountancyExport
 	}
 
 	/**
-	* Export format : iSuite Expert
-	*
-	* by OpenSolus [https://opensolus.fr]
-	*
+	 * Export format : iSuite Expert
+	 *
+	 * by OpenSolus [https://opensolus.fr]
+	 *
 	 * @param 	BookKeepingLine[]	$objectLines 	data
 	 * @param	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
-	*/
+	 */
 	public function exportiSuiteExpert($objectLines, $exportFile = null)
 	{
 		$separator = ';';
@@ -2623,13 +2765,13 @@ class AccountancyExport
 			$tab[] = substr($date, 3, 2);
 			$tab[] = substr($date, 0, 2);
 			$tab[] = $line->doc_ref;
-			//Conversion de chaine UTF8 en Latin9
+			// Convert the UTF-8 string in latin9
 			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
 
-			//Calcul de la longueur des numéros de comptes
+			//Calculate account number length
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client et fournisseur générique
+			//Build generic customer and supplier account number
 			$numero_cpt_client = '411';
 			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
@@ -2637,7 +2779,7 @@ class AccountancyExport
 				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients et fournisseur
+			//Build auxiliary accounts for customers and suppliers
 			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {

@@ -102,12 +102,6 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3, $result);
 
-		/*
-		$result = num_between_day(1514332800, 1538265600, 0);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(277, $result);
-		*/
-
 		return $result;
 	}
 
@@ -191,6 +185,15 @@ class DateLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+
+		// Check for sunday/sunday with time changing - Sunday 25 october 2025 - Sunday 1 november 2025
+		$date1 = dol_mktime(0, 0, 0, 10, 26, 2025, 'gmt');
+		$date2 = dol_mktime(0, 0, 0, 11, 1, 2025, 'gmt');
+		$result = num_open_day($date1, $date2, 0, 1, 0, 'FR');
+		print __METHOD__." result ".$result."\n";
+		$this->assertEquals(5, $result, 'NumPublicHoliday for FR with date start before date change end inding after');
+
 
 		// With same hours - Tuesday/Wednesday jan 2013
 		$date1 = dol_mktime(0, 0, 0, 1, 1, 2013, 'gmt');	// tuesday
@@ -401,6 +404,15 @@ class DateLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Thu Jan January', $result);
 
+		// Check date output in a use timezone
+		$_SESSION['dol_tz'] = 1;
+		$_SESSION['dol_dst'] = 0;
+		$_SESSION['dol_tz_string'] = 'Europe/Paris';
+
+		$result = dol_print_date(0, '%H', 'tzuserrel', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01', $result);
+
 		return $result;
 	}
 
@@ -422,9 +434,14 @@ class DateLibTest extends CommonClassTest
 		$outputlangs->setDefaultLang('fr_FR');
 		$outputlangs->load("main");
 
-		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', true, $outputlangs);
+		$result = dol_print_date(dol_time_plus_duree(dol_time_plus_duree(dol_time_plus_duree(0, 1, 'm'), 1, 'y'), 1, 'd'), 'dayhour', 'gmt', $outputlangs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
+
+		// Add 4 days on a date just before daylight change
+		$result = dol_print_date(dol_time_plus_duree(dol_mktime(0, 0, 0, 10, 24, 2025, 'gmt'), 4, 'd'), 'dayhour', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('28/10/2025 00:00', $result);
 
 		return $result;
 	}

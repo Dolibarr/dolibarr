@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,8 +77,8 @@ class TraceableDB extends DoliDB
 	 * Format a SQL IF
 	 *
 	 * @param   string $test Test string (example: 'cd.statut=0', 'field IS NULL')
-	 * @param   string $resok resultat si test equal
-	 * @param   string $resko resultat si test non equal
+	 * @param   string $resok result if test equal
+	 * @param   string $resko result if test non equal
 	 * @return	string                SQL string
 	 */
 	public function ifsql($test, $resok, $resko)
@@ -116,7 +116,7 @@ class TraceableDB extends DoliDB
 	 * Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 * Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      Date TMS to convert
+	 *   @param	    int|''		$param      Date TMS to convert
 	 *	 @param		'gmt'|'tzserver'	$gm		'gmt'=Input information are GMT values, 'tzserver'=Local to server TZ
 	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
@@ -186,7 +186,7 @@ class TraceableDB extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return the number o flines into the result of a request INSERT, DELETE or UPDATE
+	 * Return the number of lines into the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param   resource $resultset    Curseur de la requete voulue
 	 * @return 	int                    Number of lines
@@ -314,7 +314,7 @@ class TraceableDB extends DoliDB
 	/**
 	 * Get last ID after an insert INSERT
 	 *
-	 * @param	string 	$tab 		Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
+	 * @param	string 	$tab 		Table name concerned by insert. Needed for Postgresql compatibility (not useful for MySql)
 	 * @param   string 	$fieldid 	Field name
 	 * @return  int                	Id of row
 	 */
@@ -378,10 +378,26 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
+	 * Check if full query tracing is enabled
+	 *
+	 * Full tracing captures backtrace for ALL queries, not just failed ones.
+	 * This is useful for debugging but has performance impact.
+	 *
+	 * @return bool True if full tracing is enabled
+	 */
+	protected function isFullTracingEnabled()
+	{
+		if (isset($_COOKIE['debugbar_full_tracing'])) {
+			return $_COOKIE['debugbar_full_tracing'] === '1';
+		}
+		return false;
+	}
+
+	/**
 	 * End query tracing
 	 *
 	 * @param      string   $sql       query string
-	 * @param      string   $resql     query result
+	 * @param      mysqli_result|bool|resource   $resql     query result
 	 * @return     void
 	 */
 	protected function endTracing($sql, $resql)
@@ -391,13 +407,20 @@ class TraceableDB extends DoliDB
 		$endMemory   = memory_get_usage(true);
 		$memoryDelta = $endMemory - $this->startMemory;
 
+		// Capture backtrace for failed queries, or if full tracing is enabled
+		$backtrace = null;
+		if (!$resql || $this->isFullTracingEnabled()) {
+			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+
 		$this->queries[] = array(
 			'sql'           => $sql,
 			'duration'      => $duration,
 			'memory_usage'  => $memoryDelta,
 			'is_success'    => $resql ? true : false,
 			'error_code'    => $resql ? null : $this->db->lasterrno(),
-			'error_message' => $resql ? null : $this->db->lasterror()
+			'error_message' => $resql ? null : $this->db->lasterror(),
+			'backtrace'     => $backtrace
 		);
 	}
 
@@ -509,7 +532,7 @@ class TraceableDB extends DoliDB
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
+	 * @param        array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Nom du champ qui sera la clef primaire
 	 * @param        string $type 			Type de la table
 	 * @param        ?array<string,mixed> 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
@@ -548,7 +571,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to add
-	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Tableau associatif de description du champ a inserer[nom du parameter][valeur du parameter]
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,extra?:string,null?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
@@ -574,7 +597,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 	Array with description of field format
+	 * @param    array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 	Array with description of field format
 	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -628,8 +651,8 @@ class TraceableDB extends DoliDB
 	 * Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
 	 * @param    string $dolibarr_main_db_host 	Ip serveur
-	 * @param    string $dolibarr_main_db_user 	Nom user a creer
-	 * @param    string $dolibarr_main_db_pass 	Password user a creer
+	 * @param    string $dolibarr_main_db_user 	Name of user to create
+	 * @param    string $dolibarr_main_db_pass 	Password of user to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
 	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
@@ -644,8 +667,8 @@ class TraceableDB extends DoliDB
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
 	 * 19700101020000 -> 7200 whatever is TZ if gmt=1
 	 *
-	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
+	 * @param	?string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 * @param	bool|int|string	$gm			1=Input information are GMT values, otherwise local to server TZ
 	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false)

@@ -3,8 +3,8 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,6 @@ class Website extends CommonObject
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'globe';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string Ref
@@ -197,6 +192,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
+
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
 		$sql .= 'entity,';
@@ -212,15 +209,15 @@ class Website extends CommonObject
 		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : ((int) $this->entity)).',';
 		$sql .= ' '.(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").',';
 		$sql .= ' '.(!isset($this->otherlang) ? 'NULL' : "'".$this->db->escape($this->otherlang)."'").',';
-		$sql .= ' '.(!isset($this->status) ? '1' : $this->status).',';
-		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : $this->fk_default_home).',';
+		$sql .= ' '.(!isset($this->status) ? '1' : ((int) $this->status)).',';
+		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : ((int) $this->fk_default_home)).',';
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
+		$sql .= ' '.(!isset($this->fk_user_creat) ? ((int) $user->id) : ((int) $this->fk_user_creat)).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen((string) $this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen((string) $this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
@@ -254,8 +251,6 @@ class Website extends CommonObject
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
-			$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
-
 			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
 			// Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
@@ -283,7 +278,14 @@ class Website extends CommonObject
 			$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
-			file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+			dolChmod($pathofwebsite.'/.dolibarr');
+
+			$filelicense = $pathofwebsite.'/LICENSE';
+			if (!dol_is_file($filelicense)) {
+				$licensecontent = "LICENSE\n-------\nThis website template content (HTML and PHP code) is published under the license CC-BY-SA - https://creativecommons.org/licenses/by/4.0/";
+				$result = dolSaveLicense($filelicense, $licensecontent);
+			}
 		}
 
 		// Commit or rollback
@@ -416,7 +418,7 @@ class Website extends CommonObject
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 			if (count($sqlwhere) > 0) {
@@ -531,16 +533,16 @@ class Website extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
+		$sql .= ' entity = '.(isset($this->entity) ? ((int) $this->entity) : "null").',';
 		$sql .= ' ref = '.(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' lang = '.(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").',';
 		$sql .= ' otherlang = '.(isset($this->otherlang) ? "'".$this->db->escape($this->otherlang)."'" : "null").',';
-		$sql .= ' status = '.(isset($this->status) ? $this->status : "null").',';
-		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? $this->fk_default_home : "null").',';
+		$sql .= ' status = '.(isset($this->status) ? ((int) $this->status) : "null").',';
+		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? ((int) $this->fk_default_home) : "null").',';
 		$sql .= ' use_manifest = '.((int) $this->use_manifest).',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '') ? "'".$this->db->escape($this->virtualhost)."'" : "null").',';
-		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
+		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? ((int) $user->id) : ((int) $this->fk_user_modif)).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid='.((int) $this->id);
@@ -785,10 +787,11 @@ class Website extends CommonObject
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
+
+		$newidforhome = 0;
 
 		if (!$error) {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -812,8 +815,6 @@ class Website extends CommonObject
 			$pathofmediasimagenew = DOL_DATA_ROOT.'/medias/image/'.$newref;
 			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, getDolGlobalString('MAIN_UMASK'), 0);
 
-			$newidforhome = 0;
-
 			// Duplicate pages
 			$objectpages = new WebsitePage($this->db);
 			$listofpages = $objectpages->fetchAll($fromid);
@@ -823,7 +824,7 @@ class Website extends CommonObject
 				dol_delete_file($filetplold);
 
 				// Create new file
-				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, '1');
 
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl) {
@@ -1062,6 +1063,9 @@ class Website extends CommonObject
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, '0', 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
 
+		// Remove non required files (will be re-generated during the import)
+		dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/master.inc.php');
+
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
 			dol_copy($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md', $conf->website->dir_temp.'/'.$website->ref.'/README.md');
@@ -1096,10 +1100,10 @@ class Website extends CommonObject
 		}
 
 		// Build the website_page.sql file
-		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
-		$fp = fopen($filesql, "w");
+		$filesql_path = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
+		$fp = fopen($filesql_path, "w");
 		if (empty($fp)) {
-			setEventMessages("Failed to create file ".$filesql, null, 'errors');
+			setEventMessages("Failed to create file ".$filesql_path, null, 'errors');
 			return '';
 		}
 
@@ -1170,10 +1174,10 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->lang)."', ";
 			$line .= "'".$this->db->escape($objectpageold->image)."', ";
 			$line .= "'".$this->db->escape($objectpageold->keywords)."', ";
-			$line .= "'".$this->db->escape($objectpageold->status)."', ";
+			$line .= "'".$this->db->escape((string) $objectpageold->status)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_creation)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_modification)."', ";
-			$line .= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
+			$line .= ($objectpageold->import_key ? "'".$this->db->escape((string) $objectpageold->import_key)."'" : "null").", ";
 			$line .= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
 			$line .= "'".$this->db->escape($objectpageold->type_container)."', ";
 
@@ -1188,7 +1192,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
-			$line .= "'".$this->db->escape(str_replace(array("\r\n", "\r", "\n"), "__N__", $stringtoexport))."', "; // Replace \r \n to have record on 1 line
+
+			if (getDolGlobalString('WEBSITE_EXPORT_SQL_ON_SEVERAL_LINES')) {
+				$line .= "/* new line */\n";	// Add a comment so we will able to restore a one line instruction on import
+			}
+			$line .= "'".$this->db->escape($stringtoexport)."', ";
 
 			// Make substitution with a generic path into page content
 			$stringtoexport = $objectpageold->content;
@@ -1206,8 +1214,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 
+			if (getDolGlobalString('WEBSITE_EXPORT_SQL_ON_SEVERAL_LINES')) {
+				$line .= "/* new line */\n";	// Add a comment so we will able to restore a one line instruction on import
+			}
+			$line .= "'".$this->db->escape($stringtoexport)."', ";
 
-			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
 			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
 			$line .= (int) $objectpageold->allowed_in_frames;
 			$line .= ");";
@@ -1219,7 +1230,7 @@ class Website extends CommonObject
 			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
 			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0)) {	// This is the page that is set as the home page
 				// Warning: We must keep llx_ here. It is a generic SQL.
-				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape((string) $objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
 				$line .= "\n";
 				fwrite($fp, $line);
 			}
@@ -1235,7 +1246,7 @@ class Website extends CommonObject
 
 		fclose($fp);
 
-		dolChmod($filesql);
+		dolChmod($filesql_path);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1269,6 +1280,11 @@ class Website extends CommonObject
 		$error = 0;
 
 		$pathtofile = dol_sanitizePathName($pathtofile);
+		if (!file_exists($pathtofile)) {
+			$this->error = 'The zip file "'.$pathtofile.'" is not found';
+			return -9;
+		}
+
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
@@ -1350,6 +1366,7 @@ class Website extends CommonObject
 
 		// Search the $maxrowid because we need it later
 		$sqlgetrowid = 'SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
+		$maxrowid = 0;
 		$resql = $this->db->query($sqlgetrowid);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1357,13 +1374,14 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
-		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
+		$resqlrun = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
+		if ($resqlrun <= 0) {
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $resqlrun).')';
 			$error++;
 		}
 
 		$objectpagestatic = new WebsitePage($this->db);
+		$aliasesarray = null;
 
 		// Regenerate the php files for pages
 		$fp = fopen($sqlfile, "r");
@@ -1372,7 +1390,7 @@ class Website extends CommonObject
 				$reg = array();
 
 				// Warning fgets with second parameter that is null or 0 hang.
-				$buf = fgets($fp, 65000);
+				$buf = fgets($fp, 65000);	// No needto have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
 				$newid = 0;
 
 				// Scan the line
@@ -1696,7 +1714,7 @@ class Website extends CommonObject
 		if ($languagecodeselected) {
 			// Convert $languagecodeselected into a long language code
 			if (strlen($languagecodeselected) == 2) {
-				$languagecodeselected = (empty($arrayofspecialmainlanguages[$languagecodeselected]) ? $languagecodeselected.'_'.strtoupper($languagecodeselected) : $arrayofspecialmainlanguages[$languagecodeselected]);
+				$languagecodeselected = (string) (empty($arrayofspecialmainlanguages[$languagecodeselected]) ? $languagecodeselected.'_'.strtoupper($languagecodeselected) : $arrayofspecialmainlanguages[$languagecodeselected]);
 			}
 
 			$countrycode = strtolower(substr($languagecodeselected, -2));
@@ -1749,8 +1767,6 @@ class Website extends CommonObject
 	{
 		global $conf;
 
-		//$error = 0;
-
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
 			setEventMessages("Website id or ref is not defined", null, 'errors');
@@ -1765,6 +1781,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$destdir = null;  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
+		$destdirrel = '';  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
 		// Replace modified files into the doctemplates directory.
 		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
 			// If the user has not specified a path
@@ -1798,6 +1816,11 @@ class Website extends CommonObject
 			}
 		}
 
+		if ($destdir === null) {
+			setEventMessages("The destination path is not determined.", null, 'errors');
+			return -1;
+		}
+
 		dol_mkdir($destdir);
 
 		if (!is_writable($destdir)) {
@@ -1808,7 +1831,7 @@ class Website extends CommonObject
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
-		// Remove the file README and LICENSE from the $destdir/containers
+		// Remove the file README.md and LICENSE from the $destdir/containers
 		if (dol_is_file($destdir.'/containers/README.md')) {
 			dol_move($destdir.'/containers/README.md', $destdir.'/README.md', '0', 1, 0, 0);
 		}
@@ -1874,34 +1897,6 @@ class Website extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-	/**
-	 * check previous state for file
-	 * @param  string   $pathname  path of file
-	 * @return  array|mixed
-	 */
-	public function checkPreviousState($pathname)
-	{
-		if (!file_exists($pathname)) {
-			if (touch($pathname)) {
-				dolChmod($pathname, '0664');
-			}
-			return [];
-		}
-		return unserialize(file_get_contents($pathname));
-	}
-
-
-	/**
-	 * Save state for File
-	 * @param mixed $etat   state
-	 * @param string $pathname  path of file
-	 * @return int|false
-	 */
-	public function saveState($etat, $pathname)
-	{
-		return file_put_contents($pathname, serialize($etat));
 	}
 
 	/**
@@ -2050,13 +2045,13 @@ class Website extends CommonObject
 				}
 				if ($lineContent1 !== $lineContent2) {
 					if (isset($lines1[$lineNum]) && !isset($lines2[$lineNum])) {
-						// Ligne deleted de la source
+						// Line deleted from the source
 						$diff["Supprimée à la ligne " . ($lineNum + 1)] = $lineContent1;
 					} elseif (!isset($lines1[$lineNum]) && isset($lines2[$lineNum])) {
-						// Nouvelle ligne added dans la destination
+						// New line added to the target
 						$diff["Ajoutée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					} else {
-						// Différence found it
+						// Found a difference
 						$diff["Modifiée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					}
 				}
@@ -2134,7 +2129,10 @@ class Website extends CommonObject
 		// Reindex the table keys
 		$contentDest = array_values($contentDest);
 		$stringreplacement = implode("\n", $contentDest);
+
 		file_put_contents($inplaceFile, $stringreplacement);
+		dolChmod($inplaceFile);
+
 		foreach ($differences['lignes_dont_change'] as $linechanged => $line) {
 			if (in_array($linechanged, $contentDest)) {
 				dolReplaceInFile($inplaceFile, array($linechanged => $line));

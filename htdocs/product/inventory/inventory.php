@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $listoffset = GETPOST('listoffset', 'alpha');
@@ -113,7 +114,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $id);
+//restrictedArea($user, 'mymodule', $id);
 
 //Parameters Page
 $paramwithsearch = '&sortfield=' . urlencode($sortfield);
@@ -230,7 +231,7 @@ if (empty($reshook)) {
 							$price = $line->pmp_real;
 						}
 
-						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, $price, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
+						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, (float) $stock_movement_qty, $movement_type, $price, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
 						if ($idstockmove < 0) {
 							$error++;
 							setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
@@ -260,8 +261,13 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+						// Mirror Product::fetch (product.class.php:2995-2997) which reads pmp from
+						// llx_product_perentity only when MULTICOMPANY_PRODUCT_SHARING_ENABLED and
+						// MULTICOMPANY_PMP_PER_ENTITY_ENABLED are both set. MAIN_PRODUCT_PERENTITY_SHARED
+						// is the accountancy-codes flag; using it to gate the pmp write here means we
+						// silently write into a row that fetch never looks at (#37773).
+						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -287,6 +293,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+		$action = '';
 	}
 
 	// Save quantity found during inventory (when we click on Save button on inventory page)
@@ -550,7 +557,7 @@ if (isModEnabled('project'))
 	{
 		if ($action != 'classify')
 		{
-			$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -794,7 +801,7 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js($object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
@@ -1006,7 +1013,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 	} else {
 		$filtertype = 0;
 	}
-	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', $filtertype, 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
+	print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT('fk_product') : $object->fk_product), 'fk_product', $filtertype, 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 	print '</td>';
 	if (isModEnabled('productbatch')) {
 		print '<td>';
@@ -1149,7 +1156,7 @@ if ($resql) {
 				}
 				$pmp_valuation = $pmp_expected * $valuetoshow;
 				print '<td class="right">';
-				print price($pmp_expected);
+				print is_null($pmp_expected) ? '' : price($pmp_expected);
 				print '<input type="hidden" name="expectedpmp_'.$obj->rowid.'" value="'.$pmp_expected.'"/>';
 				print '</td>';
 				print '<td class="right">';
@@ -1171,7 +1178,7 @@ if ($resql) {
 					$pmp_real = $product_static->pmp;
 				}
 				$pmp_valuation_real = $pmp_real * $qty_view;
-				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
+				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.(is_null($pmp_real) ? '' : price2num($pmp_real)).'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<input type="text" class="maxwidth75 right realvaluation'.$obj->fk_product.'" name="realvaluation_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_real_valuation" value="'.$pmp_valuation_real.'">';
@@ -1193,12 +1200,12 @@ if ($resql) {
 			if ($permissiontoupdatestock) {
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
 			}
-			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
+			$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp"), 'MS') >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 			print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 			print '</td>';
 		} else {
 			if (getDolGlobalString('INVENTORY_MANAGE_REAL_PMP')) {
-				//PMP Expected
+				// PMP Expected
 				if (!empty($obj->pmp_expected)) {
 					$pmp_expected = $obj->pmp_expected;
 				} else {
@@ -1206,7 +1213,7 @@ if ($resql) {
 				}
 				$pmp_valuation = $pmp_expected * $valuetoshow;
 				print '<td class="right">';
-				print price($pmp_expected);
+				print is_null($pmp_expected) ? '' : price($pmp_expected);
 				print '</td>';
 				print '<td class="right">';
 				print price($pmp_valuation);
@@ -1216,7 +1223,7 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 
-				//PMP Real
+				// PMP Real
 				print '<td class="right">';
 				if (!empty($obj->pmp_real)) {
 					$pmp_real = $obj->pmp_real;
@@ -1224,7 +1231,7 @@ if ($resql) {
 					$pmp_real = $product_static->pmp;
 				}
 				$pmp_valuation_real = $pmp_real * $obj->qty_view;
-				print price($pmp_real);
+				print is_null($pmp_real) ? '' : price($pmp_real);
 				print '</td>';
 				print '<td class="right">';
 				print price($pmp_valuation_real);
@@ -1321,10 +1328,11 @@ print '<script type="text/javascript">
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
+        					type: "POST",
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
        					 	}});
 							return false;
 						});

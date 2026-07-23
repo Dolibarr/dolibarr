@@ -17,6 +17,7 @@ AccountancyCodeAsset=Grootboekrekening (bezittingen)
 AccountancyCodeDepreciationAsset=Grootboekrekening (Afschrijving grootboekrekening)
 AccountancyCodeDepreciationExpense=Grootboekrekening (Afschrijving kosten grootboekrekening)
 AssetsLines=Bezittingen
+ConfirmValidateAsset=Weet u zeker dat u dit bestand wilt valideren met de referentie <b>%s</b>?
 DeleteType=Verwijderen
 DeleteAnAssetType=Een activamodel verwijderen
 ConfirmDeleteAssetType=Weet u zeker dat u dit itemmodel wilt verwijderen?
@@ -70,6 +71,7 @@ AssetDisposal=Beschikbaarheid
 AssetConfirmDisposalAsk=Weet u zeker dat u het actief <b> %s </b> wilt verkopen?
 AssetConfirmReOpenAsk=Weet u zeker dat u het activum <b> %s </b> wilt heropenen?
 # Asset status
+AssetInDraft=Ontwerp
 AssetInProgress=In behandeling
 AssetDisposed=weggegooid
 AssetRecorded=Geboekt

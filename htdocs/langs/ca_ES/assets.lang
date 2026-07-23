@@ -17,6 +17,7 @@ AccountancyCodeAsset=Codi de compte (actius)
 AccountancyCodeDepreciationAsset=Codi de compte (compte d'amortització d'actius)
 AccountancyCodeDepreciationExpense=Codi de compte (compte de despeses d'amortització)
 AssetsLines=Actius
+ConfirmValidateAsset=Esteu segur que voleu validar aquest actiu amb la referència <b>%s</b>?
 DeleteType=Elimina
 DeleteAnAssetType=Suprimir un model d'actiu
 ConfirmDeleteAssetType=Esteu segur que voleu suprimir aquest model de recursos?
@@ -34,7 +35,7 @@ AssetsTypeId=Identificador del model d'actiu
 AssetsTypeLabel=Nom del model d'actiu
 AssetsTypes=Models d'actius
 ASSET_ACCOUNTANCY_CATEGORY=Grup de comptabilitat de l'immobilitzat
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Període proporcional en dies per al càlcul d'amortització superior a un any
 # Menu
 MenuAssets=Actius
 MenuNewAsset=Actiu nou
@@ -70,6 +71,7 @@ AssetDisposal=Disposició
 AssetConfirmDisposalAsk=Esteu segur que voleu disposar de l'actiu <b> %s </b>?
 AssetConfirmReOpenAsk=Esteu segur que voleu reobrir l'actiu <b> %s </b>?
 # Asset status
+AssetInDraft=Esborrany
 AssetInProgress=En progrés
 AssetDisposed=Disposat
 AssetRecorded=Comptabilitzat

@@ -4,7 +4,7 @@
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int|string $date_ech
+	 * @var int|string
 	 */
 	public $date_ech;
 
@@ -119,7 +119,7 @@ class ChargeSociales extends CommonObject
 	public $lib;
 
 	/**
-	 * @var int account ID
+	 * @var ?int account ID
 	 */
 	public $fk_account;
 
@@ -634,9 +634,10 @@ class ChargeSociales extends CommonObject
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  int		$short           			1=Return just URL
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int     $addlinktonotes  			1=Add link to notes
 	 *	@return	string								String with link
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
 		global $langs, $conf, $user, $hookmanager;
 
@@ -671,8 +672,8 @@ class ChargeSociales extends CommonObject
 		if (isset($this->paye)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}
 		if (!empty($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
@@ -708,6 +709,18 @@ class ChargeSociales extends CommonObject
 		}
 		$result .= $linkend;
 
+		if ($addlinktonotes) {
+			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+			if ($txttoshow) {
+				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
+				$result .= ' <span class="note inline-block">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/compta/sociales/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= img_picto('', 'note');
+				$result .= '</a>';
+				$result .= '</span>';
+			}
+		}
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -728,12 +741,9 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getSommePaiement()
 	{
-		$table = 'paiementcharge';
-		$field = 'fk_charge';
-
 		$sql = 'SELECT sum(amount) as amount';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge';
+		$sql .= " WHERE fk_charge = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -820,7 +830,7 @@ class ChargeSociales extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -853,7 +863,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, (float) $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -5,7 +5,7 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,14 +292,14 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$pdf->SetTitle($title);
 		$pdf->SetSubject($title);
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
 		$pdf->SetMargins(0, 0);
-		$pdf->SetAutoPageBreak(false);
+		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
 		// Enable  printing the label when the page was already started

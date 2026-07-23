@@ -22,7 +22,7 @@ printSellby=ຂາຍໂດຍ: %s
 printQty=ຈໍານວນ: %d
 printPlannedWarehouse=ສາງ: %s
 AddDispatchBatchLine=ເພີ່ມແຖວ ສຳ ລັບການຈັດສົ່ງຊີວິດ Shelf
-WhenProductBatchModuleOnOptionAreForced=ເມື່ອໂມດູນ Lot/Serial ເປີດຢູ່, ການຫຼຸດຫຸ້ນອັດຕະໂນມັດຈະຖືກບັງຄັບເປັນ '%s' ແລະໂໝດການເພີ່ມອັດຕະໂນມັດຈະຖືກບັງຄັບເປັນ '%s '. ບາງທາງເລືອກອາດຈະບໍ່ມີ. ທາງເລືອກອື່ນສາມາດຖືກກໍານົດຕາມທີ່ທ່ານຕ້ອງການ.
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 ProductDoesNotUseBatchSerial=ຜະລິດຕະພັນນີ້ບໍ່ໄດ້ໃຊ້ lot/serial number
 ProductLotSetup=ການຕັ້ງຄ່າໂມດູນ/serial
 ShowCurrentStockOfLot=ສະແດງຫຼັກຊັບປັດຈຸບັນ ສຳ ລັບສິນຄ້າຄູ່ ໜຶ່ງ/ຫຼາຍ
@@ -50,3 +50,6 @@ ToReplace=ແທນທີ່
 CantMoveNonExistantSerial=ຜິດພາດ. ທ່ານຮ້ອງຂໍໃຫ້ມີການເຄື່ອນໄຫວໃນການບັນທຶກສໍາລັບ serial ທີ່ບໍ່ມີຢູ່ແລ້ວ. ບາງທີເຈົ້າອາດຈະເອົາ serial ດຽວກັນຢູ່ໃນສາງດຽວກັນຫຼາຍຄັ້ງໃນການຂົນສົ່ງດຽວກັນຫຼືມັນຖືກນໍາໃຊ້ໂດຍການຂົນສົ່ງອື່ນ. ເອົາການຂົນສົ່ງນີ້ອອກແລະກະກຽມອັນອື່ນ.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=ຕາຕະລາງ lott ການສ້ອມແປງແລ່ນບໍ່ສົມບູນດ້ວຍພາລາມິເຕີ '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= ຕ້ອງມີການແກ້ໄຂຫຼັກຊັບເນື່ອງຈາກໝາຍເລກຊີຣຽວບໍ່ຊໍ້າກັນ.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+BatchInformationNotfound=Batch information not found

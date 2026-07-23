@@ -3,7 +3,8 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2012 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,33 +72,33 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(
-	$conf->global->LDAP_KEY_USERS,
-	$conf->global->LDAP_FIELD_FULLNAME,
-	$conf->global->LDAP_FIELD_NAME,
-	$conf->global->LDAP_FIELD_FIRSTNAME,
-	$conf->global->LDAP_FIELD_LOGIN,
-	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-	$conf->global->LDAP_FIELD_PASSWORD,
-	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-	$conf->global->LDAP_FIELD_PHONE,
-	$conf->global->LDAP_FIELD_FAX,
-	$conf->global->LDAP_FIELD_MOBILE,
-	// $conf->global->LDAP_FIELD_ADDRESS,
-	// $conf->global->LDAP_FIELD_ZIP,
-	// $conf->global->LDAP_FIELD_TOWN,
-	// $conf->global->LDAP_FIELD_COUNTRY,
-	$conf->global->LDAP_FIELD_MAIL,
-	$conf->global->LDAP_FIELD_TITLE,
-	$conf->global->LDAP_FIELD_DESCRIPTION,
-	$conf->global->LDAP_FIELD_SID
+	getDolGlobalString('LDAP_KEY_USERS'),
+	getDolGlobalString('LDAP_FIELD_FULLNAME'),
+	getDolGlobalString('LDAP_FIELD_NAME'),
+	getDolGlobalString('LDAP_FIELD_FIRSTNAME'),
+	getDolGlobalString('LDAP_FIELD_LOGIN'),
+	getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'),
+	getDolGlobalString('LDAP_FIELD_PASSWORD'),
+	getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED'),
+	getDolGlobalString('LDAP_FIELD_PHONE'),
+	getDolGlobalString('LDAP_FIELD_FAX'),
+	getDolGlobalString('LDAP_FIELD_MOBILE'),
+	// getDolGlobalString('LDAP_FIELD_ADDRESS'),
+	// getDolGlobalString('LDAP_FIELD_ZIP'),
+	// getDolGlobalString('LDAP_FIELD_TOWN'),
+	// getDolGlobalString('LDAP_FIELD_COUNTRY'),
+	getDolGlobalString('LDAP_FIELD_MAIL'),
+	getDolGlobalString('LDAP_FIELD_TITLE'),
+	getDolGlobalString('LDAP_FIELD_DESCRIPTION'),
+	getDolGlobalString('LDAP_FIELD_SID')
 );
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
-$required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+$required_fields = array_unique(array_values(array_filter($required_fields, "dolValidLdapElement3")));
 
 if (!isset($argv[1])) {
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...] [-y]\n";
@@ -137,12 +138,12 @@ print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
-print "login=".$conf->db->user."\n";
+print "login=".(string) $conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "excludeuser=".join(',', $excludeuser)."\n";
-print "Mapped LDAP fields=".join(',', $required_fields)."\n";
+print "excludeuser=".implode(',', $excludeuser)."\n";
+print "Mapped LDAP fields=".implode(',', $required_fields)."\n";
 print "\n";
 
 if (!$confirmed) {
@@ -185,8 +186,6 @@ if ($resql) {
 $ldap = new Ldap();
 $result = $ldap->connectBind();
 if ($result >= 0) {
-	$justthese = array();
-
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
@@ -205,17 +204,17 @@ if ($result >= 0) {
 			$fuser = new User($db);
 
 			if (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SID')) {
-				$fuser->fetch('', '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le SID
+				$fuser->fetch(0, '', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by SID
 			} elseif (getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN')) {
-				$fuser->fetch('', $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Chargement du user concerné par le login
+				$fuser->fetch(0, $ldapuser[getDolGlobalString('LDAP_KEY_USERS')]); // Load the user matched by login
 			}
 
 			// Propriete membre
-			$fuser->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')] ?? null;
-			$fuser->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')] ?? null;
-			$fuser->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')] ?? null;
-			$fuser->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')] ?? null;
-			$fuser->pass_indatabase_crypted = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] ?? null;
+			$fuser->firstname = $ldapuser[getDolGlobalString('LDAP_FIELD_FIRSTNAME')] ?? '';
+			$fuser->lastname = $ldapuser[getDolGlobalString('LDAP_FIELD_NAME')] ?? '';
+			$fuser->login = $ldapuser[getDolGlobalString('LDAP_FIELD_LOGIN')] ?? '';
+			$fuser->pass = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD')] ?? '';
+			$fuser->pass_indatabase_crypted = $ldapuser[getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED')] ?? '';
 
 			// $user->societe;
 			/*
@@ -227,13 +226,13 @@ if ($result >= 0) {
 			 * $fuser->country_code=$countries[$hashlib2rowid[strtolower($fuser->country)]]['code'];
 			 */
 
-			$fuser->office_phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')] ?? null;
-			$fuser->user_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')] ?? null;
-			$fuser->office_fax = $ldapuser[getDolGlobalString('LDAP_FIELD_FAX')] ?? null;
-			$fuser->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')] ?? null;
-			$fuser->ldap_sid = $ldapuser[getDolGlobalString('LDAP_FIELD_SID')] ?? null;
+			$fuser->office_phone = $ldapuser[getDolGlobalString('LDAP_FIELD_PHONE')] ?? '';
+			$fuser->user_mobile = $ldapuser[getDolGlobalString('LDAP_FIELD_MOBILE')] ?? '';
+			$fuser->office_fax = $ldapuser[getDolGlobalString('LDAP_FIELD_FAX')] ?? '';
+			$fuser->email = $ldapuser[getDolGlobalString('LDAP_FIELD_MAIL')] ?? '';
+			$fuser->ldap_sid = $ldapuser[getDolGlobalString('LDAP_FIELD_SID')] ?? '';
 
-			$fuser->job = $ldapuser[getDolGlobalString('LDAP_FIELD_TITLE')] ?? null;
+			$fuser->job = $ldapuser[getDolGlobalString('LDAP_FIELD_TITLE')] ?? '';
 			$fuser->note = $ldapuser[getDolGlobalString('LDAP_FIELD_DESCRIPTION')] ?? null;
 			$fuser->admin = 0;
 			$fuser->socid = 0;
@@ -244,8 +243,8 @@ if ($result >= 0) {
 			// TODO : revoir la gestion du status
 			/*
 			 * if (isset($ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')])) {
-			 * $fuser->datec=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			 * $fuser->datevalid=dol_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+			 * $fuser->datec=dol_stringtotime($ldapuser[getdolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
+			 * $fuser->datevalid=dol_stringtotime($ldapuser[getdolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')]);
 			 * $fuser->statut=$ldapuser[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] ?? null;
 			 * }
 			 */
@@ -296,7 +295,7 @@ if ($result >= 0) {
 			}
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", (string) $error)."\n";
 			$db->rollback();
 		}
 		print "\n";
@@ -318,7 +317,7 @@ exit($error);
  * @param	string 	$element	Value to test
  * @return 	boolean 			True of false
  */
-function dolValidElement($element)
+function dolValidLdapElement3($element)
 {
 	return (trim($element) != '');
 }

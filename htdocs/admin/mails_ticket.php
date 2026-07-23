@@ -3,7 +3,8 @@
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
@@ -103,6 +104,8 @@ if ($action == 'update' && !$cancel) {
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS_TICKET", GETPOST("MAIN_MAIL_EMAIL_TLS_TICKET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS_TICKET", GETPOST("MAIN_MAIL_EMAIL_STARTTLS_TICKET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_TICKET", GETPOST("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_TICKET"), 'chaine', 0, '', $conf->entity);
+
+	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -337,7 +340,7 @@ if ($action == 'edit') {
 		print '</script>'."\n";
 	}
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
@@ -561,7 +564,20 @@ if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'common_ticket', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
-	print "<br><br>\n";
+	print "<br>\n";
+
+	print '<div class="neutral nomargintop">';
+	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
+	if (!empty($conf->use_javascript_ajax)) {
+		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
+	} else {
+		print yn(getDolGlobalString('MAIN_DISABLE_ALL_MAILS'));
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			print img_warning($langs->trans("Disabled"));
+		}
+	}
+	print '</div>';
+	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
@@ -681,6 +697,7 @@ if ($action == 'edit') {
 	}
 
 	print '</table>';
+
 	print '</div>';
 
 	print dol_get_fiche_end();
@@ -711,16 +728,16 @@ if ($action == 'edit') {
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') && getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'default') {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_TICKET') != 'mail' || !$linuxlike) {
 			if (function_exists('fsockopen') && $port && $server) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect&token='.newToken().'">'.$langs->trans("DoTestServerAvailability").'</a>';
 			}
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init">'.$langs->trans("DoTestSend").'</a>';
 
 		if (isModEnabled('fckeditor')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 		}
 	}
 
@@ -738,20 +755,35 @@ if ($action == 'edit') {
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
+		$mail = new CMailFile('test', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
-		$result = $mail->check_server_port($server, $port);
-		if ($result) {
-			print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", $server, $port).'</div>';
-		} else {
-			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", $server, $port);
+		$errormsg = '';
 
+		$listOfAllowedPorts = array('25', '465', '587', '2525');
+		if (!in_array((string) $port, $listOfAllowedPorts)) {
+			$errormsg = $langs->trans("Testing the SMTP port on different ports than ".implode(', ', $listOfAllowedPorts)." is not allowed.");
+		}
+
+		if (empty($errormsg)) {
+			$result = $mail->check_server_port((string) $server, (int) $port);
+			if ($result && !is_array($result)) {
+				print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", (string) $server, (string) $port).'</div>';
+			} else {
+				$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", (string) $server, (string) $port);
+				if (is_array($result)) {
+					$errormsg .= '<br>'.$result['content'];
+				}
+			}
+		}
+
+		if ($errormsg) {
 			if ($mail->error) {
 				$errormsg .= ' - '.$mail->error;
 			}
 
 			setEventMessages($errormsg, null, 'errors');
 		}
+
 		print '<br>';
 	}
 
@@ -762,7 +794,7 @@ if ($action == 'edit') {
 
 		print dol_get_fiche_head(array(), '', '', -1);
 
-		// Cree l'objet formulaire mail
+		// Create the mail form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname', 'restricthtml') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));

@@ -549,6 +549,7 @@ communication:
   label: Communication
 computers:
   icons:
+    - compact-disc
     - database
     - desktop
     - download
@@ -1159,6 +1160,7 @@ household:
     - plug
     - pump-soap
     - shower
+    - sink
     - snowflake
     - soap
     - toilet-paper
@@ -1189,6 +1191,7 @@ images:
     - portrait
     - sliders-h
     - tint
+    - unsplash
   label: Images
 interfaces:
   icons:
@@ -1494,6 +1497,8 @@ maps:
     - university
     - utensil-spoon
     - utensils
+    - vest
+    - vest-patches
     - wheelchair
     - wifi
     - wine-glass
@@ -1552,6 +1557,8 @@ medical:
   icons:
     - allergies
     - ambulance
+    - bacteria
+    - bacterium
     - band-aid
     - biohazard
     - bone
@@ -1642,6 +1649,7 @@ moving:
   label: Moving
 music:
   icons:
+    - compact-disc
     - drum
     - drum-steelpan
     - file-audio
@@ -1919,6 +1927,7 @@ payments-shopping:
     - ethereum
     - gem
     - gift
+    - google-pay
     - google-wallet
     - handshake
     - heart
@@ -2457,6 +2466,7 @@ users-people:
     - user-times
     - users
     - users-cog
+    - users-slash
     - walking
     - wheelchair
   label: Users & People

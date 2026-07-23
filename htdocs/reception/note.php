@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,19 +45,22 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
  * @var User $user
  */
 
-$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$morejs = '';
+
+$origin = '';
 $object = new Reception($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
 	if (!empty($object->origin)) {
-		$origin = $object->origin;
+		$origin = (string) $object->origin;
 		$typeobject = $object->origin;
 
 		$object->fetch_origin();
@@ -94,11 +97,11 @@ if (isModEnabled("reception")) {
 $permissionnote = $user->hasRight('reception', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // TODO Test on reception module on only
-if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $object->id);
+if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
+	$result = restrictedArea($user, 'reception', $object->id);
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
-		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
+		$result = restrictedArea($user, 'fournisseur', $object->origin_id, 'commande_fournisseur', 'commande');
 	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}
@@ -145,12 +148,12 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {    // Do not change on reception
+		if (0) {	// @phpstan-ignore-line  Do not change on reception
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $permissiontoadd) {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);

@@ -8,8 +8,8 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	public $situationinvoice;
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -224,7 +224,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 50; // Height reserved to output the info and total part and payment part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -239,8 +239,8 @@ class pdf_standard_asset extends ModelePDFAsset
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir .'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -253,18 +253,16 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("PdfTitle"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset((string) $object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
 				// Set certificate
-				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
-				// If user has no certificate, we try to take the company one
-				if (!$cert) {
-					$cert = !getDolGlobalString('CERTIFICATE_CRT') ? '' : $conf->global->CERTIFICATE_CRT;
-				}
+				$cert = getDolUserString('CERTIFICATE_CRT', getDolGlobalString('CERTIFICATE_CRT'));
+				$certprivate = getDolUserString('CERTIFICATE_CRT_PRIVATE', getDolGlobalString('CERTIFICATE_CRT_PRIVATE'));
+
 				// If a certificate is found
 				if ($cert) {
 					$info = array(
@@ -273,7 +271,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						'Reason' => 'ASSET',
 						'ContactInfo' => $this->emetteur->email
 					);
-					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+					$pdf->setSignature($cert, $certprivate, $this->emetteur->name, '', 2, $info);
 				}
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -345,12 +343,12 @@ class pdf_standard_asset extends ModelePDFAsset
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 						}
 
 						// back to start
 						$pdf->setPage($pageposbeforenote);
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 						$pageposafternote = $pdf->getPage();
@@ -364,7 +362,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							$pdf->setPage($pageposafternote);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext);
 							//$posyafter = $tab_top_newpage;
 						}
 
@@ -386,7 +384,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							}
 
 							// Add footer
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 
 							$i++;
@@ -451,7 +449,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -466,7 +464,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
-							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
@@ -499,7 +497,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -542,7 +540,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 
 					$sign = 1;
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
@@ -602,7 +600,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 					if (!isset($this->tva[$vatrate])) {
@@ -632,7 +630,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -695,9 +693,12 @@ class pdf_standard_asset extends ModelePDFAsset
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -734,14 +735,14 @@ class pdf_standard_asset extends ModelePDFAsset
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF|TCPDI	$pdf     		Object PDF
-	 *   @param		int|float	$tab_top		Top position of table
-	 *   @param		int|float	$tab_height		Height of table (rectangle)
+	 *   @param		float		$tab_top		Top position of table
+	 *   @param		float		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param		int			$hidebottom		Hide bottom bar of array
+	 *   @param		int<-1,1>	$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int<0,1>	$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
-	 *   @param		Translate	$outputlangsbis	Langs object bis
+	 *   @param		?Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
@@ -754,7 +755,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$hidetop = -1;
 		}
 
-		$currency = !empty($currency) ? $currency : $conf->currency;
+		$currency = !empty($currency) ? $currency : getDolCurrency();
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Amount in (at tab_top - 1)
@@ -772,7 +773,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->RoundedRect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, $this->corner_radius, '1001', 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -796,10 +797,10 @@ class pdf_standard_asset extends ModelePDFAsset
 	 *
 	 *  @param	TCPDF|TCPDI	$pdf     		Object PDF
 	 *  @param  Asset		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>   	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	float|int                   Return topshift value
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
+	 *  @return	float						Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -831,8 +832,8 @@ class pdf_standard_asset extends ModelePDFAsset
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -849,7 +850,7 @@ class pdf_standard_asset extends ModelePDFAsset
 					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
 			} else {
-				$text = $this->emetteur->name;
+				$text = (string) $this->emetteur->name;
 				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
 		}
@@ -892,7 +893,7 @@ class pdf_standard_asset extends ModelePDFAsset
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->projet->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
 			}
 		}
 
@@ -921,7 +922,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		// Get contact
@@ -976,7 +977,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			// Show sender name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset((string) $this->emetteur->name), 0, 'L');
 			$posy = $pdf->getY();
 
 			// Show sender information
@@ -1001,6 +1002,8 @@ class pdf_standard_asset extends ModelePDFAsset
 
 			if (is_object($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_client_name = '';
 			}
 
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
@@ -1049,7 +1052,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Asset		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
+	 *      @param	int<0,1>	$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
@@ -1061,11 +1064,11 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *  Define Array Column Field
 	 *
-	 *  @param	Asset			$object    		common object
+	 *  @param	CommonObject	$object    		common object
 	 *  @param	Translate		$outputlangs    langs
-	 *  @param	int				$hidedetails	Do not show line details
-	 *  @param	int				$hidedesc		Do not show desc
-	 *  @param	int				$hideref		Do not show ref
+	 *  @param	int<0,1>		$hidedetails	Do not show line details
+	 *  @param	int<0,1>		$hidedesc		Do not show desc
+	 *  @param	int<0,1>		$hideref		Do not show ref
 	 *  @return	void
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
@@ -1108,7 +1111,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			'width' => false, // only for desc
 			'status' => true,
 			'title' => array(
-				'textkey' => 'Designation', // use lang key is useful in somme case with module
+				'textkey' => 'Designation', // use lang key is useful in some case with module
 				'align' => 'L',
 				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 				// 'label' => ' ', // the final label

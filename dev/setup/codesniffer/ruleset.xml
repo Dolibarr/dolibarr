@@ -7,7 +7,7 @@
 
 	<!-- info: '*' is replaced with '.*', so better use '+' in some cases -->
 	<!-- info: 'relative' paths are relative to the examined file, so not ok. -->
-	<exclude-pattern>/build/(html|aps)/</exclude-pattern>
+	<exclude-pattern>/dev/build/(html|aps)/</exclude-pattern>
 	<exclude-pattern>/dev/tools/test/namespacemig/</exclude-pattern>
 	<exclude-pattern>/dev/tools/phan/stubs/</exclude-pattern>
 	<!-- <exclude-pattern>dev/initdata/dbf/includes</exclude-pattern> -->
@@ -21,6 +21,11 @@
 	<exclude-pattern>/\.git/</exclude-pattern>
 	<exclude-pattern>/\.cache/</exclude-pattern>
 
+	<!-- Custom rules -->
+	<config name="installed_paths" value="/dev/setup/codesniffer" />
+	<rule ref="codesniffer.Dolibarr.LanguageOfComments"/>
+	<rule ref="codesniffer.Dolibarr.CheckIsModEnabledArgument"/>
+
 	<!-- List of all tests -->
 
 
@@ -28,8 +33,15 @@
 
 	<rule ref="Internal.NoCodeFound" />
 
-
 	<!-- Rules from Generic Standard -->
+	<!--
+	<rule ref="PSR12.Files.OpenTag">
+		<properties>
+			<property name="ignoreIndent" value="true"/>
+		</properties>
+	</rule>
+	<exclude name="PSR12.WhiteSpace.ScopeIndent"/>
+	-->
 
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
@@ -69,16 +81,16 @@
 		<severity>0</severity>
 	</rule>
 
-    <!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
-    <rule ref="Generic.Files.LineLength.TooLong">
+	<!-- Lower severity on warnings we do not want to show in the pre-commit reports -->
+	<rule ref="Generic.Files.LineLength.TooLong">
 		<severity>4</severity>
-    </rule>
-    <rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
+	</rule>
+	<rule ref="Generic.Metrics.CyclomaticComplexity.TooHigh">
 		<severity>4</severity>
-    </rule>
-    <rule ref="Generic.Metrics.NestingLevel.TooHigh">
+	</rule>
+	<rule ref="Generic.Metrics.NestingLevel.TooHigh">
 		<severity>4</severity>
-    </rule>
+	</rule>
 
 
 	<!-- Warnings on TODO -->
@@ -93,7 +105,7 @@
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
 		<properties>
-			<property name="lineLimit" value="500" />
+			<property name="lineLimit" value="800" />
 			<property name="absoluteLineLimit" value="0" />
 		</properties>
 	</rule>
@@ -134,12 +146,12 @@
 
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
-	<!-- <rule ref="Generic.Functions.CallTimePassByReference" /> -->
+	<!-- <rule ref="Generic.Functions.CallTimePassByReference" /> This rule does not exists anymore -->
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 
 	<!-- Disallow several spaces after comma -->
-	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
+	<!-- We want to allow this because we want to be able to align params on several similar functions on different lines -->
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
 		<severity>0</severity>
 	</rule>
