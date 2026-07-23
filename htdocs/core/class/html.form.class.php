@@ -2528,24 +2528,32 @@ class Form
 	 * @param	string	$filter		Optional filter criteria. Must be a sanitized string.
 	 * @param	int		$socid		Id of thirdparty
 	 * @param	int		$maxvalue	Max value for lines that can be selected
+	 * @param	int		$projectid	Current project id. Discounts from source invoices in this project are shown first
 	 * @return	int					Return number of qualifed lines in list
 	 */
-	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0)
+	public function select_remises($selected, $htmlname, $filter, $socid, $maxvalue = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
 
 		// On recherche les remises
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql .= " re.description, re.fk_facture_source";
+		$sql .= " re.description, re.fk_facture_source,";
+		$sql .= " source_invoice.fk_projet as source_project_id, source_invoice.ref as source_invoice_ref";
 		$sql .= " FROM " . $this->db->prefix() . "societe_remise_except as re";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "facture as source_invoice ON source_invoice.rowid = re.fk_facture_source";
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
 			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " AND " . $sanitizedfilter;
 		}
-		$sql .= " ORDER BY re.description ASC";
+		if ($projectid > 0) {
+			$sql .= " ORDER BY CASE WHEN source_invoice.fk_projet = " . ((int) $projectid) . " THEN 0 ELSE 1 END,";
+		} else {
+			$sql .= " ORDER BY";
+		}
+		$sql .= " re.description ASC, re.rowid ASC";
 
 		dol_syslog(get_class($this) . "::select_remises", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2572,6 +2580,12 @@ class Form
 					}
 					if (preg_match('/\(EXCESS PAID\)/', $desc)) {
 						$desc = preg_replace('/\(EXCESS PAID\)/', $langs->trans("ExcessPaid"), $desc);
+					}
+					if ($projectid > 0 && (int) $obj->source_project_id === (int) $projectid) {
+						$desc = '[' . $langs->trans('Project') . '] ' . $desc;
+						if (!empty($obj->source_invoice_ref)) {
+							$desc .= ' - ' . $obj->source_invoice_ref;
+						}
 					}
 
 					$selectstring = '';
@@ -7542,9 +7556,10 @@ class Form
 	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
 	 * @param int		$filterabsolutediscount		Filter absolute discount
 	 * @param int		$filtercreditnote			Filter credit note
+	 * @param int 		$projectid 		Current project id used to prioritize related customer discounts
 	 * @return    void
 	 */
-	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0)
+	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0, $filterabsolutediscount = 0, $filtercreditnote = 0, $projectid = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -7601,7 +7616,7 @@ class Form
 					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue, $projectid);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
