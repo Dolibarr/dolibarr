@@ -1260,4 +1260,12 @@ class EcmFilesLine extends CommonObjectLine
 	 * @var int
 	 */
 	public $src_object_id;
+	/**
+	 * @var int
+	 */
+	public $agenda_id;
+	/**
+	 * @var ?string Hash for file sharing
+	 */
+	public $share;
 }
