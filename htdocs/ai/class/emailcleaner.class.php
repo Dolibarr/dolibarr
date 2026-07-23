@@ -102,14 +102,22 @@ class EmailCleaner
 		if ($msgid === '') {
 			$msgid = sha1($subject."\n".$from."\n".substr($rawBody, 0, 4000));
 		}
-		$replyOnly = self::extractReplyOnlyTextBasic($rawBody);
-		$quotedContext = self::extractQuotedThreadSnippetBasic($rawBody, 1200);
+		$messageScopes = self::buildMessageScopesBasic($rawBody, $subject, $from, $headerDate, $msgid, $inReplyTo, $references);
+		$replyOnly = (string) ($messageScopes['reply_only'] ?? '');
+		$quotedContext = (string) ($messageScopes['quoted_context'] ?? '');
+		$normalizedMessageId = self::normalizeMessageId($msgid);
+		$normalizedInReplyTo = self::normalizeMessageId($inReplyTo);
+		$normalizedReferences = self::normalizeMessageIdList($references);
+		$ancestorMessageIds = self::normalizeMessageIdList(array_merge($normalizedReferences, ($normalizedInReplyTo !== '' ? array($normalizedInReplyTo) : array())));
 		$emailContext = array(
 			'threading' => array(
-				'message_id' => $msgid,
-				'in_reply_to' => ($inReplyTo !== '' ? $inReplyTo : null),
-				'references' => (!empty($references) ? $references : array()),
-				'thread_depth' => (int) count($references) + ($inReplyTo !== '' ? 1 : 0),
+				'message_id' => ($normalizedMessageId !== '' ? $normalizedMessageId : $msgid),
+				'in_reply_to' => ($normalizedInReplyTo !== '' ? $normalizedInReplyTo : null),
+				'references' => $normalizedReferences,
+				'ancestor_message_ids' => $ancestorMessageIds,
+				'thread_depth' => count($ancestorMessageIds),
+				'thread_key' => self::buildThreadKey($normalizedMessageId, $normalizedInReplyTo, $normalizedReferences),
+				'link_type' => ($normalizedInReplyTo !== '' ? 'direct_reply' : (!empty($normalizedReferences) ? 'referenced_thread' : 'standalone')),
 			),
 			'addresses' => array(
 				'from' => $from,
@@ -131,6 +139,13 @@ class EmailCleaner
 				'reply_only' => ($replyOnly !== '' ? $replyOnly : null),
 				'quoted_context' => ($quotedContext !== '' ? $quotedContext : null),
 				'has_quoted_context' => ($quotedContext !== '' ? 1 : 0),
+				'quoted_block_count' => count((array) ($messageScopes['quoted_blocks'] ?? array())),
+				'quoted_blocks' => (array) ($messageScopes['quoted_blocks'] ?? array()),
+				'parsing_warnings' => (array) ($messageScopes['parsing_warnings'] ?? array()),
+			),
+			'timeline' => array(
+				'order' => 'current_then_quoted_newest_to_oldest',
+				'entries' => (array) ($messageScopes['timeline'] ?? array()),
 			),
 		);
 		$attachmentRows = self::collectAttachmentRows(
@@ -154,6 +169,7 @@ class EmailCleaner
 		$engine = (string) ($cleanResult['engine'] ?? 'fallback');
 		$fallbackUsed = !empty($cleanResult['fallback_used']);
 		$hCleanup = self::buildNoiseSummaryFromSegments($segments);
+		$emailContext['body_context']['excluded_context_summary'] = $hCleanup;
 		$complianceMeta = self::buildComplianceMetadata($engine, $fallbackUsed, $confidence);
 		$pdfAttachmentItems = array();
 		if ($hasPdfAttachments) {
@@ -630,7 +646,7 @@ class EmailCleaner
 		$prompt .= "{\n";
 		$prompt .= "  \"clean_body\": string,\n";
 		$prompt .= "  \"segments\": [\n";
-		$prompt .= "    {\"type\":\"main_content|quoted_thread|signature|legal_disclaimer|system_noise|unknown\",\"text\":string}\n";
+		$prompt .= "    {\"type\":\"main_content|quoted_thread|signature|legal_disclaimer|environmental_notice|security_notice|social_footer|system_noise|unknown\",\"text\":string}\n";
 		$prompt .= "  ],\n";
 		$prompt .= "  \"email_understanding\": {\n";
 		$prompt .= "    \"key_points\": string[],\n";
@@ -954,6 +970,229 @@ class EmailCleaner
 		$out = array_values(array_unique($out));
 		if (count($out) > 20) $out = array_slice($out, -20);
 		return $out;
+	}
+
+	/**
+	 * Normalize one RFC message identifier for comparisons.
+	 *
+	 * @param string $messageId Message identifier
+	 * @return string
+	 */
+	public static function normalizeMessageId($messageId)
+	{
+		$messageId = trim((string) $messageId);
+		$messageId = trim($messageId, "<> \t\n\r\0\x0B");
+		return strtolower($messageId);
+	}
+
+	/**
+	 * Normalize and de-duplicate RFC message identifiers without changing order.
+	 *
+	 * @param array<int,string> $messageIds Message identifiers
+	 * @return array<int,string>
+	 */
+	public static function normalizeMessageIdList($messageIds)
+	{
+		$out = array();
+		$seen = array();
+		foreach ((array) $messageIds as $messageId) {
+			$messageId = self::normalizeMessageId((string) $messageId);
+			if ($messageId === '' || isset($seen[$messageId])) continue;
+			$seen[$messageId] = true;
+			$out[] = $messageId;
+		}
+		if (count($out) > 20) $out = array_slice($out, -20);
+		return $out;
+	}
+
+	/**
+	 * Build a stable technical thread key from RFC lineage.
+	 *
+	 * The oldest References entry is preferred because replies that are not
+	 * consecutive still share it. This is only correlation metadata and never a
+	 * business interpretation.
+	 *
+	 * @param string $messageId Current message identifier
+	 * @param string $inReplyTo Direct parent identifier
+	 * @param array<int,string> $references Reference lineage
+	 * @return string
+	 */
+	public static function buildThreadKey($messageId, $inReplyTo, $references)
+	{
+		$references = self::normalizeMessageIdList($references);
+		$root = (!empty($references) ? (string) $references[0] : self::normalizeMessageId($inReplyTo));
+		if ($root === '') $root = self::normalizeMessageId($messageId);
+		return ($root !== '' ? 'rfc822:'.hash('sha256', $root) : '');
+	}
+
+	/**
+	 * Build deterministic current/quoted scopes and a technical timeline.
+	 *
+	 * @param string $body Raw email body
+	 * @param string $subject Current subject
+	 * @param string $from Current sender
+	 * @param string $date Current Date header
+	 * @param string $messageId Current message identifier
+	 * @param string $inReplyTo Direct parent identifier
+	 * @param array<int,string> $references Reference lineage
+	 * @return array<string,mixed>
+	 */
+	public static function buildMessageScopesBasic($body, $subject = '', $from = '', $date = '', $messageId = '', $inReplyTo = '', $references = array())
+	{
+		$body = self::normalizeText((string) $body);
+		$replyOnly = self::extractReplyOnlyTextBasic($body);
+		$quotedBlocks = self::extractQuotedMessageBlocksBasic($body, 16);
+		$quotedParts = array();
+		$timeline = array(array(
+			'kind' => 'current_message',
+			'index' => -1,
+			'from' => (trim((string) $from) !== '' ? trim((string) $from) : null),
+			'date_raw' => (trim((string) $date) !== '' ? trim((string) $date) : null),
+			'subject' => (trim((string) $subject) !== '' ? trim((string) $subject) : null),
+			'message_id' => (self::normalizeMessageId($messageId) !== '' ? self::normalizeMessageId($messageId) : null),
+			'in_reply_to' => (self::normalizeMessageId($inReplyTo) !== '' ? self::normalizeMessageId($inReplyTo) : null),
+			'references' => self::normalizeMessageIdList($references),
+		));
+
+		foreach ($quotedBlocks as $index => $block) {
+			if (!is_array($block)) continue;
+			$text = trim((string) ($block['text'] ?? ''));
+			if ($text !== '') $quotedParts[] = $text;
+			$timeline[] = array(
+				'kind' => 'quoted_message',
+				'index' => (int) $index,
+				'from' => ($block['from'] ?? null),
+				'date_raw' => ($block['date_raw'] ?? null),
+				'subject' => ($block['subject'] ?? null),
+				'message_id' => ($block['message_id'] ?? null),
+				'in_reply_to' => ($block['in_reply_to'] ?? null),
+				'references' => (array) ($block['references'] ?? array()),
+			);
+		}
+
+		$quotedContext = trim(implode("\n\n", $quotedParts));
+		if ($quotedContext === '') $quotedContext = self::extractQuotedThreadSnippetBasic($body, 1200);
+		if (strlen($quotedContext) > 2400) $quotedContext = substr($quotedContext, 0, 2400);
+
+		$warnings = array();
+		if ($quotedContext !== '' && empty($quotedBlocks)) $warnings[] = 'quoted_context_without_structured_blocks';
+
+		return array(
+			'schema_version' => 1,
+			'parser' => 'emailcleaner_message_scopes_v1',
+			'reply_only' => $replyOnly,
+			'quoted_context' => $quotedContext,
+			'quoted_blocks' => $quotedBlocks,
+			'timeline' => $timeline,
+			'parsing_warnings' => $warnings,
+		);
+	}
+
+	/**
+	 * Extract quoted message blocks with neutral RFC metadata.
+	 *
+	 * @param string $body Raw email body
+	 * @param int $maxBlocks Maximum blocks
+	 * @return array<int,array<string,mixed>>
+	 */
+	public static function extractQuotedMessageBlocksBasic($body, $maxBlocks = 16)
+	{
+		$body = self::normalizeText((string) $body);
+		$maxBlocks = max(1, min(32, (int) $maxBlocks));
+		if ($body === '') return array();
+
+		$lines = preg_split('/\n/', $body);
+		if (!is_array($lines)) return array();
+		$blocks = array();
+		$current = array();
+		$collecting = false;
+		$flush = function () use (&$blocks, &$current, &$collecting, $maxBlocks) {
+			if (!$collecting || empty($current) || count($blocks) >= $maxBlocks) {
+				$current = array();
+				return;
+			}
+			$raw = trim(implode("\n", $current));
+			$current = array();
+			if ($raw === '') return;
+			$header = self::extractLeadingQuotedHeaderBasic($raw);
+			$text = trim((string) ($header['body'] ?? $raw));
+			if ($text === '') return;
+			$blocks[] = array(
+				'from' => ($header['from'] ?? null),
+				'date_raw' => ($header['date_raw'] ?? null),
+				'subject' => ($header['subject'] ?? null),
+				'message_id' => ($header['message_id'] ?? null),
+				'in_reply_to' => ($header['in_reply_to'] ?? null),
+				'references' => (array) ($header['references'] ?? array()),
+				'text' => (strlen($text) > 1200 ? substr($text, 0, 1200) : $text),
+			);
+		};
+
+		foreach ($lines as $line) {
+			$trim = trim((string) $line);
+			$isSeparator = (bool) preg_match('/^(?:-{2,}\s*)?(?:original message|mensaje original|mensagem original|forwarded message|message transfere|weitergeleitete nachricht)(?:\s*-{2,})?$/iu', trim($trim, '- '));
+			$isWroteLine = (bool) preg_match('/^(?:on|el|em|le|am|op)\s+.{1,300}\s+(?:wrote|escribio|escreveu|a ecrit|schrieb|schreef)\s*:?$/iu', $trim);
+			$isHeaderStart = (bool) preg_match('/^(?:from|de|da|von|van|sent|enviado|enviada|date|fecha|data)\s*:/iu', $trim);
+			if ($isSeparator || $isWroteLine || ($isHeaderStart && !$collecting)) {
+				$flush();
+				$collecting = true;
+				if (!$isSeparator) $current[] = preg_replace('/^>+\s*/', '', (string) $line);
+				continue;
+			}
+			if ($collecting) {
+				if ($isHeaderStart && !empty($current) && preg_match('/(?:^|\n)\s*$/', implode("\n", array_slice($current, -2)))) {
+					$flush();
+					$collecting = true;
+				}
+				$current[] = preg_replace('/^>+\s*/', '', (string) $line);
+			}
+		}
+		$flush();
+
+		return $blocks;
+	}
+
+	/**
+	 * Parse neutral metadata from the leading header of a quoted block.
+	 *
+	 * @param string $raw Quoted block
+	 * @return array<string,mixed>
+	 */
+	private static function extractLeadingQuotedHeaderBasic($raw)
+	{
+		$lines = preg_split('/\n/', self::normalizeText((string) $raw));
+		if (!is_array($lines)) $lines = array((string) $raw);
+		$headerLines = array();
+		$bodyLines = array();
+		$inHeader = true;
+		foreach ($lines as $line) {
+			$trim = trim((string) $line);
+			if ($inHeader && ($trim === '' || preg_match('/^(?:from|de|da|von|van|sent|enviado|enviada|date|fecha|data|to|para|subject|asunto|assunto|objet|betreff|onderwerp|message-id|in-reply-to|references)\s*:/iu', $trim))) {
+				$headerLines[] = $line;
+				if ($trim === '' && count($headerLines) > 1) $inHeader = false;
+				continue;
+			}
+			$inHeader = false;
+			$bodyLines[] = $line;
+		}
+		$header = implode("\n", $headerLines);
+		$get = function ($names) use ($header) {
+			foreach ((array) $names as $name) {
+				if (preg_match('/^'.preg_quote((string) $name, '/').'\s*:\s*(.+)$/miu', $header, $m)) return trim((string) $m[1]);
+			}
+			return '';
+		};
+		$messageId = self::normalizeMessageId($get(array('Message-ID')));
+		$inReplyTo = self::normalizeMessageId($get(array('In-Reply-To')));
+		return array(
+			'from' => ($get(array('From', 'De', 'Da', 'Von', 'Van')) ?: null),
+			'date_raw' => ($get(array('Sent', 'Enviado', 'Enviada', 'Date', 'Fecha', 'Data')) ?: null),
+			'subject' => ($get(array('Subject', 'Asunto', 'Assunto', 'Objet', 'Betreff', 'Onderwerp')) ?: null),
+			'message_id' => ($messageId !== '' ? $messageId : null),
+			'in_reply_to' => ($inReplyTo !== '' ? $inReplyTo : null),
+			'references' => self::normalizeMessageIdList(self::extractHeaderMessageIds($get(array('References')))),
+			'body' => trim(implode("\n", $bodyLines)),
+		);
 	}
 
 	/**
