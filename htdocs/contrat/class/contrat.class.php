@@ -3369,8 +3369,8 @@ class ContratLigne extends CommonObjectLine
 				$this->ref   = $obj->rowid;
 
 				$this->tms = $this->db->jdate($obj->tms);
-				$this->fk_contrat = $obj->fk_contrat;
-				$this->fk_product = $obj->fk_product;
+				$this->fk_contrat = (int) $obj->fk_contrat;
+				$this->fk_product = (int) $obj->fk_product;
 				$this->statut = $obj->statut;
 				$this->product_ref = $obj->product_ref;
 				$this->product_label = $obj->product_label;
