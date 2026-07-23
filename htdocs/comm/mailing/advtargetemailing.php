@@ -1085,6 +1085,7 @@ if ($object->fetch($id) >= 0) {
 			$contactstatic = new Contact($db);
 			$elementtype = $contactstatic->table_element;
 			// fetch optionals attributes and labels
+
 			$extrafields->fetch_name_optionals_label($elementtype);
 			$extrafieldinfo = $extrafields->attributes[$elementtype] ?? [];
 			if (!empty($extrafieldinfo['type'])) {
