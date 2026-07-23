@@ -1449,6 +1449,34 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = array();
+		} elseif ($action == 'ECMFILES_CREATE' && $object instanceof EcmFiles) {
+			if ($object->src_object_type !== 'commande_fournisseur' || $object->src_object_id <= 0 || $object->gen_or_uploaded !== 'uploaded') {
+				return 0;
+			}
+
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+			$supplierOrder = new CommandeFournisseur($this->db);
+			if ($supplierOrder->fetch($object->src_object_id) <= 0) {
+				return 0;
+			}
+
+			$filePath = DOL_DATA_ROOT.'/'.$object->filepath.'/'.$object->filename;
+			$fileSize = is_file($filePath) ? filesize($filePath) : false;
+			$fileHash = is_file($filePath) ? hash_file('sha256', $filePath) : false;
+			$mimeType = dol_mimetype($object->filename);
+
+			$supplierOrder->actionmsg2 = $langs->transnoentities('SupplierOrderDocumentUploaded', $supplierOrder->ref, $object->filename);
+			$supplierOrder->actionmsg = implode("\n", array(
+				$langs->transnoentities('SupplierOrderDocumentStoredName', $object->filename),
+				$langs->transnoentities('SupplierOrderDocumentOriginalName', $object->fullpath_orig ?: $object->filename),
+				$langs->transnoentities('SupplierOrderDocumentSize', $fileSize !== false ? $fileSize : 0),
+				$langs->transnoentities('SupplierOrderDocumentMimeType', $mimeType),
+				$langs->transnoentities('SupplierOrderDocumentSha256', $fileHash !== false ? $fileHash : $langs->transnoentities('NotAvailable')),
+			));
+			$supplierOrder->actiontypecode = 'AC_OTH_AUTO';
+			$supplierOrder->sendtoid = array();
+			$object = $supplierOrder;
+			$action = 'ORDER_SUPPLIER_DOCUMENT_UPLOAD';
 		} else {
 			// TODO Merge all previous cases into this generic one
 			// $action = PASSWORD, ORDER_DELETE, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
