@@ -777,6 +777,55 @@ class Shipments extends DolibarrApi
 		return $this->_cleanObjectDatas($this->shipment);
 	}
 
+	/**
+	 * Set a shipment back to draft status
+	 *
+	 * This reverts a validated shipment to draft. If stock movements were recorded
+	 * at validation, they are cancelled back accordingly by the native method.
+	 *
+	 * @param   int $id             Shipment ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0=execute triggers
+	 *
+	 * @url POST    {id}/setdraft
+	 *
+	 * @return  object
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function setDraft($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->shipment->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Shipment not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->shipment->setDraft(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already draft');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when setting shipment back to draft: '.$this->shipment->error);
+		}
+
+		// Reload shipment
+		$result = $this->shipment->fetch($id);
+
+		$this->shipment->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->shipment);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
