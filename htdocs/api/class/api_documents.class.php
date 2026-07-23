@@ -449,7 +449,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$content_type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array					Array of documents with path
-	 * @phan-return array{data:array<array<string,string|int>>,pagination:array{total:int,page:int,page_count:int,limit:int}}|array<array<string,string|int>>
+	 * @phan-return array{data:array<mixed,array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>,pagination:array{total:int,page:int,page_count:int,limit:int}}|array<mixed,array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>
 	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET /
@@ -681,7 +681,7 @@ class Documents extends DolibarrApi
 				'pagination' => [
 					'total' => (int) $countarray,
 					'page' => $page, // count starts from 0
-					'page_count' => ceil((int) $countarray / $limit),
+					'page_count' => (int) ceil((int) $countarray / $limit),
 					'limit' => $limit
 				]
 			];
