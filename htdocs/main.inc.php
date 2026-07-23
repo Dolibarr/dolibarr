@@ -2700,7 +2700,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
             jQuery(document).on("click", function(event) {
 				if (jQuery("#topmenu-login-dropdown").hasClass("open")) {
 	                if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-						/* console.log("click close login - we click outside"); */
+						/* console.log("click close login - we click outside"); // disabled because too verbose */
+	                    // Hide the dropdown.
 						closeTopMenuLoginDropdown();
 	                }
 				}
@@ -2901,8 +2902,8 @@ function top_menu_quickadd()
         jQuery(document).ready(function() {
             jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
-                    /* console.log("click close quick add - we click outside"); */
-					// Hide the menus.
+                    /* console.log("click close quick add - we click outside"); // disabled because too verbose */
+					// Hide the dropdown.
                     $("#topmenu-quickadd-dropdown").removeClass("open");
                 }
             });
@@ -3365,8 +3366,8 @@ function top_menu_search()
         // close drop down
         jQuery(document).on("click", function(event) {
 			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
-				console.log("click close search - we click outside");
-                // Hide the menus.
+				/* console.log("click close search - we click outside"); // disabled because too verbose */
+                // Hide the dropdown.
                 jQuery("#topmenu-global-search-dropdown").removeClass("open");
             }
         });
