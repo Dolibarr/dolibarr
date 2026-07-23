@@ -981,7 +981,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR dbt.".$dbt_keyfield." IS NULL OR dbt.".$dbt_keyfield." = 0)";
 				}
-			} elseif (isModEnabled('multicompany')) {
+			} elseif (isModEnabled('multicompany') && (!empty($object->ismultientitymanaged) || !isset($object->ismultientitymanaged))) {
 				// If multicompany, and user is an internal user with all permissions, check that object is in correct entity
 				$sql = "SELECT COUNT(dbt.".$db->sanitize($dbt_select).") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($dbtablename)." as dbt";
