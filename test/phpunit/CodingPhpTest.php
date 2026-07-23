@@ -616,15 +616,15 @@ class CodingPhpTest extends CommonClassTest
 
 		// Checks with IN
 
-		// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize'. It means we forgot a db->sanitize when forging a sql request.
+		// Check string ' IN (".xxx' or ' IN (\'.xxx'  with xxx that is not '$this->db->sanitize' and not '$db->sanitize' and without int or float cast. It means we forgot a db->sanitize when forging a sql request.
 		$ok = true;
 		$lines = array();
 		$matches = array();
-		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*(.........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
+		preg_match_all('/\s+IN\s*\([\'"]\s*\.\s*((?![(]*(float|int)).........)(.*)/i', $filecontent, $matches, PREG_SET_ORDER);
 		foreach ($matches as $key => $val) {
 			//var_dump($val);
 			if (!in_array($val[1], array('$sanitize', '$db->sani', '$this->db', 'getEntity', 'WON\',\'L', 'self::STA', 'Commande:', 'CommandeF', 'Entrepot:', 'Facture::', 'FactureFo', 'ExpenseRe', 'Societe::', 'Ticket::S'))) {
-				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
+				$lines[] = self::reportAndGetLine($val[1].$val[2], $filecontent, $report_filepath, "NotSanitizedString '${val[1]}' in IN/NOT IN sql query `{$val[1]}{$val[2]}...`)");
 				$ok = false;
 				// break;  // Not breaking, report all lines
 			}
