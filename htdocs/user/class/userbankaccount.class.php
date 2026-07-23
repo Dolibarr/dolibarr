@@ -96,7 +96,7 @@ class UserBankAccount extends Account
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
-		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
+		$sql .= " VALUES (".((int) $this->userid).", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
