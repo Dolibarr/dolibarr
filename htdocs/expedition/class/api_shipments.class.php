@@ -784,9 +784,8 @@ class Shipments extends DolibarrApi
 	 * at validation, they are cancelled back accordingly by the native method.
 	 *
 	 * @param   int $id             Shipment ID
-	 * @param   int $notrigger      1=Does not execute triggers, 0=execute triggers
 	 *
-	 * @url POST    {id}/setdraft
+	 * @url POST    {id}/settodraft
 	 *
 	 * @return  object
 	 *
@@ -795,7 +794,7 @@ class Shipments extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function setDraft($id, $notrigger = 0)
+	public function setToDraft($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(403);
@@ -810,7 +809,7 @@ class Shipments extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->shipment->setDraft(DolibarrApiAccess::$user, $notrigger);
+		$result = $this->shipment->setDraft(DolibarrApiAccess::$user);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}
