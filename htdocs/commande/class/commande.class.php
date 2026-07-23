@@ -15,6 +15,7 @@
  * Copyright (C) 2022       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -617,14 +618,14 @@ class Commande extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'commande/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'commande/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1404,7 +1405,7 @@ class Commande extends CommonOrder
 	 */
 	public function createFromProposal($object, User $user)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
@@ -1467,6 +1468,8 @@ class Commande extends CommonOrder
 		$this->deposit_percent      = $object->deposit_percent;
 		$this->mode_reglement_id    = $object->mode_reglement_id;
 		$this->fk_account           = $object->fk_account;
+		$this->fk_incoterms         = $object->fk_incoterms;
+		$this->location_incoterms   = $object->location_incoterms;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->delivery_date        = $object->delivery_date;
@@ -1543,7 +1546,20 @@ class Commande extends CommonOrder
 				// Validate immediately the order
 				if (getDolGlobalString('ORDER_VALID_AFTER_CLOSE_PROPAL')) {
 					$this->fetch($ret);
-					$this->valid($user);
+					$result = $this->valid($user);
+					if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$this->fetch($this->id);
+						$this->fetch_thirdparty();
+
+						$outputlangs = $langs;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->thirdparty->default_lang)) {
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang($this->thirdparty->default_lang);
+							$outputlangs->loadLangs(array('main', 'orders'));
+						}
+
+						$this->generateDocument($this->model_pdf, $outputlangs);
+					}
 				}
 				return $ret;
 			} else {
@@ -1766,7 +1782,7 @@ class Commande extends CommonOrder
 			// Rang to use
 			$ranktouse = $rang;
 
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -1894,7 +1910,7 @@ class Commande extends CommonOrder
 	 * 	@param  int|''  $date_end           End date of the line
 	 * 	@return void
 	 *
-	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
+	 *	TODO	Replace calls to this function by generation of the `Ligne` (line) object
 	 */
 	public function add_product($idproduct, $qty, $remise_percent = 0.0, $date_start = '', $date_end = '')
 	{
@@ -2170,6 +2186,10 @@ class Commande extends CommonOrder
 			$line->desc = $remise->description; // Description for the order line
 			$line->vat_src_code = $remise->vat_src_code;
 			$line->tva_tx = $remise->tva_tx;
+			$line->localtax1_tx = $remise->localtax1_tx;
+			$line->localtax1_type = $remise->localtax1_type;
+			$line->localtax2_tx = $remise->localtax1_tx;
+			$line->localtax2_type = $remise->localtax1_type;
 			$line->subprice = -(float) $remise->amount_ht;
 			$line->price = -(float) $remise->amount_ht;
 			$line->fk_product = 0; // Predefined Product ID
@@ -2181,6 +2201,8 @@ class Commande extends CommonOrder
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
+			$line->total_localtax1 = -(float) $remise->total_localtax1;
+			$line->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$result = $line->insert();
 			if ($result > 0) {
@@ -3291,7 +3313,7 @@ class Commande extends CommonOrder
 			}
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
+				if (abs((float) $qty) < $this->line->packaging) {
 					$qty = $this->line->packaging;
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 				} else {
@@ -3299,8 +3321,10 @@ class Commande extends CommonOrder
 						&& is_numeric($this->line->packaging)
 						&& (float) $this->line->packaging > 0
 						&& (float) price2num(fmod((float) $qty, (float) $this->line->packaging), 'MS')) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
+						// Use abs() to keep the rounding consistent for negative qty,
+						// matching what addline() at line 1725 already does (#38782 bug 5).
+						$coeff = intval(abs((float) $qty) / $this->line->packaging) + 1;
+						$qty = price2num((float) $this->line->packaging * $coeff, 'MS');
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'warnings');
 					}
 				}
@@ -3419,29 +3443,29 @@ class Commande extends CommonOrder
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
+		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
-		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
-		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
+		$sql .= " localtax1=".(isset($this->total_localtax1) ? ((float) $this->total_localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->total_localtax2) ? ((float) $this->total_localtax2) : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : "null").",";
+		$sql .= " fk_user_modif=".(isset($user->id) ? ((int) $user->id) : "null").",";
+		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? ((int) $this->user_validation_id) : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? ((float) $this->deposit_percent) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
-		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
-		$sql .= " fk_account=".($this->fk_account > 0 ? $this->fk_account : "null").",";
-		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
+		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? ((int) $this->shipping_method_id) : "null").",";
+		$sql .= " fk_account=".($this->fk_account > 0 ? ((int) $this->fk_account) : "null").",";
+		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? ((int) $this->demand_reason_id) : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? $this->warehouse_id : "null").",";
+		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? ((int) $this->warehouse_id) : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " module_source = ".(isset($this->module_source) ? "'".$this->db->escape($this->module_source)."'" : "null").",";
 		$sql .= " pos_source = ".(isset($this->pos_source) ? "'".$this->db->escape($this->pos_source)."'" : "null");

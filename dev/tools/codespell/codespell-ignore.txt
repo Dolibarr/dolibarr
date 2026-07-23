@@ -21,6 +21,9 @@ noe
 udo
 tim
 
+# key inside xsd files
+MIAN
+
 ConfirmActionXxx
 
 # Inside email
@@ -106,3 +109,4 @@ Referers
 # other
 blacklists
 confirmactionxxx
+udate

@@ -200,11 +200,10 @@ function bank_report_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("compta"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
 	$extrafields->fetch_name_optionals_label('paiement');
@@ -457,7 +456,8 @@ function checkBanForAccount($account)
 		// Separation du rib en 3 groups de 7 + 1 group de 2.
 		// Multiplication of each group by the coefficients in the array.
 
-		for ($i = 0, $s = 0; $i < 3; $i++) {
+		$s = 0;
+		for ($i = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
 			$s += ((int) $code) * $coef[$i];
 		}
@@ -552,7 +552,7 @@ function checkES($IentOfi, $InumCta)
 
 	$sum = 0;
 
-	for ($i = 0; $i < 11; $i++) {
+	for ($i = 0; $i < 10; $i++) {
 		$sum += $values[$i] * (int) substr($InumCta, $i, 1); //int to cast result of substr to a number
 	}
 

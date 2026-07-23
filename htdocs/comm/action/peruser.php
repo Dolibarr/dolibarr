@@ -390,6 +390,9 @@ if ($end_d != '') {
 if ($search_categ_cus != 0) {
 	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
 }
+if ($check_holiday) {
+	$param .= '&check_holiday=1';
+}
 $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
@@ -579,7 +582,27 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
 	$s .= 'jQuery(".check_birthday").click(function() { console.log("Click on .check_birthday so we toggle class .peruser_birthday"); jQuery(".peruser_birthday").addClass("peruser_birthday_imp"); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Click on .check_holiday so we toggle class .peruser_holiday"); if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) { jQuery(".peruser_holiday").removeClass("peruser_holiday_imp"); } else { jQuery(".peruser_holiday").addClass("peruser_holiday_imp"); } });'."\n";
+
+	$s .= 'jQuery(".check_holiday").click(function() {';
+	$s .= '	console.log("Click on .check_holiday so we toggle class .peruser_holiday");';
+	$s .= '	if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) {';
+	$s .= '		jQuery(".peruser_holiday").removeClass("peruser_holiday_imp");';
+	$s .= '	} else { ';
+	$s .= '		jQuery(".peruser_holiday").addClass("peruser_holiday_imp");';
+	$s .= '	}';
+	// add check_holiday params to navigation links when click on check holiday input
+	$s .= '	var checkHoliday = jQuery(this).is(":checked") ? 1 : 0;';
+	$s .= '	jQuery(".navselectiondate a, .navmode a").each(function(index, elem) { ';
+	$s .= '		var navLinkElem = jQuery(elem);';
+	$s .= '		var navLinkHref = navLinkElem.attr("href");';
+	$s .= '		var navLinkParts = navLinkHref.split("?");';
+	$s .= '		var navLinkPath = navLinkParts[0];';
+	$s .= '		var navLinkParams = new URLSearchParams(navLinkParts[1] || "");';
+	$s .= '		navLinkParams.set("check_holiday", checkHoliday);';
+	$s .= '		navLinkElem.attr("href", navLinkPath + "?" + navLinkParams.toString());';
+	$s .= '	});';
+	$s .= '});'."\n";
+
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -784,7 +807,7 @@ if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 	}
 }
 // Search on socid

@@ -6,7 +6,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -621,6 +621,7 @@ class ActionComm extends CommonObject
 		$sql .= "fk_contact,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_action,";
+		$sql .= "fk_task,";
 		$sql .= "label,percent,priority,fulldayevent,location,";
 		$sql .= "transparency,";
 		$sql .= "fk_element,";
@@ -650,15 +651,16 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->idate($this->datep)."', ";	// date start event
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
 		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape((string) $this->durationp)."'" : "null").", "; // deprecated
-		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
+		$sql .= (isset($this->type_id) ? ((int) $this->type_id) : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
-		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
-		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
+		$sql .= (isset($user->id) && $user->id > 0 ? ((int) $user->id) : "null").", ";
+		$sql .= ($userownerid > 0 ? ((int) $userownerid) : "null").", ";
+		$sql .= (!empty($this->fk_task) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
 		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
 		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
@@ -693,7 +695,7 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 			$this->ref = (string) $this->id;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
@@ -891,6 +893,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
 		$sql .= " a.fk_user_action,";
+		$sql .= " a.fk_task,";
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
@@ -962,6 +965,7 @@ class ActionComm extends CommonObject
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
+				$this->fk_task = $obj->fk_task;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -1281,6 +1285,7 @@ class ActionComm extends CommonObject
 		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_task = ".(!empty($this->fk_task) ? ((int) $this->fk_task) : "null");
 		if (!empty($this->fk_element)) {
 			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
@@ -1401,13 +1406,13 @@ class ActionComm extends CommonObject
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
-	 *  @param		string	$filter			Other filter
+	 *  @param		string	$sqlfilter		Other filter
 	 *  @param		string	$sortfield		Sort on this field
 	 *  @param		string	$sortorder		ASC or DESC
 	 *  @param		int		$limit			Limit number of answers
 	 *  @return		ActionComm[]|string		Error string if KO, array with actions if OK
 	 */
-	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $sqlfilter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $hookmanager;
 
@@ -1456,8 +1461,8 @@ class ActionComm extends CommonObject
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
-		if (!empty($filter)) {
-			$sql .= $filter;
+		if (!empty($sqlfilter)) {
+			$sql .= $sqlfilter;
 		}
 		// Fields where hook
 		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
@@ -1532,7 +1537,7 @@ class ActionComm extends CommonObject
 			if ($search_sale == -2) {
 				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 			}
 		}
 

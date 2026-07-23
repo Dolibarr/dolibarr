@@ -50,7 +50,7 @@ $langs->loadLangs(array("companies", "mrp"));
 // Security check
 $result = restrictedArea($user, 'bom|mrp');
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*

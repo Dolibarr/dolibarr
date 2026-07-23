@@ -91,7 +91,7 @@ $(document).ready(function() {
 	$('#refreshbutton').click( function() {
 		console.log("Click on refreshbutton");
 
-		dolBlockUI("<?php echo $langs->trans('PleaseBePatient'); ?>");
+		dolBlockUI("<?php echo $langs->transnoentities('PleaseBePatient'); ?>");
 
 		$.get("<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
 			action: 'build',

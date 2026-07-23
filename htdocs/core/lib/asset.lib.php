@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2022	OpenDSI					<support@open-dsi.fr>
- * Copyright (C) 2022-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -31,9 +31,8 @@
  */
 function assetAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('asset');
 	$extrafields->fetch_name_optionals_label('asset_model');
 

@@ -320,6 +320,7 @@ if (empty($reshook)) {
 				}
 
 				// For compatibility
+				$classname = '';
 				if ($element == 'order') {
 					$element = $subelement = 'commande';
 				}
@@ -330,6 +331,17 @@ if (empty($reshook)) {
 				if ($element == 'invoice' || $element == 'facture') {
 					$element = 'compta/facture';
 					$subelement = 'facture';
+				}
+				if ($element == 'facturerec' || $element == 'facture_rec') {
+					// FactureRec lives in compta/facture/class/facture-rec.class.php (#34775)
+					$element = 'compta/facture';
+					$subelement = 'facture-rec';
+					$classname = 'FactureRec';
+				}
+				if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+					$element = 'fourn';
+					$subelement = 'fournisseur.facture-rec';
+					$classname = 'FactureFournisseurRec';
 				}
 
 				$object->origin    = $origin;
@@ -345,7 +357,9 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-					$classname = ucfirst($subelement);
+					if (empty($classname)) {
+						$classname = ucfirst($subelement);
+					}
 					$srcobject = new $classname($db);
 					'@phan-var-force Commande|Propal|Facture $srcobject';  // Can be other class, but CommonObject is too Generic
 
@@ -361,15 +375,14 @@ if (empty($reshook)) {
 
 						$fk_parent_line = 0;
 						$num = count($lines);
+						$rang = 0;
 
 						for ($i = 0; $i < $num; $i++) {
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 							if ($product_type == 1 || (getDolGlobalString('CONTRACT_SUPPORT_PRODUCTS') && in_array($product_type, array(0, 1)))) { 	// TODO Exclude also deee
-								// service prédéfini
+								// predefined service
 								if ($lines[$i]->fk_product > 0) {
-									$product_static = new Product($db);
-
 									// Define output language
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 										$prod = new Product($db);
@@ -430,7 +443,7 @@ if (empty($reshook)) {
 									$lines[$i]->pa_ht,
 									$array_options,
 									(int) $lines[$i]->fk_unit,
-									$num + 1
+									$rang++
 								);
 
 								if ($result < 0) {
@@ -1190,10 +1203,23 @@ if ($action == 'create') {
 				$element = 'compta/facture';
 				$subelement = 'facture';
 			}
+			$classname = '';
+			if ($element == 'facturerec' || $element == 'facture_rec') {
+				$element = 'compta/facture';
+				$subelement = 'facture-rec';
+				$classname = 'FactureRec';
+			}
+			if ($element == 'facture_fourn_rec' || $element == 'invoice_supplier_rec') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.facture-rec';
+				$classname = 'FactureFournisseurRec';
+			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
-			$classname = ucfirst($subelement);
+			if (empty($classname)) {
+				$classname = ucfirst($subelement);
+			}
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Facture $objectsrc';
 			$objectsrc->fetch($originid);
@@ -1345,7 +1371,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Create");
+	print $form->buttonsSaveCancel("CreateDraft");
 
 	if (is_object($objectsrc)) {
 		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
@@ -1496,7 +1522,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+			$morehtmlref .= ' <span class="otherlink valignmiddle">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.((int) $object->thirdparty->id).'">'.$langs->trans("OtherContracts").'</a>)</span>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -1505,7 +1531,7 @@ if ($action == 'create') {
 			if ($permissiontoadd) {
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => ((int) $object->id)], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
@@ -1584,7 +1610,7 @@ if ($action == 'create') {
 		$expired= $object->getTotalizedLines(4, 1);
 		$close= $object->getTotalizedLines(5, 0);
 
-		print '<tr><td class="titlefield">'.$langs->trans("Lines").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Quantity").'</td>';
 		print '<td class="right nowrap">'.($all['total_qty'] ? price2num($all['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($draft['total_qty'] ? price2num($draft['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';
 		print '<td class="right">'.($enabled['total_qty'] ? price2num($enabled['total_qty']) : '<span class="opacitymedium">0</span>').'</td>';

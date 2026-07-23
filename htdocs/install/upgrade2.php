@@ -81,6 +81,7 @@ require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 require_once $dolibarr_main_document_root.'/user/class/user.class.php';
+require_once $dolibarr_main_document_root.'/blockedlog/lib/blockedlog.lib.php';
 
 global $langs;
 
@@ -681,6 +682,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
 
 				migrate_rename_directories($db, $langs, $conf, '/banque', '/bank');
+
+				migrate_blockedlog_add_end_file();
 			}
 		}
 
@@ -1360,7 +1363,7 @@ function migrate_links_transfert($db, $langs, $conf)
 				$sql .= "fk_bank, url_id, url, label, type";
 				$sql .= ")";
 				$sql .= " VALUES (";
-				$sql .= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
+				$sql .= ((int) $obj->barowid).",".((int) $obj->bbrowid).", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
 				$sql .= ")";
 
 				//print $sql.'<br>';
@@ -1651,9 +1654,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 						print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
 						$insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
-						$insert_sql .= ' fk_paiementfourn = \''.$select_obj->rowid.'\',';
-						$insert_sql .= ' fk_facturefourn  = \''.$select_obj->fk_facture_fourn.'\',';
-						$insert_sql .= ' amount           = \''.$select_obj->amount.'\'';
+						$insert_sql .= ' fk_paiementfourn = \''.((int) $select_obj->rowid).'\',';
+						$insert_sql .= ' fk_facturefourn  = \''.((int) $select_obj->fk_facture_fourn).'\',';
+						$insert_sql .= ' amount           = \''.((float) $select_obj->amount).'\'';
 						$insert_resql = $db->query($insert_sql);
 
 						if ($insert_resql) {
@@ -2835,9 +2838,9 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->rowid;
+					$sql2 .= ", ".((int) $obj->rowid);
 					$sql2 .= ", '160'";
-					$sql2 .= ", ".$obj->fk_user_resp;
+					$sql2 .= ", ".((int) $obj->fk_user_resp);
 					$sql2 .= ")";
 
 					if ($obj->fk_user_resp > 0) {
@@ -2914,9 +2917,9 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$sql2 .= ") VALUES (";
 					$sql2 .= "'".$db->idate(dol_now())."'";
 					$sql2 .= ", '4'";
-					$sql2 .= ", ".$obj->fk_project_task;
+					$sql2 .= ", ".((int) $obj->fk_project_task);
 					$sql2 .= ", '180'";
-					$sql2 .= ", ".$obj->fk_user;
+					$sql2 .= ", ".((int) $obj->fk_user);
 					$sql2 .= ")";
 
 					$resql2 = $db->query($sql2);
@@ -3266,9 +3269,9 @@ function migrate_shipping_delivery($db, $langs, $conf)
 					$sqlInsert .= ", fk_target";
 					$sqlInsert .= ", targettype";
 					$sqlInsert .= ") VALUES (";
-					$sqlInsert .= $obj->fk_expedition;
+					$sqlInsert .= ((int) $obj->fk_expedition);
 					$sqlInsert .= ", 'shipping'";
-					$sqlInsert .= ", ".$obj->rowid;
+					$sqlInsert .= ", ".((int) $obj->rowid);
 					$sqlInsert .= ", 'delivery'";
 					$sqlInsert .= ")";
 
@@ -3950,7 +3953,7 @@ function migrate_remise_entity($db, $langs, $conf)
 				$obj = $db->fetch_object($resql);
 
 				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
-				$sqlUpdate .= " entity = ".$obj->entity;
+				$sqlUpdate .= " entity = ".((int) $obj->entity);
 				$sqlUpdate .= " WHERE rowid = ".((int) $obj->rowid);
 
 				$result = $db->query($sqlUpdate);
@@ -4247,13 +4250,15 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/menus/barre_top/default.php',
 		'/core/modules/modComptabiliteExpert.class.php',
 		'/core/modules/modCommercial.class.php',
+		'/core/modules/modPaybox.class.php',
 		'/core/modules/modProduit.class.php',
 		'/core/modules/modSkype.class.php',
-		'/core/modules/modactivite.class.php',		// A file from external module that should not be here
+		'/core/modules/modactivite.class.php',		// A file from an external module that should not be here
 		'/core/triggers/interface_modWebcalendar_Webcalsynchro.class.php',
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php', // now has position 99
 		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
 		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
@@ -5627,7 +5632,9 @@ function migrate_apiresttokens()
 
 
 /**
- * Add the HMAC key for blockedlog v2
+ * Add the HMAC key for blockedlog v2+
+ * Note that this is used on old version only. It stores the HMAC with old method but it will be automatically converted in new storing
+ * method once on version of blockedlog 3.0.0
  *
  * @return  int		Return -1 if KO, 1 if OK
  */
@@ -5647,9 +5654,11 @@ function migrate_blockedlog_add_hmac_key()
 	$hmac_encoded_secret_key = getDolGlobalString('BLOCKEDLOG_HMAC_KEY');
 	if (empty($hmac_encoded_secret_key)) {
 		// Add key
-		$hmac_secret_key = 'BLOCKEDLOGHMAC'.getRandomPassword(true);		// This is using random_int for 32 chars
+		$randomsecret = bin2hex(random_bytes(32)); 	// 64 char hex - 256 bits
 
-		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', 0);	// Will encrypt the value using dolCrypt and store it.
+		$hmac_secret_key = 'BLOCKEDLOGHMAC'.$randomsecret;		// Example: 'BLOCKEDLOGHMACY3Ewx37RXbSd8gL9JV8p7Wqw7qvq2K2A'
+
+		$result = dolibarr_set_const($db, 'BLOCKEDLOG_HMAC_KEY', $hmac_secret_key, 'chaine', 0, 'The secret key for HMAC used for blockedlog record', $conf->entity);	// Will encrypt the value using dolCrypt and store it.
 
 		if ($result < 0) {
 			dol_print_error($db);

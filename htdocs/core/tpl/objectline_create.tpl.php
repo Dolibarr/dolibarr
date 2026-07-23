@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
@@ -1278,11 +1278,27 @@ if (!empty($object->thirdparty)) {
 							}
 						});
 
-
 						// Execute js context Dolibarr Hooks
 						if (typeof Dolibarr != 'undefined') {
 							Dolibarr.executeHook('objectLineCreate:GetSupplierPrices', {'idprod': idProd, ajaxResultData : data, jsConf});
 						}
+
+						<?php if (getDolGlobalString('PRODUCT_USE_UNITS')) { ?>
+						// Sync the measuring unit dropdown with the product's default fk_unit
+						// for the supplier-side line picker (issue #38636), mirroring the
+						// customer-side behaviour from issue #34610. Look at the first
+						// non-pmp/non-cost row of the AJAX response (all rows for a given
+						// product carry the same fk_unit since it comes from llx_product).
+						var firstFkUnit = null;
+						$(data).each(function() {
+							if (this.id != 'pmpprice' && this.id != 'costprice' && typeof this.fk_unit != 'undefined' && this.fk_unit != null && firstFkUnit === null) {
+								firstFkUnit = this.fk_unit;
+							}
+						});
+						if (firstFkUnit !== null && $("#units").length) {
+							$("#units").val(firstFkUnit).trigger('change');
+						}
+						<?php } ?>
 					}
 				},
 				'json');
@@ -1360,7 +1376,7 @@ if (!empty($object->thirdparty)) {
 					"invoice_supplier_rec"
 				];
 
-				// seller.tva_assuj -> à injecter dans jsConf ou ailleurs
+				// seller.tva_assuj -> to inject into jsConf or elsewhere
 				if (supplierElements.includes(jsConf.docObject.element) && !jsConf.docObject.seller_tva_assuj) {
 					if (tva_tx !== 0) {
 						tva_tx = 0;
@@ -1396,9 +1412,13 @@ if (!empty($object->thirdparty)) {
 
 				if (has_multicurrency_up === false) {
 					if (typeof up_locale === 'undefined') {
-						jQuery("#price_ht").val(up);
+						if (!Number.isNaN(up)) {
+							jQuery("#price_ht").val(up);
+						}
 					} else {
-						jQuery("#price_ht").val(up_locale);
+						if (!Number.isNaN(up_locale)) {
+							jQuery("#price_ht").val(up_locale);
+						}
 					}
 				}
 
@@ -1562,7 +1582,7 @@ if (!empty($object->thirdparty)) {
 			jQuery("#np_markRate, .np_markRate").hide();
 		}
 
-		jQuery("#units, #title_units").hide();
+		jQuery("#units, #title_units, .linecoluseunit .selection").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();
 	}
