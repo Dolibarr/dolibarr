@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2009-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 // Check parameters
 if (!isset($argv[1])) {
@@ -168,7 +168,7 @@ foreach ($argv as $key => $value) {
 			print 'Error: Bad date format or value'."\n";
 			exit(1);
 		}
-		print 'Rebuild PDF for ivoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
+		print 'Rebuild PDF for invoices with at least one payment between '.dol_print_date($paymentdateafter, 'day', 'gmt')." and ".dol_print_date($paymentdatebefore, 'day', 'gmt').".\n";
 	}
 
 	if ($value == 'filter=nopayment') {
@@ -176,7 +176,7 @@ foreach ($argv as $key => $value) {
 		$option .= (empty($option) ? '' : '_').'nopayment';
 		$filter[] = 'nopayment';
 
-		print 'Rebuild PDF for ivoices with no payment done yet.'."\n";
+		print 'Rebuild PDF for invoices with no payment done yet.'."\n";
 	}
 
 	if ($value == 'filter=bank') {
@@ -222,18 +222,18 @@ foreach ($argv as $key => $value) {
 		$filter[] = 'excludethirdparties';
 
 		$thirdpartiesid = explode(',', $argv[$key + 1]);
-		print 'Exclude thirdparties with id in list ('.join(',', $thirdpartiesid).").\n";
+		print 'Exclude thirdparties with id in list ('.implode(',', $thirdpartiesid).").\n";
 
-		$option .= (empty($option) ? '' : '_').'excludethirdparties'.join('-', $thirdpartiesid);
+		$option .= (empty($option) ? '' : '_').'excludethirdparties'.implode('-', $thirdpartiesid);
 	}
 	if ($value == 'filter=onlythirdparties') {
 		$found = true;
 		$filter[] = 'onlythirdparties';
 
 		$thirdpartiesid = explode(',', $argv[$key + 1]);
-		print 'Only thirdparties with id in list ('.join(',', $thirdpartiesid).").\n";
+		print 'Only thirdparties with id in list ('.implode(',', $thirdpartiesid).").\n";
 
-		$option .= (empty($option) ? '' : '_').'onlythirdparty'.join('-', $thirdpartiesid);
+		$option .= (empty($option) ? '' : '_').'onlythirdparty'.implode('-', $thirdpartiesid);
 	}
 
 	if (!$found && preg_match('/filter=/i', $value)) {

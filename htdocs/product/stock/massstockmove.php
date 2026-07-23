@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -36,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $confirm = GETPOST('confirm', 'alpha');
 $filetoimport = GETPOST('filetoimport');
@@ -103,6 +102,8 @@ if (!empty($_SESSION['massstockmove'])) {
 
 $error = 0;
 
+$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer');
+
 
 /*
  * Actions
@@ -135,6 +136,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	}
 
 	// Check a batch number is provided if product need it
+	$producttmp = null;
 	if (!$error) {
 		$producttmp = new Product($db);
 		$producttmp->fetch($id_product);
@@ -149,7 +151,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 
 	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
 	// What is more important is to have qty when doing action 'createmovements'
-	if (!$error) {
+	if (!$error && $producttmp !== null) {
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch()) {
 		} else {
@@ -216,19 +218,19 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 				// Define value of products moved
 				$pricesrc = 0;
 				if (!empty($product->pmp)) {
-					$pricesrc = $product->pmp;
+					$pricesrc = (float) $product->pmp;
 				}
 				$pricedest = $pricesrc;
 
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
 
-				if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {	// If product does not need lot/serial
+				if (!isModEnabled('productbatch') || !$product->hasbatch()) {	// If product does not need lot/serial
 					// Remove stock if source warehouse defined
 					if ($id_sw > 0) {
 						$result1 = $product->correct_stock(
 							$user,
 							$id_sw,
-							$qty,
+							(float) $qty,
 							1,
 							GETPOST("label"),
 							$pricesrc,
@@ -244,7 +246,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					$result2 = $product->correct_stock(
 						$user,
 						$id_tw,
-						$qty,
+						(float) $qty,
 						0,
 						GETPOST("label"),
 						$pricedest,
@@ -275,7 +277,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$result1 = $product->correct_stock_batch(
 							$user,
 							$id_sw,
-							$qty,
+							(float) $qty,
 							1,
 							GETPOST("label"),
 							$pricesrc,
@@ -294,7 +296,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					$result2 = $product->correct_stock_batch(
 						$user,
 						$id_tw,
-						$qty,
+						(float) $qty,
 						0,
 						GETPOST("label"),
 						$pricedest,
@@ -481,6 +483,10 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 				}
+				if (!is_numeric($tmp_qty)) {
+					$error++;
+					setEventMessages('Qty need to be numeric value only', null, 'errors');
+				}
 
 				// Check a batch number is provided if product need it
 				if (!$error) {
@@ -522,16 +528,8 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$_SESSION['massstockmove'] = json_encode($listofdata);
 }
 
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontodelete) {
 	$langs->load("other");
-
-	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
-	if ($excludefirstline) {
-		$param .= '&excludefirstline='.urlencode($excludefirstline);
-	}
-	if ($endatlinenb) {
-		$param .= '&endatlinenb='.urlencode($endatlinenb);
-	}
 
 	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
@@ -687,11 +685,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 // From warehouse
 print '<td class="nowraponall">';
-print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses(is_null($id_sw) ? '' : $id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // To warehouse
 print '<td class="nowraponall">';
-print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses(is_null($id_sw) ? '' : $id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Product
 print '<td class="nowraponall">';
@@ -700,9 +698,9 @@ if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
 if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
-	$limit = '';
+	$limit = 0;
 } else {
-	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
+	$limit = getDolGlobalInt('PRODUIT_LIMIT_SIZE');
 }
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
 print $form->select_produits((isset($id_product) ? $id_product : 0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);

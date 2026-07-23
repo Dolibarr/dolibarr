@@ -1,7 +1,10 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ *
+ * This is the phan config file used by .github/workflows/phan.yml
  */
+
 define('DOL_PROJECT_ROOT', __DIR__.'/../../..');
 define('DOL_DOCUMENT_ROOT', DOL_PROJECT_ROOT.'/htdocs');
 define('PHAN_DIR', __DIR__);
@@ -32,7 +35,8 @@ $sanitizeRegex
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
 			'restricthtmlnolink',
-			'restricthtmlallowlinkscript'
+			'restricthtmlallowlinkscript',
+			'url',
 		)
 	).')*$/';
 
@@ -76,6 +80,7 @@ $VALID_MODULE_MAPPING = array(
 	'bom' => 'Bom',
 	'bookcal' => 'BookCal',
 	'bookmark' => 'Bookmark',
+	'captureserver' => null, // Not provided by default, no module tests
 	'cashdesk' => null,  // TODO: fill in proper class
 	'category' => 'Categorie',
 	'clicktodial' => 'ClickToDial',
@@ -93,7 +98,8 @@ $VALID_MODULE_MAPPING = array(
 	'don' => 'Don',
 	'dynamicprices' => 'DynamicPrices',
 	'ecm' => 'ECM',
-	'ecotax' => null,  // TODO: External module ?
+	'ecotax' => null,
+	'einvoice' => null,
 	'emailcollector' => 'EmailCollector',
 	'eventorganization' => 'EventOrganization',
 	'expensereport' => 'ExpenseReport',
@@ -114,6 +120,7 @@ $VALID_MODULE_MAPPING = array(
 	'intracommreport' => 'Intracommreport',
 	'invoice' => 'Facture',
 	'knowledgemanagement' => 'KnowledgeManagement',
+	'ksef' => null,
 	'label' => 'Label',
 	'ldap' => 'Ldap',
 	'loan' => 'Loan',
@@ -139,6 +146,7 @@ $VALID_MODULE_MAPPING = array(
 	'paymentbybanktransfer' => 'PaymentByBankTransfer',
 	'paypal' => 'Paypal',
 	'paypalplus' => null,
+	'pdpconnectfr' => null,
 	'prelevement' => 'Prelevement',
 	'printing' => 'Printing',
 	'product' => 'Product',
@@ -147,6 +155,7 @@ $VALID_MODULE_MAPPING = array(
 	'productsupplierprice' => null,
 	'project' => 'Projet',
 	'propal' => 'Propale',
+	'quickmemo' => null,
 	'receiptprinter' => 'ReceiptPrinter',
 	'reception' => 'Reception',
 	'recruitment' => 'Recruitment',
@@ -158,6 +167,7 @@ $VALID_MODULE_MAPPING = array(
 	'stock' => 'Stock',
 	'stocktransfer' => 'StockTransfer',
 	'stripe' => 'Stripe',
+	'subtotals' => 'Subtotals',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
 	'supplier_proposal' => 'SupplierProposal',
@@ -207,7 +217,7 @@ $EXTRAFIELDS_TYPE2LABEL = array(
 	);
 
 
-$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename'))).')$/';
+$moduleNameRegex = '/^(?:'.implode('|', array_merge(array_keys($DEPRECATED_MODULE_MAPPING), array_keys($VALID_MODULE_MAPPING), array('\$modulename', '\$dirofmodule'))).')$/';
 $deprecatedModuleNameRegex = '/^(?!(?:'.implode('|', array_keys($DEPRECATED_MODULE_MAPPING)).')$).*/';
 
 $extraFieldTypeRegex = '/^(?:'.implode('|', array_keys($EXTRAFIELDS_TYPE2LABEL)).')$/';
@@ -222,18 +232,41 @@ return [
 	'backward_compatibility_checks' => false,
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
+	/*'included_extension_subset' => [
+		'curl',
+		'dom',
+		'filter',
+		'gd',
+		'imap',
+		'intl',
+		'json',
+		'libxml',
+		'mbstring',
+		'mysqli',
+		'opcache',
+		'openssl',
+		'session',
+		'sqlite3',
+		'xml',
+		'zip'
+	],*/
 	'globals_type_map' => [
-		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
+		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>',
 		'action' => 'string',
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
 		'badgeStatus1' => 'string',
-		'badgeStatus11' => 'string',
 		'badgeStatus3' => 'string',
 		'badgeStatus4' => 'string',
+		'badgeStatus5' => 'string',
 		'badgeStatus6' => 'string',
+		'badgeStatus7' => 'string',
 		'badgeStatus8' => 'string',
 		'badgeStatus9' => 'string',
+		'badgeStatus10' => 'string',
+		'badgeStatus11' => 'string',
+		'badgeStatus4b' => 'string',
+		'badgeStatus8b' => 'string',
 		'classname' => 'string',
 		'conf' => '\Conf',
 		'conffile' => 'string',
@@ -246,13 +279,24 @@ return [
 		'disableremove' => 'int<0,1>',
 		'dolibarr_main_authentication' => 'string',
 		'dolibarr_main_data_root' => 'string',
-		'dolibarr_main_data_root' => 'string',
 		'dolibarr_main_db_encrypted_pass' => 'string',
 		'dolibarr_main_db_host' => 'string',
 		'dolibarr_main_db_pass' => 'string',
+		'dolibarr_main_db_type' => '?string',
 		'dolibarr_main_demo' => 'string',
 		'dolibarr_main_document_root' => 'string',
 		'dolibarr_main_url_root' => 'string',
+		'dolibarr_font_DOL_DEFAULT_TTF' => '?string',
+		'dolibarr_font_DOL_DEFAULT_TTF_BOLD' => '?string',
+		'dolibarr_js_CKEDITOR' => '?string',
+		'dolibarr_js_JQUERY' => '?string',
+		'dolibarr_js_JQUERY_UI' => '?string',
+		'dolibarr_lib_NUSOAP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATH' => '?string',
+		'dolibarr_lib_ODTPHP_PATHTOPCLZIP' => '?string',
+		'dolibarr_lib_PHPEXCELNEW_PATH' => '?string',
+		'dolibarr_lib_TCPDF_PATH' => '?string',
+		'dolibarr_lib_TCPDI_PATH' => '?string',
 		'errormsg' => 'string',
 		'extrafields' => '\ExtraFields',
 		'filter' => 'string',
@@ -267,7 +311,7 @@ return [
 		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
-		'mysoc' => '?\Societe',
+		'mysoc' => '\Societe',
 		'nblines' => '\int',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
@@ -299,7 +343,8 @@ return [
 	// your application should be included in this list.
 	'directory_list' => [
 		'htdocs',
-		PHAN_DIR . '/stubs/',
+		'scripts',
+		PHAN_DIR . '/stubs',
 	],
 
 	// A directory list that defines files that will be excluded
@@ -317,6 +362,7 @@ return [
 		'htdocs/includes/',
 		'htdocs/install/doctemplates/websites/',
 		'htdocs/core/class/lessc.class.php', // External library
+		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
 	],
 	//'exclude_file_regex' => '@^vendor/.*/(tests?|Tests?)/@',
@@ -367,7 +413,7 @@ return [
 		// can also be written as 'vendor/phan/phan/.phan/plugins/AlwaysReturnPlugin.php'
 		'DeprecateAliasPlugin',
 		//'EmptyMethodAndFunctionPlugin',
-		// 'InvalidVariableIssetPlugin',
+		'InvalidVariableIssetPlugin',
 		//'MoreSpecificElementTypePlugin',
 		'NoAssertPlugin',
 		'NotFullyQualifiedUsagePlugin',
@@ -422,12 +468,14 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginConstantVariableNull',		// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayPropertyType', // Helps find missing array keys or mismatches, remaining occurrences are likely unused properties
 		'PhanTypeArraySuspiciousNullable',	// About 440 occurrences
 		// 'PhanTypeInvalidDimOffset',			// Helps identify missing array indexes in types or reference to unset indexes
 		'PhanTypeObjectUnsetDeclaredProperty',
 		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
 		// 'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanTypeMismatchArgumentSuperType', 	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr uses tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility
@@ -439,9 +487,10 @@ return [
 		'PhanPluginCanUseNullableParamType',	// Fixer - Report/Add nullable parameter types in the function definition
 		'PhanPluginCanUseNullableReturnType',	// Fixer - Report/Add nullable return types in the function definition
 
+		'PhanPluginEmptyStatementIf',		// Usually done on purpose with a comment
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Also reported by phpstan < lvl6 - 12300+ occurrences
+		// 'PhanTypeMismatchArgument',		// Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -451,8 +500,10 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
-		// 'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
+		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
+
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
@@ -467,7 +518,7 @@ return [
 	// Note: The array key must be the same as the extension name reported by `php -m`,
 	// so that phan can skip loading the stubs if the extension is actually available.
 	'autoload_internal_extension_signatures' => [
-				// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
+		// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
 
 		// Xdebug stubs are bundled with Phan 0.10.1+/0.8.9+ for usage,
 		// because Phan disables xdebug by default.
@@ -493,11 +544,13 @@ return [
 		'pdo_mysql'  => PHAN_DIR . '/stubs/pdo_mysql.phan_php',
 		'pdo_pgsql'  => PHAN_DIR . '/stubs/pdo_pgsql.phan_php',
 		'pdo_sqlite'  => PHAN_DIR . '/stubs/pdo_sqlite.phan_php',
+		'phpunit'  => PHAN_DIR . '/stubs/phpunit.phan_php',
 		'pgsql'  => PHAN_DIR . '/stubs/pgsql.phan_php',
 		'session'  => PHAN_DIR . '/stubs/session.phan_php',
 		'simplexml'  => PHAN_DIR . '/stubs/SimpleXML.phan_php',
 		'soap'  => PHAN_DIR . '/stubs/soap.phan_php',
 		'sockets'  => PHAN_DIR . '/stubs/sockets.phan_php',
+		'sqlite3'  => PHAN_DIR . '/stubs/sqlite3.phan_php',
 		'tidy'  => PHAN_DIR . '/stubs/tidy.phan_php',
 		'zip'  => PHAN_DIR . '/stubs/zip.phan_php',
 	],

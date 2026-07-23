@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  * Copyright (C) 2023	   William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -44,26 +51,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
+
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$groupby    = GETPOST('groupby', 'aZ09');
 
 $socid = GETPOSTINT('socid');
 
@@ -123,6 +125,14 @@ $pagenext = $page + 1;
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'f.titre' => "Ref",
+	's.nom' => "ThirdParty",
+	's.code_client' => "CustomerCodeShort",
+	'fdc.description' => 'Description',
+);
+
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
 	if (!$ret) {
@@ -147,31 +157,30 @@ if (!$sortfield) {
 }
 
 $arrayfields = array(
-	'f.titre' => array('label' => "Ref", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
-	'f.total_ht' => array('label' => "AmountHT", 'checked' => 1),
-	'f.total_tva' => array('label' => "AmountVAT", 'checked' => -1),
-	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1),
-	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => 0),
-	'f.fk_cond_reglement' => array('label' => "PaymentTerm", 'checked' => 0),
-	'recurring' => array('label' => "RecurringInvoice", 'checked' => 1),
-	'f.frequency' => array('label' => "Frequency", 'checked' => 1),
-	'f.unit_frequency' => array('label' => "FrequencyUnit", 'checked' => 1),
-	'f.nb_gen_done' => array('label' => "NbOfGenerationDoneShort", 'checked' => 1),
-	'f.date_last_gen' => array('label' => "DateLastGenerationShort", 'checked' => 1),
-	'f.date_when' => array('label' => "NextDateToExecutionShort", 'checked' => 1),
-	'f.fk_user_author' => array('label' => "UserCreation", 'checked' => 0, 'position' => 500),
-	'f.fk_user_modif' => array('label' => "UserModification", 'checked' => 0, 'position' => 505),
-	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 520),
-	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 525),
-	'status' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'f.titre' => array('label' => "Ref", 'checked' => '1'),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
+	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1'),
+	'f.total_tva' => array('label' => "AmountVAT", 'checked' => '-1'),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => '1'),
+	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '0'),
+	'f.fk_cond_reglement' => array('label' => "PaymentTerm", 'checked' => '0'),
+	'recurring' => array('label' => "RecurringInvoice", 'checked' => '1'),
+	'f.frequency' => array('label' => "Frequency", 'checked' => '1'),
+	'f.unit_frequency' => array('label' => "FrequencyUnit", 'checked' => '1'),
+	'f.nb_gen_done' => array('label' => "NbOfGenerationDoneShort", 'checked' => '1'),
+	'f.date_last_gen' => array('label' => "DateLastGenerationShort", 'checked' => '1'),
+	'f.date_when' => array('label' => "NextDateToExecutionShort", 'checked' => '1'),
+	'f.fk_user_author' => array('label' => "UserCreation", 'checked' => '0', 'position' => 500),
+	'f.fk_user_modif' => array('label' => "UserModification", 'checked' => '0', 'position' => 505),
+	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 520),
+	'f.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 525),
+	'status' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if ($socid > 0) {
 	$tmpthirdparty = new Societe($db);
@@ -183,9 +192,13 @@ if ($socid > 0) {
 
 $objecttype = 'facture_rec';
 
+$permissiontoread = $user->hasRight("facture", "read");
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
+$permissiontodelete = $user->hasRight("facture", "delete");
+
+$uploaddir = $conf->facture->dir_output;
 
 // Security check
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
@@ -203,7 +216,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('arrayfields' => &$arrayfields, 'socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -247,6 +260,7 @@ if (empty($reshook)) {
 		$search_unit_frequency = '';
 		$search_nb_gen_done = '';
 		$search_status = '';
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -256,11 +270,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass actions
-	/*$objectclass='MyObject';
-	$objectlabel='MyObject';
-	$permissiontoread = $user->hasRight("mymodule", "read");
-	$permissiontodelete = $user->hasRight("mymodule", "delete");
-	$uploaddir = $conf->mymodule->dir_output;
+	/*$objectclass = 'MyObject';
+	$objectlabel = 'MyObject';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
 
@@ -390,6 +401,15 @@ if ($search_date_when_end) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+if ($search_all) {
+	$sql .= " AND EXISTS (SELECT fdc.rowid FROM ".MAIN_DB_PREFIX."facturedet_rec as fdc WHERE f.rowid = fdc.fk_facture ".natural_search(array_keys($fieldstosearchall), $search_all).")";
+}
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -404,7 +424,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -430,6 +450,12 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->facid;
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$id);
+	exit;
+}
 
 // Output page
 // --------------------------------------------------------------------
@@ -447,6 +473,15 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
+}
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -523,14 +558,11 @@ if ($search_nb_gen_done != '') {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -544,7 +576,7 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend' => $langs->trans("SendByMail"), 'builddoc' => $langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
@@ -565,7 +597,14 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
-print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
+print '<div class="info">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</div>';
+
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
 
 $i = 0;
 
@@ -586,7 +625,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -597,8 +636,8 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -611,7 +650,7 @@ if (!empty($arrayfields['f.titre']['checked'])) {
 }
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+	print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag((string) $search_societe).'"></td>';
 }
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
@@ -634,7 +673,7 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	// Payment term
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+	print $form->getSelectConditionsPaiements((int) $search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 	print "</td>";
 }
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
@@ -729,8 +768,8 @@ if (!empty($arrayfields['status']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+if (!$conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -744,7 +783,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -819,12 +858,18 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+// Hook fields
+$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -862,7 +907,7 @@ while ($i < $imaxinloop) {
 	$j = 0;
 	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="center tdoverflowmax125">';
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {
@@ -927,7 +972,7 @@ while ($i < $imaxinloop) {
 	// Payment term
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="tdoverflowmax150">';
-		$form->form_conditions_reglement(0, $objp->fk_cond_reglement, 'none');
+		$form->form_conditions_reglement('0', $objp->fk_cond_reglement, 'none');
 		print '</td>'."\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1061,7 +1106,7 @@ while ($i < $imaxinloop) {
 		}
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center tdoverflowmax125">';
 		if ($user->hasRight('facture', 'creer') && empty($invoicerectmp->suspended)) {
 			if ($invoicerectmp->isMaxNbGenReached()) {

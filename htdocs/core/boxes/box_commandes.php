@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class box_commandes extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -65,7 +65,7 @@ class box_commandes extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $hookmanager;
 		$langs->load('orders');
 
 		$this->max = $max;
@@ -108,9 +108,15 @@ class box_commandes extends ModeleBoxes
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $commandestatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid) {
+					$sql .= " AND s.rowid = " . ((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			if (getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE')) {
 				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			} else {
@@ -123,7 +129,6 @@ class box_commandes extends ModeleBoxes
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$date = $this->db->jdate($objp->date_commande);

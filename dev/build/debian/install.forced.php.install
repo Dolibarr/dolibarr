@@ -1,0 +1,41 @@
+<?php
+// File to force Dolibarr wizard installer choices.
+//
+// This file must be present into htdocs/install or /etc/dolibarr directory
+// during install process to be used.
+//
+//
+
+$force_install_packager='deb';
+$force_install_noedit=1;
+$force_install_message='KeepDefaultValuesDeb';
+#$force_install_main_data_root='/usr/share/dolibarr/documents';
+$force_install_main_data_root='/var/lib/dolibarr/documents';
+$force_install_type='mysqli';
+$force_install_dbserver='localhost';
+$force_install_port='3306';
+$force_install_database='dolibarrdebian';
+$force_install_createdatabase='1';
+$force_install_databaselogin='dolibarrdebian';
+$force_install_databasepass='';
+$force_install_createuser='1';
+$force_install_databaserootlogin='__SUPERUSERLOGIN__';
+$force_install_databaserootpass='__SUPERUSERPASSWORD__';
+$force_install_dolibarrlogin='admin';
+$force_install_nophpinfo='1';
+$force_install_lockinstall='444';
+$force_install_distrib='debian';
+
+// Value to overwrite path to use shared libraries/fonts instead of embedded one.
+// If during install, we enable/disable declaration to use non embedded libraries, we must also check they are
+// - not removed from package (see rm in rules file),
+// - declared into dependencies (see Depends in control file)
+//$force_dolibarr_lib_TCPDF_PATH='';
+//$force_dolibarr_lib_GEOIP_PATH='';
+//$force_dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap';
+//$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip';
+//$force_dolibarr_js_CKEDITOR='/javascript/ckeditor';	// Use '/javascript/ckeditor' or 'disabled'
+//$force_dolibarr_js_JQUERY='/javascript/jquery';
+//$force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
+//$force_dolibarr_js_JQUERY_FLOT='/javascript/flot';
+//$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf';

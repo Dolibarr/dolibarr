@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,11 @@
  * @var string $elementtype
  * @var string $value
  */
+'@phan-var-force int $error';
+'@phan-var-force string $action';
+'@phan-var-force string $elementtype';
+'@phan-var-force string $value';
+
 $maxsizestring = 255;
 $maxsizeint = 10;
 $mesg = '';
@@ -67,7 +73,7 @@ $listofreservedwords = array(
 	'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DOUBLE', 'DROP', 'DUAL',
 	'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXPLAIN', 'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FORCE', 'FOREIGN', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND',
 	'IGNORE', 'IGNORE_SERVER_IDS', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INTEGER', 'INTERVAL', 'INTO', 'ITERATE',
-	'KEYS', 'KEYWORD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
+	'KEYS', 'KEYWORD', 'LEAD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
 	'OFFSET', 'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE', 'OVER',
 	'PARTITION', 'POSITION', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READS', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE',
 	'SCHEMAS', 'SECOND_MICROSECOND', 'SENSITIVE', 'SEPARATOR', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SSL', 'STARTING', 'STRAIGHT_JOIN',
@@ -145,6 +151,7 @@ if ($action == 'add') {
 			$parameters_array = explode("\r\n", $parameters);
 			foreach ($parameters_array as $param_ligne) {
 				if (!empty($param_ligne)) {
+					$matches = array();
 					if (preg_match_all('/,/', $param_ligne, $matches)) {
 						if (count($matches[0]) > 1) {
 							$error++;
@@ -234,10 +241,14 @@ if ($action == 'add') {
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
-					1,
+					'1',
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
+					(GETPOST('showintooltip', 'int') ? 1 : 0),
+					GETPOSTINT('personal_data')
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -302,7 +313,7 @@ if ($action == 'update') {
 			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'edit';
 		}
-		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
 			$error++;
 			$langs->load("errors");
 			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
@@ -420,8 +431,12 @@ if ($action == 'update') {
 					GETPOST('langfile'),
 					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt"),
+					(GETPOST('emptyonclone', 'alpha') ? 1 : 0),
+					(GETPOST('showintooltip', 'int') ? 1 : 0),
+					GETPOSTINT('personal_data')
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -482,14 +497,14 @@ if ($action == 'encrypt') {
 					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
 						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
 
-						$sql  = "SELECT te.rowid, te.".$attributekey;
-						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
+						$sql  = "SELECT te.rowid, te.".$db->sanitize($attributekey);
+						$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element'])." as t, ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields as te';
 						$sql .= " WHERE te.fk_object = t.rowid";
-						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
-						$sql .= " AND te.".$attributekey." IS NOT NULL";
-						$sql .= " AND te.".$attributekey." <> ''";
+						$sql .= " AND te.".$db->sanitize($attributekey)." NOT LIKE 'dolcrypt:%'";
+						$sql .= " AND te.".$db->sanitize($attributekey)." IS NOT NULL";
+						$sql .= " AND te.".$db->sanitize($attributekey)." <> ''";
 						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
-							$sql .= " AND t.entity = ".getEntity($arrayofelement['table_element'], 0);
+							$sql .= " AND t.entity = ".getEntity($arrayofelement['element'], 0);
 						}
 
 						//print $sql;
@@ -505,8 +520,8 @@ if ($action == 'encrypt') {
 								if ($pass) {
 									$newpassword = dolEncrypt($pass);
 
-									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields';
-									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
+									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($arrayofelement['table_element']).'_extrafields';
+									$sqlupdate .= " SET ".$db->sanitize($attributekey)." = '".$db->escape($newpassword)."'";
 									$sqlupdate .= " WHERE rowid = ".((int) $id);
 
 									$resupdate = $db->query($sqlupdate);

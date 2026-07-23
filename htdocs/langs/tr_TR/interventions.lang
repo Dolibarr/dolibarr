@@ -86,3 +86,4 @@ TypeContact_fichinter_external_BILLING=Müdahale faturalandırmasında müşteri
 TypeContact_fichinter_external_CUSTOMER=Müşteri iletişim müdahale takibi
 NotARecurringInterventionalTemplate=Tekrarlanan bir müdahale şablonu değil
 ShowInterventionModel=Müdahale modelini göster
+CreateRepeatableIntervention=oluştur yinelenen müdahale

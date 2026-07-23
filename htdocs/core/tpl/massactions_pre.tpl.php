@@ -1,9 +1,10 @@
 <?php
+
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +40,7 @@
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var FormCompany $formcompany
  * @var HookManager $hookmanager
@@ -52,12 +54,25 @@
  * @var string $sendto
  * @var string $topicmail
  * @var string $trackid
+ * @var ?string $uploaddir
  * @var int[] $toselect
  * @var int[] $arrayofselected
+ * @var ?string $search_all
  */
 '
+@phan-var-force string $string
 @phan-var-force CommonObject $objecttmp
+@phan-var-force CommonObject $object
 @phan-var-force int[] $toselect
+@phan-var-force ?string $uploaddir
+@phan-var-force int<0,1> $withmaindocfilemail
+@phan-var-force string $sendto
+@phan-var-force string $massaction
+@phan-var-force int[] $arrayofselected
+@phan-var-force string $trackid
+@phan-var-force string $modelmail
+@phan-var-force ?string $search_all
+@phan-var-force ?Task $taskstatic
 ';
 
 if (!empty($sall) || !empty($search_all)) {
@@ -82,7 +97,7 @@ if ($massaction == 'preclonetasks') {
 	$formquestion = array(
 		// TODO If list of project is long and project is not on a thirdparty, the combo may be very long.
 		// Solution: Allow only sameproject for cloning tasks ?
-		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects($object->id, 'projectid', '', 0, 1, '', 0, array(), $object->socid, '1', 1, '', null, 1)),
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects((string) $object->id, 'projectid', '', 0, 1, '', 0, array(), $object->socid, '1', 1, '', array(), 1)),
 	);
 	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
@@ -114,7 +129,7 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 				'type' => 'other',
 				'name' => 'affecttag_'.$categ_type['code'],
 				'label' => '',
-				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, '', 0, '60%', '', '', $langs->transnoentitiesnoconv("SelectTheTagsToAssign"))
+				'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $categ_arbo_tmp, GETPOST('contcats_'.$categ_type['code'], 'array'), 0, 0, '', 0, '60%', '', '', $langs->transnoentitiesnoconv("SelectTheTagsToAssign"))
 			);
 		}
 		$formquestion[] = array(
@@ -130,10 +145,11 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 }
 
 if ($massaction == 'preupdateprice'
- && (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+ && (
+	getDolGlobalString('PRODUCT_PRICE_UNIQ')
 		|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')
 		|| getDolGlobalString('PRODUIT_MULTIPRICES')
-	)) {
+ )) {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
@@ -147,9 +163,9 @@ if ($massaction == 'preupdateprice'
 				'value' => $valuefield
 			);
 
-	$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect));
+	$descConfirmPreUpdatePrice = $langs->trans("ConfirmUpdatePriceQuestion", count($toselect));
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect)*getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') .' ('.$langs->transnoentities('PricingRule').', '.$langs->transnoentities('MultiPricesNumPrices').')');
+		$descConfirmPreUpdatePrice = $langs->trans("ConfirmUpdatePriceQuestion", count($toselect) * getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') .' ('.$langs->transnoentities('PricingRule').', '.$langs->transnoentities('MultiPricesNumPrices').')');
 	}
 
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $descConfirmPreUpdatePrice, "updateprice", $formquestion, 1, 0, 200, 500, 1);
@@ -160,7 +176,7 @@ if ($massaction == 'presetsupervisor') {
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
 	$valuefield .= img_picto('', 'user').' ';
-	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 	$valuefield .= '</div>';
 
 	$formquestion[] = array(
@@ -178,7 +194,7 @@ if ($massaction == 'preaffectuser') {
 
 	$valuefielduser = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 165px; padding-bottom: 6px; gap: 5px">';
 	$valuefielduser .= img_picto('', 'user').' ';
-	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 	$valuefielduser .= '</div>';
 
 	$valuefieldprojrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px; padding-bottom: 6px">';
@@ -190,11 +206,11 @@ if ($massaction == 'preaffectuser') {
 	$valuefieldtasksrole .= '</div>';
 
 	$formquestion[] = array(
-				'type' => 'other',
-				'name' => 'usertoaffect',
-				'label' => $langs->trans("User"),
-				'value' => $valuefielduser
-			);
+		'type' => 'other',
+		'name' => 'usertoaffect',
+		'label' => $langs->trans("User"),
+		'value' => $valuefielduser
+	);
 	$formquestion[] = array(
 		'type' => 'other',
 		'name' => 'projectrole',
@@ -251,7 +267,7 @@ if ($massaction == 'presend') {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
-	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
+	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE', 'user'));
 
 	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
@@ -343,7 +359,7 @@ if ($massaction == 'presend') {
 	// Tableau des parameters complementaires du post
 	$formmail->param['action'] = $action;
 	$formmail->param['models'] = $modelmail;	// the filter to know which kind of template emails to show. 'none' means no template suggested.
-	$formmail->param['models_id'] = GETPOSTINT('modelmailselected') ? GETPOSTINT('modelmailselected') : '-1';
+	$formmail->param['models_id'] = GETPOSTINT('modelmailselected') ? GETPOSTINT('modelmailselected') : '';
 	$formmail->param['id'] = implode(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 	if (getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && count($listofselectedrecipientobjid) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
@@ -363,7 +379,6 @@ if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = $objecttmp->element;
 	/** @var CommonObject $objecttmp */
-	$extrafields = new ExtraFields($db);
 	$keysuffix = '';
 	$extrafields->fetch_name_optionals_label($elementtype);
 	$extrafields_list = $extrafields->attributes[$elementtype]['label'];
@@ -387,7 +402,7 @@ if ($massaction == 'edit_extrafields') {
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
 			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
 			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp, $objecttmp->table_element);
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', '', $objecttmp, $objecttmp->table_element);
 			$outputShowOutputFields .= '</div>';
 		}
 		$outputShowOutputFields .= '<script>
@@ -424,20 +439,22 @@ if ($massaction == 'predisable') {
 }
 if ($massaction == 'presetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
-			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+			'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1)
+	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "assignsalerepresentative", $formquestion, 1, 0, 200, 500, 1);
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 		'name' => 'unassigncommercial',
 		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
-		'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+		'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1)
+	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUnallocateCommercial"), $langs->trans("ConfirmUnallocateCommercialQuestion", count($toselect)), "unassigncommercial", $formquestion, 1, 0, 200, 500, 1);
 }
 
@@ -445,9 +462,27 @@ if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }
 
+if ($massaction == 'precreatecreditnote') {
+	$text = '<br>';
+	$text .= $langs->trans("ConfirmMassCreateCreditNoteQuestion", count($toselect)) . '<br>';
+
+	// Credit note validation may trigger notifications, so display them in confirmation dialog
+	if (isModEnabled('notification')) {
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+				$notify = new Notify($db);
+				$text .= $notify->confirmMessage('BILL_VALIDATE', $objecttmp->socid, $objecttmp) . '<br>';
+			}
+		}
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCreateCreditNote"), $text, "createcreditnote", null, 'yes', 0, 200, 500, 1);
+}
+
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 if (empty($toselect)) {
-	$toselect=[];
+	$toselect = [];
 }
 $parameters = array(
 	'toselect' => &$toselect,
@@ -455,6 +490,7 @@ $parameters = array(
 	'massaction' => $massaction
 );
 
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

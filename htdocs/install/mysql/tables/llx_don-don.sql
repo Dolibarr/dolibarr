@@ -31,7 +31,7 @@ create table llx_don
   amount          double(24,8) DEFAULT 0,
   fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
-  fk_soc      	  integer NULL, 
+  fk_soc      	  integer NULL,
   firstname       varchar(50),
   lastname        varchar(50),
   societe         varchar(50),
@@ -54,5 +54,6 @@ create table llx_don
   note_public     text,
   model_pdf       varchar(255),
   import_key      varchar(14),
-  extraparams	  varchar(255)							-- for other parameters with json format
+  extraparams	    varchar(255),							-- for other parameters with json format
+  ip              varchar(250)              --ip used to create record (for public submission page)
 )ENGINE=innodb;

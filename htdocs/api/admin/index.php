@@ -5,7 +5,7 @@
  * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,8 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $dolibarr_main_url_root
+ * @var string 	$dolibarr_main_url_root
+ * @var	string	$dolibarr_api_count_always_enabled
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -85,18 +88,22 @@ if ($action == 'setproductionmode') {
 
 // Disable compression mode
 if ($action == 'setdisablecompression') {
-	$status = GETPOST('status', 'alpha');
+	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
+		dol_print_error($db);
+	}
+}
 
-	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', $status, 'chaine', 0, '', 0) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+// Disable compression mode
+if ($action == 'setenablecount' && !empty($dolibarr_api_count_always_enabled)) {
+	if (dolibarr_set_const($db, 'API_ENABLE_COUNT_CALLS', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'save') {
-	dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha'));
+	if (dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha')) <= 0) {
+		dol_print_error($db);
+	}
 }
 
 
@@ -109,13 +116,18 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp'); // May have been deleted by a purge
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-api page-admin-index');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
+
+$head = api_admin_prepare_head();
+
+print dol_get_fiche_head($head, 'parameter', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
 print "<br>\n";
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="save">';
 
@@ -123,7 +135,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td>'.$langs->trans("Value")."</td>";
+print '<td></td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -158,9 +170,30 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans("RESTRICT_ON_IP"), $langs->trans("Example").': '.$langs->trans("IPListExample"));
+print '<td>'.$langs->trans("API_ENABLE_COUNT_CALLS").'</td>';
+$enable_count = getDolGlobalBool('API_ENABLE_COUNT_CALLS');
+if (!empty($dolibarr_api_count_always_enabled)) {
+	print '<td>';
+	print img_picto($langs->trans("AlwaysEnabled"), 'switch_on', 'class="opacitymedium"');
+	print '</td>';
+} else {
+	if ($enable_count) {
+		print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablecount&token='.newToken().'&status=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablecount&token='.newToken().'&status=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+}
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$form->textwithpicto($langs->trans("RESTRICT_ON_IP"), $langs->trans("RESTRICT_ON_IPHelp").'<br>'.$langs->trans("Example").': '.$langs->trans("IPListExample"));
 print '</td>';
-print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'"></td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag(getDolGlobalString('API_RESTRICT_ON_IP')).'" spellcheck="false"></td>';
 print '<td>';
 print '<input type="submit" class="button button-save smallpaddingimp" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
 print '</td>';
@@ -182,7 +215,7 @@ $message = '';
 //$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $url = $urlwithroot.'/api/index.php/login?login=auserlogin&password=thepassword[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'"></div>';
+$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'" spellcheck="false"></div>';
 print $message;
 print ajax_autoselect("urltogettoken");
 print '<br>';
@@ -197,7 +230,7 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
-	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'"></div>';
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogetapidesc" value="'.$urlswagger.'" spellcheck="false"></div>';
 	print '</div>';
 	print ajax_autoselect("urltogetapidesc");
 } else {

@@ -3,6 +3,7 @@
 /* Copyright (C) 2007-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean Heimburger         <http://tiaris.eu>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ $hookmanager->initHooks(array('cli'));
  */
 
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - dir=".DOL_DATA_ROOT." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (empty($argv[1])) {
 	print "Usage:    $script_file  subdirtoscan (test|confirm)\n";
@@ -110,14 +111,14 @@ if ($subdir == 'propale' || $subdir == 'proposal') {
 		print 'Error, module not enabled'."\n";
 	}
 } elseif ($subdir == 'commande' || $subdir == 'order') {
-	if (isModEnabled('commande')) {
+	if (isModEnabled('order')) {
 		require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 		$tmpobject = new Commande($db);
 	} else {
 		print 'Error, module not enabled'."\n";
 	}
 } elseif ($subdir == 'facture' || $subdir == 'invoice') {
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		$tmpobject = new Facture($db);
 	} else {

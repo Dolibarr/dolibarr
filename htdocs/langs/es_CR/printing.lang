@@ -31,6 +31,7 @@ IPP_State_reason1=Motivo1 del Estado
 IPP_BW=Blanco y Negro
 IPP_Media=Calidad de Impresión
 IPP_Supported=Tipo de medio
+STATE_IPP_none=Ninguno
 DirectPrintingJobsDesc=Esta página muestra todos los trabajos de impresión encontrados para las impresoras disponibles.
 GoogleAuthNotConfigured=Google OAuth no se ha configurado. Habilite el módulo OAuth y configure un ID / secreto de Google.
 GoogleAuthConfigured=Las credenciales de Google OAuth fueron encontradas en la configuración del módulo OAuth

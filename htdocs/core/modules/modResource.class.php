@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024      MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,13 +197,13 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 100,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'user' => 0
 		);
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', // Uses anchors defined in the parent menu declared above
 			'type' => 'left', // Toujours un menu gauche
 			'titre' => 'MenuResourceAdd',
 			'mainmenu' => 'agenda',
@@ -211,13 +212,13 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 101,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->write',
+			'perms' => '$user->hasRight("resource", "write")',
 			'target' => '',
 			'user' => 0
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', // Uses anchors defined in the parent menu declared above
 			'type' => 'left', // Toujours un menu gauche
 			'titre' => 'List',
 			'mainmenu' => 'agenda',
@@ -226,7 +227,7 @@ class modResource extends DolibarrModules
 			'langs' => 'resource',
 			'position' => 102,
 			'enabled' => '1',
-			'perms' => '$user->rights->resource->read',
+			'perms' => '$user->hasRight("resource", "read")',
 			'target' => '',
 			'user' => 0
 		);
@@ -273,7 +274,7 @@ class modResource extends DolibarrModules
 		$this->import_tables_array[$r] = array('r' => MAIN_DB_PREFIX.'resource', 'extra' => MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array('r.ref' => "ResourceFormLabel_ref*", 'r.fk_code_type_resource' => 'ResourceTypeCode', 'r.description' => 'ResourceFormLabel_description', 'r.note_private' => "NotePrivate", 'r.note_public' => "NotePublic", 'r.asset_number' => 'AssetNumber', 'r.datec' => 'DateCreation');
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

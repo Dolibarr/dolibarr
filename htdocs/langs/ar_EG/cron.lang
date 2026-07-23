@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - cron
+Permission23101 =قراءة المهام المجدولة
+Permission23102 =إنشاء/تحديث المهام المجدولة
+Permission23103 =حذف المهام المجدولة
+Permission23104 =تنفيذ المهام المجدولة
+CronLastResult=رمز آخر نتيجة
+CronFrequency=التكرار
+CronLabel=التسمية
+CronArgs=معاملات
+CronNote=تعليق
+CronErrEndDateStartDt=لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء
+CronStatusInactiveBtn=تعطيل
+CronFrom=من موقع

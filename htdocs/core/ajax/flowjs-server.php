@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2023-2026  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -25,6 +25,7 @@
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
+// If there is no need to load and show top and left menu
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -37,7 +38,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-// If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
@@ -58,6 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $module = GETPOST('module', 'aZ09arobase');
+$uploaddirname = dol_sanitizeFileName(GETPOST('uploaddirname', 'alpha'));
 
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
@@ -65,7 +66,11 @@ $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
 $flowChunkSize = GETPOST('flowChunkSize', 'alpha');
 $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 
-$result = restrictedArea($user, $module, 0, '', '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, ($module ? $module : 'unknown'), 0, '', '', 'fk_soc', 'rowid', 0, 1);		// Call with mode return. Use 'unknown' if module not defined to be sure to have an error when module is not set
+
+if (!$result) {
+	httponly_accessforbidden("No permission on module ".$module);
+}
 
 if ($action != 'upload') {
 	httponly_accessforbidden("Param action must be 'upload'");
@@ -73,9 +78,13 @@ if ($action != 'upload') {
 
 if (!empty($conf->$module->dir_temp)) {
 	$upload_dir = $conf->$module->dir_temp;
+	if (!empty($uploaddirname)) {
+		$upload_dir .= "/".$uploaddirname;
+	}
 } else {
 	httponly_accessforbidden("Param module does not has a dir_temp directory. Module does not exists or is not activated.");
 }
+
 
 /*
  * Action

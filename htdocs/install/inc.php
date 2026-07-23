@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ if (!defined('DOL_INC_FOR_VERSION_ERROR')) {
 require_once '../filefunc.inc.php';
 
 
-
 // Define DOL_DOCUMENT_ROOT used for install/upgrade process
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
@@ -47,6 +46,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+'
+@phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_db_prefix
+';
 
 $conf = new Conf();
 
@@ -63,8 +67,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 $includeconferror = '';
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
@@ -91,7 +93,7 @@ $long_options = array(
  * @param string $header  the message to signal to the user
  * @return void
  */
-function usage($program, $header)
+function install_usage($program, $header)
 {
 	echo $header."\n";
 	echo "  php ".$program." [options] [script options]\n";
@@ -144,7 +146,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 				break;
 			case 'h':
 			case 'help':
-				usage($argv[0], "Usage:");
+				install_usage($argv[0], "Usage:");
 				exit(0);
 		}
 	}
@@ -184,7 +186,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	// typo right now.
 	if (count($unknown_options) > 0) {
 		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
-		usage($argv[0], "Usage:");
+		install_usage($argv[0], "Usage:");
 		exit(1);
 	}
 
@@ -442,12 +444,12 @@ function conf($dolibarr_main_document_root)
 	}
 
 	$conf = new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
+	$conf->db->type = trim((string) $dolibarr_main_db_type);
+	$conf->db->host = trim((string) $dolibarr_main_db_host);
+	$conf->db->port = trim((string) $dolibarr_main_db_port);
+	$conf->db->name = trim((string) $dolibarr_main_db_name);
+	$conf->db->user = trim((string) $dolibarr_main_db_user);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -566,24 +568,25 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="generator" content="Dolibarr installer">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../public/theme/common/fontawesome-5/css/all.min.css?layout=classic">'."\n";
 
 	print '<!-- Includes CSS for JQuery -->'."\n";
 	if ($jQueryUiCustomPath) {
 		print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	} else {
-		print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
+		print '<link rel="stylesheet" type="text/css" href="../public/includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	}
 
 	print '<!-- Includes JS for JQuery -->'."\n";
 	if ($jQueryCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery.min.js"></script>'."\n";
 	}
 	if ($jQueryUiCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery-ui.min.js"></script>'."\n";
 	}
 
 	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";
@@ -593,7 +596,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 
 	print '<div class="divlogoinstall" style="text-align:center">';
 	print '<img class="imglogoinstall" src="../theme/dolibarr_logo.svg" alt="Dolibarr logo" width="300px"><br>';
-	print DOL_VERSION;
+	print '<span class="opacitymedium">'.DOL_VERSION.'</span>';
 	print '</div><br>';
 
 	print '<span class="titre">';

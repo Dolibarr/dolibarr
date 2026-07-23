@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=Не (лот/серия истифода намешав�
 ProductStatusOnBatchShort=Лут
 ProductStatusOnSerialShort=Силсилавӣ
 ProductStatusNotOnBatchShort=Не
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s ё %s ҳатмӣ аст
 BatchSellOrEatByMandatoryNone=Ҳеҷ
 BatchSellOrEatByMandatoryAll=%s ва %s
 Batch=Лот/серия
@@ -50,3 +50,5 @@ ToReplace=Иваз кардан
 CantMoveNonExistantSerial=Хатогӣ. Шумо хоҳиш мекунед, ки сабти як силсилаи дигар вуҷуд надорад. Мумкин аст, ки шумо як серияро дар як анбор якчанд маротиба дар як бор гирифтаед ё онро интиқоли дигар истифода кардаед. Ин борро хориҷ кунед ва дигареро омода кунед.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Таъмири иҷронашудаи ҷадвали лот бо параметри '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Ислоҳи саҳҳомӣ лозим аст, зеро рақами силсилавии беназир.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

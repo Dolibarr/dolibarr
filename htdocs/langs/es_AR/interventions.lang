@@ -5,7 +5,6 @@ ChangeIntoRepeatableIntervention=Cambiar a intervención iterativa
 ListOfInterventions=Lista de intervenciones
 ActionsOnFicheInter=Acciones en la intervención
 LastInterventions=Ultimas %s intervenciones
-InterventionContact=Contacto de la intervención
 DeleteInterventionLine=Eliminar línea de la intervención
 ConfirmDeleteIntervention=¿Estás seguro de que quieres eliminar esta intervención?
 ConfirmValidateIntervention=¿Estás seguro de que quieres validar esta intervención con el nombre <b> %s</b>?

@@ -3,9 +3,9 @@
  * Copyright (C) 2008-2009  Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
- * Copyright (C) 2016-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'salaries'));
+
+$id = 0;
 
 // Security check
 if (GETPOSTISSET("account") || GETPOSTISSET("ref")) {
@@ -230,7 +232,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 
-	// Ligne de titre tableau des ecritures
+	// Line of title for bank transactions
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
@@ -299,7 +301,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				$socialcontribstatic->ref = $tmpobj->ref;
 				$socialcontribstatic->id = $tmpobj->objid;
 				$socialcontribstatic->label = $tmpobj->type;
-				$ref = $socialcontribstatic->getNomUrl(1, 24);
+				$ref = $socialcontribstatic->getNomUrl(1, '24');
 
 				$totalpayment = -1 * $socialcontribstatic->getSommePaiement(); // Payment already done
 			}
@@ -350,7 +352,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
+				if (isModEnabled('multicompany') && isset($mc) && getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";
@@ -365,7 +367,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
 				}
-				print '<td class="nowrap right">'.price($solde).'</td>';
+				print '<td class="nowraponall right"><span class="'.($solde >= 0 ? ' amount' : ' amountneg').'">'.price($solde).'</span></td>';
 				print "</tr>";
 			}
 

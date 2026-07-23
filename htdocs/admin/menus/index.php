@@ -2,8 +2,8 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
@@ -101,11 +100,11 @@ if ($action == 'up') {
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
+	$sql .= " WHERE (m.position < ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid < ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
+	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -152,11 +151,11 @@ if ($action == 'up') {
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
+	$sql .= " WHERE (m.position > ".((int) $current['order'])." OR (m.position = ".((int) $current['order'])." AND rowid > ".GETPOSTINT("menuId")."))";
 	$sql .= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
-	$sql .= " AND m.entity = ".$conf->entity;
+	$sql .= " AND m.entity = ".((int) $conf->entity);
 	$sql .= " AND m.type = '".$db->escape($current['type'])."'";
-	$sql .= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
+	$sql .= " AND m.fk_menu = '".$db->escape((string) $current['fk_menu'])."'";
 	$sql .= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -208,8 +207,8 @@ if ($action == 'up') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofjs = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/public/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss = array('/public/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $langs->trans("Menus"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-admin page-menus_index');
 
@@ -245,7 +244,7 @@ if ($action == 'delete') {
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOSTINT('menuId'), $langs->transnoentitiesnoconv("DeleteMenu"), $langs->transnoentitiesnoconv("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
@@ -253,7 +252,7 @@ if ($user->admin) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
-print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="newmenu" class="nocellnopadd" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 $formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
@@ -292,7 +291,7 @@ $data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' =
 $sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 $sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 $sql .= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 //$sql.= " AND fk_menu >= 0";
 $sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
 

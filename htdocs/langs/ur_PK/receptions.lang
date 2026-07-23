@@ -7,7 +7,6 @@ Receptions=استقبالیہ
 AllReceptions=تمام استقبالیہ
 ShowReception=استقبالیہ دکھائیں۔
 ReceptionsArea=استقبالیہ علاقہ
-ListOfReceptions=استقبالیوں کی فہرست
 ReceptionMethod=استقبال کا طریقہ
 LastReceptions=تازہ ترین %s استقبالیہ
 StatisticsOfReceptions=استقبالیہ کے اعدادوشمار
@@ -54,3 +53,4 @@ RestoreWithCurrentQtySaved=تازہ ترین محفوظ شدہ اقدار کے �
 ReceptionsRecorded=استقبالیہ ریکارڈ کیا گیا۔
 ReceptionUpdated=استقبالیہ کامیابی کے ساتھ اپ ڈیٹ ہو گیا۔
 ReceptionDistribution=استقبالیہ تقسیم
+AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation=Automatic validation is not possible when stock is decreased on invoice validation

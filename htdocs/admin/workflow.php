@@ -3,7 +3,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,9 +65,11 @@ if (preg_match('/del(.*)/', $action, $reg)) {
 	}
 }
 
+
 // List of workflow we can enable
 clearstatcache();
 
+/** @var array<string,array{family:string,position:int,enabled:bool,picto?:string,warning?:string,deprecated?:int<0,1>,reloadpage?:int<0,1>}> $workflowcodes */
 $workflowcodes = array(
 	// Automatic creation
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER' => array(
@@ -227,6 +229,7 @@ $workflowcodes = array(
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
 	foreach ($conf->modules_parts['workflow'] as $workflow) {
+		/** @var array<string,array{family:string,position:int,enabled:bool,picto?:string,warning?:string,deprecated?:int<0,1>,reloadpage?:int<0,1>}> $workflow */
 		$workflowcodes = array_merge($workflowcodes, $workflow);
 	}
 }
@@ -257,7 +260,8 @@ if ($action == 'setvarworkflow') {	// Test on permission already done
 
 llxHeader('', $langs->trans("WorkflowSetup"), "EN:Module_Workflow_En|FR:Module_Workflow|ES:Módulo_Workflow", '', 0, 0, '', '', '', 'mod-admin page-workflow');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("WorkflowDesc").'</span>';
@@ -289,7 +293,7 @@ foreach ($workflowcodes as $key => $params) {
 	if ($params['family'] == 'separator') {
 		if ($atleastoneline) {
 			print '</table>';
-			print '<br>';
+			print '<br>'."\n";
 
 			$oldfamily = '';
 			$atleastoneline = 0;
@@ -301,8 +305,10 @@ foreach ($workflowcodes as $key => $params) {
 	if ($oldfamily != $params['family']) {
 		// New group
 		if ($params['family'] == 'create') {
+			$headerfamily = $langs->trans("AutomaticCreation");
 			$header = $langs->trans("AutomaticCreation");
 		} elseif (preg_match('/classify_(.*)/', $params['family'], $reg)) {
+			$headerfamily = $langs->trans("AutomaticClassification");
 			$header = $langs->trans("AutomaticClassification");
 			if ($reg[1] == 'proposal') {
 				$header .= ' - '.$langs->trans('Proposal');
@@ -323,20 +329,31 @@ foreach ($workflowcodes as $key => $params) {
 				$header .= ' - '.$langs->trans('Shipment');
 			}
 		} elseif (preg_match('/link_(.*)/', $params['family'], $reg)) {
+			$headerfamily = $langs->trans("AutomaticLinking");
 			$header = $langs->trans("AutomaticLinking");
 			if ($reg[1] == 'ticket') {
 				$header .= ' - '.$langs->trans('Ticket');
 			}
 		} else {
+			$headerfamily = $langs->trans("Other");
 			$header = $langs->trans("Description");
 		}
 
+		if ($tableopen) {
+			print '</table><br>'."\n";
+		}
+
+		if ($oldfamily == '') {
+			print load_fiche_titre($headerfamily);
+		}
+
+		print "\n";
 		print '<table class="noborder centpercent">';
 		$tableopen = 1;
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
-		print '<th class="right">'.$langs->trans("Status").'</th>';
+		print '<th class="right"></th>';
 		print '</tr>';
 
 		$oldfamily = $params['family'];

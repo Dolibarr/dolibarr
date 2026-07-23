@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2022 		Alice Adminson 			<aadminson@example.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,20 +26,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "other"));
@@ -51,7 +51,7 @@ $lineid = GETPOSTINT('lineid');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -59,7 +59,6 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize a technical objects
 $object = new Availabilities($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('availabilitiescard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -111,18 +110,19 @@ $upload_dir = $conf->bookcal->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('bookcal')) {
+if (!isModEnabled("bookcal")) {
 	accessforbidden();
 }
 if (!$permissiontoread) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
  */
-$error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -150,11 +150,6 @@ if (empty($reshook)) {
 	$startyear = GETPOSTINT('startyear');
 	$starthour = GETPOSTINT('startHour');
 
-	if (GETPOST('startHour') == "") {
-		$error++;
-		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
-	}
-
 	$dateStartTimestamp = dol_mktime($starthour, 0, 0, $startmonth, $startday, $startyear);
 
 	$endday = GETPOSTINT('endday');
@@ -162,27 +157,30 @@ if (empty($reshook)) {
 	$endyear = GETPOSTINT('endyear');
 	$endhour = GETPOSTINT('endHour');
 
-	if (GETPOST('endHour') == "") {
-		$error++;
-		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
-	}
-
 	$dateEndTimestamp = dol_mktime($endhour, 0, 0, $endmonth, $endday, $endyear);
 
-	// check hours
-	if ($starthour > $endhour) {
-		if ($dateStartTimestamp === $dateEndTimestamp) {
+	if (! $cancel) {
+		if (GETPOST('startHour') == "" && ($action == 'add' || $action == 'update')) {	// Test on permission not required
 			$error++;
-			setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), $hookmanager->errors, 'errors');
+			setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
+		}
+		if (GETPOST('endHour') == "" && ($action == 'add' || $action == 'update')) {	// Test on permission not required
+			$error++;
+			setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
+		}
+		// Check hours
+		if ($starthour > $endhour) {
+			if ($dateStartTimestamp === $dateEndTimestamp) {
+				$error++;
+				setEventMessages($langs->trans("ErrorEndTimeMustBeGreaterThanStartTime"), $hookmanager->errors, 'errors');
+			}
+		}
+		// Check date
+		if (($dateStartTimestamp != "") && ($dateStartTimestamp >= $dateEndTimestamp)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorIncoherentDates"), $hookmanager->errors, 'errors');
 		}
 	}
-
-	// check date
-	if (($dateStartTimestamp != "") && ($dateStartTimestamp >= $dateEndTimestamp)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorIncoherentDates"), $hookmanager->errors, 'errors');
-	}
-
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -237,7 +235,7 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("NewAvailabilities"), '', 'object_'.$object->picto);
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($error != 0) {
 		print '<input type="hidden" name="action" value="create">';
@@ -249,6 +247,9 @@ if ($action == 'create') {
 	}
 	if ($backtopageforcancel) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
+	if ($dol_openinpopup) {
+		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 	}
 
 	print dol_get_fiche_head(array(), '');
@@ -276,7 +277,7 @@ if ($action == 'create') {
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Availabilities"), '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -331,32 +332,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-
-	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionAvailabilities', $object->ref);
-		/*if (! empty($conf->notification->enabled))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('AVAILABILITIES_CLOSE', $object->socid, $object);
-		}*/
-
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -375,40 +350,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/bookcal/availabilities_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
-	 // Project
-	 if (isModEnabled('project')) {
-	 $langs->load("projects");
-	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd) {
-	 //if ($action != 'classify') $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
-	 $morehtmlref .= ' : ';
-	 if ($action == 'classify') {
-	 //$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 0, 1, '', 'maxwidth300');
-	 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-	 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-	 $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 $morehtmlref .= '</form>';
-	 } else {
-	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
-	 }
-	 } else {
-	 if (! empty($object->fk_project)) {
-	 $proj = new Project($db);
-	 $proj->fetch($object->fk_project);
-	 $morehtmlref .= ': '.$proj->getNomUrl();
-	 } else {
-	 $morehtmlref .= '';
-	 }
-	 }
-	 }*/
 	$morehtmlref .= '</div>';
 
 
@@ -478,7 +419,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $mysoc, $mysoc);
 				}
 			}
 		}
@@ -526,7 +467,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction($langs->trans('ToClone'), '', 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 
 			/*
 			if ($permissiontoadd) {

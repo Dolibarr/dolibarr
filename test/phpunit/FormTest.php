@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -38,6 +39,28 @@ if (empty($user->id)) {
 	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+
+/**
+ * Helper class for testing product option generation.
+ */
+class FormProductOptionTest extends Form
+{
+	/**
+	 * Build a product option by exposing the protected helper for unit tests.
+	 *
+	 * @param stdClass $product Product row object
+	 * @return array{0:string,1:array<string,mixed>}
+	 */
+	public function buildProductOption($product)
+	{
+		$option = '';
+		$optionJson = array();
+
+		$this->constructProductListOption($product, $option, $optionJson, 0, 0, 1, '', 1);
+
+		return array($option, $optionJson);
+	}
+}
 
 
 /**
@@ -76,5 +99,54 @@ class FormTest extends CommonClassTest
 		print __METHOD__." count result=".count($result)."\n";
 
 		return $result;
+	}
+
+	/**
+	 * testProductOptionUsesFullEscapedTextForSearch
+	 *
+	 * @return void
+	 */
+	public function testProductOptionUsesFullEscapedTextForSearch()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->PRODUCT_MAX_LENGTH_COMBO = 48;
+		$conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO = 0;
+		$conf->global->PRODUCT_SHOW_DIMENSIONS_IN_COMBO = 0;
+		$conf->global->PRODUCT_USE_UNITS = 0;
+
+		$form = new FormProductOptionTest($db);
+		$product = (object) array(
+			'rowid' => 123,
+			'ref' => 'P00489',
+			'label' => 'PVC Pipe 1/2" Standard Quality Professional Grade Heavy Duty Construction Tool for Industrial Use - KEYWORD',
+			'label_translated' => '',
+			'description' => '',
+			'description_translated' => '',
+			'barcode' => '',
+			'fk_country' => 0,
+			'fk_product_type' => Product::TYPE_PRODUCT,
+			'duration' => '',
+			'price_by_qty_rowid' => '',
+		);
+
+		list($option) = $form->buildProductOption($product);
+
+		$htmlMatches = array();
+		$textMatches = array();
+		$this->assertSame(1, preg_match('/ data-html="([^"]+)"/', $option, $htmlMatches));
+		$this->assertSame(1, preg_match('/>(.*)<\/option>/s', $option, $textMatches));
+
+		$visibleText = html_entity_decode($htmlMatches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$searchText = html_entity_decode($textMatches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+		$this->assertStringContainsString('PVC Pipe 1/2" Standard Quality', $visibleText);
+		$this->assertStringNotContainsString('KEYWORD', $visibleText);
+		$this->assertStringContainsString('PVC Pipe 1/2" Standard Quality', $searchText);
+		$this->assertStringContainsString('KEYWORD', $searchText);
 	}
 }

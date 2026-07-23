@@ -2,8 +2,8 @@
 /* Copyright (C) 2013-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,17 +53,18 @@ $mailsonde = GETPOST('mailsonde');
 $creation_sondage_date = GETPOST('creation_sondage_date');
 $creation_sondage_autre = GETPOST('creation_sondage_autre');
 
-// We init some session variable to avoir warning
-$session_var = array('title', 'description', 'mailsonde');
+// We init some session variables to avoid PHP 8 "undefined array key" warning
+$session_var = array('title', 'description', 'mailsonde', 'allow_comments', 'allow_spy', 'champdatefin');
 foreach ($session_var as $var) {
-	if (isset($_SESSION[$var])) {
-		$_SESSION[$var] = null;
+	if (!isset($_SESSION[$var])) {
+		$_SESSION[$var] = '';
 	}
 }
 
-// On initialise également les autres variables
+// Also initialise the other variables
 $cocheplus = '';
 $cochemail = '';
+$champdatefin = 0;
 
 // Jump to correct page
 if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
@@ -138,7 +139,7 @@ $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("OpenSurvey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
+print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)', '', 'poll');
 
 
 print '<form name="formulaire" action="" method="POST">'."\n";
@@ -150,7 +151,8 @@ print '<table class="border centpercent">'."\n";
 
 print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td>';
 
-print '<td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'" autofocus></td>'."\n";
+print '<td><input type="text" id="title" name="title" class="minwidth300" maxlength="80" value="'.dol_escape_htmltag($_SESSION["title"]).'" autofocus></td>'."\n";
+
 if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre'))) {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
@@ -181,6 +183,7 @@ if ($_SESSION["mailsonde"]) {
 
 print '<input type="checkbox" id="mailsonde" name="mailsonde" '.$cochemail.'> <label for="mailsonde">'.$langs->trans("ToReceiveEMailForEachVote").'</label><br>'."\n";
 
+$allow_comments = '';
 if ($_SESSION['allow_comments']) {
 	$allow_comments = 'checked';
 }
@@ -189,6 +192,7 @@ if (GETPOSTISSET('allow_comments')) {
 }
 print '<input type="checkbox" id="allow_comments" name="allow_comments" '.$allow_comments.'"> <label for="allow_comments">'.$langs->trans('CanComment').'</label><br>'."\n";
 
+$allow_spy = '';
 if ($_SESSION['allow_spy']) {
 	$allow_spy = 'checked';
 }

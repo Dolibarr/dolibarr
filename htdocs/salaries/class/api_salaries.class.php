@@ -1,6 +1,8 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +33,18 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 class Salaries extends DolibarrApi
 {
 	/**
-	 * @var array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields, checked when creating an object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'fk_user',
 		'label',
 		'amount',
 	);
 
 	/**
-	 * array $FIELDS Mandatory fields, checked when creating an object
+	 * @var string[] Mandatory fields for mayment, checked when creating an object
 	 */
-	static $FIELDSPAYMENT = array(
+	public static $FIELDSPAYMENT = array(
 		"paiementtype",
 		'datepaye',
 		'chid',
@@ -67,6 +69,8 @@ class Salaries extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @return array                List of salary objects
+	 * @phan-return Salary[]
+	 * @phpstan-return Salary[]
 	 *
 	 * @throws RestException
 	 */
@@ -74,12 +78,22 @@ class Salaries extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "salary as t";
-		//$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
+		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				$sql .= ' AND t.fk_user = '.((int) DolibarrApiAccess::$user->id).')';
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				$sql .= ' AND t.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -121,7 +135,9 @@ class Salaries extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -131,6 +147,19 @@ class Salaries extends DolibarrApi
 			throw new RestException(404, 'salary not found');
 		}
 
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
+		}
+
 		return $this->_cleanObjectDatas($salary);
 	}
 
@@ -138,6 +167,8 @@ class Salaries extends DolibarrApi
 	 * Create salary object
 	 *
 	 * @param 	array $request_data    	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 					ID of salary
 	 */
 	public function post($request_data = null)
@@ -164,6 +195,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int    	$id              	ID of salary
 	 * @param 	array  	$request_data    	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -230,6 +263,8 @@ class Salaries extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @return array                List of paymentsalary objects
+	 * @phan-return PaymentSalary[]
+	 * @phpstan-return PaymentSalary[]
 	 *
 	 * @url     GET /payments
 	 *
@@ -239,12 +274,22 @@ class Salaries extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readchild')
+			&& !DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "payment_salary as t, ".MAIN_DB_PREFIX."salary as s";
 		$sql .= ' WHERE s.rowid = t.fk_salary AND t.entity IN ('.getEntity('salary').')';
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				$sql .= ' AND s.fk_user = '.((int) DolibarrApiAccess::$user->id).')';
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				$sql .= ' AND s.fk_user IN ('.$this->db->sanitize(implode(',', $childids)).')';
+			}
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -289,7 +334,11 @@ class Salaries extends DolibarrApi
 	 */
 	public function getPayments($pid)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'read')) {
+		// A payment of salary can be done on different salaries of different users, so only users with permission
+		// to read all area allowed.
+		// TODO To support read or readchild case, the get must be done with a SQL that include the paid user with
+		// a where on current user and childids of current user.
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
 			throw new RestException(403);
 		}
 
@@ -307,6 +356,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int		$id					Id of salary
 	 * @param 	array 	$request_data    	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 						ID of paymentsalary
 	 *
 	 * @url     POST {id}/payments
@@ -348,6 +399,8 @@ class Salaries extends DolibarrApi
 	 *
 	 * @param 	int    $id              ID of paymentsalary
 	 * @param 	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object					PaymentSalary object
 	 *
 	 * @url     PUT {id}/payments
@@ -415,13 +468,16 @@ class Salaries extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$salary = array();
 		foreach (Salaries::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -435,16 +491,21 @@ class Salaries extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validatepayments($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$paymentsalary = array();
 		$fields = Salaries::$FIELDSPAYMENT;
-		if (isModEnabled("bank")) array_push($fields, "accountid");
+		if (isModEnabled("bank")) {
+			array_push($fields, "accountid");
+		}
 		foreach ($fields as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
@@ -457,9 +518,12 @@ class Salaries extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

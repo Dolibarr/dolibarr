@@ -1,6 +1,7 @@
 ---
 # This runs a travis script inside a github runner
 name: Travis
+
 # Controls when the workflow will run
 on:
   # workflow called by the parent workflow ci.yml
@@ -16,9 +17,11 @@ concurrency:
   group: travis-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
     }}
   cancel-in-progress: true
+
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
   GITHUB_JSON: ${{ toJSON(github) }}  # Helps in debugging Github Action
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job
@@ -27,15 +30,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      # matrix:
-      #   php-version:
+      matrix:
+        php-version:
       #  # PHPStan requires PHP >= 7.2.
       #    #- "7.2"
-      #    - "8.2"
+        - "8.2"
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout travis file
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Run .travis.yml build script
         uses: ktomk/run-travis-yml@v1
         with:

@@ -1,12 +1,13 @@
 <?php
+
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
@@ -39,15 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
-$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
+$langs->loadLangs(array("sendings", "receptions", 'companies', 'bills', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -55,8 +55,8 @@ $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 $show_files = GETPOSTINT('show_files');
-$toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -89,6 +89,8 @@ $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $
 $search_billed = GETPOST("search_billed", 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
 $search_all = GETPOST('search_all', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -130,21 +132,23 @@ if (empty($user->socid)) {
 	$fieldstosearchall["e.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => 1),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0),
+	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1'),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1'),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1'),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0'),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0'),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
+	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1'),
+	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 520, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES') ? '0' : '1')),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 521, 'enabled' => (getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES') ? '0' : '1')),
+	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1000, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_RECEPTION") !== "0"')
 );
 
 // Extra fields
@@ -152,7 +156,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -228,7 +231,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array');
+		$receptions = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -248,6 +251,7 @@ if (empty($reshook)) {
 		//sort ids to keep order if one bill per third
 		sort($receptions);
 		foreach ($receptions as $id_reception) {
+			$soc = null;
 			$rcp = new Reception($db);
 			// We not allow invoice reception that are in draft status
 			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut == $rcp::STATUS_DRAFT) {
@@ -263,6 +267,7 @@ if (empty($reshook)) {
 
 				// Add all links of this new reception to the existing invoice
 				$objecttmp->fetchObjectLinked();
+				$objecttmp->clearObjectLinkedCache(); // force refetch after upcoming add_object_linked() calls so BILL_SUPPLIER_VALIDATE trigger sees all linked receptions
 				$rcp->fetchObjectLinked();
 				if (!empty($rcp->linkedObjectsIds['order_supplier']) && is_array($rcp->linkedObjectsIds['order_supplier'])) {
 					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
@@ -324,7 +329,6 @@ if (empty($reshook)) {
 						}
 					}
 
-					$soc = null;
 					// try get from third party of reception
 					if (!empty($rcp->thirdparty)) {
 						$soc = $rcp->thirdparty;
@@ -375,8 +379,8 @@ if (empty($reshook)) {
 				}
 
 				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'reception';
-				$objecttmp->origin_id = $id_reception;
+				$objecttmp->origin = 'reception';
+				$objecttmp->origin_id = (int) $id_reception;
 
 				// Auto calculation of date due if not filled by user
 				if (empty($objecttmp->date_echeance)) {
@@ -519,11 +523,11 @@ if (empty($reshook)) {
 								$date_start,
 								$date_end,
 								0,
-								$lines[$i]->info_bits,
+								(int) $lines[$i]->info_bits,
 								'HT',
 								$product_type,
 								$rang,
-								false,
+								0,
 								array(),
 								null,
 								$lines[$i]->rowid,
@@ -608,8 +612,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep this ?
-			$_GET["originid"] = $_POST["originid"];	// Keep this ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			setEventMessages($object->error, $errors, 'errors');
 			$error++;
 		}
@@ -633,7 +637,7 @@ $title = $langs->trans('Receptions');
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'bodyforlist mod-reception page-list');
 
-$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,";
+$sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,e.note_private, e.note_public,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -663,6 +667,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 // Add table from hooks
 $parameters = array();
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
@@ -698,6 +703,13 @@ if ($search_date_delivery_end) {
 }
 if ($search_date_create_start) {
 	$sql .= " AND e.date_creation >= '".$db->idate($search_date_create_start)."'";
+}
+
+if ($search_note_public) {
+	$sql .= " AND e.note_public LIKE '%".$db->escape($db->escapeforlike($search_note_public))."%'";
+}
+if ($search_note_private) {
+	$sql .= " AND e.note_private LIKE '%".$db->escape($db->escapeforlike($search_note_private))."%'";
 }
 if ($search_date_create_end) {
 	$sql .= " AND e.date_creation <= '".$db->idate($search_date_create_end)."'";
@@ -737,7 +749,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -752,7 +768,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -911,8 +927,9 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/reception/stats/index.php?mode=statistics'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewReception'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/reception/card.php?action=create2', '', $user->hasRight('reception', 'creer'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewReception'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/reception/card.php?action=create', '', $user->hasRight('reception', 'creer'));
 
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -985,14 +1002,14 @@ $moreforfilter = '';
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -1004,7 +1021,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1051,7 +1068,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 	print '</td>';
 }
 // Date delivery planned
@@ -1098,6 +1115,18 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	// Note public
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_public" value="'.dol_escape_htmltag($search_note_public).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	// Note private
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_note_private" value="'.dol_escape_htmltag($search_note_private).'">';
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
@@ -1111,7 +1140,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1126,7 +1155,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1189,6 +1218,14 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_public']['label'], $_SERVER["PHP_SELF"], "e.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['e.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['e.note_private']['label'], $_SERVER["PHP_SELF"], "e.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['e.fk_statut']['label'], $_SERVER["PHP_SELF"], "e.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -1198,7 +1235,7 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1225,6 +1262,8 @@ while ($i < $imaxinloop) {
 	$reception->status = $obj->status;
 	$reception->socid = $obj->socid;
 	$reception->billed = $obj->billed;
+	$reception->note_public = $obj->note_public;
+	$reception->note_private = $obj->note_private;
 
 	$reception->fetch_thirdparty();
 
@@ -1256,10 +1295,10 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {	// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1342,7 +1381,7 @@ while ($i < $imaxinloop) {
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
-			if (!isset($typenArray) || empty($typenArray)) {
+			if (!isset($typenArray) || empty($typenArray)) {  // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 				$typenArray = $formcompany->typent_array(1);
 			}
 			if (isset($typenArray[$obj->typent_code])) {
@@ -1415,6 +1454,24 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Note public
+		if (!empty($arrayfields['f.note_public']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['f.note_private']['checked'])) {
+			print '<td class="sensiblehtmlcontent center">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Status
 		if (!empty($arrayfields['e.fk_statut']['checked'])) {
 			print '<td class="right nowrap">'.$reception->LibStatut($obj->status, 5).'</td>';
@@ -1431,7 +1488,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {
 				// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1477,7 +1534,7 @@ print '</form>';
 $db->free($resql);
 
 $hidegeneratedfilelistifempty = 1;
-if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+if ($massaction == 'builddoc' || $action == 'remove_file') {
 	$hidegeneratedfilelistifempty = 0;
 }
 

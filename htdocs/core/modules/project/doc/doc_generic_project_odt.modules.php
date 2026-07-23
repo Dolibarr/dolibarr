@@ -3,9 +3,9 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +62,6 @@ if (isModEnabled('contract')) {
 }
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -141,7 +138,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
-	 * @return	array<string,mixed>					Array of substitution
+	 * @return	array<string,float|string>			Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
@@ -152,17 +149,17 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 
 		$resarray = array(
-			$array_key.'_id' => $object->id,
-			$array_key.'_ref' => $object->ref,
-			$array_key.'_title' => $object->title,
-			$array_key.'_description' => $object->description,
+			$array_key.'_id' => (int) $object->id,
+			$array_key.'_ref' => (string) $object->ref,
+			$array_key.'_title' => (string) $object->title,
+			$array_key.'_description' => (string) $object->description,
 			$array_key.'_date_creation' => dol_print_date($object->date_c, 'day'),
 			$array_key.'_date_modification' => dol_print_date($object->date_m, 'day'),
 			$array_key.'_date_start' => dol_print_date($object->date_start, 'day'),
 			$array_key.'_date_end' => dol_print_date($object->date_end, 'day'),
-			$array_key.'_note_private' => $object->note_private,
-			$array_key.'_note_public' => $object->note_public,
-			$array_key.'_public' => $object->public,
+			$array_key.'_note_private' => (string) $object->note_private,
+			$array_key.'_note_public' => (string) $object->note_public,
+			$array_key.'_public' => (string) $object->public,
 			$array_key.'_statut' => $object->getLibStatut()
 		);
 
@@ -183,7 +180,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array{task_ref:string,task_fk_project:string,task_projectref:string,task_projectlabel:string,task_label:string,task_description:string,task_fk_parent:string,task_duration:string,task_duration_hour:string,task_planned_workload:string,task_planned_workload_hour:string,task_progress:string,task_public:string,task_date_start:string,task_date_end:string,task_note_private:string,task_note_public:string}			Return a substitution array + extrafields
-
 	 */
 	public function get_substitutionarray_tasks(Task $task, $outputlangs)
 	{
@@ -196,8 +192,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_label' => $task->label,
 			'task_description' => $task->description,
 			'task_fk_parent' => $task->fk_task_parent,
-			'task_duration' => $task->duration,
-			'task_duration_hour' => convertSecondToTime($task->duration, 'all'),
+			'task_duration' => $task->duration_effective,
+			'task_duration_hour' => convertSecondToTime($task->duration_effective, 'all'),
 			'task_planned_workload' => $task->planned_workload,
 			'task_planned_workload_hour' => convertSecondToTime($task->planned_workload, 'all'),
 			'task_progress' => $task->progress,
@@ -287,9 +283,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'projfile_name' => $file['name'],
+			'projfile_name' => (string) $file['name'],
 			'projfile_date' => dol_print_date($file['date'], 'day'),
-			'projfile_size' => $file['size']
+			'projfile_size' => (int) $file['size']
 		);
 	}
 
@@ -299,21 +295,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 *	@param  array{type:string,ref:string,date:string,socname:string,amountht:float|'',amountttc:float|'',status:string}		$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array{projref_type:string,projref_ref:string,projref_date:string,projref_socname:string,projref_amountht:string,projref_amountttc:string,projref_status:string}								Return a substitution array
+	 *  @return	array{projref_type:string,projref_ref:string,projref_date:string,projref_socname:string,projref_amountht:string,projref_amountttc:string,projref_status:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-			'projref_type' => $refdetail['type'],
-			'projref_ref' => $refdetail['ref'],
+			'projref_type' => (string) $refdetail['type'],
+			'projref_ref' => (string) $refdetail['ref'],
 			'projref_date' => dol_print_date($refdetail['date'], 'day'),
-			'projref_socname' => $refdetail['socname'],
+			'projref_socname' => (string) $refdetail['socname'],
 			'projref_amountht' => price($refdetail['amountht'], 0, $outputlangs),
 			'projref_amountttc' => price($refdetail['amountttc'], 0, $outputlangs),
-			'projref_status' => $refdetail['status']
+			'projref_status' => (int) $refdetail['status']
 		);
 	}
 
@@ -331,13 +325,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
-			'taskressource_rowid' => $taskresource['rowid'],
-			'taskressource_role' => $taskresource['libelle'],
-			'taskressource_lastname' => $taskresource['lastname'],
-			'taskressource_firstname' => $taskresource['firstname'],
-			'taskressource_fullcivname' => $taskresource['fullname'],
-			'taskressource_socname' => $taskresource['socname'],
-			'taskressource_email' => $taskresource['email']
+			'taskressource_rowid' => (int) $taskresource['rowid'],
+			'taskressource_role' => (string) $taskresource['libelle'],
+			'taskressource_lastname' => (string) $taskresource['lastname'],
+			'taskressource_firstname' => (string) $taskresource['firstname'],
+			'taskressource_fullcivname' => (string) $taskresource['fullname'],
+			'taskressource_socname' => (string) $taskresource['socname'],
+			'taskressource_email' => (string) $taskresource['email']
 		);
 	}
 
@@ -347,24 +341,24 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *
 	 *	@param	array{rowid:int,task_date:int,task_duration:int,note:string,fk_user:int,name:string,firstname:string,fullcivname:string,amountht:float,amountttc:float,thm:int} 	$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *	@return	array{tasktime_rowid:int,tasktime_task_date:string,tasktime_task_duration_sec:int,tasktime_task_duration:string,tasktime_note:string,tasktime_fk_user:int,tasktime_user_name:string,tasktime_user_first:string,tasktime_fullcivname:string,tasktime_amountht:float,tasktime_amountttc:float,tasktime_thm:int}		Return a substitution array
+	 *	@return	array{tasktime_rowid:int,tasktime_task_date:string,tasktime_task_duration_sec:int,tasktime_task_duration:string,tasktime_note:string,tasktime_fk_user:int,tasktime_user_name:string,tasktime_user_first:string,tasktime_fullcivname:string,tasktime_amountht:float,tasktime_amountttc:float,tasktime_thm:float|int}		Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
 		// phpcs:enable
 		return array(
-			'tasktime_rowid' => $tasktime['rowid'],
+			'tasktime_rowid' => (int) $tasktime['rowid'],
 			'tasktime_task_date' => dol_print_date($tasktime['task_date'], 'day'),
-			'tasktime_task_duration_sec' => $tasktime['task_duration'],
+			'tasktime_task_duration_sec' => (int) $tasktime['task_duration'],
 			'tasktime_task_duration' => convertSecondToTime($tasktime['task_duration'], 'all'),
-			'tasktime_note' => $tasktime['note'],
-			'tasktime_fk_user' => $tasktime['fk_user'],
-			'tasktime_user_name' => $tasktime['name'],
-			'tasktime_user_first' => $tasktime['firstname'],
-			'tasktime_fullcivname' => $tasktime['fullcivname'],
-			'tasktime_amountht' => $tasktime['amountht'],
-			'tasktime_amountttc' => $tasktime['amountttc'],
-			'tasktime_thm' => $tasktime['thm'],
+			'tasktime_note' => (string) $tasktime['note'],
+			'tasktime_fk_user' => (int) $tasktime['fk_user'],
+			'tasktime_user_name' => (string) $tasktime['name'],
+			'tasktime_user_first' => (string) $tasktime['firstname'],
+			'tasktime_fullcivname' => (string) $tasktime['fullcivname'],
+			'tasktime_amountht' => (float) $tasktime['amountht'],
+			'tasktime_amountttc' => (float) $tasktime['amountttc'],
+			'tasktime_thm' => (float) $tasktime['thm']
 		);
 	}
 
@@ -380,9 +374,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		// phpcs:enable
 		return array(
-			'tasksfile_name' => $file['name'],
+			'tasksfile_name' => (string) $file['name'],
 			'tasksfile_date' => dol_print_date($file['date'], 'day'),
-			'tasksfile_size' => $file['size']
+			'tasksfile_size' => (int) $file['size']
 		);
 	}
 
@@ -439,7 +433,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -494,9 +488,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -652,11 +649,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -676,8 +680,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 					// Security check
 					$socid = 0;
-					if (!empty($object->fk_soc)) {
-						$socid = $object->fk_soc;
+					if (!empty($object->socid)) {
+						$socid = $object->socid;
 					}
 
 					$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $socid, 0);
@@ -800,7 +804,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$row['thm'] = 0;
 								}
 
-								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs);
+								$tmparray = $this->get_substitutionarray_taskstime($row, $outputlangs); // @phpstan-ignore argument.type
 
 								foreach ($tmparray as $key => $val) {
 									try {
@@ -870,9 +874,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 					}
 					$odfHandler->mergeSegment($listlines);
 				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					$ExceptionTrace = $e->getTrace();
+					// no segment defined on ODT is not an error
+					if ($ExceptionTrace[0]['function'] != 'setSegment') {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace tags of lines for contacts
@@ -889,6 +897,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$listlines = $odfHandler->setSegment('projectcontacts');
 
 						foreach ($contact_arrray as $contact) {
+							$objectdetail = null;
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -900,6 +909,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog('Unexpected contact source:'.$contact['source'].'.'. getCallerInfoString(), LOG_ERR);
+								continue;
 							}
 							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 
@@ -915,9 +927,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$odfHandler->mergeSegment($listlines);
 					} catch (OdfException $e) {
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
-						return -1;
+						$ExceptionTrace = $e->getTrace();
+						// no segment defined on ODT is not an error
+						if ($ExceptionTrace[0]['function'] != 'setSegment') {
+							$this->error = $e->getMessage();
+							dol_syslog($this->error, LOG_WARNING);
+							return -1;
+						}
 					}
 				}
 
@@ -986,13 +1002,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'disableamount' => 1,
 						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 					),
-					'trip' => array(
-						'title' => "ListTripAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
-					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReportLine',
@@ -1053,11 +1062,11 @@ class doc_generic_project_odt extends ModelePDFProjects
 									$ref_array['type'] = (string) $langs->trans($classname);
 
 									$element = new $classname($this->db);
-									$element->fetch($elementarray[$i]);
+									$element->fetch((int) $elementarray[$i]);
 									$element->fetch_thirdparty();
 
 									//Ref object
-									$ref_array['ref'] = $element->ref;
+									$ref_array['ref'] = (string) $element->ref;
 
 									//Date object
 									$dateref = $element->date;
@@ -1079,8 +1088,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 									//Amount object
 									if (empty($valueref['disableamount'])) {
 										if (!empty($element->total_ht)) {
-											$ref_array['amountht'] = $element->total_ht;
-											$ref_array['amountttc'] = $element->total_ttc;
+											$ref_array['amountht'] = (float) $element->total_ht;
+											$ref_array['amountttc'] = (float) $element->total_ttc;
 										} else {
 											$ref_array['amountht'] = 0;
 											$ref_array['amountttc'] = 0;

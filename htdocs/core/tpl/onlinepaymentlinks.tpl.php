@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,9 @@
  * @var Translate $langs
  * @var string $servicename
  */
+'
+@phan-var-force string $servicename
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -38,7 +42,7 @@ if (isModEnabled('order')) {
 	print '<div id="order"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("orders");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#order" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -60,7 +64,7 @@ if (isModEnabled('invoice')) {
 	print '<div id="invoice"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("bills");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#invoice" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -82,7 +86,7 @@ if (isModEnabled('contract')) {
 	print '<div id="contractline"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("contracts");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#contractline" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -104,7 +108,7 @@ if (isModEnabled('member')) {
 	print '<div id="membersubscription"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#membersubscription" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -126,7 +130,7 @@ if (isModEnabled('don')) {
 	print '<div id="donation"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
-	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN') && getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+	if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 		$langs->load("members");
 		print '<form action="'.$_SERVER["PHP_SELF"].'#donation" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

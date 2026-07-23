@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2019      Markus Welters       <markus@welters.de>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +111,7 @@ if ($action == "set") {
 		if (!($res > 0)) $error++;
 	}
 	*/
-	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") || GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") == "") {
+	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") !== null && GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") !== '') {
 		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ADDDAYS", GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS"), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
@@ -152,7 +154,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("CreditTransferSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-paymentbybanktransfer');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
@@ -171,7 +173,7 @@ print "</tr>";
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToPayCreditTransfer").'</td>';
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-print $form->select_comptes($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT, 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
+print $form->select_comptes(getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT'), 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "(courant:=:1)", 1, '', 0, 'minwidth200', 1);
 print '</td></tr>';
 
 /* Moved to bank account data
@@ -186,7 +188,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
 print '<td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+print $form->select_dolusers(getDolGlobalString('PAYMENTBYBANKTRANSFER_USER'), 'PAYMENTBYBANKTRANSFER_USER', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 
@@ -205,12 +207,11 @@ print '</td></tr>';
 */
 
 //ADDDAYS
+$addDaysValue = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS', 0);
+
 print '<tr class="oddeven"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) {
-	$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
-}
-print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . getDolGlobalString('PAYMENTBYBANKTRANSFER_ADDDAYS').'" class="width50"></td>';
+print '<input type="number" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="' . $addDaysValue .'" class="width50" min="0"></td>';
 print '</td></tr>';
 print '</table>';
 
@@ -233,7 +234,7 @@ $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql.= " WHERE type = '".$db->escape($type)."'";
-$sql.= " AND entity = ".$conf->entity;
+$sql.= " AND entity = ".((int) $conf->entity);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -325,7 +326,7 @@ foreach ($dirmodels as $reldir)
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
+								if (getDolGlobalString('PAYMENTORDER_ADDON_PDF') == $name)
 								{
 									print img_picto($langs->trans("Default"),'on');
 								}
@@ -360,7 +361,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								}
 								else
 								{

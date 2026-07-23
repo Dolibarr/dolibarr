@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+/* Copyright (C) 2010-2014 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015	   	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,9 +271,21 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
 
+		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is set
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 1;
+
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
+
+		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
+		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECTrowidFROMllx_societeWHEREfournisseur1)))", $sql);
 
 		return true;
 	}
@@ -287,6 +301,7 @@ class FunctionsLibTest extends CommonClassTest
 		global $db;
 
 		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
 
 		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
@@ -299,11 +314,25 @@ class FunctionsLibTest extends CommonClassTest
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+	}
 
-		//$newproductcloned2 = dol_clone($newproduct1, 2);
-		//var_dump($newproductcloned2);
-		//print __METHOD__." newproductcloned1->db must be null\n";
-		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
+	/**
+	 * testDolCloneInArray
+	 *
+	 * @return void
+	 */
+	public function testDolCloneInArray()
+	{
+		global $db;
+
+		$newproduct1 = new Product($db);
+		$newproduct1->initAsSpecimen();
+
+		$newproductclonedinarray1 = dol_clone_in_array($newproduct1);
+
+		print __METHOD__." newproductclonedinarray1[db] must be null\n";
+		$this->assertNull((empty($newproductclonedinarray1['db']) ? null : 'defined'), 'newproductclonedinarray1[db] is null');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 	}
 
 	/**
@@ -482,10 +511,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testGetBrowserInfo
-	*
-	* @return void
-	*/
+	 * testGetBrowserInfo
+	 *
+	 * @return void
+	 */
 	public function testGetBrowserInfo()
 	{
 		// MSIE 5.0
@@ -943,9 +972,9 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		// Text not already HTML
 
-		$input = "A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
+		$input = "A string\nwith a à ä é è ë ï ü ö ÿ É É, &, < and >."; // the second É is different than the first one
 		$after = dol_string_unaccent($input);
-		$this->assertEquals("A string\nwith a a a e e e i u o y, &, < and >.", $after);
+		$this->assertEquals("A string\nwith a a a e e e i u o y E E, &, < and >.", $after);
 	}
 
 
@@ -1113,12 +1142,15 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		$input = "x&<b>#</b>,\"'";    // " will be converted into '
 		$result = dol_escape_js($input);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\'\'", $result, "Test mode=0");
 
 		$result = dol_escape_js($input, 1);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\"\'", $result, "Test mode=1");
 
 		$result = dol_escape_js($input, 2);
+		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
 	}
 
@@ -1130,6 +1162,8 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolEscapeHtmlTag()
 	{
+		print __METHOD__."\n";
+
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
 		$result = dol_escape_htmltag($input);
 		$this->assertEquals('x&amp;#,&quot;', $result);
@@ -1162,8 +1196,19 @@ class FunctionsLibTest extends CommonClassTest
 		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
 		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
 		</div>';
-
 		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
+
+		// The same plus the tag 'code'
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		<code>abc</code>
+		</div>';
+		$result = dol_escape_htmltag($input, 1, 1, 'common,code');
 		$this->assertEquals($input, $result);
 	}
 
@@ -1176,10 +1221,13 @@ class FunctionsLibTest extends CommonClassTest
 	public function testDolFormatAddress()
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf = $this->savconf;
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();
@@ -1218,6 +1266,8 @@ class FunctionsLibTest extends CommonClassTest
 		$user = $this->savuser;
 		$langs = $this->savlangs;
 		$db = $this->savdb;
+
+		print __METHOD__."\n";
 
 		$object = new Societe($db);
 		$object->initAsSpecimen();
@@ -1322,6 +1372,21 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testVerifCondOnMethods
+	 *
+	 * @return	void
+	 */
+	public function testVerifCondOnMethods()
+	{
+		$a = verifCond('$user->hasRight("facture", "read")');
+		$this->assertTrue($a);
+
+		$a = verifCond('$user->hasMethodKo("facture", "read")');
+		$this->assertFalse($a);
+	}
+
+
+	/**
 	 * testGetDefaultTva
 	 *
 	 * @return	void
@@ -1376,26 +1441,32 @@ class FunctionsLibTest extends CommonClassTest
 		// Not tested
 
 		// Test RULE 1
+		print __METHOD__." rule=RULE 1\n";
 		$vat = get_default_tva($companyfrnovat, $companymc, 0);
 		$this->assertEquals(0, $vat, 'RULE 1');
 
 		// Test RULE 2 (FR-FR)
+		print __METHOD__." rule=RULE 2 FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-FR - Check that the dictionary is set to have default VAT to 20');
 
 		// Test RULE 2 (FR-MC)
+		print __METHOD__." rule=RULE 2 FR-MC\n";
 		$vat = get_default_tva($companyfr, $companymc, 0);
-		$this->assertEquals(20, $vat, 'RULE 2');
+		$this->assertEquals(20, $vat, 'RULE 2 FR-MC');
 
 		// Test RULE 3 (FR-DE company)
+		print __METHOD__." rule=RULE 3 FR-DE\n";
 		$vat = get_default_tva($companyfr, $companyit, 0);
 		$this->assertEquals(0, $vat, 'RULE 3');
 
 		// Test RULE 4 (FR-DE not a company)
+		print __METHOD__." rule=RULE 4 FR-DE\n";
 		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(20, $vat, 'RULE 4');
 
 		// Test RULE 5 (FR-US)
+		print __METHOD__." rule=RULE 5 FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5');
 
@@ -1404,22 +1475,27 @@ class FunctionsLibTest extends CommonClassTest
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
 		// Test RULE 1 (FR-US)
+		print __METHOD__." rule=RULE 1 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
 
 		// Test RULE 2 (FR-FR)
+		print __METHOD__." rule=RULE 2 ECOMMERCE_200238EC FR-FR\n";
 		$vat = get_default_tva($companyfr, $companyfr, 0);
 		$this->assertEquals(20, $vat, 'RULE 2 ECOMMERCE_200238EC');
 
 		// Test RULE 3 (FR-DE company)
+		print __METHOD__." rule=RULE 3 ECOMMERCE_200238EC FR-DE company\n";
 		$vat = get_default_tva($companyfr, $companyde, 0);
 		$this->assertEquals(0, $vat, 'RULE 3 ECOMMERCE_200238EC');
 
 		// Test RULE 4 (FR-DE not a company)
+		print __METHOD__." rule=RULE 4 ECOMMERCE_200238EC FR-DE not company\n";
 		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(19, $vat, 'RULE 4 ECOMMERCE_200238EC');
 
 		// Test RULE 5 (FR-US)
+		print __METHOD__." rule=RULE 5 ECOMMERCE_200238EC FR-US\n";
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5 ECOMMERCE_200238EC');
 	}
@@ -1478,24 +1554,28 @@ class FunctionsLibTest extends CommonClassTest
 		$companyus->localtax2_assuj = 0;
 
 		// Test RULE FR-MC
+		print __METHOD__." rule=FR-MC\n";
 		$vat1 = get_default_localtax($companyfrnovat, $companymc, 1, 0);
 		$vat2 = get_default_localtax($companyfrnovat, $companymc, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
 		// Test RULE ES-ES
+		print __METHOD__." rule=ES-ES\n";
 		$vat1 = get_default_localtax($companyes, $companyes, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyes, 2, 0);
 		$this->assertEquals($vat1, 5.2);
 		$this->assertStringStartsWith((string) $vat2, '-19:-15:-9');       // Can be -19 (old version) or '-19:-15:-9' (new setup)
 
 		// Test RULE ES-IT
+		print __METHOD__." rule=ES-IT company\n";
 		$vat1 = get_default_localtax($companyes, $companyit, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyit, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
-		// Test RULE ES-IT
+		// Test RULE ES-not IT
+		print __METHOD__." rule=ES-IT not company\n";
 		$vat1 = get_default_localtax($companyes, $notcompanyit, 1, 0);
 		$vat2 = get_default_localtax($companyes, $notcompanyit, 2, 0);
 		$this->assertEquals(0, $vat1);
@@ -1505,6 +1585,7 @@ class FunctionsLibTest extends CommonClassTest
 		// Not tested
 
 		// Test RULE ES-US
+		print __METHOD__." rule=ES-US\n";
 		$vat1 = get_default_localtax($companyes, $companyus, 1, 0);
 		$vat2 = get_default_localtax($companyes, $companyus, 2, 0);
 		$this->assertEquals(0, $vat1);
@@ -1587,6 +1668,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		$oldlangs = $langs;
 
+		// For US language SeparatorThousand=, and SeparatorDecimal=.
 		$newlangs = new Translate('', $conf);
 		$newlangs->setDefaultLang('en_US');
 		$newlangs->load("main");
@@ -1598,7 +1680,10 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1000, price2num('1 000', 'MT'));
 		$this->assertEquals(1000, price2num('1 000', 'MU'));
 
-		$this->assertEquals(1000.123456, price2num('1 000.123456'));
+		$this->assertEquals(1000.123456, price2num('1 000.123456'), 'Test 1 000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123456, price2num('1,000.123456'), 'Test 1,000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123, price2num('1 000.123'), 'Test 1 000.123 give 1000.123 with us language');
+		$this->assertEquals(1000.123, price2num('1,000.123'), 'Test 1,000.123 give 1000.123 with us language');
 
 		// Round down
 		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'), 'Error in round down with MT');
@@ -1614,7 +1699,10 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('12.4', price2num('12.4$'));
 		$this->assertEquals('12.4', price2num('12r.4$'));
 
-		// For spanish language
+		$this->assertEquals('1.023210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with en_US');
+		$this->assertEquals('1023.21000', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with en_US');
+
+		// For spanish language SeparatorThousand=. and SeparatorDecimal=,
 		$newlangs2 = new Translate('', $conf);
 		$newlangs2->setDefaultLang('es_ES');
 		$newlangs2->load("main");
@@ -1623,25 +1711,29 @@ class FunctionsLibTest extends CommonClassTest
 		// Test with 3 chars after . or ,
 		// If a . is used and there is 3 digits after, it is a thousand separator
 		$this->assertEquals(1234, price2num('1.234', '', 2), 'Test 1.234 give 1234 with spanish language if user input');
-		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1234 with spanish language if user input');
+		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1.234 with spanish language if user input');
 		$this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
-		$this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
-		$this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
-		$this->assertEquals(-1234, price2num('-1 234'), 'Test 1 234 give 1234 with spanish language');
-		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
+		$this->assertEquals(-1.234, price2num('-1.234'), 'Test -1.234 give 1.234 with spanish language and not user input (this differs when user input)');
+		$this->assertEquals(-1.234, price2num('-1,234'), 'Test -1,234 give 1234 with spanish language and not user input');
+		$this->assertEquals(-1234, price2num('-1 234'), 'Test -1 234 give 1234 with spanish language and not user input');
+		$this->assertEquals(1111.234, price2num('1.111,234'), 'Test 1.111,234 give 1111.234 with spanish language and not user input');
+		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language and not user input');
 		$this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
-		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
-		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language');
-		// Test with 2 digits
-		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language');
-		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language');
+		$this->assertEquals(21500123, price2num('21 500.123', 0, 2), 'Test 21 500.123 give 21500123 with spanish language if user input');
+		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language and not user input');
+		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language and not user input');
+		// Test with 2 digits (we can guess that , is not a thousand separator)
+		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language and not user input');
+		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language and not user input');
 		// Test with 3 digits
 		$this->assertEquals(12123, price2num('12.123', '', 2), 'Test 12.123 give 12123 with spanish language if user input');
 		$this->assertEquals(12.123, price2num('12,123', '', 2), 'Test 12,123 give 12.123 with spanish language if user input');
-		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language');
-		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language');
+		$this->assertEquals(1012.123, price2num('1.012,123', '', 2), 'Test 1.012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(1012.123, price2num('1 012,123', '', 2), 'Test 1 012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language and not user input');
+		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language and not user input');
 
-		// For french language
+		// For french language SeparatorThousand=Space and SeparatorDecimal=,
 		$newlangs3 = new Translate('', $conf);
 		$newlangs3->setDefaultLang('fr_FR');
 		$newlangs3->load("main");
@@ -1654,10 +1746,15 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with french language');
 		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1.234 with french language if user input');
 		$this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with french language');
+		$this->assertEquals(1111.234, price2num('1 111,234'), 'Test 1 111,234 give 1111.234 with french language');
 		$this->assertEquals(21500000, price2num('21500 000'), 'Test 21500 000 give 21500000 with french language');
 		$this->assertEquals(21500000, price2num('21 500 000'), 'Test 21 500 000 give 21500000 with french language');
 		$this->assertEquals(21500, price2num('21500.00'), 'Test 21500.00 give 21500 with french language');
 		$this->assertEquals(21500, price2num('21500,00'), 'Test 21500,00 give 21500 with french language');
+
+		$this->assertEquals(21500, price2num('21.500,00'), 'Test 21.500,00 give 21500 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with french language');
 
 		$langs = $oldlangs;
 
@@ -1881,7 +1978,7 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testFetchObjectByElement
 	 *
-	 * @return boolean;
+	 * @return boolean
 	 */
 	public function testFetchObjectByElement()
 	{
@@ -1897,7 +1994,7 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testRoundUpToNextMultiple
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function testRoundUpToNextMultiple()
 	{
@@ -1921,15 +2018,17 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testNaturalSearch
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function testNaturalSearch()
 	{
+		global $db;
+
 		$s = natural_search("t.field", "abc def");
 		$this->assertEquals(" AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')", $s);
 
-		//$s = natural_search("t.field", "'abc def' ghi");
-		//$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
+		$s = natural_search("t.field", "'abc def' ghi");
+		$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
 
 		$s = natural_search("t.field", "abc def,ghi", 3);				// mode 3 is to provide a list of string separated with coma
 		$this->assertEquals(" AND (t.field IN ('abc def','ghi'))", $s);
@@ -1952,7 +2051,87 @@ class FunctionsLibTest extends CommonClassTest
 		var_dump($s);
 		*/
 
-		//$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
-		//$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+	}
+
+	/**
+	 * testDolExplodeKeepIfQuotes
+	 *
+	 * @return void
+	 */
+	public function testDolExplodeKeepIfQuotes()
+	{
+		global $db;
+
+		$result = dolExplodeKeepIfQuotes("a b");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("'a' 'b'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b' c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b'c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b c'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("1 0");
+		$this->assertEquals("1", $result[0]);
+		$this->assertEquals("0", $result[1]);
+	}
+
+
+
+	/**
+	 * testDolSanitizePathName
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizePathName()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('_/aéa/bbb ccc/ddd', $result);
+
+		$s = '../aéa/bbb ccc/ddd';
+		$result = dol_sanitizePathName($s, '_', 1);
+		$this->assertEquals('_/aea/bbb ccc/ddd', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = 'C:\ccc/d\'d"d$';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('C:\ccc/d\'d_d_', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s);
+		$this->assertEquals('/aaa/bbb _a _b', $result);
+
+		$s = '/aaa/bbb -a -b';
+		$result = dol_sanitizePathName($s, '_', 0, 1);
+		$this->assertEquals('/aaa/bbb -a -b', $result);
 	}
 }

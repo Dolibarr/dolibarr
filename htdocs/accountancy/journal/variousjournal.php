@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2021-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 /**
  * @var Conf $conf
@@ -91,8 +92,8 @@ if (empty($date_endmonth)) {
 }
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+	$date_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
 $data_type = 'view';
@@ -188,7 +189,17 @@ if ($reload) {
 
 $form = new Form($db);
 
-if ($object->nature == 2) {
+if ($object->nature == 1) {
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1'
+		|| !getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED') || getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED') == '-1'
+		|| !getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED') || getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| !getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED') || getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_GRANTED') == '-1'
+		|| !getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED') || getDolGlobalString('ACCOUNTING_ACCOUNT_DISCOUNT_RECEIVED') == '-1';
+} elseif ($object->nature == 2) {
 	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
 	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
 } elseif ($object->nature == 3) {

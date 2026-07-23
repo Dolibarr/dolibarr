@@ -2,12 +2,12 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,12 +72,39 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var float
+	 */
 	public $posxpiece;
+
+	/**
+	 * @var float
+	 */
 	public $posxskill;
+
+	/**
+	 * @var float
+	 */
 	public $posxrankemp;
+
+	/**
+	 * @var float
+	 */
 	public $posxrequiredrank;
+
+	/**
+	 * @var float
+	 */
 	public $posxresult;
+
+	/**
+	 * @var float
+	 */
 	public $postotalht;
+
+	/**
+	 * @var float
+	 */
 	public $posxnotes;
 
 
@@ -88,7 +115,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc, $user;
+		global $langs, $mysoc;
+
 		// Translations
 		$langs->loadLangs(array("main", "hrm"));
 
@@ -145,12 +173,12 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *  @param		int<0,1>		$hidedetails		Do not show line details
 	 *  @param		int<0,1>		$hidedesc			Do not show desc
 	 *  @param		int<0,1>		$hideref			Do not show ref
-	 *  @return		int<0,1>							1=OK, 0=KO
+	 *  @return		int<-1,1>							1=OK, <=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -208,7 +236,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$heightforfooter += 6;
 				}
 
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -228,7 +256,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Evaluation"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Evaluation"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -248,20 +276,21 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 65;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 35 : 10);
+				$top_margin = 55 + $this->marge_haute;
+				$tab_top = $top_margin;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $top_margin + 32 : $top_margin);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				if (!empty($object->note_public)) {
-					$tab_top = 65;
+					$tab_top = $top_margin;
 
 					$pdf->SetFont('', 'B', $default_font_size);
-					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', 0, 0, 12, $tab_top);
+					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
 					$tab_top += 4;
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxnotes + 1, $tab_top + 1, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
@@ -278,6 +307,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$iniY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
+				$showmorebeforepagebreak = 0;
+
 				$pdf->setTopMargin($tab_top_newpage);
 				// Loop on each lines
 				$i = 0;
@@ -286,9 +317,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pdf->SetTextColor(0, 0, 0);
 
 					if (empty($showmorebeforepagebreak) && ($i !== ($nblines - 1))) {
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					} else {
-						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
@@ -297,8 +328,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$curY = $nexY;
 					$pdf->startTransaction();
 
+					// Shod fields of line
 					$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-
 
 
 					$pageposafter = $pdf->getPage();
@@ -325,7 +356,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 							$pdf->setTopMargin($tab_top_newpage);
 							continue;
 						} else {
-							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$pdf->setPageOrientation('', true, $heightforfooter);
 							$showmorebeforepagebreak = 0;
 						}
 
@@ -365,7 +396,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
@@ -373,7 +404,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
@@ -382,7 +413,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -436,9 +467,12 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -468,39 +502,64 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 */
 	protected function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
-		global $conf;
 		$objectligne = $object->lines[$linenumber];
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetTextColor(0, 0, 0);
 
+		// Rank of employee
+		$rankemptoshow = "-";
+		if ($objectligne->rankorder > 0) {
+			$rankemptoshow = (string) $objectligne->rankorder;
+		} elseif ($objectligne->rankorder < 0) {
+			$rankemptoshow = $outputlangs->transnoentitiesnoconv("NA");
+		}
+		$pdf->SetXY($this->posxrankemp, $curY);
+		$pdf->MultiCell($this->posxrequiredrank - $this->posxrankemp - 0.8, 4, $rankemptoshow, 0, 'C');
+
+		// Expected required Rank
+		$rankexpectedtoshow = "-";
+		if ($objectligne->required_rank > 0) {
+			if ($objectligne->rankorder != 0) {
+				$rankexpectedtoshow = $objectligne->required_rank;
+			}
+		} elseif ($objectligne->required_rank < 0) {
+			$rankexpectedtoshow = $outputlangs->transnoentitiesnoconv("NA");
+		}
+		$pdf->SetXY($this->posxrequiredrank, $curY);
+		$pdf->MultiCell($this->posxresult - $this->posxrequiredrank - 0.8, 4, $rankexpectedtoshow, 0, 'C');
+
 		// Result
 		$pdf->SetXY($this->posxresult - 1, $curY);
 
-		if ($objectligne->rankorder > $objectligne->required_rank) {
+		if ($objectligne->required_rank < 0) {	// NA
+			$pdf->SetFillColor(255, 255, 255);
+		} elseif ($objectligne->rankorder > $objectligne->required_rank) {	// Higher than expected
 			// Teal Green
-			$pdf->SetFillColor(0, 109, 91);
-		} elseif ($objectligne->rankorder == $objectligne->required_rank) {
+			$pdf->SetFillColor(20, 129, 111);
+		} elseif ($objectligne->rankorder == $objectligne->required_rank) {	// Same than expected
 			// Seafoam Green
-			$pdf->SetFillColor(159, 226, 191);
-		} elseif ($objectligne->rankorder < $objectligne->required_rank) {
-			// red
+			$pdf->SetFillColor(169, 236, 201);
+		} elseif ($objectligne->rankorder < $objectligne->required_rank) {	// Lower than expected
+			// Red
 			$pdf->SetFillColor(205, 92, 92);
 		}
-		if ($objectligne->rankorder == 0 || $objectligne->required_rank == 0) {
+		if ($objectligne->rankorder <= 0 || $objectligne->required_rank == 0) {
 			// No fill color
-			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetFillColor(240, 240, 240);
 		}
-		$result = (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->rankorder . "/" . $objectligne->required_rank : "-");
-		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', 1);
+		$result = "-";
+		if ($objectligne->required_rank < 0) {
+			if ($objectligne->rankorder > 0) {
+				$result = $objectligne->rankorder;
+			}
+		} elseif ($objectligne->rankorder < 0) {
+			$result = $outputlangs->transnoentitiesnoconv("NA");
+		} elseif ($objectligne->required_rank != 0 && $objectligne->rankorder != 0) {
+			$result = $objectligne->rankorder . "/" . $objectligne->required_rank;
+		}
+		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', true);
 
-
-		// required Rank
-		$pdf->SetXY($this->posxrequiredrank, $curY);
-		$pdf->MultiCell($this->posxresult - $this->posxrequiredrank - 0.8, 4, (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->required_rank : "-"), 0, 'C');
-
-		// Rank Employee
-		$pdf->SetXY($this->posxrankemp, $curY);
-		$pdf->MultiCell($this->posxrequiredrank - $this->posxrankemp - 0.8, 4, (($objectligne->rankorder != 0) ? $objectligne->rankorder : "-"), 0, 'C');
+		// The next fields can be on several lines so we output them at end so the pos on next line will work correctly
 
 		// Skill
 		$skill = new Skill($this->db);
@@ -513,11 +572,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 		}
 		$pdf->writeHTMLCell($this->posxrankemp - $this->posxskill - 0.8, 4, $this->posxskill - 1, $curY, $comment, 0, 1);
 
-
-
 		// Line num
 		$pdf->SetXY($this->posxpiece, $curY);
-		$pdf->writeHTMLCell($this->posxskill - $this->posxpiece - 0.8, 3, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1, 0, 0, 'C');
+		$pdf->writeHTMLCell($this->posxskill - $this->posxpiece - 0.8, 3, $this->posxpiece - 1, $curY, (string) ($linenumber + 1), 0, 1, false, false, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -608,7 +665,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 
 			// Show sender
-			$posy = 40;
+			$posy = $this->marge_haute + 30;
 			$posx = $this->marge_gauche;
 			$hautcadre = 20;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -642,9 +699,9 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *   Show table for lines
 	 *
 	 *   @param     TCPDF		$pdf     		Object PDF
-	 *   @param		int			$tab_top		Tab top
-	 *   @param		int			$tab_height		Tab height
-	 *   @param		int			$nexY			next y
+	 *   @param		float		$tab_top		Tab top
+	 *   @param		float		$tab_height		Tab height
+	 *   @param		float		$nexY			next y
 	 *   @param		Translate	$outputlangs	Output langs
 	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
 	 *   @param		int			$hidebottom		Hide bottom bar of array

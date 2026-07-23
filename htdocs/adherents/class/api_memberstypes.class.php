@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2025   Frédéric France	<frederic.france@free.fr>
  * Copyright (C) 2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025   Frédéric France	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 	}
 
@@ -93,8 +93,6 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
@@ -157,8 +155,8 @@ class MembersTypes extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields. Throw exception on error.
+		$this->_validate($request_data);
 
 		$membertype = new AdherentType($this->db);
 		foreach ($request_data as $field => $value) {
@@ -168,7 +166,7 @@ class MembersTypes extends DolibarrApi
 				continue;
 			}
 
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
@@ -212,7 +210,7 @@ class MembersTypes extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$membertype->array_options[$index] = $this->_checkValForAPI($field, $val, $membertype);
+					$membertype->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $membertype);
 				}
 				continue;
 			}
@@ -291,9 +289,12 @@ class MembersTypes extends DolibarrApi
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
+	 * @phpstan-template T
 	 *
 	 * @param	Object  $object		Object to clean
 	 * @return	Object				Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2013  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Alexandre Spangaro   	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 
 $filenameamount = $dir."/donationamount-".$year.".png";
-$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&amp;file=donationamoutinyear-'.$year.'.png';
+$fileurlamount = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationamoutinyear-'.$year.'.png']);
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
@@ -153,7 +153,7 @@ if (!$mesg) {
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $filename_avg = $dir."/donationaverage-".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=donationStats&file=donationaverageinyear-'.$year.'.png';
+$fileurl_avg = dolBuildUrl(DOL_URL_ROOT.'/viewimage.php', ['modulepart' => 'donationStats', 'file' => 'donationaverageinyear-'.$year.'.png']);
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
@@ -168,7 +168,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -208,14 +208,14 @@ print dol_get_fiche_head($head, 'byyear', '', -1);
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
 // Company
-if (empty(!$conf->global->DONATION_USE_THIRDPARTIES)) {
+if (getDolGlobalString('DONATION_USE_THIRDPARTIES')) {
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth300', '');
@@ -224,7 +224,7 @@ if (empty(!$conf->global->DONATION_USE_THIRDPARTIES)) {
 
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-$sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT);
+$sortparam_typent = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC');
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -238,14 +238,16 @@ if (isModEnabled('category')) {
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	if (is_array($cate_arbo)) {
+		print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	}
 	print '</td></tr>';
 }
 
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 
 // Status
@@ -261,6 +263,7 @@ print $form->selectarray('status', $liststatus, 4, 1);
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 
 print '</td></tr>';
@@ -287,7 +290,7 @@ foreach ($data as $val) {
 	while (!empty($year) && $oldyear > (int) $year + 1) {
 		$oldyear--;
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['year' => $oldyear]).'">'.$oldyear.'</a></td>';
 
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
@@ -303,7 +306,14 @@ foreach ($data as $val) {
 	$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
 
 	print '<tr class="oddeven" height="24">';
-	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	$query = ['year' => $year, 'mode' => $mode];
+	if ($socid > 0) {
+		$query += ['socid' => $socid];
+	}
+	if ($userid > 0) {
+		$query += ['userid' => $userid];
+	}
+	print '<td align="center"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $query).'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,11 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
-
-$hookmanager = new HookManager($db);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('projectsindex'));
@@ -63,7 +60,7 @@ if ($search_project_user == $user->id) {
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 // Security check
 $socid = 0;
@@ -125,15 +122,14 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 }
 
-$morehtml = '';
-$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+$morehtml = '<form name="projectform" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
 
-$morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
+$morehtml .= '<select name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
-$morehtml .= '</SELECT>';
+$morehtml .= '</select>';
 $morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1', 'small');
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 $morehtml .= '</form>';
@@ -153,6 +149,14 @@ print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_S
 
 // Get list of ponderated percent and colors for each status
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+/**
+ * @var string $badgeStatus0
+ * @var string $badgeStatus1
+ * @var string $badgeStatus2
+ * @var string $badgeStatus4
+ * @var string $badgeStatus6
+ * @var string $badgeStatus9
+ */
 // Available from theme_vars:
 '
 @phan-var-force string $badgeStatus0
@@ -211,7 +215,6 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
-//var_dump($listofoppcode);
 
 
 print '<div class="fichecenter">';
@@ -275,13 +278,14 @@ if ($resql) {
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->name_alias;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
+
 			//$companystatic->code_client = $obj->code_client;
 			$companystatic->code_compta = $obj->code_compta;
 			$companystatic->code_compta_client = $obj->code_compta;
-			$companystatic->client = $obj->client;
-			//$companystatic->code_fournisseur = $obj->code_fournisseur;
 			$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-			$companystatic->fournisseur = $obj->fournisseur;
+
 			$companystatic->logo = $obj->logo;
 			$companystatic->email = $obj->email;
 			$companystatic->entity = $obj->entity;
@@ -299,20 +303,21 @@ if ($resql) {
 
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$filedir = $conf->project->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($projectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print '</td>';
 
 			// Label
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
-			print dol_escape_htmltag($projectstatic->title);
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<div class="twolinesmax-normallineheight minwidth100onall">';
+			print dolPrintHTML($projectstatic->title);
+			print '</div>';
 			print '</td>';
 
 			// Thirdparty
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name).'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($companystatic->name).'">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
@@ -320,7 +325,7 @@ if ($resql) {
 
 			// Date
 			$datem = $db->jdate($obj->datem);
-			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print '<td class="center" title="'.dolPrintHTMLForAttribute($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
 			print dol_print_date($datem, 'day', 'tzuserrel');
 			print '</td>';
 

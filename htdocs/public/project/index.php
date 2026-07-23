@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,8 @@
 /**
  *     	\file       htdocs/public/project/index.php
  *		\ingroup    core
- *		\brief      File to offer a way to suggest a conference or a booth for an event
+ *		\brief      Page to offer a way to suggest a conference or a booth for a given event.
+ *					Link of this page is given into the project card.
  */
 
 if (!defined('NOLOGIN')) {
@@ -53,20 +55,19 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-global $dolibarr_main_url_root;
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
 
 // Load translation files
-$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -97,8 +98,6 @@ if ($resultproject < 0) {
 
 $hookmanager->initHooks(array('newpayment'));
 
-$extrafields = new ExtraFields($db);
-
 $user->loadDefaultValues();
 
 // Security check
@@ -111,15 +110,18 @@ if (empty($conf->project->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -168,9 +170,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -231,11 +235,11 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag((string) $id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
+//print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 
-print '<div align="center">';
+print '<div class="centergrid">';
 print '<div id="divsubscribe">';
 
 
@@ -243,10 +247,11 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
 print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
+print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 // Help text
@@ -288,16 +293,8 @@ print '<br>';
 
 print '<table id="dolsuggestboost" summary="Suggest a boost form" class="center">'."\n";
 
-print $text;
-
 // Output payment summary form
-print '<tr><td align="center">';
-
-$found = false;
-$error = 0;
-$var = false;
-
-$object = null;
+print '<tr><td class="center">';
 
 print "\n";
 
@@ -339,8 +336,9 @@ print '</div>'."\n";
 print '<br>';
 
 
+$suffix = '';
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $project);
 
 llxFooter('', 'public');
 

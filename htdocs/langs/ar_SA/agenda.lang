@@ -2,6 +2,7 @@
 IdAgenda=رمز الحدث
 Actions=الأحداث
 Agenda=جدول الأعمال
+AgendaEvents=أحداث الأجندة
 TMenuAgenda=جدول الأعمال
 Agendas=جداول الأعمال
 LocalAgenda=التقويم الافتراضي
@@ -206,3 +207,6 @@ BookcalBookingTitle=موعد عبر الإنترنت
 Transparency = الشفافية
 ReadMore = اقرأ المزيد
 ReadLess = اقرأ أقل
+RecurringEvent=حدث متكرر
+EventPartOfARecurringSerie=الحدث هو جزء من سلسلة متكررة ذات المعرف %s
+BookCalSystem=الحجز عبر الإنترنت

@@ -6,6 +6,7 @@
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +30,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'orders'));
@@ -82,8 +82,8 @@ if (empty($sortfield)) {
 	$sortfield = "cf.date_commande";
 }
 
-$search_month = GETPOSTINT('search_month');
-$search_year = GETPOSTINT('search_year');
+$search_month = GETPOST('search_month');	// Can be ''
+$search_year = GETPOST('search_year');	// Can be '''
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
@@ -152,8 +152,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield" width="100%">';
-
+		print '<table class="border centpercent tableforfield">';
 
 		// Product
 		print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
@@ -210,13 +209,15 @@ if ($id > 0 || !empty($ref)) {
 		//      // Other attributes
 		//      include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-		print '<table class="border centpercent tableforfield" width="100%">';
+		print '<table class="noborder centpercent tableforfield">';
 
 		$nboflines = show_stats_for_batch($object, $socid);
 
 		print "</table>";
 
 		print '</div>';
+
+
 		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
@@ -242,10 +243,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND cfdi.batch = '".($db->escape($object->batch))."'";
 			$sql .= " AND cfdi.fk_product = " . (int) $object->fk_product;
 			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(cf.date_commande) IN ('.$db->sanitize($search_month).')';
+				$sql .= ' AND MONTH(cf.date_commande) IN ('.$db->sanitize((string) $search_month).')';
 			}
 			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(cf.date_commande) IN ('.$db->sanitize($search_year).')';
+				$sql .= ' AND YEAR(cf.date_commande) IN ('.$db->sanitize((string) $search_year).')';
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -301,7 +302,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear($search_year ? (string) $search_year : '-1', 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -326,10 +327,6 @@ if ($id > 0 || !empty($ref)) {
 				if ($num > 0) {
 					while ($i < min($num, $limit)) {
 						$objp = $db->fetch_object($result);
-
-						if ($objp->type == Facture::TYPE_CREDIT_NOTE) {
-							$objp->qty = -($objp->qty);
-						}
 
 						//                      $total_ht_pondere += $objp->total_ht_pondere;
 						$total_qty += $objp->qty;

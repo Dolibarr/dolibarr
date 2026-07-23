@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/variants/lib/variants.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/variants/lib/variants.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -42,8 +42,6 @@ if (!$user->admin) {
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'product'));
 
-
-$extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
@@ -56,10 +54,6 @@ foreach ($tmptype2label as $key => $val) {
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'product_attribute'; //Must be the $table_element of the class that manage extrafield
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 
 /*
@@ -77,7 +71,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 $title =  $langs->trans("ProductAttributeExtrafieldsSetup");
 llxHeader('', $title);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = adminProductAttributePrepareHead();
