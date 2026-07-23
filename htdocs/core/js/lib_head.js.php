@@ -148,7 +148,10 @@ if ($thousand == 'Space') {
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
 
-// To start/stop Block UI
+/*
+ * To start/stop Block UI
+ */
+
 function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
 	const block = document.getElementById('dol-block-ui');
 	if (block != null) {
@@ -165,7 +168,10 @@ function dolUnblockUI() {
 }
 
 
-// For jQuery date picker
+/*
+ * For jQuery date picker
+ */
+
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
@@ -295,6 +301,7 @@ function dpChangeDay(dateFieldID, format)
 	return 0;
 }
 
+
 /*
  * =================================================================
  * Function: formatDate(javascript object Date(), format)
@@ -355,7 +362,6 @@ function formatDate(date,format)
 	// alert(result);
 	return result;
 }
-
 
 /*
  * =================================================================
@@ -503,6 +509,7 @@ function urlencode(s) {
 	news = news.replace(/&/gi,'%26');
 	return news;
 }
+
 
 /*
  * =================================================================
@@ -1379,8 +1386,10 @@ function generateFilterString(column, operator, context, fieldType) {
 	}
 })();
 
+
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price()
@@ -1604,10 +1613,10 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
 		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
-			/* console.log("click close butAction - we click outside"); */
+			/* console.log("click close butAction - we click outside"); // disabled because too verbose */
 			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
 			if (parentholder){
-				// Hide the menus.
+				// Hide the dropdown.
 				parentholder.removeClass("open --up --left");
 			}
 		}
