@@ -1165,6 +1165,8 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 				$bookkeepingToCreate = new BookKeeping($db);
 
+				// Unique key is on couple: $payment_id, $objectInfos['id']
+				
 				// For doc_type='bank', fk_doc is the bank line id and fk_docdet is the source document id (invoice, expense report, salary, ...).
 				// The couple (fk_doc, fk_docdet) must match the binding/read queries below (ab.fk_doc=bu.fk_bank AND ab.fk_docdet=<doc>.rowid),
 				// otherwise the "already transferred" filter never matches and re-transfer wrongly reports "already recorded".
