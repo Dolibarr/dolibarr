@@ -63,6 +63,11 @@ class EcmFiles extends CommonObject
 	public $share;
 
 	/**
+	 * @var EcmFilesLine[]
+	 */
+	public $lines = array();
+
+	/**
 	 * @var ?string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
