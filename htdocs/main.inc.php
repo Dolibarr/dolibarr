@@ -380,6 +380,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			'editfile',
 			'editvalidator',
 			'file_manager',
+			'getCategories',
 			'history',
 			'presend',
 			'presend_addmessage',
