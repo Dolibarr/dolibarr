@@ -806,7 +806,7 @@ class TtcRoundingTest extends CommonClassTest
 
 		$source = new SupplierProposal($db);
 		$source->fetch($id);
-		$clonedId = $source->createFromClone($user, $id);
+		$clonedId = $source->createFromClone($user, $socid);
 		$this->assertGreaterThan(0, $clonedId, 'Supplier proposal createFromClone');
 
 		$clone = new SupplierProposal($db);
