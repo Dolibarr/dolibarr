@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024      MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -274,7 +274,7 @@ class modResource extends DolibarrModules
 		$this->import_tables_array[$r] = array('r' => MAIN_DB_PREFIX.'resource', 'extra' => MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array('r.ref' => "ResourceFormLabel_ref*", 'r.fk_code_type_resource' => 'ResourceTypeCode', 'r.description' => 'ResourceFormLabel_description', 'r.note_private' => "NotePrivate", 'r.note_public' => "NotePublic", 'r.asset_number' => 'AssetNumber', 'r.datec' => 'DateCreation');
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {

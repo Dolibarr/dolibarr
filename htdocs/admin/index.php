@@ -167,8 +167,8 @@ print '<br>';
 
 $arrayofeinvoiceneed = array(
 	'FR' => array('module' => array('einvoice', 'pdpconnectfr'), 'search' => 'e-invoice'),
-	'ES' => array('search' => array('verifactu')),
-	'BE' => array('search' => array('peppol')),
+	'ES' => array('search' => 'verifactu'),
+	'BE' => array('search' => 'peppol'),
 	'PL' => array('module' => array('ksef'), 'search' => 'ksef')
 );
 
