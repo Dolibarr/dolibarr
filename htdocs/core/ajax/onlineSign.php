@@ -619,7 +619,6 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
-				
 				if (!$error) {
 					$db->begin();
 
