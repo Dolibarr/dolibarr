@@ -768,7 +768,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		
 		$extralabels = $extrafields->fetch_name_optionals_label("product_customer_price");
 		$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
 
