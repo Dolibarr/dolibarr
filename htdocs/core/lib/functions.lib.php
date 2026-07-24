@@ -3091,7 +3091,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		   						},
 								close: function (event, ui) {
 									console.log("Popup is closed, run jsonclose = ' . $jsonclose . '");
-									' . (empty($jsonclose) ? '' : $jsonclose . ';') . '
+									' . (empty($jsonclose) || preg_match('/^TODO/', $jsonclose) ? '' : $jsonclose . ';') . '
 								}
 							});
 
