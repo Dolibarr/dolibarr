@@ -16,7 +16,7 @@
  * Copyright (C) 2022	    Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023-2024	Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2025-2026	Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3717,6 +3717,14 @@ if ($action == 'create' && $usercancreate) {
 				print '<br><!-- Link to pay -->';
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/payments.lib.php';
 				print showOnlinePaymentUrl('order', $object->ref) . '<br>';
+			}
+
+			// Show online signature link
+			$useonlinesignature = getDolGlobalInt('ORDER_ALLOW_ONLINESIGN');
+			if ($object->status != Commande::STATUS_DRAFT && $useonlinesignature) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl('order', $object->ref, $object) . '<br>';
 			}
 
 			print '</div><div class="fichehalfright">';
