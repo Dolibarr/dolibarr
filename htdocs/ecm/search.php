@@ -60,7 +60,7 @@ if (!$section) {
 	$section = 0;
 }
 
-$module  = GETPOST('module', 'alpha');
+$module  = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid  = GETPOSTINT('pageid');
 if (empty($module)) {

@@ -391,23 +391,24 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 	$day_date = intval($day_date);
 	$month_date = intval($month_date);
 	$year_date = intval($year_date);
+	$sql_datefield = $db->sanitize($datefield);
 
 	if ($month_date > 0) {
 		if ($month_date > 12) {	// protection for bad value of month
 			return " AND 1 = 2";
 		}
 		if ($year_date > 0 && empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
 			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
 		} elseif ($year_date > 0 && !empty($day_date)) {
-			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm));
+			$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date, $gm));
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
 			// This case is not reliable on TZ, but we should not need it.
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape((string) $month_date)."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$sql_datefield.", '%c') = '".$db->escape((string) $month_date)."'";
 		}
 	} elseif ($year_date > 0) {
-		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
+		$sqldate .= ($excludefirstand ? "" : " AND ").$sql_datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
 		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, $gm))."'";
 	}
 	return $sqldate;
@@ -806,7 +807,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countryCodeOrId = '
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
+		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".((int) $country_id) : 0).")";
 		$sql .= " AND entity IN (0," .getEntity('holiday') .")";
 
 		$resql = $db->query($sql);
@@ -1072,7 +1073,7 @@ function listPublicHoliday($timestampStart, $timestampEnd, $countryCodeOrId = ''
 		$tmpArrayOfPublicHolidays = array();
 		$sql = "SELECT id, code, entity, fk_country, dayrule, year, month, day, active";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_hrm_public_holiday";
-		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . $country_id : 0) . ")";
+		$sql .= " WHERE active = 1 and fk_country IN (0" . ($country_id > 0 ? ", " . ((int) $country_id) : 0) . ")";
 		$sql .= " AND entity IN (0," . getEntity('holiday') . ")";
 
 		$resql = $db->query($sql);
