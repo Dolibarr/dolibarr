@@ -175,7 +175,6 @@ class ProductCustomerPrice extends CommonObject
 	 * @var ?float
 	 */
 	public $multicurrency_price_min_ttc;
-	
 	/**
 	 * @var string|int
 	 */
