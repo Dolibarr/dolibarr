@@ -695,7 +695,7 @@ class Shipments extends DolibarrApi
 	//  /**
 	//  * Create a shipment using an existing order.
 	//  *
-	//  * @param int   $orderid       Id of the order
+	//  * @param int   $orderid    Id of the order
 	//  *
 	//  * @url     POST /createfromorder/{orderid}
 	//  *
