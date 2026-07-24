@@ -3844,6 +3844,9 @@ class Form
 				$sql .= " OR EXISTS (SELECT pfp.fk_product FROM " . $this->db->prefix() . "product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product";
 				$sql .= " AND (";
 				$sql .= $sqlSupplierSearch;
+				if (isModEnabled('barcode')) {
+					$sql .= " OR pfp.barcode LIKE '" . $this->db->escape($prefix . $filterkey) . "%'";
+				}
 				$sql .= "))";
 			}
 
