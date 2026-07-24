@@ -366,11 +366,11 @@ class Shipments extends DolibarrApi
 
 		// addline() stacks the line in memory and runs native validation
 		// (warehouse requirement, stock availability, batch rejection).
-		$addRes = $this->shipment->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), (int) $fk_product);
-		if ($addRes <= 0) {
+		$addResult = $this->shipment->addline((int) $warehouse_id, $fk_origin_line, $qty, array(), (int) $fk_product);
+		if ($addResult <= 0) {
 			$msg = $this->shipment->error ? $this->shipment->error : 'Error while adding shipment line';
 			// -1 missing warehouse, -3 not enough stock, -4 batch product: bad request from the caller.
-			if (in_array((int) $addRes, array(-1, -3, -4), true)) {
+			if (in_array((int) $addResult, array(-1, -3, -4), true)) {
 				throw new RestException(400, $msg);
 			}
 			throw new RestException(500, $msg);
