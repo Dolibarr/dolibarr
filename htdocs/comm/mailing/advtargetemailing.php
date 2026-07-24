@@ -203,7 +203,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 		}
 
 		if (preg_match("/^contact_/", $key)) {
-			$array_query[$key] = GETPOST($key);
+			$array_query[$key] = GETPOSTISARRAY($key) ? GETPOST($key, 'array:int') : GETPOST($key);
 
 			$specials_date_key = array(
 					'contact_update_st_dt',
@@ -232,7 +232,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 		}
 
 		if (preg_match("/^type_of_target/", $key)) {
-			$array_query[$key] = GETPOST($key);
+			$array_query[$key] = GETPOSTINT($key);
 		}
 	}
 
@@ -617,11 +617,9 @@ if ($object->fetch($id) >= 0) {
 
 	print dol_get_fiche_end();
 
-	print '<br>';
-
 
 	// Show email selectors
-	if ($object->status == 0 && $user->hasRight('mailing', 'creer')) {
+	if ($object->status < 2 && $user->hasRight('mailing', 'creer')) {
 		// @phan-assert FormAdvTargetEmailing $formadvtargetemaling
 		// @phan-assert AdvanceTargetingMailing $advTarget
 
@@ -666,7 +664,9 @@ if ($object->fetch($id) >= 0) {
 		</script>';
 
 
-		print load_fiche_titre($langs->trans("AdvTgtTitle").'...', '', '');
+		print '<div class="info">';
+		print $langs->trans("AdvTgtTitle").'...';
+		print '</div>';
 
 		print '<form name="find_customer" id="find_customer" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'"  method="POST">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
@@ -709,7 +709,7 @@ if ($object->fetch($id) >= 0) {
 		// Customer name
 		print '<tr><td>'.$langs->trans('ThirdPartyName');
 		if (!empty($array_query['cust_name'])) {
-			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
+			print img_picto($langs->trans('AdvTgtUse'), 'tick', 'class="marginleftonly"');
 		}
 		print '</td><td><input type="text" name="cust_name" value="'.$array_query['cust_name'].'"/></td><td>'."\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');

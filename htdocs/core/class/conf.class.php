@@ -1039,7 +1039,7 @@ class Conf extends stdClass
 			// This value can be overwritten by user choice in main.inc.php
 			$this->liste_limit = getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT', 15);
 			if ((int) $this->liste_limit <= 0) {
-				// Mode automatic. Similar code than into main.inc.php
+				// Mode automatic.
 				$this->liste_limit = getListLimitFromScreenHeight();
 			}
 
