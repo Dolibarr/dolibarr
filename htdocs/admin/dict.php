@@ -705,6 +705,8 @@ if (empty($sortfield)) {
 	//var_dump($sortfield); //var_dump($sortorder);
 }
 
+global $elementList, $sourceList, $localtax_typeList, $type_vatList;  // Used in dictFieldList() below
+
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 $sourceList = array();
@@ -1379,6 +1381,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+global $form, $formother; // Used in dictFieldList() below
 
 $form = new Form($db);
 $formother = new FormOther($db);
