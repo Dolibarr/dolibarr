@@ -4682,18 +4682,31 @@ class Form
 			$out .= '
 				<script nonce="' . getNonce() . '">
 					$(document).ready(function () {
-						$("#' . $htmlname . '").change(function () {
-							let $selected = $(this).find("option:selected");
-							let depositPercent = $selected.attr("data-deposit_percent");
+						let $select = $("#' . $htmlname . '");
+						let $container = $("#' . $htmlname . '_deposit_percent_container");
+						let $input = $("#' . $htmlname . '_deposit_percent");
+
+						function refreshDepositPercent(isInit) {
+							let depositPercent = $select.find("option:selected").attr("data-deposit_percent") || "";
 
 							if (depositPercent.length > 0) {
-								$("#' . $htmlname . '_deposit_percent_container").show().find("#' . $htmlname . '_deposit_percent").val(depositPercent);
+								$container.show();
+								// On page load, keep an existing (possibly customized) value; on user change use the payment term default
+								if (!isInit || !parseFloat($input.val())) {
+									$input.val(depositPercent);
+								}
 							} else {
-								$("#' . $htmlname . '_deposit_percent_container").hide();
+								$container.hide();
 							}
+						}
 
+						$select.change(function () {
+							refreshDepositPercent(false);
 							return true;
 						});
+
+						// Initialize on load so a default payment term with a deposit is reflected without a manual change
+						refreshDepositPercent(true);
 					});
 				</script>';
 		}
