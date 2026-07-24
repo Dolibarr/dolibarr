@@ -205,6 +205,27 @@ class TtcRoundingTest extends CommonClassTest
 	}
 
 	/**
+	 * Assert both priced lines of a credit note built by inverting an invoice: the TTC entry mode
+	 * is kept with the inverted sign so there is no rounding drift. See #1882.
+	 *
+	 * @param	CommonObject	$object		Reloaded credit note (lines loaded)
+	 * @param	string			$tag		Message prefix
+	 * @return	void
+	 */
+	private function assertBothPricedLinesInverted($object, $tag)
+	{
+		$priced = $this->pricedLines($object);
+		$this->assertCount(2, $priced, $tag.' must have 2 priced lines');
+		foreach ($priced as $k => $line) {
+			$this->assertEquals(-self::PU_TTC, (float) ($line->subprice_ttc ?? 0), $tag." line $k subprice_ttc (inverted TTC entry mode kept)");
+			$this->assertEquals(-self::PU_HT, (float) $line->subprice, $tag." line $k subprice (inverted HT unit price)");
+			$this->assertEquals(-self::LINE_HT, (float) $line->total_ht, $tag." line $k total_ht (inverted)");
+			$this->assertEquals(-self::LINE_TVA, (float) $line->total_tva, $tag." line $k total_tva (inverted)");
+			$this->assertEquals(-self::LINE_TTC, (float) $line->total_ttc, $tag." line $k total_ttc (inverted)");
+		}
+	}
+
+	/**
 	 * Whether the object supports subtotal lines (subtotals module enabled and object type wired).
 	 * Kept portable across versions: supplier objects gained subtotals only in later Dolibarr releases.
 	 *
@@ -1025,5 +1046,196 @@ class TtcRoundingTest extends CommonClassTest
 		}
 		$this->assertBothPricedLines($clone, 'Supplier invoice clone');
 		print __METHOD__." id=".$id." clone=".$clonedId."\n";
+	}
+
+	/**
+	 * Customer proposal -> order (Commande::createFromProposal) must preserve the TTC entry mode. See #1882.
+	 *
+	 * @return void
+	 */
+	public function testCustomerProposalToOrderTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('propal') || !isModEnabled('order')) {
+			$this->markTestSkipped('Module propal or order disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Propal($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCORIG'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Proposal create for origin');
+
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$source = new Propal($db);
+		$source->fetch($id);
+		if (method_exists($source, 'fetch_lines')) {
+			$source->fetch_lines();
+		}
+
+		$order = new Commande($db);
+		$orderId = $order->createFromProposal($source, $user);
+		$this->assertGreaterThan(0, $orderId, 'createFromProposal');
+
+		$reloaded = new Commande($db);
+		$reloaded->fetch($orderId);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertBothPricedLines($reloaded, 'Proposal to order');
+		print __METHOD__." propal=".$id." order=".$orderId."\n";
+	}
+
+	/**
+	 * Customer order -> invoice (Facture::createFromOrder) must preserve the TTC entry mode. See #1882.
+	 *
+	 * @return void
+	 */
+	public function testCustomerOrderToInvoiceTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('order') || !isModEnabled('invoice')) {
+			$this->markTestSkipped('Module order or invoice disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Commande($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCORIG'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Order create for origin');
+
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, 0, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$source = new Commande($db);
+		$source->fetch($id);
+		if (method_exists($source, 'fetch_lines')) {
+			$source->fetch_lines();
+		}
+
+		// createFromOrder() returns 1 on success; the new invoice id is in $invoice->id.
+		$invoice = new Facture($db);
+		$this->assertGreaterThan(0, $invoice->createFromOrder($source, $user), 'createFromOrder');
+		$invoiceId = $invoice->id;
+
+		$reloaded = new Facture($db);
+		$reloaded->fetch($invoiceId);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertBothPricedLines($reloaded, 'Order to invoice');
+		print __METHOD__." order=".$id." invoice=".$invoiceId."\n";
+	}
+
+	/**
+	 * Customer contract -> invoice (Facture::createFromContract) must preserve the TTC entry mode. See #1882.
+	 *
+	 * @return void
+	 */
+	public function testCustomerContractToInvoiceTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('contract') || !isModEnabled('invoice')) {
+			$this->markTestSkipped('Module contract or invoice disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Contrat($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCORIG'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Contract create for origin');
+
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', '', 'TTC', self::PU_TTC);
+
+		$source = new Contrat($db);
+		$source->fetch($id);
+		if (method_exists($source, 'fetch_lines')) {
+			$source->fetch_lines();
+		}
+
+		// createFromContract() returns 1 on success; the new invoice id is in $invoice->id.
+		$invoice = new Facture($db);
+		$this->assertGreaterThan(0, $invoice->createFromContract($source, $user), 'createFromContract');
+		$invoiceId = $invoice->id;
+
+		$reloaded = new Facture($db);
+		$reloaded->fetch($invoiceId);
+		if (method_exists($reloaded, 'fetch_lines')) {
+			$reloaded->fetch_lines();
+		}
+		$this->assertBothPricedLines($reloaded, 'Contract to invoice');
+		print __METHOD__." contract=".$id." invoice=".$invoiceId."\n";
+	}
+
+	/**
+	 * Customer invoice -> credit note (Facture::createFromCurrent with invertdetail) must keep the TTC
+	 * entry mode with the inverted sign. See #1882.
+	 *
+	 * @return void
+	 */
+	public function testCustomerInvoiceToCreditNoteTtc()
+	{
+		global $user,$db;
+		$this->restoreGlobals();
+		if (!isModEnabled('invoice')) {
+			$this->markTestSkipped('Module invoice disabled');
+			return;
+		}
+
+		$socid = self::$socid;
+		$pid = self::$productid;
+
+		$object = new Facture($db);
+		$object->initAsSpecimen();
+		$object->socid = $socid;
+		$object->ref = 'TTCORIG'.substr(uniqid(), -8);
+		$object->lines = array();
+		$id = $object->create($user);
+		$this->assertGreaterThan(0, $id, 'Invoice create for credit note');
+
+		$object->addline('Product TTC', 0, self::QTY, self::VAT, 0, 0, $pid, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+		$object->addline('Free TTC', 0, self::QTY, self::VAT, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', self::PU_TTC);
+
+		$source = new Facture($db);
+		$source->fetch($id);
+		if (method_exists($source, 'fetch_lines')) {
+			$source->fetch_lines();
+		}
+
+		// Credit note = invoice with all amounts inverted (invertdetail = 1).
+		$creditId = $source->createFromCurrent($user, 1);
+		$this->assertGreaterThan(0, $creditId, 'createFromCurrent invertdetail');
+
+		$credit = new Facture($db);
+		$credit->fetch($creditId);
+		if (method_exists($credit, 'fetch_lines')) {
+			$credit->fetch_lines();
+		}
+		$this->assertBothPricedLinesInverted($credit, 'Invoice to credit note');
+		print __METHOD__." invoice=".$id." creditnote=".$creditId."\n";
 	}
 }

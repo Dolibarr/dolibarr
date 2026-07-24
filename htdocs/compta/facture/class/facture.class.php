@@ -1249,6 +1249,7 @@ class Facture extends CommonInvoice
 			$facture->lines[$i]->fk_prev_id = $this->lines[$i]->rowid;
 			if ($invertdetail) {
 				$facture->lines[$i]->subprice  = -$facture->lines[$i]->subprice;
+				$facture->lines[$i]->subprice_ttc = -$facture->lines[$i]->subprice_ttc;	// Keep the TTC entry mode with the inverted sign so the credit note has no rounding drift.
 				$facture->lines[$i]->total_ht  = -$facture->lines[$i]->total_ht;
 				$facture->lines[$i]->total_tva = -$facture->lines[$i]->total_tva;
 				$facture->lines[$i]->total_localtax1 = -$facture->lines[$i]->total_localtax1;
@@ -1464,6 +1465,7 @@ class Facture extends CommonInvoice
 			$line->label			= $src_line->label;
 			$line->desc				= $src_line->desc;
 			$line->subprice			= $src_line->subprice;
+			$line->subprice_ttc		= $src_line->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->total_ht			= $src_line->total_ht;
 			$line->total_tva		= $src_line->total_tva;
 			$line->total_localtax1	= $src_line->total_localtax1;
@@ -1606,6 +1608,7 @@ class Facture extends CommonInvoice
 			$line->label			= $object->lines[$i]->label;
 			$line->desc				= $object->lines[$i]->desc;
 			$line->subprice			= $object->lines[$i]->subprice;
+			$line->subprice_ttc		= $object->lines[$i]->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->total_ht			= $object->lines[$i]->total_ht;
 			$line->total_tva		= $object->lines[$i]->total_tva;
 			$line->total_localtax1	= $object->lines[$i]->total_localtax1;

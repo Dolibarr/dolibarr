@@ -1428,6 +1428,7 @@ class Commande extends CommonOrder
 			$line->desc              = $object->lines[$i]->desc;
 			$line->price             = $object->lines[$i]->price;
 			$line->subprice          = $object->lines[$i]->subprice;
+			$line->subprice_ttc      = $object->lines[$i]->subprice_ttc;	// Preserve the TTC entry mode so create() keeps the typed value (no rounding drift).
 			$line->vat_src_code      = $object->lines[$i]->vat_src_code;
 			$line->tva_tx            = $object->lines[$i]->tva_tx;
 			$line->localtax1_tx      = $object->lines[$i]->localtax1_tx;

@@ -1532,6 +1532,7 @@ if (empty($reshook)) {
 							$line->fk_parent_line = $fk_parent_line;
 
 							$line->subprice = -$line->subprice; // invert price for object
+							$line->subprice_ttc = -$line->subprice_ttc; // keep the TTC entry mode with the inverted sign (no rounding drift)
 							// $line->pa_ht = $line->pa_ht; // we chose to have buy/cost price always positive, so no revert of sign here
 							$line->total_ht = -$line->total_ht;
 							$line->total_tva = -$line->total_tva;
@@ -2099,6 +2100,8 @@ if (empty($reshook)) {
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
+										// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+										$line_price_base_type = (isset($lines[$i]->subprice_ttc) && (float) $lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
 										$result = $object->addline(
 											$desc,
 											$lines[$i]->subprice,
@@ -2113,8 +2116,8 @@ if (empty($reshook)) {
 											0,
 											(int) $lines[$i]->info_bits,
 											isset($lines[$i]->fk_remise_except) ? $lines[$i]->fk_remise_except : null,
-											'HT',
-											0,
+											$line_price_base_type,
+											(float) $lines[$i]->subprice_ttc,
 											$product_type,
 											$lines[$i]->rang,
 											$lines[$i]->special_code,

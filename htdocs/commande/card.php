@@ -495,6 +495,8 @@ if (empty($reshook)) {
 									$tva_tx .= ' (' . $lines[$i]->vat_src_code . ')';
 								}
 
+								// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+								$line_price_base_type = (isset($lines[$i]->subprice_ttc) && (float) $lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
 								$result = $object->addline(
 									$desc,
 									$lines[$i]->subprice,
@@ -506,8 +508,8 @@ if (empty($reshook)) {
 									$lines[$i]->remise_percent,
 									$lines[$i]->info_bits,
 									$lines[$i]->fk_remise_except,
-									'HT',
-									0,
+									$line_price_base_type,
+									(float) $lines[$i]->subprice_ttc,
 									$date_start,
 									$date_end,
 									$product_type,
