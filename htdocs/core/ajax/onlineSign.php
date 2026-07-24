@@ -2,6 +2,7 @@
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Lenin Rivas					<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -473,6 +474,202 @@ if ($action == "importSignature") {
 				}
 				$user = new User($db);
 				$object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'CONTRACT_MODIFY');
+			}
+		} elseif ($mode == 'order') {
+			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
+			$object = new Commande($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = !empty($conf->commande->multidir_output[$object->entity ?? $conf->entity]) ? $conf->commande->multidir_output[$object->entity ?? $conf->entity] : $conf->commande->dir_output;
+			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/" . $date . "_signature.png";
+			if (!is_dir($upload_dir . "signatures/")) {
+				if (!dol_mkdir($upload_dir . "signatures/")) {
+					$response = "Error mkdir. Failed to create dir " . $upload_dir . "signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir . $filename, $data);
+				if ($return === false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				} else {
+					dolChmod($upload_dir.$filename);
+				}
+			}
+
+			if (!$error) {
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('order');    // url to download the $object->last_main_doc
+
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+					$ref_pdf = preg_replace('/_signed-(\d+)/', '', $ref_pdf);
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
+
+					if (dol_is_file($sourcefile)) {
+						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
+						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+
+						if (empty($reshook)) {
+							// We build the new PDF
+							$pdf = pdf_getInstance();
+							if (class_exists('TCPDF')) {
+								$pdf->setPrintHeader(false);
+								$pdf->setPrintFooter(false);
+							}
+							$pdf->SetFont(pdf_getPDFFont($langs));
+
+							if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+								$pdf->SetCompression(false);
+							}
+
+							//$pdf->Open();
+							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+
+							$param = array();
+							$param['online_sign_name'] = $online_sign_name;
+							$param['pathtoimage'] = $upload_dir . $filename;
+
+							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
+							for ($i = 1; $i < ($pagecount + 1); $i++) {
+								try {
+									$tppl = $pdf->importPage($i);
+									$s = $pdf->getTemplatesize($tppl);
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->useTemplate($tppl);
+
+									if (getDolGlobalString("ORDER_SIGNATURE_ON_ALL_PAGES")) {
+										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+										// TODO Get position of box from PDF template
+
+										if (getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART")) {
+											$param['xforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART");
+										} else {
+											$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+										}
+										if (getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART")) {
+											$param['yforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART");
+										} else {
+											$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+										}
+										if (getDolGlobalString("ORDER_SIGNATURE_WFORIMG")) {
+											$param['wforimg'] = getDolGlobalString("ORDER_SIGNATURE_WFORIMG");
+										} else {
+											$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+										}
+
+										dolPrintSignatureImage($pdf, $langs, $param);
+									}
+								} catch (Exception $e) {
+									dol_syslog("Error when manipulating some PDF by onlineSign: " . $e->getMessage(), LOG_ERR);
+									$response = $e->getMessage();
+									$error++;
+								}
+							}
+
+							if (!getDolGlobalString("ORDER_SIGNATURE_ON_ALL_PAGES")) {
+								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+								// TODO Get position of box from PDF template
+
+								if (getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART")) {
+									$param['xforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_XFORIMGSTART");
+								} else {
+									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+								}
+								if (getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART")) {
+									$param['yforimgstart'] = getDolGlobalString("ORDER_SIGNATURE_YFORIMGSTART");
+								} else {
+									$param['yforimgstart'] = (empty($s['h']) ? 240 : $s['h'] - 60);
+								}
+								if (getDolGlobalString("ORDER_SIGNATURE_WFORIMG")) {
+									$param['wforimg'] = getDolGlobalString("ORDER_SIGNATURE_WFORIMG");
+								} else {
+									$param['wforimg'] = $s['w'] - 20 - $param['xforimgstart'];
+								}
+
+								dolPrintSignatureImage($pdf, $langs, $param);
+							}
+
+							//$pdf->Close();
+							$pdf->Output($newpdffilename, "F");
+
+							// Index the new file and update the last_main_doc property of object.
+							$object->indexFile($newpdffilename, 1);
+						}
+					}
+					if (!$error) {
+						$response = "success";
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+				
+				if (!$error) {
+					$db->begin();
+
+					$online_sign_ip = getUserRemoteIP();
+
+					$sql = "UPDATE " . MAIN_DB_PREFIX . "commande";
+					$sql .= " SET fk_statut = " . ((int) $object::STATUS_VALIDATED) . ", note_private = '" . $db->escape($object->note_private) . "',";
+					$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
+					$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";
+					if ($online_sign_name) {
+						$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
+					}
+					$sql .= " WHERE rowid = " . ((int) $object->id);
+
+					dol_syslog(__FILE__, LOG_DEBUG);
+					$resql = $db->query($sql);
+					if (!$resql) {
+						$error++;
+					} else {
+						$num = $db->affected_rows($resql);
+					}
+
+					if (!$error) {
+						if (method_exists($object, 'call_trigger')) {
+							$user = new User($db);
+							$user->fetch($object->user_author_id);
+							$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+							$result = $object->call_trigger('ORDER_CLOSE_SIGNED', $user);
+							if ($result < 0) {
+								$error++;
+								$response = "error in trigger " . $object->error;
+							} else {
+								$response = "success";
+							}
+						} else {
+							$response = "success";
+						}
+					} else {
+						$error++;
+						$response = "error sql";
+					}
+
+					if (!$error) {
+						$db->commit();
+						$response = "success";
+						setEventMessages("OrderSigned", null, 'warnings');
+					} else {
+						$db->rollback();
+					}
+				}
 			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
