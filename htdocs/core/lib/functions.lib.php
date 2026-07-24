@@ -460,10 +460,9 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * This mapping defines the conversion to the current internal
  * names from the alternative allowed names (including effectively deprecated
- * and future new names (not yet used as internal names).
+ * and future new names not yet used as internal names).
  *
  * This allows to map any temporary or future name to the effective internal name.
- *
  * The value is typically the name of module's root directory.
  */
 define(
@@ -1785,9 +1784,9 @@ function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 }
 
 /**
- *	Get properties for an object - including magic properties when requested
+ *	Get value of properties for an object - including magic properties when requested
  *
- *	Only returns properties that exist
+ *	By default, returns all public properties. If a list of properties is provided, only returns the ones that exist.
  *
  *	@param	object		$obj		Object to get properties from
  *	@param	string[]	$properties	Optional list of properties to get.
@@ -14816,11 +14815,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// TODO replace $TCompiledAttr generation by commonHtmlAttributeBuilder given below
+	// TODO replace this $TCompiledAttr generation block by commonHtmlAttributeBuilder like line below
+	// $TCompiledAttr = commonHtmlAttributeBuilder($attr, $params['use_unsecured_unescapedattr'] ?? []);
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
-			// Not recommended
+			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
 		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
@@ -14830,8 +14830,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$TCompiledAttr[] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
-	// TODO replace $TCompiledAttr generation by uncomment line below and remove old code
-	//  $TCompiledAttr = commonHtmlAttributeBuilder($attr,$params['use_unsecured_unescapedattr'] ?? []);
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
@@ -14869,14 +14867,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 /**
  * Builds an array of safe and properly escaped HTML attributes from a key-value pair list.
  *
- * This function ensures that HTML attributes are correctly encoded for safe output,
- * while allowing certain attributes to remain unescaped if explicitly specified.
- * Special handling is applied for attributes such as `href`, which are processed
- * using `dolPrintHTMLForAttributeUrl()`. All other attributes are escaped using
- * `dolPrintHTMLForAttribute()`.
- *
- * Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
- * fully trust the input data, as it may lead to XSS vulnerabilities.
+ * This function ensures that HTML attributes are correctly encoded for safe output.
+ * Special handling is applied for attributes such as `href`, which are processed using `dolPrintHTMLForAttributeUrl()`.
+ * All other attributes are escaped using `dolPrintHTMLForAttribute()`.
  *
  * Example:
  * ```php
@@ -14895,8 +14888,8 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
  * // ]
  * ```
  *
- * @param array<string, string|int|float|null|bool> $attr          Associative array of attribute names and their values.
- * @param string[]                            $unescapedAttr  Optional list of attribute names that should **not** be escaped.
+ * @param array<string, string|int|float|null|bool> $attr          	Associative array of attribute names and their values.
+ * @param string[]                            		$unescapedAttr  Optional list of attribute names that should **not** be escaped.
  *
  * @return array<string, string> An array where each key corresponds to the attribute name
  *                               and each value is a full `key="escaped_value"` string ready for HTML output.
@@ -17469,6 +17462,8 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
  * @param array<string, T> $array1  The base array (default parameters).
  * @param array<string, T> $array2  The array with values to override or extend the base array.
  * @return array<string, T>			The merged array with recursive replacement.
+ *
+ * TODO Move it out of functions.lib.php
  */
 function array_merge_recursive_distinct(array $array1, array $array2): array
 {
