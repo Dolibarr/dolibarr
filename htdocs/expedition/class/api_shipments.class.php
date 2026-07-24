@@ -268,32 +268,33 @@ class Shipments extends DolibarrApi
 		return $this->shipment->id;
 	}
 
-	//  * Get lines of an shipment
-	//  *
-	//  * @param int   $id             Id of shipment
-	//  *
-	//  * @url	GET {id}/lines
-	//  *
-	//  * @return int
-	//  */
+	/**
+	 * Get lines of a shipment
+	 *
+	 * @param int   $id             Id of shipment
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 */
 	public function getLines($id)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$result = $this->shipment->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Shipment not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expedition', $this->shipment->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->shipment->getLinesArray();
 		$result = array();
 		foreach ($this->shipment->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
