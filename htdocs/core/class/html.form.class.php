@@ -6388,20 +6388,17 @@ class Form
 
 		if (!getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 			// Add html code to add the edit button and go back
-			$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+			$jsonclose = 'doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'()';
 			$urltoopen = '/categories/categorie_list.php?type='.urlencode($categtype).'&nosearch=1';
 
 			$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
 			$out .= $s;
 			// Add js code to add the edit button and go back
 			$out .= '<!-- Add js code to open the popup for category/edit/add -->'."\n";
-			$out .= '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
-				console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+			$out .= '<script>function doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'() {
+				console.log("doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).' has been called, we refresh the combo content + refresh select2...");
 
 				// Call an ajax to reload values and update the select
-				// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
-
-				// Refresh select2 to take account of new values (enough for small change)
 
 		        $.ajax({
 		            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
@@ -6412,7 +6409,7 @@ class Form
 		            type: \'GET\',
 		            dataType: \'json\',
 		            success: function (data) {
-		                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+		                var $select = $(\'#'.dol_sanitizeKeyCode($htmlname).'\');
 						var selectedValues = $select.val(); // This is an array of selected values
 						console.log(selectedValues);
 		                $select.empty();
@@ -6426,11 +6423,13 @@ class Form
 		            }
 		        });
 
-				$("#'.dol_escape_js($htmlname).'").trigger("change");
+				// Refresh select2 to take account of new values (enough for small change)
+				$("#'.dol_sanitizeKeyCode($htmlname).'").trigger("change");
+
 				// Alternative if change in select is complex
 				/*
-				$("#'.dol_escape_js($htmlname).'").select2("destroy");
-				$("#'.dol_escape_js($htmlname).'").select2();
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2("destroy");
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2();
 				*/
 			}</script>';
 		}
