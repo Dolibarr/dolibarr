@@ -203,7 +203,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 		}
 
 		if (preg_match("/^contact_/", $key)) {
-			$array_query[$key] = GETPOST($key);
+			$array_query[$key] = GETPOSTISARRAY($key) ? GETPOST($key, 'array:int') : GETPOST($key);
 
 			$specials_date_key = array(
 					'contact_update_st_dt',
@@ -232,7 +232,7 @@ if ($action == 'add' && $permissiontoadd) {		// Add recipients
 		}
 
 		if (preg_match("/^type_of_target/", $key)) {
-			$array_query[$key] = GETPOST($key);
+			$array_query[$key] = GETPOSTINT($key);
 		}
 	}
 
