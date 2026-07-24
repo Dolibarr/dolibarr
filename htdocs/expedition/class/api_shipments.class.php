@@ -276,6 +276,8 @@ class Shipments extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return ExpeditionLigne[]
+	 * @phpstan-return ExpeditionLigne[]
 	 */
 	public function getLines($id)
 	{
