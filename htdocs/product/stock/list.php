@@ -340,7 +340,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
+	$sql .= "t.".$db->sanitize($key).", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
