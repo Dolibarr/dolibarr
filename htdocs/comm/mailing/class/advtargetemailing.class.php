@@ -714,8 +714,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
