@@ -15652,7 +15652,8 @@ function getElementProperties($elementType)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion of classes is automatic
+ * Inclusion of classes is automatic.
+ * This does not include permission check that must be done separately with checkUserAccessToObject()
  *
  * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
  * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
