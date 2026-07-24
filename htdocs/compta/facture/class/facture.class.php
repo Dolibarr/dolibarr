@@ -899,9 +899,11 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_remise_except = $discountId;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = (isset($newinvoiceline->subprice_ttc) && (float) $newinvoiceline->subprice_ttc != 0) ? 'TTC' : 'HT';
 						$result = $this->addline(
 							$newinvoiceline->desc,
-							$newinvoiceline->subprice,
+							(float) $newinvoiceline->subprice,
 							$newinvoiceline->qty,
 							$vatrate,
 							$newinvoiceline->localtax1_tx,
@@ -913,8 +915,8 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_code_ventilation,
 							$newinvoiceline->info_bits,
 							$newinvoiceline->fk_remise_except,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $newinvoiceline->subprice_ttc,
 							$newinvoiceline->product_type,
 							$newinvoiceline->rang,
 							$newinvoiceline->special_code,

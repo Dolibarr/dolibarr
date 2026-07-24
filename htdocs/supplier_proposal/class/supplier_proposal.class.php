@@ -1097,17 +1097,19 @@ class SupplierProposal extends CommonObject
 							$fk_parent_line = 0;
 						}
 
+						// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+						$line_price_base_type = (isset($this->lines[$i]->subprice_ttc) && (float) $this->lines[$i]->subprice_ttc != 0) ? 'TTC' : 'HT';
 						$result = $this->addline(
 							$this->lines[$i]->desc,
-							$this->lines[$i]->subprice,
+							(float) $this->lines[$i]->subprice,
 							$this->lines[$i]->qty,
 							$this->lines[$i]->tva_tx,
 							$this->lines[$i]->localtax1_tx,
 							$this->lines[$i]->localtax2_tx,
 							$this->lines[$i]->fk_product,
 							$this->lines[$i]->remise_percent,
-							'HT',
-							0,
+							$line_price_base_type,
+							(float) $this->lines[$i]->subprice_ttc,
 							0,
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->rang,

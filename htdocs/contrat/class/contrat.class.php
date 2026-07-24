@@ -1566,6 +1566,8 @@ class Contrat extends CommonObject
 			$total_ttc = $tabprice[2];
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
+			$pu_ht  = $tabprice[3];
+			$pu_ttc = $tabprice[5];
 
 			if (count($localtaxes_type) > 0) {
 				$localtax1_type = $localtaxes_type[0];
@@ -1715,7 +1717,6 @@ class Contrat extends CommonObject
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
-		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1750,6 +1751,7 @@ class Contrat extends CommonObject
 		$total_ttc = $tabprice[2];
 		$total_localtax1 = $tabprice[9];
 		$total_localtax2 = $tabprice[10];
+		$pu_ht  = $tabprice[3];
 		$pu_ttc = $tabprice[5];
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
@@ -1770,7 +1772,7 @@ class Contrat extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET description = '".$this->db->escape($desc)."'";
-		$sql .= ",subprice = ".((float) price2num($subprice));
+		$sql .= ",subprice = ".((float) price2num($pu_ht));
 		// Persist the original entry mode of the line so a no-op edit can preserve it later.
 		$sql .= ",subprice_ttc = ".($price_base_type === 'TTC' ? (float) price2num($pu_ttc) : 0);
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
@@ -2683,7 +2685,11 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			foreach ($this->lines as $line) {
-				$result = $clonedObj->addline($line->description, $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, 'HT', 0, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
+				// Preserve the original entry mode of the line. Contrat::addline() stores subprice from the
+				// $pu_ht argument as-is (like the card, which pre-computes it), so we pass the stored HT and
+				// flag TTC + subprice_ttc so the total is computed from the typed value (no rounding drift).
+				$line_price_base_type = (isset($line->subprice_ttc) && (float) $line->subprice_ttc != 0) ? 'TTC' : 'HT';
+				$result = $clonedObj->addline($line->description, (float) $line->subprice, $line->qty, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->fk_product, $line->remise_percent, $line->date_start, $line->date_cloture, $line_price_base_type, (float) $line->subprice_ttc, $line->info_bits, $line->fk_fournprice, $line->pa_ht, $line->array_options, $line->fk_unit, $line->rang);
 				if ($result < 0) {
 					$error++;
 					$this->setErrorsFromObject($clonedObj);

@@ -1128,9 +1128,11 @@ class Commande extends CommonOrder
 						$line->ref_ext = '';
 					}
 
+					// Preserve the original entry mode of the line so the total is computed from the typed value (no rounding drift).
+					$line_price_base_type = (isset($line->subprice_ttc) && (float) $line->subprice_ttc != 0) ? 'TTC' : 'HT';
 					$result = $this->addline(
 						$line->desc,
-						$line->subprice,
+						(float) $line->subprice,
 						$line->qty,
 						$vatrate,
 						$line->localtax1_tx,
@@ -1139,8 +1141,8 @@ class Commande extends CommonOrder
 						$line->remise_percent,
 						$line->info_bits,
 						$line->fk_remise_except,
-						'HT',
-						0,
+						$line_price_base_type,
+						(float) $line->subprice_ttc,
 						$line->date_start,
 						$line->date_end,
 						$line->product_type,
