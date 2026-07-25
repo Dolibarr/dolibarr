@@ -90,15 +90,15 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 */
 	private const SAFE_METHODS = [
 		// CommonObject
-		'quote',   // Save, based on fields definition
+		'quote',   // Safe, based on fields definition
 		// DoliDB methods, ...
 		'escape',    // Safe, goal is to escape
-		'sanitize',  // Safe, goal is to cleanup
-		'prefix',  // Not fully safe - would be better to define prefix($tablebasename) and protect
-		'plimit',  // Safe, limits are casted to int
 		'idate',  // Safe uses dol_print_date
 		'jdate',  // Safe uses dol_mktime
 		'order',  // Sanitizes arguments
+		'plimit',  // Safe, limits are casted to int
+		'prefix',  // Not fully safe - would be better to define prefix($tablebasename) and protect
+		'sanitize',  // Safe, goal is to cleanup
 		// 'order',  // Not safe - fields are not checked
 		'regexpsql', // Partially safe - $subject is not escaped if $sqlstring is 0
 		'encrypt',  // Safe, results in string
@@ -110,32 +110,55 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 		'getMemosQuery',  // Safe, variables protected in function
 		'getTemplateMemosQuery',  // Safe, variables protected in function
 		// Functions
-		'sanititzekey', // Used with array_map
-		'forgeSQLFromUniversalSearchCriteria', // Returns sql
-		'addMailingEventTypeSQL', // Returns sql
-		'transformToSQL', // Returns sql (advtargetemailing)
-		'count', // Returns int
-		'intval', // Returns int
-		'floatval', // Returns float
-		'strlen', // Returns int
-		'strpos', // Returns int
-		'dol_strlen', // Returns int
-		'dol_sanitizeFileName', // Supposed ok for sql (?)
-		'date_format', // Returns formatted string
-		'dol_print_date', // Returns formatted string
-		'price2num', // Returns formatted number
-		'GETPOSTINT', // Returns int
 		'GETPOSTFLOAT', //Returns float
-		'getDolUserInt', //Returns float
-		'getEntity', // Returns entity
+		'GETPOSTINT', // Returns int
+		'addMailingEventTypeSQL', // Returns sql
+		'count', // Returns int
+		'date_format', // Returns formatted string
+		'dolSqlDateFilter', // Partially safe datefield not checked/escaped
 		'dol_escape_json',
 		'dol_hash', // Returns string
-		'dolSqlDateFilter', // Partially safe datefield not checked/escaped
-		'natural_search',
+		'dol_print_date', // Returns formatted string
+		'dol_sanitizeFileName', // Supposed ok for sql (?)
+		'dol_strlen', // Returns int
+		'floatval', // Returns float
+		'forgeSQLFromUniversalSearchCriteria', // Returns sql
+		'getDolUserInt', //Returns float
+		'getEntity', // Returns entity
 		'getSqlCalEvents', // Returns sql
+		'intval', // Returns int
+		'natural_search',
+		'price2num', // Returns formatted number
+		'sanititzekey', // Used with array_map
 		'setEntity', // Returns int
+		'strlen', // Returns int
+		'strpos', // Returns int
+		'transformToSQL', // Returns sql (advtargetemailing)
 		// 'get_exdir',  // Not safe if directory could look like SQL (forged, e.g. sql as invoice ref)
 		'getSQLFactLines', // intracommreport.class.php
+	];
+
+	/**
+	 * Regex pattern for safe SQL string characters that can appear after an unclosed quote.
+	 * These characters don't need escaping and can appear in SQL string literals.
+	 */
+	private const SAFE_STRING_CHARS_REGEX = '/^[\w\d\/\-\s%_=<>!,\(\)]+$/';
+
+	/**
+	 * List of methods that require their output to be wrapped in quotes in SQL strings.
+	 * These methods escape/clean values but don't add the surrounding quotes.
+	 *
+	 * @var string[]
+	 */
+	private const METHODS_REQUIRING_QUOTES = [
+		'escape',
+		'escapeforlike',
+		'idate',
+		'date_format',
+		'dol_escape_json',
+		'dol_hash',
+		'dol_print_date',
+		'dol_sanitizeFileName',
 	];
 
 	/**
@@ -205,6 +228,20 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			"[DEBUG {$shortFile}:{$line}] %s",
 			[$message]
 		);
+	}
+
+	/**
+	 * Check if a quote at the given position is followed by safe SQL characters.
+	 * Safe characters don't need escaping and can appear in SQL string literals.
+	 *
+	 * @param string $str The string to check
+	 * @param int $quotePos The position of the quote in the string
+	 * @return bool True if the quote is followed by safe characters
+	 */
+	private function quoteFollowedBySafeChars(string $str, int $quotePos): bool
+	{
+		$afterQuote = substr($str, $quotePos + 1);
+		return $afterQuote !== '' && preg_match(self::SAFE_STRING_CHARS_REGEX, $afterQuote);
 	}
 
 	/**
@@ -426,9 +463,10 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 	 *
 	 * @param mixed $expr The expression to check
 	 * @param Node $contextNode The context node for error reporting
+	 * @param ?Node $parentNode The parent node in the AST (for context checking)
 	 * @return void
 	 */
-	private function checkExpressionForUnsafeVariables($expr, Node $contextNode): void
+	private function checkExpressionForUnsafeVariables($expr, Node $contextNode, ?Node $parentNode = null): void
 	{
 		if (!($expr instanceof Node)) {
 			return;
@@ -454,11 +492,18 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 			case \ast\AST_BINARY_OP:
 				$left = $expr->children['left'] ?? null;
 				$right = $expr->children['right'] ?? null;
+				$flags = $expr->flags ?? null;
+
+				// If this is a string concatenation (.), check for unquoted escape methods
+				if ($flags === \ast\flags\BINARY_CONCAT) {
+					$this->checkConcatenationForUnquotedEscape($expr, $contextNode);
+				}
+
 				if ($left instanceof Node) {
-					$this->checkExpressionForUnsafeVariables($left, $contextNode);
+					$this->checkExpressionForUnsafeVariables($left, $contextNode, $expr);
 				}
 				if ($right instanceof Node) {
-					$this->checkExpressionForUnsafeVariables($right, $contextNode);
+					$this->checkExpressionForUnsafeVariables($right, $contextNode, $expr);
 				}
 				break;
 
@@ -467,10 +512,10 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				$falseExpr = $expr->children['false'] ?? null;
 				$this->debug("checkExpr: CONDITIONAL node");
 				if ($trueExpr instanceof Node) {
-					$this->checkExpressionForUnsafeVariables($trueExpr, $contextNode);
+					$this->checkExpressionForUnsafeVariables($trueExpr, $contextNode, $expr);
 				}
 				if ($falseExpr instanceof Node) {
-					$this->checkExpressionForUnsafeVariables($falseExpr, $contextNode);
+					$this->checkExpressionForUnsafeVariables($falseExpr, $contextNode, $expr);
 				}
 				// Intentionally skip condition - it's not part of SQL
 				break;
@@ -480,7 +525,13 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				$method = $expr->children['expr'] ?? null;
 				$methodKind = $method instanceof Node ? $method->kind : 'null';
 				$methodName = $method->children['name'] ?? null;
+				$objNode = ($expr->kind === \ast\AST_METHOD_CALL) ? ($expr->children['expr'] ?? null) : null;
 				$this->debug("checkExpr: CALL/METHOD_CALL node, methodKind={$methodKind}, methodName=" . var_export($methodName, true));
+
+				// Note: We check for unquoted escape/sanitize in the BINARY_OP case (concatenation)
+				// This handles cases like: "..." . $db->escape($x) . "..."
+				// For non-concatenation cases, we rely on the string context check in BINARY_OP
+
 				if (!$this->isSafeMethodCall($expr)) {
 					$argsNode = $expr->children['args'] ?? null;
 					if ($argsNode instanceof Node) {
@@ -499,14 +550,14 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 								} elseif ($isArgsOk && $idx == 2) {
 									return;
 								} else {
-									$this->checkExpressionForUnsafeVariables($arg, $contextNode);
+									$this->checkExpressionForUnsafeVariables($arg, $contextNode, $expr);
 								}
 								// First argument of this function does not need to be safe
 								continue;
 							}
 							$value = $arg; //$arg->children['value'] ?? $arg;
 							if ($value instanceof Node) {
-								$this->checkExpressionForUnsafeVariables($value, $contextNode);
+								$this->checkExpressionForUnsafeVariables($value, $contextNode, $expr);
 							}
 						}
 					}
@@ -522,7 +573,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				}
 				$inner = $expr->children['expr'] ?? null;
 				if ($inner instanceof Node) {
-					$this->checkExpressionForUnsafeVariables($inner, $contextNode);
+					$this->checkExpressionForUnsafeVariables($inner, $contextNode, $expr);
 				}
 				break;
 
@@ -538,9 +589,917 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 				$this->debug("Other node kind=".$expr->kind);
 				foreach ($expr->children ?? [] as $child) {  // @phpstan-ignore nullCoalesce.property
 					if ($child instanceof Node) {
-						$this->checkExpressionForUnsafeVariables($child, $contextNode);
+						$this->checkExpressionForUnsafeVariables($child, $contextNode, $expr);
 					}
 				}
+		}
+	}
+
+	/**
+	 * Check a concatenation for unquoted escape/sanitize method calls
+	 *
+	 * @param Node $binaryOp The BINARY_OP node with BINARY_CONCAT flag
+	 * @param Node $contextNode The context node for error reporting
+	 * @return void
+	 */
+	private function checkConcatenationForUnquotedEscape(Node $binaryOp, Node $contextNode): void
+	{
+		$left = $binaryOp->children['left'] ?? null;
+		$right = $binaryOp->children['right'] ?? null;
+
+		// Check if either operand is an unquoted escape/sanitize method call
+		if ($left instanceof Node && $this->isMethodCallNeedingQuotes($left)) {
+			$this->checkMethodCallQuotingInOperand($left, $binaryOp, $contextNode, 'left', $right);
+		}
+		if ($right instanceof Node && $this->isMethodCallNeedingQuotes($right)) {
+			$this->checkMethodCallQuotingInOperand($right, $binaryOp, $contextNode, 'right', $left);
+		}
+	}
+
+	/**
+	 * Check if a node is a DoliDB escape/sanitize method call that requires quoting
+	 *
+	 * @param Node $operand The operand node to check
+	 * @return bool True if this is a method call that needs quote checking
+	 */
+	private function isMethodCallNeedingQuotes(Node $operand): bool
+	{
+		if ($operand->kind !== \ast\AST_METHOD_CALL && $operand->kind !== \ast\AST_CALL) {
+			return false;
+		}
+
+		$methodName = null;
+		$objNode = null;
+
+		if ($operand->kind === \ast\AST_METHOD_CALL) {
+			$methodName = $operand->children['method'] ?? null;
+			$objNode = $operand->children['expr'] ?? null;
+		} else {
+			$method = $operand->children['expr'] ?? null;
+			if ($method instanceof Node && $method->kind === \ast\AST_NAME) {
+				$methodName = $method->children['name'] ?? null;
+			}
+		}
+
+		if (!is_string($methodName) || !in_array($methodName, self::METHODS_REQUIRING_QUOTES, true)) {
+			return false;
+		}
+
+		// Check if it's called on a DoliDB instance
+		if ($operand->kind === \ast\AST_METHOD_CALL && $objNode instanceof Node) {
+			return $this->isDoliDB($objNode, ['this', 'db']);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a method call in a concatenation operand is properly quoted
+	 *
+	 * @param Node $operand The operand node to check
+	 * @param Node $binaryOp The parent BINARY_OP node
+	 * @param Node $contextNode The context node for error reporting
+	 * @param string $position Either 'left' or 'right'
+	 * @param mixed $oppositeOperand The opposite operand (for getting quote type)
+	 * @return void
+	 */
+	private function checkMethodCallQuotingInOperand(Node $operand, Node $binaryOp, Node $contextNode, string $position, $oppositeOperand): void
+	{
+		// This method now only checks the quoting context for method calls that need it
+		// The filtering of which methods need quoting is done in checkConcatenationForUnquotedEscape
+
+		// Get the expected quote type from the opposite operand
+		$expectedQuoteType = $this->getQuoteTypeFromOperand($oppositeOperand);
+
+		// Check if the method call is properly quoted
+		if (!$this->isMethodCallInQuotedContext($operand, $binaryOp, $position, $expectedQuoteType, $contextNode)) {
+			$methodDisplay = $this->getNodeVarForMethodCall($operand);
+			// @phpstan-ignore-next-line method.notFound
+			$this->emitPluginIssue(
+				$this->code_base, // @phpstan-ignore property.notFound
+				$this->context, // @phpstan-ignore property.notFound
+				'SqlInjectionUnquotedEscape',
+				"Method call {$methodDisplay} used in SQL without surrounding quotes. Wrap in single or double quotes, e.g., \"'\" . {$methodDisplay} . \"'\".",
+				[]
+			);
+		}
+	}
+
+	/**
+	 * Extract the quote type from an operand (if it contains a quote)
+	 *
+	 * @param mixed $operand The operand to check
+	 * @return ?string The quote type ('\'' or '"') or null if no quote found
+	 */
+	private function getQuoteTypeFromOperand($operand): ?string
+	{
+		if (is_string($operand)) {
+			if (strpos($operand, "'") !== false) {
+				return "'";
+			}
+			if (strpos($operand, '"') !== false) {
+				return '"';
+			}
+			return null;
+		}
+
+		if ($operand instanceof Node && $operand->kind === \ast\AST_BINARY_OP && ($operand->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			// Recursively check nested concatenation
+			$left = $operand->children['left'] ?? null;
+			$right = $operand->children['right'] ?? null;
+
+			// Try left first
+			$leftQuote = $this->getQuoteTypeFromOperand($left);
+			if ($leftQuote !== null) {
+				return $leftQuote;
+			}
+
+			// Then try right
+			return $this->getQuoteTypeFromOperand($right);
+		}
+
+		// Handle ENCAPS_LIST from string interpolation
+		if ($operand instanceof Node && $operand->kind === \ast\AST_ENCAPS_LIST) {
+			foreach ($operand->children as $child) {
+				if (is_string($child)) {
+					if (strpos($child, "'") !== false) {
+						return "'" ;
+					}
+					if (strpos($child, '"') !== false) {
+						return '"';
+					}
+				}
+			}
+			return null;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if a method call is properly quoted based on its position in a concatenation
+	 *
+	 * @param Node $methodCall The method call node
+	 * @param Node $binaryOp The parent BINARY_OP node
+	 * @param string $position The position ('left' or 'right') in the concatenation
+	 * @param ?string $expectedQuoteType The expected quote type from the opposite operand
+	 * @param Node|null $contextNode The context node (ASSIGN_OP or ASSIGN) for checking if we're at the top level
+	 * @return bool True if properly quoted
+	 */
+	private function isMethodCallInQuotedContext(Node $methodCall, Node $binaryOp, string $position, ?string $expectedQuoteType = null, ?Node $contextNode = null): bool
+	{
+		// Get the sibling operand (the one we're not checking)
+		$siblingOperand = ($position === 'left') ? ($binaryOp->children['right'] ?? null) : ($binaryOp->children['left'] ?? null);
+
+		// If expectedQuoteType is not provided, compute it from the sibling
+		if ($expectedQuoteType === null) {
+			$expectedQuoteType = $this->getQuoteTypeFromOperand($siblingOperand);
+		}
+
+		// Helper function to check if the binaryOp is at the top level and should be flagged
+		$checkTopLevel = function () use ($contextNode, $binaryOp, $position, $expectedQuoteType): bool {
+			// If we determined that the method call is preceded by a quote (for right position)
+			// or followed by a quote (for left position), we need to check if it's at the top level
+			// If it is, there's no closing quote after/before the method call
+			if ($contextNode !== null && ($contextNode->kind === \ast\AST_ASSIGN_OP || $contextNode->kind === \ast\AST_ASSIGN)) {
+				$assignExpr = $contextNode->children['expr'] ?? null;
+				if ($assignExpr === $binaryOp) {
+					// This binaryOp IS the direct expression of the assignment
+					// So the method call is at the end/beginning with no closing quote
+					return false;
+				}
+				// The binaryOp is nested, so there might be a closing quote in the outer expression
+				// Assume it's OK if the binaryOp is not the direct expression
+				return true;
+			}
+
+			// No context node, we can't determine
+			// Assume it's properly quoted
+			return true;
+		};
+
+		// In AST, string literals in BINARY_OP are represented as direct string values
+		if (is_string($siblingOperand)) {
+			if ($position === 'left') {
+				// Method call is on the left, check if sibling (right) starts with the expected quote
+				if ($expectedQuoteType !== null) {
+					return strpos($siblingOperand, $expectedQuoteType) === 0;
+				}
+				// Fallback: check for any quote
+				return strpos($siblingOperand, "'") === 0 || strpos($siblingOperand, '"') === 0;
+			} else {
+				// Method call is on the right, check if sibling (left) ends with the expected quote or contains
+				// an unclosed expected quote followed by acceptable characters
+				if ($expectedQuoteType !== null) {
+					$endsWithExpectedQuote = substr($siblingOperand, -1) === $expectedQuoteType;
+
+					// Check if the left operand contains an unclosed quote of the expected type
+					// followed by acceptable characters
+					$containsUnclosedQuote = false;
+					if (!$endsWithExpectedQuote) {
+						$expectedQuotePos = strrpos($siblingOperand, $expectedQuoteType);
+						if ($expectedQuotePos !== false && $this->quoteFollowedBySafeChars($siblingOperand, $expectedQuotePos)) {
+							$containsUnclosedQuote = true;
+						}
+					}
+
+					if (!$endsWithExpectedQuote && !$containsUnclosedQuote) {
+						// Left operand doesn't end with the expected quote and doesn't contain an acceptable unclosed quote
+						return false;
+					}
+
+					// Left operand ends with the expected quote or contains an unclosed expected quote followed by word chars
+					// Now check if this binaryOp is at the top level of the expression
+					return $checkTopLevel();
+				}
+
+				// Fallback: use the old logic for any quote type
+				$hasLastQuote = substr($siblingOperand, -1) === "'" || substr($siblingOperand, -1) === '"';
+
+				// Check if the left operand contains a quote (not necessarily at the end)
+				// that might be an opening quote for a SQL string literal
+				$containsUnclosedQuote = false;
+				if (!$hasLastQuote) {
+					// Check if there's a quote in the sibling that is followed by safe characters
+					// This would indicate the escape call is being appended to a SQL string literal
+					$lastSingleQuotePos = strrpos($siblingOperand, "'");
+					$lastDoubleQuotePos = strrpos($siblingOperand, '"');
+
+					if ($lastSingleQuotePos !== false && ($lastDoubleQuotePos === false || $lastSingleQuotePos > $lastDoubleQuotePos)) {
+						// Last quote is single quote, check what comes after it
+						if ($this->quoteFollowedBySafeChars($siblingOperand, $lastSingleQuotePos)) {
+							$containsUnclosedQuote = true;
+						}
+					} elseif ($lastDoubleQuotePos !== false) {
+						// Last quote is double quote, check what comes after it
+						if ($this->quoteFollowedBySafeChars($siblingOperand, $lastDoubleQuotePos)) {
+							$containsUnclosedQuote = true;
+						}
+					}
+				}
+
+				if (!$hasLastQuote && !$containsUnclosedQuote) {
+					// Left operand doesn't end with a quote and doesn't contain an acceptable unclosed quote
+					return false;
+				}
+
+				// Left operand ends with a quote or contains an unclosed quote followed by word chars
+				// Now check if this binaryOp is at the top level of the expression
+				return $checkTopLevel();
+			}
+		}
+
+		// If the sibling is an ENCAPS_LIST (string with variable interpolation), check if it starts/ends with the expected quote
+		if ($siblingOperand instanceof Node && $siblingOperand->kind === \ast\AST_ENCAPS_LIST) {
+			if ($expectedQuoteType !== null) {
+				if ($position === 'left') {
+					// Method is on left, check if the ENCAPS_LIST starts with the expected quote
+					return $this->encapsListHasFirstQuoteOfType($siblingOperand, $expectedQuoteType);
+				} else {
+					// Method is on right, check if the ENCAPS_LIST ends with the expected quote
+					// or contains an unclosed quote of the expected type followed by acceptable characters
+					if ($this->encapsListHasLastQuoteOfType($siblingOperand, $expectedQuoteType)) {
+						// ENCAPS_LIST ends with the expected quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					// Check if the ENCAPS_LIST contains an unclosed quote of the expected type followed by acceptable characters
+					if ($this->encapsListHasUnclosedQuoteOfType($siblingOperand, $expectedQuoteType)) {
+						// ENCAPS_LIST contains an unclosed quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					// Doesn't end with or contain an unclosed quote of the expected type
+					return false;
+				}
+			} else {
+				// Fallback: check for any quote
+				if ($position === 'left') {
+					return $this->encapsListHasFirstQuote($siblingOperand);
+				} else {
+					if ($this->encapsListHasLastQuote($siblingOperand)) {
+						// ENCAPS_LIST ends with a quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					if ($this->encapsListHasUnclosedQuote($siblingOperand)) {
+						// ENCAPS_LIST contains an unclosed quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					// Doesn't end with or contain an unclosed quote
+					return false;
+				}
+			}
+		}
+
+		// If the sibling is another concatenation, check if it starts/ends with the expected quote
+		// or contains an unclosed expected quote followed by acceptable characters
+		if ($siblingOperand instanceof Node && $siblingOperand->kind === \ast\AST_BINARY_OP && ($siblingOperand->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if ($position === 'left') {
+				// Method is on left, need to find the leftmost string in the sibling concat
+				if ($expectedQuoteType !== null) {
+					return $this->hasFirstQuoteOfType($siblingOperand, $expectedQuoteType);
+				}
+				return $this->hasFirstQuote($siblingOperand);
+			} else {
+				// Method is on right, need to find the rightmost string in the sibling concat
+				// Also check if the concatenation contains a quote followed by word characters
+				if ($expectedQuoteType !== null) {
+					if ($this->hasLastQuoteOfType($siblingOperand, $expectedQuoteType)) {
+						// Concatenation ends with the expected quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					// Check if the concatenation contains an unclosed quote of the expected type followed by word chars
+					if ($this->concatHasUnclosedQuoteOfType($siblingOperand, $expectedQuoteType)) {
+						// Concatenation contains an unclosed quote, now check if this is at the top level
+						return $checkTopLevel();
+					}
+					// Doesn't end with or contain an unclosed quote of the expected type
+					return false;
+				}
+				if ($this->hasLastQuote($siblingOperand)) {
+					// Concatenation ends with a quote, now check if this is at the top level
+					return $checkTopLevel();
+				}
+				// Check if the concatenation contains an unclosed quote followed by word chars
+				if ($this->concatHasUnclosedQuote($siblingOperand)) {
+					// Concatenation contains an unclosed quote, now check if this is at the top level
+					return $checkTopLevel();
+				}
+				// Doesn't end with or contain an unclosed quote
+				return false;
+			}
+		}
+
+		// If we can't determine, assume it's not properly quoted
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation has a first quote of any type (recursively through nested concatenations)
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @return bool True if the concatenation has a first quote
+	 */
+	private function hasFirstQuote(Node $node): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$left = $node->children['left'] ?? null;
+		if ($left instanceof Node && $left->kind === \ast\AST_BINARY_OP && ($left->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			return $this->hasFirstQuote($left);
+		}
+
+		if (is_string($left)) {
+			return strpos($left, "'") === 0 || strpos($left, '"') === 0;
+		}
+
+		// Check if left is an ENCAPS_LIST
+		if ($left instanceof Node && $left->kind === \ast\AST_ENCAPS_LIST) {
+			return $this->encapsListHasFirstQuote($left);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation has a last quote of any type (recursively through nested concatenations)
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @return bool True if the concatenation has a last quote
+	 */
+	private function hasLastQuote(Node $node): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$right = $node->children['right'] ?? null;
+		if ($right instanceof Node && $right->kind === \ast\AST_BINARY_OP && ($right->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			return $this->hasLastQuote($right);
+		}
+
+		if (is_string($right)) {
+			return substr($right, -1) === "'" || substr($right, -1) === '"';
+		}
+
+		// Check if right is an ENCAPS_LIST
+		if ($right instanceof Node && $right->kind === \ast\AST_ENCAPS_LIST) {
+			return $this->encapsListHasLastQuote($right);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation contains an unclosed quote followed by word characters, numbers, slashes, dashes, or other safe SQL characters
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @return bool True if the concatenation contains an unclosed quote followed by acceptable characters
+	 */
+	private function concatHasUnclosedQuote(Node $node): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$left = $node->children['left'] ?? null;
+		$right = $node->children['right'] ?? null;
+
+		// Check right operand first (it's the rightmost)
+		if (is_string($right)) {
+			$lastSingleQuotePos = strrpos($right, "'");
+			$lastDoubleQuotePos = strrpos($right, '"');
+
+			if ($lastSingleQuotePos !== false && ($lastDoubleQuotePos === false || $lastSingleQuotePos > $lastDoubleQuotePos)) {
+				// Last quote is single quote, check what comes after it
+				if ($this->quoteFollowedBySafeChars($right, $lastSingleQuotePos)) {
+					return true;
+				}
+			} elseif ($lastDoubleQuotePos !== false) {
+				// Last quote is double quote, check what comes after it
+				if ($this->quoteFollowedBySafeChars($right, $lastDoubleQuotePos)) {
+					return true;
+				}
+			}
+		} elseif ($right instanceof Node && $right->kind === \ast\AST_ENCAPS_LIST) {
+			// Check if the ENCAPS_LIST contains an unclosed quote
+			if ($this->encapsListHasUnclosedQuote($right)) {
+				return true;
+			}
+		}
+
+		// Check left operand (recursively)
+		if ($left instanceof Node && $left->kind === \ast\AST_BINARY_OP && ($left->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if ($this->concatHasUnclosedQuote($left)) {
+				return true;
+			}
+		} elseif ($left instanceof Node && $left->kind === \ast\AST_ENCAPS_LIST) {
+			// Check if the ENCAPS_LIST contains an unclosed quote
+			if ($this->encapsListHasUnclosedQuote($left)) {
+				return true;
+			}
+		}
+
+		// Check left operand if it's a string
+		if (is_string($left)) {
+			$lastSingleQuotePos = strrpos($left, "'");
+			$lastDoubleQuotePos = strrpos($left, '"');
+
+			if ($lastSingleQuotePos !== false && ($lastDoubleQuotePos === false || $lastSingleQuotePos > $lastDoubleQuotePos)) {
+				// Last quote is single quote, check what comes after it
+				if ($this->quoteFollowedBySafeChars($left, $lastSingleQuotePos)) {
+					return true;
+				}
+			} elseif ($lastDoubleQuotePos !== false) {
+				// Last quote is double quote, check what comes after it
+				if ($this->quoteFollowedBySafeChars($left, $lastDoubleQuotePos)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation has a first quote of the specified type (recursively through nested concatenations)
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the concatenation has a first quote of the specified type
+	 */
+	private function hasFirstQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$left = $node->children['left'] ?? null;
+		if ($left instanceof Node && $left->kind === \ast\AST_BINARY_OP && ($left->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			return $this->hasFirstQuoteOfType($left, $quoteType);
+		}
+
+		if (is_string($left)) {
+			return strpos($left, $quoteType) === 0;
+		}
+
+		// Check if left is an ENCAPS_LIST
+		if ($left instanceof Node && $left->kind === \ast\AST_ENCAPS_LIST) {
+			return $this->encapsListHasFirstQuoteOfType($left, $quoteType);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation has a last quote of the specified type (recursively through nested concatenations)
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the concatenation has a last quote of the specified type
+	 */
+	private function hasLastQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$right = $node->children['right'] ?? null;
+		if ($right instanceof Node && $right->kind === \ast\AST_BINARY_OP && ($right->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			return $this->hasLastQuoteOfType($right, $quoteType);
+		}
+
+		if (is_string($right)) {
+			return substr($right, -1) === $quoteType;
+		}
+
+		// Check if right is an ENCAPS_LIST
+		if ($right instanceof Node && $right->kind === \ast\AST_ENCAPS_LIST) {
+			return $this->encapsListHasLastQuoteOfType($right, $quoteType);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if a concatenation contains an unclosed quote of a specific type followed by word characters, numbers, slashes, dashes, or other safe SQL characters
+	 *
+	 * @param Node $node The BINARY_OP concatenation node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the concatenation contains an unclosed quote of the specified type followed by acceptable characters
+	 */
+	private function concatHasUnclosedQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if (!($node instanceof Node) || $node->kind !== \ast\AST_BINARY_OP || ($node->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+			return false;
+		}
+
+		$left = $node->children['left'] ?? null;
+		$right = $node->children['right'] ?? null;
+
+		// Check right operand first (it's the rightmost)
+		if (is_string($right)) {
+			$quotePos = strrpos($right, $quoteType);
+			if ($quotePos !== false && $this->quoteFollowedBySafeChars($right, $quotePos)) {
+				return true;
+			}
+		} elseif ($right instanceof Node && $right->kind === \ast\AST_ENCAPS_LIST) {
+			// Check if the ENCAPS_LIST contains an unclosed quote of the expected type
+			if ($this->encapsListHasUnclosedQuoteOfType($right, $quoteType)) {
+				return true;
+			}
+		}
+
+		// Check left operand (recursively)
+		if ($left instanceof Node && $left->kind === \ast\AST_BINARY_OP && ($left->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			if ($this->concatHasUnclosedQuoteOfType($left, $quoteType)) {
+				return true;
+			}
+		} elseif ($left instanceof Node && $left->kind === \ast\AST_ENCAPS_LIST) {
+			// Check if the ENCAPS_LIST contains an unclosed quote of the expected type
+			if ($this->encapsListHasUnclosedQuoteOfType($left, $quoteType)) {
+				return true;
+			}
+		}
+
+		// Check left operand if it's a string
+		if (is_string($left)) {
+			$quotePos = strrpos($left, $quoteType);
+			if ($quotePos !== false && $this->quoteFollowedBySafeChars($left, $quotePos)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST starts with a specific quote type
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the ENCAPS_LIST starts with the specified quote
+	 */
+	private function encapsListHasFirstQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		// Get the first child
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				// Found a string part, check if it starts with the quote
+				return strpos($child, $quoteType) === 0;
+			}
+			// If it's a variable or other node, skip it and continue
+			// We only care about the first string part
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST ends with a specific quote type
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the ENCAPS_LIST ends with the specified quote
+	 */
+	private function encapsListHasLastQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		// Get the children in order and find the last string part
+		$lastString = null;
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				$lastString = $child;
+			}
+			// If it's a variable or other node, skip it
+		}
+
+		if ($lastString !== null) {
+			return substr($lastString, -1) === $quoteType;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST contains an unclosed quote of a specific type followed by acceptable characters
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @param string $quoteType The specific quote type to check for ('\'' or '"')
+	 * @return bool True if the ENCAPS_LIST contains an unclosed quote of the specified type followed by acceptable characters
+	 */
+	private function encapsListHasUnclosedQuoteOfType(Node $node, string $quoteType): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		// Get the last string that contains the quote type
+		$lastStringWithQuote = null;
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				if (strpos($child, $quoteType) !== false) {
+					$lastStringWithQuote = $child;
+				}
+			}
+		}
+
+		if ($lastStringWithQuote !== null) {
+			// Find the last occurrence of the quote type
+			$quotePos = strrpos($lastStringWithQuote, $quoteType);
+			if ($quotePos !== false && $this->quoteFollowedBySafeChars($lastStringWithQuote, $quotePos)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST starts with any quote
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @return bool True if the ENCAPS_LIST starts with a quote
+	 */
+	private function encapsListHasFirstQuote(Node $node): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				return strpos($child, "'") === 0 || strpos($child, '"') === 0;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST ends with any quote
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @return bool True if the ENCAPS_LIST ends with a quote
+	 */
+	private function encapsListHasLastQuote(Node $node): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		$lastString = null;
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				$lastString = $child;
+			}
+		}
+
+		if ($lastString !== null) {
+			return substr($lastString, -1) === "'" || substr($lastString, -1) === '"';
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if an ENCAPS_LIST contains an unclosed quote of any type followed by acceptable characters
+	 *
+	 * @param Node $node The ENCAPS_LIST node
+	 * @return bool True if the ENCAPS_LIST contains an unclosed quote followed by acceptable characters
+	 */
+	private function encapsListHasUnclosedQuote(Node $node): bool
+	{
+		if ($node->kind !== \ast\AST_ENCAPS_LIST) {
+			return false;
+		}
+
+		// Check for single quotes
+		$lastSingleQuoteString = null;
+		$lastDoubleQuoteString = null;
+		foreach ($node->children as $child) {
+			if (is_string($child)) {
+				if (strpos($child, "'") !== false) {
+					$lastSingleQuoteString = $child;
+				}
+				if (strpos($child, '"') !== false) {
+					$lastDoubleQuoteString = $child;
+				}
+			}
+		}
+		// Check single quote
+		if ($lastSingleQuoteString !== null) {
+			$lastSingleQuotePos = strrpos($lastSingleQuoteString, "'");
+			if ($lastSingleQuotePos !== false && $this->quoteFollowedBySafeChars($lastSingleQuoteString, $lastSingleQuotePos)) {
+				return true;
+			}
+		}
+
+		// Check double quote
+		if ($lastDoubleQuoteString !== null) {
+			$lastDoubleQuotePos = strrpos($lastDoubleQuoteString, '"');
+			if ($lastDoubleQuotePos !== false && $this->quoteFollowedBySafeChars($lastDoubleQuoteString, $lastDoubleQuotePos)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get a string representation of a method or function call for error messages
+	 *
+	 * @param Node $node The method or function call node
+	 * @return string A string representation of the call
+	 */
+	private function getNodeVarForMethodCall(Node $node): string
+	{
+		if ($node->kind === \ast\AST_METHOD_CALL) {
+			$objNode = $node->children['expr'] ?? null;
+			$methodName = $node->children['method'] ?? '?:';
+			$objStr = $this->getNodeVar($objNode) ?? '?';
+			$argsStr = $this->getMethodCallArgs($node);
+			return "{$objStr}->{$methodName}({$argsStr})";
+		} elseif ($node->kind === \ast\AST_CALL) {
+			$method = $node->children['expr'] ?? null;
+			if ($method instanceof Node && $method->kind === \ast\AST_NAME) {
+				$methodName = $method->children['name'] ?? '?:';
+				$argsStr = $this->getMethodCallArgs($node);
+				return $methodName . "({$argsStr})";
+			}
+			return '?()';
+		}
+		return 'unknown()';
+	}
+
+	/**
+	 * Get the arguments of a method or function call as a string
+	 *
+	 * @param Node $node The METHOD_CALL or CALL node
+	 * @return string The arguments string
+	 */
+	private function getMethodCallArgs(Node $node): string
+	{
+		$argsNode = $node->children['args'] ?? null;
+		if ($argsNode === null) {
+			return '';
+		}
+
+		if (!($argsNode instanceof Node)) {
+			return '';
+		}
+
+		// AST_ARG_LIST contains children as an array of nodes
+		if ($argsNode->kind === \ast\AST_ARG_LIST) {
+			$args = [];
+			foreach ($argsNode->children as $child) {
+				if ($child instanceof Node) {
+					$args[] = $this->reconstructArg($child);
+				} else {
+					$args[] = var_export($child, true);
+				}
+			}
+			return implode(', ', $args);
+		}
+
+		// If it's a single argument (not a list), just reconstruct it
+		return $this->reconstructArg($argsNode);
+	}
+
+	/**
+	 * Reconstruct a single argument from AST node
+	 *
+	 * @param Node|mixed $argNode The argument node
+	 * @return string Reconstructed argument string
+	 */
+	private function reconstructArg($argNode): string
+	{
+		if (is_string($argNode) || is_int($argNode) || is_float($argNode) || is_bool($argNode)) {
+			return var_export($argNode, true);
+		}
+
+		if (!($argNode instanceof Node)) {
+			return '';
+		}
+
+		switch ($argNode->kind) {
+			case \ast\AST_VAR:
+				$name = $argNode->children['name'] ?? '?';
+				return '\$' . $name;
+
+			case \ast\AST_PROP:
+				$expr = $argNode->children['expr'] ?? null;
+				$prop = $argNode->children['prop'] ?? '?';
+				return $this->reconstructArg($expr) . '->' . $prop;
+
+			case \ast\AST_DIM:
+				$expr = $argNode->children['expr'] ?? null;
+				$dim = $argNode->children['dim'] ?? null;
+				$exprStr = $this->reconstructArg($expr);
+				if ($dim instanceof Node) {
+					$dimStr = $this->reconstructArg($dim);
+				} else {
+					$dimStr = is_string($dim) ? var_export($dim, true) : (is_int($dim) ? $dim : '?');
+				}
+				return "{$exprStr}[{$dimStr}]";
+
+			case \ast\AST_CONST:
+			case \ast\AST_NAME:
+				$name = $argNode->children['name'] ?? '?';
+				return is_string($name) ? $name : (is_scalar($name) ? (string) $name : '?');
+
+			case \ast\AST_CLASS_CONST:
+				$class = $argNode->children['class'] ?? null;
+				$name = $argNode->children['name'] ?? '?';
+				$classStr = $class instanceof Node ? $this->reconstructArg($class) : (is_string($class) ? $class : '?');
+				$nameStr = is_string($name) ? $name : (is_scalar($name) ? (string) $name : '?');
+				return "{$classStr}::{$nameStr}";
+
+			case \ast\AST_CALL:
+			case \ast\AST_METHOD_CALL:
+				return $this->getNodeVarForMethodCall($argNode);
+
+			case \ast\AST_CAST:
+				$expr = $argNode->children['expr'] ?? null;
+				$exprStr = $this->reconstructArg($expr);
+				$flags = $argNode->flags ?? 0;
+				if ($flags === \ast\flags\TYPE_STRING) {
+					return "(string){$exprStr}";
+				} elseif ($flags === \ast\flags\TYPE_LONG) {
+					return "(int){$exprStr}";
+				} elseif ($flags === \ast\flags\TYPE_BOOL) {
+					return "(bool){$exprStr}";
+				} elseif ($flags === \ast\flags\TYPE_DOUBLE) {
+					return "(float){$exprStr}";
+				} elseif ($flags === \ast\flags\TYPE_ARRAY) {
+					return "(array){$exprStr}";
+				} elseif ($flags === \ast\flags\TYPE_OBJECT) {
+					return "(object){$exprStr}";
+				}
+				return "({$exprStr})";
+
+			case \ast\AST_BINARY_OP:
+				// For concatenation, reconstruct both sides
+				$left = $argNode->children['left'] ?? null;
+				$right = $argNode->children['right'] ?? null;
+				$leftStr = $this->reconstructArg($left);
+				$rightStr = $this->reconstructArg($right);
+				$flags = $argNode->flags ?? 0;
+				if ($flags === \ast\flags\BINARY_CONCAT) {
+					return $leftStr . '.' . $rightStr;
+				}
+				return $leftStr . $rightStr;
+
+			default:
+				// For other node types, try to get a string representation
+				return '...';
 		}
 	}
 
