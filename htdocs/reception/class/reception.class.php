@@ -1142,7 +1142,7 @@ class Reception extends CommonObject
 	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
-	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array())
+	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $notrigger, $array_options = array(), $cost_price = null, $ref_fourn = null, $fk_entrepot = 0, $batch = null)
 	{
 		global $mysoc, $langs, $user;
 

@@ -813,13 +813,7 @@ if (empty($reshook)) {
 
 
 			if (!$error) {
-				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options);
-				// Update buying price, supplier ref, destination warehouse and batch of the line
-				if ($result >= 0) {
-					$setparts = array();
-					if (GETPOSTISSET('cost_price')) {
-						$setparts[] = "cost_price = ".((float) price2num(GETPOST('cost_price', 'alpha')));
-					}
+				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, GETPOSTINT('entrepot_id'), GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
 					if (GETPOSTISSET('fourn_ref')) {
 						$setparts[] = "ref_fourn = '".$db->escape(GETPOST('fourn_ref', 'alphanohtml'))."'";
 					}
