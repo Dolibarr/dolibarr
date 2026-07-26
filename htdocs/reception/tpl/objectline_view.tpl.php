@@ -102,7 +102,9 @@ print '<td class="linecoldescription line minwidth300imp tdoverflowmax300">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
-$tmpproduct->fetch($line->fk_product);
+if (!empty($line->fk_product)) {
+	$tmpproduct->fetch($line->fk_product);
+}
 $tmprecep = new Reception($object->db);
 if ($line->fk_product > 0) {
 	print $tmpproduct->getNomUrl(1);
@@ -113,10 +115,33 @@ if ($line->fk_product > 0) {
 print '</td>';
 
 // Qty
+print '<td class="linecolrefsupplier">';
+print dol_escape_htmltag((string) (!empty($line->ref_fourn) ? $line->ref_fourn : ''));
+if (!empty($line->fk_product) && !empty($object->socid)) {
+	// Icon to open the buying prices of the product (standard page) in a popup, prefiltered on the reception supplier
+	$urlpfp = DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $line->fk_product).'&socid='.((int) $object->socid).'&dol_hide_topmenu=1&dol_hide_leftmenu=1';
+	$jspfp = "jQuery('<div></div>').append(jQuery('<iframe>', {src: '".dol_escape_js($urlpfp)."', style: 'width:100%;height:100%;border:0'}))";
+	$jspfp .= ".dialog({modal: true, width: '85%', height: jQuery(window).height()*0.85, title: '".dol_escape_js($langs->trans('BuyingPrices'))."', close: function() { location.reload(); }}); return false;";
+	print ' <a href="'.$urlpfp.'" onclick="'.dol_escape_htmltag($jspfp).'" title="'.dol_escape_htmltag($langs->trans('BuyingPrices')).'">'.img_picto('', 'edit', 'class="paddingleft"').'</a>';
+}
+print '</td>';
+print '<td class="linecolcostprice nowrap right">'.(!empty($line->cost_price) ? price($line->cost_price) : '').'</td>';
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
+print '<td class="linecolwarehouse nowrap right">';
+if (!empty($line->fk_entrepot)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+	$tmpwarehouse = new Entrepot($object->db);
+	if ($tmpwarehouse->fetch($line->fk_entrepot) > 0) {
+		print $tmpwarehouse->getNomUrl(1);
+	}
+}
+print '</td>';
+if (isModEnabled('productbatch')) {
+	print '<td class="linecolbatch">'.dol_escape_htmltag((string) (!empty($line->batch) ? $line->batch : '')).'</td>';
+}
 
 // Unit
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on

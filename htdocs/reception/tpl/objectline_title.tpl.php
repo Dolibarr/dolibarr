@@ -74,7 +74,13 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 print '<th class="linecoldescription">'.$langs->trans('Description');
 
 // Qty
+print '<th class="linecolrefsupplier">'.$langs->trans('RefSupplier').'</th>';
+print '<th class="linecolcostprice right">'.$langs->trans('BuyingPrice').'</th>';
 print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
+print '<th class="linecolwarehouse right">'.$langs->trans('Warehouse').'</th>';
+if (isModEnabled('productbatch')) {
+	print '<th class="linecolbatch">'.$langs->trans('Batch').'</th>';
+}
 
 
 // Unit
