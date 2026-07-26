@@ -457,28 +457,26 @@ class AccountancyExport
 					$completefilename = dol_sanitizeFileName($filename).'_'.dol_print_date(dol_now(), '%Y%m%d%H%M%S').'.txt';
 				}
 
-				if (!empty($completefilename)) {
-					// create export file
-					$exportFileFullName = $completefilename;
-					$exportFileBaseName = basename($exportFileFullName);
-					$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
-					$exportFilePath = $outputDir . '/' . $exportFileFullName;
-					$exportFile = fopen($exportFilePath, 'w');
-					if (!$exportFile) {
-						$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
-						return -1;
-					}
+				// create export file
+				$exportFileFullName = $completefilename;
+				$exportFileBaseName = basename($exportFileFullName);
+				$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
+				$exportFilePath = $outputDir . '/' . $exportFileFullName;
+				$exportFile = fopen($exportFilePath, 'w');
+				if (!$exportFile) {
+					$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
+					return -1;
+				}
 
-					if ($withAttachment == 1) {
-						$archiveFileList[0] = array(
-							'path' => $exportFilePath,
-							'name' => $exportFileFullName,
-						);
+				if ($withAttachment == 1) {
+					$archiveFileList[0] = array(
+						'path' => $exportFilePath,
+						'name' => $exportFileFullName,
+					);
 
-						// archive name and path
-						$archiveFullName = $exportFileName . '.zip';
-						$archivePath = $outputDir . '/' . $archiveFullName;
-					}
+					// archive name and path
+					$archiveFullName = $exportFileName . '.zip';
+					$archivePath = $outputDir . '/' . $archiveFullName;
 				}
 			}
 		}
