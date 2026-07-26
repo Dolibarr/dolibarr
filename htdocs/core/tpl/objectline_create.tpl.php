@@ -487,21 +487,21 @@ if ($nolinesbefore) {
 					<?php
 		}
 		if ($object->element != 'reception') {	// Receptions have no VAT on lines
-		print '<td class="nobottom linecolvat right">';
-		$coldisplay++;
-		$type_tva = 0;
-		if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
-			$type_tva = 1;
-		} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
-			$type_tva = 2;
-		}
-		if ($seller->tva_assuj == "0") {
-			echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate('0', true);
-		} else {
-			echo $form->load_tva('tva_tx', (GETPOSTISSET("tva_tx") ? GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1, $type_tva);
-		}
-		?>
-	</td>
+			print '<td class="nobottom linecolvat right">';
+			$coldisplay++;
+			$type_tva = 0;
+			if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
+				$type_tva = 1;
+			} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
+				$type_tva = 2;
+			}
+			if ($seller->tva_assuj == "0") {
+				echo '<input type="hidden" name="tva_tx" id="tva_tx" value="0">'.vatrate('0', true);
+			} else {
+				echo $form->load_tva('tva_tx', (GETPOSTISSET("tva_tx") ? GETPOST("tva_tx", 'alpha', 2) : -1), $seller, $buyer, 0, 0, '', false, 1, $type_tva);
+			}
+			?>
+		</td>
 	<?php } ?>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
@@ -561,7 +561,7 @@ if ($nolinesbefore) {
 			print '</td>';
 		}
 	} else {
-	?>
+		?>
 
 	<td class="nobottom nowrap linecoldiscount right"><input type="text" name="remise_percent" id="remise_percent" class="flat width40 right" value="<?php echo(GETPOSTISSET("remise_percent") ? GETPOST("remise_percent", 'alpha', 2) : ($remise_percent ? $remise_percent : '')); ?>"><span class="opacitymedium hideonsmartphone">%</span></td>
 	<?php } ?>
