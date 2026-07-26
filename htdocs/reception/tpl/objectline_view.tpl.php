@@ -117,12 +117,10 @@ print '</td>';
 // Qty
 print '<td class="linecolrefsupplier">';
 print dol_escape_htmltag((string) (!empty($line->ref_fourn) ? $line->ref_fourn : ''));
-if (!empty($line->fk_product) && !empty($object->socid)) {
-	// Icon to open the buying prices of the product (standard page) in a popup, prefiltered on the reception supplier
-	$urlpfp = DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $line->fk_product).'&socid='.((int) $object->socid).'&dol_hide_topmenu=1&dol_hide_leftmenu=1';
-	$jspfp = "jQuery('<div></div>').append(jQuery('<iframe>', {src: '".dol_escape_js($urlpfp)."', style: 'width:100%;height:100%;border:0'}))";
-	$jspfp .= ".dialog({modal: true, width: '85%', height: jQuery(window).height()*0.85, title: '".dol_escape_js($langs->trans('BuyingPrices'))."', close: function() { location.reload(); }}); return false;";
-	print ' <a href="'.$urlpfp.'" onclick="'.dol_escape_htmltag($jspfp).'" title="'.dol_escape_htmltag($langs->trans('BuyingPrices')).'">'.img_picto('', 'edit', 'class="paddingleft"').'</a>';
+if (!empty($line->fk_product) && !empty($object->socid) && getDolGlobalString('RECEPTION_MANAGE_SUPPLIER_PRICES')) {
+	// Button to manage the buying prices of the product, using the standard core popup
+	$urlpfp = DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $line->fk_product).'&socid='.((int) $object->socid);
+	print ' '.dolButtonToOpenUrlInDialogPopup('pfpline'.$line->id, $langs->transnoentitiesnoconv('BuyingPrices'), img_picto('', 'edit', 'class="paddingleft"'), $urlpfp, '', 'classlink reposition', '', 'location.reload();');
 }
 print '</td>';
 print '<td class="linecolcostprice nowrap right">'.(!empty($line->cost_price) ? price($line->cost_price) : '').'</td>';
