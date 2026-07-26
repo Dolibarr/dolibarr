@@ -174,6 +174,11 @@ class ReceptionLineBatch extends CommonObjectLine
 	 * @var int|float
 	 */
 	public $cost_price = 0;
+
+	/**
+	 * @var string Supplier ref for the product on this reception line
+	 */
+	public $ref_fourn;
 	/**
 	 * @var int rang of line
 	 */
@@ -283,7 +288,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= "description,";
 		$sql .= "rang,";
 		$sql .= "fk_reception,";
-		$sql .= "cost_price";
+		$sql .= "cost_price,";
+		$sql .= "ref_fourn";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : (int) $this->fk_product).",";
 		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : (int) $this->fk_element).",";
@@ -302,7 +308,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
 		$sql .= ", ".((int) $ranktouse).",";
 		$sql .= " ".((int) $this->fk_reception).",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price);
+		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price).",";
+		$sql .= " ".(!isset($this->ref_fourn) ? 'NULL' : "'".$this->db->escape($this->ref_fourn)."'");
 		$sql .= ")";
 
 		$this->db->begin();
