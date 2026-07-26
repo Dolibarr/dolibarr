@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
- * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
@@ -378,7 +378,8 @@ class AccountancyExport
 		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
-		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
+		$formatcode = $this->getFormatCode($formatexportset);
+		$filename = 'general_ledger-'.(!empty($formatcode) ? $formatcode : $formatexportset);
 		$type_export = 'general_ledger';
 
 		$completefilename = '';
@@ -449,6 +450,11 @@ class AccountancyExport
 					$langs->load('errors');
 					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);
 					return -1;
+				}
+
+				// Fallback if template did not set $completefilename
+				if (empty($completefilename)) {
+					$completefilename = dol_sanitizeFileName($filename).'_'.dol_print_date(dol_now(), '%Y%m%d%H%M%S').'.txt';
 				}
 
 				if (!empty($completefilename)) {
@@ -541,11 +547,18 @@ class AccountancyExport
 				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);
-				// file contents will be created in the hooked function via print
+				$parameters = array(
+					'format' => $formatexportset,
+					'file' => $exportFile,
+					'filepath' => $exportFilePath,
+					'filefullname' => $exportFileFullName,
+				);
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
 					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				} elseif (!empty($hookmanager->resArray['downloadFileFullName']) && !empty($hookmanager->resArray['downloadFilePath'])) {
+					$exportFileFullName = $hookmanager->resArray['downloadFileFullName'];
+					$exportFilePath = $hookmanager->resArray['downloadFilePath'];
 				}
 				break;
 		}
