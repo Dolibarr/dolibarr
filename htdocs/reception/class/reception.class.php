@@ -686,14 +686,14 @@ class Reception extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			// TODO in future, reception lines may not be linked to order line
-			$sql = "SELECT cd.fk_product, cd.subprice, cd.remise_percent,";
+			$sql = "SELECT COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) as fk_product, cd.subprice, cd.remise_percent,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql .= " ed.eatby, ed.sellby, ed.batch,";
 			$sql .= " ed.fk_elementdet, ed.cost_price";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-			$sql .= " AND cd.rowid = ed.fk_elementdet";
+			$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
 
 			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1434,11 +1434,11 @@ class Reception extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as receptiondet_batch_id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+			$sql = "SELECT COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) as fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.eatby, ed.sellby, ed.batch, ed.rowid as receptiondet_batch_id";
+			$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-			$sql .= " AND cd.rowid = ed.fk_elementdet";
+			$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
 
 			dol_syslog(get_class($this)."::delete select details", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2058,14 +2058,14 @@ class Reception extends CommonObject
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine ?
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql = "SELECT COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) as fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.fk_elementdet, ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
+				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2219,14 +2219,14 @@ class Reception extends CommonObject
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine
-				$sql = "SELECT ed.fk_product, cd.subprice,";
+				$sql = "SELECT COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) as fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.fk_elementdet, ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
+				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2356,14 +2356,14 @@ class Reception extends CommonObject
 
 				// Loop on each product line to add a stock movement
 				// TODO possibilite de receptionner a partir d'une propale ou autre origine
-				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql = "SELECT COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) as fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
 				$sql .= " ed.fk_elementdet, ed.cost_price";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."receptiondet_batch as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cd ON cd.rowid = ed.fk_elementdet";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_elementdet";
+				$sql .= " AND COALESCE(NULLIF(ed.fk_product, 0), cd.fk_product) IS NOT NULL";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
