@@ -1051,6 +1051,10 @@ class Reception extends CommonObject
 	 * @param   int			$rang             				Position of line
 	 * @param 	string		$description					Description of line product
 	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @param	float		$cost_price		Buying price of the line (used by stock movement at validation)
+	 * @param	string		$ref_fourn		Supplier ref of the product for this line
+	 * @param	int			$fk_entrepot	Id of destination warehouse (0 = not set)
+	 * @param	string		$batch			Batch/serial number
 	 * @return	int											Return integer <0 if KO, >0 if OK
 	 */
 	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $array_options = [], $cost_price = 0, $ref_fourn = '', $fk_entrepot = 0, $batch = '')
