@@ -53,7 +53,7 @@
 @phan-var-force int $num
 @phan-var-force int $i
 @phan-var-force CommonObject $this
-@phan-var-force CommonObject $object
+@phan-var-force Reception $object
 ';
 
 // Protection to avoid direct call of template

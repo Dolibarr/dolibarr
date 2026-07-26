@@ -987,7 +987,7 @@ if (empty($reshook)) {
 					$idprod = (int) $reg[1];
 				} elseif ((int) $ipfp > 0) {
 					$productsupplier = new ProductFournisseur($db);
-					$idprod = $productsupplier->get_buyprice((int) $ipfp, price2num(GETPOST('qty', 'alpha'), 'MS'));
+					$idprod = $productsupplier->get_buyprice((int) $ipfp, (float) price2num(GETPOST('qty', 'alpha'), 'MS'));
 					if ($idprod > 0) {
 						$cost_price_from_pfp = price2num($productsupplier->fourn_unitprice);
 						$reffourn_from_pfp = $productsupplier->ref_supplier;
