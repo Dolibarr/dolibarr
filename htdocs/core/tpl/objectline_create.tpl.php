@@ -502,7 +502,7 @@ if ($nolinesbefore) {
 			}
 			?>
 		</td>
-	<?php } ?>
+		<?php } ?>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
 		<input type="text" name="price_ht" id="price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
