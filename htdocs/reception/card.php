@@ -814,6 +814,25 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options);
+				// Update buying price, supplier ref, destination warehouse and batch of the line
+				if ($result >= 0) {
+					$setparts = array();
+					if (GETPOSTISSET('cost_price')) {
+						$setparts[] = "cost_price = ".((float) price2num(GETPOST('cost_price', 'alpha')));
+					}
+					if (GETPOSTISSET('fourn_ref')) {
+						$setparts[] = "ref_fourn = '".$db->escape(GETPOST('fourn_ref', 'alphanohtml'))."'";
+					}
+					if (GETPOSTISSET('batch')) {
+						$setparts[] = "batch = '".$db->escape(GETPOST('batch', 'alphanohtml'))."'";
+					}
+					if (GETPOSTINT('entrepot_id') > 0) {
+						$setparts[] = "fk_entrepot = ".GETPOSTINT('entrepot_id');
+					}
+					if (count($setparts)) {
+						$db->query("UPDATE ".MAIN_DB_PREFIX."receptiondet_batch SET ".implode(', ', $setparts)." WHERE rowid = ".GETPOSTINT('lineid'));
+					}
+				}
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -953,10 +972,32 @@ if (empty($reshook)) {
 		$fk_entrepot = '';
 		$rang = '';
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
+		$cost_price_from_pfp = 0;
+		$reffourn_from_pfp = '';
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
 			$idprod = GETPOSTINT('idprod');
+			if (empty($idprod) && GETPOSTISSET('idprodfournprice')) {
+				// The supplier product combo posts idprodfournprice (id of supplier price, or 'idprod_x' if product has no supplier price)
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+				$ipfp = GETPOST('idprodfournprice', 'alpha');
+				$reg = array();
+				if (preg_match('/^idprod_([0-9]+)$/', $ipfp, $reg)) {
+					$idprod = (int) $reg[1];
+				} elseif ((int) $ipfp > 0) {
+					$productsupplier = new ProductFournisseur($db);
+					$idprod = $productsupplier->get_buyprice((int) $ipfp, price2num(GETPOST('qty', 'alpha'), 'MS'));
+					if ($idprod > 0) {
+						$cost_price_from_pfp = price2num($productsupplier->fourn_unitprice);
+						$reffourn_from_pfp = $productsupplier->ref_supplier;
+					}
+				}
+			}
+			if ($prod_entry_mode != 'free' && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
 			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
 				$error++;
@@ -1095,7 +1136,21 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options);
+				// Buying price: typed value first (field of the supplier add-line block), then known supplier price
+				$typedcost = price2num(GETPOST('cost_price', 'alpha'));
+				if (!(float) $typedcost) {
+					$typedcost = price2num(GETPOST('price_ht', 'alpha'));
+				}
+				$finalcost = ((float) $typedcost > 0) ? (float) $typedcost : (float) $cost_price_from_pfp;
+				$reffourn_line = GETPOST('fourn_ref', 'alphanohtml');
+				if ($reffourn_line === '' && !empty($reffourn_from_pfp)) {
+					$reffourn_line = $reffourn_from_pfp;
+				}
+				$wh_line = GETPOSTINT('entrepot_id');
+				if (empty($wh_line)) {
+					$wh_line = getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE');
+				}
+				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $array_options, (float) $finalcost, $reffourn_line, $wh_line, GETPOST('batch', 'alphanohtml'));
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -2443,6 +2498,7 @@ if ($action == 'create' && $permissiontoadd) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
+						$senderissupplier = 2;	// Use the same add-line block as supplier orders; 2 = also list products without supplier price for this supplier
 						$object->formAddObjectLine(0, $mysoc, $soc);
 					}
 				}

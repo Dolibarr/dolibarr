@@ -138,12 +138,14 @@ if ($nolinesbefore) {
 			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
 		</td>
 		<?php
-		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
+		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec' || $object->element == 'reception') {	// We must have same test in printObjectLines
 			?>
 			<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 			<?php
 		} ?>
+		<?php if ($object->element != 'reception') { ?>
 		<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
+		<?php } ?>
 		<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) { ?>
 			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHT').'&nbsp;<span class="opacitymedium">('.$langs->getCurrencySymbol($this->multicurrency_code).')</span>'; ?></span></td>
@@ -370,8 +372,8 @@ if ($nolinesbefore) {
 					echo '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 					echo '</a>';
 					echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
-					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
-					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'"> '.$langs->trans("NewProduct").'</a>';
+					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'"> '.$langs->trans("NewService").'</a>';
 					echo '</div>';
 					echo '</div>';
 				} else {
@@ -384,7 +386,7 @@ if ($nolinesbefore) {
 							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $jsonclode);
 						} else {
-							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
@@ -396,7 +398,7 @@ if ($nolinesbefore) {
 							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $jsonclode);
 						} else {
-							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 				}
@@ -479,11 +481,12 @@ if ($nolinesbefore) {
 			}
 		}
 		echo '</td>';
-		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
+		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec' || $object->element == 'reception') {	// We must have same test in printObjectLines
 			$coldisplay++; ?>
 	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo(GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 					<?php
 		}
+		if ($object->element != 'reception') {	// Receptions have no VAT on lines
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
 		$type_tva = 0;
@@ -499,6 +502,7 @@ if ($nolinesbefore) {
 		}
 		?>
 	</td>
+	<?php } ?>
 
 	<td class="nobottom linecoluht right"><?php $coldisplay++; ?>
 		<input type="text" name="price_ht" id="price_ht" class="flat right width50" value="<?php echo(GETPOSTISSET("price_ht") ? GETPOST("price_ht", 'alpha', 2) : ''); ?>">
@@ -544,9 +548,23 @@ if ($nolinesbefore) {
 		$remise_percent = $seller->remise_supplier_percent;
 	}
 	$coldisplay++;
+	if ($object->element == 'reception') {	// Destination warehouse and batch per line instead of discount
+		print '<td class="nobottom linecolwarehouse right">';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproductcreate = new FormProduct($object->db);
+		print $formproductcreate->selectWarehouses(GETPOSTINT('entrepot_id') > 0 ? GETPOSTINT('entrepot_id') : 'ifone', 'entrepot_id', '', 1, 0, 0, '', 1);
+		print '</td>';
+		if (isModEnabled('productbatch')) {
+			$coldisplay++;
+			print '<td class="nobottom linecolbatch">';
+			print '<input size="8" type="text" class="flat" name="batch" id="batch" placeholder="'.dol_escape_htmltag($langs->trans('Batch')).'" value="'.(GETPOSTISSET('batch') ? dol_escape_htmltag(GETPOST('batch', 'alphanohtml')) : '').'">';
+			print '</td>';
+		}
+	} else {
 	?>
 
 	<td class="nobottom nowrap linecoldiscount right"><input type="text" name="remise_percent" id="remise_percent" class="flat width40 right" value="<?php echo(GETPOSTISSET("remise_percent") ? GETPOST("remise_percent", 'alpha', 2) : ($remise_percent ? $remise_percent : '')); ?>"><span class="opacitymedium hideonsmartphone">%</span></td>
+	<?php } ?>
 	<?php
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$coldisplay++;
