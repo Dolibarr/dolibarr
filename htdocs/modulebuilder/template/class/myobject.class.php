@@ -212,37 +212,37 @@ class MyObject extends CommonObject
 	//BEGIN MODULEBUILDER LINES
 	// If this object has a subtable with lines
 
-	 /**
-	  * @var string    Name of subtable line
-	  */
-	 public $table_element_line = 'mymodule_myobjectline';
+	/**
+	 * @var string    Name of subtable line
+	 */
+	public $table_element_line = 'mymodule_myobjectline';
 
-	 /**
-	  * @var string    Field with ID of parent key if this object has a parent
-	  */
-	 public $fk_element = 'fk_myobject';
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_myobject';
 
-	 /**
-	  * @var string    Name of subtable class that manage subtable lines
-	  */
-	 public $class_element_line = 'MyObjectline';
+	/**
+	 * @var string    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'MyObjectline';
 
-	 /**
-	  * @var array<array<string>|string>		List of child tables. To test if we can delete object.
-	  */
-	 protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
+	/**
+	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
 
-	 /**
-	  * @var string[]	List of child tables. To know object to delete on cascade.
-	  *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	  *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	  */
-	 protected $childtablesoncascade = array('mymodule_myobjectdet');
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 */
+	protected $childtablesoncascade = array('mymodule_myobjectdet');
 
-	 /**
-	  * @var MyObjectLine[]     Array of subtable lines
-	  */
-	 public $lines = array();
+	/**
+	 * @var MyObjectLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
 	//END MODULEBUILDER LINES
 
@@ -336,8 +336,9 @@ class MyObject extends CommonObject
 		}
 
 		// get lines so they will be clone
-		foreach ($this->lines as $line)
+		foreach ($this->lines as $line) {
 			$line->fetch_optionals();
+		}
 		//END MODULEBUILDER LINES
 		// Reset some properties
 		unset($object->id);
@@ -476,7 +477,7 @@ class MyObject extends CommonObject
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $this->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -658,14 +659,14 @@ class MyObject extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

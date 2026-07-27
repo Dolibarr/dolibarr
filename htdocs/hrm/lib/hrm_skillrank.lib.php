@@ -4,6 +4,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +113,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 	require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 	require_once DOL_DOCUMENT_ROOT . '/hrm/class/skilldet.class.php';
 
-	// On charge les différentes notes possibles pour la compétence $fk_skill
+	// Load the different possible ratings for skill $fk_skill
 	$skilldet = new Skilldet($db);
 	$Lines = $skilldet->fetchAll('ASC', 'rankorder', 0, 0, '(fk_skill:=:'.((int) $fk_skill).')');
 

@@ -115,7 +115,7 @@ while ($i < $argc) {
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
 	}
 	if (!empty($result["buildzip"])) {
-		$buildzip = 1;
+		$buildzip = $result["buildzip"];
 	}
 	$i++;
 }
@@ -134,7 +134,7 @@ $savrelease = $release;
 $tmpver = explode('-', $release, 2);
 if ($tmpver[0] == 'auto') {
 	$release = DOL_VERSION;
-	if (!empty($tmpver[1]) && $tmpver[0] == 'auto') {
+	if (!empty($tmpver[1])) {
 		$release .= '-'.$tmpver[1];
 	}
 }
@@ -419,12 +419,12 @@ foreach ($arrayofunalterablefiles as $entry) {
 			exit(1);
 		}
 		if ($newdir != $dir) {
-			if ($needtoclose) {
-				if ($release) {
-					fputs($fp, '  </dir>'."\n");
-				}
-				$needtoclose = 0;
+			//if ($needtoclose) {
+			if ($release) {
+				fputs($fp, '  </dir>'."\n");
 			}
+				$needtoclose = 0;
+			//}
 			if ($release) {
 				fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 			}
