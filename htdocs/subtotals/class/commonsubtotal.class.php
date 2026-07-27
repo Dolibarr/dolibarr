@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
 
  *
@@ -842,6 +842,31 @@ trait CommonSubtotal
 			$depth_array[$i + 1] = $langs->trans("SubtotalLevel", $i + 1);
 		}
 		return $depth_array;
+	}
+
+	/**
+	 * Retrieve the list of active predefined phrases usable as description of a title line.
+	 *
+	 * @return array<string,string>	Array with the phrase label as both key and value, sorted alphabetically
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getPredefinedPhrases()
+	{
+		$phrases = array();
+
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_phrases";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_phrases').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$phrases[$obj->label] = $obj->label;
+			}
+		}
+
+		return $phrases;
 	}
 
 	/**
