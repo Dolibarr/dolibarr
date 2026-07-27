@@ -2133,7 +2133,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				&& $filterobj->table_element && $filterobj->element
 			) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element) . ($module ? "@" . $db->escape($module) : "") . "'";
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element. ($module ? "@" . $module : "")) . "'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
