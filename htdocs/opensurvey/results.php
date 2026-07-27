@@ -528,7 +528,7 @@ print '<table class="border tableforfield centpercent">';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td>';
 if ($action == 'edit') {
-	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
+	print $form->selectDate(!empty($expiredate) ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
 	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {

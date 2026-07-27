@@ -75,16 +75,16 @@ if ($user->socid > 0) {
 }
 
 // Maximum elements of the tables
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxLatestEditCount = 5;
-$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
+$maxOpenCount = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
+$maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
 
-
-$maxofloop = getDolGlobalString('MAIN_MAXLIST_OVERLOAD', 500);
 
 
 /*

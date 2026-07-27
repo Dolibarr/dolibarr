@@ -230,7 +230,7 @@ class Menubase
 					$maxrowid = 1;
 				}
 
-				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".($maxrowid).")";
+				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".((int) $maxrowid).")";
 				//print $sql; exit;
 				$resqlrowidset = $this->db->query($sql);
 				if (!$resqlrowidset) {
@@ -248,7 +248,7 @@ class Menubase
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
 		$sql .= " AND url = '".$this->db->escape($this->url)."'";
-		$sql .= " AND entity IN (0, ".$conf->entity.")";
+		$sql .= " AND entity IN (0, ".((int) $conf->entity).")";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -649,7 +649,7 @@ class Menubase
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre,";
 		$sql .= " m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position, m.showtopmenuinframe";
 		$sql .= " FROM ".$this->db->prefix()."menu as m";
-		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
+		$sql .= " WHERE m.entity IN (0,".((int) $conf->entity).")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
 		if ($type_user == 0) {
 			$sql .= " AND m.usertype IN (0,2)";
@@ -679,7 +679,7 @@ class Menubase
 						$tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force the part of condition on leftmenu to true
 					}
 					$perms = verifCond($tmpcond);
-					//print "verifCond rowid=".$menu['rowid']." ".$tmpcond.":".$perms."<br>\n";
+					//var_dump($menu['rowid'].' - '.$menu['titre'].' - '.$menu['perms'].' => '.$tmpcond.":".$perms);
 				}
 
 				// Define $enabled

@@ -521,11 +521,13 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {	// lowercase + remove accents
 		$msg .= '
 				var term = params.term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-				var text = (data.text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
 	} else {															// lowercase only (accent kept)
 		$msg .= '
 				var term = params.term.toLowerCase();
-				var text = (data.text || "").toLowerCase();';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).toLowerCase();';
 	}
 	$msg .= '
 				var keywords = term.split(" ");

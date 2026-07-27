@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2017       Pierre-Henry Favre      <support@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ if ($id > 0) {
 				$sql .= " ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
 				$sql .= " WHERE pf.fk_paiement = p.rowid";
-				$sql .= " AND p.entity = ".$conf->entity;
+				$sql .= " AND p.entity = ".((int) $conf->entity);
 				$sql .= " AND pf.fk_facture = ".((int) $fac->id);
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 

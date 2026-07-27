@@ -218,6 +218,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tablevalidbgcolor: rgb(252, 248, 227);
 	--colorblack: #000;
 	--colorwhite: #fff;
+	--colorwhitelight: #eee;
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -274,6 +275,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
 				--colorwhite: #000;
+				--colorwhitelight: #333;
 	      }
 
 		body, button {
@@ -398,7 +400,7 @@ span.massactionselect, input.inputsearch_dropdownselectedfields {
 }
 
 .divadvancedsearchfieldcompinput,
-div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
+div.tabBar input:not(.pageplusone), div.tabBar input.flat:not(.pageplusone), div.tabBar textarea:not(.cke_source), div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '' : '-bottom'; ?>: solid 1px var(--inputbordercolor);
 	<?php if (getDolGlobalString('THEME_ADD_BACKGROUND_ON_INPUT')) { ?>
@@ -517,6 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -937,6 +940,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 }
 
 .button:not(.bordertransp):not(.buttonpayment),
+.buttonCancel:not(.bordertransp):not(.buttonpayment),
 .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	margin-bottom: 3px;
 	margin-top: 3px;
@@ -978,12 +982,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	box-shadow: none;
 	cursor: auto;
 	text-decoration: none;
-}
-.buttonRefused {
-	pointer-events: none;
-	   cursor: default;
-	opacity: 0.4;
-	box-shadow: none;
 }
 .button_search, .button_removefilter {
 	border: unset;
@@ -2680,8 +2678,8 @@ td.showDragHandle {
 <?php } else { ?>
 	display: table-cell;
 <?php } ?>
-	border-<?php echo $right; ?>: 1px solid #ECECEC;
-	border-bottom: 1px solid #ECECEC;
+	border-<?php echo $right; ?>: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -6252,7 +6250,7 @@ div.ui-tooltip.mytooltip {
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
-	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
 	color: var(--tooltipfontcolor);
@@ -7110,6 +7108,20 @@ button.tox-tbtn.tox-tbtn--select.tox-tbtn--bespoke[data-mce-name="fontsize"] {
 .mce-content-body p {
 	margin: unset;
 }
+.tox .tox-button:hover:not(:disabled, .tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-button:not(.tox-button--secondary, .tox-button--naked) {
+	background-color: var(--butactionbg) !important;
+	border-color: var(--butactionbg) !important;
+}
+.tox .tox-custom-editor:focus-within, .tox .tox-listboxfield .tox-listbox--select:focus, .tox .tox-textarea-wrap:focus-within, .tox .tox-textarea:focus, .tox .tox-textfield:focus {
+	background-color: #fff;
+	border-color: var(--butactionbg) !important;
+	box-shadow: 0 0 0 1px var(--butactionbg) !important;
+	outline: 0;
+}
 
 
 /* ============================================================================== */
@@ -7824,9 +7836,10 @@ li.select2-selection__choice {
 .select2-dropdown {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
-	box-shadow: 1px 2px 10px #8884;
+	box-shadow: 0 2px 10px rgb(0, 0, 0, .3);
 	background-color: var(--colorbackbody);
 	color: var(--colortext);
+	border: unset;
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);
@@ -8218,7 +8231,7 @@ dl.dropdown {
 }
 .dropdown dd ul {
 	background-color: var(--inputbackgroundcolor);
-	box-shadow: 1px 1px 10px #aaa;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 	display:none;
 	<?php echo $right; ?>:0px;						/* pop is align on right */
 	padding: 0 0 0 0;
@@ -8227,7 +8240,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
-	border-radius: 4px;
+	border-radius: 6px;
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 
 		$statssql[0] = $sql;
 
@@ -111,7 +111,7 @@ class mailing_pomme extends MailingTargets
 		$sql = "SELECT count(distinct(u.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = u.email and mu.entity = ".((int) $conf->entity).")";
 		}
@@ -184,7 +184,7 @@ class mailing_pomme extends MailingTargets
 		$sql .= " u.lastname, u.firstname as firstname, u.civility as civility_id, u.login, u.office_phone";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicit dans ce test
-		$sql .= " AND u.entity IN (0,".$conf->entity.")";
+		$sql .= " AND u.entity IN (0,".((int) $conf->entity).")";
 		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
 			$sql .= " AND u.statut=1";
