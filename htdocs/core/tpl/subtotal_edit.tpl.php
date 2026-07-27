@@ -136,7 +136,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		if ($line_type == 'title') {
 			$predefinedphrases = $this->getPredefinedPhrases();  // @phan-suppress-current-line PhanUndeclaredMethod
 			if (!empty($predefinedphrases)) {
-				print $form->selectarray('line_predefinedphrase', $predefinedphrases, '', 1, 0, 0, 'onchange="if (jQuery(this).val()) { jQuery(\'#line_desc\').val(jQuery(this).val()); }"', 0, 0, 0, '', 'minwidth100');
+				print $form->selectarray('line_predefinedphrase', $predefinedphrases, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
 			}
 		}
 		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod

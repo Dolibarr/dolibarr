@@ -723,6 +723,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
+				'MAIN_MODULE_SUBTOTALS' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',
 				'MAIN_MODULE_TAKEPOS' => 'newboxdefonly',
 				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)

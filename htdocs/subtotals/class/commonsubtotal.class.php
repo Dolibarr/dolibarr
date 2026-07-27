@@ -862,7 +862,7 @@ trait CommonSubtotal
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$phrases[$obj->label] = $obj->label;
+				$phrases[dol_escape_htmltag($obj->label)] = $obj->label;
 			}
 		}
 

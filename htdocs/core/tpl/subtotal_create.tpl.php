@@ -60,7 +60,7 @@ if ($type == 'title') {
 			'label' => $langs->trans("PredefinedPhrase"),
 			'values' => $predefinedphrases,
 			'select_show_empty' => 1,
-			'moreattr' => 'onchange="if (jQuery(this).val()) { jQuery(\'#subtotallinedesc\').val(jQuery(this).val()); }"',
+			'moreattr' => 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#subtotallinedesc\').val(v); }"',
 		);
 	}
 

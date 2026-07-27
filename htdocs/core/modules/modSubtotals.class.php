@@ -101,7 +101,7 @@ class modSubtotals extends DolibarrModules
 			'langs' => 'subtotals',
 			'tabname' => array("c_subtotals_phrases"),
 			'tablib' => array("SubtotalsPredefinedPhrases"),
-			'tabsql' => array('SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_phrases'),
+			'tabsql' => array('SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_phrases WHERE entity IN ('.getEntity('c_subtotals_phrases').')'),
 			'tabsqlsort' => array("label ASC"),
 			'tabfield' => array("code,label"),
 			'tabfieldvalue' => array("code,label"),
