@@ -376,25 +376,21 @@ if ($nolinesbefore) {
 					echo '</div>';
 				} else {
 					if ($addproducton) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshProductCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewProduct")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
 					}
 					if ($addserviceon) {
-						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+						$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 						$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
 						if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-							// @FIXME Not working yet
-							$jsonclode = 'jsRefreshServiceCombo';
-							// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url, '', '', $jsonclode);
+							// The popup child page (product/card.php) reloads the parent itself after a successful creation
+							print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddService'), $newbutton, $url);
 						} else {
 							print '<a href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.dol_escape_htmltag($langs->trans("NewService")).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 						}
