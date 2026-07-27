@@ -1491,7 +1491,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
 
 		if ($type == 1) {
 			$picto = 'service';
