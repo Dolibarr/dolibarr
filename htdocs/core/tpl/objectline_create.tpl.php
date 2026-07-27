@@ -372,8 +372,16 @@ if ($nolinesbefore) {
 					echo '<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 					echo '</a>';
 					echo '<div class="dropdown-menu" aria-labelledby="dropdownAddProductAndServiceLink" style="top:auto; left:auto;">';
-					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'"> '.$langs->trans("NewProduct").'</a>';
-					echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($object->element == 'reception' ? '&idprodfournprice=idprod___ID__' : '')).'"> '.$langs->trans("NewService").'</a>';
+					if ($object->element == 'reception') {
+						// Open the product/service creation in the core dialog popup; on success product/card.php reloads the parent with idprod___ID__ (autoselect)
+						$urlnewp = '/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprodfournprice=idprod___ID__');
+						$urlnews = '/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&idprodfournprice=idprod___ID__');
+						echo '<span class="dropdown-item">'.dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('NewProduct'), $langs->trans("NewProduct"), $urlnewp, '', 'classlink').'</span>';
+						echo '<span class="dropdown-item">'.dolButtonToOpenUrlInDialogPopup('addservice', $langs->transnoentitiesnoconv('NewService'), $langs->trans("NewService"), $urlnews, '', 'classlink').'</span>';
+					} else {
+						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewProduct").'</a>';
+						echo '<a class="dropdown-item" href="'.DOL_URL_ROOT.'/product/card.php?action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"> '.$langs->trans("NewService").'</a>';
+					}
 					echo '</div>';
 					echo '</div>';
 				} else {
