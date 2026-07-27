@@ -1637,12 +1637,11 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by "word"
 								// Replace 'column = $any$' by "1=1"
-                                $word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
+								$word = '#([a-zA-Z0-9._-]+):=:\$([A-Za-z0-9_]+)\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 								// Replace '$any$ = column' by "1:=:1"
-                                $word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
+								$word = '#\$([A-Za-z0-9_]+)\$:=:([A-Za-z0-9._-]+)#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
