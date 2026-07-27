@@ -386,7 +386,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;
@@ -1183,15 +1183,16 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_outcome += $obj->amount;
 				$total_ttc_outcome += $obj->amount;
 			}
+			$debit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven">';
 			print '<td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingDebit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price(-$obj->amount).'</span>';
+				print '<span class="amount">'.price(-$debit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price(-$obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price(-$debit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Credit (payment received from customer for example)
@@ -1203,14 +1204,15 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ht_income += $obj->amount;
 				$total_ttc_income += $obj->amount;
 			}
+			$credit_amount = isset($obj->amount) ? $obj->amount : 0;
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("AccountingCredit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
-				print '<span class="amount">'.price($obj->amount).'</span>';
+				print '<span class="amount">'.price($credit_amount).'</span>';
 			}
 			print '</td>';
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price($credit_amount)."</span></td>\n";
 			print "</tr>\n";
 
 			// Total

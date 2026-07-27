@@ -3,6 +3,12 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 23.0.4 compared to 23.0.3 *****
+
+SEC #39000 Escalation to admin when user has clone permission - credit Abderrahmane Aksoum on the fix commit
+
+
+
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
 
 FIX: #36589 (#38037) There is no save button in the "Variant attributes extrafields" and "Variant attributes values extrafields" tabs of the product variant module

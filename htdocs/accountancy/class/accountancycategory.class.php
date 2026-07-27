@@ -623,7 +623,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to set the property ->sdc (and ->sdcperaccount) that is the result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int|array<?string>	$cpt 	Accounting account or array of accounting account
+	 * @param string|int|array<?string>	$cpt 	Accounting account or array of accounting account
 	 * @param int 		$date_start			Date start
 	 * @param int	 	$date_end			Date end
 	 * @param int<0,1>	$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit

@@ -101,7 +101,9 @@ $reg = [];
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
 		$datep = dol_now();
-	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use instead '&datep=now'
+	} elseif (preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$/', GETPOST("datep"), $reg)) {		// YYYYMMDDHHMMSS (dayhourlog) - e.g. from /societe/agenda.php "Add event" button
+		$datep = dol_mktime((int) $reg[4], (int) $reg[5], (int) $reg[6], (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
+	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// YYYYMMDD - try to not use this. Use instead '&datep=now'
 		$datep = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
 	}
 }
@@ -1998,7 +2000,7 @@ if ($action == 'create') {
 							$("#select_offsetunittype_duration").select2("destroy");
 							$("#select_offsetunittype_duration").select2();
 							selectremindertype();
-	            		 });
+	            		 }
 
 						toggle_reminder_part();
 						$("#addreminder").click(toggle_reminder_part);

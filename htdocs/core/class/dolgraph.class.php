@@ -1229,9 +1229,10 @@ class DolGraph
 				$legends[$x] = (array_key_exists('label', $valarray) ? $valarray['label'] : $valarray[0]);
 				$array_of_ykeys = array_keys($valarray);
 				$alabelexists = 1;
-				$tmpykey = explode('_', (string) ($array_of_ykeys[$i + ($alabelexists ? 1 : 0)]), 3);
+				$ykeyindex = $i + ($alabelexists ? 1 : 0);
+				$tmpykey = isset($array_of_ykeys[$ykeyindex]) ? explode('_', (string) $array_of_ykeys[$ykeyindex], 3) : array();
 				if (isset($tmpykey[2]) && (!empty($tmpykey[2]) || $tmpykey[2] == '0')) {		// This is a 'Group by' array
-					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : $valarray[$i + 1]);
+					$tmpvalue = (array_key_exists('y_' . $tmpykey[1] . '_' . $tmpykey[2], $valarray) ? $valarray['y_' . $tmpykey[1] . '_' . $tmpykey[2]] : ($valarray[$i + 1] ?? null));
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
 						'stacknum' => (int) $tmpykey[1],
@@ -1239,7 +1240,7 @@ class DolGraph
 						'legendwithgroup' => ($this->Legend[$tmpykey[1]] ?? '') . ' - ' . $tmpykey[2]
 					);
 				} else {
-					$tmpvalue = (array_key_exists('y_' . $i, $valarray) ? $valarray['y_' . $i] : $valarray[$i + 1]);
+					$tmpvalue = (array_key_exists('y_' . $i, $valarray) ? $valarray['y_' . $i] : ($valarray[$i + 1] ?? null));
 					//var_dump($i.'_'.$x.'_'.$tmpvalue);
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 				}

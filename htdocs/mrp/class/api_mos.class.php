@@ -267,6 +267,47 @@ class Mos extends DolibarrApi
 	}
 
 	/**
+	 * Validate MO
+	 *
+	 * @param   int $id             MO ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('mrp', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->mo->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'MO not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('mrp', $this->mo->id, 'mrp_mo')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->mo->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating MO: '.$this->mo->error);
+		}
+		$result = $this->mo->fetch($id);
+
+		return $this->_cleanObjectDatas($this->mo);
+	}
+
+	/**
 	 * Delete MO
 	 *
 	 * @param   int     $id   MO ID

@@ -170,7 +170,15 @@ if (empty($reshook)) {
 
 			$objectbomchildline->fetch($id_bom_line);
 
-			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('origin_id' => $id_bom_line));
+			// Find the consume line of the parent MO generated from this BOM line.
+			// The lookup must be scoped to the parent MO and use an exact match on origin_id/origin_type,
+			// otherwise the default 'origin_id LIKE %..%' filter can return an unrelated line (or none),
+			// which would let the child MO be created from the leftover parent POST data (duplicate MO).
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', 1, 0, array('fk_mo' => $mo_parent->id, 'origin_id' => $id_bom_line, 'origin_type' => 'bomline'));
+
+			if (empty($TMoLines)) {
+				continue;
+			}
 
 			foreach ($TMoLines as $tmpmoline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
@@ -674,7 +682,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 	// Project

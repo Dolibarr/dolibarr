@@ -1369,11 +1369,11 @@ class SupplierProposal extends CommonObject
 				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
+				$this->db->free($resql);
+
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-
-				$this->db->free($resql);
 
 				$this->lines = array();
 
@@ -1449,6 +1449,8 @@ class SupplierProposal extends CommonObject
 						$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 						$line->fk_unit = $objp->fk_unit;
 
+						$line->fetch_optionals();
+
 						$this->lines[$i] = $line;
 
 						$i++;
@@ -1458,10 +1460,6 @@ class SupplierProposal extends CommonObject
 					$this->error = $this->db->error();
 					return -1;
 				}
-
-				// Retrieve all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
 
 				return 1;
 			}
@@ -2138,6 +2136,19 @@ class SupplierProposal extends CommonObject
 			// End call triggers
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_proposal";
+			$sql .= " WHERE fk_supplier_proposal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
+		}
+
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'supplier_proposaldet';
 			$ef = $main."_extrafields";
@@ -2752,9 +2763,11 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i] = new SupplierProposalLine($this->db);
 				$this->lines[$i]->id = $obj->rowid; // for backward compatibility
 				$this->lines[$i]->rowid = $obj->rowid;
+
 				$this->lines[$i]->label = $obj->custom_label;
 				$this->lines[$i]->description = $obj->description; // deprecated
 				$this->lines[$i]->desc = $obj->description;
+
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;
@@ -2792,6 +2805,8 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 				$this->lines[$i]->fk_unit = $obj->fk_unit;
 				$this->lines[$i]->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
+
+				$this->lines[$i]->fetch_optionals();
 
 				$i++;
 			}

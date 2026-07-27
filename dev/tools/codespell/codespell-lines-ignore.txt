@@ -6,11 +6,11 @@
 						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
 						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
+						$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					GETPOSTINT("mouvement"),
-					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
+						dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 					jQuery("#mouvement option").removeAttr("selected").change();
 					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
 					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");

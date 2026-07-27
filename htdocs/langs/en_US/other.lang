@@ -398,7 +398,6 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page shou
 CreateBookmark = Create bookmark
 ListOfBookmarks = List of bookmarks
 NewBookmark = New bookmark
-NoBookmarkFound = No bookmark found
 NoBookmarks = No bookmarks defined
 OpenANewWindow = Open a new tab
 ReplaceWindow = Replace current tab

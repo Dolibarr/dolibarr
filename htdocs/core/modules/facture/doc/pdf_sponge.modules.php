@@ -822,7 +822,7 @@ class pdf_sponge extends ModelePDFFactures
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
-							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
+							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty), 'ffffff'));
 							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
@@ -936,7 +936,8 @@ class pdf_sponge extends ModelePDFFactures
 					}
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
+					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent) && getDolGlobalInt('INVOICE_USE_SITUATION') != 2) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						} else {
@@ -1911,8 +1912,8 @@ class pdf_sponge extends ModelePDFFactures
 
 		// Show total discount only if there is some discount on lines
 		if ($total_discount_on_lines > 0 && !$object->isSituationInvoice()) {
-			// Show discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
+			// Show total NET before discount except on credit note type invoices
+			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHTBeforeDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHTBeforeDiscount") : ''), 0, 'L', true);
@@ -1924,8 +1925,8 @@ class pdf_sponge extends ModelePDFFactures
 				$index++;
 			}
 
-			// Show total NET before discount except on credit note type invoices
-			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_BEFORE_DISCOUNT') && $object->type != 2) {
+			// Show discount except on credit note type invoices
+			if (!getDolGlobalString('MAIN_HIDE_AMOUNT_DISCOUNT') && $object->type != 2) {
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalDiscount") : ''), 0, 'L', true);

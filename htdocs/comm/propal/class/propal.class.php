@@ -783,7 +783,7 @@ class Propal extends CommonObject
 
 			// Rang to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -1961,7 +1961,7 @@ class Propal extends CommonObject
 		if ($sqlforgedfilters) {
 			$sql .= $sqlforgedfilters;
 		}
-		$sql .= ' ORDER by d.rang';
+		$sql .= ' ORDER BY d.rang, d.rowid';
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3149,6 +3149,19 @@ class Propal extends CommonObject
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_propal";
+			$sql .= " WHERE fk_propal = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
 		}
 
 		// Delete extrafields of lines and lines
