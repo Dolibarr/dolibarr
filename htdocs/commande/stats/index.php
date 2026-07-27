@@ -390,7 +390,10 @@ if (isModEnabled('category')) {
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+// Pass -1 (not 0) when no user is selected so the combo keeps its empty entry instead of defaulting to the
+// current user. The statistics query below is not filtered on the current user by default, so preselecting
+// them here wrongly suggests the displayed figures are limited to that user while they are actually global.
+print $form->select_dolusers(($userid > 0 ? $userid : -1), 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 if ($mode == 'customer') {

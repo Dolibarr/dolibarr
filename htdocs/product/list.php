@@ -67,7 +67,7 @@ if (isModEnabled('category')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'other'));
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }

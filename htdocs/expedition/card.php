@@ -2311,31 +2311,37 @@ if ($action == 'create' && $usercancreate) {
 									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
-										if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
-										} else {
-											if (!isset($alreadyQtySetted[$line->fk_product])) {
-												$alreadyQtySetted[$line->fk_product] = array();
+										// For a virtual product (kit), $deliverableQty is already min($quantityToBeDelivered, $stock) computed above
+										// and the per-warehouse "stock" returned by loadStockForVirtualProduct() is $qtyWish, not a shared physical
+										// stock. The cross-line $alreadyQtySetted cap must not be applied for kits, otherwise the 2nd and next order
+										// lines of the same kit would be wrongly pre-filled with 0.
+										$tooltipClass = $tooltipTitle = '';
+										if ($productChildrenNb <= 0) {
+											if (isset($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+												$deliverableQty = min($quantityToBeDelivered, $stock - $alreadyQtySetted[$line->fk_product][intval($warehouse_id)]);
+											} else {
+												if (!isset($alreadyQtySetted[$line->fk_product])) {
+													$alreadyQtySetted[$line->fk_product] = array();
+												}
+
+												$deliverableQty = min($quantityToBeDelivered, $stock);
 											}
 
-											$deliverableQty = min($quantityToBeDelivered, $stock);
+											if ($deliverableQty < 0) {
+												$deliverableQty = 0;
+											}
+
+											if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
+												$tooltipClass = ' classfortooltip';
+												$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
+											} else {
+												$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
+											}
+
+											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 										}
 
-										if ($deliverableQty < 0) {
-											$deliverableQty = 0;
-										}
-
-										$tooltipClass = $tooltipTitle = '';
-										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$tooltipClass = ' classfortooltip';
-											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines') . ' : ' . $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-										} else {
-											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
-										}
-
-										$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = $deliverableQty + $alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
-
-										$inputName = 'qtyl' . $indiceAsked . '_' . $subj;
+										$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
 										if (GETPOSTISSET($inputName)) {
 											$deliverableQty = GETPOSTINT($inputName);
 										}
