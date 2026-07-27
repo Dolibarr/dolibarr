@@ -814,19 +814,6 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, 0, $array_options, GETPOSTISSET('cost_price') ? price2num(GETPOST('cost_price', 'alpha')) : null, GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref', 'alphanohtml') : null, GETPOSTINT('entrepot_id'), GETPOSTISSET('batch') ? GETPOST('batch', 'alphanohtml') : null);
-					if (GETPOSTISSET('fourn_ref')) {
-						$setparts[] = "ref_fourn = '".$db->escape(GETPOST('fourn_ref', 'alphanohtml'))."'";
-					}
-					if (GETPOSTISSET('batch')) {
-						$setparts[] = "batch = '".$db->escape(GETPOST('batch', 'alphanohtml'))."'";
-					}
-					if (GETPOSTINT('entrepot_id') > 0) {
-						$setparts[] = "fk_entrepot = ".GETPOSTINT('entrepot_id');
-					}
-					if (count($setparts)) {
-						$db->query("UPDATE ".MAIN_DB_PREFIX."receptiondet_batch SET ".implode(', ', $setparts)." WHERE rowid = ".GETPOSTINT('lineid'));
-					}
-				}
 
 				if ($result >= 0) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
