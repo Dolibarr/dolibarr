@@ -364,7 +364,7 @@ class dolReceiptPrinter extends Printer
 
 		$sql = "SELECT rowid, name, template";
 		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 
@@ -523,7 +523,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
-		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
+		$sql .= ", '".$this->db->escape($template)."', ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -544,7 +544,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt_template';
 		$sql .= " WHERE rowid = ".((int) $templateid);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;

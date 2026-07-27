@@ -1264,7 +1264,7 @@ class Propal extends CommonObject
 		$sql .= ", multicurrency_tx";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
@@ -1283,11 +1283,11 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->escape((string) $this->ref_client)."'";
 		$sql .= ", '".$this->db->escape((string) $this->ref_ext)."'";
 		$sql .= ", ".(!isDolTms($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
-		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
-		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
+		$sql .= ", ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'NULL');
+		$sql .= ", ".($this->warehouse_id > 0 ? ((int) $this->warehouse_id) : 'NULL');
 		$sql .= ", ".((int) $this->availability_id);
 		$sql .= ", ".((int) $this->demand_reason_id);
-		$sql .= ", ".($this->fk_project ? $this->fk_project : "null");
+		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : "null");
 		$sql .= ", ".(int) $this->fk_incoterms;
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->entity;
@@ -2162,7 +2162,7 @@ class Propal extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'propale/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -2422,7 +2422,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_availability = ".((int) ($id > 0 ? $id : 0));
+			$sql .= " SET fk_availability = ".((int) ($id > 0 ? ((int) $id) : 0));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$id.')', LOG_DEBUG);
@@ -2690,7 +2690,7 @@ class Propal extends CommonObject
 		$sql  = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', note_public = '".$this->db->escape($newpublicnote)."'";
 		if ($status == self::STATUS_SIGNED) {
-			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".((int) $fk_user_signature);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -3110,8 +3110,8 @@ class Propal extends CommonObject
 				$tab_sqlobj = array();
 				$nump = $this->db->num_rows($resql);
 				for ($i = 0; $i < $nump; $i++) {
-					$sqlobj = $this->db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
+					$obj = $this->db->fetch_object($resql);
+					$tab_sqlobj[] = $obj;
 				}
 				$this->db->free($resql);
 

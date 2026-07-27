@@ -404,7 +404,7 @@ if ($action != 'edit' && $user->hasRight('opensurvey', 'write')) {
 print '</div>';
 
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.urlencode($numsondage), $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $numsondage), 'delete_confirm', '', '', 1);
 }
 
 

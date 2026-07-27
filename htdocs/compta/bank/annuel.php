@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -325,8 +325,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".((int) ($year - $annee))."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".((int) ($year - $annee))."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
@@ -408,8 +408,8 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
-		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
+		$sql .= " AND b.datev >= '".((int) ($year - $annee))."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".((int) ($year - $annee))."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";

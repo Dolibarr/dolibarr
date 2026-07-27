@@ -229,8 +229,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 50;
-				$tab_top_newpage = 40;
+				$tab_top = 40 + $this->marge_haute;
+				$tab_top_newpage = 30 + $this->marge_haute;
 
 				$tab_height = $this->page_hauteur - $tab_top - $this->heightforfooter  - $this->heightforfreetext ;
 
@@ -561,7 +561,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$tab_hl = 4;
 
 		$posx = $this->marge_gauche;
-		$pdf->SetXY($posx, $tab_top);
+		$pdf->SetXY($posx, $tab_top + $this->marge_haute);
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 

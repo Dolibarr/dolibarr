@@ -2448,7 +2448,7 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
 
@@ -2878,16 +2878,21 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
 				}
 				// Validate
-				if ($object->status == 0 && $num > 0) {
-					if ($usercanvalidate) {
-						$tmpbuttonlabel = $langs->trans('Validate');
-						if ($usercanapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
-							$tmpbuttonlabel = $langs->trans("ValidateAndApprove");
-						}
+				if ($object->status == 0) {
+					if ($num > 0) {
+						if ($usercanvalidate) {
+							$tmpbuttonlabel = $langs->trans('Validate');
+							if ($usercanapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
+								$tmpbuttonlabel = $langs->trans("ValidateAndApprove");
+							}
 
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&token='.newToken().'">';
-						print $tmpbuttonlabel;
-						print '</a>';
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'">';
+							print $tmpbuttonlabel;
+							print '</a>';
+						}
+					} else {
+						$langs->load("errors");
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"] . '?action=validate&token=' . newToken() . '&id=' . $object->id, (string) $object->id, -1);
 					}
 				}
 				// Create event
