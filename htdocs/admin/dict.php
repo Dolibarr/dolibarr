@@ -1154,7 +1154,7 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
