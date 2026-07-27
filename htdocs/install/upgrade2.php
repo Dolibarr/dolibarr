@@ -720,7 +720,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
 				'MAIN_MODULE_SERVICE' => 'newboxdefonly',
-				'MAIN_MODULE_SYSLOG' => 'newboxdefonly',
+				//'MAIN_MODULE_SYSLOG' => 'newboxdefonly',		This enabled the module syslog, but we don't want to do that.
 				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
 				'MAIN_MODULE_STRIPE' => 'menuonly',
 				'MAIN_MODULE_TICKET' => 'newboxdefonly',

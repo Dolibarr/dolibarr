@@ -275,8 +275,8 @@ class ExpenseReportLine extends CommonObjectLine
 			$this->date = $objp->date;
 			$this->dates = $this->db->jdate($objp->date);
 			$this->value_unit = $objp->value_unit;
-			$this->fk_c_type_fees = $objp->fk_c_type_fees;
-			$this->fk_c_exp_tax_cat = $objp->fk_c_exp_tax_cat;
+			$this->fk_c_type_fees = (int) $objp->fk_c_type_fees;
+			$this->fk_c_exp_tax_cat = (int) $objp->fk_c_exp_tax_cat;
 			$this->fk_projet = $objp->fk_project; // deprecated
 			$this->fk_project = $objp->fk_project;
 			$this->type_fees_code = $objp->type_fees_code;
@@ -347,7 +347,7 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ' total_ht, total_tva, total_ttc,';
 		$sql .= ' total_localtax1, total_localtax2,';
 		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
-		$sql .= " VALUES (".$this->db->escape((string) $this->fk_expensereport).",";
+		$sql .= " VALUES (".((int) $this->fk_expensereport).",";
 		$sql .= " ".((int) $this->fk_c_type_fees).",";
 		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? ((int) $this->fk_projet) : 'null')).",";
 		$sql .= " ".((float) $this->vatrate).",";
@@ -491,8 +491,8 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape((string) $this->fk_c_exp_tax_cat);
-		$sql .= ", fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
+		$sql .= ", fk_c_exp_tax_cat = ".((int) $this->fk_c_exp_tax_cat);
+		$sql .= ", fk_ecm_files = ".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		if ($this->fk_c_type_fees) {
 			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
 		} else {
