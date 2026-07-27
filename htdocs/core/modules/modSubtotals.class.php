@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +96,21 @@ class modSubtotals extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 
+		// Dictionaries
+		$this->dictionaries = array(
+			'langs' => 'subtotals',
+			'tabname' => array("c_subtotals_phrases"),
+			'tablib' => array("SubtotalsPredefinedPhrases"),
+			'tabsql' => array('SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_phrases'),
+			'tabsqlsort' => array("label ASC"),
+			'tabfield' => array("code,label"),
+			'tabfieldvalue' => array("code,label"),
+			'tabfieldinsert' => array("code,label,entity"),
+			'tabrowid' => array("rowid"),
+			'tabcond' => array(isModEnabled('subtotals')),
+			'tabhelp' => array(array()),
+		);
+
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
 		$this->tabs[] = array(); // To add a new tab identified by code tabname1
@@ -122,6 +138,11 @@ class modSubtotals extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		$result = $this->_load_tables('/install/mysql/', 'subtotals');
+		if ($result < 0) {
+			return -1; // Do not activate module if error occurred while loading module SQL queries
+		}
+
 		// Permissions
 		$this->remove($options);
 
