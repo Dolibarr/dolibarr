@@ -22,6 +22,7 @@
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2025		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2026		Pierre Ardoin		<developpeur@lesmetiersdubatiment.fr>
+ * Copyright (C) 2026		José MARTINEZ		<jose.martinez@pichinov.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4011,9 +4012,10 @@ abstract class CommonObject
 	 *  @param  'none'|'auto'|'0'|'1'	$roundingadjust		'none'=Do nothing (when properties are already correctly set), 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int<0,1>				$nodatabaseupdate	1=Do not update database total fields of the main object. Update only properties in memory. Can be used to save SQL when this method is called several times, so we can do it only once at end.
 	 *  @param	?Societe				$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
+	 *  @param  'auto'|'0'|'1'			$followforeigncurrency	For a document in a foreign currency: 'auto'=Use MAIN_TOTALS_FOLLOW_FOREIGN_CURRENCY (or its _SUPPLIER variant), '1'=Totals in the company currency are the exact conversion of the multicurrency totals, '0'=Totals are the sum of the lines. Ignored when the document has no foreign currency.
 	 *	@return	int<-1,1>									Return integer <0 if KO, >0 if OK
 	 */
-	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null)
+	public function update_price($exclspec = 0, $roundingadjust = 'auto', $nodatabaseupdate = 0, $seller = null, $followforeigncurrency = 'auto')
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $action;
@@ -4029,6 +4031,7 @@ abstract class CommonObject
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$isElementForSupplier = false;
 		$roundTotalConstName = 'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND'; // const for customer by default
+		$followCurrencyConstName = 'MAIN_TOTALS_FOLLOW_FOREIGN_CURRENCY'; // const for customer by default
 		$MODULE = "";
 		if ($this->element == 'propal') {
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
@@ -4048,6 +4051,7 @@ abstract class CommonObject
 		}
 		if ($isElementForSupplier) {
 			$roundTotalConstName = 'MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER'; // const for supplier
+			$followCurrencyConstName = 'MAIN_TOTALS_FOLLOW_FOREIGN_CURRENCY_SUPPLIER'; // const for supplier
 		}
 
 		if (!empty($MODULE)) {
@@ -4068,6 +4072,12 @@ abstract class CommonObject
 			$forcedroundingmode = getDolGlobalString($roundTotalConstName);
 		} elseif ($forcedroundingmode == 'auto') {
 			$forcedroundingmode = '0';
+		}
+
+		// Which currency is the reference for the totals. This is independent from the VAT rounding
+		// method above: both questions can be answered separately on the same document.
+		if ($followforeigncurrency == 'auto') {
+			$followforeigncurrency = getDolGlobalString($followCurrencyConstName, '0');
 		}
 
 		$error = 0;
@@ -4301,6 +4311,19 @@ abstract class CommonObject
 						}
 					}
 				}
+			}
+
+			// On a document in a foreign currency, the totals in the company currency are the sum of the
+			// converted lines, while the multicurrency totals are the sum of the same lines in the foreign
+			// currency. Each currency being rounded on its own lines, dividing one by the exchange rate does
+			// not always give back the other: both are correct, they just answer different questions.
+			// When the amount due in the foreign currency is the reference (a supplier invoice received in
+			// USD for instance), the totals in the company currency can be set to its exact conversion.
+			if ($followforeigncurrency == '1' && !empty($multicurrency_tx) && $multicurrency_tx != 1) {
+				$this->total_ht = (float) price2num($this->multicurrency_total_ht / $multicurrency_tx);
+				$this->total_ttc = (float) price2num($this->multicurrency_total_ttc / $multicurrency_tx);
+				// VAT absorbs the rounding difference so the total incl. tax stays equal to what is due
+				$this->total_tva = (float) price2num($this->total_ttc - $this->total_ht - $this->total_localtax1 - $this->total_localtax2);
 			}
 
 			// Clean total
