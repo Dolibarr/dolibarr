@@ -1373,7 +1373,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('mailing')) {
 			$langs->load("mails");
 			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
+			print '<td><a class="badge badge-info" href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
 		}
 
 		// Unsubscribe opt-out

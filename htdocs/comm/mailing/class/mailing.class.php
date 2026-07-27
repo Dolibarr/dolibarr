@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -703,7 +703,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);
@@ -726,7 +726,7 @@ class Mailing extends CommonObject
 		$now = dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".$user->id;
+		$sql .= " SET statut = 0, tms = '".$this->db->idate($now)."', fk_user_modif=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Mailing::valid", LOG_DEBUG);

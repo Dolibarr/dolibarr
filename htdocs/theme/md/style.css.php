@@ -360,7 +360,7 @@ $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
 // @phan-suppress-next-line PhanRedefinedClassReference
-$nbtopmenuentries = (is_object($menumanager) && method_exists($menumanager, 'showmenu')) ? $menumanager->showmenu('topnb') : 0;
+$nbtopmenuentries = is_object($menumanager) ? $menumanager->showmenu('topnb') : 0;
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
 	$nbtopmenuentries = max($nbtopmenuentries, 10);
@@ -582,7 +582,7 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-textarea:focus:not(.ia-input) {
+textarea:focus:not(.ia-input, .cke_source) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.input-icon-user, .input-icon-password, .input-icon-security):not(.noborderfocus):not(.inputsearch_dropdownselectedfields):not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
@@ -6256,6 +6256,10 @@ table.dp {
 }
 .categtextblack {
 	color: #000 !important;
+}
+
+.cke_source {
+	margin: 5px !important;
 }
 
 

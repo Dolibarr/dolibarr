@@ -4,7 +4,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2025  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
@@ -1343,7 +1343,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(405, 'Discount not owned by this thirdpartie');
 		}
 
-		if ( price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
+		if (price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
 			throw new RestException(405, 'Sum of the 2 discounts is different that the original discount');
 		}
 		if ($discount->fk_facture_line) {
@@ -1433,7 +1433,7 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+		$sql .= " WHERE re.rowid IN (".((int) $newid1).",".((int) $newid2).") AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
 
 		$sql .= $this->db->order("f.type", "ASC");
 
@@ -2391,7 +2391,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = $id AND site = '".$this->db->escape($site)."'";
+		$sql = "SELECT rowid, fk_user_creat, date_creation FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
 		// We do not found an existing SocieteAccount entity for this fk_soc and site ; we then create a new one.
@@ -2553,7 +2553,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '".$this->db->escape($site)."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {

@@ -191,7 +191,7 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
+		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02u", ((int) $month))."-01'";
 		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}

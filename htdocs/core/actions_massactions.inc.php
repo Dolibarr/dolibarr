@@ -503,29 +503,29 @@ if (!$error && $massaction == 'confirm_presend') {
 			// Send email if there is at least one qualified object for current thirdparty
 			if (count($listofqualifiedobj) > 0) {
 				$langs->load("commercial");
-				$from = '';
+				$email_from = '';
 
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
 				if ($fromtype === 'user') {
-					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
+					$email_from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
-					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+					$email_from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-					$from = trim($tmp[((int) $reg[1] - 1)]);
+					$email_from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+						$email_from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
 				} else {
-					$from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
+					$email_from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
 				}
 
-				$replyto = $from;
+				$replyto = $email_from;
 				$subject = GETPOST('subject', 'restricthtml');
 				$message = GETPOST('message', 'restricthtml');
 
@@ -667,7 +667,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $email_from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
@@ -692,7 +692,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentByTo', $from, (string) $sendto);
+								$actionmsg = $langs->transnoentities('MailSentByTo', $email_from, (string) $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -761,12 +761,12 @@ if (!$error && $massaction == 'confirm_presend') {
 						} else {
 							$langs->load("other");
 							if ($mailfile->error) {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto);
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, (string) $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							} else {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $email_from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}

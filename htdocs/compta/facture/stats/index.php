@@ -106,7 +106,7 @@ $dir = $conf->invoice->dir_temp;
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_invoice';
-	$title = $langs->trans("BillsStatisticsSuppliers");
+	$title = $langs->trans("BillsSuppliers");
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 

@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
 
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
 
 /*
  * Actions
@@ -444,8 +450,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters
