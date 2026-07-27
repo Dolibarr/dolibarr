@@ -283,7 +283,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
-			$numChqOrOpe = '';	// TODO Store the po ref from $event->data
+			$numChqOrOpe = $event->data->object->id;	// Store the payout reference (po_...) as the bank transfer number
 
 			$db->begin();
 

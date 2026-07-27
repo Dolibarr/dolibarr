@@ -1,5 +1,7 @@
 #!/bin/bash
-# Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2025-2026	MDW	<mdeweerd@users.noreply.github.com>
+
+# shellcheck disable=2129,2128,2034,2016
 
 set -euo pipefail
 
@@ -41,22 +43,33 @@ repo="${GITHUB_REPOSITORY##*/}"   # Extract text after the last '/'
 page=1
 per_page=100
 changed_php_files=()
+changed_phan_files=()
 changed_lang_files=()
+
+# Get phan path configuration
+phan_directory_list=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["directory_list"]);')
+phan_exclude_directory=$(php -r '$config = require("dev/tools/phan/config.php"); echo "^".implode("|",$config["exclude_analysis_directory_list"]);')
+
+phan_exclude_file_regex=$(php -r '$config = require("dev/tools/phan/config.php"); echo $config["exclude_file_regex"];')
+phan_exclude_file_regex=${phan_exclude_file_regex#@}
+phan_exclude_file_regex=${phan_exclude_file_regex%@}
 
 # Loop through all pages to gather changed files
 while true; do
 	response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
 		"https://api.github.com/repos/${owner}/${repo}/pulls/${pr_number}/files?per_page=${per_page}&page=${page}")
 
-        phan_exclude_file_regex=$(php -r '$config = require("dev/tools/phan/config.php"); echo $config["exclude_file_regex"];')
 
 
 	# Filter for files ending with .php and add them to the list
-	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not)) | .filename' | grep -vP "$phan_exclude_file_regex")
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("^dev/") | not)) | .filename')
 	changed_php_files+=("${files[@]}")
 
+	mapfile -t files < <(echo "$response" | jq -r '.[] | select((.filename | test("\\.php$")) and (.filename | test("'"$phan_directory_list"'"))) | .filename' | grep -vP "$phan_exclude_file_regex")
+	changed_phan_files+=("${files[@]}")
+
 	mapfile -t files < <(echo "$response" | jq -r '.[] | select(.filename | test("\\.lang$")) | .filename')
-    changed_lang_files+=("${files[@]}")
+	changed_lang_files+=("${files[@]}")
 
 	# Check if we have reached the last page (less than per_page results)
 	count=$(echo "$response" | jq 'length')
@@ -69,10 +82,12 @@ done
 
 # Build a space-separated string of changed PHP and lang files
 # This does not cope with files that have spaces.
+
 # But such files do not exist in the project (at least not for the
 # files we are filtering).
 all_changed_files=$(IFS=" " ; echo "${changed_php_files[*]}")
 all_changed_lang=$(IFS=" " ; echo "${changed_lang_files[*]}")
+phan_changed_files=$(IFS=" " ; echo "${changed_phan_files[*]}")
 
 
 forbidden_files=""
@@ -85,21 +100,31 @@ forbidden_files=""
 #fi
 
 
-# Determine changed files flag
-if [ -z "$all_changed_files" ]; then
+# Determine changed files flags
+if [ -z "${all_changed_files}" ]; then
     any_changed="false"
 else
     any_changed="true"
 fi
 
+if [ -z "${phan_changed_files}" ]; then
+    phan_changed="false"
+else
+    phan_changed="true"
+fi
+
 # Set outputs for GitHub Actions if GITHUB_OUTPUT is available
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
 	echo "any_changed=${any_changed}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed=${phan_changed}" >> "$GITHUB_OUTPUT"
 	echo "all_changed_files=${all_changed_files}" >> "$GITHUB_OUTPUT"
+	echo "phan_changed_files=${phan_changed_files[*]}" >> "$GITHUB_OUTPUT"
 	echo "forbidden_files=${forbidden_files}" >> "$GITHUB_OUTPUT"
 else
 	# Otherwise, print the outputs
 	echo "any_changed=${any_changed}"
+	echo "phan_changed=${phan_changed}"
+	echo "phan_changed_files=${phan_changed_files[*]}"
 	echo "all_changed_files=${all_changed_files}"
 	echo "forbidden_files=${forbidden_files}"
 fi

@@ -1243,7 +1243,7 @@ class Product extends CommonObject
 								$sql .= ", accountancy_code_sell_intra";
 								$sql .= ", accountancy_code_sell_export";
 								$sql .= ") VALUES (";
-								$sql .= $this->id;
+								$sql .= ((int) $this->id);
 								$sql .= ", " . ((int) $conf->entity);
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
@@ -3302,7 +3302,7 @@ class Product extends CommonObject
 							/*
 							 $this->prices_by_qty[$i]=$result["price_by_qty"];
 							 $this->prices_by_qty_id[$i]=$result["rowid"];
-							 // Récuperation de la liste des prix selon qty si flag positionné
+							 // Get the pricelist according to the qty if flag is set
 							 if ($this->prices_by_qty[$i] == 1)
 							 {
 							 $sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
@@ -3357,7 +3357,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[0] = $result["price_by_qty"];
 							$this->prices_by_qty_id[0] = $result["rowid"];
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[0] == 1) {
 								$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -3419,7 +3419,7 @@ class Product extends CommonObject
 							// Price by quantity
 							$this->prices_by_qty[$i] = (!empty($result["price_by_qty"]) ? $result["price_by_qty"] : 0);
 							$this->prices_by_qty_id[$i] = (!empty($result["rowid"]) ? $result["rowid"] : 0);
-							// Récuperation de la liste des prix selon qty si flag positionné
+							// Get the pricelist according to the qty if flag is set
 							if ($this->prices_by_qty[$i] == 1) {
 								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
 								$sql .= " FROM ".$this->db->prefix()."product_price_by_qty";
@@ -4034,7 +4034,7 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge tableau des stats réception fournisseur pour le produit/service
+	 * Loads supplier reception statistics table for given product or service
 	 *
 	 * @param	int    	$socid           	Id thirdparty to filter on a thirdparty
 	 * @param	string 	$filtrestatut    	Id status to filter on a status
@@ -4486,7 +4486,7 @@ class Product extends CommonObject
 	/**
 	 *  Load array of statistics for recurring supplier invoice for product/service
 	 *
-	 * 	@param	int	$socid 	Id societe
+	 * 	@param	int	$socid 	Supplier ID
 	 * 	@return	int			Array of stats in $this->stats_facturefournrec, <0 if ko or >0 if ok
 	 */
 	public function load_stats_facturefournrec($socid = 0)
@@ -4656,7 +4656,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -4709,7 +4709,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";

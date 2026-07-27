@@ -776,6 +776,9 @@ if ($sortorder) {
 if ($sortfield) {
 	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 }
+if ($limit) {
+	$paramwithsearch .= '&limit='.((int) $limit);
+}
 if (GETPOST('from', 'alpha')) {
 	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
 }
@@ -813,7 +816,6 @@ if ($action != 'create') {
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	print load_fiche_titre($title, '', $titlepicto);
 } else {
-	//print load_fiche_titre($title, $newcardbutton, $titlepicto);
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, $newcardbutton, '', $limit, 'limit', 0, 1);
 }
 
@@ -1173,11 +1175,11 @@ foreach ($fieldlist as $field => $value) {
 		if ($sortfieldtouse == 'type_template') {
 			$sortfieldtouse .= ',lang,position,label';
 		}
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
+		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, $css.' ');
 	}
 }
 
-print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $paramwithsearch, '', $sortfield, $sortorder, 'center ');
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList('');

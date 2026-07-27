@@ -1088,17 +1088,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
 
 			$sqlwhere .= "(";
-			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
-			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+			$sqlwhere .= " (SUBSTRING(".$field.", ".((int) $yearpos).", ".((int) $yearlen).") = '".$db->escape($yearcomp)."'";
+			$sqlwhere .= " AND SUBSTRING(".$field.", ".((int) $monthpos).", ".((int) $monthlen).") >= '".str_pad((string) ((int) $monthcomp), ((int) $monthlen), '0', STR_PAD_LEFT)."')";
 			$sqlwhere .= " OR";
-			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp1)."'";
-			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
+			$sqlwhere .= " (SUBSTRING(".$field.", ".((int) $yearpos).", ".((int) $yearlen).") = '".$db->escape($yearcomp1)."'";
+			$sqlwhere .= " AND SUBSTRING(".$field.", ".((int) $monthpos).", ".((int) $monthlen).") < '".str_pad((string) ((int) $monthcomp), ((int) $monthlen), '0', STR_PAD_LEFT)."') ";
 			$sqlwhere .= ')';
 		} elseif ($resetEveryMonth) {
-			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
-			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+			$sqlwhere .= "(SUBSTRING(".$field.", ".((int) $yearpos).", ".((int) $yearlen).") = '".$db->escape($yearcomp)."'";
+			$sqlwhere .= " AND SUBSTRING(".$field.", ".((int) $monthpos).", ".((int) $monthlen).") = '".str_pad((string) ((int) $monthcomp), ((int) $monthlen), '0', STR_PAD_LEFT)."')";
 		} else { // reset is done on january
-			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."')";
+			$sqlwhere .= "(SUBSTRING(".$field.", ".((int) $yearpos).", ".((int) $yearlen).") = '".$db->escape($yearcomp)."')";
 		}
 	}
 	//print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
@@ -1113,7 +1113,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($posnumstart < 0) {
 		return 'ErrorBadMaskFailedToLocatePosOfSequence';
 	}
-	$sqlstring = "SUBSTRING(".$field.", ".($posnumstart + 1).", ".dol_strlen($maskcounter).")";
+	$sqlstring = "SUBSTRING(".$field.", ".(((int) $posnumstart) + 1).", ".dol_strlen($maskcounter).")";
 
 	// Define $maskLike
 	$maskLike = dol_string_nospecial($mask);
@@ -1273,7 +1273,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($maskrefclient_posnumstart <= 0) {
 				return 'ErrorBadMask';
 			}
-			$maskrefclient_sqlstring = 'SUBSTRING('.$field.', '.($maskrefclient_posnumstart + 1).', '.dol_strlen($maskrefclient_maskcounter).')';
+			$sanitized_maskrefclient_string = 'SUBSTRING('.$field.', '.((int) $maskrefclient_posnumstart + 1).', '.dol_strlen($maskrefclient_maskcounter).')';
 			//print "x".$sqlstring;
 
 			// Define $maskrefclient_maskLike
@@ -1291,7 +1291,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
-			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
+			$maskrefclient_sql = "SELECT MAX(".$sanitized_maskrefclient_string.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
 			$maskrefclient_sql .= " WHERE ".$db->sanitize($field)." LIKE '".$db->escape($maskrefclient_maskLike) . (getDolGlobalString('SEARCH_FOR_NEXT_VAL_ON_START_ONLY') ? "%" : "") . "'";
 			if ($bentityon) { // only if entity enable
@@ -3111,6 +3111,11 @@ function csvClean($newvalue, $charset = '', $separator = '')
 
 	// Rule 3 CSV: If value contains separator, we must add "
 	if (preg_match('/'.$separator.'/', $newvalue)) {
+		$addquote = 1;
+	}
+
+	// Rule 4 CSV: If value is a string started with char that trigger formula in calc software, we must add "
+	if (preg_match('/^\s*[=+-@]/', $newvalue)) {
 		$addquote = 1;
 	}
 

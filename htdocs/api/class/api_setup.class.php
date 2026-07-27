@@ -2744,6 +2744,9 @@ class Setup extends DolibarrApi
 	public function getEstablishments()
 	{
 		$list = array();
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Error API open to admin users only');
+		}
 
 		$limit = 0;
 
@@ -2782,12 +2785,19 @@ class Setup extends DolibarrApi
 	 */
 	public function getEtablishmentByID($id)
 	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Error API open to admin users only');
+		}
+
 		$establishment = new Establishment($this->db);
 
 		$result = $establishment->fetch($id);
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieving establishment : '.$establishment->error);
 		} elseif ($result == 0) {
+			throw new RestException(404, 'Establishment not found');
+		}
+		if (!in_array($establishment->entity, explode(',', getEntity('establishment')))) {
 			throw new RestException(404, 'Establishment not found');
 		}
 
