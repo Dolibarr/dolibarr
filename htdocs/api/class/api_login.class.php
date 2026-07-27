@@ -163,7 +163,7 @@ class Login
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET api_key = '".$this->db->escape(dolEncrypt($token, '', '', 'dolibarr'))."'";
-			$sql .= " WHERE login = '".$this->db->escape($login)."'";
+			$sql .= " WHERE rowid = ".((int) $tmpuser->id);
 
 			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
 			$result = $this->db->query($sql);

@@ -1451,7 +1451,15 @@ class Form
 				$htmltoenteralink .= '<input type="checkbox" name="idtolinkto[' . $key . '_' . $objp->rowid . ']" id="' . $key . '_' . $objp->rowid . '" value="' . $objp->rowid . '">';
 			}
 			$htmltoenteralink .= '</td>';
-			$htmltoenteralink .= '<td><label for="' . $key . '_' . $objp->rowid . '">' . $objp->ref . '</label></td>';
+			$htmltoenteralink .= '<td>';
+			if (!$alreadylinked) {
+				$htmltoenteralink .= '<label for="' . $key . '_' . $objp->rowid . '">';
+			}
+			$htmltoenteralink .= $objp->ref;
+			if (!$alreadylinked) {
+				$htmltoenteralink .= '</label>';
+			}
+			$htmltoenteralink .= '</td>';
 			$htmltoenteralink .= '<td>' . (!empty($objp->ref_client) ? $objp->ref_client : (!empty($objp->ref_supplier) ? $objp->ref_supplier : '')) . '</td>';
 			$htmltoenteralink .= '<td class="right">';
 			if ($possiblelink['label'] == 'LinkToContract') {
@@ -2058,7 +2066,7 @@ class Form
 		}
 		if ($filter) {
 			// $filter is safe because, it has been tested by testSqlAndScriptInject() and sanitized by forgeSQLFromUniversalSearchCriteria()
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " AND (" . $sqlwhere . ")";
 		}
 		if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -2328,7 +2336,7 @@ class Form
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
 			// if not, by testSqlAndScriptInject() only.
-			$sanitizedfilter = $filter;
+			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " AND (" . $sanitizedfilter . ")";
 		}
 		// Add where from hooks
@@ -2534,7 +2542,7 @@ class Form
 		$sql .= " WHERE re.fk_soc = " . (int) $socid;
 		$sql .= " AND re.entity = " . ((int) $conf->entity);
 		if ($filter) {
-			$sanitizedfilter = $filter;
+			$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " AND " . $sanitizedfilter;
 		}
 		$sql .= " ORDER BY re.description ASC";
@@ -4042,10 +4050,11 @@ class Form
 
 		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
-		$label = $objp->label;
+		$productlabel = $objp->label;
 		if (!empty($objp->label_translated)) {
-			$label = $objp->label_translated;
+			$productlabel = $objp->label_translated;
 		}
+		$label = $productlabel;
 		if (!empty($filterkey) && $filterkey != '') {
 			$label = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $label, 1);
 		}
@@ -4121,18 +4130,19 @@ class Form
 			}
 		}
 
-		// Set $labeltoshow
-		$labeltoshow = '';
-		$labeltoshow .= $objp->ref;
+		// Set full plain label for the native <option> text. Select2 uses this text
+		// as its search corpus, while data-html below keeps the visible label short.
+		$labeltosearch = '';
+		$labeltosearch .= $objp->ref;
 		if (!empty($objp->custref)) {
-			$labeltoshow .= ' (' . $objp->custref . ')';
+			$labeltosearch .= ' (' . $objp->custref . ')';
 		}
 		if ($outbarcode) {
-			$labeltoshow .= ' (' . $outbarcode . ')';
+			$labeltosearch .= ' (' . $outbarcode . ')';
 		}
-		$labeltoshow .= ' - ' . dol_trunc($label, $maxlengtharticle);
+		$labeltosearch .= ' - ' . $productlabel;
 		if ($outorigin && getDolGlobalString('PRODUCT_SHOW_ORIGIN_IN_COMBO')) {
-			$labeltoshow .= ' (' . getCountry($outorigin, '1') . ')';
+			$labeltosearch .= ' (' . getCountry($outorigin, '1') . ')';
 		}
 
 		// Set $labltoshowhtml
@@ -4304,6 +4314,10 @@ class Form
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
 
+		$optiontext = $labeltosearch.$outvalUnits.$labeltoshowprice.$labeltoshowstock;
+		$optionhtml = $labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.$labeltoshowhtmlstock;
+		$optionhtmlforattribute = dol_escape_htmltag($optionhtml, 0, 0, '', 0, 1);
+
 		// Build options
 		$opt = '<option value="' . $objp->rowid . '"';
 		$opt .= ($objp->rowid == $selected) ? ' selected' : '';
@@ -4311,35 +4325,33 @@ class Form
 			$opt .= ' pbq="' . $objp->price_by_qty_rowid . '" data-pbq="' . $objp->price_by_qty_rowid . '" data-pbqup="' . $objp->price_by_qty_unitprice . '" data-pbqbase="' . $objp->price_by_qty_price_base_type . '" data-pbqqty="' . $objp->price_by_qty_quantity . '" data-pbqpercent="' . $objp->price_by_qty_remise_percent . '"';
 		}
 		if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-			$opt .= ' data-labeltrans="' . $outlabel_translated . '"';
+			$opt .= ' data-labeltrans="' . dol_escape_htmltag($outlabel_translated, 0, 0, '', 0, 1) . '"';
 			$opt .= ' data-desctrans="' . dol_escape_htmltag($outdesc_translated) . '"';
 		}
 
 		if ($stocktag == 1) {
-			$opt .= ' class="product_line_stock_ok" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_ok" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_ok"';
 		}
 		if ($stocktag == -1) {
-			$opt .= ' class="product_line_stock_too_low" data-html="'.$labeltoshowhtml.$outvalUnits.$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
+			$opt .= ' class="product_line_stock_too_low" data-html="'.dolPrintHTMLForAttribute($labeltoshowhtml, 0, array('strong')).dolPrintHTMLForAttribute($outvalUnits).$labeltoshowhtmlprice.dolPrintHTMLForAttribute($labeltoshowhtmlstock).'"';
 			//$opt .= ' class="product_line_stock_too_low"';
 		}
+		$opt .= ' data-html="'.$optionhtmlforattribute.'" data-select-html="'.$optionhtmlforattribute.'"';
 
 		$opt .= '>';
 
 		// Ref, barcode, country
-		$opt .= $labeltoshow;
+		$opt .= dol_escape_htmltag($optiontext, 0, 0, '', 0, 1);
 		$outval .= $labeltoshowhtml;
 
 		// Units
-		$opt .= $outvalUnits;
 		$outval .= $outvalUnits;
 
 		// Price
-		$opt .= $labeltoshowprice;
 		$outval .= $labeltoshowhtmlprice;
 
 		// Stock
-		$opt .= $labeltoshowstock;
 		$outval .= $labeltoshowhtmlstock;
 
 
@@ -4677,6 +4689,16 @@ class Form
 				}
 				$outvallabel .= ' - ' . dol_trunc($label, $maxlengtharticle);
 
+				$outsearchlabel = implode(' ', array_filter(array(
+					(string) $objp->ref,
+					(string) $objp->ref_fourn,
+					(string) $objp->barcode,
+					(string) $objp->label,
+					dol_string_nohtmltag((string) $objp->description)
+				), function (string $value): bool {
+					return $value !== '';
+				}));
+
 				// Units
 				$optlabel .= $outvalUnits;
 				$outvallabel .= $outvalUnits;
@@ -4807,6 +4829,7 @@ class Form
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
+				$optstart .= ' data-search="' . dol_escape_htmltag($outsearchlabel) . '"';
 
 				// set $parameters to call hook
 				$outarrayentry = array(
@@ -6365,20 +6388,17 @@ class Form
 
 		if (!getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 			// Add html code to add the edit button and go back
-			$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+			$jsonclose = 'doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'()';
 			$urltoopen = '/categories/categorie_list.php?type='.urlencode($categtype).'&nosearch=1';
 
 			$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
 			$out .= $s;
 			// Add js code to add the edit button and go back
 			$out .= '<!-- Add js code to open the popup for category/edit/add -->'."\n";
-			$out .= '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
-				console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+			$out .= '<script>function doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).'() {
+				console.log("doJsCodeAfterPopupClose'.dol_sanitizeKeyCode($htmlname).' has been called, we refresh the combo content + refresh select2...");
 
 				// Call an ajax to reload values and update the select
-				// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
-
-				// Refresh select2 to take account of new values (enough for small change)
 
 		        $.ajax({
 		            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
@@ -6389,7 +6409,7 @@ class Form
 		            type: \'GET\',
 		            dataType: \'json\',
 		            success: function (data) {
-		                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+		                var $select = $(\'#'.dol_sanitizeKeyCode($htmlname).'\');
 						var selectedValues = $select.val(); // This is an array of selected values
 						console.log(selectedValues);
 		                $select.empty();
@@ -6403,11 +6423,13 @@ class Form
 		            }
 		        });
 
-				$("#'.dol_escape_js($htmlname).'").trigger("change");
+				// Refresh select2 to take account of new values (enough for small change)
+				$("#'.dol_sanitizeKeyCode($htmlname).'").trigger("change");
+
 				// Alternative if change in select is complex
 				/*
-				$("#'.dol_escape_js($htmlname).'").select2("destroy");
-				$("#'.dol_escape_js($htmlname).'").select2();
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2("destroy");
+				$("#'.dol_sanitizeKeyCode($htmlname).'").select2();
 				*/
 			}</script>';
 		}
@@ -7574,7 +7596,7 @@ class Form
 					$newfilter .= ' AND fk_facture IS NULL AND fk_facture_line IS NULL'; // Customer discounts available
 				}
 				if ($filter) {
-					$sanitizedfilter = $filter;
+					$sanitizedfilter = $filter;  // @phan-suppress-current-line SqlInjection
 					$newfilter .= ' AND (' . $sanitizedfilter . ')';
 				}
 				// output the combo of discounts
@@ -8009,12 +8031,22 @@ class Form
 		//exit;
 
 		// Define list of countries to use to search VAT rates to show
-		// First we defined code_country to use to find list
-		if (is_object($societe_vendeuse)) {
-			$code_country = "'" . $societe_vendeuse->country_code . "'";
-		} else {
-			$code_country = "'" . $mysoc->country_code . "'"; // Pour compatibilite ascendente
+		// First we defined code_country to use to find list.
+		// country_code must be a c_country ISO code (e.g. 'FR', 'CH'). In some setups it may hold a
+		// country label (e.g. 'Suisse') instead, which would make the "c.code IN (...)" lookup done by
+		// load_cache_vatrates() match nothing and wrongly force the VAT rate to 0%. A valid ISO code is
+		// always 2 chars, so when the value is not a well formed ISO code (empty or a label) and we have
+		// a valid country id, we recover the ISO code from the authoritative country id. This way we do
+		// not run any SQL on each page access when we already have a valid ISO code.
+		$sellercountrycode = is_object($societe_vendeuse) ? $societe_vendeuse->country_code : $mysoc->country_code;
+		$sellercountryid = is_object($societe_vendeuse) ? $societe_vendeuse->country_id : $mysoc->country_id;
+		if ((int) $sellercountryid > 0 && strlen((string) $sellercountrycode) != 2) {
+			$tmpcountrycode = dol_getIdFromCode($this->db, (string) $sellercountryid, 'c_country', 'rowid', 'code');
+			if (!empty($tmpcountrycode) && !is_numeric($tmpcountrycode)) {
+				$sellercountrycode = $tmpcountrycode;
+			}
 		}
+		$code_country = "'" . $sellercountrycode . "'"; // Pour compatibilite ascendente
 
 		if ($societe_vendeuse == $mysoc && getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
@@ -9852,6 +9884,7 @@ class Form
 		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			'@phan-var-force CommonObjectLine $objecttmp';
 			$parent_properties = getElementProperties($objecttmp->parent_element);
+			// @phan-suppress-next-line SqlInjection
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
 		if (!empty($objecttmp->parent_element) && in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
@@ -10008,7 +10041,7 @@ class Form
 	 * Generates a set of HTML radio inputs from an array of key-value items.
 	 *
 	 * @param string $htmlName Name of the HTML input group
-	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, unescapedAttr?: string[],attrLabel?: array<string, string|int|bool|null>,unescapedAttrLabel?: string[],disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
+	 * @param array<string, string|array{label: string,value?: string|int,attr?: array<string, string|int|bool|null>, attrLabel?: array<string, string|int|bool|null>, disabled?: bool,css?: string,labelIsHtml?: bool}> $radioItems Array of items in the form key => label or key => array of item properties
 	 * @param string|int $selected Preselected key for selection.
 	 * @param array<string, array<string, string|int|bool|null>|string|bool> $moreGlobalParams Additional global parameters applied to all items (e.g., attributes)
 	 *
@@ -10023,9 +10056,7 @@ class Form
 				'type' => 'radio',
 				'name' => $htmlName,
 			],
-			'unescapedAttr' => [],
 			'attrLabel' => [],
-			'unescapedAttrLabel' => [],
 			'labelIsHtml' => false
 		];
 
@@ -10063,8 +10094,8 @@ class Form
 				}
 
 				// Build HTML attributes for input and label
-				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr'], $item['unescapedAttr']));
-				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel'], $item['unescapedAttrLabel']));
+				$inputAttributes = implode(' ', commonHtmlAttributeBuilder($item['attr']));
+				$labelAttributes = implode(' ', commonHtmlAttributeBuilder($item['attrLabel']));
 
 				// prevent accidental Xss todo : escape $item['label'] but html friendly compatible
 				$text = $item['labelIsHtml'] ? $item['label'] : htmlspecialchars($item['label'], ENT_QUOTES | ENT_SUBSTITUTE);
@@ -11988,7 +12019,7 @@ class Form
 		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entity as e ON e.rowid=ug.entity";
 			if ($force_entity) {
-				$sql .= " WHERE ug.entity IN (0, " . $force_entity . ")";
+				$sql .= " WHERE ug.entity IN (0, " . ((int) $force_entity) . ")";
 			} else {
 				$sql .= " WHERE ug.entity IS NOT NULL";
 			}

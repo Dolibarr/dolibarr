@@ -5,7 +5,7 @@
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2021-2026  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	$setupcompanynotcomplete = 0;
 }
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
 
 
 /*
@@ -204,7 +204,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
-	$sql .= " AND x.entity = ".$conf->entity;
+	$sql .= " AND x.entity = ".((int) $conf->entity);
 	if (!$user->hasRight('holiday', 'readall')) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
@@ -310,7 +310,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
-	$sql .= " AND x.entity = ".$conf->entity;
+	$sql .= " AND x.entity = ".((int) $conf->entity);
 	if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(implode(',', $childids)).')';
 	}
@@ -400,7 +400,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND rp.fk_soc = $socid";
+		$sql .= " AND rp.fk_soc = ".((int) $socid);
 	}
 	$sql .= $db->order("rc.tms", "DESC");
 	$sql .= $db->plimit($max, 0);

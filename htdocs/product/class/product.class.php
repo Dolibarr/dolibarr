@@ -1243,7 +1243,7 @@ class Product extends CommonObject
 								$sql .= ", accountancy_code_sell_intra";
 								$sql .= ", accountancy_code_sell_export";
 								$sql .= ") VALUES (";
-								$sql .= $this->id;
+								$sql .= ((int) $this->id);
 								$sql .= ", " . ((int) $conf->entity);
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
 								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
@@ -4656,7 +4656,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
@@ -4709,7 +4709,7 @@ class Product extends CommonObject
 			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = $socid";
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(f.datef,'%Y%m')";
