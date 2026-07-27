@@ -1467,7 +1467,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Set the label and message of event
 			if (empty($object->actionmsg2)) {
 				// Load translation files required by the page
-				$langs->loadLangs(array("agenda", "other"));
+				$langs->loadLangs(array("agenda", "main", "other"));
 				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? (string) $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
 					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? (string) $object->ref : $object->newref));
 				} else {	// generic translation key
@@ -1477,7 +1477,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 			if (empty($object->actionmsg)) {
 				// Load translation files required by the page
-				$langs->loadLangs(array("agenda", "other"));
+				$langs->loadLangs(array("agenda", "main", "other"));
 				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? (string) $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
 					$object->actionmsg = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? (string) $object->ref : $object->newref));
 				} else {	// generic translation key
@@ -1486,6 +1486,19 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 				if (isModEnabled('multicompany') && property_exists($object, 'entity') && $object->entity > 1) {
 					$object->actionmsg .= ' ('.$langs->trans("Entity").' '.$object->entity.')';
+				}
+			}
+
+			if (!empty($object->context['createfromclone']) && !empty($object->context['clonefromref'])) {
+				$translationKeys = array(
+					'PROPAL_CREATE' => 'ProposalClonedInDolibarr',
+					'ORDER_CREATE' => 'OrderClonedInDolibarr',
+					'BILL_CREATE' => 'InvoiceClonedInDolibarr',
+				);
+				if (isset($translationKeys[$action])) {
+					$sourceRef = (string) $object->context['clonefromref'];
+					$cloneMessage = $langs->transnoentities($translationKeys[$action], (string) $object->ref, $sourceRef);
+					$object->actionmsg = dol_concatdesc($object->actionmsg, $cloneMessage);
 				}
 			}
 

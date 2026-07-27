@@ -43,6 +43,11 @@
 
 -- v25 migration
 
+-- Add customer document creation triggers to configurable automatic agenda actions
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('PROPAL_CREATE', 'Customer proposal created', 'Executed when a customer proposal is created', 'propal', 19);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('ORDER_CREATE', 'Customer order created', 'Executed when a customer order is created', 'commande', 29);
+INSERT INTO llx_c_action_trigger (code, label, description, elementtype, rang) VALUES ('BILL_CREATE', 'Customer invoice created', 'Executed when a customer invoice is created', 'facture', 39);
+
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
