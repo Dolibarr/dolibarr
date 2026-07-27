@@ -2288,10 +2288,10 @@ class EmailCollector extends CommonObject
 
 				$reg = array();
 				if (preg_match('/^(.*)<(.*)>$/', $fromstring, $reg)) {
-					$from = $reg[2];
+					$email_from = $reg[2];
 					$fromtext = $reg[1];
 				} else {
-					$from = $fromstring;
+					$email_from = $fromstring;
 					$fromtext = '';
 				}
 				if (preg_match('/^(.*)<(.*)>$/', $replytostring, $reg)) {
@@ -2315,7 +2315,7 @@ class EmailCollector extends CommonObject
 					}
 
 					if (empty($emailsToCheck)) {
-						foreach (array($from, $replyto) as $tmpEmail) {
+						foreach (array($email_from, $replyto) as $tmpEmail) {
 							$tmpEmail = strtolower(trim((string) $tmpEmail));
 							if ($tmpEmail !== '' && strpos($tmpEmail, '@') !== false) {
 								$emailsToCheck[$tmpEmail] = true;
@@ -2635,28 +2635,28 @@ class EmailCollector extends CommonObject
 				}
 
 				if (empty($contactid)) {		// Try to find contact using email
-					$result = $contactstatic->fetch(0, null, '', $from);
+					$result = $contactstatic->fetch(0, null, '', $email_from);
 
 					if ($result > 0) {
-						dol_syslog("We found a contact with the email ".$from);
+						dol_syslog("We found a contact with the email ".$email_from);
 						$contactid = $contactstatic->id;
-						$contactfoundby = 'email of contact ('.$from.')';
+						$contactfoundby = 'email of contact ('.$email_from.')';
 						if (empty($thirdpartyid) && $contactstatic->socid > 0) {
 							$result = $thirdpartystatic->fetch($contactstatic->socid);
 							if ($result > 0) {
 								$thirdpartyid = $thirdpartystatic->id;
-								$thirdpartyfoundby = 'email of contact ('.$from.')';
+								$thirdpartyfoundby = 'email of contact ('.$email_from.')';
 							}
 						}
 					}
 				}
 
 				if (empty($thirdpartyid)) {		// Try to find thirdparty using email
-					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
+					$result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $email_from);
 					if ($result > 0) {
-						dol_syslog("We found a thirdparty with the email ".$from);
+						dol_syslog("We found a thirdparty with the email ".$email_from);
 						$thirdpartyid = $thirdpartystatic->id;
-						$thirdpartyfoundby = 'email ('.$from.')';
+						$thirdpartyfoundby = 'email ('.$email_from.')';
 					}
 				}
 
@@ -3005,7 +3005,7 @@ class EmailCollector extends CommonObject
 											} else {
 												$thirdpartystatic->name_alias = (empty($replytostring) ? (empty($fromtext) ? '' : $fromtext) : $replytostring);
 											}
-											$thirdpartystatic->email = (empty($emailtouseforthirdparty) ? (empty($replyto) ? (empty($from) ? '' : $from) : $replyto) : $emailtouseforthirdparty);
+											$thirdpartystatic->email = (empty($emailtouseforthirdparty) ? (empty($replyto) ? (empty($email_from) ? '' : $email_from) : $replyto) : $emailtouseforthirdparty);
 
 											// Overwrite values with values extracted from source email
 											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
@@ -3051,26 +3051,26 @@ class EmailCollector extends CommonObject
 								if ($errorforthisaction) {
 									$errorforactions++;
 								} else {
-									if (!empty($contact_static->email) && $contact_static->email != $from) {
-										$from = $contact_static->email;
+									if (!empty($contact_static->email) && $contact_static->email != $email_from) {
+										$email_from = $contact_static->email;
 									}
-									$from = (string) $from;
+									$email_from = (string) $email_from;
 
-									$from = (string) $from;
+									$email_from = (string) $email_from;
 
-									$result = $contactstatic->fetch(0, null, '', $from);
+									$result = $contactstatic->fetch(0, null, '', $email_from);
 									if ($result < 0) {
 										$errorforactions++;
-										$this->error = 'Error when getting contact with email ' . $from;
+										$this->error = 'Error when getting contact with email ' . $email_from;
 										$this->errors[] = $this->error;
 										break;
 									} elseif ($result == 0) {
-										dol_syslog("Contact with email " . $from . " was not found. We try to create it.");
+										dol_syslog("Contact with email " . $email_from . " was not found. We try to create it.");
 										$contactstatic = new Contact($this->db);
 
 										// Create contact
-										$contactstatic->email = $from;
-										$operationslog .= '<br>We set property email='.dol_escape_htmltag($from);
+										$contactstatic->email = $email_from;
+										$operationslog .= '<br>We set property email='.dol_escape_htmltag($email_from);
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($contactstatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
@@ -3195,7 +3195,7 @@ class EmailCollector extends CommonObject
 								// Insert record of emails sent
 								$actioncomm->type_code   = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 								$actioncomm->code        = 'AC_'.$actioncode;
-								$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
+								$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$email_from;
 								$actioncomm->note_private = $descriptionfull;
 								$actioncomm->fk_project  = $projectstatic->id;
 								$actioncomm->datep       = $dateemail;	// date of email
@@ -3294,10 +3294,10 @@ class EmailCollector extends CommonObject
 								}
 							}
 							if (count($data) > 0) {
-								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($from)."%'";
+								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($email_from)."%'";
 								$resql = $this->db->query($sql);
 								if ($this->db->num_rows($resql) == 0) {
-									$this->errors[] = "User Not allowed to add documents ({$from})";
+									$this->errors[] = "User Not allowed to add documents ({$email_from})";
 								}
 								$arrayobject = array(
 									'propale' => array('table' => 'propal',
@@ -3641,7 +3641,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1)));
 								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1)));
 								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1)));
-								$tickettocreate->origin_email = $from;
+								$tickettocreate->origin_email = $email_from;
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
 								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);
 								$tickettocreate->fk_user_create = $user->id;
@@ -3723,7 +3723,7 @@ class EmailCollector extends CommonObject
 
 										// Add sender to context array to make sure that confirmation e-mail can be sent by trigger script
 										$sender_contact = new Contact($this->db);
-										$sender_contact->fetch(0, null, '', $from);
+										$sender_contact->fetch(0, null, '', $email_from);
 										if (!empty($sender_contact->id)) {
 											$tickettocreate->context['contact_id'] = $sender_contact->id;
 										}
@@ -3791,8 +3791,8 @@ class EmailCollector extends CommonObject
 								$candidaturetocreate->type_code = 0;
 								$candidaturetocreate->category_code = null;
 								$candidaturetocreate->severity_code = null;
-								$candidaturetocreate->email = $from;
-								//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
+								$candidaturetocreate->email = $email_from;
+								//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$email_from;
 								$candidaturetocreate->fk_user_creat = $user->id;
 								$candidaturetocreate->date_creation = dol_now();
 								$candidaturetocreate->fk_project = $projectstatic->id;
@@ -3877,7 +3877,7 @@ class EmailCollector extends CommonObject
 								'imapemail' => $imapemail,
 								'overview' => $overview,
 
-								'from' => $from,
+								'from' => $email_from,
 								'fromtext' => $fromtext,
 
 								'actionparam' =>  $operation['actionparam'],

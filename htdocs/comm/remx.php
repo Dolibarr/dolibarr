@@ -1159,18 +1159,18 @@ if ($socid > 0) {
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				for ($i = 0; $i < $num; $i++) {
-					$sqlobj = $db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
-					$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
 			for ($i = 0; $i < $num; $i++) {
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
 			$array1_sort_order = SORT_DESC;
@@ -1329,18 +1329,18 @@ if ($socid > 0) {
 			$num = $db->num_rows($resql);
 			if ($num > 0) {
 				for ($i = 0; $i < $num; $i++) {
-					$sqlobj = $db->fetch_object($resql);
-					$tab_sqlobj[] = $sqlobj;
-					$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+					$fetched_obj = $db->fetch_object($resql);
+					$tab_sqlobj[] = $fetched_obj;
+					$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 				}
 			}
 			$db->free($resql);
 
 			$num = $db->num_rows($resql2);
 			for ($i = 0; $i < $num; $i++) {
-				$sqlobj = $db->fetch_object($resql2);
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
+				$fetched_obj = $db->fetch_object($resql2);
+				$tab_sqlobj[] = $fetched_obj;
+				$tab_sqlobjOrder[] = $db->jdate($fetched_obj->dc);
 			}
 			$db->free($resql2);
 			$array1_sort_order = SORT_DESC;

@@ -56,6 +56,7 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';	// We force include of main.inc.php instead of master.inc.php even if we are in CLI mode because it contains a lot of security components we want to test.
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/blockedlog/lib/securitycore.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
@@ -98,6 +99,31 @@ class SecurityTest extends CommonClassTest
 		$tmplangs->setDefaultLang('auto');
 		print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
 		$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
+	}
+
+
+
+	/**
+	 * testDolEncryptDolDecrypt
+	 *
+	 * @return  void
+	 */
+	public function testDolEncryptDolDecrypt()
+	{
+		$s = 'simple string with no special char a..z 1..0';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
+
+
+		$s = 'string with à é ç';
+		$es = dolEncrypt($s);
+		$news = dolDecrypt($es);
+
+		print __METHOD__.' testDolEncryptDolDecrypt '.$s.' ==> '.$es.' ==> '.$news."\n";
+		$this->assertEquals($news, $s);
 	}
 
 
@@ -451,7 +477,7 @@ class SecurityTest extends CommonClassTest
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
 
-		$result = restrictedArea($user, 'societe');
+		$result = restrictedArea($user, 'societe', 0, '', '', 'fk_soc', 'rowid', 0, 1);
 		$this->assertEquals(1, $result);
 	}
 

@@ -350,6 +350,15 @@ span.okinversed {
 div.warning, span.warning {
 	color: #777711;
 }
+div.warningbackground {
+	padding-top: 16px;
+	padding-left: 20px;
+	padding-right: 10px;
+	padding-bottom: 16px;
+	margin: 1em 0em 1em 0em;
+	border-radius: 5px;
+	background: #fcf8e3;
+}
 
 /* Error */
 div.error {

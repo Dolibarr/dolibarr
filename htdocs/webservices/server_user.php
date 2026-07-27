@@ -452,7 +452,7 @@ function getListOfGroups($authentication)
 		if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
-			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE g.entity IN (0,".((int) $conf->entity).")";
 		}
 		$sql .= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 		$resql = $db->query($sql);
@@ -531,7 +531,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			// If a contact / company already exists with the email, return the corresponding socid
 			$sql = "SELECT s.rowid as socid FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
-			$sql .= " WHERE s.entity=".$conf->entity;
+			$sql .= " WHERE s.entity=".((int) $conf->entity);
 			$sql .= " AND s.email='".$db->escape($thirdpartywithuser['email'])."'";
 			$sql .= " OR sp.email='".$db->escape($thirdpartywithuser['email'])."'";
 			$sql .= $db->plimit(1);
