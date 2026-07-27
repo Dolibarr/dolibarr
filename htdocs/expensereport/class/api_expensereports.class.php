@@ -344,7 +344,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->date,
 			$request_data->comments,
 			$request_data->fk_project,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->type,
 			$request_data->fk_ecm_files
 		);
@@ -414,7 +414,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->value_unit,
 			$request_data->date,
 			$id,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->fk_ecm_files
 		);
 

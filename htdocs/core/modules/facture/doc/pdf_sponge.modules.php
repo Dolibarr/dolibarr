@@ -927,7 +927,9 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					// Collect total by value of vat rate into $this->tva_array
+					// Lines are already stored as delta (not cumulative) once INVOICE_USE_SITUATION=2, so no ratio must be reapplied here (same guard as CommonObject::update_price())
 					$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
