@@ -1051,7 +1051,6 @@ AGENDA_USE_EVENT_TYPE_DEFAULT =Establecer automáticamente este valor predetermi
 PasswordTogetVCalExport =Clave para autorizar el enlace de exportación
 PastDelayVCalExport=No exportar evento más antiguo que
 ClickToDialUseTelLink=Use solo un enlace "tel:" en los números de teléfono
-CashDesk=Punto de venta
 CashDeskSetup=Configuración del módulo de punto de venta
 CashDeskThirdPartyForSell=Tercero genérico predeterminado para usar en ventas
 CashDeskBankAccountForSell=Cuenta predeterminada para usar para recibir pagos en efectivo

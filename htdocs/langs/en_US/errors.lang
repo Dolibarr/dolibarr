@@ -388,6 +388,7 @@ ErrorModuleBuilderFailedToInit=Failed to init the object with the new %s (%s)
 ErrorThirdPartyNotFound=Error ThirdParty Not Found
 ErrorDynamicPHPContentNotAllowed=Error: %s=1 so dynamic PHP content is allowed only if RCE PHP functions (exec, shell_exec, ...) are all disabled.
 ErrorTooManyLinksIntoHTMLString=The HTML content contains too many links or images. Reduce the number or raise MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=Deleting a closed cash control is not possible
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -442,6 +443,7 @@ WarningModuleAffiliatedToAReportedCompany=Warning, this module has been reported
 WarningModuleAffiliatedToAPiratPlatform=Be careful when getting a module (paid or free) from a suspicious non official platform like %s
 WarningDNSServerNotAvailable=Warning, DNS server not available
 WarningSecureKeyNotSet=The value fo the securekey must not be empty
+WarningFullPathWasNotFoundSoWeUseAnAlternativeValue=Note: Full path was not found so we used the alternative value <b>%s</b>
 
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)

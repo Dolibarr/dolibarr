@@ -545,11 +545,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 
 					$to = $adh->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
-					$from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
+					$email_from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
 					$mailfile = new CMailFile(
 						'['.$appli.'] ' . getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'),
 						$to,
-						$from,
+						$email_from,
 						$adh->makeSubstitution(getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL')),
 						array(),
 						array(),
@@ -561,7 +561,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					);
 
 					if (!$mailfile->sendfile()) {
-						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $email_from, $to), LOG_ERR);
 					}
 				}
 
@@ -665,13 +665,14 @@ print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"'
 print '<div align="center">';
 print '<div id="divsubscribe">';
 
-print '<div class="center subscriptionformhelptext opacitymedium justify">';
+print '<div class="center subscriptionformhelptext opacitylow justify small margintoponly"><br>';
 if (getDolGlobalString('MEMBER_NEWFORM_TEXT')) {
 	print $langs->trans(getDolGlobalString('MEMBER_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
+print '<br>';
 
 dol_htmloutput_errors($errmsg);
 dol_htmloutput_events();
@@ -1344,7 +1345,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		$num = $db->num_rows($result);
 
 		print '<br><div class="div-table-responsive">';
-		print '<table class="tagtable liste">'."\n";
+		print '<table class="tagtable liste noborder">'."\n";
 		print '<input type="hidden" name="action" value="create">';
 
 		print '<tr class="liste_titre">';
@@ -1358,7 +1359,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		if ($publiccounters) {
 			print '<th class="center">'.$langs->trans("Members").'</th>';
 		}
-		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
+		print '<th class="center"></th>';
 		print "</tr>\n";
 
 		$i = 0;
@@ -1370,13 +1371,22 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			$minimumamountbytype = $adht->minimumamountbytype(1);         // Load the array of amount per type
 
 			print '<tr class="oddeven">';
+
 			// Label
-			print '<td>'.dolPrintHTML($objp->label).'</td>';
+			print '<td>';
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print dolPrintHTML($objp->label);
+			print '</div>';
+			print '</td>';
+
 			// Duration
 			print '<td class="center">';
 			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+			print '<span class="badge badge-primary">';
 			print max(1, intval($objp->duration)).' '.$units[$unit];
+			print '</span>';
 			print '</td>';
+
 			// Amount
 			print '<td class="center"><span class="amount nowrap">';
 
@@ -1406,7 +1416,8 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				print "–"; // No subscription required
 			}
 			print '</span></td>';
-			print '<td class="center">';
+
+			print '<td class="center minwidth100">';
 			if ($objp->morphy == 'phy') {
 				print $langs->trans("Physical");
 			} elseif ($objp->morphy == 'mor') {
@@ -1415,6 +1426,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				print $langs->trans("MorAndPhy");
 			}
 			print '</td>';
+
 			if (empty($hidevoteallowed)) {
 				print '<td class="center">'.yn($objp->vote).'</td>';
 			}

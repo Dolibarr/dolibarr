@@ -936,8 +936,8 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 
 	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, aa.pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";
-	$sql .= " WHERE b.entity = ".$conf->entity;
-	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " WHERE b.entity = ".((int) $conf->entity);
+	$sql .= " AND aa.entity = ".((int) $conf->entity);
 	$sql .= " AND b.numero_compte = aa.account_number";
 	$sql .= " AND ".$sanitizedpredefinedgroupwhere;
 	$sql .= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";

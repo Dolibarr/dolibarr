@@ -704,16 +704,19 @@ trait CommonSubtotal
 						$this->lines[$i]->multicurrency_subprice
 					);
 				} elseif ($current_module == 'propal' && $this instanceof Propal) {
+					// Preserve the original entry mode of the line so the total is not drifted by rounding.
+					$line_price_base_type = $this->lines[$i]->wasEnteredIncludingTax() ? 'TTC' : 'HT';
+					$line_pu = ($line_price_base_type === 'TTC') ? $this->lines[$i]->subprice_ttc : $this->lines[$i]->subprice;
 					$result = $this->updateline(
 						$this->lines[$i]->id,
-						$this->lines[$i]->subprice,
+						$line_pu,
 						$this->lines[$i]->qty,
 						$mode == 'discount' ? $value : $this->lines[$i]->remise_percent,
 						$mode == 'tva' ? $value : $this->lines[$i]->tva_tx,
 						$this->lines[$i]->localtax1_rate,
 						$this->lines[$i]->localtax2_rate,
 						$this->lines[$i]->desc,
-						'HT',
+						$line_price_base_type,
 						$this->lines[$i]->info_bits,
 						$this->lines[$i]->special_code,
 						$this->lines[$i]->fk_parent_line,

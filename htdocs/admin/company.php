@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
 
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
 
 /*
  * Actions
@@ -88,21 +94,31 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
+	$db->begin();
+
 	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
-		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
-			// For FR, default value of option to show profid SIREN is on by default
-			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		// Check we can change country
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if ($mysoc->country_code == 'FR' && $tmparray['code'] != $mysoc->country_code && isALNERunningVersion()) {
+			$langs->load("blockedlog");
+			setEventMessages($langs->trans("BlockedLogCountryChangeNotAllowedFR"), null, 'errors');
+			$error++;
+		} else {
+			if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+				// For FR, default value of option to show profid SIREN is on by default
+				$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+			}
+
+			$mysoc->country_id   = $tmparray['id'];
+			$mysoc->country_code = $tmparray['code'];
+			$mysoc->country_label = $tmparray['label'];
+
+			$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
+
+			activateModulesRequiredByCountry($mysoc->country_code);
 		}
-
-		$mysoc->country_id   = $tmparray['id'];
-		$mysoc->country_code = $tmparray['code'];
-		$mysoc->country_label = $tmparray['label'];
-
-		$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
-
-		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
 	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, 0, $langs, 0);
@@ -116,8 +132,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	} else {
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
-
-	$db->begin();
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("name", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -436,8 +450,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters

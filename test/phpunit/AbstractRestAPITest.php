@@ -99,7 +99,7 @@ abstract class AbstractRestAPITest extends CommonClassTest
 
 		$this->assertNotNull($object, "$test Parsing of JSON result must not be null");
 		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), "$test Error".(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
-		$this->assertEquals('200', $object['success']['code']);
+		$this->assertEquals('200', $object['success']['code'] ?? 0, "API call for setup failed");
 
 		$this->api_key = isset($object['success']['token']) ? $object['success']['token'] : null;
 

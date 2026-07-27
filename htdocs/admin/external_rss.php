@@ -27,7 +27,7 @@
 /**
  *      \file       htdocs/admin/external_rss.php
  *      \ingroup    external_rss
- *      \brief      Page to setupe module ExternalRss
+ *      \brief      Page to setup the ExternalRss module
  */
 
 // Load Dolibarr environment
@@ -89,7 +89,7 @@ if ($action == 'add' || GETPOST("modify")) {
 		$db->begin();
 
 		if (GETPOST("modify")) {
-			// Supprime boite box_external_rss de definition des boites
+			// Remove box_external_rss from the definition of boxes
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
 			$sql.= " WHERE file ='box_external_rss.php' AND note LIKE '".$db->escape(GETPOST("norss"))." %'";
@@ -102,7 +102,7 @@ if ($action == 'add' || GETPOST("modify")) {
 			}
 			*/
 		} else {
-			// Ajoute boite box_external_rss dans definition des boites
+			// Add box_external_rss to the definition of boxes
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
 			$sql .= " VALUES ('box_external_rss.php', '".$db->escape(GETPOSTINT("norss")." (".GETPOST($external_rss_title)).")')";
 			if (!$db->query($sql)) {
@@ -148,7 +148,7 @@ if (GETPOST("delete")) {
 				$obj = $db->fetch_object($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-				$sql .= " WHERE entity = ".$conf->entity;
+				$sql .= " WHERE entity = ".((int) $conf->entity);
 				$sql .= " AND box_id = ".((int) $obj->rowid);
 				$resql = $db->query($sql);
 
@@ -203,7 +203,7 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
 print '<br>';
 
-// Formulaire ajout
+// From to add
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
@@ -358,7 +358,7 @@ llxFooter();
 $db->close();
 
 /**
- * Check if the given RSS feed if inside the list of boxes/widgets
+ * Check if the given RSS feed is inside the list of boxes/widgets
  *
  * @param	int				$idrss		The id of the RSS feed
  * @param	ModeleBoxes[]	$boxlist	A list with boxes/widgets

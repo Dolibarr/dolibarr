@@ -57,17 +57,15 @@ NEW: Add button more on membership stat page
 NEW: Add captcha on webportail (#37726)
 NEW: Add column einvoice_vate on VAT dictionary
 NEW: Add condition to exclude unpaid invoices from profit (#36693)
-NEW: Add count tool for AI
+NEW: Add count tool for API
 NEW: Add default bank account field on third party creation form (#37866)
 NEW: Add direct debit to close on home thumbs
 NEW: Add end date of membership on list of partnership
 NEW: Add field 'Commentaires' in formconfirm when adding a payment on invoices from massaction. (#37594)
-NEW: Add label column to a members subscription list (#38289)
+NEW: Add label/note column to the members subscription list (#38289)
 NEW: Add lifetime amount on the list of blockedlog
 NEW: Add mass mailing tab - with counts to project tabs (#37703)
 NEW: Add member on list of partnership
-NEW: Add method calculateVATNumberFromProperties()
-NEW: Add method dolOutputDates()
 NEW: Add method formatLogObject to allow logs in 1 line #37135
 NEW: Add new EUID number (#36997)
 NEW: Add page to control last line deletion
@@ -161,7 +159,6 @@ NEW: Add mass action to cancel invoices using credit notes (#37852)
 NEW: Add personal_data flag in extrafields admin UI - next step of #8612 (#38133)
 NEW: Direct installation for community and free modules on DoliStore (#38357)
 NEW: Display thirdparty name with ref in supplier orders linked objects (#36952)
-NEW: Show bom net needs treeview by line position. (#37459)
 NEW: Show name_alias in parentheses in thirdparty dropdown lists (#37997)
 NEW: Thirdparty card +tab with events where thirdparty is attendee/booth (#37743)
 NEW: Update ticket read date when status changes (#37470)
@@ -173,6 +170,7 @@ NEW: The OAuth login with Google stay on the requested page after the redirect i
 NEW: Add shipment online url to substitution array
 NEW: ModuleBuilder - selectable object tabs (+ fixes for multi-object generation)
 NEW: Add hook getTicketMessageEmailFrom to override sender in Ticket::sendTicketMessageByEmail
+NEW: Can export ODT documents as PDF/A (new MAIN_ODT_AS_PDFA option)
 
 For developers:
 ---------------
@@ -189,7 +187,9 @@ NEW: API endpoint for getting product price logs (#38420)
 NEW: API get country: load region and load states now an option (#37715)
 NEW: Add MAIN_FORCE_SYSTEM_MESSAGE Renamed hook "info_admin" into "messageOfTheDay"
 NEW: Category - API - Add type list (#38207)
-
+NEW: Add method calculateVATNumberFromProperties()
+NEW: Add method dolOutputDates()
+FIX: Security permission on payment instead of create to create payment with API (credit Santosh Kumar Puppala) in commit ad8cd7c0e1800636302517e42fcdcafa393524b3
 
 WARNING:
 --------
@@ -202,11 +202,19 @@ The following changes may create regressions for some external modules, but were
 * The substitution variable __MYCOUNTRY_ID__ has been removed (duplicate of standard __MYCOMPANY_COUNTRY_ID__).
 * Renamed hook "info_admin" into "messageOfTheDay".
 * Library jeditable was not used by the core (used by a hidden option with no security rules), so it has been removed.
-* Module Paybox has been removed.
+* Old deprecated module Paybox has been removed.
+* Old deprecated module Deplacement has been removed.
+
+
+
+***** ChangeLog for 23.0.4 compared to 23.0.3 *****
+
+SEC #39000 Escalation to admin when user has clone permission - credit Abderrahmane Aksoum
 
 
 ***** ChangeLog for 23.0.3 compared to 23.0.2 *****
 
+FIX: #35076 ModuleBuilder - 'Show on combobox' option was ignored for fields other than ref/code (property not captured on add/edit)
 FIX: #36589 (#38037) There is no save button in the "Variant attributes extrafields" and "Variant attributes values extrafields" tabs of the product variant module
 FIX: #37552 (#38073) Webportal Proposals, Sales orders and Invoices links not working
 FIX: #37649 (#38101) Gross price not calculated in supplier orders
@@ -233,6 +241,7 @@ FIX: missing "blob:" in the assistant for CSP editor.
 FIX: option MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE
 FIX: product price.php: preserve default_vat_code and tva_npr when auto-creating initial product_price row (#38034)
 FIX: propagate fk_warehouse from BOM/MO to production lines in createProduction() and processBOM() (#38147)
+FIX: #39068 Product search combo: ignore supplier price warning text when filtering
 FIX: selected default value ko on select_produits_fournisseurs_list()
 FIX: Set default warehouse on order create. (#37815)
 FIX: Site root missing in $backtopage. (#37804)

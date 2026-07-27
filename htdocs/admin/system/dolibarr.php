@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("blockedlog", "install", "other", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -61,7 +61,14 @@ $sfurl = '';
 $version = '0.0';
 
 // Version blockedlog
-$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow().'</span>';
+$versionbadge = '<span class="badge-text badge-secondary">'.getBlockedLogVersionToShow();
+if ($mysoc->country_code == 'FR') {
+	$islne = isALNEQualifiedVersion(1, 1);
+	if (!$islne) {
+		$versionbadge .= ' - '.$langs->trans("NotCertified");
+	}
+}
+$versionbadge .= '</span>';
 
 
 /*
@@ -588,11 +595,11 @@ $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
-	$sql .= " WHERE entity IN (0,".$conf->entity.")";
+	$sql .= " WHERE entity IN (0,".((int) $conf->entity).")";
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".((int) $conf->entity)).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

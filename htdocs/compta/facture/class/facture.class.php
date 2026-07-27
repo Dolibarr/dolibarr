@@ -24,6 +24,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -618,7 +619,12 @@ class Facture extends CommonInvoice
 			$this->note_private = trim($this->note_private);
 			$this->note_private = dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 
-			$this->array_options = $_facrec->array_options;
+			// Use template extra fields as fallback only - form values (already set) take precedence
+			foreach ($_facrec->array_options as $key => $val) {
+				if (!isset($this->array_options[$key]) || $this->array_options[$key] === '') {
+					$this->array_options[$key] = $val;
+				}
+			}
 
 			if (!$this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
@@ -743,7 +749,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape((string) $this->pos_source)."'" : "null");
 		$sql .= ", ".(int) $this->pos_print_counter;
@@ -1190,7 +1196,10 @@ class Facture extends CommonInvoice
 
 		// Retrieve all extrafield
 		// fetch optionals attributes and labels
-		$this->fetch_optionals();
+		// (unless the caller already set array_options, e.g. from a create form, so we don't overwrite them)
+		if (empty($this->array_options)) {
+			$this->fetch_optionals();
+		}
 
 		if (!empty($this->array_options)) {
 			$facture->array_options = $this->array_options;
@@ -2914,7 +2923,10 @@ class Facture extends CommonInvoice
 			$facligne->desc = $remise->description; // Description of the invoice line
 			$facligne->vat_src_code = $remise->vat_src_code;
 			$facligne->tva_tx = $remise->tva_tx;
-
+			$facligne->localtax1_tx = $remise->localtax1_tx;
+			$facligne->localtax1_type = (int) $remise->localtax1_type;
+			$facligne->localtax2_tx = $remise->localtax1_tx;
+			$facligne->localtax2_type = (int) $remise->localtax1_type;
 			$facligne->subprice = -(float) $remise->total_ht;
 			$facligne->fk_product = 0; // Predefined Product ID
 			$facligne->qty = 1;
@@ -2943,6 +2955,8 @@ class Facture extends CommonInvoice
 			$facligne->total_ht  = -(float) $remise->total_ht;
 			$facligne->total_tva = -(float) $remise->total_tva;
 			$facligne->total_ttc = -(float) $remise->total_ttc;
+			$facligne->total_localtax1 = -(float) $remise->total_localtax1;
+			$facligne->total_localtax2 = -(float) $remise->total_localtax2;
 
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_total_ht;
@@ -3244,9 +3258,9 @@ class Facture extends CommonInvoice
 			}
 
 			// Invoice line extrafields
-			$main = MAIN_DB_PREFIX.'facturedet';
-			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM ".$ef." WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
+			$sql_main_table = MAIN_DB_PREFIX.'facturedet';
+			$sql_ef_table = $sql_main_table."_extrafields";
+			$sqlef = "DELETE FROM ".$sql_ef_table." WHERE fk_object IN (SELECT rowid FROM ".$sql_main_table." WHERE fk_facture = ".((int) $rowid).")";
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
@@ -3742,7 +3756,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= " SET ref = '".$this->db->escape($num)."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
+			$sql .= " SET ref = '".$this->db->escape($num)."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? ((int) $user->id) : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {	// If option enabled, we force invoice date
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
@@ -4404,7 +4418,7 @@ class Facture extends CommonInvoice
 
 			// Rank to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1) {
+			if (empty($ranktouse) || $ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
@@ -4726,7 +4740,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 			$apply_abs_price_on_credit_note = false;
-			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+			if ($this->type == self::TYPE_CREDIT_NOTE && !(getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN'))) {
 				$apply_abs_price_on_credit_note = true;
 			}
 
@@ -6308,11 +6322,11 @@ class Facture extends CommonInvoice
 					}
 
 					// Sender
-					$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+					$email_from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 					if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-						$from = (string) $arraymessage->email_from;
+						$email_from = (string) $arraymessage->email_from;
 					}
-					if (empty($from)) {
+					if (empty($email_from)) {
 						$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 						$loopError++;
 					}
@@ -6350,7 +6364,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Mail Creation
-						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+						$cMailFile = new CMailFile($sendTopic, $to, $email_from, $sendContent, $joinFile, $joinFileMime, $joinFileName, $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 						$resultsendmail = $cMailFile->sendfile();
 
@@ -6382,7 +6396,7 @@ class Facture extends CommonInvoice
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
 							$actioncomm->email_subject = $sendTopic;
-							$actioncomm->email_from = $from;
+							$actioncomm->email_from = $email_from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;
 							//$actioncomm->email_tocc = $sendtocc;
@@ -6422,7 +6436,7 @@ class Facture extends CommonInvoice
 							// Fields when action is an email (content should be added into note)
 							$actioncomm->email_msgid = $cMailFile->msgid;
 							$actioncomm->email_subject = $sendTopic;
-							$actioncomm->email_from = $from;
+							$actioncomm->email_from = $email_from;
 							$actioncomm->email_sender = '';
 							$actioncomm->email_to = $to;
 							//$actioncomm->email_tocc = $sendtocc;

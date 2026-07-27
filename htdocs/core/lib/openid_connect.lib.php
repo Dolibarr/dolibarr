@@ -124,14 +124,14 @@ function openid_connect_create_user($db, $userinfo, $login, $entity)
 
 	// Sanitize login using Dolibarr forbidden characters for logins.
 	$badChars = getDolGlobalLoginBadCharUnauthorized();
-	$sanitized_login = $login;
+	$sanitized_login = $login;  // @phan-suppress-current-line SqlInjection
 
 	if ($badChars !== '' && preg_match('/['.preg_quote($badChars, '/').']/', $login)) {
 		// First try preferred_username from OIDC (common standard claim)
 		if (property_exists($userinfo, 'preferred_username') && !empty($userinfo->preferred_username)) {
 			$preferred = $userinfo->preferred_username;
 			if (!preg_match('/['.preg_quote($badChars, '/').']/', $preferred)) {
-				$sanitized_login = $preferred;
+				$sanitized_login = $preferred;  // @phan-suppress-current-line SqlInjection
 			}
 		}
 		// If still invalid (no preferred_username or it also has bad chars), extract local part of email

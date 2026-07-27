@@ -33,7 +33,14 @@ include_once DOL_DOCUMENT_ROOT.'/blockedlog/versionmod.inc.php';
  */
 function getBlockedLogVersionToShow()
 {
-	return constant('DOLCERT_VERSION');
+	$versionbadge = constant('DOLCERT_VERSION');
+
+	// Protection if we used a past old version not yet certified, we change version shown.
+	if (!constant('CERTIF_LNE')) {	// Hard coded in version
+		$versionbadge = preg_replace('/^(\d)\./', '\1b.', $versionbadge);
+	};
+
+	return $versionbadge;
 }
 
 
@@ -139,15 +146,14 @@ function isRegistrationDataSaved()
 
 	$companyname = getDolGlobalString('BLOCKEDLOG_REGISTRATION_NAME', $mysoc->name);
 	$companyemail = getDolGlobalString('BLOCKEDLOG_REGISTRATION_EMAIL', $mysoc->email);
-	$companycountrycode = getDolGlobalString('BLOCKEDLOG_REGISTRATION_COUNTRY_CODE', $mysoc->country_code);
-	$companyidprof1 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF1', $mysoc->idprof1);
-	$companyidprof2 = getDolGlobalString('BLOCKEDLOG_REGISTRATION_IDPROF2', $mysoc->idprof2);
+	$companycountrycode = $mysoc->country_code;
+	$companyidprof1 = getDolGlobalString('MAIN_INFO_SIREN', $mysoc->idprof1);
+	$companyidprof2 = getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
 	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
 		return false;
 	}
-
 	/*
 	$providerset = getDolGlobalString('MAIN_INFO_ITPROVIDER_NAME');	// Can be 'myself'
 
@@ -205,7 +211,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return 'CERTIF_LNE_IS_2';
 	}
 
-	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version, it can't be the certified versions.
+	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version (dev version), it can't be the certified versions.
 		return '';
 	}
 	if ($mysoc->country_code != 'FR') {
@@ -218,30 +224,32 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 		return '';
 	}
 
-	// all conditions are ok to become a LNE certified version
+	// All conditions are ok to become a LNE certified version
 	return ($ignoredev ? '' : 'NOT_BETA+').'FR+CERTIF_LNE_IS_1'.($ignoremodule ? '' : '+MODENABLED');
 }
 
 
 /**
  * Return if the application is executed with the LNE requirements on.
- * This function can be used to disable some features like custom receipts, or to enable others like showing the information "Certified LNE".
+ * This function can be used to block some features like custom receipts, or to enable others like showing the information "Certified LNE".
  *
- * @param	int		$blockedlogtestalreadydone	Test on blockedlog used already done and we suppose it is true.
- * @return 	boolean								True or false
+ * @param	int		$blockedlogtestalreadydone		Test on blockedlog used already done and we suppose it is true.
+ * @param	int		$blockedlogmodulealreadydone	Test on blockedlog module already done and we suppose it is true.
+ * @return 	boolean									True or false
  */
-function isALNERunningVersion($blockedlogtestalreadydone = 0)
+function isALNERunningVersion($blockedlogtestalreadydone = 0, $blockedlogmodulealreadydone = 0)
 {
-	// For Debug help: Constant CERTIF_LNE can be set 2 by developer to force all LNE restrictions
-	// even if the country is not France, so we can test the restrictions on any dev instance.
+	// For Debug help: Constant CERTIF_LNE can be set 2 by developers get mode 1 compliant with dev env.
 	// Note that you can force, with this constant, the enabling of the restrictions,
 	// but there is no way to force the disabling of a restriction.
-	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2
-		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 2		// Value is 2 for debug purpose to enable restriction except https for dev env.
+		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
+		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 	if (defined('CERTIF_LNE') && (int) constant('CERTIF_LNE') === 1		// Value is 1 when version is certified
-		&& isModEnabled('blockedlog') && ($blockedlogtestalreadydone || isBlockedLogUsed())) {
+		&& ($blockedlogmodulealreadydone || isModEnabled('blockedlog'))
+		&& ($blockedlogtestalreadydone || isBlockedLogUsed())) {
 		return true;
 	}
 
@@ -268,7 +276,7 @@ function isBlockedLogUsed($ignoresystem = 0)
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log is disallowed
+		$sql .= " WHERE entity = ".((int) $conf->entity);	// Sharing entity in blocked log will never be allowed
 		if ($ignoresystem) {
 			$sql .= " AND action NOT IN ('MODULE_SET', 'MODULE_RESET')";
 		}
@@ -310,11 +318,12 @@ function pdfCertifMentionblockedLog(&$pdf, $outputlangs, $seller, $default_font_
 
 	if (in_array($seller->country_code, array('FR'))) {
 		$outputlangs->load("blockedlog");
+		$blockedlog_mention = '';
 
 		$isalne = isALNEQualifiedVersion(); // If necessary, we could replace with "if isALNERunningVersion()"
 		if ($isalne == 'CERTIF_LNE_IS_2') {
 			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECandidatePOSSystem");
-		} else {
+		} elseif ($isalne) {
 			$blockedlog_mention = $outputlangs->transnoentitiesnoconv("InvoiceGeneratedWithLNECertifiedPOSSystem");
 		}
 
@@ -392,6 +401,95 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
 
 
 /**
+ * Call remote API service to get the obfuscation key.
+ * This function is only called by blockedlog->getObfuscationKey();
+ *
+ * @param 	string	$idprof1				Counter ID/value of ne record
+ * @param 	string	$registrationnumber		Registration number
+ * @param	boolean	$force					False. Use true for tests.
+ * @return	string							Obfuscationkey or 'ERROR ...' if error.
+ */
+function callApiToGetObfuscationKey($idprof1, $registrationnumber, $force = false)
+{
+	global $mysoc, $conf;
+
+	$obfuscationkey = 'ERROR';
+
+	if (empty($idprof1)) {
+		dol_syslog("callApiToGetObfuscationKey was called with empty idprof1", LOG_DEBUG);
+		return 'ERROR callApiToGetObfuscationKey was called with empty idprof1';
+	}
+
+	//if ((isALNERunningVersion(1) || $force) && $mysoc->country_code == 'FR') {
+		$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
+
+		$algo = 'sha256';
+		$hash_unique_id = getHashUniqueIdOfRegistration($algo);		// The hash of the unique IDof instance
+
+		$t = microtime(true);
+		$micro = sprintf("%06d", (int) (($t - floor($t)) * 1000000));
+
+		$data = '';
+		$data .= 'hash_algo=dol_hash-'.urlencode($algo);
+		$data .= '&hash_unique_id='.urlencode($hash_unique_id);
+		$data .= '&action=dolibarrgetkeyobfuscation';
+		$data .= '&datesys='.urlencode(dol_print_date(dol_now('gmt'), 'standard', 'gmt').'.'.$micro);
+		$data .= '&version='.(float) DOL_VERSION;
+		$data .= '&version_full='.urlencode(DOL_VERSION);
+		$data .= '&versionblockedlog='.(float) getBlockedLogVersionToShow();
+		$data .= '&versionblockedlog_full='.urlencode(getBlockedLogVersionToShow());
+
+		$data .= '&entity='.(int) $conf->entity;
+
+		$data .= '&company_idprof1='.urlencode(dol_sanitizeKeyCode($idprof1));
+		$data .= '&registrationnumber='.urlencode(dol_sanitizeKeyCode($registrationnumber));
+
+		$addheaders = array();
+		$timeoutconnect = 3;
+		$timeoutresponse = 3;
+
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG);
+		dol_syslog("callApiToGetObfuscationKey call remote URL idprod1=".dol_sanitizeKeyCode($idprof1), LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	try {
+		$tmpresult = getURLContent($url_for_ping, 'POST', $data, 1, $addheaders, array('https'), 0, -1, $timeoutconnect, $timeoutresponse, array());
+		usleep(10000);
+
+		// Add a warning in log in case of error
+		if ($tmpresult['http_code'] == 0 && !empty($tmpresult['curl_error_msg'])) {
+			$logerrormessage = 'Error: '.$tmpresult['curl_error_msg'];
+			$obfuscationkey .= ' '.$tmpresult['curl_error_msg'];
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+		} elseif ($tmpresult['http_code'] != 200) {
+			$logerrormessage = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+			$obfuscationkey .= ' '.$tmpresult['http_code'].' '.$tmpresult['content'];
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING);
+			dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$logerrormessage, LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+		} else {
+			$reg = array();
+			if (preg_match('/(DOLOBFUSCKEY.*)/', $tmpresult['content'], $reg)) {		// gitleaks:allow  $tmpresult['content'] may contains text comments before the line 'DOLOBFUSCKEY1...,DOLOBFUSCKEY2...'
+				$obfuscationkey = $reg[1];
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG);
+				dol_syslog("callApiToGetObfuscationKey we got the remote obfuscation key", LOG_DEBUG, 0, '_dolibarrgetkeyobfuscation');
+			} else {
+				$obfuscationkey .= ' '.$tmpresult['content'];
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING);
+				dol_syslog("callApiToGetObfuscationKey result error when getting obfuscation key: ".$tmpresult['content'], LOG_WARNING, 0, '_dolibarrgetkeyobfuscation');
+			}
+		}
+	} catch (Exception $e) {
+		$obfuscationkey .= ' '.$e->getMessage();
+		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR);
+		dol_syslog("callApiToGetObfuscationKey result error ".$e->getMessage(), LOG_ERR, 0, '_dolibarrgetkeyobfuscation');
+	}
+
+	return $obfuscationkey;
+}
+
+
+/**
  * Call remote API service to push the last counter and signature
  *
  * @param 	int		$id						Counter ID/value of ne record
@@ -403,6 +501,7 @@ function sumAmountsForUnalterableEvent($block, &$refinvoicefound, &$totalhtamoun
  * @param	int		$previousdatecreation	Date creation of previous record
  * @return	int								Return <0 if KO, 0 if nothing done, >0 if OK
  */
+/*
 function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid, $previoussignature, $previousdatecreation)
 {
 	global $mysoc, $conf;
@@ -481,6 +580,8 @@ function callApiToPushCounter($id, $signature, $datecreation, $test, $previousid
 
 	return 0;
 }
+*/
+
 
 /**
  * Return if user is a tax auditor.
@@ -555,4 +656,117 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
 			$posy += 3;
 		}
 	}
+}
+
+
+
+/**
+ * Migrate an old database to add the .end flag.
+ *
+ * @return  int		Return -1 if KO, 1 if OK
+ */
+function migrate_blockedlog_add_end_file()
+{
+	global $conf, $db, $langs, $mysoc;
+
+	include_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	$blocklog_static = new BlockedLog($db);
+
+	// Loop on all entities found in llx_blockedlog
+	$listofentities = array();
+	$sql = "SELECT DISTINCT entity FROM ".MAIN_DB_PREFIX."blockedlog";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$listofentities[] = $obj->entity;
+		}
+	} else {
+		print '<tr class="trforrunsql"><td colspan="4">';
+		print '<b>'.$langs->trans('InitEndFlagFile')."</b>:\n";
+		print 'Error: Failed to get list of entities in blockedlog table';
+		print '</td></tr>';
+		return -1;
+	}
+
+	foreach ($listofentities as $entity) {
+		print '<tr class="trforrunsql"><td colspan="4">';
+		print '<b>'.$langs->trans('InitEndFlagFile')." (entity = ".$entity.")</b>:\n";
+
+		// Load the data of company (country, ...). Erase current one so this function can be used by migration script only.
+		$conf->setEntityValues($db, $entity);
+		$mysoc = new Societe($db);
+		$mysoc->setMysoc($conf);
+
+		$maxid = 0;
+		$sql = "SELECT MAX(rowid) as maxid FROM ".MAIN_DB_PREFIX."blockedlog WHERE entity = ".((int) $entity);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$maxid = $obj->maxid;
+			}
+		} else {
+			print 'Error: Failed to get max id of blockedlog table';
+			print '</td></tr>';
+			return -1;
+		}
+
+		$blocklog_static->fetch($maxid);
+
+		$lockfile = $blocklog_static->getEndOfChainFlagFile();
+
+		// Lock acquired, we can now write the new .end file
+		$stringtowrite = 'BLOCKEDLOGHEAD '.$blocklog_static->id." ".dol_print_date($blocklog_static->date_creation, 'dayhourrfc', 'gmt')." ".(string) $blocklog_static->signature;
+
+		if (isALNERunningVersion(1) && $mysoc->country_code == 'FR') {
+			$remoteobfuscationkey = $blocklog_static->getObfuscationKey();
+			if (empty($remoteobfuscationkey)) {
+				print "Error: Failed to get the remote obfuscation key. We can't record the end of chain flag file so we abort the transaction.";
+				print '</td></tr>';
+				return -1;
+			}
+
+			$stringtowriteencoded = dolEncrypt($stringtowrite, $remoteobfuscationkey, '', '', 'dolobfuscationv1-'.$mysoc->idprof1.'-'.$blocklog_static->id);
+		} else {
+			$stringtowriteencoded = dolEncrypt($stringtowrite, '', '', '', 'dolcrypt-'.$mysoc->idprof1.'-'.$blocklog_static->id);
+		}
+
+		// Update or create the .end flag file.
+		if (defined('BLOCKEDLOG_END_FLAG_IN_A_FILE')) {
+			$lockhandle = fopen($lockfile, 'w+');
+			if ($lockhandle) {
+				if (fwrite($lockhandle, $stringtowriteencoded."\n") === false) {
+					print "Cannot write to the blockedlog .end file ".$lockfile;
+					print '</td></tr>';
+					return -1;
+				}
+
+				fclose($lockhandle);	// Remove the lock
+				dolChmod($lockfile);
+			} else {
+				print "Cannot open for writing the blockedlog .end file ".$lockfile;
+				print '</td></tr>';
+				return -1;
+			}
+		} else {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " WHERE name = '".$db->escape(basename($lockfile))."' AND entity = ".((int) $conf->entity);
+			$resql = $db->query($sql);
+
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
+			$sql .= " VALUES('".$db->escape(basename($lockfile))."', '".$db->escape($stringtowriteencoded)."', 'chaine', 0, 'Blockedlog end of chain flag', ".((int) $conf->entity).")";
+			$resql = $db->query($sql);
+			if (!$resql) {
+				print "Cannot open for writing the blockedlog .end file ".basename($lockfile);
+				print '</td></tr>';
+				return -1;
+			}
+		}
+
+		print $langs->trans("Done");
+		print '</td></tr>';
+	}
+
+	return 1;
 }

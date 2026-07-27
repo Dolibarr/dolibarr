@@ -153,7 +153,7 @@ if ($action == 'add' && $permissiontoadd) {
 		$error++;
 	}
 
-	// gestion des fréquences et des échéances
+	// frequency and due date management
 	$frequency = GETPOSTINT('frequency');
 	$rec_year = GETPOST('rec_year');
 	$rec_month = GETPOST('rec_month');
@@ -541,7 +541,7 @@ if ($action == 'create') {
 						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref .= $formproject->select_projects($object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
@@ -748,7 +748,7 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-				$type =0;
+				$type = 0;
 				// Show product and description
 				if (isset($object->lines[$i]->product_type)) {
 					$type = $object->lines[$i]->product_type;
@@ -808,7 +808,7 @@ if ($action == 'create') {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND f.entity = ".$conf->entity;
+		$sql .= " AND f.entity = ".((int) $conf->entity);
 		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -840,7 +840,7 @@ if ($action == 'create') {
 
 			print_barre_liste($langs->trans("RepeatableIntervention"), $page, $_SERVER['PHP_SELF'], "&socid=$socid", $sortfield, $sortorder, '', $num, '', 'intervention');
 
-			print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedIntervention").'</span><br><br>';
+			print '<div class="info"><span class="">'.$langs->trans("ToCreateAPredefinedIntervention").'</span></div><br>';
 
 			$i = 0;
 			print '<table class="noborder centpercent">';
