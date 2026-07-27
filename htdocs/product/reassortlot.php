@@ -402,7 +402,7 @@ if ($search_stock_physique != '') {
 	} else {
 		$sql_having .= " HAVING";
 	}
-	$sql_having .= $natural_search_physique;
+	$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 }
 // Add HAVING from hooks
 $parameters = array();

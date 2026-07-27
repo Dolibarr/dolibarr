@@ -50,6 +50,7 @@ ALTER TABLE llx_categorie_project_task DROP FOREIGN KEY fk_categorie_project_tas
 -- VPGSQL8.2 DROP INDEX idx_categorie_project_fk_task;
 ALTER TABLE llx_categorie_project_task ADD INDEX idx_categorie_project_fk_task (fk_project_task);
 ALTER TABLE llx_categorie_project_task ADD CONSTRAINT fk_categorie_project_task_rowid FOREIGN KEY (fk_project_task) REFERENCES llx_projet_task (rowid);
+ALTER TABLE llx_stock_mouvement ADD INDEX idx_stock_mouvement_batch_entrepot_type_datem (batch, fk_entrepot, type_mouvement, datem);
 
 -- V24 migration
 ALTER TABLE llx_expensereport_det ADD COLUMN tcheck_file	integer DEFAULT NULL after fk_ecm_files;
@@ -569,5 +570,7 @@ DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MENU_BARRETOP';
 UPDATE llx_const SET name = __ENCRYPT('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT')__ WHERE __DECRYPT('name')__ = 'ACCOUNTANCY_COMBO_FOR_AUX';
 --noqa:enable=PRS
 
+
+ALTER TABLE llx_adherent MODIFY COLUMN societe VARCHAR(128);
 
 -- end of migration

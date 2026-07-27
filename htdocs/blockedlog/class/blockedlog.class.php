@@ -2,8 +2,8 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,12 +96,12 @@ class BlockedLog
 	public $pos_source = '';
 
 	/**
-	 * @var string $linktype. Example 'paymentofinvoice'
+	 * @var string Example 'paymentofinvoice'
 	 */
 	public $linktype = '';
 
 	/**
-	 * @var string $linktoref
+	 * @var string
 	 */
 	public $linktoref = '';
 
@@ -638,7 +638,9 @@ class BlockedLog
 
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
-			$arrayoffieldstoexclude = array_merge($arrayoffieldstoexclude, array(
+			$arrayoffieldstoexclude = array_merge(
+				$arrayoffieldstoexclude,
+				array(
 				'name', 'lastname', 'firstname', 'region', 'region_id', 'region_code', 'state', 'state_id', 'state_code', 'country', 'country_id', 'country_code',
 				'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
 				'barcode_type', 'barcode_type_code', 'barcode_type_label', 'barcode_type_coder', 'mode_reglement_id', 'cond_reglement_id', 'mode_reglement', 'cond_reglement', 'shipping_method_id',
@@ -884,7 +886,7 @@ class BlockedLog
 			$this->linktoref = '';
 
 			// If payment and $object->amounts is empty (for example when we delete), we complete the information
-			if ($this->element == 'payment' && empty($object->amounts) && $object instanceOf Paiement) {
+			if ($this->element == 'payment' && empty($object->amounts) && $object instanceof Paiement) {
 				$amountsarray = $object->getAmountsArray();
 				$object->amounts = $amountsarray;
 				// Invert the sign of amount into the array ->amounts if it is a deletion
@@ -1148,9 +1150,8 @@ class BlockedLog
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.type_code, b.linktoref, b.linktype, b.object_data, b.object_version, b.object_format, b.signature,";
 		$sql .= " b.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
-		if ($id) {
-			$sql .= " WHERE b.rowid = ".((int) $id);
-		}
+		$sql .= " WHERE b.rowid = ".((int) $id);  // $id is not empty because of test above
+
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1409,7 +1410,7 @@ class BlockedLog
 		$sql .= "0,";
 		$sql .= ((int) $this->fk_user).",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
-		$sql .= ((int) ($this->entity ? $this->entity : $conf->entity)).",";
+		$sql .= ((int) ($this->entity ? ((int) $this->entity) : ((int) $conf->entity))).",";
 		$sql .= "'".$this->db->escape($this->debuginfo)."'";
 		$sql .= ")";
 
@@ -1537,7 +1538,7 @@ class BlockedLog
 						$sql .= " SET signature = '".$this->db->escape($finalsignature)."',";
 						$sql .= " note = '".$this->db->escape($finalnote)."',";
 						$sql .= " debuginfo = '".$this->db->escape($this->debuginfo)."'";
-						$sql .=" WHERE rowid = ".((int) $this->id);
+						$sql .= " WHERE rowid = ".((int) $this->id);
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							throw new Exception("End of chain deletion detected but we failed to update the signature of the record ".$this->id." to set the note and new signature ".$finalsignature." to track this.");
@@ -1953,7 +1954,7 @@ class BlockedLog
 		$registrationnumber = getHashUniqueIdOfRegistration();
 
 		// Value is not into cache, we must get it from ping.dolibarr.org
-		$obfuscationkey = callApiToGetObfuscationKey($mysoc->idprof1, $registrationnumber);
+		$obfuscationkey = callApiToGetObfuscationKey((string) $mysoc->idprof1, $registrationnumber);
 		if (empty($obfuscationkey)) {
 			dol_syslog("getObfuscationKey Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.", LOG_DEBUG);
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org (country='.$mysoc->country_code.', SIREN='.$mysoc->idprof1.'). May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (empty value returned). Re-try later.');
@@ -1963,11 +1964,9 @@ class BlockedLog
 			throw new Exception('Error: Failed to get the obfuscation key from ping.dolibarr.org. May be the SIREN is not valid, the ping.dolibarr.org server is down or registration was not done (bad value returned). Re-try later. '.$obfuscationkey);
 		}
 
-		// Now store value in cache
-		if ($obfuscationkey) {
-			$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-			$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
-		}
+		// Now store value in cache ($obfuscationkey is not empty because of empty/throw above).
+		$_SESSION['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
+		$conf->cache['obfuscationkey_'.((int) $this->entity)] = $obfuscationkey;
 
 		return (string) $obfuscationkey;
 	}
@@ -2229,16 +2228,16 @@ class BlockedLog
 
 		if ($element == 'all') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity;
+			 WHERE entity = ".((int) $conf->entity);
 		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 0";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 0";
 		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND certified = 1";
+			 WHERE entity = ".((int) $conf->entity)." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity = ".$conf->entity." AND element = '".$this->db->escape($element)."'";
+			 WHERE entity = ".((int) $conf->entity)." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {
@@ -2291,9 +2290,9 @@ class BlockedLog
 					}
 				}
 				if (!empty($search_module_source)) {
-					$tmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
-					$tmp = str_replace('%backoffice%', '', $tmp);
-					$sql .= $tmp;
+					$sqlTmp = natural_search("module_source", implode(',', $search_module_source), 0, 1);
+					$sqlTmp = str_replace('%backoffice%', '', $sqlTmp);
+					$sql .= $sqlTmp;
 				}
 				$sql .= " OR module_source = 'mix'";	// When a payment was recorded and payment was on an invoice with different origins (pos and not pos)
 				$sql .= ")";

@@ -1372,6 +1372,21 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testVerifCondOnMethods
+	 *
+	 * @return	void
+	 */
+	public function testVerifCondOnMethods()
+	{
+		$a = verifCond('$user->hasRight("facture", "read")');
+		$this->assertTrue($a);
+
+		$a = verifCond('$user->hasMethodKo("facture", "read")');
+		$this->assertFalse($a);
+	}
+
+
+	/**
 	 * testGetDefaultTva
 	 *
 	 * @return	void

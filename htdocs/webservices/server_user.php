@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +393,8 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),
-						'statut' => $user->statut,
+						'statut' => (int) $user->statut,
+						'status' => (int) $user->status,
 						'photo' => $user->photo,
 						'lang' => $user->lang,
 						//'rights' => $user->rights,
@@ -451,7 +452,7 @@ function getListOfGroups($authentication)
 		if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
-			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE g.entity IN (0,".((int) $conf->entity).")";
 		}
 		$sql .= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 		$resql = $db->query($sql);
@@ -530,7 +531,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			// If a contact / company already exists with the email, return the corresponding socid
 			$sql = "SELECT s.rowid as socid FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
-			$sql .= " WHERE s.entity=".$conf->entity;
+			$sql .= " WHERE s.entity=".((int) $conf->entity);
 			$sql .= " AND s.email='".$db->escape($thirdpartywithuser['email'])."'";
 			$sql .= " OR sp.email='".$db->escape($thirdpartywithuser['email'])."'";
 			$sql .= $db->plimit(1);
@@ -724,7 +725,7 @@ function setUserPassword($authentication, $shortuser)
 		$fuser->loadRights();
 
 		if ($fuser->hasRight('user', 'user', 'password')
-			|| ($fuser->hasRight('user', 'self', 'password') && $shortuser['login'] == $shortuser['login'])) {
+			|| ($fuser->hasRight('user', 'self', 'password') && $fuser->login == $shortuser['login'])) {
 			$userstat = new User($db);
 			$res = $userstat->fetch(0, $shortuser['login']);
 			if ($res) {

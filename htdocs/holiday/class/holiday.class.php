@@ -294,7 +294,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *   Créer un congés payés dans la base de données
+	 *   Create a paid leave entry in the database
 	 *
 	 *   @param		User	$user        	User that create
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -544,7 +544,7 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack needed for search on the list
 		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
@@ -675,7 +675,7 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 
 		// Selection filtering
 		if (!empty($filter)) {
@@ -1600,7 +1600,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Met à jour une option du module Holiday Payés
+	 *  Update an option of the Holiday module
 	 *
 	 *  @param	string	$name       name settings parameter
 	 *  @param	string	$value      true if update OK else false
@@ -2291,7 +2291,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	string	$sqlorder   SQL sort order
 	 *  @param  string	$sqlwhere   SQL where
-	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
+	 *  @return int         		-1 if error, 1 if OK, 2 if no result
 	 */
 	public function fetchLog($sqlorder, $sqlwhere)
 	{

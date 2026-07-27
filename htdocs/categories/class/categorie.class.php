@@ -413,10 +413,10 @@ class Categorie extends CommonObject
 					$mapCode = $mapList['code'];
 					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
-					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
-					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
-					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;  // @phan-suppress-current-line SqlInjection
+					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;  // @phan-suppress-current-line SqlInjection
+					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];  // @phan-suppress-current-line SqlInjection
+					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];  // @phan-suppress-current-line SqlInjection
 					self::$MAP_TYPE_TITLE_AREA[$mapCode] = isset($mapList['label']) ? $mapList['label'] : null;
 				}
 			}
@@ -607,7 +607,7 @@ class Categorie extends CommonObject
 		$sql .= "'".$this->db->escape($this->color)."', ";
 		$sql .= (int) $this->position.",";
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
-			$sql .= ($this->socid > 0 ? $this->socid : 'null').", ";
+			$sql .= ($this->socid > 0 ? ((int) $this->socid) : 'null').", ";
 		}
 		$sql .= "'".$this->db->escape((string) $this->visible)."', ";
 		$sql .= ((int) $type).", ";
@@ -704,7 +704,7 @@ class Categorie extends CommonObject
 		$sql .= " color = '".$this->db->escape($this->color)."'";
 		$sql .= ", position = ".(int) $this->position;
 		if (getDolGlobalString('CATEGORY_ASSIGNED_TO_A_CUSTOMER')) {
-			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
+			$sql .= ", fk_soc = ".($this->socid > 0 ? ((int) $this->socid) : 'null');
 		}
 		$sql .= ", visible = ".(int) $this->visible;
 		$sql .= ", fk_parent = ".(int) $this->fk_parent;
@@ -817,7 +817,7 @@ class Categorie extends CommonObject
 				if (empty($value['enabled'])) {
 					continue;
 				}
-				$sanitizedvalue = $value['field'];
+				$sanitizedvalue = $value['field'];  // From explicit array above @phan-suppress-current-line SqlInjection
 			}
 
 			$sql  = "DELETE FROM ".$this->db->sanitize(MAIN_DB_PREFIX.$key);

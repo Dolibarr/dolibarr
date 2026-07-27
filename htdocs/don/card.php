@@ -545,7 +545,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	print $form->buttonsSaveCancel('CreateDraft');
 
 	print "</form>\n";
 }
