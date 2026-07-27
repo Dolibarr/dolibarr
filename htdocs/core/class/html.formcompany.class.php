@@ -58,12 +58,12 @@ class FormCompany extends Form
 
 		$sql = "SELECT id, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_typent";
-		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : $mysoc->country_id) . ")";
+		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = " . (empty($mysoc->country_id) ? '0' : ((int) $mysoc->country_id)) . ")";
 
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 
@@ -119,7 +119,7 @@ class FormCompany extends Form
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 
@@ -581,7 +581,7 @@ class FormCompany extends Form
 		$errormsg = '';
 		$filter = forgeSQLFromUniversalSearchCriteria($filter, $errormsg, 0);
 		if ($filter) {
-			$sqlwhere = $filter;
+			$sqlwhere = $filter;  // @phan-suppress-current-line SqlInjection
 			$sql .= " " . $sqlwhere;
 		}
 

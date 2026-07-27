@@ -519,6 +519,7 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
+	box-shadow: 0 0 4px rgb(0, 0, 0, 0.15);
 }
 section.setupsection:hover {
 	box-shadow: 0 0 5px #aaa;
@@ -2677,8 +2678,8 @@ td.showDragHandle {
 <?php } else { ?>
 	display: table-cell;
 <?php } ?>
-	border-<?php echo $right; ?>: 1px solid #ECECEC;
-	border-bottom: 1px solid #ECECEC;
+	border-<?php echo $right; ?>: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;

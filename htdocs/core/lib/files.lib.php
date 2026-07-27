@@ -3198,12 +3198,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->order->multidir_output[$entity].'/'.$original_file;
-	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for preview of intervention
 		if ($fuser->hasRight('ficheinter', $lire)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
 	} elseif (($modulepart == 'apercucontract') && !empty($conf->contract->multidir_output[$entity])) {
 		// Wrapping for preview of contracts
 		if ($fuser->hasRight('contrat', $lire)) {
@@ -3397,16 +3397,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe').")";
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('societe').")";
 	} elseif (($modulepart == 'contact' || $modulepart == 'socpeople') && !empty($conf->societe->multidir_output[$entity])) {
 		// Wrapping for contact
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) {
 			return array('accessallowed' => 0, 'error' => 'Value entity must be provided');
 		}
-		if ($fuser->hasRight('societe', $lire)) {
+		if ($fuser->hasRight('societe', 'contact', $lire)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->societe->multidir_output[$entity].'/contact/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpepople WHERE rowid = ".((int) $refname)." AND entity IN (".getEntity('contact').")";
 	} elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->invoice->multidir_output[$entity])) {
 		// Wrapping for invoices
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3475,20 +3476,20 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
-	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->dir_output)) {
+	} elseif (($modulepart == 'fichinter' || $modulepart == 'ficheinter') && !empty($conf->ficheinter->multidir_output[$entity])) {
 		// Wrapping for interventions
 		if ($fuser->hasRight('ficheinter', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$original_file = $conf->ficheinter->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'deplacement' && !empty($conf->deplacement->dir_output)) {
 		// Wrapping pour les deplacements et notes de frais
 		if ($fuser->hasRight('deplacement', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->deplacement->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && isset($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les propales
 		if ($fuser->hasRight('propal', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3536,14 +3537,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif (($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_supplier') && !empty($conf->fournisseur->facture->dir_output)) {
 		// Wrapping for supplier invoices
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'supplier_payment') {
 		// Wrapping for supplier payments
 		if ($fuser->hasRight('fournisseur', 'facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3551,7 +3552,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = preg_replace("/payment\//", "", $original_file);	// Because the $conf->fournisseur->payment->dir_output already contains the "payment/"
 		$original_file = $conf->fournisseur->payment->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiementfourn as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON pf.fk_facturefourn = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
 	} elseif ($modulepart == 'payment') {
 		// Wrapping for report of payments
 		if ($fuser->hasRight('facture', $lire) || preg_match('/^specimen/i', $original_file)) {
@@ -3568,9 +3572,14 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		} else {
 			$original_file = $conf->invoice->dir_output.'/payments/'.$original_file;
 		}
+		/*      $sqlprotectagainstexternals = "SELECT f.fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."paiement as p";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+		$sqlprotectagainstexternals .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = p.rowid";
+		$sqlprotectagainstexternals .= " WHERE p.ref = '".$db->escape($refname)."' AND p.entity=".((int) $conf->entity);
+		var_dump($sqlprotectagainstexternals);exit;*/
 	} elseif ($modulepart == 'export_compta' && !empty($conf->accounting->dir_output)) {
 		// Wrapping for accounting exports
-		if ($fuser->hasRight('accounting', 'bind', 'write') || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->hasRight('accounting', 'bind', 'write') || $fuser->hasRight('accounting', 'mouvements', 'export') || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;

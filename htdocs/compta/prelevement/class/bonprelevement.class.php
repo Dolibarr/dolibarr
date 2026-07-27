@@ -461,7 +461,7 @@ class BonPrelevement extends CommonObject
 			$sql .= ", fk_prelevement_demande";
 			$sql .= ($sourcetype == 'salary' ? ", fk_user" : "");
 			$sql .= ") VALUES (";
-			$sql .= $this->id;
+			$sql .= ((int) $this->id);
 			$sql .= ", " . (($sourcetype != 'salary') ? ((int) $client_id) : "0");	// fk_soc can't be null
 			$sql .= ", '" . $this->db->escape($client_nom) . "'";
 			$sql .= ", " . ((float) price2num($amount));

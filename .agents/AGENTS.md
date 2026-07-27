@@ -15,7 +15,7 @@ Every modification must respect:
 - ❌ Do not break compatibility of PHP functions and methods
 - ❌ Do not introduce external dependencies without validation
 - ❌ Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
-- ❌ Never commit directly to `main` or `master` branch
+- ❌ Never commit directly to `develop` or version branch matching regex `^\d+\.\d+$`
 - ❌ Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
 - ✅ Use Dolibarr hooks whenever possible
 - ✅ Respect existing naming conventions
