@@ -14699,7 +14699,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				}
 				$subbuttonparam['isDropDown'] = (empty($params['isDropDown']) ? ($subbutton['isDropDown'] ?? false) : $params['isDropDown']);
 
-				$out .= dolGetButtonAction($subbutton['text'], $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
+				$out .= dolGetButtonAction($subbutton['text'] ?? '', $langs->trans($subbutton['label']), 'default', $tmpurl, $subbutton['id'] ?? '', $subbutton['perm'], $subbuttonparam);
 			}
 			$out .= "</div>";
 			$out .= "</div>";
