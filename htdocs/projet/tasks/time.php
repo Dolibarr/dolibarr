@@ -313,7 +313,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_date = $timespent_date;
 				$object->timespent_withhour = 0;
 			}
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
@@ -348,7 +351,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_withhour = 0;
 			}
 
-			$object->timespent_fk_user = GETPOSTINT("userid_line");
+			// If column "by" is hidden, no userid_line is posted; keep the existing fk_user instead of resetting it to 0.
+			if (GETPOSTISSET("userid_line")) {
+				$object->timespent_fk_user = GETPOSTINT("userid_line");
+			}
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
 			$object->timespent_invoiceid = GETPOSTINT("invoiceid");
 			$object->timespent_invoicelineid = GETPOSTINT("invoicelineid");
@@ -633,7 +639,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
 				}
 
+				$pu_ht_saved = $pu_ht;	// Save the base unit price (price of the selected product/service if any, 0 otherwise)
 				foreach ($arrayoftasks as $timespent_id => $value) {
+					$pu_ht = $pu_ht_saved;	// Reset for each line, so a line does not inherit the unit price computed for the previous one
 					$userid = $value['user'];
 					//$pu_ht = $value['timespent'] * $fuser->thm;
 
@@ -642,7 +650,9 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 
 					// If no unit price known
 					if (empty($pu_ht)) {
-						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
+						if ($value['timespent']) {
+							$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
+						}
 					}
 
 					// Add lines
@@ -1721,13 +1731,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if ($search_timespent_starthour || $search_timespent_startmin) {
 				$timespent_duration_start = $search_timespent_starthour * 60 * 60; // We store duration in seconds
 				$timespent_duration_start += ($search_timespent_startmin ? $search_timespent_startmin : 0) * 60; // We store duration in seconds
-				$sql .= " AND t.element_duration >= " . $timespent_duration_start;
+				$sql .= " AND t.element_duration >= " . ((int) $timespent_duration_start);
 			}
 
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$timespent_duration_end = $search_timespent_endhour * 60 * 60; // We store duration in seconds
 				$timespent_duration_end += ($search_timespent_endmin ? $search_timespent_endmin : 0) * 60; // We store duration in seconds
-				$sql .= " AND t.element_duration <= " . $timespent_duration_end;
+				$sql .= " AND t.element_duration <= " . ((int) $timespent_duration_end);
 			}
 		}
 

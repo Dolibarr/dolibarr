@@ -1,8 +1,8 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
- * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,23 +141,23 @@ class Salaries extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
-			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				if ($id != DolibarrApiAccess::$user->id) {
-					throw new RestException(404, 'salary not found');
-				}
-			} else {
-				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
-				if (!in_array($id, $childids)) {
-					throw new RestException(404, 'salary not found');
-				}
-			}
-		}
-
 		$salary = new Salary($this->db);
 		$result = $salary->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'salary not found');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
 		}
 
 		return $this->_cleanObjectDatas($salary);
@@ -334,7 +334,7 @@ class Salaries extends DolibarrApi
 	 */
 	public function getPayments($pid)
 	{
-		// A payment of salary can be done on different salaires of didderent user, so only users with permission
+		// A payment of salary can be done on different salaries of different users, so only users with permission
 		// to read all area allowed.
 		// TODO To support read or readchild case, the get must be done with a SQL that include the paid user with
 		// a where on current user and childids of current user.

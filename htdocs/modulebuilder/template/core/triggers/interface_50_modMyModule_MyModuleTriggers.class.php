@@ -73,6 +73,8 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		// You can isolate code for each action in a separate method: this method should be named like the trigger in camelCase.
 		// For example : COMPANY_CREATE => public function companyCreate($action, $object, User $user, Translate $langs, Conf $conf)
+
+		/* Disabled, critical security risk. You must explicitly call function into the switch($action)
 		$methodName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($action)))));
 		$callback = array($this, $methodName);
 		if (is_callable($callback)) {
@@ -82,6 +84,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 			return call_user_func($callback, $action, $object, $user, $langs, $conf);
 		}
+		*/
 
 		// Or you can execute some code here
 		switch ($action) {  // @phan-suppress-current-line PhanNoopSwitchCases

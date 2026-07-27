@@ -6,7 +6,7 @@
  * Copyright (C) 2017      	Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING			<contact@atm-consulting.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,9 +171,8 @@ function facture_prepare_head($object)
  */
 function invoice_admin_prepare_head()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('facture');
 	$extrafields->fetch_name_optionals_label('facturedet');
 	$extrafields->fetch_name_optionals_label('facture_rec');
@@ -1304,7 +1303,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.rowid = ff.fk_soc";
-		$sql .= " AND ff.entity = ".$conf->entity;
+		$sql .= " AND ff.entity = ".((int) $conf->entity);
 		$sql .= " AND ff.paye = 0";
 		$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {

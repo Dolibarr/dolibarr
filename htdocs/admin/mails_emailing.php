@@ -4,7 +4,7 @@
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/admin/mails.php
- *       \brief      Page to setup emails sending
+ *       \brief      Email setup page
  */
 
 // Load Dolibarr environment
@@ -572,6 +572,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br>\n";
 
+	print '<div class="neutral nomargintop">';
 	print $langs->trans("MAIN_DISABLE_ALL_MAILS");
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_DISABLE_ALL_MAILS', array(), null, 0, 0, 1, 2, 0, 0, '_red').'</a>';
@@ -581,9 +582,7 @@ if ($action == 'edit') {
 			print img_warning($langs->trans("Disabled"));
 		}
 	}
-
-	print "<br>\n";
-	print "<br>\n";
+	print '</div>';
 	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -799,7 +798,7 @@ if ($action == 'edit') {
 
 		print dol_get_fiche_head(array(), '', '', -1);
 
-		// Cree l'objet formulaire mail
+		// Create the mail form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");

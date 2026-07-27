@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,9 +125,9 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *   Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *   Show filter form that appears in a page to select the recipients of mailings
 	 *
-	 *   @return     string      Retourne zone select
+	 *   @return     string      HTML for selection filter.
 	 */
 	public function formFilter()
 	{

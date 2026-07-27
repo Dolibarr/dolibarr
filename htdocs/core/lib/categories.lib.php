@@ -86,12 +86,8 @@ function categories_prepare_head(Categorie $object, $type)
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $extrafields, $db;
+	global $langs, $conf, $extrafields;
 
-	if (!is_object($extrafields)) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($db);
-	}
 	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");

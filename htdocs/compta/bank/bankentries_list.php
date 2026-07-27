@@ -10,7 +10,7 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2026  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1340,7 +1340,7 @@ if ($resql) {
 			$sqlforbalance .= " AND ba.entity IN (".getEntity('bank_account').")";
 			$sqlforbalance .= " AND b.fk_account = ".((int) $search_account);
 			// To limit record on the page
-			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".$objp->rowid."))))";
+			$sqlforbalance .= " AND (b.datev < '".$db->idate($db->jdate($objp->dv))."' OR (b.datev = '".$db->idate($db->jdate($objp->dv))."' AND (b.dateo < '".$db->idate($db->jdate($objp->do))."' OR (b.dateo = '".$db->idate($db->jdate($objp->do))."' AND b.rowid < ".((int) $objp->rowid)."))))";
 			$resqlforbalance = $db->query($sqlforbalance);
 
 			//print $sqlforbalance;
@@ -1912,7 +1912,9 @@ if ($resql) {
 				}
 			}
 			if ($user->hasRight('banque', 'modifier')) {
-				$parambis = preg_replace('/action=reconcile/', '', $param);
+				// Strip the surrounding & so the leading action= we put first stays the only action= in the URL.
+				// Without this the URL ends up with two action= params; PHP picks the last one and the page silently switches to 'reconcile' instead of 'delete'.
+				$parambis = preg_replace('/&?action=(reconcile|confirm_deleteonreconcile)(&|$)/', '\2', $param);
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action='.($action == 'reconcile' ? 'confirm_deleteonreconcile&confirm=yes' : 'delete').'&token='.newToken().'&rowid='.$objp->rowid.'&page='.$page.$parambis.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">';
 				print img_delete('', 'class="marginleftonly"');
 				print '</a>';

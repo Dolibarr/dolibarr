@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,13 @@
  * @var CommonObject $object
  * @var DoliDB $db
  * @var ExtraFields $extrafields
- * @var string $sql
  *
+ * @var string $sql
  * @var string $extrafieldsobjectkey
  */
+'
+@phan-var-force string $sql
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -50,7 +54,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 		$search_options_pattern = 'search_options_';
 	}
 
-	$morewhere = '';
+	$sqlMoreWhere = '';
 
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
@@ -63,23 +67,23 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 					$crit = dol_get_first_hour($crit);
 				}
-				$morewhere .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
+				$sqlMoreWhere .= " AND ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '".$db->idate($crit)."'";
 			} elseif (is_array($crit)) {
 				if (!is_null($crit['start']) && $crit['start'] !== '' && !is_null($crit['end']) && $crit['end'] !== '') {
-					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
+					$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
 				} elseif (!is_null($crit['start']) && $crit['start'] !== '') {
-					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
+					$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." >= '". $db->idate($crit['start'])."')";
 				} elseif (!is_null($crit['end']) && $crit['end'] !== '') {
-					$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
+					$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." <= '". $db->idate($crit['end'])."')";
 				}
 			}
 		} elseif (in_array($typ, array('boolean'))) {
 			if ($crit !== '-1' && $crit !== '') {
-				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."'";
+				$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '".$db->escape($crit)."'";
 				if ($crit == '0') {
-					$morewhere .= " OR ".$extrafieldsobjectprefix.$tmpkey." IS NULL";
+					$sqlMoreWhere .= " OR ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." IS NULL";
 				}
-				$morewhere .= ")";
+				$sqlMoreWhere .= ")";
 			}
 		} elseif ($crit != ''
 			&& (!in_array($typ, array('select', 'sellist', 'select', 'link')) || $crit != '0')
@@ -100,13 +104,13 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			if (is_array($crit)) {
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ',') === false) {
-				$critSelect = "'".implode("','", array_map(array($db, 'escape'), explode(',', $crit)))."'";
-				$morewhere .= " AND (".$extrafieldsobjectprefix.$tmpkey." IN (".$db->sanitize($critSelect, 1).") )";
+				$sanitizedCritSelect = "'".implode("','", array_map(array($db, 'escape'), explode(',', $crit)))."'";
+				$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." IN (".$sanitizedCritSelect.") )";
 				continue;
 			}
-			$morewhere .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);
+			$sqlMoreWhere .= natural_search($db->sanitize($extrafieldsobjectprefix.$tmpkey), $crit, $mode_search);
 		}
 	}
 
-	$sql .= $morewhere;
+	$sql .= $sqlMoreWhere;
 }

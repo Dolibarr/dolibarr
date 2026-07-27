@@ -20,6 +20,7 @@
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Lenin Rivas					<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -723,9 +724,15 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$newremaintopay = $object->getRemainToPay(0);
-				if ($newremaintopay == 0) {
-					$object->setPaid($user);
+				// Only mark as paid when the invoice is already validated. On a still-draft
+				// invoice the discount link reduces the remain_to_pay but the invoice is not
+				// yet a legally issued document (ref is still PROV-...), so closing it would
+				// leave it stuck as paid+PROV (see #37744).
+				if ($object->status == Facture::STATUS_VALIDATED) {
+					$newremaintopay = $object->getRemainToPay(0);
+					if ($newremaintopay == 0) {
+						$object->setPaid($user);
+					}
 				}
 			}
 		}
@@ -1012,7 +1019,7 @@ if (empty($reshook)) {
 		if ($canconvert) {
 			$db->begin();
 
-			$amount_ht = $amount_tva = $amount_ttc = array();
+			$amount_ht = $amount_tva = $amount_ttc = $amount_localtax1 = $amount_localtax2 = array();
 			$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
 			// Loop on each vat rate
@@ -1029,6 +1036,14 @@ if (empty($reshook)) {
 						$amount_tva[$keyforvatrate] = 0;
 					}
 					$amount_tva[$keyforvatrate] += $line->total_tva;
+					if (!isset($amount_localtax1[$keyforvatrate])) {
+						$amount_localtax1[$keyforvatrate] = 0;
+					}
+					$amount_localtax1[$keyforvatrate] += $line->total_localtax1;
+					if (!isset($amount_localtax2[$keyforvatrate])) {
+						$amount_localtax2[$keyforvatrate] = 0;
+					}
+					$amount_localtax2[$keyforvatrate] += $line->total_localtax2;
 					if (!isset($amount_ttc[$keyforvatrate])) {
 						$amount_ttc[$keyforvatrate] = 0;
 					}
@@ -1051,6 +1066,8 @@ if (empty($reshook)) {
 			'@phan-var-force array<string,float> $amount_ht
 			 @phan-var-force array<string,float> $amount_tva
 			 @phan-var-force array<string,float> $amount_ttc
+			 @phan-var-force array<string,float> $amount_localtax1
+			 @phan-var-force array<string,float> $amount_localtax2
 			 @phan-var-force array<string,float> $multicurrency_amount_ht
 			 @phan-var-force array<string,float> $multicurrency_amount_tva
 			 @phan-var-force array<string,float> $multicurrency_amount_ttc';
@@ -1064,6 +1081,8 @@ if (empty($reshook)) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
+						$amount_localtax1[$vatrate] = price2num($amount_localtax1[$vatrate] * $ratio, 'MU');
+						$amount_localtax2[$vatrate] = price2num($amount_localtax2[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
 						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
@@ -1130,6 +1149,10 @@ if (empty($reshook)) {
 				$discount->amount_tva = 0;
 				$discount->amount_ht = $discount->amount_ttc;
 				$discount->tva_tx = 0;
+				$discount->localtax1_tx = 0;
+				$discount->localtax1_type = 0;
+				$discount->localtax2_tx = 0;
+				$discount->localtax2_type = 0;
 				$discount->vat_src_code = '';
 
 				if ($discount->amount_ttc > 0) {
@@ -1149,12 +1172,17 @@ if (empty($reshook)) {
 				}
 
 				foreach ($amount_ht as $tva_tx => $xxx) {
+					// Get localtaxes from TVA tx
+					$taxes = getTaxesFromId($tva_tx, $object->thirdparty, $mysoc, 0);
+
 					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
 						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
 						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
 						$discount->total_ht = -((float) $amount_ht[$tva_tx]);
 						$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->total_localtax1 = -((float) $amount_localtax1[$tva_tx]);
+						$discount->total_localtax2 = -((float) $amount_localtax2[$tva_tx]);
 						$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
 						$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
 						$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
@@ -1163,12 +1191,14 @@ if (empty($reshook)) {
 						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
 						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
 					} else {
-						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the “create” function of the Payment class
+						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the "create" function of the Payment class
 						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
 						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
 						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
 						$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
 						$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->total_localtax1 = abs((float) $amount_localtax1[$tva_tx]);
+						$discount->total_localtax2 = abs((float) $amount_localtax2[$tva_tx]);
 						$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
 						$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
 						$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
@@ -1187,6 +1217,10 @@ if (empty($reshook)) {
 					}
 
 					$discount->tva_tx = abs((float) $tva_tx);
+					$discount->localtax1_tx = $taxes['localtax1'];
+					$discount->localtax1_type = $taxes['localtax1_type'];
+					$discount->localtax2_tx = $taxes['localtax2'];
+					$discount->localtax2_type = $taxes['localtax2_type'];
 					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
@@ -1420,7 +1454,10 @@ if (empty($reshook)) {
 								$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 								$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 
-								if (!empty($facture_source->tab_previous_situation_invoice)) {
+								// The subtraction below assumes total_ht/situation_percent are stored cumulative on situation invoice lines
+								// (INVOICE_USE_SITUATION = 1, legacy). In progressive mode (INVOICE_USE_SITUATION = 2), each line already
+								// holds its own delta, so subtracting the previous invoice's line here would credit the wrong amount.
+								if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2 && !empty($facture_source->tab_previous_situation_invoice)) {
 									// search the last standard invoice in cycle and the possible credit note between this last and facture_source
 									// TODO Move this out of loop of $facture_source->lines
 									$tab_jumped_credit_notes = array();
@@ -1986,6 +2023,12 @@ if (empty($reshook)) {
 										$discount->total_tva = abs($lines[$i]->total_tva);
 										$discount->total_ttc = abs($lines[$i]->total_ttc);
 										$discount->tva_tx = $lines[$i]->tva_tx;
+										$discount->localtax1_tx = $lines[$i]->localtax1_tx;
+										$discount->localtax2_tx = $lines[$i]->localtax2_tx;
+										$discount->localtax1_type = $lines[$i]->localtax1_type;
+										$discount->localtax2_type = $lines[$i]->localtax2_type;
+										$discount->total_localtax1 = abs($lines[$i]->total_localtax1);
+										$discount->total_localtax2 = abs($lines[$i]->total_localtax2);
 										$discount->fk_user = $user->id;
 										$discount->description = $desc;
 										$discount->multicurrency_subprice = abs($lines[$i]->multicurrency_subprice);
@@ -2277,19 +2320,18 @@ if (empty($reshook)) {
 
 				$object->situation_counter += 1;
 
+				// Set extrafields from the create form BEFORE createFromCurrent(), so they are already
+				// present when create() inserts them and fires the BILL_CREATE trigger. This avoids firing
+				// BILL_CREATE a second time just to expose the extrafields (#32217).
+				$extrafields->fetch_name_optionals_label($object->table_element);
+				$extrafields->setOptionalsFromPost(null, $object);
+
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
 				} else {
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
-
-					// create extrafields with data from create form
-					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
-					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
-					if ($ret > 0) {
-						$nextSituationInvoice->insertExtraFields();
-					}
 
 					// Hooks
 					$parameters = array('origin_type' => $object->origin_type, 'origin_id' => $object->origin_id);
@@ -3454,7 +3496,7 @@ if (empty($reshook)) {
 
 						// Change each progression percent on each lines
 						foreach ($object->lines as $line) {
-							// no traitement for special product
+							// no processing for special product
 							if ($line->product_type == 9) {
 								continue;
 							}
@@ -4440,17 +4482,17 @@ if ($action == 'create') {
 			print '<script type="text/javascript">
 					$(document).ready(function() {
 						var listType = {'.$jsListType.'};
-						$("[name=\'type\'").change(function() {
+						$("[name=\'type\']").change(function() {
 							console.log("change name=type");
 							if ($( this ).prop("checked"))
 							{
 								if(($( this ).val() in listType))
 								{
-									$("#model").val(listType[$( this ).val()]);
+									$("#model").val(listType[$( this ).val()]).trigger("change");
 								}
 								else
 								{
-									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'");
+									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'").trigger("change");
 								}
 							}
 						});
@@ -4748,7 +4790,7 @@ if ($action == 'create') {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				'@phan-var-force Contrat $objectsrc';
-				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
+				// Recalculate contrat->price (excl. VAT), contrat->total (incl. VAT), contrat->tva
 				$objectsrc->update_price(1, 'auto', 1);
 			}
 
@@ -5344,7 +5386,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -5538,7 +5580,7 @@ if ($action == 'create') {
 
 		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
 			// Date invoice point of tax (Leistungsdatum / service date for tax).
-			// Only editable while the invoice is a draft — once validated, the
+			// Only editable while the invoice is a draft -- once validated, the
 			// invoice is a legally issued document and date_pointoftax is the
 			// basis for the VAT-return period assignment under accrual taxation
 			// (Soll-Versteuerung). To correct, set the invoice back to draft or
@@ -6884,7 +6926,6 @@ if ($action == 'create') {
 			// For situation invoice, create credit note
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
-				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0
 				&& $usercancreate
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()

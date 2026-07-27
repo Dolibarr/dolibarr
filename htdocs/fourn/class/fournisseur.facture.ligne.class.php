@@ -700,7 +700,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ' info_bits, total_ht, tva, total_ttc, total_localtax1, total_localtax2, fk_unit';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_facture_fourn.",";
+		$sql .= " VALUES (".((int) $this->fk_facture_fourn).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$product_label
 			= !empty($this->product_label)
@@ -717,7 +717,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
@@ -725,7 +725,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".(!empty($this->qty) ? price2num($this->total_ttc / $this->qty) : price2num($this->total_ttc)).",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= ' '.(!empty($this->fk_code_ventilation) ? $this->fk_code_ventilation : 0).',';
+		$sql .= ' '.(!empty($this->fk_code_ventilation) ? ((int) $this->fk_code_ventilation) : 0).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= " ".((int) $this->info_bits).",";
@@ -734,7 +734,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->total_ttc).",";
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
-		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".price2num($this->multicurrency_subprice);
