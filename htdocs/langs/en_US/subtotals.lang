@@ -12,12 +12,14 @@ SubtotalSetup=Subtotals module setup
 MaxSubtotalLevel=Maximum level
 SubtotalLineBackColor=Level %s lines background color
 NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
+SubtotalsPredefinedPhrases=Subtotals predefined phrases
 
 #
 # Card
 #
 AddTitleLine=Add title line
 AddSubtotalLine=Add subtotal line
+PredefinedPhrase=Predefined phrase
 TitleNeedDesc=You must enter a valid description to create a title.
 TitleAddedLevelTooHigh=Added title level too high (added with level %s instead).
 TitleEditedLevelTooHigh=Edited title level too high (edited with level %s instead).
