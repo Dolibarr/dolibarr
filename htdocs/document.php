@@ -81,7 +81,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 // be the one of this entity.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
-if (is_numeric($entity) && $entity > 0) {
+if ($entity > 0) {
 	// An entity was forced on param, so we force the constant to allow master.inc.php to use this entity if not already logged.
 	// It has no effect if already logged.
 	define("DOLENTITY", $entity);

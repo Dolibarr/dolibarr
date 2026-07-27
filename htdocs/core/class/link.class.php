@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -123,7 +123,7 @@ class Link extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid, share,share_pass)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
+		$sql .= " VALUES (".((int) $conf->entity).", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
@@ -345,7 +345,7 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sqlwhere=[];
+		$sqlwhere = [];
 
 		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share, share_pass FROM ".$this->db->prefix()."links";
 		if (!empty((int) $rowid)) {
@@ -356,10 +356,10 @@ class Link extends CommonObject
 		}
 
 		if ($conf->entity != 0) {
-			$sqlwhere[] = " entity = ".$conf->entity;
+			$sqlwhere[] = " entity = ".((int) $conf->entity);
 		}
-		if (count($sqlwhere)>0) {
-			$sql .=' WHERE '.implode(' AND ', $sqlwhere);
+		if (count($sqlwhere) > 0) {
+			$sql .= ' WHERE '.implode(' AND ', $sqlwhere);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
