@@ -460,10 +460,9 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * This mapping defines the conversion to the current internal
  * names from the alternative allowed names (including effectively deprecated
- * and future new names (not yet used as internal names).
+ * and future new names not yet used as internal names).
  *
  * This allows to map any temporary or future name to the effective internal name.
- *
  * The value is typically the name of module's root directory.
  */
 define(
@@ -1303,7 +1302,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Check type of variable and make sanitization according to this
-	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
+	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:int'
 		$tmpcheck = 'alphanohtml';
 		if ($out === null || $out === '') {
 			$out = array();
@@ -1785,9 +1784,9 @@ function dolBuildUrl($url, $params = [], $addtoken = false, $anchor = '')
 }
 
 /**
- *	Get properties for an object - including magic properties when requested
+ *	Get value of properties for an object - including magic properties when requested
  *
- *	Only returns properties that exist
+ *	By default, returns all public properties. If a list of properties is provided, only returns the ones that exist.
  *
  *	@param	object		$obj		Object to get properties from
  *	@param	string[]	$properties	Optional list of properties to get.
@@ -2601,21 +2600,26 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				$tmp = str_ireplace('</' . $tagtoreplace . '>', '__ENDTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
 				$tmp = preg_replace('/<' . preg_quote($tagtoreplace, '/') . ' \/>/', '__BEGINENDTAGTOREPLACE' . $tagtoreplace . '__', $tmp);
 
-				// For case of tag with attributes
-				do {
-					$tmpold = $tmp;
-
-					if (preg_match('/<' . preg_quote($tagtoreplace, '/') . '(\s+)([^>]+)>/', $tmp, $reg)) {
+				// For case of tag with attributes.
+				// All the occurrences are protected in a single pass: the replacement string contains no '<', so it
+				// can never build a new tag to protect (a loop replacing one distinct attribute string per round was
+				// rescanning the whole content for each of them, so the cost was quadratic on large contents).
+				$tmp = preg_replace_callback(
+					'/<'.preg_quote($tagtoreplace, '/').'(\s+)([^>]+)>/',
+					/**
+					 * @param string[] $reg
+					 * @return string
+					 */
+					static function ($reg) use ($tagtoreplace) {
 						// We want to protect the attribute part ... in '<xxx ...>' to avoid transformation by htmlentities() later
 						$tmpattributes = str_ireplace(array('[', ']'), '_', $reg[2]);	// We must never have [ ] inside the attribute string
 						$tmpattributes = str_ireplace('"', '__DOUBLEQUOTE__', $tmpattributes);
 						$tmpattributes = preg_replace('/[^a-z0-9_%,\/\?\;\s=&\.\-@:\.#\+]/i', '', $tmpattributes);
 						//$tmpattributes = preg_replace("/float:\s*(left|right)/", "", $tmpattributes);	// Disabled: we must not remove content
-						$tmp = str_replace('<' . $tagtoreplace . $reg[1] . $reg[2] . '>', '__BEGINTAGTOREPLACE' . $tagtoreplace . '[' . $tmpattributes . ']__', $tmp);
-					}
-
-					$diff = strcmp($tmpold, $tmp);
-				} while ($diff);
+						return '__BEGINTAGTOREPLACE'.$tagtoreplace.'['.$tmpattributes.']__';
+					},
+					$tmp
+				) ?? $tmp;
 			}
 
 			$tmp = str_ireplace('&amp', '__ANDNOSEMICOLON__', $tmp);
@@ -3087,7 +3091,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		   						},
 								close: function (event, ui) {
 									console.log("Popup is closed, run jsonclose = ' . $jsonclose . '");
-									' . (empty($jsonclose) ? '' : $jsonclose . ';') . '
+									' . (empty($jsonclose) || preg_match('/^TODO/', $jsonclose) ? '' : $jsonclose . ';') . '
 								}
 							});
 
@@ -12346,6 +12350,11 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space after): ' . $s;
 		}
 
+		// Check if there is an include or a require
+		if (preg_match('/(include|include_once|require|require_once)/', $s)) {
+			return 'Bad string syntax to evaluate (found not allowed key include|include_once|require|require_once): ' . $s;
+		}
+
 		// Check if there is dynamic call (first we use black list patterns)
 		if (preg_match('/\$[\w]*\s*\(/', $s)) {
 			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a call using "$abc(" or "$abc (" instead of using the direct name of the function): ' . $s;
@@ -14811,11 +14820,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// TODO replace $TCompiledAttr generation by commonHtmlAttributeBuilder given below
+	// TODO replace this $TCompiledAttr generation block by commonHtmlAttributeBuilder like line below
+	// $TCompiledAttr = commonHtmlAttributeBuilder($attr, $params['use_unsecured_unescapedattr'] ?? []);
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
-			// Not recommended
+			// Deprecated, forbidden.
 			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
 		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
@@ -14825,8 +14835,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 		$TCompiledAttr[] = $key . '="' . $value . '"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
-	// TODO replace $TCompiledAttr generation by uncomment line below and remove old code
-	//  $TCompiledAttr = commonHtmlAttributeBuilder($attr,$params['use_unsecured_unescapedattr'] ?? []);
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
@@ -14864,14 +14872,9 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 /**
  * Builds an array of safe and properly escaped HTML attributes from a key-value pair list.
  *
- * This function ensures that HTML attributes are correctly encoded for safe output,
- * while allowing certain attributes to remain unescaped if explicitly specified.
- * Special handling is applied for attributes such as `href`, which are processed
- * using `dolPrintHTMLForAttributeUrl()`. All other attributes are escaped using
- * `dolPrintHTMLForAttribute()`.
- *
- * Note: Disabling escaping (via `$unescapedAttr`) is **not recommended** unless you
- * fully trust the input data, as it may lead to XSS vulnerabilities.
+ * This function ensures that HTML attributes are correctly encoded for safe output.
+ * Special handling is applied for attributes such as `href`, which are processed using `dolPrintHTMLForAttributeUrl()`.
+ * All other attributes are escaped using `dolPrintHTMLForAttribute()`.
  *
  * Example:
  * ```php
@@ -14890,8 +14893,8 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
  * // ]
  * ```
  *
- * @param array<string, string|int|float|null|bool> $attr          Associative array of attribute names and their values.
- * @param string[]                            $unescapedAttr  Optional list of attribute names that should **not** be escaped.
+ * @param array<string, string|int|float|null|bool> $attr          	Associative array of attribute names and their values.
+ * @param string[]                            		$unescapedAttr  Optional list of attribute names that should **not** be escaped.
  *
  * @return array<string, string> An array where each key corresponds to the attribute name
  *                               and each value is a full `key="escaped_value"` string ready for HTML output.
@@ -15647,7 +15650,8 @@ function getElementProperties($elementType)
 
 /**
  * Fetch an object from its id and element_type
- * Inclusion of classes is automatic
+ * Inclusion of classes is automatic.
+ * This does not include permission check that must be done separately with checkUserAccessToObject()
  *
  * @param	int     	$element_id 		Element id (Use this or element_ref but not both. If id and ref are empty, object with no fetch is returned)
  * @param	string  	$element_type 		Element type ('module' or 'myobject@mymodule' or 'mymodule_myobject')
@@ -17463,6 +17467,8 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
  * @param array<string, T> $array1  The base array (default parameters).
  * @param array<string, T> $array2  The array with values to override or extend the base array.
  * @return array<string, T>			The merged array with recursive replacement.
+ *
+ * TODO Move it out of functions.lib.php
  */
 function array_merge_recursive_distinct(array $array1, array $array2): array
 {

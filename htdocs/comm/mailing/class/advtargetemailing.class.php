@@ -714,8 +714,6 @@ class AdvanceTargetingMailing extends CommonObject
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
@@ -766,7 +764,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
 			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ']) > 0) {
-				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
+				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->sanitize(implode(",", $arrayquery['contact_categ']), 0, 0, 0, 0)."))";
 			}
 
 			//Standard Extrafield feature

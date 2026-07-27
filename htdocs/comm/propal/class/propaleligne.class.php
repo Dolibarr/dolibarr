@@ -583,7 +583,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' fk_unit,';
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
-		$sql .= " VALUES (".$this->fk_propal.",";
+		$sql .= " VALUES (".((int) $this->fk_propal).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
@@ -795,7 +795,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " description = '".$this->db->escape($this->desc)."'";
 		$sql .= ", label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", product_type = ".((int) $this->product_type);
-		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
+		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
