@@ -12350,6 +12350,11 @@ function dol_eval_standard($s, $hideerrors = 1, $onlysimplestring = '1')
 			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a < or <= without space after): ' . $s;
 		}
 
+		// Check if there is an include or a require
+		if (preg_match('/(include|include_once|require|require_once)/', $s)) {
+			return 'Bad string syntax to evaluate (found not allowed key include|include_once|require|require_once): ' . $s;
+		}
+
 		// Check if there is dynamic call (first we use black list patterns)
 		if (preg_match('/\$[\w]*\s*\(/', $s)) {
 			return 'Bad string syntax to evaluate (mode ' . $onlysimplestring . ', found a call using "$abc(" or "$abc (" instead of using the direct name of the function): ' . $s;

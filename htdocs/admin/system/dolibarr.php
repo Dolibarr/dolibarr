@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin"));
+$langs->loadLangs(array("blockedlog", "install", "other", "admin"));
 
 $action = GETPOST('action', 'aZ09');
 
