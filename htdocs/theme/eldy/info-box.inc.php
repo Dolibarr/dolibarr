@@ -46,7 +46,7 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	width: 100%;
 	<?php
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
-	box-shadow: 0 1px 10px rgba(128, 128, 128, 0.3);
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
 	<?php } ?>
 	border-radius: 5px;
 	/* border: 1px solid #e9e9e9; */

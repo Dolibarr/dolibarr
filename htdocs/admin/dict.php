@@ -701,7 +701,7 @@ if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
-	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
+	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');  // @phan-suppress-current-line SqlInjection
 	//var_dump($sortfield); //var_dump($sortorder);
 }
 
@@ -984,7 +984,7 @@ if (empty($reshook)) {
 
 			// List of values
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-				$sql .= $newid.",";
+				$sql .= ((int) $newid).",";
 			}
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
@@ -2618,6 +2618,10 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == 'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
+							} elseif ($value == 'libelle' && ($tabname[$id] == 'c_stcomm' || $tabname[$id] == 'c_stcommcontact')) {
+								$key = 'StatusProspect'.$obj->rowid;
+								$trans = $langs->trans($key);
+								$valuetoshow = ($trans != $key ? $trans : $obj->{$value});
 							} elseif ($value == 'label' && $tabname[$id] == 'c_units') {
 								$langs->load('other');
 								$key = $langs->trans($obj->label);

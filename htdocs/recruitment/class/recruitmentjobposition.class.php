@@ -596,14 +596,14 @@ class RecruitmentJobPosition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'recruitmentjobposition/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'recruitmentjobposition/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -720,7 +720,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET status = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
-		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
