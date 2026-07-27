@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,11 +114,11 @@ class Comment extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->description)."'";
 		$sql .= ", ".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null');
-		$sql .= ", '".(isset($this->fk_element) ? $this->fk_element : "null")."'";
+		$sql .= ", '".(isset($this->fk_element) ? ((int) $this->fk_element) : "null")."'";
 		$sql .= ", '".$this->db->escape($this->element_type)."'";
-		$sql .= ", '".(isset($this->fk_user_author) ? $this->fk_user_author : "null")."'";
+		$sql .= ", '".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null")."'";
 		$sql .= ", ".((int) $user->id);
-		$sql .= ", ".(!empty($this->entity) ? $this->entity : '1');
+		$sql .= ", ".(!empty($this->entity) ? ((int) $this->entity) : '1');
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
 
@@ -246,10 +246,10 @@ class Comment extends CommonObject
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " datec = ".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql .= " fk_element = ".(isset($this->fk_element) ? $this->fk_element : "null").",";
+		$sql .= " fk_element = ".(isset($this->fk_element) ? ((int) $this->fk_element) : "null").",";
 		$sql .= " element_type = '".$this->db->escape($this->element_type)."',";
 		$sql .= " fk_user_modif = ".((int) $user->id).",";
-		$sql .= " entity = ".(!empty($this->entity) ? $this->entity : '1').",";
+		$sql .= " entity = ".(!empty($this->entity) ? ((int) $this->entity) : '1').",";
 		$sql .= " import_key = ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -358,7 +358,7 @@ class Comment extends CommonObject
 			$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 			$sql .= " WHERE c.fk_element = ".((int) $fk_element);
 			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
-			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " AND c.entity = ".((int) $conf->entity);
 			$sql .= " ORDER BY c.tms DESC";
 
 			dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);

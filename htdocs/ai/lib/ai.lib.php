@@ -616,7 +616,7 @@ function getAiChatAssistantConfig()
  */
 function getAiChatAssistantHtml($mode = 'page')
 {
-	global $langs, $user;
+	global $langs, $user, $conf;
 
 	$out = '';
 
@@ -711,16 +711,20 @@ function getAiChatAssistantHtml($mode = 'page')
 	$out .= '<div class="chat-controls">';
 	$out .= '<div class="chat-input-pill">';
 	// Upload Wrapper (Visible only in Doc modes)
-	$out .= '<div id="upload-wrapper" class="upload-wrapper hidden">';
+	$out .= '<div id="upload-wrapper" class="upload-wrapper ai-hidden">';
 	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
 	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
 	$out .= '</div>';
 	// Microphone Wrapper (Visible only in Voice modes)
-	$out .= '<div id="mic-wrapper" class="mic-wrapper hidden">';
+	$out .= '<div id="mic-wrapper" class="mic-wrapper ai-hidden">';
 	$out .= '<button type="button" id="mic-btn" class="round-btn mic-btn" title="'.dol_escape_htmltag($langs->trans("ToggleMicrophone")).'">'.img_picto('', 'fa-microphone').'</button>';
 	$out .= '</div>';
 	// Text Input
-	$out .= '<textarea id="user-input" rows="1" placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'" autocomplete="off"></textarea>';
+	$out .= '<textarea id="user-input" class="ia-input" rows="1"';
+	if (empty($conf->dol_optimize_smallscreen)) {
+		$out .= ' placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'"';
+	}
+	$out .= ' autocomplete="off" spellcheck="false"></textarea>';
 	// Send Button
 	$out .= '<button type="button" id="send-btn" class="chat-send-btn" title="'.dol_escape_htmltag($langs->trans("SendPrompt")).'">'.img_picto('', 'fa-paper-plane').'</button>';
 	$out .= '</div>';

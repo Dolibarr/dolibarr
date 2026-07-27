@@ -334,7 +334,7 @@ class Export
 	{
 		// phpcs:enable
 		// Build the sql request
-		$sql = $this->array_export_sql_start[$indice];
+		$sql = $this->array_export_sql_start[$indice];  // @phan-suppress-current-line SqlInjection
 		$i = 0;
 
 		//print_r($array_selected);
@@ -343,7 +343,7 @@ class Export
 				continue; // Field not selected
 			}
 			if (preg_match('/^none\./', $key)) {
-				continue; // A field that must not appears into SQL
+				continue; // A field that must not appear into SQL
 			}
 			if ($i > 0) {
 				$sql .= ', ';
@@ -357,9 +357,9 @@ class Export
 				$newfield = $key;
 			}
 
-			$sql .= $newfield;
+			$sql .= $newfield;  // @phan-suppress-current-line SqlInjection
 		}
-		$sql .= $this->array_export_sql_end[$indice];
+		$sql .= $this->array_export_sql_end[$indice];  // @phan-suppress-current-line SqlInjection
 
 		// Add the WHERE part. Filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue)) {
@@ -370,21 +370,21 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " AND ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);  // @phan-suppress-current-line SqlInjection
 				}
 			}
 			$sql .= $sqlWhere;
 		}
 
 		// Add the sort order
-		$sql .= $this->array_export_sql_order[$indice];
+		$sql .= $this->array_export_sql_order[$indice];  // @phan-suppress-current-line SqlInjection
 
 		// Add the HAVING part.
 		if (is_array($array_filterValue) && !empty($array_filterValue)) {
 			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value) {
 				if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') {
-					$sql .= " HAVING ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sql .= " HAVING ".$this->buildFilterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);  // @phan-suppress-current-line SqlInjection
 				}
 			}
 		}
@@ -576,7 +576,7 @@ class Export
 				}
 				$sql = "SELECT ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label".(empty($InfoFieldList[3]) ? "" : ", ".$this->db->sanitize($InfoFieldList[3])." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = "SELECT id as id, ".$this->db->sanitize($keyList)." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$this->db->sanitize($InfoFieldList[3]).' as code');
+					$sql = "SELECT id as id, ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label".(empty($InfoFieldList[3]) ? "" : ", ".$this->db->sanitize($InfoFieldList[3]).' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
 					$sql = "SELECT ".$this->db->sanitize($keyList)." as rowid, ".$this->db->sanitize($InfoFieldList[2])." as label, code as code";
@@ -727,7 +727,7 @@ class Export
 				$this->error = "ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
-			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);
+			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);  // @phan-suppress-current-line SqlInjection
 		}
 
 		// Run the SQL

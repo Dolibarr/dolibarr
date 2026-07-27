@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,25 +135,25 @@ class ToolNavigation extends McpTool
 		}
 
 		// Build Query Parameters
-		$queryParams = [];
+		$getQueryParams = [];
 
 		// Handle Action/ID logic
 		if ($id > 0) {
-			$queryParams['id'] = $id;
+			$getQueryParams['id'] = $id;
 		} elseif (!empty($ref)) {
-			$queryParams['ref'] = $ref;
+			$getQueryParams['ref'] = $ref;
 		}
 
 		// Set action for create view
 		if ($view === 'create') {
-			$queryParams['action'] = 'create';
+			$getQueryParams['action'] = 'create';
 		}
 
 		// Handle Status Filtering
 		if ($view === 'list' && !empty($statusFilter)) {
 			$statusParam = $this->mapStatusToFilter($elementType, $statusFilter);
 			if ($statusParam) {
-				$queryParams = array_merge($queryParams, $statusParam);
+				$getQueryParams = array_merge($getQueryParams, $statusParam);
 			} else {
 				return ["error" => "Unknown status filter '$statusFilter' for object type '$rawType'."];
 			}
@@ -162,15 +163,15 @@ class ToolNavigation extends McpTool
 
 		// Merge extra params
 		if (!empty($params) && is_array($params)) {
-			$queryParams = array_merge($queryParams, $params);
+			$getQueryParams = array_merge($getQueryParams, $params);
 		}
 
 		// Generate Native URL
 		$baseUrl = dol_buildpath($relativePath, 1);
 
 		$finalUrl = $baseUrl;
-		if (!empty($queryParams)) {
-			$finalUrl .= '?' . http_build_query($queryParams);
+		if (!empty($getQueryParams)) {
+			$finalUrl .= '?' . http_build_query($getQueryParams);
 		}
 
 		return [

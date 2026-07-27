@@ -33,7 +33,7 @@ jobs:
       github.repository == 'Dolibarr/dolibarr'
       || github.event.schedule == false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Another method to get the list of changed files
       # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
@@ -61,9 +61,10 @@ jobs:
         #   - the merge from branch contains 'phan_full', or,
         #   - there are changes in PHP files.
         # Note: --output-mode=github does not provide file:line, so using checkstyle and cs2pr
-        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.any_changed == 'true') }}
+        if: ${{ ! cancelled() && (github.ref_name == 'develop' || github.ref_name == 'refs/heads/develop' || endsWith(github.ref_name, '.0') || contains(github.head_ref, 'phan_full') || steps.changed-php.outputs.phan_changed == 'true') }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+          PHAN_CHANGED_FILES: ${{ steps.changed-php.outputs.phan_changed_files }}
         # shellcheck disable=2086
           FILE_CHANGED_LIST: /tmp/phan-changed.lst
         run: |
@@ -73,7 +74,7 @@ jobs:
             phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
           else
             echo -n "" > "$FILE_CHANGED_LIST"
-            for f in $ALL_CHANGED_FILES; do echo "$f" >> "$FILE_CHANGED_LIST"; done
+            for f in $PHAN_CHANGED_FILES; do echo "$f" >> "$FILE_CHANGED_LIST"; done
             # Must exclude same files as in phan configuration
             grep -v -E '^htdocs/(custom/|.*/canvas/.*/tpl/.*.tpl.php|admin/tools/ui/|includes/(nusoap/|restler/|stripe/)|conf/conf.php)$' "$FILE_CHANGED_LIST"> "$FILE_CHANGED_LIST".tmp || true
             mv "$FILE_CHANGED_LIST".tmp "$FILE_CHANGED_LIST"

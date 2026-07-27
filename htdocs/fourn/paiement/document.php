@@ -63,6 +63,14 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
+// Load object
+$object = new PaiementFourn($db);
+$upload_dir = null;
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$ref = dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+}
 
 // Security check
 if ($user->isExternalUser()) {
@@ -86,15 +94,6 @@ if (!$sortorder) {
 }
 if (!$sortfield) {
 	$sortfield = "name";
-}
-
-// Load object
-$object = new PaiementFourn($db);
-$upload_dir = null;
-if ($object->fetch($id, $ref)) {
-	$object->fetch_thirdparty();
-	$ref = dol_sanitizeFileName($object->ref);
-	$upload_dir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 }
 
 $permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php

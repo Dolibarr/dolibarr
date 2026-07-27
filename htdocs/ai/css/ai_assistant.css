@@ -616,6 +616,15 @@ body.ai-fullpage {
 }
 
 /* Input Field */
+#user-input::placeholder {
+	font-size: 0.95rem;
+}
+@media (max-width: 768px) {
+	#user-input::placeholder {
+    	opacity: 0;
+	}
+}
+
 #user-input {
     flex-grow: 1;
     padding: 11px 15px;
@@ -627,8 +636,8 @@ body.ai-fullpage {
     transition: border-color 0.2s, box-shadow 0.2s;
 
     /* Allow expansion, but set limits */
-    height: 44px;
-    min-height: 44px;
+    height: 40px;
+    min-height: 40px;
     max-height: 150px;
 
     box-sizing: border-box;
@@ -744,7 +753,7 @@ body.ai-fullpage {
 }
 
 /* Helpers */
-.hidden {
+.ai-hidden {
     display: none !important;
 }
 
@@ -964,7 +973,7 @@ body.ai-fullpage {
     position: fixed;
     top: var(--ai-popover-top, 48px);
     right: 12px;
-    width: 380px;
+    width: 460px;
     height: min(560px, calc(100vh - var(--ai-popover-top, 48px) - 16px));
     z-index: 1010;
     display: flex;

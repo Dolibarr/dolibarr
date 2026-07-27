@@ -42,7 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
  */
 class Fichinter extends CommonObject
 {
-	use CommonSignedObject, CommonSubtotal;
+	use CommonSignedObject;
+	use CommonSubtotal;
 
 	/**
 	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
@@ -85,6 +86,11 @@ class Fichinter extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'fichinter';
+
+	/**
+	 * @var string Name of field in database that is used as reference when object is linked to another one.
+	 */
+	public $fk_element = 'fk_fichinter';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -346,7 +352,7 @@ class Fichinter extends CommonObject
 		$sql .= ", note_public";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= $this->socid;
+		$sql .= ((int) $this->socid);
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
@@ -656,7 +662,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $this->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -692,7 +698,7 @@ class Fichinter extends CommonObject
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -767,7 +773,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity = " . ((int) $conf->entity);
+			$sql .= " AND entity IN (".getEntity('intervention').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {
