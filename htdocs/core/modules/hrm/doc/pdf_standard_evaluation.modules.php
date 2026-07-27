@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
  * Copyright (C) 2020       Marc Guenneugues        <marc.guenneugues@simicar.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -276,14 +276,15 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 65;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 35 : 10);
+				$top_margin = 55 + $this->marge_haute;
+				$tab_top = $top_margin;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $top_margin + 32 : $top_margin);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				if (!empty($object->note_public)) {
-					$tab_top = 65;
+					$tab_top = $top_margin;
 
 					$pdf->SetFont('', 'B', $default_font_size);
 					$pdf->MultiCell(190, 4, $outputlangs->transnoentities("Notes") . ":", 0, 'L', false, 0, 12, $tab_top);
@@ -493,13 +494,13 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 * @param   TCPDF       	$pdf                Object PDF
 	 * @param	Evaluation		$object             Object to show
 	 * @param   int         	$linenumber         line number
-	 * @param   int         	$curY               current y position
+	 * @param   float         	$curY               current y position
 	 * @param   int         	$default_font_size  default font size
 	 * @param   Translate   	$outputlangs        Object lang for output
-	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+	 * @param	int<0,2>		$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
 	 */
-	protected function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
+	protected function printLine($pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
 		$objectligne = $object->lines[$linenumber];
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -582,11 +583,11 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *
 	 *  @param	TCPDF			$pdf     		Object PDF
 	 *  @param  Evaluation		$object     	Object to show
-	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  int<0,1>   		$showaddress    0=no, 1=yes
 	 *  @param  Translate		$outputlangs	Object lang for output
-	 *  @return	float|int                   	Return topshift value
+	 *  @return	float		                   	Return topshift value
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead($pdf, $object, $showaddress, $outputlangs)
 	{
 		// global $conf, $langs, $hookmanager;
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
@@ -664,7 +665,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 
 			// Show sender
-			$posy = 40;
+			$posy = $this->marge_haute + 30;
 			$posx = $this->marge_gauche;
 			$hautcadre = 20;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -707,7 +708,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -779,7 +780,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 *  @param  int				$hidefreetext		1=Hide free text
 	 *  @return int									Return height of bottom margin including footer text
 	 */
-	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot($pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, '', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

@@ -204,7 +204,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	/* border: 1px solid #633; */
 	color: #633 !important;
 }
-.button.button-cancel, .button.button-cancel:link, .button.button-cancel:visited, .button.button-cancel:hover, .button.button-cancel:active, .button.button-cancel {
+.button.button-cancel:not(.buttongen), .button.button-cancel:link:not(.buttongen), .button.button-cancel:visited:not(.buttongen), .button.button-cancel:hover:not(.buttongen), .button.button-cancel:active:not(.buttongen), .button.button-cancel:not(.buttongen) {
 	background: var(--butactioncancelbg) !important;
 	border: none;
 	color: #333 !important;
@@ -213,7 +213,7 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 .butActionDelete:hover {
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button.button-cancel:hover {
+.button.button-cancel:hover:not(.buttongen) {
 	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
@@ -232,9 +232,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 */
 
 .butActionRefused {
-	pointer-events: none;
+	/* pointer-events: none; Removed as this break the use of title */
 	cursor: default;
-	opacity: 0.4;
+	opacity: 0.8;
 	box-shadow: none;
 
 	text-decoration: none !important;

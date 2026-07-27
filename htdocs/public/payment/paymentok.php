@@ -392,7 +392,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 	// Check we are coming from the newpaymentpage
 	// Bypass session check when returning from Stripe confirmPayment() (mode STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2)
 	// In that case, payment_intent is passed in GET by Stripe and PaymentIntent::retrieve() below acts as verification
-	if (empty(GETPOST('payment_intent', 'alphanohtml')) && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+	if (!GETPOST('payment_intent', 'alphanohtml') && GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
 		$error++;
 		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');

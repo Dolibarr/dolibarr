@@ -87,9 +87,9 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('supprimer');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied read access to email templates');
+			throw new RestException(403, 'denied delete access to email templates');
 		}
 
 		$result = $this->email_template->apifetch($id, '');
@@ -123,11 +123,11 @@ class EmailTemplates extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteByLAbel($label)
+	public function deleteByLabel($label)
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('supprimer');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied read access to email templates');
+			throw new RestException(403, 'denied delete access to email templates');
 		}
 
 		$result = $this->email_template->apifetch(0, $label);

@@ -1454,7 +1454,10 @@ if (empty($reshook)) {
 								$source_fk_prev_id = $line->fk_prev_id; // temporary storing situation invoice fk_prev_id
 								$line->fk_prev_id  = $line->id; // The new line of the new credit note we are creating must be linked to the situation invoice line it is created from
 
-								if (!empty($facture_source->tab_previous_situation_invoice)) {
+								// The subtraction below assumes total_ht/situation_percent are stored cumulative on situation invoice lines
+								// (INVOICE_USE_SITUATION = 1, legacy). In progressive mode (INVOICE_USE_SITUATION = 2), each line already
+								// holds its own delta, so subtracting the previous invoice's line here would credit the wrong amount.
+								if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2 && !empty($facture_source->tab_previous_situation_invoice)) {
 									// search the last standard invoice in cycle and the possible credit note between this last and facture_source
 									// TODO Move this out of loop of $facture_source->lines
 									$tab_jumped_credit_notes = array();
@@ -2317,19 +2320,18 @@ if (empty($reshook)) {
 
 				$object->situation_counter += 1;
 
+				// Set extrafields from the create form BEFORE createFromCurrent(), so they are already
+				// present when create() inserts them and fires the BILL_CREATE trigger. This avoids firing
+				// BILL_CREATE a second time just to expose the extrafields (#32217).
+				$extrafields->fetch_name_optionals_label($object->table_element);
+				$extrafields->setOptionalsFromPost(null, $object);
+
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
 				} else {
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
-
-					// create extrafields with data from create form
-					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
-					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
-					if ($ret > 0) {
-						$nextSituationInvoice->insertExtraFields();
-					}
 
 					// Hooks
 					$parameters = array('origin_type' => $object->origin_type, 'origin_id' => $object->origin_id);
@@ -4480,17 +4482,17 @@ if ($action == 'create') {
 			print '<script type="text/javascript">
 					$(document).ready(function() {
 						var listType = {'.$jsListType.'};
-						$("[name=\'type\'").change(function() {
+						$("[name=\'type\']").change(function() {
 							console.log("change name=type");
 							if ($( this ).prop("checked"))
 							{
 								if(($( this ).val() in listType))
 								{
-									$("#model").val(listType[$( this ).val()]);
+									$("#model").val(listType[$( this ).val()]).trigger("change");
 								}
 								else
 								{
-									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'");
+									$("#model").val("' . getDolGlobalString('FACTURE_ADDON_PDF').'").trigger("change");
 								}
 							}
 						});
@@ -5384,7 +5386,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -6924,7 +6926,6 @@ if ($action == 'create') {
 			// For situation invoice, create credit note
 			if ($object->status > Facture::STATUS_DRAFT
 				&& $object->isSituationInvoice()
-				&& ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) > 0
 				&& $usercancreate
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()
