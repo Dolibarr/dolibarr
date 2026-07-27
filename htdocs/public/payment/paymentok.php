@@ -656,13 +656,31 @@ if ($ispaymentok) {
 				if (! $error) {
 					// We validate the member (no effect if it is already validated)
 					$result = ($object->status == $object::STATUS_EXCLUDED) ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
-					if ($result < 0 || empty($object->datevalid)) {
+					if ($result < 0) {
 						$error++;
 						$errmsg = $object->error;
 						$postactionmessages[] = $errmsg;
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
+					}
+					// Member is validated but date of vlaidation is empty so we set it
+					if (empty($object->datevalid)) {
+						dol_syslog("Member date of validation is empty. We define it", LOG_WARNING, 0, '_payment');
+						$now = dol_now();
+						$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+						$sql .= " datevalid = '".$db->idate($now)."'";
+						$sql .= " WHERE rowid = ".((int) $object->id);
+						$result = $db->query($sql);
+						if ($result) {
+							$object->datevalid = $now;
+						} else {
+							$errmsg = $db->error();
+							$postactionmessages[] = $errmsg;
+							$error++;
+							$ispostactionok = -1;
+							dol_syslog("Failed to set date of validation: ".$errmsg, LOG_ERR, 0, '_payment');
+						}
 					}
 				}
 
