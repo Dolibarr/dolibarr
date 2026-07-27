@@ -10840,7 +10840,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT . "/expedition/card.php?id=" . $object->id;
 					if (getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN')) {
 						require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', $object->ref, 1, $object);
+						$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'expedition', (string) $object->ref, 1, $object);
 					}
 				}
 			}
