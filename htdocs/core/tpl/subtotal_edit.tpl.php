@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +133,12 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			$disabled = 1;
 		}
 		print '>';
+		if ($line_type == 'title') {
+			$predefinedphrases = $this->getPredefinedPhrases();  // @phan-suppress-current-line PhanUndeclaredMethod
+			if (!empty($predefinedphrases)) {
+				print $form->selectarray('line_predefinedphrase', $predefinedphrases, '', 1, 0, 0, 'onchange="if (jQuery(this).val()) { jQuery(\'#line_desc\').val(jQuery(this).val()); }"', 0, 0, 0, '', 'minwidth100');
+			}
+		}
 		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
 		print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
 		if ($disabled) {
