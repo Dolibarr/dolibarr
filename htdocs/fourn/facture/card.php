@@ -2133,6 +2133,20 @@ if (empty($reshook)) {
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Set which currency drives the totals. Separate from the VAT calculation rule below:
+	// the two are independent, so they get their own action.
+	if ($action == 'settotalsreference' && $usercancreate) {
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+		$result = $object->update_price(0, 'auto', 0, $object->thirdparty, (GETPOST('totalsreference', 'aZ09') == 'currency') ? '1' : '0');
+		if ($result <= 0) {
+			dol_print_error($db, $object->error, $object->errors);
+			exit;
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+
 	// Make calculation according to calculationrule
 	if ($action == 'calculate' && $usercancreate) {
 		$calculationrule = GETPOST('calculationrule');
@@ -3754,6 +3768,33 @@ if ($action == 'create') {
 			print '<table class="border tableforfield centpercent">';
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
+
+			// Which currency drives the totals. Shown next to the currency and the exchange rate, as it is a
+			// property of that relation, and only where the recalculation is available.
+			if (isModEnabled("multicurrency") && !empty($object->multicurrency_code) && $object->multicurrency_code != $conf->currency
+				&& !empty($object->multicurrency_tx) && $object->multicurrency_tx != 1) {
+				$exactconversion = (float) price2num((float) $object->multicurrency_total_ttc / (float) $object->multicurrency_tx, 'MT');
+				$isalignedoncurrency = (abs((float) $object->total_ttc - $exactconversion) < 0.005);
+				$lblLines = $langs->trans("TotalsFromLines");
+				$lblCurrency = $langs->trans("TotalsAlignedOnForeignCurrency", $object->multicurrency_code);
+				print '<tr><td>' . $langs->trans("TotalsReference") . '</td>';
+				print '<td colspan="2">';
+				if ($object->getVentilExportCompta() == 0) {
+					// Same pattern as the VAT calculation rule below: the active choice is plain text,
+					// the other one is the link that switches to it.
+					$url = $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=settotalsreference&token=' . newToken() . '&totalsreference=';
+					$s = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("ReCalculate") . ' </span>';
+					$s .= $isalignedoncurrency ? '<a href="' . $url . 'lines">' . $lblLines . '</a>' : '<span class="opacitymedium">' . $lblLines . '</span>';
+					$s .= ' / ';
+					$s .= $isalignedoncurrency ? '<span class="opacitymedium">' . $lblCurrency . '</span>' : '<a href="' . $url . 'currency">' . $lblCurrency . '</a>';
+					print '<div class="inline-block">';
+					print $form->textwithtooltip($s, $langs->trans("TotalsReferenceDesc", $object->multicurrency_code, price($exactconversion, 0, $langs, 0, -1, -1, $conf->currency)), 2, 1, img_picto('', 'help', 'class="paddingleft paddingright"'), '', 3, '', 0, 'totalsreference');
+					print '</div>';
+				} else {
+					print $isalignedoncurrency ? $lblCurrency : $lblLines;
+				}
+				print '</td></tr>';
+			}
 
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';

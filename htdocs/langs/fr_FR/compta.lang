@@ -348,3 +348,7 @@ VATExemptionCodeDesc=Si le code TVA taux est 0, vous pouvez saisir ici le code d
 VATExemptionCodeDesc2=Vous pouvez choisir n'importe quelle valeur valide parmi la liste sur https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/ ou la laisser vide pour utiliser le code par défaut.
 VATExemptionCodeDesc3=Ce code n'est pas utilisé pour la comptabilité. Il est utilisé uniquement si vous utilisez un module de génération de factures électroniques.
 WeWillUseThisValueAsNumber=Nous utiliserons cette valeur comme numéro d'immatriculation complet.
+TotalsReference=Référence des totaux
+TotalsFromLines=Somme des lignes
+TotalsAlignedOnForeignCurrency=Alignés sur le %s
+TotalsReferenceDesc=Les totaux en devise de la société sont la somme des lignes converties : ils peuvent différer de quelques centimes de la conversion exacte du total en %s, qui vaut %s. Alignez-les sur cette conversion lorsque le montant dû en devise fait foi. L'opération est réversible tant que la facture n'est pas transférée en comptabilité.
