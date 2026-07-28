@@ -972,6 +972,11 @@ if (empty($reshook)) {
 						$fk_parent_line = 0;
 
 						foreach ($facture_source->lines as $line) {
+							// Extrafields
+							if (method_exists($line, 'fetch_optionals')) {
+								$line->fetch_optionals();
+							}
+
 							// Reset fk_parent_line for no child products and special product
 							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 								$fk_parent_line = 0;
@@ -1017,6 +1022,19 @@ if (empty($reshook)) {
 
 						if ($retAddLine < 0) {
 							$error++;
+						}
+					}
+				}
+
+				// Add link between credit note and origin objects
+				if (!empty($object->fk_facture_source) && $id > 0) {
+					$facture_source_link = new FactureFournisseur($db);
+					if ($facture_source_link->fetch($object->fk_facture_source) > 0) {
+						$facture_source_link->fetchObjectLinked();
+						if (!empty($facture_source_link->linkedObjectsIds)) {
+							foreach ($facture_source_link->linkedObjectsIds as $sourcetype => $TIds) {
+								$object->add_object_linked($sourcetype, current($TIds));
+							}
 						}
 					}
 				}
@@ -2687,6 +2705,9 @@ if ($action == 'create') {
 						$optionsav .= '<option value="'.$key.'"';
 						if ($key == GETPOSTINT('fac_avoir')) {
 							$optionsav .= ' selected';
+							// pre-fill extra fields with selected source invoice
+							$newinvoice_static->fetch_optionals($key);
+							$object->array_options = $newinvoice_static->array_options;
 						}
 						$optionsav .= '>';
 						$optionsav .= $newinvoice_static->ref;
