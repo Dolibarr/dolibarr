@@ -2078,8 +2078,8 @@ if ($action == 'create') {
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
 
-			if ($socid > 0) { // external user
-				$projSocFilter = $socid;
+			if ($user->socid > 0) { // external user
+				$projSocFilter = $user->socid;
 			} elseif ((int) $socid == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
 				$projSocFilter = -1;
 			} else {
