@@ -9786,6 +9786,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/on(timeupdate|toggle|unhandled|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', '', $out);
 			// More not into the previous list
 			$out = preg_replace('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', '', $out);
+			// Add also a generic removal of any onxxx= attribute
+			$out = preg_replace('/\son[a-z]+\s*=/i', '', $out);
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
