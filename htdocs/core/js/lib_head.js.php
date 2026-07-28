@@ -505,6 +505,9 @@ function getIntegerInString(str,i,minlength,maxlength)
  */
 function urlencode(s) {
 	var news = s;
+	if (typeof news === "number") {
+		news = news.toString();
+	}
 	news = news.replace(/\+/gi,'%2B');
 	news = news.replace(/&/gi,'%26');
 	return news;
