@@ -8,6 +8,8 @@
  * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2026		Kim Wittkowski				<kim@wittkowski-it.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -141,7 +145,7 @@ $object = new Adherent($db);
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('memberlist'));
-
+$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->member->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
@@ -171,6 +175,8 @@ $arrayfields = array(
 	'd.rowid' => array('label' => 'ID', 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
 	'd.ref' => array('label' => "Ref", 'checked' => 1),
 	'd.civility' => array('label' => "Civility", 'checked' => 0),
+	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
+	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
 	'd.gender' => array('label' => "Gender", 'checked' => 0),
 	'd.societe' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
@@ -358,46 +364,325 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Create external user
+	// Create subscription with processing options
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
 		$label = GETPOST("label");
 		$nbcreated = 0;
 		$now = dol_now();
-		$amount = price2num(GETPOST('amount', 'alpha'));
-		// Honour MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH and
-		// MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR the same way as the
-		// single subscription form (adherents/subscription.php), otherwise
-		// the mass action falls back to a one-year duration in
-		// Adherent::subscription() and ignores the global setting.
-		$datesubend = 0;
-		if (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH')) {
-			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"), (int) dol_print_date($now, "%m"));
-		} elseif (getDolGlobalInt('MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR')) {
-			$datesubend = dol_get_last_day((int) dol_print_date($now, "%Y"));
+		// Get member amounts from hidden field or single amount
+		$member_amounts_json = GETPOST('member_amounts', 'alpha');
+		$single_amount = price2num(GETPOST('amount', 'alpha'));
+		$member_amounts = array();
+		
+		// Get new input parameters for designation and dates
+		$subscription_label = GETPOST('subscription_label', 'alpha');
+		$subscription_start_day = GETPOSTINT('subscription_start_day');
+		$subscription_start_month = GETPOSTINT('subscription_start_month');
+		$subscription_start_year = GETPOSTINT('subscription_start_year');
+		$subscription_end_day = GETPOSTINT('subscription_end_day');
+		$subscription_end_month = GETPOSTINT('subscription_end_month');
+		$subscription_end_year = GETPOSTINT('subscription_end_year');
+		
+		// Build start and end dates
+		$datestart = null;
+		$dateend = null;
+		if ($subscription_start_day && $subscription_start_month && $subscription_start_year) {
+			$datestart = dol_mktime(0, 0, 0, $subscription_start_month, $subscription_start_day, $subscription_start_year);
 		}
+		if ($subscription_end_day && $subscription_end_month && $subscription_end_year) {
+			$dateend = dol_mktime(23, 59, 59, $subscription_end_month, $subscription_end_day, $subscription_end_year);
+		}
+		
+		if (!empty($member_amounts_json)) {
+			$member_amounts = json_decode($member_amounts_json, true);
+		}
+		
+		$subscription_processing = GETPOST('subscription_processing', 'alpha');
 		$db->begin();
+		
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				// Mirror the single subscription form (adherents/subscription.php): if no
-				// global EOM/EOY override was set, compute the end date from the member's
-				// AdherentType duration_value/duration_unit so a 6-month type does not
-				// silently fall back to the 1-year default in Adherent::subscription()
-				$datesubendthismember = $datesubend;
-				if (!$datesubendthismember && $tmpmember->typeid > 0) {
-					if ($adht->fetch($tmpmember->typeid) > 0) {
-						$delay = !empty($adht->duration_value) ? $adht->duration_value : 1;
-						$delayunit = !empty($adht->duration_unit) ? $adht->duration_unit : 'y';
-						$datesubendthismember = dol_time_plus_duree(dol_time_plus_duree($now, $delay, $delayunit), -1, 'd');
+				// Use individual amount from JSON, single amount, or re-fetch from member type
+				$amount_to_use = $single_amount;
+				
+				// First try to get from member_amounts JSON
+				if (isset($member_amounts[$id]) && isset($member_amounts[$id]['amount']) && $member_amounts[$id]['amount'] > 0) {
+					$amount_to_use = (float) $member_amounts[$id]['amount'];
+				}
+				
+				// If still 0, fetch from member type directly
+				if ($amount_to_use <= 0) {
+					$adht->fetch($tmpmember->typeid);
+					$amount_to_use = (float) $adht->amount;
+				}
+				
+				// Calculate subscription dates - use provided dates or calculate
+				$subscription_date_start = $datestart ? $datestart : $now;
+				$subscription_date_end = $dateend ? $dateend : null;
+				
+				// Only calculate start date if not provided
+				if (!$datestart) {
+					// Check for last subscription to determine proper start date
+					$tmpmember->fetch_subscriptions();
+					if (!empty($tmpmember->subscriptions) && is_array($tmpmember->subscriptions)) {
+						// Sort subscriptions by end date to get the most recent one
+						$sorted_subs = $tmpmember->subscriptions;
+						usort($sorted_subs, function($a, $b) {
+							return ($a->datefin > $b->datefin) ? -1 : 1;
+						});
+						
+						$last_subscription = $sorted_subs[0];
+						if ($last_subscription && $last_subscription->datefin) {
+							// Start new subscription from the day after the last one ended
+							$subscription_date_start = $last_subscription->datefin + (24 * 3600); // +1 day
+							
+							// For subscriptions that ended in previous months, start from 1st of current month
+							if ($subscription_date_start < dol_mktime(0, 0, 0, dol_print_date($now, '%m'), 1, dol_print_date($now, '%Y'))) {
+								$subscription_date_start = dol_mktime(0, 0, 0, dol_print_date($now, '%m'), 1, dol_print_date($now, '%Y'));
+							}
+						} else {
+							// If no valid end date, start from 1st of current month
+							$subscription_date_start = dol_mktime(0, 0, 0, dol_print_date($now, '%m'), 1, dol_print_date($now, '%Y'));
+						}
+					} else {
+						// No previous subscriptions, start from 1st of current month
+						$subscription_date_start = dol_mktime(0, 0, 0, dol_print_date($now, '%m'), 1, dol_print_date($now, '%Y'));
 					}
 				}
-				$result = $tmpmember->subscription($now, (float) $amount, 0, '', '', '', '', '', $datesubendthismember);
+				
+				// Only calculate end date if not provided
+				if (!$dateend) {
+					$adht->fetch($tmpmember->typeid);
+					
+					// Parse duration field (format: "1m", "4w", "1y", "30d", etc.)
+					$duration_value = 0;
+					$duration_unit = '';
+					if (!empty($adht->duration)) {
+						if (preg_match('/^(\d+)([dwmy])$/', $adht->duration, $matches)) {
+							$duration_value = (int)$matches[1];
+							$duration_unit = $matches[2];
+						}
+					}
+					
+					if ($duration_value > 0) {
+						if ($duration_unit == 'd') {
+							$subscription_date_end = $subscription_date_start + ($duration_value * 24 * 3600);
+						} elseif ($duration_unit == 'w') {
+							$subscription_date_end = $subscription_date_start + ($duration_value * 7 * 24 * 3600);
+						} elseif ($duration_unit == 'm') {
+							$subscription_date_end = dol_time_plus_duree($subscription_date_start, $duration_value, 'm') - 1;
+						} elseif ($duration_unit == 'y') {
+							$subscription_date_end = dol_time_plus_duree($subscription_date_start, $duration_value, 'y') - 1;
+						}
+					} else {
+						// Default: end of current year
+						$start_year = dol_print_date($subscription_date_start, '%Y');
+						$subscription_date_end = dol_mktime(23, 59, 59, 12, 31, $start_year);
+					}
+				}
+				
+				// Create subscription with calculated dates
+				// subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
+				$result = $tmpmember->subscription(
+					$subscription_date_start,  // Date start
+					$amount_to_use,           // Amount
+					0,                        // Account ID
+					'',                       // Operation
+					$subscription_label ? $subscription_label : '',  // Label
+					'',                       // Num cheque
+					'',                       // Emetteur nom
+					'',                       // Emetteur banque
+					$subscription_date_end,   // Date end
+					null                      // fk_type
+				);
 				if ($result < 0) {
 					$error++;
 				} else {
 					$nbcreated++;
+					$subscription_id = $result; // Store subscription ID for linking
+					
+					// Apply processing options based on selection
+					if ($subscription_processing == 'invoice_only' || $subscription_processing == 'invoice_and_payment') {
+						// Create invoice - either with existing thirdparty or create one
+						$target_socid = $tmpmember->socid;
+						
+						// If member has no linked thirdparty, create one automatically
+						if ($target_socid <= 0 && $user->hasRight('societe', 'creer')) {
+							require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+							$thirdparty = new Societe($db);
+							
+							// Build company name, ensure it's not empty
+							$company_name = trim($tmpmember->getFullName($langs));
+							if (empty($company_name)) {
+								$company_name = "Mitglied-".$tmpmember->id;
+							}
+							
+							$thirdparty->name = $company_name;
+							$thirdparty->nom = $company_name;  // Both are needed for compatibility
+							$thirdparty->name_alias = "";
+							$thirdparty->client = 1; // 1=Customer, 2=Prospect, 3=Customer+Prospect
+							$thirdparty->typent_code = 'TE_PRIVATE';  // Private individual
+							
+							// Generate customer code automatically if required
+							// Set code_client to 'auto' to trigger automatic generation
+							$thirdparty->code_client = 'auto';
+							
+							// Contact details
+							if (!empty($tmpmember->email)) {
+								$thirdparty->email = $tmpmember->email;
+							}
+							if (!empty($tmpmember->address)) {
+								$thirdparty->address = $tmpmember->address;
+							}
+							if (!empty($tmpmember->zip)) {
+								$thirdparty->zip = $tmpmember->zip;
+							}
+							if (!empty($tmpmember->town)) {
+								$thirdparty->town = $tmpmember->town;
+							}
+							if (!empty($tmpmember->country_id)) {
+								$thirdparty->country_id = $tmpmember->country_id;
+								$thirdparty->country_code = getCountry($tmpmember->country_id, 2);
+							}
+							if (!empty($tmpmember->phone)) {
+								$thirdparty->phone = $tmpmember->phone;
+							}
+							
+							$socid_created = $thirdparty->create($user);
+							if ($socid_created > 0) {
+								$target_socid = $socid_created;
+								// Link the member to the new thirdparty
+								$tmpmember->socid = $target_socid;
+								$tmpmember->update($user);
+							} else {
+								// Better error handling with both error and errors array
+								$error_msg = "Fehler beim Erstellen der Firma für Mitglied ".$tmpmember->getFullName($langs).": ";
+								if (!empty($thirdparty->error)) {
+									$error_msg .= $thirdparty->error;
+								}
+								if (!empty($thirdparty->errors)) {
+									$error_msg .= " ".implode(", ", $thirdparty->errors);
+								}
+								if (empty($thirdparty->error) && empty($thirdparty->errors)) {
+									$error_msg .= " Unbekannter Fehler (möglicherweise Duplikat oder fehlende Pflichtfelder)";
+								}
+								setEventMessages($error_msg, null, 'errors');
+								dol_syslog("Failed to create thirdparty for member ".$tmpmember->id.": ".$error_msg, LOG_ERR);
+							}
+						}
+						
+						// Create invoice if we have a thirdparty (existing or newly created)
+						if ($target_socid > 0 && $user->hasRight('facture', 'creer')) {
+							$invoice = new Facture($db);
+							$invoice->socid = $target_socid;
+							$invoice->type = Facture::TYPE_STANDARD;
+							$invoice->date = $subscription_date_start;
+							
+							// Enhanced description with period info (point 2)
+							$period_desc = '';
+							if ($subscription_label) {
+								$period_desc = ' ('.$subscription_label.')';
+							} elseif ($subscription_date_start && $subscription_date_end) {
+								$period_desc = ' ('.dol_print_date($subscription_date_start, '%d.%m.%Y').' - '.dol_print_date($subscription_date_end, '%d.%m.%Y').')';
+							}
+							$invoice->note_private = "Mitgliedsbeitrag für ".$tmpmember->getFullName($langs).$period_desc;
+							
+							$invoiceid = $invoice->create($user);
+							
+							if ($invoiceid > 0) {
+								// Add invoice line with individual amount and period info
+								$label_with_period = $subscription_label ? $subscription_label : "Mitgliedsbeitrag ".dol_print_date($subscription_date_start, '%Y');
+								$desc = "Beitrag für ".$tmpmember->getFullName($langs).$period_desc;
+								
+								// Use correct addline parameters for Dolibarr 21
+								$result_line = $invoice->addline(
+									$desc,              // 1. Description
+									$amount_to_use,     // 2. Unit price HT (pu_ht)
+									1,                  // 3. Quantity
+									0,                  // 4. VAT rate (txtva)
+									0,                  // 5. Local tax 1 (txlocaltax1)
+									0,                  // 6. Local tax 2 (txlocaltax2)
+									0,                  // 7. Product ID (fk_product)
+									0,                  // 8. Discount percent (remise_percent)
+									'',                 // 9. Date start
+									'',                 // 10. Date end
+									0,                  // 11. Ventilation code (fk_code_ventilation)
+									0,                  // 12. Info bits
+									0,                  // 13. Discount exception ID (fk_remise_except)
+									'HT',               // 14. Price base type
+									0,                  // 15. Unit price TTC (pu_ttc)
+									0                   // 16. Line type (0 = product/service)
+								);
+								
+								if ($result_line > 0) {
+									// Create object link between subscription and invoice
+									// Method 1: Use Dolibarr's internal object linking
+									if (method_exists($invoice, 'add_object_linked')) {
+										$invoice->add_object_linked('subscription', $subscription_id);
+									}
+									
+									// Method 2: Manual database entry for object linking
+									$sql_link = "INSERT INTO ".MAIN_DB_PREFIX."element_element (fk_source, sourcetype, fk_target, targettype) VALUES (";
+									$sql_link .= $subscription_id.", 'subscription', ".$invoiceid.", 'facture')";
+									$db->query($sql_link);
+									
+									// Point 4: Validate invoice automatically (not provisory)
+									$result_validation = $invoice->validate($user);
+									
+									if ($result_validation > 0) {
+										// Validation successful
+										setEventMessages("Rechnung ".$invoice->ref." erfolgreich erstellt und freigegeben für ".$tmpmember->getFullName($langs), null, 'mesgs');
+										
+										if ($subscription_processing == 'invoice_and_payment') {
+											// Add payment logic here if needed
+										}
+									} else {
+										// Validation failed - rollback or error
+										$error_msg = "Rechnung erstellt aber Validierung fehlgeschlagen für Mitglied ".$tmpmember->getFullName($langs);
+										if (!empty($invoice->error)) {
+											$error_msg .= ": ".$invoice->error;
+										}
+										if (!empty($invoice->errors)) {
+											$error_msg .= " ".implode(", ", $invoice->errors);
+										}
+										setEventMessages($error_msg, null, 'errors');
+									}
+								} else {
+									// Debug: Line addition failed
+									$error_msg = "Fehler beim Hinzufügen der Rechnungszeile für Mitglied ".$tmpmember->getFullName($langs);
+									if (!empty($invoice->error)) {
+										$error_msg .= ": ".$invoice->error;
+									}
+									if (!empty($invoice->errors)) {
+										$error_msg .= " ".implode(", ", $invoice->errors);
+									}
+									setEventMessages($error_msg, null, 'errors');
+									dol_syslog("Failed to add invoice line: ".$error_msg, LOG_ERR);
+								}
+							} else {
+								// Debug: Invoice creation failed
+								setEventMessages("Fehler beim Erstellen der Rechnung für Mitglied ".$tmpmember->getFullName($langs).": ".$invoice->error, null, 'errors');
+							}
+						} else {
+							// Debug: No thirdparty or no rights
+							if ($target_socid <= 0) {
+								setEventMessages("Konnte keine Firma für Mitglied ".$tmpmember->getFullName($langs)." erstellen oder verknüpfen - keine Rechnung erstellt", null, 'warnings');
+							} else {
+								setEventMessages("Keine Berechtigung zur Rechnungserstellung", null, 'errors');
+							}
+						}
+					}
+					
+					// Bank direct entry logic for bank_direct option
+					if ($subscription_processing == 'bank_direct' || $subscription_processing == 'invoice_and_payment') {
+						// Bank entry is already created by subscription() method with individual amount
+						// Additional bank processing could be added here if needed
+					}
 				}
 			} else {
 				$error++;
@@ -853,7 +1138,14 @@ $trackid = 'mem'.$object->id;
 if ($massaction == 'createsubscription') {
 	$tmpmember = new Adherent($db);
 	$adht = new AdherentType($db);
-	$amount = 0;
+	
+	// Calculate individual amounts per member type
+	$member_amounts = array();
+	$total_members = 0;
+	$different_amounts = false;
+	$first_amount = null;
+	$duration_types = array(); // Track duration types to determine default period
+	
 	foreach ($toselect as $id) {
 		$now = dol_now();
 		$tmpmember->fetch($id);
@@ -861,21 +1153,130 @@ if ($massaction == 'createsubscription') {
 		if ($res > 0) {
 			$amounttmp = $adht->amount;
 			if (!empty($tmpmember->last_subscription_amount) && !GETPOSTISSET('newamount') && is_numeric($amounttmp)) {
-				$amounttmp = max($tmpmember->last_subscription_amount, $amount);
+				$amounttmp = max($tmpmember->last_subscription_amount, $amounttmp);
 			}
-			$amount = max(0, $amounttmp, $amount);
+			
+			// Parse duration field (format: "1m", "4w", "1y", "30d", etc.)
+			$duration_value = 0;
+			$duration_unit = '';
+			if (!empty($adht->duration)) {
+				if (preg_match('/^(\d+)([dwmy])$/', $adht->duration, $matches)) {
+					$duration_value = (int)$matches[1];
+					$duration_unit = $matches[2];
+				}
+			}
+			
+			$member_amounts[$id] = array(
+				'amount' => max(0, $amounttmp),
+				'name' => $tmpmember->getFullName($langs),
+				'type' => $adht->libelle,
+				'duration_unit' => $duration_unit,
+				'duration_value' => $duration_value
+			);
+			
+			// Track duration types for default period calculation
+			if (!isset($duration_types[$duration_unit])) {
+				$duration_types[$duration_unit] = 0;
+			}
+			$duration_types[$duration_unit]++;
+			
+			if ($first_amount === null) {
+				$first_amount = $member_amounts[$id]['amount'];
+			} elseif ($first_amount != $member_amounts[$id]['amount']) {
+				$different_amounts = true;
+			}
+			$total_members++;
 		} else {
 			$error++;
 		}
 	}
+	
+	// Display amount info
+	if ($different_amounts) {
+		$amount_display = $langs->trans("IndividualAmountsPerMemberType");
+		$amount_input_value = '';
+	} else {
+		$amount_display = price($first_amount, 0, '', 0);
+		$amount_input_value = price($first_amount, 0, '', 0);
+	}
+
+	// ALWAYS create invoice automatically - no options needed
+	// Set subscription_processing to 'invoice_only' by default (hidden field)
+	$processing_options = '<input type="hidden" name="subscription_processing" value="invoice_only">';
+	$processing_options .= '<div style="padding: 10px; background-color: #e8f5e9; border: 1px solid #4caf50; border-radius: 4px;">';
+	$processing_options .= '<strong>ℹ️ Hinweis:</strong> Es wird automatisch eine Rechnung für jedes Mitglied mit dem individuellen Mitgliedsbeitrag erstellt.';
+	$processing_options .= '</div>';
 
 	$date = dol_print_date(dol_now(), "%d/%m/%Y");
+	
+	// Build member details for display
+	$member_details = '';
+	if ($different_amounts) {
+		$member_details .= '<div style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin: 5px 0;">';
+		$member_details .= '<strong>'.$langs->trans("MemberAmountDetails").':</strong><br>';
+		foreach ($member_amounts as $member_id => $member_info) {
+			$member_details .= '• '.$member_info['name'].' ('.$member_info['type'].'): '.price($member_info['amount'], 0, '', 0).' €<br>';
+		}
+		$member_details .= '</div>';
+	}
+	
+	// Hidden field to pass member amounts data
+	$hidden_amounts = '<input type="hidden" name="member_amounts" value="'.dol_escape_htmltag(json_encode($member_amounts)).'">';
+	
+	// Date picker helpers - determine default period based on member types
+	$current_day = dol_print_date($now, '%d');
+	$current_month = dol_print_date($now, '%m');
+	$current_year = dol_print_date($now, '%Y');
+	$next_year = $current_year + 1;
+	
+	// Determine dominant subscription type (monthly or yearly)
+	$is_monthly = false;
+	if (isset($duration_types['m']) && $duration_types['m'] > 0) {
+		$is_monthly = true;
+	}
+	
+	// Set default dates based on subscription type
+	if ($is_monthly) {
+		// Monthly: Current month only (01.MM.YYYY - last day of MM.YYYY)
+		$default_start_day = '01';
+		$default_start_month = $current_month;
+		$default_start_year = $current_year;
+		
+		// Calculate last day of current month
+		$last_day = date('t', mktime(0, 0, 0, $current_month, 1, $current_year));
+		$default_end_day = $last_day;
+		$default_end_month = $current_month;
+		$default_end_year = $current_year;
+	} else {
+		// Yearly: Current year (01.MM.YYYY - 31.12.YYYY+1)
+		$default_start_day = '01';
+		$default_start_month = $current_month;
+		$default_start_year = $current_year;
+		
+		$default_end_day = '31';
+		$default_end_month = '12';
+		$default_end_year = $next_year;
+	}
+	
+	// Date input fields for start and end dates
+	$date_start_inputs = '<input type="text" name="subscription_start_day" size="2" maxlength="2" placeholder="DD" value="'.$default_start_day.'"> / ';
+	$date_start_inputs .= '<input type="text" name="subscription_start_month" size="2" maxlength="2" placeholder="MM" value="'.$default_start_month.'"> / ';
+	$date_start_inputs .= '<input type="text" name="subscription_start_year" size="4" maxlength="4" placeholder="YYYY" value="'.$default_start_year.'">';
+	
+	$date_end_inputs = '<input type="text" name="subscription_end_day" size="2" maxlength="2" placeholder="DD" value="'.$default_end_day.'"> / ';
+	$date_end_inputs .= '<input type="text" name="subscription_end_month" size="2" maxlength="2" placeholder="MM" value="'.$default_end_month.'"> / ';
+	$date_end_inputs .= '<input type="text" name="subscription_end_year" size="4" maxlength="4" placeholder="YYYY" value="'.$default_end_year.'">';
+	
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
-		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),
-		array('label' => $langs->trans("Label"), 'type' => 'text', 'value' => '', 'name' => 'label'),
-		array('type' => 'separator'),
-		array('label' => $langs->trans("MoreActions"), 'type' => 'other', 'value' => $langs->trans("None").' '.img_warning($langs->trans("WarningNoComplementaryActionDone"))),
+		array('label' => $langs->trans("Amount"), 'type' => 'other', 'value' => ($different_amounts ? $amount_display.$member_details.$hidden_amounts : '<strong>'.price($first_amount, 0, '', 0).' €</strong> (pro Mitglied)'.$hidden_amounts)),
+		// New fields for designation and custom dates
+		array('label' => 'Bezeichnung (z.B. 2026-01)', 'type' => 'text', 'name' => 'subscription_label', 'value' => dol_print_date($now, '%Y-%m'), 'size' => 20),
+		array('label' => 'Beitragszeitraum Start (TT/MM/JJJJ)', 'type' => 'other', 'value' => $date_start_inputs),
+		array('label' => 'Beitragszeitraum Ende (TT/MM/JJJJ)', 'type' => 'other', 'value' => $date_end_inputs),
+		// Info about automatic invoice creation
+		array('label' => 'Rechnung erstellen', 'type' => 'other', 'value' => $processing_options),
+		array('type' => 'separator')
 	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription_confirm", $formquestion, '', 0, 200, 500, 1);
 }
@@ -1176,7 +1577,7 @@ if (!empty($arrayfields['d.firstname']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.gender']['checked'])) {
-	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.gender']['label'], $_SERVER['PHP_SELF'], 'd.gender', "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.societe']['checked'])) {
