@@ -506,3 +506,7 @@ WebPortalSharedDocsDirHelp=Ingrese el nombre del directorio, ubicado en la carpe
 DateM=Fecha de modificación
 ThisDirectoryIsEmpty=Este directorio está vacío
 WrittenBy=Escrito por %s
+
+WebPortalContractListMenu=Contratos
+WebPortalContractListTitle=Contratos de clientes
+WebPortalContractListDesc=Lista de mis contratos de clientes

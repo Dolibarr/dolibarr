@@ -506,3 +506,7 @@ WebPortalSharedDocsDirHelp=Namen der Verzeichnisses eingeben, das sich im Ordner
 DateM=Änderungsdatum
 ThisDirectoryIsEmpty=Dieses Verzeichnis ist leer
 WrittenBy=Geschrieben von %s
+
+WebPortalContractListMenu=Verträge
+WebPortalContractListTitle=Kundenverträge
+WebPortalContractListDesc=Liste meiner Kundenverträge

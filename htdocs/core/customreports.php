@@ -65,6 +65,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
 	$search_measures = GETPOST('search_measures', 'array:alphanohtml');
+	if (!is_array($search_measures)) {
+		$search_measures = array();
+	}
 
 	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
 		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
@@ -79,6 +82,9 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	'@phan-var-force string[] $search_groupby';
 
 	$search_yaxis = GETPOST('search_yaxis', 'array:alphanohtml');
+	if (!is_array($search_yaxis)) {
+		$search_yaxis = array();
+	}
 	$search_graph = (string) GETPOST('search_graph', 'restricthtml');
 
 	/**
