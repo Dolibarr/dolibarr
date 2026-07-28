@@ -667,6 +667,12 @@ class Asset extends CommonObject
 					foreach ($fields as $field_key => $value) {
 						$options->deprecation_options[$mode_key][$field_key] = $value;
 					}
+					// 'amount_base_depreciation_ht' only exists on the asset (not on the model, see 'only_on_asset'),
+					// so it is never part of $fields above and must be computed from the asset itself, otherwise
+					// it stays at 0 and all depreciation lines are calculated on a zero base.
+					if (!array_key_exists('amount_base_depreciation_ht', $options->deprecation_options[$mode_key])) {
+						$options->deprecation_options[$mode_key]['amount_base_depreciation_ht'] = $this->reversal_amount_ht > 0 ? $this->reversal_amount_ht : $this->acquisition_value_ht;
+					}
 				}
 
 				$result = $options->updateDeprecationOptions($user, $this->id, 0, $notrigger);
