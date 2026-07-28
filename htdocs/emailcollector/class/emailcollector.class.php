@@ -3263,8 +3263,23 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
-														$attachment->save($destdir.'/');
+														$filename = '';
+														try {
+															$filename = (string) $attachment->getName();
+														} catch (Throwable $e) {
+															$filename = '';
+														}
+														if ($filename === '' || $filename === 'undefined' || !$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
+														$content = $attachment->getContent();
+														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
@@ -3280,18 +3295,33 @@ class EmailCollector extends CommonObject
 							}
 						} elseif ($operation['type'] == 'recordjoinpiece') {
 							$data = [];
+							$skipped = 0;
 							if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 								foreach ($attachments as $attachment) {
-									if ($attachment->getName() === 'undefined') {
+									$attname = '';
+									try {
+										$attname = (string) $attachment->getName();
+									} catch (Throwable $e) {
+										$attname = '';
+									}
+									if ($attname === '' || $attname === 'undefined' || !$this->isAllowedAttachmentFilename($attname)) {
+										$skipped++;
 										continue;
 									}
-									$data[$attachment->getName()] = $attachment->getContent();
+									$data[$attname] = $attachment->getContent();
 								}
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
+									if (empty($val['filename']) || !$this->isAllowedAttachmentFilename((string) $val['filename'])) {
+										$skipped++;
+										continue;
+									}
 									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
+							}
+							if ($skipped > 0) {
+								$operationslog .= '<br>Skipped '.$skipped.' attachment(s) due to allowed extensions filter';
 							}
 							if (count($data) > 0) {
 								$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."user WHERE email LIKE '%".$this->db->escape($email_from)."%'";
@@ -3579,12 +3609,19 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getFilename();
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
@@ -3740,12 +3777,19 @@ class EmailCollector extends CommonObject
 													dol_mkdir($destdir);
 												}
 												if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
+													$skippedatt = 0;
 													foreach ($attachments as $attachment) {
 														// $attachment->save($destdir.'/');
-														$typeattachment = (string) $attachment->getDisposition();
 														$filename = $attachment->getName();
+														if (!$this->isAllowedAttachmentFilename($filename)) {
+															$skippedatt++;
+															continue;
+														}
 														$content = $attachment->getContent();
 														$this->saveAttachment($destdir, $filename, $content);
+													}
+													if ($skippedatt > 0) {
+														$operationslog .= '<br>Skipped '.$skippedatt.' attachment(s) due to allowed extensions filter';
 													}
 												} else {
 													$getMsg = $this->getmsg($connection, $imapemail, $destdir);
@@ -4191,45 +4235,47 @@ class EmailCollector extends CommonObject
 		if (!empty($params['filename']) || !empty($params['name'])) {
 			// filename may be given as 'Filename' or 'Name' or both
 			$filename = $params['filename'] ?? $params['name'];
-			// filename may be encoded, so see imap_mime_header_decode()
-			$attachments[$filename] = $data; // this is a problem if two files have same name
+			if ($this->isAllowedAttachmentFilename($filename)) {
+				// filename may be encoded, so see imap_mime_header_decode()
+				$attachments[$filename] = $data; // this is a problem if two files have same name
 
-			if (strlen($destdir)) {
-				if (substr($destdir, -1) != '/') {
-					$destdir .= '/';
-				}
+				if (strlen($destdir)) {
+					if (substr($destdir, -1) != '/') {
+						$destdir .= '/';
+					}
 
-				// Get file name (with extension)
-				$file_name_complete = $filename;
-				$destination = $destdir.$file_name_complete;
-
-				// Extract file extension
-				$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
-
-				// Extract file name without extension
-				$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
-
-				// Save an original file name variable to track while renaming if file already exists
-				$file_name_original = $file_name;
-
-				// Increment file name by 1
-				$num = 1;
-
-				/**
-				 * Check if the same file name already exists in the upload folder,
-				 * append increment number to the original filename
-				 */
-				while (file_exists($destdir.$file_name.".".$extension)) {
-					$file_name = $file_name_original . ' (' . $num . ')';
-					$file_name_complete = $file_name . "." . $extension;
+					// Get file name (with extension)
+					$file_name_complete = $filename;
 					$destination = $destdir.$file_name_complete;
-					$num++;
+
+					// Extract file extension
+					$extension = pathinfo($file_name_complete, PATHINFO_EXTENSION);
+
+					// Extract file name without extension
+					$file_name = pathinfo($file_name_complete, PATHINFO_FILENAME);
+
+					// Save an original file name variable to track while renaming if file already exists
+					$file_name_original = $file_name;
+
+					// Increment file name by 1
+					$num = 1;
+
+					/**
+					 * Check if the same file name already exists in the upload folder,
+					 * append increment number to the original filename
+					 */
+					while (file_exists($destdir.$file_name.".".$extension)) {
+						$file_name = $file_name_original . ' (' . $num . ')';
+						$file_name_complete = $file_name . "." . $extension;
+						$destination = $destdir.$file_name_complete;
+						$num++;
+					}
+
+					$destination = dol_sanitizePathName($destination);
+
+					file_put_contents($destination, $data);
+					dolChmod($destination);
 				}
-
-				$destination = dol_sanitizePathName($destination);
-
-				file_put_contents($destination, $data);
-				dolChmod($destination);
 			}
 		}
 
@@ -4456,6 +4502,59 @@ class EmailCollector extends CommonObject
 		}
 
 		return $stored;
+	}
+
+	/**
+	 * Check if an attachment filename is allowed by configuration.
+	 *
+	 * If EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS is empty, all attachments are allowed.
+	 * If set, only attachments with an extension in the allowlist are kept (case-insensitive).
+	 *
+	 * @param 	string	$filename	Filename as provided by IMAP
+	 * @return 	bool
+	 */
+	private function isAllowedAttachmentFilename($filename)
+	{
+		static $allowedExtRaw = null;
+		static $allowedExtMap = null;
+
+		$raw = trim(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS'));
+		if ($raw === '') {
+			return true;
+		}
+
+		if ($allowedExtRaw !== $raw) {
+			$allowedExtRaw = $raw;
+			$allowedExtMap = array();
+
+			$tokens = preg_split('/[\\s,;]+/', strtolower($raw));
+			if (is_array($tokens)) {
+				foreach ($tokens as $token) {
+					$token = trim($token);
+					if ($token === '') {
+						continue;
+					}
+					$token = ltrim($token, '.');
+					$token = preg_replace('/[^a-z0-9]+/', '', $token);
+					if ($token === '') {
+						continue;
+					}
+					$allowedExtMap[$token] = true;
+				}
+			}
+		}
+
+		// If the allowlist contains no valid extension, consider it as "no restriction".
+		if (empty($allowedExtMap)) {
+			return true;
+		}
+
+		$ext = strtolower(pathinfo((string) $filename, PATHINFO_EXTENSION));
+		if ($ext === '') {
+			return false;
+		}
+
+		return !empty($allowedExtMap[$ext]);
 	}
 
 	/**
