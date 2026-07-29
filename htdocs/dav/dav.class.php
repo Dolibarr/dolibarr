@@ -63,7 +63,7 @@ class CdavLib
 	 *
 	 * @param 	int 		$calendarId 	Calendar id
 	 * @param 	int|bool	$oid			Oid
-	 * @param	int|bool	$ouri			Ouri
+	 * @param	int|string|bool	$ouri		Ouri (matches against a.recurid)
 	 * @return string
 	 */
 	public function getSqlCalEvents($calendarId, $oid = false, $ouri = false)
@@ -103,10 +103,10 @@ class CdavLib
 			if ($ouri === false) {
 				$sql .= ' AND a.id = ' . ((int) $oid);
 			} else {
-				$sql .= ' AND (a.id = ' . ((int) $oid) . ' OR a.recurid = \''. $this->db->escape($ouri) . '\')';
+				$sql .= ' AND (a.id = ' . ((int) $oid) . ' OR a.recurid = \''. $this->db->escape((string) $ouri) . '\')';
 			}
 		} elseif ($ouri !== false) {
-			$sql .= ' AND a.recurid = \''. $this->db->escape($ouri) . '\'';
+			$sql .= ' AND a.recurid = \''. $this->db->escape((string) $ouri) . '\'';
 		}
 
 		return $sql;
