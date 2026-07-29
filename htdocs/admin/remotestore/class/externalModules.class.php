@@ -575,7 +575,7 @@ class ExternalModules
 
 				// Direct install
 				if (($product['direct-download'] && $product['direct-download'] == 'yes') || $product['source'] === 'dolistore') {
-					$disableInstall = ($compatible === 'NotCompatible') || getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0;
+					$disableInstall = ($compatible === 'NotCompatible') && !getDolGlobalInt('MAIN_FEATURES_LEVEL');
 					// $disableInstall = false; // TODO: remove this.
 					$disableInfo = $disableInstall ? dol_string_nohtmltag($version) : '';
 					$fields = ['action' => 'install', 'token' => newToken()];
