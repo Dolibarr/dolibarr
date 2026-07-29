@@ -481,3 +481,10 @@ ErrorCommercialNotAllowedForThirdparty=Le utilisateur %s n'a pas l'autorisation 
 EnablePublicCompanyPages=Activer la page de contact publique
 PublicInterfaceCompanyDesc=Cette option offre une page publique avec un formulaire de contact en ligne permettant à tout visiteur anonyme de vous envoyer un message (créant également un contact tiers et/ou automatiquement).
 ImpossibleToCreateUserFromContact=Impossible de créer utilisateur à partir de ce contact
+
+# Separateurs de section sur la fiche tiers (creation/edition)
+Identity=Identité
+AddressAndContact=Adresse et coordonnées
+LegalAndTaxIdentifiers=Identifiants légaux et fiscaux
+Characteristics=Caractéristiques
+TagsAndRelations=Tags et relations

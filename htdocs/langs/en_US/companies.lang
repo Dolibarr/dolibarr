@@ -483,3 +483,10 @@ ErrorCommercialNotAllowedForThirdparty=The user %s has not the permission to see
 EnablePublicCompanyPages=Enable the public contact page
 PublicInterfaceCompanyDesc=This option offer a public page with an online contact form to allow any anonymous visitor to send you a message (creating also a thirdparty and/or contact, automatically).
 ImpossibleToCreateUserFromContact=Impossible to create user from this contact
+
+# Section separators on thirdparty create/edit card
+Identity=Identity
+AddressAndContact=Address and contact details
+LegalAndTaxIdentifiers=Legal and tax identifiers
+Characteristics=Characteristics
+TagsAndRelations=Tags and relations
