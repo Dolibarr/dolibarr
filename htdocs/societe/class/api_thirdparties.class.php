@@ -676,6 +676,11 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$arrayofcateg = $categories->getListForItem($id, 'customer', $sortfield, $sortorder, $limit, $page);
@@ -715,7 +720,7 @@ class Thirdparties extends DolibarrApi
 
 		$result = $this->company->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Thirdparty not found');
+			throw new RestException(404, 'Third party not found');
 		}
 		$category = new Categorie($this->db);
 		$result = $category->fetch($category_id);
@@ -807,6 +812,11 @@ class Thirdparties extends DolibarrApi
 		$result = $this->company->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
+		}
+
+		// Check that user has permission on thirdparty ID
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company)) {
+			throw new RestException(404, 'Third party not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$categories = new Categorie($this->db);

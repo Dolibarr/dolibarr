@@ -453,7 +453,7 @@ if ($action != 'create') {
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("User").'</td><td>';
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print $form->select_dolusers((GETPOSTISSET('private') ? GETPOSTINT('private') : $object->private), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
+		print $form->select_dolusers((GETPOSTISSET('private') ? GETPOSTINT('private') : ($object->private ? $object->private : -1)), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.(GETPOSTISSET('position') ? GETPOSTINT('position') : $object->position).'"></td></tr>';
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
