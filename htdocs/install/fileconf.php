@@ -230,6 +230,11 @@ if (!empty($force_install_noedit)) {
 		if (empty($dolibarr_main_data_root)) {
 			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
+		// Correct value if dolibarr_main_data_root contains '..'
+		if (strpos($dolibarr_main_data_root, '..') !== false) {
+			$dolibarr_main_data_root = dirname($dolibarr_main_document_root).'/documents';
+		}
+
 		?>
 		<td class="label">
 			<input type="text"
@@ -481,7 +486,7 @@ if (!empty($force_install_noedit)) {
 			<input type="text" class="width75"
 				   name="db_port"
 				   id="db_port"
-				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
+				   value="<?php print (!empty($force_install_port)) ? (int) $force_install_port : (empty($dolibarr_main_db_port) ? "" : $dolibarr_main_db_port); ?>"
 				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>

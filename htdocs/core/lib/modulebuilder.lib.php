@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  *  \brief		Set of function for modulebuilder management
  */
 
+require_once DOL_DOCUMENT_ROOT . '/modulebuilder/class/NamingContract.class.php';
 
 /**
  * 	Regenerate files .class.php
@@ -332,7 +333,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	// Backup old file
 	dol_copy($pathoffiletoedittarget, $pathoffiletoedittarget.'.back', $newmask, 1);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER FIELDS'."\n";
@@ -391,9 +392,9 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= "\t".'-- END MODULEBUILDER FIELDS';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER FIELDS.*END MODULEBUILDER FIELDS/ims', $texttoinsert, $contentsqlfile);
 
-	$result = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
@@ -406,7 +407,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
 	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
-	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc));
+	$contentsqlfile = file_get_contents(dol_osencode($pathoffiletoeditsrc));
 
 	$i = 0;
 	$texttoinsert = '-- BEGIN MODULEBUILDER INDEXES'."\n";
@@ -428,11 +429,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	}
 	$texttoinsert .= '-- END MODULEBUILDER INDEXES';
 
-	$contentsql = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsql);
+	$contentsqlfile = preg_replace('/-- BEGIN MODULEBUILDER INDEXES.*END MODULEBUILDER INDEXES/ims', $texttoinsert, $contentsqlfile);
 
 	dol_mkdir(dirname($pathoffiletoedittarget));
 
-	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
+	$result2 = file_put_contents($pathoffiletoedittarget, $contentsqlfile);
 	if ($result2) {
 		dolChmod($pathoffiletoedittarget, $newmask);
 	} else {
@@ -650,7 +651,7 @@ function reWriteAllPermissions($file, $permissions, $key, $right, $objectname, $
 		// parcourir les objects
 		$o = 0;
 		foreach ($permissions as &$object) {
-			// récupérer la permission de l'objet
+			// get the object permission
 			$p = 1;
 			foreach ($object as &$obj) {
 				if (str_contains($obj[5], 'read')) {
@@ -1045,22 +1046,17 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 	// Add methods for each object
 	$allContent = getFromFile($srcfile, '/* BEGIN MODULEBUILDER API MYOBJECT */', '/* END MODULEBUILDER API MYOBJECT */');
 	foreach ($objects as $objectname) {
-		$arrayreplacement = array(
-			'mymodule' => strtolower($modulename),
-			'MyModule' => $modulename,
-			'MYMODULE' => strtoupper($modulename),
-			'My module' => $modulename,
-			'my module' => $modulename,
-			'Mon module' => $modulename,
-			'mon module' => $modulename,
-			'htdocs/modulebuilder/template' => strtolower($modulename),
-			'myobject' => strtolower($objectname),
-			'MyObject' => $objectname,
-			'MYOBJECT' => strtoupper($objectname),
-			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
-		);
-		$contentReplaced = make_substitutions($allContent, $arrayreplacement, null);
-		//$contentReplaced = str_replace(["myobject","MyObject"], [strtolower($object),$object], $allContent);
+		if (strtolower($modulename) === strtolower($objectname)) {
+			dol_syslog('addObjectsToApiFile: skipping object "' . $objectname . '" — name collides with module "' . $modulename . '"', LOG_WARNING);
+			continue;
+		}
+		$nc = new NamingContract($modulename, $objectname);
+		$extraMap = [
+			'htdocs/modulebuilder/template'                              => $nc->moduleNameLower,
+			'---Replace with your own copyright and developer email---' => dol_print_date($now, '%Y') . ' ' . $user->getFullName($langs) . ($user->email ? ' <' . $user->email . '>' : ''),
+		];
+		$fullMap = array_merge($nc->getSubstitutionMap(), $extraMap);
+		$contentReplaced = str_replace(array_keys($fullMap), array_values($fullMap), $allContent);
 
 		dolReplaceInFile($file, array(
 			'/* BEGIN MODULEBUILDER API MYOBJECT */' => '/* BEGIN MODULEBUILDER API '.strtoupper($objectname).' */'.$contentReplaced."\t".'/* END MODULEBUILDER API '.strtoupper($objectname).' */'."\n\n\n\t".'/* BEGIN MODULEBUILDER API MYOBJECT */'
@@ -1468,4 +1464,86 @@ function countItemsInDirectory($path, $type = 1)
 		}
 	}
 	return $count;
+}
+
+/**
+ * Return the map of optional tabs that can be generated for a ModuleBuilder object.
+ * The CARD tab is always generated and is therefore not listed here.
+ * HISTORY is an alias of AGENDA (object event history is the agenda tab in Dolibarr).
+ *
+ * @return	array<string,array{file:string,var:string,marker:string,label:string}>	Map: tab key => metadata
+ */
+function getModuleBuilderObjectTabs()
+{
+	return array(
+		'contact'  => array('file' => 'myobject_contact.php',  'var' => 'showtabofpagecontact',  'marker' => 'CONTACT',  'label' => 'Contacts'),
+		'note'     => array('file' => 'myobject_note.php',      'var' => 'showtabofpagenote',     'marker' => 'NOTE',     'label' => 'Notes'),
+		'document' => array('file' => 'myobject_document.php',  'var' => 'showtabofpagedocument', 'marker' => 'DOCUMENT', 'label' => 'Documents'),
+		'agenda'   => array('file' => 'myobject_agenda.php',    'var' => 'showtabofpageagenda',   'marker' => 'AGENDA',   'label' => 'Events'),
+	);
+}
+
+/**
+ * Filter a list of requested tab keys against the known optional tabs map.
+ * Protects against injection of unknown keys, removes duplicates, normalizes order.
+ *
+ * @param	string[]	$requested	Raw tab keys requested by the user (e.g. from GETPOST array)
+ * @param	array<string,array{file:string,var:string,marker:string,label:string}>	$map	Map from getModuleBuilderObjectTabs()
+ * @return	string[]	Sanitized list of valid tab keys, in map order
+ */
+function filterEnabledTabs($requested, $map)
+{
+	$valid = array();
+	if (!is_array($requested) || empty($requested)) {
+		return $valid;
+	}
+	foreach (array_keys($map) as $tabkey) {
+		if (in_array($tabkey, $requested, true)) {
+			$valid[] = $tabkey;
+		}
+	}
+	return $valid;
+}
+
+/**
+ * Apply substitutions to a module descriptor file while preserving the MODULEBUILDER comment markers.
+ * Markers such as "BEGIN MODULEBUILDER LEFTMENU MYOBJECT" must keep their MYOBJECT/MYMODULE placeholder
+ * so that generating subsequent objects can still locate them (see checkExistComment()). A blanket
+ * substitution would rewrite them to the first object name and break the generation of further objects.
+ *
+ * @param	string					$file				Path to the module descriptor file
+ * @param	array<string,string>	$arrayreplacement	Substitution map (search => replace), applied as literal strings
+ * @return	int											1 on success, -1 on read/write error
+ */
+function dolReplaceInFilePreservingModuleBuilderMarkers($file, $arrayreplacement)
+{
+	if (!file_exists($file)) {
+		return -1;
+	}
+	$content = file_get_contents($file);
+	if ($content === false) {
+		return -1;
+	}
+
+	// Hide every "/* BEGIN|END MODULEBUILDER ... */" marker behind a sentinel before substituting
+	$foundmarkers = array();
+	preg_match_all('/\/\*\s*(?:BEGIN|END) MODULEBUILDER [^*]*\*\//', $content, $foundmarkers);
+	$sentinels = array();
+	foreach (array_values(array_unique($foundmarkers[0])) as $index => $marker) {
+		$key = "\0MODULEBUILDERMARKER".$index."\0";
+		$sentinels[$key] = $marker;
+		$content = str_replace($marker, $key, $content);
+	}
+
+	$content = str_replace(array_keys($arrayreplacement), array_values($arrayreplacement), $content);
+
+	// Restore the protected markers untouched
+	if (!empty($sentinels)) {
+		$content = strtr($content, $sentinels);
+	}
+
+	if (file_put_contents($file, $content) === false) {
+		return -1;
+	}
+	return 1;
 }

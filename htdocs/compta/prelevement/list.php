@@ -28,10 +28,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'withdrawals', 'companies', 'categories'));
@@ -134,7 +133,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";					// to know the invoice, we should have one line only in prelevement for each pl.rowid but we may have several lines for one invoice.
 if ($type == 'bank-transfer') {
 	$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 } else {
@@ -182,7 +181,7 @@ if ($type == 'bank-transfer') {
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";				// to know the invoice, we should have one line only in prelevement for each pl.rowid but we may have several lines for one invoice.
 	$sql .= " , ".MAIN_DB_PREFIX."salary as sl";
 	$sql .= " , ".MAIN_DB_PREFIX."user as u";
 
@@ -329,7 +328,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -340,7 +339,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -354,7 +353,7 @@ print '<td class="liste_titre center"><input type="text" class="flat" name="sear
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -378,7 +377,7 @@ if ($type == 'bank-transfer') {
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -397,7 +396,7 @@ $totalarray['nbfield']++;
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -416,9 +415,11 @@ while ($i < $imaxinloop) {
 
 	$bon->id = $obj->rowid;
 	$bon->ref = $obj->ref;
-	$bon->statut = $obj->status;
-	$bon->date_echeance = $obj->datec;
-	$bon->total = $obj->amount;
+	$bon->date_creation = $db->jdate($obj->datec);
+	$bon->date_tans = $db->jdate($obj->date_trans);
+	$bon->date_credit = $db->jdate($obj->date_credit);
+	$bon->amount = $obj->amount;
+	$bon->status = $obj->status;
 
 	$object = $bon;
 	if ($object->checkIfSalaryBonPrelevement()) {
@@ -456,10 +457,10 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -530,7 +531,7 @@ while ($i < $imaxinloop) {
 		print '<td class="nowraponall right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

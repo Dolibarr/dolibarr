@@ -83,7 +83,7 @@ $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 $d_sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 $pdluoid = GETPOSTINT('pdluoid');
-$batchnumber = GETPOST('batch_number', 'aZ09comma');
+$batchnumber = GETPOST('batch_number', 'alphanohtml'); // Lot/serial number may contain chars like '/' so we must not use aZ09 sanitizing here. Value is escaped before SQL use.
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
@@ -572,7 +572,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$variants = false;
+$variants = 0;
 $iskit = 0;
 
 if ($id > 0 || $ref) {

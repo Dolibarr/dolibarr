@@ -106,6 +106,7 @@ if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
  */
 
 if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
+	$result = -1;
 	if ($object->id > 0) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$result = $object->add_contact($contactid, GETPOST("typecontact") ? GETPOST("typecontact") : GETPOST("type"), GETPOST("source"));

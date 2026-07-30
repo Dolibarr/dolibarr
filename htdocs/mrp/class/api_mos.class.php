@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -81,6 +82,40 @@ class Mos extends DolibarrApi
 		return $this->_cleanObjectDatas($this->mo);
 	}
 
+	/**
+	 * Get categories for a MO
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param int    $id        ID of MO
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int    $limit     Limit for list
+	 * @param int    $page      Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET {id}/categories
+	 *
+	 * @throws RestException
+	 */
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, Categorie::TYPE_MO, $sortfield, $sortorder, $limit, $page);
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : ' . implode(',', array_merge(array($categories->error), $categories->errors)));
+		}
+
+		return $result;
+	}
+
 
 	/**
 	 * List Mos
@@ -91,7 +126,7 @@ class Mos extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return Mo[]
@@ -249,7 +284,7 @@ class Mos extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->mo->array_options[$index] = $this->_checkValForAPI($field, $val, $this->mo);
+					$this->mo->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->mo);
 				}
 				continue;
 			}
@@ -478,7 +513,7 @@ class Mos extends DolibarrApi
 
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
-			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+			$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 			foreach ($arrayofarrayname as $arrayname) {
 				foreach (${$arrayname} as $value) {
 					$tmpproduct = new Product($this->db);
@@ -599,12 +634,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -659,12 +694,12 @@ class Mos extends DolibarrApi
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), (string) $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
 								$error++;
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), (string) $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
@@ -850,7 +885,7 @@ class Mos extends DolibarrApi
 		$this->db->begin();
 
 		$pos = 0;
-		$arrayofarrayname = array("arraytoconsume","arraytoproduce");
+		$arrayofarrayname = array("arraytoconsume", "arraytoproduce");
 		foreach ($arrayofarrayname as $arrayname) {
 			foreach (${$arrayname} as $value) {
 				if (empty($value["objectid"])) {

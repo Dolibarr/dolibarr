@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012	Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2017  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2024-2026  Alexandre Spangaro          <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
@@ -54,6 +53,10 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
+// Get supervariables
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : (GETPOSTISSET('search_status') ? GETPOST('search_status', 'array:intcomma') : array());
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -75,12 +78,7 @@ if (!$sortfield) {
 	$sortfield = "p.datec";
 }
 
-// Get supervariables
-$statut = GETPOSTINT('statut');
-$search_ref = GETPOST('search_ref', 'alpha');
-$search_amount = GETPOST('search_amount', 'alpha');
-
-$bon = new BonPrelevement($db);
+$object = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
 $usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
@@ -110,6 +108,7 @@ $error = 0;
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_amount = "";
+	$search_status = array();
 }
 
 // Mass actions
@@ -192,7 +191,7 @@ if ($type == 'bank-transfer') {
 $help_url = '';
 
 
-$sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -208,6 +207,13 @@ if ($search_ref) {
 }
 if ($search_amount) {
 	$sql .= natural_search("p.amount", $search_amount, 1);
+}
+if (is_array($search_status)) {
+	if (!empty($search_status)) {
+		$sql .= natural_search("p.statut", implode(',', $search_status), 2);
+	}
+} elseif ((string) $search_status != '' && (string) $search_status != '-1') {
+	$sql .= natural_search("p.statut", $search_status, 1);
 }
 
 // Count total nb of records
@@ -251,22 +257,31 @@ $num = $db->num_rows($resql);
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
-$param = '';
-$param .= "&statut=".urlencode((string) ($statut));
+$query = [];
 if ($type == 'bank-transfer') {
-	$param .= '&type=bank-transfer';
+	$query += ['type' => 'bank-transfer'];
 }
 if (!empty($mode)) {
-	$param .= '&mode='.urlencode($mode);
+	$query += ['mode' => $mode];
 }
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
+	$query += ['contextpage' => $contextpage];
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.((int) $limit);
+	$query += ['limit' => (int) $limit];
 }
 if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+	$query += ['optioncss' => $optioncss];
+}
+if ($search_amount) {
+	$query += ['search_amount' => $search_amount];
+}
+if (is_array($search_status)) {
+	if (!empty($search_status)) {
+		$query += ['search_status' => implode(',', $search_status)];
+	}
+} elseif ((string) $search_status != '' && (string) $search_status != '-1') {
+	$query += ['search_status' => (int) $search_status];
 }
 
 $arrayofmassactions = array(
@@ -295,10 +310,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($type != '') {
 	print '<input type="hidden" name="type" value="'.$type.'">';
 }
+$param = http_build_query($query);
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/compta/prelevement/stats.php', $query), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));
@@ -329,7 +346,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -340,7 +357,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -348,10 +365,21 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
+$arrayofstatus = array(
+	BonPrelevement::STATUS_DRAFT => $langs->trans('StatusWaiting'),
+	BonPrelevement::STATUS_TRANSFERED => $langs->trans('StatusTrans'),
+	BonPrelevement::STATUS_CREDITED => $langs->trans('Closed'),
+	BonPrelevement::STATUS_CANCELED => $langs->trans('Canceled')
+);
+print $form->multiselectarray('search_status', $arrayofstatus, $search_status, 0, 0, 'search_status width200 right onrightofpage', 0, 0, '');
+print '</td>';
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -366,20 +394,26 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
+print_liste_field_titre("TransData", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
+print_liste_field_titre("CreditDate", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 $totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "p.fk_bank_account", "", $param, '', $sortfield, $sortorder);
+$totalarray['nbfield']++;
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -399,9 +433,11 @@ while ($i < $imaxinloop) {
 
 	$directdebitorder->id = $obj->rowid;
 	$directdebitorder->ref = $obj->ref;
-	$directdebitorder->date_echeance = $obj->datec;
-	$directdebitorder->total = $obj->amount;
-	$directdebitorder->statut = $obj->statut;
+	$directdebitorder->date_creation = $db->jdate($obj->datec);
+	$directdebitorder->date_trans = $db->jdate($obj->date_trans);
+	$directdebitorder->date_credit = $db->jdate($obj->date_credit);
+	$directdebitorder->amount = $obj->amount;
+	$directdebitorder->status = $obj->status;
 
 	$object = $directdebitorder;
 
@@ -424,11 +460,10 @@ while ($i < $imaxinloop) {
 		}
 	} else {
 		// Show line of result
-		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -446,17 +481,51 @@ while ($i < $imaxinloop) {
 		print '<td>';
 		print $directdebitorder->getNomUrl(1);
 		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_trans), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_credit), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-		print '<td class="right">';
-		print $bon->LibStatut($obj->statut, 5);
+		print '<td>';
+		if ($obj->fk_bank_account > 0) {
+			// TODO Use a cache here
+			$bankaccount = new Account($db);
+			$bankaccount->fetch($obj->fk_bank_account);
+			print $bankaccount->getNomUrl(1);
+		}
+		print "</td>";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		print '<td class="center">';
+		print $object->LibStatut($obj->status, 5);
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -477,7 +546,7 @@ while ($i < $imaxinloop) {
 }
 
 if ($num == 0) {
-	print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	print '<tr><td colspan="'.$savnbfield.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 
 $db->free($resql);

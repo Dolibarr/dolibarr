@@ -54,12 +54,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 			--btncolorborderhover: none;
 			--btncolorborder: #FFF;
 			--butactiondeletebg: rgb(234,228,225);
+			--butactioncancelbg: #e3e3e3;
 			--butactionbg: rgb(<?php print $butactionbg; ?>);
 			--textbutaction: rgb(<?php print $textbutaction; ?>);
 }
 
 <?php
-if (getDolGlobalString('THEME_DARKMODEENABLED')) {
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -87,9 +88,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-/*div.divButAction {
-	margin-bottom: 1.4em;
-}*/
+
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete,
 div.tabsAction > div.divButAction > span.butAction,
@@ -187,7 +186,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	padding-<?php echo $left; ?>: 6px;
 	font-size: 1.5em;
 	border: none;
-	box-shadow: none; webkit-box-shadow: none;
+	box-shadow: none;
+	webkit-box-shadow: none;
 }
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
@@ -204,10 +204,19 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	/* border: 1px solid #633; */
 	color: #633 !important;
 }
+.button.button-cancel:not(.buttongen), .button.button-cancel:link:not(.buttongen), .button.button-cancel:visited:not(.buttongen), .button.button-cancel:hover:not(.buttongen), .button.button-cancel:active:not(.buttongen), .button.button-cancel:not(.buttongen) {
+	background: var(--butactioncancelbg) !important;
+	border: none;
+	color: #333 !important;
+}
 
 .butActionDelete:hover {
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
+.button.button-cancel:hover:not(.buttongen) {
+	box-shadow: 0px 0px 4px 1px rgba(50, 50, 50, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+}
+
 
 /*
 .butActionDelete#action-delete::before {
@@ -223,6 +232,11 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 */
 
 .butActionRefused {
+	/* pointer-events: none; Removed as this break the use of title */
+	cursor: default;
+	opacity: 0.8;
+	box-shadow: none;
+
 	text-decoration: none !important;
 	text-transform: uppercase;
 	font-weight: bold !important;
@@ -295,11 +309,10 @@ TITLE BUTTON
 	min-width: 60px;
 	text-align: center;
 	color: var(--btncolortext);
-	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: var(--btncolorbg); */
-	border: 1px solid var(--btncolorborder);
+	border: 1px solid transparent;
 }
 
 a.btnTitle.btnTitleSelected {
@@ -342,7 +355,7 @@ a.btnTitle.btnTitleSelected {
 }
 .btnTitle.reposition:not(.btnTitleSelected) {
 	background-color: unset;
-	border: unset;
+	border: 1px solid transparent;
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {
@@ -489,4 +502,22 @@ button.btn-low-emphasis.--btn-icon:active {
 	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
 	background-size: 100%;
 	transition: background 0s;/* used for hover ripple effect */
+}
+
+
+input.button-save, input.button-cancel {
+	min-width: 110px;
+	margin-left: 8px !important;
+	margin-right: 8px !important;
+}
+
+/* smartphone */
+
+@media only screen and (max-width: 767px)
+{
+	input.button-save, input.button-cancel {
+		min-width: 90px;
+		margin-left: 4px !important;
+		margin-right: 4px !important;
+	}
 }

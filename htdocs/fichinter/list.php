@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2026	Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
@@ -34,6 +34,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
@@ -41,17 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
@@ -60,6 +65,9 @@ if (isModEnabled('project')) {
 }
 if (isModEnabled('contract')) {
 	$langs->load("contracts");
+}
+if (isModEnabled('category')) {
+	$langs->load("categories");
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -96,6 +104,18 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $optioncss = GETPOST('optioncss', 'alpha');
 $socid = GETPOSTINT('socid');
 
+$searchCategoryFichinterOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryFichinterOperator = GETPOSTINT('search_category_fichinter_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryFichinterOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryFichinterList = GETPOST('search_category_fichinter_list', 'array');
+$catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($searchCategoryFichinterList)) {
+	$searchCategoryFichinterList = array($catid);
+}
+
 $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
@@ -120,8 +140,6 @@ if (!$sortfield) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
-
-$extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -206,6 +224,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_ref = "";
 		$search_ref_client = "";
+		$searchCategoryFichinterList = array();
 		$search_company = "";
 		$search_projet_ref = "";
 		$search_contrat_ref = "";
@@ -339,6 +358,34 @@ if ($search_desc) {
 		$sql .= natural_search(array('f.description'), $search_desc);
 	}
 }
+// Search for tag/category ($searchCategoryFichinterList is an array of ID)
+if (!empty($searchCategoryFichinterList)) {
+	$searchCategoryFichinterSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+		if (intval($searchCategoryFichinter) == -2) {
+			$searchCategoryFichinterSqlList[] = "NOT EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter)";
+		} elseif (intval($searchCategoryFichinter) > 0) {
+			if ($searchCategoryFichinterOperator == 0) {
+				$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie = ".((int) $searchCategoryFichinter).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryFichinter);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryFichinterOperator == 1) {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryFichinterSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryFichinterSqlList).")";
+		}
+	}
+}
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.((int) ($search_status));
 }
@@ -435,6 +482,10 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 
 // Output page
 // --------------------------------------------------------------------
+$paramsCat = '';
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$paramsCat .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
+}
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
@@ -464,6 +515,12 @@ if ($search_all) {
 }
 if ($socid) {
 	$param .= "&socid=".urlencode((string) ($socid));
+}
+if ($searchCategoryFichinterOperator == 1) {
+	$param .= "&search_category_fichinter_operator=".urlencode((string) $searchCategoryFichinterOperator);
+}
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$param .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -523,7 +580,10 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (isModEnabled('category') && $user->hasRight('categorie', 'creer')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -562,6 +622,14 @@ $objecttmp = new Fichinter($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if (!empty($catid)) {
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'fichinter/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
+}
+
 if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
@@ -572,8 +640,12 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
+// Filter on categories
 $moreforfilter = '';
-
+if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_FICHINTER, $searchCategoryFichinterList, 'minwidth300', $searchCategoryFichinterOperator ? $searchCategoryFichinterOperator : 0);
+}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -589,7 +661,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -600,7 +672,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -704,7 +776,7 @@ if (!empty($arrayfields['fd.duree']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -719,7 +791,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -792,7 +864,7 @@ if (!empty($arrayfields['fd.duree']['checked'])) {
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -860,7 +932,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1056,7 +1128,7 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['fd.duree'] += $obj->duree;
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

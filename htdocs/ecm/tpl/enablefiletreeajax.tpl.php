@@ -2,6 +2,7 @@
 /* Copyright (C) 2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,11 @@
 /**
  * @var ?Conf $conf
  * @var Translate $langs
+ * @var string $param
  */
+'
+@phan-var-force string $param
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
@@ -110,7 +115,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo(empty($paramwithoutsection) ? '' : "+'".$paramwithoutsection."'"); ?>;
+	var url = '<?php echo dol_escape_js(dol_buildpath('/core/ajax/ajaxdirpreview.php', 1).'?action=preview&module='.urlencode($module)); ?>&section='+urlencode(section)+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection) ? '' : "+'".dol_escape_js($paramwithoutsection)."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

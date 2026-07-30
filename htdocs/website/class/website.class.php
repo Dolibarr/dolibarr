@@ -3,8 +3,8 @@
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,15 +209,15 @@ class Website extends CommonObject
 		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
-		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
+		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : ((int) $this->entity)).',';
 		$sql .= ' '.(!isset($this->ref) ? 'NULL' : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").',';
 		$sql .= ' '.(!isset($this->otherlang) ? 'NULL' : "'".$this->db->escape($this->otherlang)."'").',';
-		$sql .= ' '.(!isset($this->status) ? '1' : $this->status).',';
-		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : $this->fk_default_home).',';
+		$sql .= ' '.(!isset($this->status) ? '1' : ((int) $this->status)).',';
+		$sql .= ' '.(!isset($this->fk_default_home) ? 'NULL' : ((int) $this->fk_default_home)).',';
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
-		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
+		$sql .= ' '.(!isset($this->fk_user_creat) ? ((int) $user->id) : ((int) $this->fk_user_creat)).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen((string) $this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
 		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen((string) $this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
@@ -533,16 +533,16 @@ class Website extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
+		$sql .= ' entity = '.(isset($this->entity) ? ((int) $this->entity) : "null").',';
 		$sql .= ' ref = '.(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").',';
 		$sql .= ' description = '.(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").',';
 		$sql .= ' lang = '.(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").',';
 		$sql .= ' otherlang = '.(isset($this->otherlang) ? "'".$this->db->escape($this->otherlang)."'" : "null").',';
-		$sql .= ' status = '.(isset($this->status) ? $this->status : "null").',';
-		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? $this->fk_default_home : "null").',';
+		$sql .= ' status = '.(isset($this->status) ? ((int) $this->status) : "null").',';
+		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0) ? ((int) $this->fk_default_home) : "null").',';
 		$sql .= ' use_manifest = '.((int) $this->use_manifest).',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '') ? "'".$this->db->escape($this->virtualhost)."'" : "null").',';
-		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
+		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? ((int) $user->id) : ((int) $this->fk_user_modif)).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid='.((int) $this->id);
@@ -1100,10 +1100,10 @@ class Website extends CommonObject
 		}
 
 		// Build the website_page.sql file
-		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
-		$fp = fopen($filesql, "w");
+		$filesql_path = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
+		$fp = fopen($filesql_path, "w");
 		if (empty($fp)) {
-			setEventMessages("Failed to create file ".$filesql, null, 'errors');
+			setEventMessages("Failed to create file ".$filesql_path, null, 'errors');
 			return '';
 		}
 
@@ -1246,7 +1246,7 @@ class Website extends CommonObject
 
 		fclose($fp);
 
-		dolChmod($filesql);
+		dolChmod($filesql_path);
 
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
@@ -1374,9 +1374,9 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
-		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
+		$resqlrun = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
+		if ($resqlrun <= 0) {
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $resqlrun).')';
 			$error++;
 		}
 
@@ -2045,13 +2045,13 @@ class Website extends CommonObject
 				}
 				if ($lineContent1 !== $lineContent2) {
 					if (isset($lines1[$lineNum]) && !isset($lines2[$lineNum])) {
-						// Ligne deleted de la source
+						// Line deleted from the source
 						$diff["Supprimée à la ligne " . ($lineNum + 1)] = $lineContent1;
 					} elseif (!isset($lines1[$lineNum]) && isset($lines2[$lineNum])) {
-						// Nouvelle ligne added dans la destination
+						// New line added to the target
 						$diff["Ajoutée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					} else {
-						// Différence found it
+						// Found a difference
 						$diff["Modifiée à la ligne " . ($lineNum + 1)] = $lineContent2;
 					}
 				}

@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -189,6 +189,7 @@ class CMailFile
 	public $html_images = array();
 	/** @var array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}> */
 	public $images_encoded = array();
+	/** @var array<string,string> Filename extension to MIME mapping */
 	public $image_types = array(
 		'gif'  => 'image/gif',
 		'jpg'  => 'image/jpeg',
@@ -331,7 +332,7 @@ class CMailFile
 				// TODO Exclude viewimage used for the read tracker ?
 				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
 				if ((int) $conf->entity !== 1) {
-					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+					$dolibarr_main_data_root_images .= '/'.$conf->entity.'/';
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
@@ -523,7 +524,7 @@ class CMailFile
 			$text_body = "";
 			$files_encoded = "";
 
-			// Define smtp_headers (this also set SMTP headers from ->msgid, ->in_reply_to and ->references)
+			// Define smtp_headers (this also set SMTP headers from ->in_reply_to and ->references and set the property ->msgid)
 			$smtp_headers = $this->write_smtpheaders();
 			if (!empty($moreinheader)) {
 				$smtp_headers .= $moreinheader; // $moreinheader contains the \r\n
@@ -1171,6 +1172,8 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
@@ -1356,6 +1359,8 @@ class CMailFile
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
+							$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+							$serviceFactory->setHttpClient($httpClient);
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// Recreate the service with its configured scopes.
 							// This matters for some providers (Microsoft v2 token endpoint) where scope may be required on refresh.
@@ -1485,7 +1490,7 @@ class CMailFile
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
 
-		error_reporting($errorlevel); // Reactive niveau erreur origine
+		error_reporting($errorlevel); // Reactive original error level
 		return $res;
 	}
 
@@ -1923,7 +1928,7 @@ class CMailFile
 	 * Attach an image to email (mode = 'mail')
 	 *
 	 * @param	array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}>	$images_list	Array of array image
-	 * @return	string					Chaine images encodees
+	 * @return	string					String with encoded images
 	 */
 	public function write_images($images_list)
 	{
@@ -1952,17 +1957,57 @@ class CMailFile
 	/**
 	 * Try to create a socket connection
 	 *
-	 * @param 	string		$host		Add ssl:// for SSL/TLS.
-	 * @param 	int			$port		Example: 25, 465
-	 * @return	int						Socket id if ok, 0 if KO
+	 * @param 	string							$host		Add ssl:// for SSL/TLS.
+	 * @param 	int								$port		Example: 25, 465
+	 * @return	int|array<string,int|string>				Socket id if OK, = 0 if KO
 	 */
 	public function check_server_port($host, $port)
 	{
-		// phpcs:enable
-		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		// phpcs:enable
 		$_retVal = 0;
 		$timeout = 5; // Timeout in seconds
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($host);
+		$hosttocheck = $newUrlArray['host'] ?: $newUrlArray['path'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		// Deny some reserved host names
+		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+			$info = array();
+			$info['http_code'] = 400;
+			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
+			return $info;
+		}
+
+		// Clean host name $hosttocheck to convert it into an IP $iptocheck
+		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
+			$iptocheck = '127.0.0.1';
+		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
+			$iptocheck = '::1';
+		} else {
+			// Resolve $hosttocheck to get the IP $iptocheck
+			$iptocheck = resolveDns($hosttocheck);
+		}
+
+		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
+			$iptocheck = '0'; // will disabled check on IP
+		}
+
+		if ($iptocheck && !in_array($iptocheck, array('127.0.0.1', '::1'))) {
+			$localurl = 0;
+			$tmpresult = isIPAllowed($iptocheck, $localurl);
+
+			if ($tmpresult) {
+				$info = array();
+				$info['http_code'] = 400;
+				$info['content'] = $tmpresult;
+				return $info;
+			}
+		}
 
 		if (function_exists('fsockopen')) {
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
@@ -2026,6 +2071,8 @@ class CMailFile
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
+
+		sleep(1);
 
 		return $_retVal;
 	}
@@ -2279,7 +2326,7 @@ class CMailFile
 
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		$i = 0;
 		foreach ($arrayaddress as $val) {
 			$regs = array();
@@ -2347,7 +2394,7 @@ class CMailFile
 
 		$arrayaddress = explode(',', $address);
 
-		// Boucle sur chaque composant de l'address
+		// Loop over every component of the address
 		foreach ($arrayaddress as $val) {
 			$regs = array();
 			if (preg_match('/^(.*)<(.*)>$/i', trim($val), $regs)) {

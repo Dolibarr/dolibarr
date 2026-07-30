@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -207,8 +207,8 @@ if (empty($reshook)) {
 			// Search company saved with email
 			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
-			// Chercher un contact existent avec cette address email
-			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
+			// Look for an existing contact with this email address
+			// The first contact found is used to dtermine the tracking contact
 			$contacts = $object->searchContactByEmail($origin_email);
 			if (!is_array($contacts)) {
 				$contacts = array();
@@ -262,14 +262,18 @@ if (empty($reshook)) {
 		}
 
 
+		// Check value of input fields
 		$fieldsToCheck = [
 			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
 			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
 			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
 			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
-			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
 		];
-
+		if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+			$fieldsToCheck['message'] = ['check' => 'restricthtml', 'langs' => 'Message'];
+		} else {
+			$fieldsToCheck['message'] = ['check' => 'alphanohtml', 'langs' => 'Message'];
+		}
 		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
@@ -328,7 +332,11 @@ if (empty($reshook)) {
 			$object->db->begin();
 
 			$object->subject = GETPOST("subject", "alphanohtml");
-			$object->message = GETPOST("message", "restricthtml");
+			if (getDolGlobalInt('FCKEDITOR_ENABLE_TICKET') >= 2) {		// 0=no reich text editor, 1=allowed on backoffice only, 2=allowed on backoffice and public page (very dangerous)
+				$object->message = GETPOST("message", "restricthtml");
+			} else {
+				$object->message = GETPOST("message", "alphanohtml");
+			}
 			$object->origin_email = $origin_email;
 			$object->email_from = $origin_email;
 
@@ -501,7 +509,7 @@ if (empty($reshook)) {
 							}
 							$message_admin .= '</ul>';
 
-							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
+							$message_admin .= '<p>'.$langs->trans('Message').' : <br>'.dolPrintText($object->message).'</p>';
 							$message_admin .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'" rel="nofollow noopener">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';

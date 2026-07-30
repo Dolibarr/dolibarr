@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "suppliers", "categories"));
+$langs->loadLangs(array("companies", "categories", "suppliers", "other"));
 
 $socialnetworks = getArrayOfSocialNetworks();
 
@@ -65,8 +65,10 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
-}$mode = GETPOST('mode', 'alpha');
+}
+$mode = GETPOST('mode', 'alpha');
 
+// Security check
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
@@ -114,11 +116,32 @@ $search_type = GETPOST('search_type', 'alpha');
 $search_address = GETPOST('search_address', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
+$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_region = trim(GETPOST("search_region", 'alpha'));
 $search_import_key = GETPOST("search_import_key", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", 'array');
 $search_stcomm = GETPOST('search_stcomm', 'intcomma');
+
+$search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
+$search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
+$search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
+$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
+$search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
+$search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
+$search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
+$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
+
+$search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
+$search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
+$search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
+$search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
+$search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
+$search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
+$search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
+$search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
+
 $search_birthday_start = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_startmonth'), GETPOSTINT('search_birthday_startday'), GETPOSTINT('search_birthday_startyear'));
 $search_birthday_end = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_endmonth'), GETPOSTINT('search_birthday_endday'), GETPOSTINT('search_birthday_endyear'));
 $search_note_public = GETPOST('search_note_public', 'alphanohtml');
@@ -246,7 +269,9 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields to fields for list
-$arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 66, 'checked' => '0');
+$arrayfields['state.nom'] = array('label' => "State", 'position' => 66, 'checked' => '0');
+$arrayfields['region.nom'] = array('label' => "Region", 'position' => 67, 'checked' => '0');
+$arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 68, 'checked' => '0');
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => '1');
 	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '1');
@@ -380,6 +405,8 @@ if (empty($reshook)) {
 		$search_town = "";
 		$search_address = "";
 		$search_zip = "";
+		$search_state = "";
+		$search_region = "";
 		$search_country = "";
 		$search_poste = "";
 		$search_phone = "";
@@ -399,6 +426,22 @@ if (empty($reshook)) {
 		$search_priv = "";
 		$search_stcomm = '';
 		$search_level = '';
+		$search_date_creation_startmonth = "";
+		$search_date_creation_startyear = "";
+		$search_date_creation_startday = "";
+		$search_date_creation_start = "";
+		$search_date_creation_endmonth = "";
+		$search_date_creation_endyear = "";
+		$search_date_creation_endday = "";
+		$search_date_creation_end = "";
+		$search_date_modif_startmonth = "";
+		$search_date_modif_startyear = "";
+		$search_date_modif_startday = "";
+		$search_date_modif_start = "";
+		$search_date_modif_endmonth = "";
+		$search_date_modif_endyear = "";
+		$search_date_modif_endday = "";
+		$search_date_modif_end = "";
 		$search_status = -1;
 		$search_sale = '';
 		$search_categ = '';
@@ -492,7 +535,9 @@ $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.ip, p.datec as date_creation, p.tms as date_modification,";
 $sql .= " p.import_key, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel, p.note_public, p.note_private,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto,";
-$sql .= " co.label as country, co.code as country_code";
+$sql .= " co.label as country, co.code as country_code,";
+$sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " region.code_region as region_code, region.nom as region_name";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -517,6 +562,8 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = p.fk_departement)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
 
 // Add fields from hooks - ListFrom
@@ -732,6 +779,12 @@ if (strlen($search_zip)) {
 if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
+if ($search_state) {
+	$sql .= natural_search("state.nom", $search_state);
+}
+if ($search_region) {
+	$sql .= natural_search("region.nom", $search_region);
+}
 if (count($search_roles) > 0) {
 	$sql .= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE p.rowid = sc.fk_socpeople AND sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
@@ -746,6 +799,19 @@ if ($search_note_public != '') {
 }
 if ($search_note_private != '') {
 	$sql .= natural_search('p.note_private', $search_note_private);
+}
+if ($search_date_creation_start) {
+	$sql .= " AND p.datec >= '".$db->idate($search_date_creation_start)."'";
+}
+if ($search_date_creation_end) {
+	$sql .= " AND p.datec <= '".$db->idate($search_date_creation_end)."'";
+}
+
+if ($search_date_modif_start) {
+	$sql .= " AND p.tms >= '".$db->idate($search_date_modif_start)."'";
+}
+if ($search_date_modif_end) {
+	$sql .= " AND p.tms <= '".$db->idate($search_date_modif_end)."'";
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND p.statut = ".((int) $search_status);
@@ -899,6 +965,12 @@ if ($search_zip != '') {
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
 }
+if ($search_state != '') {
+	$param .= "&search_state=".urlencode($search_state);
+}
+if ($search_region != '') {
+	$param .= "&search_region=".urlencode($search_region);
+}
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
 }
@@ -929,6 +1001,54 @@ if ($search_note_private != '') {
 if ($search_note_public != '') {
 	$param .= '&search_note_public='.urlencode((string) ($search_note_public));
 }
+if ($search_date_creation_startmonth) {
+	$param .= '&search_date_creation_startmonth='.urlencode((string) ($search_date_creation_startmonth));
+}
+if ($search_date_creation_startyear) {
+	$param .= '&search_date_creation_startyear='.urlencode((string) ($search_date_creation_startyear));
+}
+if ($search_date_creation_startday) {
+	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
+}
+if ($search_date_creation_start) {
+	$param .= '&search_date_creation_start='.urlencode((string) $search_date_creation_start);
+}
+if ($search_date_creation_endmonth) {
+	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
+}
+if ($search_date_creation_endyear) {
+	$param .= '&search_date_creation_endyear='.urlencode((string) ($search_date_creation_endyear));
+}
+if ($search_date_creation_endday) {
+	$param .= '&search_date_creation_endday='.urlencode((string) ($search_date_creation_endday));
+}
+if ($search_date_creation_end) {
+	$param .= '&search_date_creation_end='.urlencode((string) $search_date_creation_end);
+}
+if ($search_date_modif_startmonth) {
+	$param .= '&search_date_modif_startmonth='.urlencode((string) ($search_date_modif_startmonth));
+}
+if ($search_date_modif_startyear) {
+	$param .= '&search_date_modif_startyear='.urlencode((string) ($search_date_modif_startyear));
+}
+if ($search_date_modif_startday) {
+	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
+}
+if ($search_date_modif_start) {
+	$param .= '&search_date_modif_start='.urlencode((string) $search_date_modif_start);
+}
+if ($search_date_modif_endmonth) {
+	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
+}
+if ($search_date_modif_endyear) {
+	$param .= '&search_date_modif_endyear='.urlencode((string) ($search_date_modif_endyear));
+}
+if ($search_date_modif_endday) {
+	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
+}
+if ($search_date_modif_end) {
+	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
+}
 if ($search_stcomm != '') {
 	$param .= '&search_stcomm='.urlencode((string) ($search_stcomm));
 }
@@ -958,9 +1078,6 @@ if ($search_birthday_start) {
 if ($search_birthday_end) {
 	$param .= '&search_birthday_end='.urlencode(dol_print_date($search_birthday_end, '%d')).'&search_birthday_endmonth='.urlencode(dol_print_date($search_birthday_end, '%m')).'&search_birthday_endyear='.urlencode(dol_print_date($search_birthday_end, '%Y'));
 }
-
-
-
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -991,7 +1108,7 @@ if ($optioncss != '') {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+print '<input type="hidden" name="view" value="'.dolPrintHTMLForAttribute($view).'">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
@@ -1094,7 +1211,7 @@ print $hookmanager->resPrint;
 print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1104,7 +1221,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1112,63 +1229,56 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dolPrintHTMLForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.lastname']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width75" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_lastname" value="'.dolPrintHTMLForAttribute($search_lastname).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.firstname']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width75" type="text" name="search_firstname" value="'.dol_escape_htmltag($search_firstname).'">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_firstname" value="'.dolPrintHTMLForAttribute($search_firstname).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref_ext']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_ref_ext" value="'.dolPrintHTMLForAttribute($search_ref_ext).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.poste']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_poste" value="'.dol_escape_htmltag($search_poste).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_poste" value="'.dolPrintHTMLForAttribute($search_poste).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.address']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_address" value="'.dol_escape_htmltag($search_address).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_address" value="'.dolPrintHTMLForAttribute($search_address).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.zip']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_zip" value="'.dolPrintHTMLForAttribute($search_zip).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.town']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_town" value="'.dolPrintHTMLForAttribute($search_town).'">';
 	print '</td>';
 }
-
-/*
 // State
- if (!empty($arrayfields['state.nom']['checked']))
- {
- print '<td class="liste_titre">';
- print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
- print '</td>';
- }
-
- // Region
- if (!empty($arrayfields['region.nom']['checked']))
- {
- print '<td class="liste_titre">';
- print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
- print '</td>';
- }
-*/
-
+if (!empty($arrayfields['state.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_state" value="'.dolPrintHTMLForAttribute($search_state).'">';
+	print '</td>';
+}
+// Region
+if (!empty($arrayfields['region.nom']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_region" value="'.dolPrintHTMLForAttribute($search_region).'">';
+	print '</td>';
+}
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -1177,27 +1287,27 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 }
 if (!empty($arrayfields['p.phone']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_phone_pro" size="6" value="'.dol_escape_htmltag($search_phone_pro).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone_pro" size="6" value="'.dolPrintHTMLForAttribute($search_phone_pro).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.phone_perso']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_phone_perso" size="6" value="'.dol_escape_htmltag($search_phone_perso).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone_perso" size="6" value="'.dolPrintHTMLForAttribute($search_phone_perso).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.phone_mobile']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_phone_mobile" size="6" value="'.dol_escape_htmltag($search_phone_mobile).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone_mobile" size="6" value="'.dolPrintHTMLForAttribute($search_phone_mobile).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.fax']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_fax" size="6" value="'.dol_escape_htmltag($search_fax).'">';
+	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_fax" size="6" value="'.dolPrintHTMLForAttribute($search_fax).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.email']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_email" size="6" value="'.dol_escape_htmltag($search_email).'">';
+	print '<input class="flat searchemail maxwidth50imp" type="text" name="search_email" size="6" value="'.dolPrintHTMLForAttribute($search_email).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['unsubscribed']['checked'])) {
@@ -1210,7 +1320,7 @@ if (isModEnabled('socialnetworks')) {
 		if ($value['active']) {
 			if (!empty($arrayfields['p.'.$key]['checked'])) {
 				print '<td class="liste_titre">';
-				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_[$key]).'">';
+				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dolPrintHTMLForAttribute($search_[$key]).'">';
 				print '</td>';
 			}
 		}
@@ -1218,13 +1328,13 @@ if (isModEnabled('socialnetworks')) {
 }
 if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_societe" size="8" value="'.dolPrintHTMLForAttribute($search_societe).'">';
 	print '</td>';
 }
 // Alias of ThirdParty
 if (!empty($arrayfields['s.name_alias']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'">';
+	print '<td class="liste_titre left">';
+	print '<input class="flat searchstring maxwidth75imp" type="text" name="search_societe_alias" value="'.dolPrintHTMLForAttribute($search_societe_alias).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.priv']['checked'])) {
@@ -1269,44 +1379,44 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 // IP
 if (!empty($arrayfields['p.ip']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
 	print '</td>';
 }
 // Date creation
 if (!empty($arrayfields['p.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_creation_end ? $search_date_creation_end : -1, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Date modification
 if (!empty($arrayfields['p.tms']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-// Note public
-if (!empty($arrayfields['p.note_public']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
-	print '</td>';
-}
-// Note private
-if (!empty($arrayfields['p.note_private']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
+	print '<td class="liste_titre center nowraponall">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_modif_end ? $search_date_modif_end : -1, 'search_date_modif_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Status
 if (!empty($arrayfields['p.statut']['checked'])) {
-	print '<td class="liste_titre center parentonrightofpage">';
+	print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
 	print $form->selectarray('search_status', array('-1' => '', '0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input class="flat searchstring" type="text" name="search_import_key" size="3" value="'.dol_escape_htmltag($search_import_key).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" size="3" value="'.dolPrintHTMLForAttribute($search_import_key).'">';
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1320,7 +1430,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1356,8 +1466,14 @@ if (!empty($arrayfields['p.town']['checked'])) {
 	print_liste_field_titre($arrayfields['p.town']['label'], $_SERVER["PHP_SELF"], "p.town", $begin, $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-//if (!empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-//if (!empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
+if (!empty($arrayfields['state.nom']['checked'])) {
+	print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['region.nom']['checked'])) {
+	print_liste_field_titre($arrayfields['region.nom']['label'], $_SERVER["PHP_SELF"], "region.nom", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -1459,7 +1575,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -1494,6 +1610,8 @@ while ($i < $imaxinloop) {
 	$contactstatic->address = $obj->address;
 	$contactstatic->zip = $obj->zip;
 	$contactstatic->town = $obj->town;
+	$contactstatic->state = $obj->state_name;
+	$contactstatic->region = $obj->region_name;
 	$contactstatic->socialnetworks = $arraysocialnetworks;
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
@@ -1533,7 +1651,7 @@ while ($i < $imaxinloop) {
 		print '>';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1551,7 +1669,7 @@ while ($i < $imaxinloop) {
 		// ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
 			print '<td class="tdoverflowmax50">';
-			print dol_escape_htmltag($obj->rowid);
+			print dolPrintHTML($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1594,7 +1712,7 @@ while ($i < $imaxinloop) {
 
 		// Job position
 		if (!empty($arrayfields['p.poste']['checked'])) {
-			print '<td class="tdoverflowmax100">'.dol_escape_htmltag($obj->poste).'</td>';
+			print '<td class="tdoverflowmax100">'.dolPrintHTML($obj->poste).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1602,7 +1720,7 @@ while ($i < $imaxinloop) {
 
 		// Address
 		if (!empty($arrayfields['p.address']['checked'])) {
-			print '<td>'.dol_escape_htmltag($obj->address).'</td>';
+			print '<td>'.dolPrintHTML($obj->address).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1610,7 +1728,7 @@ while ($i < $imaxinloop) {
 
 		// Zip
 		if (!empty($arrayfields['p.zip']['checked'])) {
-			print '<td>'.dol_escape_htmltag($obj->zip).'</td>';
+			print '<td>'.dolPrintHTML($obj->zip).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1618,32 +1736,30 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['p.town']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->town).'">'.dolPrintHTML($obj->town).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-
-		/*
 		// State
-		if (!empty($arrayfields['state.nom']['checked']))
-		{
-			print "<td>".$obj->state_name."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+		if (!empty($arrayfields['state.nom']['checked'])) {
+			print "<td>".dolPrintHTML($obj->state_name)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-
 		// Region
-		if (!empty($arrayfields['region.nom']['checked']))
-		{
-			print "<td>".$obj->region_name."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-		}*/
-
+		if (!empty($arrayfields['region.nom']['checked'])) {
+			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print dol_escape_htmltag($tmparray['label']);
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1751,8 +1867,8 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->alias).'">';
-			print dol_escape_htmltag($obj->alias);
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print dolPrintHTML($obj->alias);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1761,7 +1877,9 @@ while ($i < $imaxinloop) {
 
 		// Private/Public
 		if (!empty($arrayfields['p.priv']['checked'])) {
-			print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+			print '<td class="center">';
+			print $contactstatic->LibPubPriv($obj->priv, 2);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1875,7 +1993,7 @@ while ($i < $imaxinloop) {
 		// Import key
 		if (!empty($arrayfields['p.import_key']['checked'])) {
 			print '<td class="tdoverflowmax100">';
-			print dol_escape_htmltag($obj->import_key);
+			print dolPrintHTML($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1883,7 +2001,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

@@ -8,7 +8,7 @@
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ class Don extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE client IN (1, 3)";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " LIMIT 10";
 
 		$resql = $this->db->query($sql);
@@ -436,8 +436,8 @@ class Don extends CommonObject
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
@@ -501,7 +501,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Object utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object User which updates the donation
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */
@@ -529,7 +529,7 @@ class Don extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET";
 		$sql .= " amount = ".((float) $this->amount);
-		$sql .= ", fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
+		$sql .= ", fk_payment = ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
@@ -538,7 +538,7 @@ class Don extends CommonObject
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
 		$sql .= ", note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", datedon='".$this->db->idate($this->date)."'";
@@ -904,7 +904,7 @@ class Don extends CommonObject
 		$sql = "SELECT sum(amount) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."don";
 		$sql .= " WHERE fk_statut = ".((int) $param);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -950,7 +950,7 @@ class Don extends CommonObject
 	 *	@param	int  	$notooltip					1=Disable tooltip
 	 *	@param	string	$moretitle					Add more text to title tooltip
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{

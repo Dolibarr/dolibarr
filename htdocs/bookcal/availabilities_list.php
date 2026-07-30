@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,20 +26,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // load module libraries
 require_once __DIR__.'/class/availabilities.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "other"));
@@ -73,7 +73,6 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Availabilities($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); // Note that conf->hooks_modules contains array
 
@@ -293,17 +292,17 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -496,7 +495,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -508,7 +507,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -560,7 +559,7 @@ print $hookmanager->resPrint;
 	print '<td class="liste_titre"></td>';
 }*/
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -575,7 +574,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -607,7 +606,7 @@ print $hookmanager->resPrint;
 	$totalarray['nbfield']++;
 }*/
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -664,7 +663,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -738,7 +737,7 @@ while ($i < $imaxinloop) {
 			print '<td class="right">'.$obj->anotherfield.'</td>';
 		}*/
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

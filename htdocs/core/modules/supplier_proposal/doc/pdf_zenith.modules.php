@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/supplir_proposal/doc/pdf_zenith.modules.php
+ *	\file       htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
  *	\ingroup    fournisseur
  *	\brief      File of class to generate suppliers proposals from zenith model
  */
@@ -295,7 +295,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("SupplierProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SupplierProposal")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -323,8 +323,8 @@ class pdf_zenith extends ModelePDFSupplierProposal
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
+				$tab_top = 80 + $this->marge_haute + $top_shift;
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 32 + $this->marge_haute + $top_shift : $this->marge_haute);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -485,10 +485,39 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 				$nexY = $tab_top + $this->tabTitleHeight;
 
-				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
+				$pdf_sub_options = [
+					'titleshowuponpdf' => 1,
+					'titleshowtotalexludingvatonpdf' => 1,
+				];
+
+				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
+					$sub_options = $object->lines[$i]->extraparams["subtotal"] ?? array();
+
+					if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
+						$level = $object->lines[$i]->qty;
+						if ($sub_options) {
+							if (isset($sub_options['titleshowuponpdf'])) {
+								$pdf_sub_options['titleshowuponpdf'] = isset($pdf_sub_options['titleshowuponpdf']) && $pdf_sub_options['titleshowuponpdf'] < $level ? $pdf_sub_options['titleshowuponpdf'] : $level;
+							} elseif (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
+								unset($pdf_sub_options['titleshowuponpdf']);
+							}
+							if (isset($sub_options['titleshowtotalexludingvatonpdf'])) {
+								$pdf_sub_options['titleshowtotalexludingvatonpdf'] = isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && $pdf_sub_options['titleshowtotalexludingvatonpdf'] < $level ? $pdf_sub_options['titleshowtotalexludingvatonpdf'] : $level;
+							} elseif (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
+								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						} else {
+							if (isset($pdf_sub_options['titleshowuponpdf']) && abs($level) <= $pdf_sub_options['titleshowuponpdf']) {
+								unset($pdf_sub_options['titleshowuponpdf']);
+							}
+							if (isset($pdf_sub_options['titleshowtotalexludingvatonpdf']) && abs($level) <= $pdf_sub_options['titleshowtotalexludingvatonpdf']) {
+								unset($pdf_sub_options['titleshowtotalexludingvatonpdf']);
+							}
+						}
+					}
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
@@ -588,14 +617,14 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// VAT Rate
-					if ($this->getColumnStatus('vat')) {
+					if ($this->getColumnStatus('vat') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Unit price before discount
-					if ($this->getColumnStatus('subprice')) {
+					if ($this->getColumnStatus('subprice') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowuponpdf'])) {
 						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -603,7 +632,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 					// Quantity
 					// Enough for 6 chars
-					if ($this->getColumnStatus('qty')) {
+					if ($this->getColumnStatus('qty') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'qty', $qty);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -611,14 +640,14 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 
 					// Unit
-					if ($this->getColumnStatus('unit')) {
+					if ($this->getColumnStatus('unit') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'unit', $unit);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Discount on line
-					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent) {
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
 						$nexY = max($pdf->GetY(), $nexY);
@@ -626,8 +655,17 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 					// Total HT line
 					if ($this->getColumnStatus('totalexcltax')) {
-						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-						$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && isset($pdf_sub_options['titleshowtotalexludingvatonpdf'])) {
+							$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						} elseif ($object->lines[$i]->qty < 0 && isset($sub_options['subtotalshowtotalexludingvatonpdf'])) {
+							if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+								$total_excl_tax = $object->getSubtotalLineMulticurrencyAmount($object->lines[$i]);
+							} else {
+								$total_excl_tax = $object->getSubtotalLineAmount($object->lines[$i]);
+							}
+							$this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+						}
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -654,7 +692,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this); // Note that $object may have been modified by hook
 
 
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// // Collect total by value of vat rate into $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {
@@ -1310,7 +1348,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_fournisseur), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_fournisseur), '', 'R');
 		}
 
 		// Get contact
@@ -1358,7 +1396,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+			$posy = 32 + $this->marge_haute + $top_shift;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -1388,12 +1426,12 @@ class pdf_zenith extends ModelePDFSupplierProposal
 
 
 
-			// If SUPPLIER/SERVICE contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow order is 'SERVICE'
+			// If CUSTOMER contact defined on proposal, we use it. Note: Even if this is a supplier object, the code for external contact that follow-up a supplier proposal is 'CUSTOMER'
 			$usecontact = false;
 			if (!getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT')) {
-				$arrayidcontact = $object->getIdContact('external', 'SERVICE');
+				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 			} else {
-				$arrayidcontact = array_merge($object->getIdContact('external', 'SERVICE'), $object->getIdContact('external', 'BILLING'));
+				$arrayidcontact = array_merge($object->getIdContact('external', 'CUSTOMER'), $object->getIdContact('external', 'BILLING'));
 			}
 			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$usecontact = true;
@@ -1416,7 +1454,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = 42 + $top_shift;
+			$posy = 32 + $this->marge_haute + $top_shift;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;

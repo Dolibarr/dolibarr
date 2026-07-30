@@ -295,6 +295,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 ?>
 	var alreadypayed = <?php echo $alreadypayed ?>;
+	var invoicetype = <?php echo $invoice->type ?>;
 
 	function addreceived(price)
 	{
@@ -307,23 +308,29 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		?>
 		$('.change1').html(pricejs(parseFloat(received), 'MT'));
 		$('.change1').val(parseFloat(received));
-		console.log(alreadypayed);
-		console.log(received);
-		alreadypaydplusreceived = price2numjs(alreadypayed + parseFloat(received));
-		//console.log("already+received = "+alreadypaydplusreceived);
+		console.log("invoicetype="+invoicetype);
+		console.log("alreadyreceived="+alreadypayed);
+		console.log("received="+received);
+		if (invoicetype == 2) {
+			alreadypaydplusreceived = price2numjs(alreadypayed - parseFloat(received));
+		} else {
+			alreadypaydplusreceived = price2numjs(alreadypayed + parseFloat(received));
+		}
+		console.log("already+received = "+alreadypaydplusreceived);
 		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
-		if (alreadypaydplusreceived > <?php echo (float) $invoice->total_ttc; ?>)
-		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+		if (Math.abs(alreadypaydplusreceived) > Math.abs(<?php echo ((float) $invoice->total_ttc); ?>)) {
+			if (invoicetype == 2) {
+				var change = parseFloat(alreadypayed + parseFloat(received) + <?php echo (float) $invoice->total_ttc; ?>);
+			} else {
+				var change = parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+			}
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
 			$('.change1').addClass('colorgreen');
 			$('.change2').removeClass('colorwhite');
 			$('.change2').addClass('colorred');
-		}
-		else
-		{
+		} else {
 			$('.change2').html(pricejs(0, 'MT'));
 			$('.change2').val(0);
 			if (alreadypaydplusreceived == <?php echo (float) $invoice->total_ttc; ?>) {
@@ -534,11 +541,18 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	echo "line1=line1.padEnd(20);";
 	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
 	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
-		type: 'GET',
-		data: { text: line1+line2 },
-		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
-	});";
+	if (getDolGlobalString('TAKEPOS_CONNECTOR_TO_WHB_CUSTOMER_DISPLAY')) {
+		echo 'webSocketCustomerDisplay.onOpen(function() {';
+		echo '	webSocketCustomerDisplay.send(line1);';
+		echo '	webSocketCustomerDisplay.send(line2);';
+		echo '});';
+	} else {
+		echo "$.ajax({
+			type: 'GET',
+			data: { text: line1+line2 },
+			url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+		});";
+	}
 }
 ?>
 </script>
@@ -575,7 +589,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 		</div>
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
-		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
+		<span class="takepospay colorwhite"><?php echo $invoice->type == $invoice::TYPE_CREDIT_NOTE ? $langs->trans("Refunded") : $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
 		echo price(0, 1, '', 1, -1, -1, $conf->currency);
 		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';

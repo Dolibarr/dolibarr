@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,19 +25,19 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other", "stocks"));
@@ -45,23 +45,22 @@ $langs->loadLangs(array("mrp", "other", "stocks"));
 // Get parameters
 $id = GETPOSTINT('id');
 $lineid = GETPOSTINT('lineid');
-$ref    = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm  = GETPOST('confirm', 'alpha');
-$cancel   = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bomnet_needs'; // To manage different context of search
-$backtopage  = GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 // Initialize a technical objects
 $object = new BOM($db);
-$extrafields = new ExtraFields($db);
 
 // Initialize a technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
 
 // Massaction
-$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -270,18 +269,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					} else {
 						print '<tr class="oddeven">';
 					}
-					if ($action == 'treeview') {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
-					} else {
-						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$TProduct['bom']->getNomUrl(1);
-					}
+					print '<td class="linecoldescription">'.str_repeat($repeatChar, $TProduct['level']).$prod->getNomUrl(1);
 					print ' <a class="collapse_bom" id="collapse-'.$fk_bom.'" href="#">';
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
-					if ($action == 'treeview') {
-						print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
-					}
+					print '<td class="left">'.$TProduct['bom']->getNomUrl(1).'</td>';
 					print '<td class="linecolqty right">'.price(price2num($TProduct['qty'], 'MS')).'</td>';
 					print '<td>';
 					print '</td>';
@@ -303,9 +296,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<tr class="oddeven">';
 						}
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						if ($action == 'treeview') {
-							print '<td></td>';
-						}
+						print '<td></td>';
 						print '<td class="linecolqty right">'.price(price2num($TInfos['qty'], 'MS')).'</td>';
 						print '<td>';
 						print '</td>';

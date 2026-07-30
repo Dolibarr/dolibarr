@@ -9,8 +9,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +34,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'orders', 'other'));
@@ -521,7 +520,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}

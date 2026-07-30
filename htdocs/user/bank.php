@@ -10,6 +10,7 @@
  * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Charlene Benke              <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,6 +421,20 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 		}
+		if (isModEnabled('holiday')) {
+			$holidayapprover = new Holiday($db);
+			$arrayApprover = $holidayapprover->fetch_users_approver_holiday();
+			if (!in_array((string) $object->fk_user, $arrayApprover)) {
+				print '<br><span class="opacitymedium">('.$langs->trans("NotHolidayApprover").')</span>';
+			}
+		}
+		if (isModEnabled('expensereport')) {
+			$expensereportapprover = new ExpenseReport($db);
+			$arrayApprover = $expensereportapprover->fetch_users_approver_expensereport();
+			if (!in_array((string) $object->fk_user, $arrayApprover)) {
+				print '<br><span class="opacitymedium">('.$langs->trans("NotExpenseReportApprover").')</span>';
+			}
+		}
 	}
 	print '</td>';
 	print "</tr>\n";
@@ -735,7 +750,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if (isModEnabled('holiday') && ($user->hasRight('holiday', 'readall') || ($user->hasRight('holiday', 'read') && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
-		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
+		$sql = "SELECT h.rowid, h.ref, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.fk_user = ".((int) $object->id);
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
@@ -758,7 +773,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$objp = $db->fetch_object($resql);
 
 				$holiday->id = $objp->rowid;
-				$holiday->ref = $objp->rowid;
+				$holiday->ref = $objp->ref;
 
 				$holiday->fk_type = $objp->fk_type;
 				$holiday->statut = $objp->status;

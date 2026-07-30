@@ -5,8 +5,9 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,29 +77,29 @@ class modFacture extends DolibarrModules
 		$this->config_page_url = array("invoice.php");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "FACTURE_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_facture_terre";
-		$this->const[$r][3] = 'Name of numbering numerotation rules of invoice';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "FACTURE_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "sponge";
-		$this->const[$r][3] = 'Name of PDF model of invoice';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "FACTURE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"FACTURE_ADDON",
+				"chaine",
+				"mod_facture_terre",
+				'Name of numbering numerotation rules of invoice',
+				0,
+			],
+			[
+				"FACTURE_ADDON_PDF",
+				"chaine",
+				"sponge",
+				'Name of PDF model of invoice',
+				0,
+			],
+			[
+				"FACTURE_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/invoices",
+				"",
+				0,
+			],
+		];
 
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
@@ -274,7 +275,7 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -402,7 +403,7 @@ class modFacture extends DolibarrModules
 			}
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -466,7 +467,7 @@ class modFacture extends DolibarrModules
 			$this->import_updatekeys_array[$r] = array(
 				'fd.rowid' => 'Row Id',
 				'fd.fk_facture' => 'Invoice Id',
-				'fd.fk_product'=> 'ProductRef'
+				'fd.fk_product' => 'ProductRef'
 			);
 			$this->import_convertvalue_array[$r] = array(
 				'fd.fk_facture' => array(
@@ -477,11 +478,11 @@ class modFacture extends DolibarrModules
 					'element' => 'facture'
 				),
 				'fd.fk_product' => array(
-					'rule'=>'fetchidfromref',
-					'classfile'=>'/product/class/product.class.php',
-					'class'=>'Product',
-					'method'=>'fetch',
-					'element'=>'Product'
+					'rule' => 'fetchidfromref',
+					'classfile' => '/product/class/product.class.php',
+					'class' => 'Product',
+					'method' => 'fetch',
+					'element' => 'Product'
 				),
 				'fd.fk_projet' => array(
 					'rule' => 'fetchidfromref',
@@ -666,7 +667,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 
@@ -758,7 +759,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
-			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : ((int) $user->id));
 		}
 		$r++;
 	}

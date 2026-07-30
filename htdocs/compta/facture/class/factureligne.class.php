@@ -20,7 +20,7 @@
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,7 +80,7 @@ class FactureLigne extends CommonInvoiceLine
 	public $fk_parent_line;
 
 	/**
-	 * @var string Description ligne
+	 * @var string Description of the invoice line
 	 */
 	public $desc;
 	/**
@@ -171,11 +171,6 @@ class FactureLigne extends CommonInvoiceLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var float 		Situation advance percentage (default 100 for standard invoices)
-	 */
-	public $situation_percent;
-
-	/**
 	 * @var int 		Previous situation line id reference
 	 */
 	public $fk_prev_id;
@@ -250,9 +245,9 @@ class FactureLigne extends CommonInvoiceLine
 
 				if ($type !== 'separate') {
 					if (in_array($type, array('point','multipts','linestrg','polygon'))) {
-						$sql .= ", ST_AsWKT(ef.".$key.") as ".$key;
+						$sql .= ", ST_AsWKT(ef.".$this->db->sanitize($key).") as ".$this->db->sanitize($key);
 					} else {
-						$sql .= ", ef.".$key;
+						$sql .= ", ef.".$this->db->sanitize($key);
 					}
 				}
 			}
@@ -510,8 +505,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
 		$sql .= ' batch, fk_warehouse';
 		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_facture.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
+		$sql .= " VALUES (".((int) $this->fk_facture).",";
+		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".price2num($this->qty).",";
@@ -521,7 +516,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
-		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
+		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? ((int) $this->fk_product) : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".price2num($this->subprice).",";
@@ -532,7 +527,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' '.((int) $this->fk_code_ventilation).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= ' '.((int) $this->special_code).',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").',';
 		$sql .= ' '.price2num($this->pa_ht).',';
 		$sql .= " '".$this->db->escape((string) $this->info_bits)."',";
 		$sql .= " ".price2num($this->total_ht).",";
@@ -541,8 +536,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2);
 		$sql .= ", ".((float) $this->situation_percent);
-		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
-		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".(!empty($this->fk_prev_id) ? ((int) $this->fk_prev_id) : "null");
+		$sql .= ", ".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(int) $this->fk_multicurrency;
@@ -762,7 +757,7 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		$sql .= ", fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht = ".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
-		$sql .= ", fk_parent_line = ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= ", fk_parent_line = ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang = ".((int) $this->rang);
 		}
@@ -954,7 +949,7 @@ class FactureLigne extends CommonInvoiceLine
 				$invoicecache[$invoiceid] = new Facture($this->db);
 				$invoicecache[$invoiceid]->fetch($invoiceid);
 			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
+			if (empty($invoicecache[$invoiceid]->situation_cycle_ref)) {
 				return 0;
 			}
 
@@ -976,7 +971,7 @@ class FactureLigne extends CommonInvoiceLine
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+					$sql .= " AND f.type = ".((int) Facture::TYPE_CREDIT_NOTE);
 
 					$res = $this->db->query($sql);
 					if ($res) {
@@ -1057,7 +1052,7 @@ class FactureLigne extends CommonInvoiceLine
 					// Si fk_prev_id, on continue
 					if ($obj->fk_prev_id) {
 						$lastprevid = $obj->fk_prev_id;
-					} else { // Sinon on stoppe la boucle
+					} else { // else we stop the loop
 						$all_found = true;
 					}
 				} else {

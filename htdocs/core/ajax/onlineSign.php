@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead				<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,16 +80,19 @@ $response = "";
 
 $type = $mode;
 
+global $dolibarr_main_instance_unique_id;
+$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
+
 // Security check
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'contract') {
-	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } elseif ($type == 'fichinter') {
-	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 } else {
-	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN');
+	$securekeyseed = getDolGlobalString(strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed . $type . $ref . (!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
@@ -304,10 +307,8 @@ if ($action == "importSignature") {
 
 				if (!$error) {
 					if (method_exists($object, 'call_trigger')) {
-						//customer is not a user !?! so could we use same user as validation ?
-						$user = new User($db);
-						$user->fetch($object->user_validation_id);
 						$object->context = array('closedfromonlinesignature' => 'closedfromonlinesignature');
+
 						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
 						if ($result < 0) {
 							$error++;
@@ -345,7 +346,7 @@ if ($action == "importSignature") {
 			$object = new Contrat($db);
 			$object->fetch(0, $ref);
 
-			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contrat->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
+			$upload_dir = !empty($conf->contract->multidir_output[$object->entity ?? $conf->entity]) ? $conf->contract->multidir_output[$object->entity ?? $conf->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
@@ -564,7 +565,7 @@ if ($action == "importSignature") {
 										if (getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART")) {
 											$param['yforimgstart'] = getDolGlobalString("FICHINTER_SIGNATURE_YFORIMGSTART");
 										} else {
-											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+											$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 										}
 										if (getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG")) {
 											$param['wforimg'] = getDolGlobalString("FICHINTER_SIGNATURE_WFORIMG");
@@ -586,7 +587,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								$param['xforimgstart'] = (empty($s['w']) ? 110 : $s['w'] / 2 - 2);
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 38);
+								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 62);
 								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 20);
 
 								dolPrintSignatureImage($pdf, $langs, $param);
@@ -723,7 +724,7 @@ if ($action == "importSignature") {
 								}
 								foreach ($dirmodels as $reldir) {
 									$file = "pdf_" . $last_modelpdf . ".modules.php";
-									// On vérifie l'emplacement du modele
+									// Check the template location
 									$file = dol_buildpath($reldir . $modelpath . $file, 0);
 									if (file_exists($file)) {
 										$filefound = $file;
@@ -793,7 +794,7 @@ if ($action == "importSignature") {
 
 				$online_sign_ip = getUserRemoteIP();
 
-				$sql = "UPDATE " . MAIN_DB_PREFIX . $object->table_element;
+				$sql = "UPDATE " . MAIN_DB_PREFIX . $db->sanitize($object->table_element);
 				$sql .= " SET ";
 				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";

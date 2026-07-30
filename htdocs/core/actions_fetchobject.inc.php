@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2025  Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,12 @@
  * @var string $ref
  * @var int $id
  */
+'
+@phan-var-force string $action
+@phan-var-force string $cancel
+@phan-var-force string $ref
+@phan-var-force int $id
+';
 
 if (((!empty($id) && $id > 0) || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
 	if (($id > 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'

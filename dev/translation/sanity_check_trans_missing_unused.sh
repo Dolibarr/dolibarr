@@ -23,7 +23,7 @@
 #   - Some side effects from translations on variables.
 #   - Some other minors side effects to be examined (#, %).
 #
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
 
 LANG_DIR=htdocs/langs/en_US/
 MYDIR=$(dirname "$(realpath "$0")")
@@ -73,7 +73,7 @@ uniq < "${AVAILABLE_FILE_NODEDUP}" > "${AVAILABLE_FILE}"
 #
 EXTRACT_STR=""
 JOIN_STR=""
-for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel'; do
+for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel' 'Dolibarr.tools.langs.trans' 'Dolibarr.tools.langs.transNoEntities'; do
 	MATCH_STR="$MATCH_STR$JOIN_STR$t"
 	EXTRACT_STR="$EXTRACT_STR$JOIN_STR(?<=${t}\\([\"'])([^\"']+)(?=[\"']\$)"
 	JOIN_STR="|"
@@ -89,7 +89,7 @@ done
 	# With std grep: `grep --no-filename -r ${GREP_OPTS} -- '->trans(' . `
 	# Using git grep avoiding to look into unversioned files
 	# transnoentitiesnoconv
-	git grep -h -r -P -- "${MATCH_STR}\\(" ':*.php' ':*.html' \
+	git grep -h -r -P -- "${MATCH_STR}\\(" ':*.php' ':*.html' ':*.js' \
 		| sed 's@\(^#\|[^:]//\|/\*\|^\s*\*\).*@@' \
 	| sed 's@)\|\(['"'"'"]\)\(,\)@\1\n@g' \
 		| grep -aPo "$EXTRACT_STR(?=.$)"
@@ -142,10 +142,10 @@ fi
 #
 REPL_STR=""
 for t in trans transnoentities transnoentitiesnoconv newItem buttonsSaveCancel; do
-   REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
-   REPL_STR="${REPL_STR}\n->${t}('\\1',"
-   REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
-   REPL_STR="${REPL_STR}\n->${t}('\\1')"
+	REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
+	REPL_STR="${REPL_STR}\n->${t}('\\1',"
+	REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
+	REPL_STR="${REPL_STR}\n->${t}('\\1')"
 done
 
 rm -f "${MISSING_FILE}.grep" >/dev/null 2>&1
@@ -163,9 +163,9 @@ if [ -s "${MISSING_FILE}.grep" ] ; then
 
 	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
 
-	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
+	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' ':*.js' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 error - Missing translation; @' > "${MISSING_FILE}.result"
 
 	if [ -s "${MISSING_FILE}.result" ] ; then
 		exit_code=1

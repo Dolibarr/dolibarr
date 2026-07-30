@@ -5,6 +5,7 @@
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025	Kowal Jessica			<jessicakowal69@gmail.com>
+ * Copyright (C) 2026	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public static $FIELDSPAYMENT = array(
 		"fk_typepayment",
-		'datepaid',
+		'datep',
 		'amounts',
 	);
 
@@ -125,7 +126,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param	int			$limit				List limit
 	 * @param	int			$page				Page number
 	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array							Array of order objects
@@ -343,7 +344,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->date,
 			$request_data->comments,
 			$request_data->fk_project,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->type,
 			$request_data->fk_ecm_files
 		);
@@ -413,7 +414,7 @@ class ExpenseReports extends DolibarrApi
 			$request_data->value_unit,
 			$request_data->date,
 			$id,
-			$request_data->fk_c_exp_tax_cat,
+			(int) $request_data->fk_c_exp_tax_cat,
 			$request_data->fk_ecm_files
 		);
 
@@ -526,7 +527,7 @@ class ExpenseReports extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->expensereport->array_options[$index] = $this->_checkValForAPI($field, $val, $this->expensereport);
+					$this->expensereport->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->expensereport);
 				}
 				continue;
 			}
@@ -609,7 +610,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->expensereport->setStatut(0);
+		$result = $this->expensereport->setStatut(ExpenseReport::STATUS_DRAFT);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
 		}
@@ -753,6 +754,50 @@ class ExpenseReports extends DolibarrApi
 		}
 
 
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
+	/**
+	 * Set to paid an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/setpaid
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function setPaid($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			throw new RestException(403, "Insufficiant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setPaid($id, DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}

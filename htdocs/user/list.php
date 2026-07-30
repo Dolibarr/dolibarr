@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -78,7 +79,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
@@ -763,7 +764,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -774,7 +775,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -884,7 +885,7 @@ if (!empty($arrayfields['u.statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -898,7 +899,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1018,7 +1019,7 @@ if (!empty($arrayfields['u.statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -1056,8 +1057,8 @@ while ($i < $imaxinloop) {
 	$object->admin = $obj->admin;
 	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
-	$object->statut = $obj->status;
-	$object->status = $obj->status;
+	$object->statut = (int) $obj->status;
+	$object->status = (int) $obj->status;
 	$object->office_phone = $obj->office_phone;
 	$object->user_mobile = $obj->user_mobile;
 	$object->job = $obj->job;
@@ -1110,7 +1111,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1296,7 +1297,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+		if (isModEnabled('multicompany') && isset($mc) && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				if (!$obj->entity) {
 					$labeltouse = $langs->trans("AllEntities");
@@ -1433,7 +1434,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

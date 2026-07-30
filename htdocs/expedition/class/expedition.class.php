@@ -13,7 +13,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Nick Fragoulis
  *
@@ -93,7 +93,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -149,7 +149,7 @@ class Expedition extends CommonObject
 	/**
 	 * @var int<0,1>
 	 */
-	public $billed;
+	public $billed = 0;
 
 	/**
 	 * @var null|int|float|''
@@ -345,8 +345,6 @@ class Expedition extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -432,6 +430,8 @@ class Expedition extends CommonObject
 
 		// Clean parameters
 		$this->tracking_number = dol_sanitizeFileName((string) $this->tracking_number);
+		$this->tracking_number = preg_replace('/\s+/', '', $this->tracking_number);
+
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
@@ -472,6 +472,7 @@ class Expedition extends CommonObject
 		$sql .= ", model_pdf";
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ", signed_status";
+		$sql .= ", billed";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".((int) $this->entity);
@@ -498,6 +499,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".((int) $this->fk_incoterms);
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".((int) $this->signed_status);
+		$sql .= ", ".((int) $this->billed);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1144,8 +1146,74 @@ class Expedition extends CommonObject
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Override to keep every expeditiondet row that belongs to the displayed line in sync when drag & drop reorders rows.
+	 *
+	 * @param int[] $rows Array of row ids received from ajax
+	 * @return void
+	 */
+	public function line_ajaxorder($rows)
+	{
+		if (empty($rows) || !is_array($rows)) {
+			return;
+		}
+
+		$rowToOrigin = array();
+		$originToRows = array();
+
+		$sql = "SELECT rowid, fk_elementdet";
+		$sql .= " FROM ".$this->db->prefix()."expeditiondet";
+		$sql .= " WHERE fk_expedition = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, rowid ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$rowid = (int) $obj->rowid;
+				$originLine = (int) $obj->fk_elementdet;
+				$rowToOrigin[$rowid] = $originLine;
+
+				if (!isset($originToRows[$originLine])) {
+					$originToRows[$originLine] = array();
+				}
+				$originToRows[$originLine][] = $rowid;
+			}
+			$this->db->free($resql);
+		} else {
+			parent::line_ajaxorder($rows);
+			return;
+		}
+
+		$processedOrigins = array();
+		$position = 1;
+
+		foreach ($rows as $rowid) {
+			$rowid = (int) $rowid;
+			if (empty($rowid)) {
+				continue;
+			}
+
+			$originLine = isset($rowToOrigin[$rowid]) ? $rowToOrigin[$rowid] : 0;
+			if ($originLine > 0 && !empty($processedOrigins[$originLine])) {
+				continue;
+			}
+
+			$rowidsToUpdate = array($rowid);
+			if ($originLine > 0 && !empty($originToRows[$originLine])) {
+				$rowidsToUpdate = $originToRows[$originLine];
+				$processedOrigins[$originLine] = 1;
+			}
+
+			foreach ($rowidsToUpdate as $childRowId) {
+				$this->updateRangOfLine($childRowId, $position);
+				$position++;
+			}
+		}
+	}
+	// phpcs:enable
+
+	// phpcs:disable
 	/**
 	 *	Create a delivery receipt from a shipment
 	 *
@@ -1822,66 +1890,55 @@ class Expedition extends CommonObject
 			}
 		}
 
+		// No delete expedition
 		if (!$error) {
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			// No delete expedition
-			if (!$error) {
-				$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
-				$sql .= " WHERE rowid = ".((int) $this->id);
-
-				if ($this->db->query($sql)) {
-					if (!empty($this->origin) && $this->origin_id > 0) {
-						$this->fetch_origin();
-						$origin_object = $this->origin_object;
-						'@phan-var-force Facture|Commande $origin_object';
-						/** @var Commande $origin_object */
-						if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
-							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
-							$origin_object->loadExpeditions();
-							if (count($origin_object->expeditions) <= 0) {
-								$origin_object->setStatut(Commande::STATUS_VALIDATED);
-							}
+			if ($this->db->query($sql)) {
+				if (!empty($this->origin) && $this->origin_id > 0) {
+					$this->fetch_origin();
+					$origin_object = $this->origin_object;
+					'@phan-var-force Facture|Commande $origin_object';
+					/** @var Commande $origin_object */
+					if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+						// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						$origin_object->loadExpeditions();
+						if (count($origin_object->expeditions) <= 0) {
+							$origin_object->setStatut(Commande::STATUS_VALIDATED);
 						}
 					}
-
-					$this->db->commit();
-
-					// We delete PDFs
-					$ref = dol_sanitizeFileName($this->ref);
-					if (!empty($conf->expedition->dir_output)) {
-						$dir = $conf->expedition->dir_output.'/sending/'.$ref;
-						$file = $dir.'/'.$ref.'.pdf';
-						if (file_exists($file)) {
-							if (!dol_delete_file($file)) {
-								return 0;
-							}
-						}
-						if (file_exists($dir)) {
-							if (!dol_delete_dir_recursive($dir)) {
-								$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
-								return 0;
-							}
-						}
-					}
-
-					return 1;
-				} else {
-					$this->error = $this->db->lasterror()." - sql=$sql";
-					$this->db->rollback();
-					return -3;
 				}
+
+				$this->db->commit();
+
+				// We delete PDFs
+				$ref = dol_sanitizeFileName($this->ref);
+				if (!empty($conf->expedition->dir_output)) {
+					$dir = $conf->expedition->dir_output.'/sending/'.$ref;
+					$file = $dir.'/'.$ref.'.pdf';
+					if (file_exists($file)) {
+						if (!dol_delete_file($file)) {
+							return 0;
+						}
+					}
+					if (file_exists($dir)) {
+						if (!dol_delete_dir_recursive($dir)) {
+							$this->error = $langs->trans("ErrorCanNotDeleteDir", $dir);
+							return 0;
+						}
+					}
+				}
+
+				return 1;
 			} else {
+				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
-				return -2;
+				return -3;
 			}
 		} else {
 			$this->db->rollback();
-			return -1;
+			return -2;
 		}
 	}
 
@@ -2131,7 +2188,7 @@ class Expedition extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 		$sql .= " AND ed.fk_elementdet = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_elementdet";		// We need after a break on fk_elementdet but when there is no break on fk_elementdet, cd.rang is same so we can add it as first order criteria.
+		$sql .= " ORDER BY CASE WHEN ed.rang IS NULL OR ed.rang = 0 THEN cd.rang ELSE ed.rang END, ed.rowid";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2273,12 +2330,11 @@ class Expedition extends CommonObject
 				$this->multicurrency_total_tva 	+= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	+= $obj->multicurrency_total_ttc;
 
-				if ($originline != $obj->fk_elementdet) {
-					$line->detail_batch = array();
-				}
-
 				// Detail of batch
 				if (isModEnabled('productbatch') && $obj->line_id > 0 && $obj->product_tobatch > 0) {
+					if ($originline != $obj->fk_elementdet) {
+						$line->detail_batch = array();
+					}
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
@@ -2884,6 +2940,11 @@ class Expedition extends CommonObject
 		// Protection. This avoid to move stock later when we should not
 		if ($this->status == self::STATUS_CLOSED) {
 			return 0;
+		}
+
+		// We need to validate shipping before closing it
+		if ($this->status == self::STATUS_DRAFT) {
+			$this->valid($user);
 		}
 
 		$this->db->begin();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,17 +253,17 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '" . $db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '" . $db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -283,7 +283,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required */
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
+	$sql .= "t.".$db->sanitize($key).", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -456,7 +456,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -467,7 +467,7 @@ print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? 
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -518,7 +518,7 @@ if (!empty($arrayfields['nbapplications']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -533,7 +533,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -564,7 +564,7 @@ if (!empty($arrayfields['nbapplications']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -624,7 +624,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -697,7 +697,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
