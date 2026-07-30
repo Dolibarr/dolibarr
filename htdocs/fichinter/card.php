@@ -848,7 +848,9 @@ if (empty($reshook)) {
 
 		$objectline->date = $date_inter;
 		$objectline->desc = $desc;
-		$objectline->duration = $duration;
+		if ($objectline->special_code != SUBTOTALS_SPECIAL_CODE) {
+			$objectline->duration = $duration;
+		}
 
 		// Extrafields
 		$extrafields->fetch_name_optionals_label($object->table_element_line);
