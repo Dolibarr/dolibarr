@@ -46,7 +46,7 @@ if (isModEnabled("bank") && isModEnabled("prelevement") && isModEnabled("payment
 	width: 100%;
 	<?php
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
-	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
 	<?php } ?>
 	border-radius: 5px;
 	/* border: 1px solid #e9e9e9; */
@@ -408,7 +408,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 .nonature-back {
-	background-color: #EEE;
+	 background-color: var(--colorwhitelight);
 }
 .prospect-back {
 	background-color: #a3c0ad !important;

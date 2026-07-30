@@ -701,9 +701,11 @@ if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
-	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
+	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');  // @phan-suppress-current-line SqlInjection
 	//var_dump($sortfield); //var_dump($sortorder);
 }
+
+global $elementList, $sourceList, $localtax_typeList, $type_vatList;  // Used in dictFieldList() below
 
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
@@ -984,7 +986,7 @@ if (empty($reshook)) {
 
 			// List of values
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-				$sql .= $newid.",";
+				$sql .= ((int) $newid).",";
 			}
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
@@ -1154,7 +1156,7 @@ if (empty($reshook)) {
 		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
 
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->escape($rowidcol)." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tablename)." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} else {
@@ -1379,6 +1381,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+global $form, $formother; // Used in dictFieldList() below
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -2618,6 +2621,10 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($valuetoshow ? $valuetoshow : $tmpid);
 							} elseif ($tabname[$id] == 'c_exp_tax_cat') {
 								$valuetoshow = $langs->trans($valuetoshow);
+							} elseif ($value == 'libelle' && ($tabname[$id] == 'c_stcomm' || $tabname[$id] == 'c_stcommcontact')) {
+								$key = 'StatusProspect'.$obj->rowid;
+								$trans = $langs->trans($key);
+								$valuetoshow = ($trans != $key ? $trans : $obj->{$value});
 							} elseif ($value == 'label' && $tabname[$id] == 'c_units') {
 								$langs->load('other');
 								$key = $langs->trans($obj->label);

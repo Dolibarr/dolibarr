@@ -29,10 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -44,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
  * @var string 	$dolibarr_main_url_root
  * @var	string	$dolibarr_api_count_always_enabled
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/api.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -71,7 +70,7 @@ if ($action == 'setproductionmode') {
 			}
 		} else {
 			// Delete the cache file otherwise it does not update
-			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
+			$result = dol_delete_file($conf->api->dir_temp.'/routes.php', 1);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
 				$error++;
@@ -136,7 +135,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td>'.$langs->trans("Value")."</td>";
+print '<td></td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 

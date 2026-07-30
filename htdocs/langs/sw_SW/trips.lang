@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=Unaweza kufafanua sheria za kiwango cha juu zaidi kwa rip
 ExpenseReportWaitingForApproval=Ripoti mpya ya gharama imewasilishwa ili kuidhinishwa
 ExpenseReportWaitingForApprovalMessage=Ripoti mpya ya gharama imewasilishwa na inasubiri idhini. <br>  - Mtumiaji: %s <br>  - Kipindi: %s <br> Bofya hapa ili kuthibitisha: %s
 ExpenseReportWaitingForReApproval=Ripoti ya gharama imewasilishwa ili kuidhinishwa tena
-ExpenseReportWaitingForReApprovalMessage=Ripoti ya gharama imewasilishwa na inasubiri kuidhinishwa tena. <br> %s, ulikataa kuidhinisha ripoti ya gharama kwa sababu hii: %s. <br> Toleo jipya limependekezwa na linasubiri idhini yako. <br>  - Mtumiaji: %s <br>  - Kipindi: %s <br> Bofya hapa ili kuthibitisha: %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=Usanidi wa gharama za mileage
 ExpenseReportsRules=Sheria za ripoti ya gharama
 ExpenseReportsToApprove=Ripoti za gharama za kuidhinishwa
@@ -120,7 +121,6 @@ ValideTrip=Idhinisha ripoti ya gharama
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Kifungua kinywa
@@ -156,3 +156,6 @@ TF_PEAGE=Ushuru
 TF_TAXI=Teksi
 TF_TRAIN=Treni
 TF_TRIP=Usafiri
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport

@@ -227,7 +227,7 @@ class DoliDBMysqli extends DoliDB
 	 *  Select a database
 	 *
 	 *  @param	    string	$database	Name of database
-	 *  @return	    boolean  		    true if OK, false if KO
+	 *  @return	    boolean  		    true if OK, false if failed
 	 */
 	public function select_db($database)
 	{
@@ -365,7 +365,7 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		if (!preg_match("/^COMMIT/i", $query) && !preg_match("/^ROLLBACK/i", $query)) {
-			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			// If user query, we save it along with its resultset
 			if (!$ret) {
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
@@ -412,7 +412,7 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
-	 *	@param	mysqli_result	$resultset	Curseur de la requete voulue
+	 *	@param	mysqli_result	$resultset	Cursor of the desired query
 	 *	@return	object|null					Object result line or null if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
@@ -469,8 +469,8 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return number of lines for result of a SELECT
 	 *
-	 *	@param	mysqli_result	$resultset  Resulset of requests
-	 *	@return	int				Nb of lines
+	 *	@param	mysqli_result	$resultset  Resultset of requests
+	 *	@return	int				Number of lines
 	 *	@see    affected_rows()
 	 */
 	public function num_rows($resultset)
@@ -487,7 +487,7 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
-	 *	@param	mysqli_result	$resultset	Curseur de la requete voulue
+	 *	@param	mysqli_result	$resultset	Cursor of the desired query
 	 *	@return int							Number of lines
 	 *	@see    num_rows()
 	 */
@@ -498,8 +498,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// mysql necessite un link de base pour cette fonction contrairement
-		// a pqsql qui prend un resultset
+		// mysql require a db link, not like pqsql that takes a resultset
 		return $this->db->affected_rows;
 	}
 
@@ -515,7 +514,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		// Si resultset en est un, on libere la memoire
+		// Si resultset is provided, free memory
 		if (is_object($resultset)) {
 			$resultset->free_result();
 		}
@@ -585,6 +584,7 @@ class DoliDBMysqli extends DoliDB
 				1217 => 'DB_ERROR_CHILD_EXISTS',
 				1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
 				1451 => 'DB_ERROR_CHILD_EXISTS',
+				1824 => 'DB_ERROR_CANNOT_CREATE',		// When creating a constraint on a parent table that does not exists
 				1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
 			);
 
@@ -604,7 +604,7 @@ class DoliDBMysqli extends DoliDB
 	public function error()
 	{
 		if (!$this->connected) {
-			// Si il y a eu echec de connection, $this->db n'est pas valide pour mysqli_error.
+			// When there is a connection failure, $this->db is invalid for to get mysqli_error.
 			return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
 		} else {
 			return $this->db->error;
@@ -629,9 +629,9 @@ class DoliDBMysqli extends DoliDB
 	 * Encrypt sensitive data in database
 	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param	string	$fieldorvalue	Field name or value to encrypt
-	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
-	 * @return	string					XXX(field) or XXX('value') or field or 'value'
+	 * @param	string		$fieldorvalue	Field name or value to encrypt
+	 * @param	int<1,1>	$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string						XXX(field) or XXX('value') or field or 'value'
 	 */
 	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
@@ -837,12 +837,12 @@ class DoliDBMysqli extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@param	    array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
-	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
-	 *	@param	    string	$type 			Type de la table
-	 *	@param	    ?array<string,mixed>	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 *	@param	    string[]	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    array<string,mixed>	$keys 	Tableau des champs cles noms => valeur
+	 *	@param	    array<string,array{type:string,label?:string,enabled?:int<0,2>|string,position?:int,notnull?:int,visible?:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields 		Associative table [field name][table of descriptions]
+	 *	@param	    string	$primary_key 	Name of the field that will be the primary key
+	 *	@param	    string	$type 			Table type
+	 *	@param	    ?array<string,mixed>	$unique_keys 	Associative table: key=field, value=field value
+	 *	@param	    string[]	$fulltext_keys	Table of fields that will be indexed as fulltext
+	 *	@param	    array<string,mixed>	$keys 	Table of fields names => value
 	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
@@ -955,7 +955,7 @@ class DoliDBMysqli extends DoliDB
 	 *	Return a pointer of line with description of a table or field
 	 *
 	 *	@param	string		$table	Name of table
-	 *	@param	string		$field	Optionnel : Name of field if we want description of field
+	 *	@param	string		$field	Optional: Name of field if we want description of field
 	 *	@return	bool|mysqli_result	Resultset x (x->Field, x->Type, ...)
 	 */
 	public function DDLDescTable($table, $field = "")
@@ -1106,7 +1106,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
 	 *
 	 *	@param	string	$dolibarr_main_db_host 		Ip server or '%'
-	 *	@param	string	$dolibarr_main_db_user 		Nom new user
+	 *	@param	string	$dolibarr_main_db_user 		Name of new user
 	 *	@param	string	$dolibarr_main_db_pass 		Password for the new user
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									Return integer <0 if KO, >=0 if OK

@@ -49,7 +49,7 @@ $cancel     = GETPOST('cancel');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm    = GETPOST('confirm', 'alpha');
 
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 $website = GETPOST('website', 'alpha');
 $pageid = GETPOSTINT('pageid');
 if (empty($module)) {
@@ -150,7 +150,7 @@ if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontou
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
 	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {

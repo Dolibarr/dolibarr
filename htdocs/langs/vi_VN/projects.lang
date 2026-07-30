@@ -258,7 +258,7 @@ OtherFilteredTasks=Các nhiệm vụ được lọc khác
 NoAssignedTasks=Không tìm thấy nhiệm vụ được giao (chỉ định dự án / nhiệm vụ cho người dùng hiện tại từ hộp chọn trên cùng để nhập thời gian vào nó)
 ThirdPartyRequiredToGenerateIntervention=Bên thứ ba phải được xác định trong dự án để có thể can thiệp.
 ThirdPartyRequiredToGenerateInvoice=Một bên thứ ba phải được xác định trong dự án để có thể lập hóa đơn.
-ChooseANotYetAssignedTask=Chọn một cônng việc chưa gán cho bạn
+ChooseANotYetAssignedTask=Tasks not yet assigned to you
 # Comments trans
 AllowCommentOnTask=Cho phép người dùng nhận xét về các nhiệm vụ
 AllowCommentOnProject=Cho phép người dùng nhận xét về các dự án

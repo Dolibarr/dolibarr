@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
+StatusInterInValidated=Bestätigt
+WebPortalInterDateStart=Start-Datum
+WebPortalInterDateEnd=End-Datum
 WebPortalMemberCardTitle=Mitglied Kartei
 unitPrice=Bruttopreis (Stk.)
 contactFormMessageLabel =Nachricht
