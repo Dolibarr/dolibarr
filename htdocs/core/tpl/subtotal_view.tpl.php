@@ -287,8 +287,13 @@ if ($line->qty > 0) { ?>
 	if (in_array($object->element, ['supplier_proposal'])) {
 		$colspan += 1;
 	}
+
+	$extra_cols = 3;
+	if (isModEnabled('multicurrency') && $object->multicurrency_code != $conf->currency) {
+		$extra_cols = 4;
+	}
 	?>
-	<td class="linecollabel" colspan="<?php echo $colspan + 3 ?>"><?php echo nl2br($line->desc); ?></td>
+	<td class="linecollabel" colspan="<?php echo $colspan + $extra_cols ?>"><?php echo nl2br($line->desc); ?></td>
 <?php }
 
 if ($this->status == 0) {
