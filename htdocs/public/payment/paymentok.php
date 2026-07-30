@@ -664,7 +664,7 @@ if ($ispaymentok) {
 						$ispostactionok = -1;
 						dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
 					}
-					// Member is validated but date of vlaidation is empty so we set it
+					// Member is validated but date of validation is empty so we set it
 					if (empty($object->datevalid)) {
 						dol_syslog("Member date of validation is empty. We define it", LOG_WARNING, 0, '_payment');
 						$now = dol_now();
