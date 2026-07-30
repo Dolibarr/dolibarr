@@ -36,10 +36,18 @@ ActivateAllOnContract=Aktivér alle tjenester
 CloseAContract=Luk en kontrakt
 ConfirmDeleteAContract=Er du sikker på, at du vil slette denne kontrakt og alle dens tjenester?
 ConfirmValidateContract=Er du sikker på, at du vil validere denne kontrakt under navnet <b> %s </b>?
+ConfirmSignContract=Er du sikker på, at du vil angive denne kontrakt som underskrevet?
+ConfirmUnsignContract=Er du sikker på, at du vil angive denne kontrakt som usigneret?
 ConfirmActivateAllOnContract=Dette vil åbne alle tjenester (endnu ikke aktive). Er du sikker på, at du vil åbne alle tjenester?
 ConfirmCloseContract=Dette lukker alle tjenester (udløbet eller ej). Er du sikker på, at du vil lukke denne kontrakt?
 ConfirmCloseService=Er du sikker på, at du vil lukke denne tjeneste med dato <b> %s </b>?
 ValidateAContract=Bekræfte en kontrakt
+UnsignContract=Afmeld kontrakt
+ContractSign=Sæt Signeret
+ContractUnsign=Sæt usigneret
+ContractSignedInDolibarr=Kontrakt underskrevet
+ContractSignedOnline=Kontrakt underskrevet online
+ContractUnsignedInDolibarr=Kontrakt uunderskrevet
 ActivateService=Aktivér service
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b>?
 RefContract=Kontrakt reference
@@ -95,7 +103,13 @@ ConfirmCloneContract=Er du sikker på at du vil klone kontrakten <b> %s </b>?
 LowerDateEndPlannedShort=Lavere planlagt slutdato for aktive tjenester
 SendContractRef=Kontraktsoplysninger __REF__
 OtherContracts=Andre kontrakter
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Kontraktens statistikker
+NbOfContracts=Antal kontrakter
+NumberOfContractsByMonth=Antal kontrakter pr. måned
+AmountOfServices=Antal tjenester
+AmountOfServicesByMonthHT=Antal tjenester (ekskl. moms) pr. måned
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salg repræsentant, der underskriver kontrakt
 TypeContact_contrat_internal_SALESREPFOLL=Salg repræsentant opfølgning kontrakt
 TypeContact_contrat_external_BILLING=Faktureringsindstillinger kunde kontakt

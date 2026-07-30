@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
+DisabledBecauseNotErasable=Deaktiviert, weil es nicht gelöscht werden kann
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Proformarechnung
 InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechnung, wird aber nicht verbucht.

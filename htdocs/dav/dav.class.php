@@ -63,47 +63,50 @@ class CdavLib
 	 *
 	 * @param 	int 		$calendarId 	Calendar id
 	 * @param 	int|bool	$oid			Oid
-	 * @param	int|bool	$ouri			Ouri
+	 * @param	int|string|bool	$ouri		Ouri (matches against a.recurid)
 	 * @return string
 	 */
 	public function getSqlCalEvents($calendarId, $oid = false, $ouri = false)
 	{
 		// TODO : replace GROUP_CONCAT by
 		$sql = 'SELECT
-					a.tms AS lastupd,
-					a.*,
-					sp.firstname,
-					sp.lastname,
-					sp.address,
-					sp.zip,
-					sp.town,
-					co.label country_label,
-					sp.phone,
-					sp.phone_perso,
-					sp.phone_mobile,
-					s.nom AS soc_nom,
-					s.address soc_address,
-					s.zip soc_zip,
-					s.town soc_town,
-					cos.label soc_country_label,
-					s.phone soc_phone,
-					ac.sourceuid,
-					(SELECT GROUP_CONCAT(u.login) FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar
-						LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
-						WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
-				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
-		$sql .= " LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays
-				LEFT JOIN '.MAIN_DB_PREFIX.'c_country as cos ON cos.rowid = s.fk_pays
-				WHERE 	a.id IN (SELECT ar.fk_actioncomm FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar WHERE ar.element_type='user' AND ar.fk_element=".((int) $calendarId).")
-						AND a.code IN (SELECT cac.code FROM '.MAIN_DB_PREFIX.'c_actioncomm cac WHERE cac.type <> 'systemauto')
-						AND a.entity IN (".getEntity('societe', 1).")";
+				a.tms AS lastupd,
+				a.*,
+				sp.firstname,
+				sp.lastname,
+				sp.address,
+				sp.zip,
+				sp.town,
+				co.label country_label,
+				sp.office_phone as phone,
+				sp.personal_mobile as phone_perso,
+				sp.user_mobile as phone_mobile,
+				s.nom AS soc_nom,
+				s.address soc_address,
+				s.zip soc_zip,
+				s.town soc_town,
+				cos.label soc_country_label,
+				s.phone soc_phone';
+		$sql .= ', (SELECT GROUP_CONCAT(u.login) FROM ' . $this->db->prefix() . 'actioncomm_resources ar
+					LEFT JOIN ' . $this->db->prefix() . 'user AS u ON (u.rowid=fk_element)
+					WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
+			FROM ' . $this->db->prefix() . 'actioncomm AS a';
+		$sql .= ' LEFT JOIN ' . $this->db->prefix() . 'user as sp ON sp.rowid = a.fk_user_action
+				LEFT JOIN ' . $this->db->prefix() . 'societe as s ON s.rowid = a.fk_soc
+				LEFT JOIN ' . $this->db->prefix() . 'c_country as co ON co.rowid = sp.fk_country
+				LEFT JOIN ' . $this->db->prefix() . 'c_country as cos ON cos.rowid = s.fk_pays
+				WHERE 		a.id IN (SELECT ar.fk_actioncomm FROM ' . $this->db->prefix() . 'actioncomm_resources ar WHERE ar.element_type=\'user\' AND ar.fk_element=' . ((int) $calendarId) . ')
+						AND a.code IN (SELECT cac.code FROM ' . $this->db->prefix() . 'c_actioncomm cac WHERE cac.type <> \'systemauto\')
+						AND a.entity IN (' . getEntity('societe', 1) . ')';
 		// TODO Restrict on external users
 		if ($oid !== false) {
 			if ($ouri === false) {
-				$sql .= ' AND a.id = '.((int) $oid);
+				$sql .= ' AND a.id = ' . ((int) $oid);
 			} else {
-				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = '".((int) $ouri)."')";
+				$sql .= ' AND (a.id = ' . ((int) $oid) . ' OR a.recurid = \''. $this->db->escape((string) $ouri) . '\')';
 			}
+		} elseif ($ouri !== false) {
+			$sql .= ' AND a.recurid = \''. $this->db->escape((string) $ouri) . '\'';
 		}
 
 		return $sql;
@@ -168,11 +171,7 @@ class CdavLib
 		$caldata .= "CREATED:".gmdate('Ymd\THis', strtotime($obj->datec))."Z\n";
 		$caldata .= "LAST-MODIFIED:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
 		$caldata .= "DTSTAMP:".gmdate('Ymd\THis', strtotime($obj->lastupd))."Z\n";
-		if ($obj->sourceuid == '') {
-			$caldata .= "UID:".$obj->id.'-ev-'.$calendarId.'-cal-'.constant('CDAV_URI_KEY')."\n";
-		} else {
-			$caldata .= "UID:".$obj->sourceuid."\n";
-		}
+		$caldata .= "UID:".$obj->id.'-ev-'.$calendarId.'-cal-'.constant('CDAV_URI_KEY')."\n";
 		$caldata .= "SUMMARY:".$obj->label."\n";
 		$caldata .= "LOCATION:".$location."\n";
 		$caldata .= "PRIORITY:".$obj->priority."\n";
