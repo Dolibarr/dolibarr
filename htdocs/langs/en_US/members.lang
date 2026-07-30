@@ -278,3 +278,7 @@ CorrespondingMemberFoundQuestion=A member has been found with the given informat
 MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE=Suggest to just record the subscription (without creating a new member) if an existing member is found
 MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATEDesc=A search is done on login, company name + email (for legal entity), or full name + email (for individual). If a member is already found, the form suggest to record a renewal of subscription.
 DraftMembersAreExcluded=Draft members are excluded.
+MembersMassActionDebitNotesFeeCaption=Caption (e.g. 2026-01)
+MembersMassActionDebitNotesFeeIntervalStart=Fee Intervall Start (TT/MM/JJJJ)
+MembersMassActionDebitNotesFeeIntervalEnd=Fee Intervall End (TT/MM/JJJJ)
+MembersMassActionDebitNotesFeeCreate=Create Fee

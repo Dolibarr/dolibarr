@@ -1271,11 +1271,11 @@ if ($massaction == 'createsubscription') {
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'other', 'value' => ($different_amounts ? $amount_display.$member_details.$hidden_amounts : '<strong>'.price($first_amount, 0, '', 0).' €</strong> (pro Mitglied)'.$hidden_amounts)),
 		// New fields for designation and custom dates
-		array('label' => 'Bezeichnung (z.B. 2026-01)', 'type' => 'text', 'name' => 'subscription_label', 'value' => dol_print_date($now, '%Y-%m'), 'size' => 20),
-		array('label' => 'Beitragszeitraum Start (TT/MM/JJJJ)', 'type' => 'other', 'value' => $date_start_inputs),
-		array('label' => 'Beitragszeitraum Ende (TT/MM/JJJJ)', 'type' => 'other', 'value' => $date_end_inputs),
+		array('label' => $langs->trans("MembersMassActionDebitNotesCaption"), 'type' => 'text', 'name' => 'subscription_label', 'value' => dol_print_date($now, '%Y-%m'), 'size' => 20),
+		array('label' => $langs->trans("MembersMassActionDebitNotesFeeIntervalStart"), 'type' => 'other', 'value' => $date_start_inputs),
+		array('label' => $langs->trans("MembersMassActionDebitNotesFeeIntervalEnd"), 'type' => 'other', 'value' => $date_end_inputs),
 		// Info about automatic invoice creation
-		array('label' => 'Rechnung erstellen', 'type' => 'other', 'value' => $processing_options),
+		array('label' => $langs->trans("MembersMassActionDebitNotesFeeCreate"), 'type' => 'other', 'value' => $processing_options),
 		array('type' => 'separator')
 	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSubsriptionCreation"), $langs->trans("ConfirmMassSubsriptionCreationQuestion", count($toselect)), "createsubscription_confirm", $formquestion, '', 0, 200, 500, 1);

@@ -276,3 +276,7 @@ ConfirmCreateMember=Erstellung eines Mitglieds bestätigen
 CorrespondingMemberFound=Zugehöriges Mitglied gefunden
 CorrespondingMemberFoundQuestion=Mit den angegebenen Informationen wurde eine Mitgliedschaft gefunden.<br>Möchten Sie Ihre Mitgliedschaft verlängern?
 MEMBER_SEARCH_MEMBER_PUBLIC_FORM_CREATE=Sucht nach einem Mitglied, das den im öffentlichen Formular zur Erstellung einer Mitgliedschaft eingegebenen Informationen entspricht. Wenn ein Mitglied gefunden wird, wird der Benutzer zum Formular für die Bezahlung der Mitgliedschaft weitergeleitet.
+MembersMassActionDebitNotesFeeCaption=Bezeichnung (z.B. 2026-01)
+MembersMassActionDebitNotesFeeIntervalStart=Beitragszeitraum Start (TT/MM/JJJJ)
+MembersMassActionDebitNotesFeeIntervalEnd=Beitragszeitraum Ende (TT/MM/JJJJ)
+MembersMassActionDebitNotesFeeCreate=Rechnung erstellen
