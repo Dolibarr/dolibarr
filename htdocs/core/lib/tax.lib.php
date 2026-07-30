@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2021-2022  Open-Dsi            <support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -765,7 +765,59 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " UNION ALL SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
+		$sql .= " d.date_start as date_start, d.date_end as date_end,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " rc.rowid as payment_id, rc.amount_ttc as payment_amount,";
+		$sql .= " rc.datec as datep, '' as payment_ref";
+		$sql .= " FROM ".$db->prefix().$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".$db->prefix()."societe_remise_except as rc ON rc.fk_facture = f.rowid";
+		$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p on d.fk_product = p.rowid";
+		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
+		$sql .= " AND f.fk_statut IN (1,2)"; // Validated or paid (partially or completely)
+		if ($direction == 'buy') {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
+		} else {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
+		}
+		$sql .= " AND rc.entity IN (".getEntity('societe_remise_except').")";
+		$sql .= " AND rc.discount_type = 0"; // 0 = customer discount (credit note)
+		if ($y && $m) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+		} elseif ($y) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+		}
+		if ($q) {
+			$sql .= " AND rc.datec > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+		}
+		if ($date_start && $date_end) {
+			$sql .= " AND rc.datec >= '".$db->idate($date_start)."' AND rc.datec <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " AND (d.product_type = 0"; // Limit to products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
+		}
+		$sql .= " ORDER BY 1, facid";
 	} else {
 		// Count on payments date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
@@ -807,7 +859,47 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " UNION ALL SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
+		$sql .= " d.date_start as date_start, d.date_end as date_end,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " rc.rowid as payment_id, rc.amount_ttc as payment_amount,";
+		$sql .= " rc.datec as datep, '' as payment_ref";
+		$sql .= " FROM ".$db->prefix().$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".$db->prefix()."societe_remise_except as rc ON rc.fk_facture = f.rowid";
+		$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p on d.fk_product = p.rowid";
+		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
+		$sql .= " AND f.fk_statut IN (1,2)"; // Paid (partially or completely)
+		$sql .= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND rc.entity IN (".getEntity('societe_remise_except').")";
+		$sql .= " AND rc.discount_type = 0"; // 0 = customer discount (credit note)
+		if ($y && $m) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+		} elseif ($y) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+		}
+		if ($q) {
+			$sql .= " AND rc.datec > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+		}
+		if ($date_start && $date_end) {
+			$sql .= " AND rc.datec >= '".$db->idate($date_start)."' AND rc.datec <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " AND (d.product_type = 0"; // Limit to products
+		$sql .= " AND d.date_start IS NULL AND d.date_end IS NULL)"; // enhance detection of products
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
+		}
+		$sql .= " ORDER BY 1, facid, payment_id";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
@@ -945,7 +1037,59 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
+		$sql .= " UNION ALL SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
+		$sql .= " d.date_start as date_start, d.date_end as date_end,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " rc.rowid as payment_id, rc.amount_ttc as payment_amount,";
+		$sql .= " rc.datec as datep, '' as payment_ref";
+		$sql .= " FROM ".$db->prefix().$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".$db->prefix()."societe_remise_except as rc ON rc.fk_facture = f.rowid";
+		$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p on d.fk_product = p.rowid";
+		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
+		$sql .= " AND f.fk_statut IN (1,2)"; // Validated or paid (partially or completely)
+		if ($direction == 'buy') {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
+		} else {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+				$sql .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$sql .= " AND f.type IN (0,1,2,3,5)";
+			}
+		}
+		$sql .= " AND rc.entity IN (".getEntity('societe_remise_except').")";
+		$sql .= " AND rc.discount_type = 0"; // 0 = customer discount (credit note)
+		if ($y && $m) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+		} elseif ($y) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+		}
+		if ($q) {
+			$sql .= " AND rc.datec > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+		}
+		if ($date_start && $date_end) {
+			$sql .= " AND rc.datec >= '".$db->idate($date_start)."' AND rc.datec <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " AND (d.product_type = 1"; // Limit to services
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
+		}
+		$sql .= " ORDER BY 1, facid";
 	} else {
 		// Count on payments date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
@@ -987,7 +1131,47 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
 			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		}
-		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
+		$sql .= " UNION ALL SELECT d.rowid, d.product_type as dtype, d.".$db->sanitize($fk_facture)." as facid, d.".$db->sanitize($f_rate)." as rate, d.vat_src_code as vat_src_code, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$db->sanitize($total_tva)." as total_vat, d.description as descr,";
+		$sql .= " d.".$db->sanitize($total_localtax1)." as total_localtax1, d.".$db->sanitize($total_localtax2)." as total_localtax2, ";
+		$sql .= " d.date_start as date_start, d.date_end as date_end,";
+		$sql .= " f.".$db->sanitize($invoicefieldref)." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " rc.rowid as payment_id, rc.amount_ttc as payment_amount,";
+		$sql .= " rc.datec as datep, '' as payment_ref";
+		$sql .= " FROM ".$db->prefix().$db->sanitize($invoicetable)." as f";
+		$sql .= " INNER JOIN ".$db->prefix()."societe_remise_except as rc ON rc.fk_facture = f.rowid";
+		$sql .= " INNER JOIN ".$db->prefix()."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " INNER JOIN ".$db->prefix().$db->sanitize($invoicedettable)." as d ON d.".$db->sanitize($fk_facture)." = f.rowid";
+		$sql .= " LEFT JOIN ".$db->prefix()."product as p on d.fk_product = p.rowid";
+		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
+		$sql .= " AND f.fk_statut IN (1,2)"; // Paid (partially or completely)
+		$sql .= " AND f.type IN (0,1,2,3,5)";
+		$sql .= " AND rc.entity IN (".getEntity('societe_remise_except').")";
+		$sql .= " AND rc.discount_type = 0"; // 0 = customer discount (credit note)
+		if ($y && $m) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
+		} elseif ($y) {
+			$sql .= " AND rc.datec >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
+		}
+		if ($q) {
+			$sql .= " AND rc.datec > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND rc.datec <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
+		}
+		if ($date_start && $date_end) {
+			$sql .= " AND rc.datec >= '".$db->idate($date_start)."' AND rc.datec <= '".$db->idate($date_end)."'";
+		}
+		$sql .= " AND (d.product_type = 1"; // Limit to services
+		$sql .= " OR d.date_start IS NOT NULL OR d.date_end IS NOT NULL)"; // enhance detection of service
+		if (getDolGlobalString('MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS')) {
+			$sql .= " AND (d.".$db->sanitize($f_rate)." <> 0 OR d.".$db->sanitize($total_tva)." <> 0)";
+		}
+		$sql .= " ORDER BY 1, facid, payment_id";
 	}
 
 	dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
