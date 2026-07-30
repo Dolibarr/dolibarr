@@ -15,4 +15,4 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
-ALTER TABLE llx_c_subtotals_phrases ADD UNIQUE INDEX uk_c_subtotals_phrases_code_entity (entity, code);
+ALTER TABLE llx_c_subtotals_sentences ADD UNIQUE INDEX uk_c_subtotals_sentences_code_entity (entity, code);

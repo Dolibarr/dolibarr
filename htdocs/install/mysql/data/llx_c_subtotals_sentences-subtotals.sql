@@ -15,7 +15,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
-INSERT INTO llx_c_subtotals_phrases (entity, code, label, active) VALUES (__ENTITY__, 'OPTIONS', 'Options', 1);
-INSERT INTO llx_c_subtotals_phrases (entity, code, label, active) VALUES (__ENTITY__, 'PRESTATIONS', 'Prestations', 1);
-INSERT INTO llx_c_subtotals_phrases (entity, code, label, active) VALUES (__ENTITY__, 'FOURNITURES', 'Fournitures', 1);
-INSERT INTO llx_c_subtotals_phrases (entity, code, label, active) VALUES (__ENTITY__, 'MAINDOEUVRE', 'Main d''oeuvre', 1);
+INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'OPTIONS', 'Options', 1);
+INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'PRESTATIONS', 'Prestations', 1);
+INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'FOURNITURES', 'Fournitures', 1);
+INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'MAINDOEUVRE', 'Main d''oeuvre', 1);

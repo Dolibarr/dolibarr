@@ -14,10 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Dictionary of predefined phrases usable as description of a subtotal title line
+-- Dictionary of predefined sentences usable as description of a subtotal title line
 -- ========================================================================
 
-create table llx_c_subtotals_phrases
+create table llx_c_subtotals_sentences
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   entity      integer DEFAULT 1 NOT NULL,

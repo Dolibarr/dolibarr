@@ -850,28 +850,28 @@ trait CommonSubtotal
 	}
 
 	/**
-	 * Retrieve the list of active predefined phrases usable as description of a title line.
+	 * Retrieve the list of active predefined sentences usable as description of a title line.
 	 *
-	 * @return array<string,string>	Array with the phrase label as both key and value, sorted alphabetically
+	 * @return array<string,string>	Array with the sentence label as both key and value, sorted alphabetically
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
-	public function getPredefinedPhrases()
+	public function getPredefinedSentences()
 	{
-		$phrases = array();
+		$sentences = array();
 
-		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_phrases";
-		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_phrases').")";
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_subtotals_sentences";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_sentences').")";
 		$sql .= " ORDER BY label ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				$phrases[dol_escape_htmltag($obj->label)] = $obj->label;
+				$sentences[dol_escape_htmltag($obj->label)] = $obj->label;
 			}
 		}
 
-		return $phrases;
+		return $sentences;
 	}
 
 	/**

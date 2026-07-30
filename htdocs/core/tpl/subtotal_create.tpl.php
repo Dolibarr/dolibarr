@@ -52,13 +52,13 @@ $formquestion = array();
 if ($type == 'title') {
 	$formquestion = array();
 
-	$predefinedphrases = $object->getPredefinedPhrases();
-	if (!empty($predefinedphrases)) {
+	$predefinedsentences = $object->getPredefinedSentences();
+	if (!empty($predefinedsentences)) {
 		$formquestion[] = array(
 			'type' => 'select',
-			'name' => 'subtotalpredefinedphrase',
-			'label' => $langs->trans("PredefinedPhrase"),
-			'values' => $predefinedphrases,
+			'name' => 'subtotalpredefinedsentence',
+			'label' => $langs->trans("PredefinedSentence"),
+			'values' => $predefinedsentences,
 			'select_show_empty' => 1,
 			'moreattr' => 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#subtotallinedesc\').val(v); }"',
 		);
