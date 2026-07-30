@@ -576,6 +576,36 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
+	 * Get a customer representative to a third party
+	 *
+	 * @since	24.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the third party
+	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 *
+	 * @url		GET		{id}/representative
+	 *
+	 * @throws RestException 401 Access not allowed for your login
+	 * @throws RestException 404 User or Third party not found
+	 */
+	public function getRepresentative($id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'reader')) {
+			throw new RestException(403);
+		}
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user);
+
+		return $result;
+	}
+
+	/**
 	 * Add a customer representative to a third party
 	 *
 	 * @since	20.0.0	Initial implementation
