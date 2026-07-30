@@ -102,3 +102,4 @@ SignedReceiverOnline=Ondertekend door derde partij online
 SignedAll=Ondertekend door alle partijen
 SignStatus=Handtekeningstatus
 DocumentSigned=Document ondertekend
+DocumentUnsigned=Document niet ondertekend
