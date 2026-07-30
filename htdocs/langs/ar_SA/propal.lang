@@ -14,6 +14,7 @@ DeleteProp=اقتراح حذف التجارية
 ValidateProp=مصادقة على اقتراح التجارية
 CancelPropal=إلغاء
 AddProp=إنشاء اقتراح
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=هل أنت متأكد أنك تريد حذف هذا العرض التجاري؟
 ConfirmValidateProp=هل أنت متأكد من أنك تريد التحقق من صحة هذا العرض التجاري تحت الاسم <b> %s </b>؟
 ConfirmCancelPropal=هل أنت متأكد أنك تريد إلغاء العرض التجاري <b>%s</b>؟

@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=เงินเดือนรอรับชำระแ�
 RefSalary=เงินเดือน
 NoSalaryInvoiceToWithdraw=ไม่มีเงินเดือนที่รอ '%s' ไปที่แท็บ '%s' บนบัตรเงินเดือนเพื่อส่งคำขอ
 SalaryInvoiceWaitingWithdraw=เงินเดือนรอรับชำระแบบโอนเครดิต
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests

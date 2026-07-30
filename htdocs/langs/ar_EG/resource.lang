@@ -33,4 +33,3 @@ ResourceTypeCode=رمز نوع المَوْرِد
 ImportDataset_resource_1=المَوَارِد
 ErrorResourcesAlreadyInUse=بعض المَوَارِد قيد الاستخدام
 ErrorResourceUseInEvent=المَوْرِد %s مستخدم في الحدث %s
-MaxUsers=الحد الأقصى للمستخدمين (أماكن، مقاعد، إلخ)

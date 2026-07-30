@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2025		Jon Bendtsen			<jon.bendtsen.github@jonb.dk>
  *
@@ -576,7 +576,7 @@ if (empty($reshook)) {
 					$i++;
 				}
 
-				$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
+				$sql .= " WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
 				if (!$user->admin) {	// A non admin user can only edit its own template
 					$sql .= " AND fk_user  = ".((int) $user->id);
 				}
