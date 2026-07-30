@@ -109,3 +109,4 @@ PAYBOX_PBX_SITE=ราคาเว็บไซต์ PBX
 PAYBOX_PBX_RANG=ราคา PBX รัง
 PAYBOX_PBX_IDENTIFIANT=ราคา PBX ID
 PAYBOX_HMAC_KEY=HMAC key
+FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup

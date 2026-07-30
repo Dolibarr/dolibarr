@@ -102,3 +102,4 @@ SignedReceiverOnline=Undertecknad av tredje part online
 SignedAll=Undertecknad av alla parter
 SignStatus=Signaturstatus
 DocumentSigned=Dokument undertecknat
+DocumentUnsigned=Dokument osignerat

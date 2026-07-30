@@ -57,3 +57,7 @@ donAnonymous=Anonimna donacija
 AnonymousDonationTooltip=Provjeri ovaj okvir ako želite da vaša donacija ostane anonimna. Vaši osobni podaci neće biti traženi.
 publicDonationFieldHelp=%s može objaviti moju donaciju u javnom registru
 listOfPublicDonations=Popis javnih donacija
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

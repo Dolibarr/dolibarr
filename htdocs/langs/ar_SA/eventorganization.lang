@@ -48,6 +48,7 @@ ConferenceOrBoothTab = مؤتمر أو كشك
 AmountPaid = المبلغ المدفوع
 DateOfRegistration = تاريخ التسجيل
 ConferenceOrBoothAttendee = حضور المؤتمر أو الكابينة
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=مقدم الطلب أو الزائر
 Speaker=مكبر الصوت
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=قائمة الحضور لمشاريع الحدث
 ListOfConfOrBoothOfEvent=قائمة المؤتمرات أو أجنحة مشاريع الفعاليات
 DownloadICSLink=تنزيل ملف ICS
 EVENTORGANIZATION_SECUREKEY=أنشئ لتأمين المفتاح لصفحة التسجيل العامة لاقتراح مؤتمر
-SERVICE_BOOTH_LOCATION=الخدمة المستخدمة لصف الفاتورة حول موقع الكشك
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=الخدمة المستخدمة لصف الفاتورة حول اشتراك حاضر في حدث
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=عدد الأصوات
 # Status
 EvntOrgDraft = حوالة مصرفية
@@ -122,7 +123,7 @@ NewSubscription=تسجيل
 OrganizationEventConfRequestWasReceived=تم استلام اقتراحك الخاص بالمؤتمر
 OrganizationEventBoothRequestWasReceived=تم استلام طلبك الخاص بكشك
 OrganizationEventPaymentOfBoothWasReceived=تم تسجيل الدفع الخاص بك لكشك
-OrganizationEventPaymentOfRegistrationWasReceived=تم تسجيل الدفع الخاص بك لتسجيل الحدث الخاص بك
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=هذا تذكير بمشاركتك في الحدث بصفتك حاضرًا
 OrganizationEventBulkMailToSpeakers=هذا تذكير بمشاركتك في الحدث كمتحدث
 OrganizationEventLinkToThirdParty=رابط لطرف ثالث (عميل أو مورد أو شريك)

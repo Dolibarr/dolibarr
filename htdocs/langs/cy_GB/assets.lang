@@ -17,6 +17,7 @@ AccountancyCodeAsset=Cod cyfrifo (ased)
 AccountancyCodeDepreciationAsset=Cod cyfrifyddu (cyfrif ased dibrisiant)
 AccountancyCodeDepreciationExpense=Cod cyfrifyddu (cyfrif cost dibrisiant)
 AssetsLines=Asedau
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=Dileu
 DeleteAnAssetType=Dileu model ased
 ConfirmDeleteAssetType=Ydych chi'n siŵr eich bod am ddileu'r model ased hwn?
@@ -70,6 +71,7 @@ AssetDisposal=Gwaredu
 AssetConfirmDisposalAsk=A ydych yn siŵr eich bod am gael gwared ar yr ased <b> %s </b> ?
 AssetConfirmReOpenAsk=A ydych yn siŵr eich bod am ailagor yr ased <b> %s </b> ?
 # Asset status
+AssetInDraft=Draft
 AssetInProgress=Ar y gweill
 AssetDisposed=Gwaredwyd
 AssetRecorded=Cyfrifwyd

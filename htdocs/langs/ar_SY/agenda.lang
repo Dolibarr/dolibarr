@@ -29,6 +29,7 @@ ViewWeek=عرض الأسبوع
 ViewPerUser=عرض حسب المستخدم
 ViewPerType=عرض حسب النوع
 AutoActions= التعبئة التلقائية
+ManualActions=Created manually by a user
 AgendaAutoActionDesc= هنا يمكنك تحديد الأحداث التي تريد أن يقوم Dolibarr بإنشائها تلقائيًا في Agenda. في حال عدم تحديد أي خيار، سيتم تضمين الإجراءات اليدوية فقط في السجلات وعرضها في Agenda. لن يتم حفظ التتبع التلقائي لإجراءات الأعمال التي تتم على الكائنات (التحقق، تغيير الحالة).
 AgendaSetupOtherDesc= تتيح هذه الصفحة خيارات لتصدير أحداث Dolibarr إلى تقويم خارجي (مثل Thunderbird أو Google Calendar)
 AgendaExtSitesDesc=تتيح هذه الصفحة تعريف مصادر تقويم خارجية لعرض أحداثها في أجندة Dolibarr.
@@ -215,3 +216,8 @@ EventPartOfARecurringSerie=هذا الحدث جزء من سلسلة متكررة
 BookCalSystem=حجز موعد عبر الانترنيت Online
 BookCalInitHelp=للبدء، انتقل إلى القائمة لإنشاء تقويم جديد مع تحديد أوقات التوافر...
 PublicLinkForBooking=رابط عام للحجز
+STOCKTRANSFER_CLOSEInDolibarr=Stock transfer %s completed.
+STOCKTRANSFER_VALIDATEInDolibarr=Stock transfer %s validated.
+
+STOCKTRANSFER_UNVALIDATEInDolibarr=Stock transfer %s set back to draft.
+STOCKTRANSFER_MODIFYInDolibarr=Stock transfer %s modified.

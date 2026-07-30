@@ -262,7 +262,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		/* Discard full numeric hostname */
 		if (preg_match('/^[x0-9a-f]+$/', $hosttocheck)) {
-			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
@@ -280,7 +280,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Check $iptocheck is an IP (v4 or v6), if not clear value.
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
 			$iptocheck = '0'; // will disabled check on IP
-			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
+			return array('http_code' => 400, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'Host is a numeric address that is not allowed');
 		}
 
 		if ($iptocheck) {
