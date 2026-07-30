@@ -12,7 +12,7 @@ SubtotalSetup=Subtotals module setup
 MaxSubtotalLevel=Maximum level
 SubtotalLineBackColor=Level %s lines background color
 NotSupportedByAllPDF=Will work with newer PDF but not with old ones %s
-SubtotalsPredefinedSentences=Subtotals predefined sentences
+SubtotalsPredefinedTitles=Subtotals predefined titles
 SubtotalsPredefinedTexts=Subtotals predefined texts
 SubtotalTextColumnTitle=Text
 
@@ -22,7 +22,7 @@ SubtotalTextColumnTitle=Text
 AddTitleLine=Add title line
 AddSubtotalLine=Add subtotal line
 AddTextLine=Add text line
-PredefinedSentence=Predefined sentence
+PredefinedTitle=Predefined title
 PredefinedText=Predefined text
 SubtotalTextContent=Text content
 TitleNeedDesc=You must enter a valid description to create a title.

@@ -13,15 +13,9 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
--- Dictionary of predefined sentences usable as description of a subtotal title line
 -- ========================================================================
 
-create table llx_c_subtotals_sentences
-(
-  rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  entity      integer DEFAULT 1 NOT NULL,
-  code        varchar(32),
-  label       varchar(255),
-  active      tinyint DEFAULT 1 NOT NULL
-)ENGINE=innodb;
+INSERT INTO llx_c_subtotals_titles (entity, code, label, active) VALUES (__ENTITY__, 'OPTIONS', 'Options', 1);
+INSERT INTO llx_c_subtotals_titles (entity, code, label, active) VALUES (__ENTITY__, 'PRESTATIONS', 'Prestations', 1);
+INSERT INTO llx_c_subtotals_titles (entity, code, label, active) VALUES (__ENTITY__, 'FOURNITURES', 'Fournitures', 1);
+INSERT INTO llx_c_subtotals_titles (entity, code, label, active) VALUES (__ENTITY__, 'MAINDOEUVRE', 'Main d''oeuvre', 1);

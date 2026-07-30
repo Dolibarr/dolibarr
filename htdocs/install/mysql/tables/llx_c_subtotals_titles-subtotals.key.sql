@@ -15,7 +15,4 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
-INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'OPTIONS', 'Options', 1);
-INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'PRESTATIONS', 'Prestations', 1);
-INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'FOURNITURES', 'Fournitures', 1);
-INSERT INTO llx_c_subtotals_sentences (entity, code, label, active) VALUES (__ENTITY__, 'MAINDOEUVRE', 'Main d''oeuvre', 1);
+ALTER TABLE llx_c_subtotals_titles ADD UNIQUE INDEX uk_c_subtotals_titles_code_entity (entity, code);

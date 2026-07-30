@@ -152,9 +152,9 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			}
 			print '>';
 			if ($line_type == 'title') {
-				$predefinedsentences = $this->getPredefinedSentences();  // @phan-suppress-current-line PhanUndeclaredMethod
-				if (!empty($predefinedsentences)) {
-					print $form->selectarray('line_predefinedsentence', $predefinedsentences, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+				$predefinedtitles = $this->getPredefinedTitles();  // @phan-suppress-current-line PhanUndeclaredMethod
+				if (!empty($predefinedtitles)) {
+					print $form->selectarray('line_predefinedtitle', $predefinedtitles, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
 				}
 			}
 		}

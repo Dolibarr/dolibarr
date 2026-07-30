@@ -13,6 +13,15 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
+--
+-- Dictionary of predefined titles usable as description of a subtotal title line
 -- ========================================================================
 
-ALTER TABLE llx_c_subtotals_sentences ADD UNIQUE INDEX uk_c_subtotals_sentences_code_entity (entity, code);
+create table llx_c_subtotals_titles
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  entity      integer DEFAULT 1 NOT NULL,
+  code        varchar(32),
+  label       varchar(255),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;

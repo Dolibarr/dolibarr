@@ -99,10 +99,10 @@ class modSubtotals extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array(
 			'langs' => 'subtotals',
-			'tabname' => array("c_subtotals_sentences", "c_subtotals_texts"),
-			'tablib' => array("SubtotalsPredefinedSentences", "SubtotalsPredefinedTexts"),
+			'tabname' => array("c_subtotals_titles", "c_subtotals_texts"),
+			'tablib' => array("SubtotalsPredefinedTitles", "SubtotalsPredefinedTexts"),
 			'tabsql' => array(
-				'SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_sentences WHERE entity IN ('.getEntity('c_subtotals_sentences').')',
+				'SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_titles WHERE entity IN ('.getEntity('c_subtotals_titles').')',
 				'SELECT rowid, code, label, content, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_texts WHERE entity IN ('.getEntity('c_subtotals_texts').')',
 			),
 			'tabsqlsort' => array("label ASC", "label ASC"),
