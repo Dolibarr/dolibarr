@@ -59,6 +59,7 @@ trait CommonSubtotal
 		'supplier_proposal',
 		'order_supplier',
 		'invoice_supplier',
+		'fichinter',
 	];
 
 
@@ -388,6 +389,10 @@ trait CommonSubtotal
 			$line = new SupplierInvoiceLine($this->db);
 			$line->id = $id;
 			$result = $line->delete();
+		} elseif ($current_module == 'fichinter') {
+			$line = new FichinterLigne($this->db);
+			$line->id = $id;
+			$result = $line->deleteLine($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
