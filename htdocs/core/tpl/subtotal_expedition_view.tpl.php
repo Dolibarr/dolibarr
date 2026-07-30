@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ */
 
 /**
  * @var CommonObject $object
@@ -70,6 +72,10 @@ if ($line->qty > 0) { ?>
 		echo '&nbsp; <span title="' . $langs->trans("ShowTotalExludingVATOnPDF") . '">%</span>';
 	}
 	?>
+</td>
+<?php } elseif ($line->qty == 0) { ?>
+<td class="linecollabel" colspan="<?php echo $colspan ?>" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>>
+	<?php echo nl2br($desc); ?>
 </td>
 <?php }
 
