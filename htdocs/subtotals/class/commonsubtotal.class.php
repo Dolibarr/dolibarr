@@ -855,6 +855,7 @@ trait CommonSubtotal
 	 * @return array<string,string>	Array with the sentence label as both key and value, sorted alphabetically
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
 	 */
 	public function getPredefinedSentences()
 	{
@@ -880,6 +881,7 @@ trait CommonSubtotal
 	 * @return array<int,array{label:string,content:string}>	Array keyed by rowid, each entry has a 'label' and 'content', sorted alphabetically by label
 	 *
 	 * @phan-suppress PhanUndeclaredProperty
+	 * @phan-suppress PhanPluginUnknownObjectMethodCall
 	 */
 	public function getPredefinedTexts()
 	{
