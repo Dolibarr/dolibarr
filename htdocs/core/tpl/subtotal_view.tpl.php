@@ -246,7 +246,7 @@ if ($line->qty > 0) { ?>
 	?>
 <?php } elseif ($line->qty == 0) {
 	// Base colspan if there is no module activated to display line correctly
-	$colspan = 4;  // linecoldescription, linecolvat, linecoluht, linecolqty
+	$colspan = 3;  // linecoldescription, linecolvat, linecoluht
 
 	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
 		$colspan++;
@@ -288,7 +288,7 @@ if ($line->qty > 0) { ?>
 		$colspan += 1;
 	}
 	?>
-	<td class="linecollabel" colspan="<?php echo $colspan ?>"><?php echo nl2br($line->desc); ?></td>
+	<td class="linecollabel" colspan="<?php echo $colspan + 3 ?>"><?php echo nl2br($line->desc); ?></td>
 <?php }
 
 if ($this->status == 0) {
