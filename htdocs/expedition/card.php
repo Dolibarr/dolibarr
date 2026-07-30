@@ -889,6 +889,10 @@ if (empty($reshook)) {
 			$shipline = new ExpeditionLigne($db);
 			$shipline->fetch(GETPOSTINT('lineid'));
 
+			// Description of a free line is editable from the line edit form, keep the current
+			// value when the field is not posted. The rank must not be reset either.
+			$description = GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $shipline->description;
+			$rang = (int) $shipline->rang;
 
 			if (!$error) {
 				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, $fk_parent, 0, $array_options);

@@ -1504,6 +1504,25 @@ class Expedition extends CommonObject
 			}
 
 			$result = $this->line->update($user, $notrigger);
+
+			// ExpeditionLigne::update() only writes fk_entrepot, qty and fk_unit, so the
+			// description and the rank set above would be lost. They are written here rather
+			// than in ExpeditionLigne::update() because that method is also used by the order
+			// based paths, which build the line without a description and would erase it.
+			if ($result > 0) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->line->table_element." SET";
+				$sql .= " description = '".$this->db->escape($description)."'";
+				$sql .= ", rang = ".((int) $rang);
+				$sql .= " WHERE rowid = ".((int) $rowid);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+					dol_syslog(get_class($this)."::updatelinefree ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+
 			if ($result > 0) {
 				// Reorder if child line
 				if (!empty($fk_parent)) {
