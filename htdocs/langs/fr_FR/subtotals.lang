@@ -13,13 +13,18 @@ MaxSubtotalLevel=Niveau maximum
 SubtotalLineBackColor=Niveau %s lignes couleur d'arrière-plan
 NotSupportedByAllPDF=Fonctionnera avec les PDF plus récents mais pas avec les anciens %s
 SubtotalsPredefinedPhrases=Phrases prédéfinies de sous-totaux
+SubtotalsPredefinedTexts=Textes prédéfinis de sous-totaux
+SubtotalTextColumnTitle=Texte
 
 #
 # Card
 #
 AddTitleLine=Ajouter une ligne de titre
 AddSubtotalLine=Ajouter une ligne de sous-total
+AddTextLine=Ajouter une ligne de texte
 PredefinedPhrase=Phrase prédéfinie
+PredefinedText=Texte prédéfini
+SubtotalTextContent=Contenu du texte
 TitleNeedDesc=Vous devez saisir une description valide pour créer un titre.
 TitleAddedLevelTooHigh=Niveau de titre ajouté trop élevé (ajouté avec le niveau %s à la place).
 TitleEditedLevelTooHigh=Le niveau du titre édité est trop élevé (édité avec le niveau %s à la place).
