@@ -172,3 +172,6 @@ SalaryWaitingWithdraw=Μισθοί σε αναμονή για πληρωμή μ�
 RefSalary=Μισθός
 NoSalaryInvoiceToWithdraw=Δεν υπάρχει μισθός σε αναμονή για ένα '%s'. Μεταβείτε στην καρτέλα '%s' στην κάρτα μισθού για να υποβάλετε ένα αίτημα.
 SalaryInvoiceWaitingWithdraw=Μισθοί σε αναμονή για πληρωμή με μεταφορά πίστωσης
+ErrorBankTransferNoPaymentRequestSelected=No payment request selected.
+AmountRequestedAlreadyReachesTotal=The total invoice amount has already been requested for payment
+AmountExceedsRemainingToRequest=The requested amount exceeds the remaining amount available for payment requests
