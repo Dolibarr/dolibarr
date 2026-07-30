@@ -155,6 +155,9 @@ ErrNoZipEngine=Aucun outil pour zipper/dézipper le fichier %s dans cette versio
 ErrorFileMustBeADolibarrPackage=Le fichier doit être un package Dolibarr
 ErrorModuleFileRequired=Vous devez sélectionner un fichier package de module Dolibarr
 ErrorFailToDownloadModuleFromSource=Impossible de télécharger le module depuis la source. Veuillez vérifier votre connexion Internet ou l'URL source et et réessayer.
+extModuleConfirmInstallTitle = Confirmer l'installation du module
+extModuleConfirmInstallText  = Vous êtes sur le point d'installer le module suivant : :<br><br><b>Nom:</b> %s<br><b>Version:</b> %s<br><b>Référence:</b> %s<br><b>Dernière mise à jour:</b> %s<br><br>Cette action est irréversible. Confirmez-vous l'installation de ce module ?
+install=Installer
 ErrorPhpCurlNotInstalled=L'extension PHP CURL n'est pas installée, ceci est indispensable pour dialoguer avec Paypal.
 ErrorFailedToAddToMailmanList=Echec de l'ajout de %s à la liste Mailman %s ou base SPIP
 ErrorFailedToRemoveToMailmanList=Echec de la suppression de %s de la liste Mailman %s ou base SPIP
@@ -385,6 +388,7 @@ ErrorModuleBuilderFailedToInit=Échec de l'initialisation de l'objet avec le nou
 ErrorThirdPartyNotFound=Erreur : Tiers introuvable
 ErrorDynamicPHPContentNotAllowed=Erreur : %s=1, le contenu PHP dynamique n'est donc autorisé que si les fonctions PHP RCE (exec, shell_exec, ...) sont toutes désactivées.
 ErrorTooManyLinksIntoHTMLString=Le contenu HTML contient trop de liens ou d'images. Réduisez leur nombre ou augmentez la valeur de MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT.
+ErrorDeletingAClosedCashControlIsNotPossible=La suppression d'une clôture de caisse est impossible.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

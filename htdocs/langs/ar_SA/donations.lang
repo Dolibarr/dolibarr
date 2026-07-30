@@ -57,3 +57,7 @@ donAnonymous=تبرع مجهول
 AnonymousDonationTooltip=حدد هذا المربع إذا كنت ترغب في إبقاء تبرعك مجهولاً. لن يُطلب منك الكشف عن معلوماتك الشخصية.
 publicDonationFieldHelp=%s يمكنه نشر تبرعي في السجل العام
 listOfPublicDonations=قائمة التبرعات العامة
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

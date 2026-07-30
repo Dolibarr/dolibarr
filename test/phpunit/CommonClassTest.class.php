@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -630,5 +630,27 @@ abstract class CommonClassTest extends TestCase
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * PHPUnit compatibility helper for assertMatchesRegularExpression
+	 *
+	 * assertMatchesRegularExpression was introduced in PHPUnit 8.0.
+	 * This method provides backward compatibility with PHPUnit 7.x which only has assertRegExp.
+	 *
+	 * @param string $pattern Regular expression pattern
+	 * @param string $string  String to match against
+	 * @param string $message Optional message
+	 * @return void
+	 */
+	public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
+	{
+		if (method_exists('PHPUnit\Framework\Assert', 'assertMatchesRegularExpression')) {
+			// PHPUnit 8.0+: call parent's method
+			PHPUnit\Framework\Assert::assertMatchesRegularExpression($pattern, $string, $message);
+		} else {
+			// PHPUnit 7.x and earlier: use assertRegExp
+			PHPUnit\Framework\Assert::assertRegExp($pattern, $string, $message);
+		}
 	}
 }
