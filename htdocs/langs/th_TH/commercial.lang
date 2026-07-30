@@ -102,3 +102,4 @@ SignedReceiverOnline=ลงนามโดยบุคคลที่สาม�
 SignedAll=ลงนามโดยทุกฝ่าย
 SignStatus=สถานะลายเซ็น
 DocumentSigned=เอกสารลงนาม
+DocumentUnsigned=Document unsigned

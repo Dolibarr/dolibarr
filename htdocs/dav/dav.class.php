@@ -102,7 +102,7 @@ class CdavLib
 			if ($ouri === false) {
 				$sql .= ' AND a.id = '.((int) $oid);
 			} else {
-				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = '".((int) $ouri)."')";
+				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = ".((int) $ouri).")";
 			}
 		}
 
