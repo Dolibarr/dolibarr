@@ -581,7 +581,7 @@ class Thirdparties extends DolibarrApi
 	 * @since	24.0.0	Initial implementation
 	 *
 	 * @param	int		$id					ID of the third party
-	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 * @return	array							Return array of representatives if OK, < 0 if KO
 	 *
 	 * @url		GET		{id}/representative
 	 *
