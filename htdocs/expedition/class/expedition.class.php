@@ -1796,7 +1796,9 @@ class Expedition extends CommonObject
 							// We increment stock of batches
 							// We use warehouse selected for each line
 							foreach ($lotArray as $lot) {
-								if (empty($lot->qty))	continue;
+								if (empty($lot->qty)) {
+									continue;
+								}
 								$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, (string) $lot->batch, '', 0, '', 0, (empty($obj->iskit) ? 1 : 0)); // Price is set to 0, because we don't want to see WAP changed
 								if ($result < 0) {
 									$error++;
