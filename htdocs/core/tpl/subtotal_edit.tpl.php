@@ -51,7 +51,7 @@ $line_options = array(
 );
 
 // Line type
-$line_type = $line->qty > 0 ? 'title' : 'subtotal';
+$line_type = $line->qty > 0 ? 'title' : ($line->qty < 0 ? 'subtotal' : 'text');
 
 print "<!-- BEGIN PHP TEMPLATE subtotal_edit.tpl.php -->\n";
 
@@ -125,18 +125,37 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 
 
 	if (!$situationinvoicelinewithparent) {
-		print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
-		$disabled = 0;
-		if ($line_type == 'subtotal') {
-			print ' readonly="readonly"';
-			$disabled = 1;
-		}
-		print '>';
-		if ($line_type == 'title') {
-			$predefinedphrases = $this->getPredefinedPhrases();  // @phan-suppress-current-line PhanUndeclaredMethod
-			if (!empty($predefinedphrases)) {
-				print $form->selectarray('line_predefinedphrase', $predefinedphrases, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+		if ($line_type == 'text') {
+			print '<textarea name="line_desc" class="marginrightonly" id="line_desc" rows="4" cols="40">';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print '</textarea>';
+
+			$predefinedtexts = $this->getPredefinedTexts();  // @phan-suppress-current-line PhanUndeclaredMethod
+			if (!empty($predefinedtexts)) {
+				$predefinedtextvalues = array();
+				$predefinedtextsmap = array();
+				foreach ($predefinedtexts as $rowid => $text) {
+					$predefinedtextvalues[$rowid] = $text['label'];
+					$predefinedtextsmap[$rowid] = $text['content'];
+				}
+				print '<script>var subtotalEditPredefinedTextsMap = ' . json_encode($predefinedtextsmap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+				print $form->selectarray('line_predefinedtext', $predefinedtextvalues, '', 1, 0, 0, 'onchange="var v = subtotalEditPredefinedTextsMap[jQuery(this).val()]; if (v !== undefined) { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+			}
+			$disabled = 0;
+		} else {
+			print '<input type="text" name="line_desc" class="marginrightonly" id="line_desc" value="';
+			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description . '"';
+			$disabled = 0;
+			if ($line_type == 'subtotal') {
+				print ' readonly="readonly"';
+				$disabled = 1;
+			}
+			print '>';
+			if ($line_type == 'title') {
+				$predefinedphrases = $this->getPredefinedPhrases();  // @phan-suppress-current-line PhanUndeclaredMethod
+				if (!empty($predefinedphrases)) {
+					print $form->selectarray('line_predefinedphrase', $predefinedphrases, '', 1, 0, 0, 'onchange="var v = jQuery(this).val(); if (v && v != \'-1\') { jQuery(\'#line_desc\').val(v); }"', 0, 0, 0, '', 'minwidth100');
+				}
 			}
 		}
 		$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
