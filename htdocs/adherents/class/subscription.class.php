@@ -518,9 +518,9 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.((int) $id);
+		$sql = "SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

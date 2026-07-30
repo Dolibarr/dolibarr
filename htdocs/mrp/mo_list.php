@@ -261,15 +261,17 @@ if (empty($reshook)) {
 							continue;
 						}
 						if (!empty($changeDate)) {
-							if ($action == 'changedatestart_confirm') {			// Test on permission not required
+							if ($action == 'changedatestart_confirm') { 		// Test on permission not required
+								// The start date can be set IF (the end date is empty OR the new date is BEFORE the existing end date).
 								if (empty($objMo->date_end_planned) || $newDate < $objMo->date_end_planned) {
 									$objMo->date_start_planned = $newDate;
 								} else {
 									setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 									break;
 								}
-							} elseif ($action == 'changedateend_confirm') {		// Test on permission not required
-								if ($newDate > $objMo->date_start_planned) {
+							} elseif ($action == 'changedateend_confirm') {	// Test on permission not required
+								// The end date can be set IF (the start date is empty OR the new date is AFTER the existing start date).
+								if (empty($objMo->date_start_planned) || $newDate > $objMo->date_start_planned) {
 									$objMo->date_end_planned = $newDate;
 								} else {
 									setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');

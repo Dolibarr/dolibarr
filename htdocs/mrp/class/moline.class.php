@@ -2,7 +2,7 @@
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
  * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -274,7 +274,7 @@ class MoLine extends CommonObjectLine
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array<string,string> $filter       	Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
+	 * @param  string|array<string,string|int> $filter       	Filter array. Example array('field'=>'valueforlike', ...)
 	 * @param  string      	$filtermode   	Filter mode (AND or OR)
 	 * @return MoLine[]|int                 	int <0 if KO, array of pages if OK
 	 */
@@ -298,12 +298,14 @@ class MoLine extends CommonObjectLine
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
-					if ($key == 't.rowid') {
+					if ($key == 't.rowid' || $key == 'fk_mo' || $key == 'origin_id') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
+					} elseif ($key == 'origin_type') {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->escape($value)."'";
 					} elseif (strpos($key, 'date') !== false) {
 						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
-						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike((string) $value))."%'";
 					}
 				}
 			}

@@ -2245,7 +2245,7 @@ if ($action == 'create' && $usercancreate) {
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->mode_reglement_id) ? $fk_account : $soc->fk_account;
 		$availability_id    = 0;
-		$shipping_method_id = $soc->shipping_method_id;
+		$shipping_method_id = empty($soc->shipping_method_id) ? $shipping_method_id : $soc->shipping_method_id;
 		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
 		//$remise_percent     = $soc->remise_percent;
@@ -2423,7 +2423,7 @@ if ($action == 'create' && $usercancreate) {
 		if (isModEnabled('shipping')) {
 			print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 			print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
-			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') != 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+			$form->selectShippingMethod(((GETPOSTISSET('shipping_method_id') && GETPOSTINT('shipping_method_id') > 0) ? GETPOST('shipping_method_id') : $shipping_method_id), 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');	// -1 is the "no value" placeholder for this select, not 0, so it must not override the fresh thirdparty default after a company change
 			print '</td></tr>';
 		}
 

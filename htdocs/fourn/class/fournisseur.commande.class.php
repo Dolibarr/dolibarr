@@ -1687,26 +1687,26 @@ class CommandeFournisseur extends CommonOrder
 						$line->subprice,
 						$line->qty,
 						$line->tva_tx,
-						$line->localtax1_tx,
-						$line->localtax2_tx,
+						$line->localtax1_tx ?? 0.0,
+						$line->localtax2_tx ?? 0.0,
 						$line->fk_product,
 						0,
-						$line->ref_fourn, // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
+						$line->ref_fourn ?? '', // $line->ref_fourn comes from field ref into table of lines. Value may ba a ref that does not exists anymore, so we first try with value of product
 						$line->remise_percent,
 						'HT',
 						0,
 						$line->product_type,
-						$line->info_bits,
+						$line->info_bits ?? 0,
 						0,
-						$line->date_start,
-						$line->date_end,
-						$line->array_options,
-						$line->fk_unit,
-						$line->multicurrency_subprice,  // pu_ht_devise
-						$line->origin,     // origin
-						$line->origin_id,  // origin_id
-						$line->rang,       // rang
-						$line->special_code
+						$line->date_start ?? null,
+						$line->date_end ?? null,
+						$line->array_options ?? [],
+						$line->fk_unit ?? null,
+						$line->multicurrency_subprice ?? 0,  // pu_ht_devise
+						$line->origin ?? '',     // origin
+						$line->origin_id ?? 0,  // origin_id
+						$line->rang ?? -1,       // rang
+						$line->special_code ?? 0
 					);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functional error
