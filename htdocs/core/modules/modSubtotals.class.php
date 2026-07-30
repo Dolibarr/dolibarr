@@ -99,16 +99,19 @@ class modSubtotals extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array(
 			'langs' => 'subtotals',
-			'tabname' => array("c_subtotals_phrases"),
-			'tablib' => array("SubtotalsPredefinedPhrases"),
-			'tabsql' => array('SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_phrases WHERE entity IN ('.getEntity('c_subtotals_phrases').')'),
-			'tabsqlsort' => array("label ASC"),
-			'tabfield' => array("code,label"),
-			'tabfieldvalue' => array("code,label"),
-			'tabfieldinsert' => array("code,label,entity"),
-			'tabrowid' => array("rowid"),
-			'tabcond' => array(isModEnabled('subtotals')),
-			'tabhelp' => array(array()),
+			'tabname' => array("c_subtotals_phrases", "c_subtotals_texts"),
+			'tablib' => array("SubtotalsPredefinedPhrases", "SubtotalsPredefinedTexts"),
+			'tabsql' => array(
+				'SELECT rowid, code, label, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_phrases WHERE entity IN ('.getEntity('c_subtotals_phrases').')',
+				'SELECT rowid, code, label, content, active, entity FROM '.MAIN_DB_PREFIX.'c_subtotals_texts WHERE entity IN ('.getEntity('c_subtotals_texts').')',
+			),
+			'tabsqlsort' => array("label ASC", "label ASC"),
+			'tabfield' => array("code,label", "code,label,content"),
+			'tabfieldvalue' => array("code,label", "code,label,content"),
+			'tabfieldinsert' => array("code,label,entity", "code,label,content,entity"),
+			'tabrowid' => array("rowid", "rowid"),
+			'tabcond' => array(isModEnabled('subtotals'), isModEnabled('subtotals')),
+			'tabhelp' => array(array(), array()),
 		);
 
 		// Array to add new pages in new tabs

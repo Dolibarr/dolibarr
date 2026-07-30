@@ -2983,7 +2983,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '<td class="'.$class.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->{$value}) ? $obj->{$value} : '').'" size="3" name="'. $value .'">';
 			print '</td>';
-		} elseif (in_array($value, array('libelle_facture'))) {
+		} elseif (in_array($value, array('libelle_facture', 'content'))) {
 			print '<td>';
 			$transfound = 0;
 			$transkey = '';
