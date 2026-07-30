@@ -77,6 +77,7 @@ CronType=工作類型
 CronType_method=PHP 類的調用方法
 CronType_command=外殼命令
 CronCannotLoadClass=無法加載類文件%s （使用類 %s）
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=類別文件 %s 已加載，但其中未找到物件 %s
 UseMenuModuleToolsToAddCronJobs=進入選單“<a href="%s"> 主頁 - 管理工具 - 計劃工作 </a> " 查看和編輯計劃的工作。
 JobDisabled=工作已停用

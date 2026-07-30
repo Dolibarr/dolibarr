@@ -4,89 +4,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=Partnerystės valdymas
+PartnershipDescription=Modulis Partnerystės valdymas
+PartnershipDescriptionLong= Modulis Partnerystės valdymas
+Partnership=Partnerystė
+Partnerships=Partnerystės
+AddPartnership=Pridėti partnerystę
+CancelPartnershipForExpiredMembers=Partnerystė: Atšaukti narių, kurių prenumeratos baigėsi, partnerystę
+PartnershipCheckBacklink=Partnerystė: patikrinkite nukreipiančią atgalinę nuorodą
 # Menu
-#
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=Nauja partnerystė
+NewPartnershipbyWeb=Jūsų partnerystės užklausa sėkmingai pridėta. Galbūt netrukus su jumis susisieksime...
+ListOfPartnerships=Partnerystės sąrašas
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-
-#
+PartnershipSetup=Partnerystės nustatymas
+PartnershipAbout=Apie partnerystę
+PartnershipAboutPage=Partnerystės puslapis apie
+partnershipforthirdpartyormember=Partnerio statusas turi būti nustatytas kaip „trečioji šalis“ arba „narys“
+PARTNERSHIP_IS_MANAGED_FOR=Partnerystė valdoma už
+PARTNERSHIP_BACKLINKS_TO_CHECK=Atgalinės nuorodos, kurias reikia patikrinti
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Dienų skaičius iki partnerystės statuso nutraukimo, kai prenumerata pasibaigė
+ReferingWebsiteCheck=Svetainės nuorodų patikrinimas
+ReferingWebsiteCheckDesc=Galite įjungti funkciją, kad patikrintumėte, ar jūsų partneriai savo svetainėse pridėjo atgalinę nuorodą į jūsų svetainių domenus.
+PublicFormRegistrationPartnerDesc=„Dolibarr“ gali pateikti jums viešą URL adresą / svetainę, kad išoriniai lankytojai galėtų pateikti užklausą dėl prisijungimo prie partnerystės programos.
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Ištrinti partnerystę
+PartnershipDedicatedToThisThirdParty=Partnerystė, skirta šiai trečiajai šaliai
+PartnershipDedicatedToThisMember=Šiam nariui skirta partnerystė
 DatePartnershipStart=Pradžios data
 DatePartnershipEnd=Pabaigos data
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Atmetimo priežastis
+ReasonDeclineOrCancel=Atsisakymo arba atšaukimo priežastis
+PartnershipAlreadyExist=Partnerystė jau egzistuoja
+ManagePartnership=Tvarkyti partnerystę
+BacklinkNotFoundOnPartnerWebsite=Partnerio svetainėje nerasta atgalinė nuoroda
+ConfirmClosePartnershipAsk=Ar tikrai norite nutraukti šią partnerystę?
+PartnershipType=Partnerystės tipas
+PartnershipRefApproved=Partnerystė %s patvirtinta
+KeywordToCheckInWebsite=Jei norite patikrinti, ar kiekvieno partnerio svetainėje yra tam tikras raktinis žodis, apibrėžkite jį čia.
 PartnershipDraft=Projektas
-PartnershipAccepted=Accepted
+PartnershipAccepted=Priimta
 PartnershipRefused=Atmestas
 PartnershipCanceled=Atšauktas
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Partneriai yra
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerystė netrukus bus nutraukta
+SendingEmailOnPartnershipRefused=Partnerystė atmesta
+SendingEmailOnPartnershipAccepted=Partnerystė priimta
+SendingEmailOnPartnershipCanceled=Partnerystė nutraukta
+YourPartnershipWillSoonBeCanceledTopic=Partnerystė netrukus bus nutraukta
+YourPartnershipRefusedTopic=Partnerystė atmesta
+YourPartnershipAcceptedTopic=Partnerystė priimta
+YourPartnershipCanceledTopic=Partnerystė nutraukta
+YourPartnershipWillSoonBeCanceledContent=Norime jus informuoti, kad mūsų partnerystė netrukus bus nutraukta (negavome atnaujinimo arba neįvykdytos partnerystės sąlygos). Susisiekite su mumis, jei gavote šį pranešimą dėl klaidos.
+YourPartnershipRefusedContent=Norime pranešti, kad jūsų partnerystės prašymas buvo atmestas. Neįvykdytos būtinos sąlygos. Jei reikia daugiau informacijos, susisiekite su mumis.
+YourPartnershipAcceptedContent=Norime pranešti, kad jūsų partnerystės prašymas buvo patvirtintas.
+YourPartnershipCanceledContent=Norime pranešti, kad mūsų partnerystė nutraukta. Jei reikia daugiau informacijos, susisiekite su mumis.
+CountLastUrlCheckError=Number of URL check errors
+LastCheckBacklink=Paskutinio URL patikrinimo data
+NewPartnershipRequest=Nauja partnerystės užklausa
+NewPartnershipRequestDesc=Ši forma leidžia jums pateikti užklausą dėl prisijungimo prie vienos iš mūsų partnerystės programų. Jei jums reikia pagalbos pildant šią formą, susisiekite el. paštu <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Šiame puslapyje turi būti bent viena nuoroda į vieną iš šių domenų: %s
+IPOfApplicant=Pareiškėjo IP
+PartnershipToReopen=Norėdami vėl atidaryti
+PartnershipConfirmReOpenAsk=Ar tikrai norite iš naujo atidaryti šią partnerystę <b> %s</b>?

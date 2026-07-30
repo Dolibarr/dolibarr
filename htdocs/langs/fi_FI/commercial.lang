@@ -102,3 +102,4 @@ SignedReceiverOnline=Kolmannen osapuolen allekirjoittama verkossa
 SignedAll=Kaikkien osapuolten allekirjoittama
 SignStatus=Allekirjoituksen tila
 DocumentSigned=Dokumentti allekirjoitettu
+DocumentUnsigned=Document unsigned

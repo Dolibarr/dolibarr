@@ -6,6 +6,7 @@ TotalMargin=Total Marjă
 MarginOnProducts=Marjă / Produse
 MarginOnServices=Marjă / Servicii
 MarginRate=Cotă Marjă
+ModifyMarginRates=Modificare marje
 MarkRate=Cotă marcă
 DisplayMarginRates=Afişează cotă marjă
 DisplayMarkRates=Afişează cotă marcă
@@ -30,14 +31,14 @@ UseDiscountOnTotal=Pe subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiţi dacă discount-ul global e tratat ca un produs, serviciu, sau numai pe total la calcularea marjei.
 MARGIN_TYPE=Prețul de achiziţie/cost sugerat implicit pentru calcularea marjei
 MargeType1=Marja la prețul cel mai bun al furnizororului
-MargeType2=Marja la prețul mediu ponderat (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Marja pe prețul de cost
-MarginTypeDesc=* Marja la prețul cel mai bun de cumpărare = Prețul de vânzare - Cel mai bun preț al furnizorului definit pe cardul de produs <br> * Marja pe prețul mediu ponderat (WAP) = Prețul de vânzare - prețul mediu ponderat al produsului(WAP)sau cel mai bun preț al furnizorului dacă WAP nu este definit încă <br> Marja pe prețul de preț = prețul de vânzare - prețul de cost definit pe cardul de produs sau WAP dacă prețul de cost nu este definit sau cel mai bun preț al vânzătorului dacă WAP nu este încă definit
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Preţ de cost
 UnitCharges=Cheltuieli unitare
 Charges=Cheltuieli
 AgentContactType=Tip contact agent comercial
-AgentContactTypeDetails= Definiți ce tip de contact (legat pe facturi) va fi utilizat pentru raportarea marjei pentru fiecare persoană de contact/adresă. Rețineți că citirea statisticilor referitoare la un contact nu este fiabilă, deoarece în cele mai multe cazuri, contactul nu poate fi definit explicit pe facturi.
+AgentContactTypeDetails=Definește ce tip de contact (asociat la facturi) va fi utilizat pentru raportul de marjă per contact/adresă. Reține că citirea statisticilor despre un contact nu este de încredere, deoarece în majoritatea cazurilor este posibil ca contactul să nu fie definit în mod explicit pe facturi.
 rateMustBeNumeric=Cota trebuie să fie numerică
 markRateShouldBeLesserThan100=Cota mărcii trebuie să fie mai mică de 100
 ShowMarginInfos=Arată informaţii marjă

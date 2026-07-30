@@ -72,7 +72,8 @@ ExpenseReportRulesDesc=செலவு அறிக்கைகளுக்க�
 ExpenseReportWaitingForApproval=ஒப்புதலுக்காக புதிய செலவு அறிக்கை சமர்ப்பிக்கப்பட்டுள்ளது
 ExpenseReportWaitingForApprovalMessage=புதிய செலவு அறிக்கை சமர்ப்பிக்கப்பட்டு, ஒப்புதலுக்காகக் காத்திருக்கிறது. <br> - பயனர்: %s <br> - காலம்: %s <br> சரிபார்க்க இங்கே கிளிக் செய்யவும்: a0ecb2ec87f49f
 ExpenseReportWaitingForReApproval=மறு ஒப்புதலுக்காக செலவு அறிக்கை சமர்ப்பிக்கப்பட்டுள்ளது
-ExpenseReportWaitingForReApprovalMessage=செலவு அறிக்கை சமர்ப்பிக்கப்பட்டு, மறு ஒப்புதலுக்காகக் காத்திருக்கிறது. <br> %s, இந்த காரணத்திற்காக செலவு அறிக்கையை அங்கீகரிக்க மறுத்துவிட்டீர்கள்: %s. <br> புதிய பதிப்பு முன்மொழியப்பட்டு உங்கள் ஒப்புதலுக்காகக் காத்திருக்கிறது. <br> - பயனர்: %s <br> - காலம்: %s <br> சரிபார்க்க இங்கே கிளிக் செய்யவும்: a0ecb2ec87f49f
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Click here to validate: %s
 ExpenseReportsIk=மைலேஜ் கட்டணங்களின் கட்டமைப்பு
 ExpenseReportsRules=செலவு அறிக்கை விதிகள்
 ExpenseReportsToApprove=அனுமதிக்க வேண்டிய செலவு அறிக்கைகள்
@@ -120,7 +121,6 @@ ValideTrip=செலவு அறிக்கையை அங்கீகரி�
 ExpenseReportPayments=Expense report payments
 TaxUndefinedForThisCategory = Tax is undefined for this category
 errorComputeTtcOnMileageExpense=Error on computing mileage expense
-ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=காலை உணவு
@@ -156,3 +156,6 @@ TF_PEAGE=டோல்
 TF_TAXI=டாக்ஸி
 TF_TRAIN=தொடர்வண்டி
 TF_TRIP=போக்குவரத்து
+FailedToSetPaid=Failed to set as paid
+FailedToSetToCancel=Failed to cancel
+NobodyHasPermissionToValidateExpenseReport=Nobody has permission to validate expensereport
