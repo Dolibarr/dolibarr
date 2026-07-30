@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,6 +244,51 @@ if ($line->qty > 0) { ?>
 		echo '</td>';
 	}
 	?>
+<?php } elseif ($line->qty == 0) {
+	// Base colspan if there is no module activated to display line correctly
+	$colspan = 4;  // linecoldescription, linecolvat, linecoluht, linecolqty
+
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
+		$colspan++;
+	}
+	// Handling colspan if MAIN_NO_INPUT_PRICE_WITH_TAX conf is enabled
+	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
+	if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$colspan++;
+	}
+
+	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		$colspan += 2;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$colspan += 1;
+		}
+	}
+
+	// Handling colspan if margin module is enabled
+	if (!empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')) && isModEnabled('margin') && empty($user->socid)) {
+		if ($user->hasRight('margins', 'creer')) {
+			$colspan += 1;
+		}
+		if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
+			$colspan += 1;
+		}
+		if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
+			$colspan += 1;
+		}
+	}
+
+	// Handling colspan if PRODUCT_USE_UNITS conf is enabled
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+		$colspan += 1;
+	}
+	// Handling colspan if supplier object
+	if (in_array($object->element, ['supplier_proposal'])) {
+		$colspan += 1;
+	}
+	?>
+	<td class="linecollabel" colspan="<?php echo $colspan ?>"><?php echo nl2br($line->desc); ?></td>
 <?php }
 
 if ($this->status == 0) {
