@@ -76,6 +76,29 @@ if ($type == 'title') {
 		array('type' => 'select', 'name' => 'subtotaltitleline', 'label' => $langs->trans("CorrespondingTitleLine"), 'values' => $titles, 'select_show_empty' => 0),
 		array('type' => 'checkbox', 'value' => true, 'name' => 'subtotalshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 	);
+} elseif ($type == 'text') {
+	$formquestion = array();
+
+	$predefinedtexts = $object->getPredefinedTexts();
+	if (!empty($predefinedtexts)) {
+		$predefinedtextvalues = array();
+		$predefinedtextsmap = array();
+		foreach ($predefinedtexts as $rowid => $text) {
+			$predefinedtextvalues[$rowid] = $text['label'];
+			$predefinedtextsmap[$rowid] = $text['content'];
+		}
+		print '<script>var subtotalPredefinedTextsMap = ' . json_encode($predefinedtextsmap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';</script>';
+		$formquestion[] = array(
+			'type' => 'select',
+			'name' => 'subtotalpredefinedtext',
+			'label' => $langs->trans("PredefinedText"),
+			'values' => $predefinedtextvalues,
+			'select_show_empty' => 1,
+			'moreattr' => 'onchange="var v = subtotalPredefinedTextsMap[jQuery(this).val()]; if (v !== undefined) { jQuery(\'#subtotaltextcontent\').val(v); }"',
+		);
+	}
+
+	$formquestion[] = array('type' => 'textarea', 'name' => 'subtotaltextcontent', 'label' => $langs->trans("SubtotalTextContent"));
 }
 
 $page = $_SERVER["PHP_SELF"];
