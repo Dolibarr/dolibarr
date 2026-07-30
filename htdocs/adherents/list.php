@@ -569,7 +569,7 @@ if (empty($reshook)) {
 									$error_msg .= " ".implode(", ", $thirdparty->errors);
 								}
 								if (empty($thirdparty->error) && empty($thirdparty->errors)) {
-									$error_msg .= " Unbekannter Fehler (möglicherweise Duplikat oder fehlende Pflichtfelder)";
+									$error_msg .= $langs->trans(MembersMassActionDebitNotesErrorUnknown);
 								}
 								setEventMessages($error_msg, null, 'errors');
 								dol_syslog("Failed to create thirdparty for member ".$tmpmember->id.": ".$error_msg, LOG_ERR);
@@ -671,7 +671,7 @@ if (empty($reshook)) {
 						} else {
 							// Debug: No thirdparty or no rights
 							if ($target_socid <= 0) {
-								setEventMessages("Konnte keine Firma für Mitglied ".$tmpmember->getFullName($langs)." erstellen oder verknüpfen - keine Rechnung erstellt", null, 'warnings');
+								setEventMessages($langs->trans(MembersMassActionDebitNotesErrorCreateOrConnect)." ".$tmpmember->getFullName($langs)." ".$langs->trans(MembersMassActionDebitNotesErrorCreateOrConnect2), null, 'warnings');
 							} else {
 								setEventMessages("Keine Berechtigung zur Rechnungserstellung", null, 'errors');
 							}
@@ -1271,7 +1271,7 @@ if ($massaction == 'createsubscription') {
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'other', 'value' => ($different_amounts ? $amount_display.$member_details.$hidden_amounts : '<strong>'.price($first_amount, 0, '', 0).' €</strong> (pro Mitglied)'.$hidden_amounts)),
 		// New fields for designation and custom dates
-		array('label' => $langs->trans("MembersMassActionDebitNotesCaption"), 'type' => 'text', 'name' => 'subscription_label', 'value' => dol_print_date($now, '%Y-%m'), 'size' => 20),
+		array('label' => $langs->trans("MembersMassActionDebitNotesFeeCaption"), 'type' => 'text', 'name' => 'subscription_label', 'value' => dol_print_date($now, '%Y-%m'), 'size' => 20),
 		array('label' => $langs->trans("MembersMassActionDebitNotesFeeIntervalStart"), 'type' => 'other', 'value' => $date_start_inputs),
 		array('label' => $langs->trans("MembersMassActionDebitNotesFeeIntervalEnd"), 'type' => 'other', 'value' => $date_end_inputs),
 		// Info about automatic invoice creation

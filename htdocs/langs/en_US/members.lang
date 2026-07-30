@@ -282,3 +282,6 @@ MembersMassActionDebitNotesFeeCaption=Caption (e.g. 2026-01)
 MembersMassActionDebitNotesFeeIntervalStart=Fee Intervall Start (TT/MM/JJJJ)
 MembersMassActionDebitNotesFeeIntervalEnd=Fee Intervall End (TT/MM/JJJJ)
 MembersMassActionDebitNotesFeeCreate=Create Fee
+MembersMassActionDebitNotesErrorUnknown= Unknown Error
+MembersMassActionDebitNotesErrorCreateOrConnect=Couldn'r find a company for Member
+MembersMassActionDebitNotesErrorCreateOrConnect2=create or link - couldn't create fee

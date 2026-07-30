@@ -280,3 +280,6 @@ MembersMassActionDebitNotesFeeCaption=Bezeichnung (z.B. 2026-01)
 MembersMassActionDebitNotesFeeIntervalStart=Beitragszeitraum Start (TT/MM/JJJJ)
 MembersMassActionDebitNotesFeeIntervalEnd=Beitragszeitraum Ende (TT/MM/JJJJ)
 MembersMassActionDebitNotesFeeCreate=Rechnung erstellen
+MembersMassActionDebitNotesErrorUnknown= Unbekannter Fehler (möglicherweise Duplikat oder fehlende Pflichtfelder)
+MembersMassActionDebitNotesErrorCreateOrConnect=Konnte keine Firma für Mitglied
+MembersMassActionDebitNotesErrorCreateOrConnect2=erstellen oder verknüpfen - keine Rechnung erstellt
