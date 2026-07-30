@@ -98,3 +98,4 @@ phpstan_custom.neon
 
 # Superpowers subagent-driven-development scratch workspace
 /.superpowers
+/docs
