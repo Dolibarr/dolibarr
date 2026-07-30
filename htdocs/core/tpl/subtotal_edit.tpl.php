@@ -127,7 +127,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	if (!$situationinvoicelinewithparent) {
 		if ($line_type == 'text') {
 			print '<textarea name="line_desc" class="marginrightonly" id="line_desc" rows="4" cols="40">';
-			print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+			print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
 			print '</textarea>';
 
 			$predefinedtexts = $this->getPredefinedTexts();  // @phan-suppress-current-line PhanUndeclaredMethod
