@@ -6,7 +6,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2026  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023-2026  William Mead            <william@m34d.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -1555,7 +1555,7 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams";
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams, special_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
@@ -1574,8 +1574,14 @@ class Fichinter extends CommonObject
 				$line->fk_fichinter = $objp->fk_fichinter;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
-				//For invoicing we calculing hours
-				$line->qty = round($objp->duree / 3600, 2);
+				$line->special_code = (int) ($objp->special_code ?? 0);
+				if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+					// Subtotals module lines store their depth (not a real duration) in duree — do not convert to hours
+					$line->qty = (int) $objp->duree;
+				} else {
+					//For invoicing we calculing hours
+					$line->qty = round($objp->duree / 3600, 2);
+				}
 				$line->date	= $this->db->jdate($objp->date);
 				$line->datei = $this->db->jdate($objp->date);	// For backward compatibility
 				$line->rang	= $objp->rang;
