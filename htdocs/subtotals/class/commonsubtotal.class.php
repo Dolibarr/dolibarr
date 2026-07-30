@@ -870,6 +870,31 @@ trait CommonSubtotal
 	}
 
 	/**
+	 * Retrieve the list of active predefined texts usable as content of a free-text line.
+	 *
+	 * @return array<int,array{label:string,content:string}>	Array keyed by rowid, each entry has a 'label' and 'content', sorted alphabetically by label
+	 *
+	 * @phan-suppress PhanUndeclaredProperty
+	 */
+	public function getPredefinedTexts()
+	{
+		$texts = array();
+
+		$sql = "SELECT rowid, label, content FROM ".MAIN_DB_PREFIX."c_subtotals_texts";
+		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_subtotals_texts').")";
+		$sql .= " ORDER BY label ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$texts[(int) $obj->rowid] = array('label' => $obj->label, 'content' => $obj->content);
+			}
+		}
+
+		return $texts;
+	}
+
+	/**
 	 * Returns an array with the IDs of the line that we don't need to show to avoid empty blocks
 	 *
 	 * @return array<int>	$total_ht
