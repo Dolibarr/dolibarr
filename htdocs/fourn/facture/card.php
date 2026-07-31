@@ -74,6 +74,9 @@ if (isModEnabled('variants')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+// Load shipping handler
+require_once DOL_DOCUMENT_ROOT.'/core/lib/handlers/shipping_handler.php';
+
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
 if (isModEnabled('incoterm')) {
@@ -130,6 +133,10 @@ if (!empty($user->socid)) {
 
 $isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
+
+// Load extrafields
+$object->fetch_optionals();
+
 
 // Common permissions
 $usercanread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
@@ -502,6 +509,25 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'set_tracking' && $usercancreate) {
+		// Save tracking information using business method
+		$tracking_awb = GETPOST('tracking_awb', 'alpha');
+		$tracking_link = GETPOST('tracking_link', 'alpha');
+		$carrier_code = GETPOST('carrier_code', 'alpha');
+
+		if ($object->setTrackingInfo($tracking_awb, $carrier_code, $tracking_link)) {
+			// Update the object to save extrafields (no check on order value as per requirements)
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		} else {
+			setEventMessages($langs->trans('ErrorFailedToSetTrackingInfo'), null, 'errors');
+		}
+
+		// Redirect back to the card
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+		exit;
 	} elseif ($action == 'setdatef' && $usercancreate) {
 		$newdate = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'), 'tzserver');
 		if ($newdate > (dol_now('tzuserrel') + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
@@ -3736,6 +3762,79 @@ if ($action == 'create') {
 				print "</td></tr>";
 			}
 
+			//
+			// Tracking Information
+			//
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+			print '<tr><td colspan="2"><hr></td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("TrackingNumber").'</td><td>';
+
+			if ($action != 'edit_tracking') {
+				// Display tracking information if it exists
+				$tracking_awb = $object->getTrackingAWB();
+				$tracking_link = $object->getTrackingUrl();
+				$carrier_code = $object->getShippingMethodCode();
+
+				if (!empty($tracking_awb) || !empty($tracking_link)) {
+					if (!empty($tracking_link)) {
+						print '<a href="'.dol_escape_htmltag($tracking_link).'" target="_blank">';
+					}
+					print dol_escape_htmltag($tracking_awb);
+					if (!empty($tracking_link)) {
+						print '</a>';
+					}
+					if (!empty($carrier_code)) {
+						print ' ('.$langs->trans('SendingMethod').': '.dol_escape_htmltag($carrier_code).')';
+					}
+				} else {
+					print $langs->trans("NotDefined");
+				}
+
+				// Add edit link if user has permission
+				if ($usercancreate) {
+					print ' <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_tracking&token='.newToken().'" class="editfielda">'.img_edit($langs->trans('SetTracking'), 1).'</a>';
+				}
+			} else {
+				// Display tracking edit form
+				$tracking_info = $object->getTrackingInfo();
+				$tracking_awb = GETPOST('tracking_awb', 'alpha') ?: $tracking_info['awb'];
+				$tracking_link = GETPOST('tracking_link', 'alpha') ?: $tracking_info['tracking_link'];
+				$carrier_code = GETPOST('carrier_code', 'alpha') ?: $tracking_info['carrier_code'];
+
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="set_tracking">';
+
+				// ShippingMethod selection
+				print '<table class="nobordernopadding"><tr><td>';
+				print '<select name="carrier_code" class="flat minwidth100">';
+				print '<option value="">-- '.$langs->trans("Select").' --</option>';
+				$carriers = get_available_shipping_methods($object);
+				foreach ($carriers as $key => $carrier) {
+					$selected = ($carrier_code == $carrier['code']) ? ' selected' : '';
+					print '<option value="'.$carrier['code'].'"'.$selected.'>'.$carrier['name'].'</option>';
+				}
+				print '</select>';
+				print '</td>';
+
+				// AWB number
+				print '<td class="left">';
+				print '<input type="text" name="tracking_awb" value="'.dol_escape_htmltag($tracking_awb).'" size="20" placeholder="'.$langs->trans('TrackingNumber').'">';
+				print '</td>';
+
+				// Submit button
+				print '<td class="left">';
+				print '<input type="submit" class="button button-edit smallpaddingimp valignmiddle" value="'.$langs->trans('Modify').'">';
+				print '</td></tr></table>';
+
+				// Tracking link (optional)
+				print '<input type="text" name="tracking_link" value="'.dol_escape_htmltag($tracking_link).'" size="50" placeholder="'.$langs->trans('TrackingLink').'">';
+
+				print '</form>';
+			}
+			print '</td></tr>';
+
 
 			// Other attributes. Fields from hook formObjectOptions and Extrafields.
 			$cols = 2;
@@ -3743,6 +3842,7 @@ if ($action == 'create') {
 				$disableedit = 1;
 				$disableremove = 1;
 			}
+
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			print '</table>';

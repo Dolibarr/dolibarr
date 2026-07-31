@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.orderline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/traits/trackingtrait.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
@@ -54,7 +55,7 @@ if (isModEnabled('productbatch')) {
  */
 class CommandeFournisseur extends CommonOrder
 {
-	use CommonSubtotal;
+	use CommonSubtotal, TrackingTrait;
 
 	/**
 	 * @var string ID to identify managed object
@@ -1548,7 +1549,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$newnoteprivate = $this->note_private;
 			if ($comment) {
-				$newnoteprivate = dol_concatdesc($newnoteprivate, $langs->trans("Comment").': '.$comment);
+				$newnoteprivate = dol_concatdesc((string) $newnoteprivate, $langs->trans("Comment").': '.$comment);
 			}
 
 			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
@@ -1662,8 +1663,8 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
 		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "NULL");
-		$sql .= ", '".$this->db->escape($this->note_private)."'";
-		$sql .= ", '".$this->db->escape($this->note_public)."'";
+		$sql .= ", ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');
+		$sql .= ", ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');
 		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");

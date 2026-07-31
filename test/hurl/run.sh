@@ -7,6 +7,12 @@
 MYDIR=$(dirname "$(realpath "$0")")
 cd "${MYDIR}" || exit 100
 
+# Allow override of hurl command
+: "${HURL:=hurl}"
+# Minimum required hurl version
+HURL_MIN_VERSION="7.1.0"
+HURL_INSTALL_URL="https://hurl.dev/docs/installation.html"
+
 # Function to display help message
 display_help() {
 	cat <<EOHELP
@@ -42,6 +48,85 @@ Examples:
   $0 setup_modules status
 EOHELP
 }
+
+# shellcheck disable=SC2016
+
+install_help() {
+	HURL_INSTALL_URL="https://hurl.dev/docs/installation.html"
+	print_error "hurl not found. See installation instructions: ${HURL_INSTALL_URL}"
+
+	case "$(uname -s)" in
+		Linux*)
+			ID=unknown
+			if [ -f /etc/os-release ]; then
+				# shellcheck disable=1091
+				. /etc/os-release
+			fi
+			case "${ID}" in
+				ubuntu)
+					echo 'For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl'
+					echo '    VERSION='"$HURL_MIN_VERSION"
+					echo '    sudo apt-add-repository -y ppa:lepapareil/hurl'
+					# shellcheck disable=SC2016
+					echo '    sudo apt install hurl="${VERSION}*"'
+					;;
+				debian)
+					echo 'For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release.'
+					echo '    VERSION='"$HURL_MIN_VERSION"
+					# shellcheck disable=SC2016
+					echo '    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb'
+					# shellcheck disable=SC2016
+					echo '    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb'
+					;;
+				alpine)
+					echo 'For Alpine, Hurl is available on testing channel.'
+					echo '    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl'
+					;;
+				arch)
+					echo 'For Arch Linux / Manjaro, Hurl is available on extra channel.'
+					echo '    pacman -Sy hurl'
+					;;
+				*)
+					echo 'On Linux, try:'
+					echo '    INSTALL_DIR=/tmp'
+					echo '    VERSION='"$HURL_MIN_VERSION"
+					# shellcheck disable=SC2016
+					echo '    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}'
+					# shellcheck disable=SC2016
+					echo '    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH'
+					;;
+			esac
+			;;
+		Darwin*)
+			echo "On macOS, try:"
+			echo "    brew install hurl"
+			;;
+		CYGWIN*|MINGW*|MSYS*)
+			echo "On Windows (with Chocolatey), try:"
+			echo "    choco install hurl"
+			;;
+		*)
+			echo "On other systems, try:"
+			echo "    See installation instructions: ${HURL_INSTALL_URL}"
+			;;
+	esac
+}
+
+check_version() {
+	# Check hurl version
+	HURL_VERSION=$("${HURL}" --version 2>/dev/null | head -1 | awk '{print $2}')
+	if [ -n "$HURL_VERSION" ]; then
+		# Compare versions using sort -V
+		if ! printf '%s\n%s\n' "$HURL_MIN_VERSION" "$HURL_VERSION" | sort -V -C; then
+			install_help
+			print_warning "hurl version ${HURL_VERSION} found, but minimum version ${HURL_MIN_VERSION} is recommended. Tests will still run."
+		fi
+	else
+		print_warning "Could not determine hurl version. Minimum version ${HURL_MIN_VERSION} is recommended."
+	fi
+
+}
+
 
 if [[ -n "${GITHUB_WORKSPACE}" ]]; then
 	# Github compatible messages
@@ -132,63 +217,13 @@ done
 
 echo
 echo "----- Run hurl test on APIs ---"
-if ! command -v hurl &> /dev/null; then
-	HURL_INSTALL_URL="https://hurl.dev/docs/installation.html"
-	print_error "hurl not found. See installation instructions: ${HURL_INSTALL_URL}"
-
-	case "$(uname -s)" in
-		Linux*)
-			ID=unknown
-			if [ -f /etc/os-release ]; then
-				# shellcheck disable=1091
-				. /etc/os-release
-			fi
-			case "${ID}" in
-				ubuntu)
-					echo 'For Ubuntu >=18.04, Hurl can be installed from ppa:lepapareil/hurl'
-					echo '    VERSION=7.0.0'
-					echo '    sudo apt-add-repository -y ppa:lepapareil/hurl'
-					echo '    sudo apt install hurl="${VERSION}*"'
-					;;
-				debian)
-					echo 'For Debian >=12, Hurl can be installed using a binary .deb file provided in each Hurl release.'
-					echo '    VERSION=7.0.0'
-					echo '    curl --location --remote-name https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl_${VERSION}_amd64.deb'
-					echo '    sudo apt update && sudo apt install ./hurl_${VERSION}_amd64.deb'
-					;;
-				alpine)
-					echo 'For Alpine, Hurl is available on testing channel.'
-					echo '    apk add --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing hurl'
-					;;
-				arch)
-					echo 'For Arch Linux / Manjaro, Hurl is available on extra channel.'
-					echo '    pacman -Sy hurl'
-					;;
-				*)
-					echo 'On Linux, try:'
-					echo '    INSTALL_DIR=/tmp'
-					echo '    VERSION=7.0.0'
-					echo '    curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/${VERSION}/hurl-${VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xvz -C ${INSTALL_DIR}'
-					echo '    export PATH=${INSTALL_DIR}/hurl-${VERSION}-x86_64-unknown-linux-gnu/bin:$PATH'
-					;;
-			esac
-			;;
-		Darwin*)
-			echo "On macOS, try:"
-			echo "    brew install hurl"
-			;;
-		CYGWIN*|MINGW*|MSYS*)
-			echo "On Windows (with Chocolatey), try:"
-			echo "    choco install hurl"
-			;;
-		*)
-			echo "On other systems, try:"
-			echo "    See installation instructions: ${HURL_INSTALL_URL}"
-			;;
-	esac
+if ! command -v "${HURL}" &> /dev/null; then
+	install_help
 	print_error "The command hurl must be available."
 	exit 1
 fi
+
+check_version
 
 # Build the find command for the tests that do not require authentication
 find_args=("api/" "gui/" "public/" "-type" "f" "-iwholename" "*/00*.hurl")
@@ -215,9 +250,19 @@ if [[ -n "${exclude_patterns[*]}" ]]; then
 fi
 
 print_info "1. Running tests (API,GUI,public) that do not require authentication"
+# First check if any test files exist
 # shellcheck disable=SC2086
-if ! find "${find_args[@]}" -exec hurl ${VERBOSE} --variable "hostnport=${hostnport}" --test "{}" +; then
-	print_warning "1. No tests found or failed to run tests that do not require authentication."
+mapfile -t TEST_FILES < <(find "${find_args[@]}" -print)
+if [ ${#TEST_FILES[@]} -eq 0 ]; then
+	print_warning "1. No tests found to run (API,GUI,public) that do not require authentication."
+else
+	# shellcheck disable=SC2086
+	${HURL} ${VERBOSE} --variable "hostnport=${hostnport}" --test "${TEST_FILES[@]}"
+	HURL_EXIT_CODE=$?
+	if [ ${HURL_EXIT_CODE} -ne 0 ]; then
+		print_error "1. Tests (API,GUI,public) that do not require authentication failed with exit code ${HURL_EXIT_CODE}."
+		exit ${HURL_EXIT_CODE}
+	fi
 fi
 
 # Now we get ready to run tests that do require authentication
@@ -315,9 +360,19 @@ else
 	fi
 
 	print_info "2.a. Running API tests that do require authentication"
+	# First check if any test files exist
 	# shellcheck disable=SC2086
-	if ! find "${find_args[@]}" -exec hurl ${VERBOSE} --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "{}" +; then
-		print_warning "2.a. No tests found or failed to run API tests that do require authentication."
+	mapfile -t TEST_FILES < <(find "${find_args[@]}" -print)
+	if [ ${#TEST_FILES[@]} -eq 0 ]; then
+		print_warning "2.a. No API tests found that require authentication."
+	else
+		# shellcheck disable=SC2086
+		${HURL} ${VERBOSE} --variable "hostnport=${hostnport}" --header "${DOLAPIKEY}" --test "${TEST_FILES[@]}"
+		HURL_EXIT_CODE=$?
+		if [ ${HURL_EXIT_CODE} -ne 0 ]; then
+			print_error "2.a. API tests that require authentication failed with exit code ${HURL_EXIT_CODE}."
+			exit ${HURL_EXIT_CODE}
+		fi
 	fi
 fi
 
@@ -367,7 +422,17 @@ if [[ -n "${exclude_patterns[*]}" ]]; then
 fi
 
 print_info "2.b. Running GUI tests that do require authentication"
+# First check if any test files exist
 # shellcheck disable=SC2086
-if ! find "${find_args[@]}" -exec hurl ${VERBOSE} --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "{}" +; then
-	print_warning "2.b. No tests found or failed to run GUI tests that do require authentication."
+mapfile -t TEST_FILES < <(find "${find_args[@]}" -print)
+if [ ${#TEST_FILES[@]} -eq 0 ]; then
+	print_warning "2.b. No GUI tests found that require authentication."
+else
+	# shellcheck disable=SC2086
+	${HURL} ${VERBOSE} --variable "hostnport=${hostnport}" --cookie "${COOKIEJAR}" --test "${TEST_FILES[@]}"
+	HURL_EXIT_CODE=$?
+	if [ ${HURL_EXIT_CODE} -ne 0 ]; then
+		print_error "2.b. GUI tests that require authentication failed with exit code ${HURL_EXIT_CODE}."
+		exit ${HURL_EXIT_CODE}
+	fi
 fi

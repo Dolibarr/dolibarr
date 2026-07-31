@@ -88,6 +88,50 @@ if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
+// Load shipping handler
+require_once DOL_DOCUMENT_ROOT.'/core/lib/handlers/shipping_handler.php';
+
+/**
+ * Sync tracking information from supplier order to linked invoices
+ * @param CommandeFournisseur $order The supplier order object
+ * @param string $tracking_awb The AWB/tracking number
+ * @param string $tracking_link The tracking link
+ * @param string $carrier_code The carrier code
+ * @return void
+ */
+function sync_tracking_to_invoices($order, $tracking_awb, $tracking_link, $carrier_code)
+{
+	global $db, $langs, $user;
+
+	// Get linked invoices
+	$order->fetchObjectLinked();
+
+	if (!empty($order->linkedObjectsIds['invoice_supplier'])) {
+		foreach ($order->linkedObjectsIds['invoice_supplier'] as $invoice_id) {
+			$invoice = new FactureFournisseur($db);
+			if ($invoice->fetch($invoice_id) > 0) {
+				// Check if invoice already has tracking info
+				$invoice_info = $invoice->getTrackingInfo();
+				$invoice_awb = $invoice_info['awb'];
+				$invoice_link = $invoice_info['tracking_link'];
+				$invoice_carrier = $invoice_info['carrier_code'];
+
+				// If invoice has different tracking info, notify user
+				if (!empty($invoice_awb) && $invoice_awb != $tracking_awb) {
+					setEventMessages($langs->trans('InvoiceHasDifferentTracking', $invoice->ref), null, 'warnings');
+					continue;
+				}
+
+				// If invoice has empty tracking info, update it
+				if (empty($invoice_awb) && empty($invoice_link) && empty($invoice_carrier)) {
+					if ($invoice->setTrackingInfo($tracking_awb, $carrier_code, $tracking_link)) {
+						$invoice->update($user);
+					}
+				}
+			}
+		}
+	}
+}
 
 // Get Parameters
 $action = GETPOST('action', 'alpha');
@@ -138,6 +182,8 @@ if ($id > 0 || !empty($ref)) {
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
 	}
+	// Load extrafields
+	$object->fetch_optionals();
 } elseif (!empty($socid) && $socid > 0) {
 	$object->socid = $socid;
 	$ret = $object->fetch_thirdparty();
@@ -414,6 +460,31 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+
+	// Tracking information actions
+	if ($action == 'set_tracking' && $usercancreate) {
+		// Save tracking information using business method
+		$tracking_awb = GETPOST('tracking_awb', 'alpha');
+		$tracking_link = GETPOST('tracking_link', 'alpha');
+		$carrier_code = GETPOST('carrier_code', 'alpha');
+
+		if ($object->setTrackingInfo($tracking_awb, $carrier_code, $tracking_link)) {
+			// Update the object
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				// Sync tracking info to linked invoices
+				sync_tracking_to_invoices($object, $tracking_awb, $tracking_link, $carrier_code);
+			}
+		} else {
+			setEventMessages($langs->trans('ErrorFailedToSetTrackingInfo'), null, 'errors');
+		}
+
+		// Redirect back to the card
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+		exit;
 	}
 
 	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
@@ -732,8 +803,13 @@ if (empty($reshook)) {
 					} else {
 						$tmpidprodfournprice = 0;
 					}
-					$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $tmpidprodfournprice);
-					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $tmpidprodfournprice);
+					$thirdparty = $object->thirdparty;
+					if (is_object($thirdparty)) {
+						$tva_tx = get_default_tva($thirdparty, $mysoc, $productsupplier->id, $tmpidprodfournprice);
+						$tva_npr = get_default_npr($thirdparty, $mysoc, $productsupplier->id, $tmpidprodfournprice);
+					} else {
+						$tva_tx = 0;
+					}
 					if (empty($tva_tx)) {
 						$tva_npr = 0;
 					}
@@ -2305,7 +2381,12 @@ if ($action == 'create') {
 
 		// We check if number is temporary number
 		if (preg_match('/^[\(]?PROV/i', (string) $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
-			$newref = $object->getNextNumRef($object->thirdparty);
+			$tmp_thirdparty = $object->thirdparty;
+			if ($tmp_thirdparty) {
+				$newref = $object->getNextNumRef($tmp_thirdparty);
+			} else {
+				$newref = '';
+			}
 		} else {
 			$newref = (string) $object->ref;
 		}
@@ -2709,6 +2790,77 @@ if ($action == 'create') {
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
+		// Tracking Information
+		print '<tr><td colspan="2"><hr></td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("TrackingNumber").'</td><td>';
+
+		if ($action != 'edit_tracking') {
+			// Display tracking information if it exists
+			$tracking_info = $object->getTrackingInfo();
+			$tracking_awb = $tracking_info['awb'];
+			$tracking_link = $tracking_info['tracking_link'];
+			$carrier_code = $tracking_info['carrier_code'];
+
+			if (!empty($tracking_awb) || !empty($tracking_link)) {
+				if (!empty($tracking_link)) {
+					print '<a href="'.dol_escape_htmltag($tracking_link).'" target="_blank">';
+				}
+				print dol_escape_htmltag($tracking_awb);
+				if (!empty($tracking_link)) {
+					print '</a>';
+				}
+				if (!empty($carrier_code)) {
+					print ' ('.$langs->trans('SendingMethod').': '.dol_escape_htmltag($carrier_code).')';
+				}
+			} else {
+				print $langs->trans("NotDefined");
+			}
+
+			// Add edit link if user has permission
+			if ($usercancreate) {
+				print ' <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_tracking&token='.newToken().'" class="editfielda">'.img_edit($langs->trans('SetTracking'), 1).'</a>';
+			}
+		} else {
+			// Display tracking edit form
+			$tracking_info = $object->getTrackingInfo();
+			$tracking_awb = GETPOST('tracking_awb', 'alpha') ?: $tracking_info['awb'];
+			$tracking_link = GETPOST('tracking_link', 'alpha') ?: $tracking_info['tracking_link'];
+			$carrier_code = GETPOST('carrier_code', 'alpha') ?: $tracking_info['carrier_code'];
+
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="set_tracking">';
+
+			// ShippingMethod selection
+			print '<table class="nobordernopadding"><tr><td>';
+			print '<select name="carrier_code" class="flat minwidth100">';
+			print '<option value="">-- '.$langs->trans("Select").' --</option>';
+			$carriers = get_available_shipping_methods($object);
+			foreach ($carriers as $key => $carrier) {
+				$selected = ($carrier_code == $carrier['code']) ? ' selected' : '';
+				print '<option value="'.$carrier['code'].'"'.$selected.'>'.$carrier['name'].'</option>';
+			}
+			print '</select>';
+			print '</td>';
+
+			// AWB number
+			print '<td class="left">';
+			print '<input type="text" name="tracking_awb" value="'.dol_escape_htmltag($tracking_awb).'" size="20" placeholder="'.$langs->trans('TrackingNumber').'">';
+			print '</td>';
+
+			// Submit button
+			print '<td class="left">';
+			print '<input type="submit" class="button button-edit smallpaddingimp valignmiddle" value="'.$langs->trans('Modify').'">';
+			print '</td></tr></table>';
+
+			// Tracking link (optional)
+			print '<input type="text" name="tracking_link" value="'.dol_escape_htmltag($tracking_link).'" size="50" placeholder="'.$langs->trans('TrackingLink').'">';
+
+			print '</form>';
+		}
+
+		print '</td></tr>';
+
 		print '</table>';
 
 		print '</div>';
@@ -2837,8 +2989,9 @@ if ($action == 'create') {
 		}
 
 		// Show object lines
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
+		$tmp_thirdparty = $object->thirdparty;
+		if (!empty($object->lines) && is_object($tmp_thirdparty)) {
+			$object->printObjectLines($action, $tmp_thirdparty, $mysoc, $lineid, 1);
 		}
 
 		$num = count($object->lines);
@@ -2853,7 +3006,7 @@ if ($action == 'create') {
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
-				if (empty($reshook)) {
+				if (empty($reshook) && is_object($societe)) {
 					$object->formAddObjectLine(1, $societe, $mysoc);
 				}
 			}
