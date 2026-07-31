@@ -431,7 +431,7 @@ if (empty($reshook)) {
 					if (!empty($tmpmember->subscriptions) && is_array($tmpmember->subscriptions)) {
 						// Sort subscriptions by end date to get the most recent one
 						$sorted_subs = $tmpmember->subscriptions;
-						usort($sorted_subs, function($a, $b) {
+						usort($sorted_subs, function ($a, $b) {
 							return ($a->datefin > $b->datefin) ? -1 : 1;
 						});
 
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 					$duration_unit = '';
 					if (!empty($adht->duration)) {
 						if (preg_match('/^(\d+)([dwmy])$/', $adht->duration, $matches)) {
-							$duration_value = (int)$matches[1];
+							$duration_value = (int) $matches[1];
 							$duration_unit = $matches[2];
 						}
 					}
