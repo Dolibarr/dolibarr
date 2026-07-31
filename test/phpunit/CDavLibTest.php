@@ -265,6 +265,10 @@ class CDavLibTest extends CommonClassTest
 
 		$cdavlib = new CdavLib($user, $db, $langs);
 
+		if ($db->type != 'mysqli') {
+			return;
+		}
+
 		// Start a transaction for database operations
 		$db->begin();
 

@@ -155,9 +155,6 @@ ErrNoZipEngine=No engine to zip/unzip %s file in this PHP
 ErrorFileMustBeADolibarrPackage=El fitxer %s ha de ser un paquet Dolibarr en format zip
 ErrorModuleFileRequired=Ha de seleccionar un arxiu del paquet del mòdul de Dolibarr
 ErrorFailToDownloadModuleFromSource=No s'ha pogut descarregar el mòdul des de l'origen. Comproveu la connexió a Internet o l'URL de l'origen i torneu-ho a provar.
-extModuleConfirmInstallTitle = Confirma la instal·lació del mòdul
-extModuleConfirmInstallText  = Esteu a punt d'instal·lar el mòdul següent:<br><br><b>Nom:</b> %s<br><b>Versió:</b> %s<br><b>Referència:</b> %s class='notranslate'><br><b>Última actualització:</b> %s<br><br>Aquesta acció no és reversible. Voleu confirmar la instal·lació d'aquest mòdul?
-install=Instal·la
 ErrorPhpCurlNotInstalled=L'extensió PHP CURL no es troba instal·lada, és indispensable per dialogar amb Paypal.
 ErrorFailedToAddToMailmanList=S'ha produït un error en intentar afegir un registre a la llista Mailman o base de dades SPIP
 ErrorFailedToRemoveToMailmanList=Error en l'eliminació de %s de la llista Mailmain %s o base SPIP
