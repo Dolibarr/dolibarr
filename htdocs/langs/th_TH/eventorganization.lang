@@ -48,6 +48,7 @@ ConferenceOrBoothTab = การประชุมหรือบูธ
 AmountPaid = จำนวนเงินที่จ่าย
 DateOfRegistration = วันที่ลงทะเบียน
 ConferenceOrBoothAttendee = ผู้เข้าร่วมการประชุมหรือบูธ
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=ผู้สมัครหรือผู้เยี่ยมชม
 Speaker=วิทยากร
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=รายชื่อผู้เข้าร่วมโ
 ListOfConfOrBoothOfEvent=รายชื่อโครงการจัดประชุมหรือออกบูธกิจกรรม
 DownloadICSLink=ดาวน์โหลดไฟล์ ICS
 EVENTORGANIZATION_SECUREKEY=เมล็ดพันธุ์เพื่อรักษาความปลอดภัยที่สำคัญสำหรับหน้าลงทะเบียนสาธารณะเพื่อเสนอแนะการประชุม
-SERVICE_BOOTH_LOCATION=บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับที่ตั้งบูธ
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=บริการที่ใช้สำหรับแถวใบแจ้งหนี้เกี่ยวกับการสมัครสมาชิกของผู้เข้าร่วมกิจกรรม
+SERVICE_BOOTH_LOCATION=Service to use on the invoice line for the sale of a booth.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service to use on the invoice line for the participation fees.
 NbVotes=จำนวนคะแนนเสียง
 # Status
 EvntOrgDraft = ร่าง
@@ -122,7 +123,7 @@ NewSubscription=การลงทะเบียน
 OrganizationEventConfRequestWasReceived=ได้รับข้อเสนอแนะของคุณสำหรับการประชุมแล้ว
 OrganizationEventBoothRequestWasReceived=ได้รับคำขอออกบูธของคุณแล้ว
 OrganizationEventPaymentOfBoothWasReceived=บันทึกการชำระเงินสำหรับบูธของคุณแล้ว
-OrganizationEventPaymentOfRegistrationWasReceived=การชำระเงินสำหรับการลงทะเบียนกิจกรรมของคุณได้รับการบันทึกแล้ว
+OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your registration to the event has been recorded
 OrganizationEventBulkMailToAttendees=นี่เป็นการเตือนความจำเกี่ยวกับการเข้าร่วมกิจกรรมของคุณในฐานะผู้เข้าร่วม
 OrganizationEventBulkMailToSpeakers=นี่เป็นเครื่องเตือนใจเกี่ยวกับการเข้าร่วมกิจกรรมของคุณในฐานะวิทยากร
 OrganizationEventLinkToThirdParty=ลิงก์ไปยังบุคคลที่สาม (ลูกค้า ซัพพลายเออร์ หรือหุ้นส่วน)

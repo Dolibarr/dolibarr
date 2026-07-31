@@ -1912,9 +1912,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					if ($row[0] == 0) {   // If not found
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, type, value, note, visible, entity)";
 						$sql .= " VALUES (";
-						$sql .= $this->db->encrypt($name);
+						$sql .= $this->db->encrypt($name);  // Note: encrypt returns SQL expression or quoted string
 						$sql .= ", '".$this->db->escape($type)."'";
-						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");
+						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");  // Note: encrypt returns SQL expression or quoted string
 						$sql .= ", ".($note ? "'".$this->db->escape($note)."'" : "null");
 						$sql .= ", '".$this->db->escape($visible)."'";
 						$sql .= ", ".((int) $entity);

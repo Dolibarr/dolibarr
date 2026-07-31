@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - quickmemo
+QuickMemoAboutPage =Page d'accueil de QuickMemo
+QuickMemoArea =Accueil QuickMemo
+QuickMemoMd_Bold =Audacieux
+QuickMemoMd_TaskNotDone =Tâche non terminée
+QuickMemoMd_TaskDone =Tâche accomplie
+QuickMemoMd_Link =Lien
+QuickMemoActionDelete =Supprimer la note
+QuickMemoActionDeleteEmpty =Supprimer le mémo vide
+QuickMemoCantDeleteThisPrivateNote =Vous ne pouvez pas supprimer cette note.
+QuickMemoConfirmDeleteModel =Êtes-vous sûr de vouloir supprimer ce modèle de note de service ?
+QuickMemoDeleteModel =Supprimer le modèle
+QuickMemoMd_SectionTitles =Titres et structure
+QuickMemoMd_SectionTasks =Listes de tâches
+QuickMemoMd_UniversalDesc =Il s'agit d'un format universel et non propriétaire. C'est le format standard utilisé pour la documentation de Wikipédia, sur GitLab, Mattermost et par la majorité des projets open source dans le monde, y compris Dolibarr.
+QuickMemoHelp_Title =Maîtrisez vos mémos grâce à ces astuces et raccourcis d'experts.
+QuickMemoHelp_EscKey =Maintenez la touche <strong>Esc</strong> enfoncée pour masquer temporairement tous les mémos et lire le contenu ci-dessous.
+QuickMemoHelp_DeleteHover =Pour supprimer un modèle : survolez-le avec votre souris pour faire apparaître l’icône de suppression.
+QuickMemoHelp_ShiftKeyDelete =<strong>Astuce rapide :</strong> Maintenez la touche <strong>Shift</strong> enfoncée lors de la suppression pour ignorer la confirmation (idéal pour un nettoyage rapide).
+QuickMemoHelp_DragDrop =Les modèles sont réorganisables. Cliquez et faites glisser pour organiser votre liste selon vos priorités.
+QuickMemoHelp_Footer =Ces fonctionnalités respectent les normes ergonomiques afin de vous offrir une interface fluide et productive.
