@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=የምርት ማጣቀሻ.
+ServiceRef=Service ref.
 ProductLabel=የምርት መለያ
 ProductLabelTranslated=የተተረጎመ የምርት መለያ
 ProductDescription=የምርት ማብራሪያ
@@ -52,6 +53,7 @@ Stock=አክሲዮን
 MenuStocks=አክሲዮኖች
 Stocks=የምርቶች አክሲዮኖች እና መገኛ (መጋዘን)
 Movements=እንቅስቃሴዎች
+ProductStatus=Products or services status
 Sell=መሸጥ
 Buy=ግዢ
 OnSell=የሚሸጥ ፡ ለሽያጭ የቀረበ
@@ -358,6 +360,7 @@ QtyRecalculatedWithPackaging=የመስመሩ ብዛት በአቅራቢው ማሸ
 
 #Attributes
 Attributes=ባህሪያት
+TranslationsExtrafields=Product translation attributes extrafields
 ProductAttributeExtrafields=Variant attributes extrafields
 ProductAttributeExtrafieldsSetup=Setup of Variant attributes extrafields
 ProductAttributeValueExtrafields=Variant attributes values extrafields
@@ -452,6 +455,7 @@ AllowStockMovementVariantParentHelp=By default, a parent of a variant is a virtu
 ConfirmSetToDraftInventory=እርግጠኛ ነህ ወደ ረቂቅ ሁኔታ መመለስ ትፈልጋለህ?<br>አሁን በዕቃው ውስጥ የተቀመጡት መጠኖች ዳግም ይጀመራሉ።
 WarningLineProductNotToSell=Product or service "%s" is not to sell and was cloned
 PriceLabel=Price label
+PotentialKitsFromStock=Potential stock of Kits available using the components in stock
 StockableProduct=Stock management
 StockableProductDescription=If this option is enabled, the stock modification for this product is retained. If not, all stock modifications will be disabled for this product.
 StockDisabled=Stock disabled
@@ -465,3 +469,4 @@ ProductType=Type of product
 UseBarCodeForProducts=Use barcode for products
 UseBarCodeForThirdParties=Use barcode for third parties
 NotSupportedOnKits=Not supported on kits
+ProductLangExtrafieldsSetup=Product translations Extrafields

@@ -41,4 +41,4 @@ CurrencyCode=Codi de moneda
 CurrencyUnitPrice=Preu unitari en moneda estrangera
 CurrencyPrice=Preu en moneda estrangera
 MutltiCurrencyAutoUpdateCurrencies=Actualitzeu tots els tipus de moneda
-MulticurrencyOriginalCurrency=original currency
+MulticurrencyOriginalCurrency=moneda original

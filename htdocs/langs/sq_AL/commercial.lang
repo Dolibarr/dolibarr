@@ -102,3 +102,4 @@ SignedReceiverOnline=Nënshkruar nga një palë e tretë në internet
 SignedAll=Nënshkruar nga të gjitha palët
 SignStatus=Statusi i nënshkrimit
 DocumentSigned=Dokumenti i nënshkruar
+DocumentUnsigned=Document unsigned
