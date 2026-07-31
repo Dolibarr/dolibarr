@@ -1585,6 +1585,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
 		$sql .= " t.invoice_line_id";
+		if (!empty($extrafields->attributes['projet_task']['label'])) {
+			foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key." as options_".$key : '');
+			}
+		}
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1598,6 +1603,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as prod ON prod.rowid = t.fk_product";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as pt ON pt.rowid = t.fk_element";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON pt.rowid = efpt.fk_object";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = pt.fk_projet";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON t.fk_user = u.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -2463,10 +2469,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			/*
-			 // Extra fields
-			 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			 */
+			// Extra fields
+			$obj = $task_time;
+			$extrafieldsobjectkey = 'projet_task';
+			$extrafieldsobjectprefix = 'ef.';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'i' => $i, 'totalarray' => &$totalarray);
@@ -2663,10 +2670,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
-				/*
-				 // Extra fields
-				 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-				 */
+				// Extra fields
+				$obj = $task_time;
+				$extrafieldsobjectkey = 'projet_task';
+				$extrafieldsobjectprefix = 'ef.';
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split1');
@@ -2830,10 +2838,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 				}
 
-				/*
-				 // Extra fields
-				 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-				 */
+				// Extra fields
+				$obj = $task_time;
+				$extrafieldsobjectkey = 'projet_task';
+				$extrafieldsobjectprefix = 'ef.';
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split2');
