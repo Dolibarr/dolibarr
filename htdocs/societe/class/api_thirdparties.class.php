@@ -581,7 +581,7 @@ class Thirdparties extends DolibarrApi
 	 * @since	24.0.0	Initial implementation
 	 *
 	 * @param	int		$id					ID of the third party
-	 * @return	array							Return array of representatives if OK, < 0 if KO
+	 * @return	array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>			Return array of representatives if OK, < 0 if KO
 	 *
 	 * @url		GET		{id}/representative
 	 *
