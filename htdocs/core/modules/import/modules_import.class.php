@@ -1720,7 +1720,7 @@ class ModeleImports
 									$keyfield = 'rowid';
 								}
 
-								$sqlend = " WHERE ".$this->db->escape($keyfield)." = ".((int) $lastinsertid);
+								$sqlend = " WHERE ".$this->db->sanitize($keyfield)." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link && !empty($where)) {
 									'@phan-var-force string[] $where';
