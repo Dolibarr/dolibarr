@@ -602,7 +602,7 @@ class Thirdparties extends DolibarrApi
 		}
 		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user);
 		/** @var array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}> $result */
-	
+
 		return $result;
 	}
 
