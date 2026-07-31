@@ -841,6 +841,17 @@ if ($action == "addelement") {
 	}
 } elseif ($action == "unlink") {
 	$tablename = GETPOST("tablename", "aZ09");
+	$referentTables = array_values(array_map(
+	/**
+	 * @param array{table: string} $definition
+	 * @return string
+	 */
+	function ($definition) {
+		return $definition['table'];
+	}, $listofreferent));
+	if (!in_array($tablename, $referentTables)) {
+		accessforbidden('', 0, 0);
+	}
 	$projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
 	$elementselectid = GETPOSTINT("elementselect");
 
