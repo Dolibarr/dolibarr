@@ -1012,7 +1012,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_NO_WITH_TO_SELECTED").'</td><td>'.yn(getDolGlobalString('MAIN_MAIL_NO_WITH_TO_SELECTED')).'</td></tr>';
 	// Global signature for all users employees
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, '', '90%', 1);
+	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%', 1);
 	$text = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS");
 	$texthelp = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS_Help");
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($text, $texthelp, 1, 'help').'</td><td>'.$doleditor->Create(1).'</td></tr>';
