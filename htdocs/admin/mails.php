@@ -677,7 +677,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 	// Global signature for all users employees
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, '', '90%');
+	$doleditor = new DolEditor('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS', getDolGlobalString('MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS'), '', 138, 'dolibarr_notes', 'In', true, true, !getDolGlobalString('FCKEDITOR_ENABLE_USERSIGN') ? 0 : 1, 0, '90%');
 	$text = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS");
 	$texthelp = $langs->trans("MAIN_MAIL_DEFAULT_SIGNATURE_FOR_ALL_USERS_Help");
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($text, $texthelp, 1, 'help').'</td><td>'.$doleditor->Create(1).'</td></tr>';
