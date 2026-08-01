@@ -32,10 +32,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-// Load ExpenseReport class for STATUS_CLOSED constant
-if (isModEnabled('expensereport')) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 /**
  * Prepare array with list of tabs
