@@ -24,10 +24,9 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 
 - Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
 
-- To manually build the .exe from Windows :
+- To manually build the .exe from Windows (Note: running from makepack-dolibarr.pl script is however recommended):
 
-  Note: running from makepack-dolibarr.pl script is however recommended
-  open file dev/build/exe/doliwamp.iss and click on button "Compile".
+  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
 
 
@@ -54,11 +53,12 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 ```
 
 
-## Actions to do a BETA
+## Actions to do a FREEZE / BETA
 
 This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
+
 - Update version/info in ChangeLog, for this you can:
 
 To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
@@ -84,7 +84,7 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 - Recopy the content of the output file into the file ChangeLog.
   
-  Note: To know number of lines changes: git diff --shortstat A B
+  Note: To know number of changed lines: git diff --shortstat A B
   
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
 
@@ -92,7 +92,7 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 - Run `makepack-dolibarr.pl` to check the generation of all packages. No need to publish them.
 
-- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks
+- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks. Include the content of the previously generated ChangeLog file into the news.
 
 - Create a branch x.y (but only when version seems stable enough).
 
@@ -108,18 +108,18 @@ We suppose the branch x.y has already been created during the beta (see previous
 
 - Check there is no pending open security issue: List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20Critical%20or%20Security%22
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
 
 - Update version/info in ChangeLog, for this:
 
-To generate a changelog of a **major new version** x.0.0 (from a repo on branch develop), you can do
+To generate a changelog of a **major new version** x.0.0 (from a repo on branch develop or x.y):
 
 ```
 cd ~/git/dolibarr
 git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy
 ```
 
-To generate a changelog of a **intermediate new version** x.y.0 (from a repo on branch x.y), you can do
+To generate a changelog of a **intermediate new version** x.y.0 (from a repo on branch x.y);
 
 ```
 cd ~/git/dolibarr_x.y

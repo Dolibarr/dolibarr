@@ -52,13 +52,20 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-sizing: border-box;
 }
 
+.badge-text {
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	border-radius: 5px;
+}
+
 .badge-status {
 	font-size: 0.95em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
-	padding: .4em .4em;
+	padding: .4em .4em .3em .4em;
 }
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -105,7 +112,13 @@ span.badgeneutral {
 	border-radius: 10px;
 	white-space: nowrap;
 }
-
+span.badgeliketopmenu {
+	padding: 2px 7px 2px 7px;
+	background-color: var(--colorbackhmenu1);
+	color: var(--colorbackvmenu1);
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 /* PRIMARY */
 .badge-primary{

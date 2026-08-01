@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bancos | Dinero en efectivo
-MenuVariousPayment=Varios pagos
 BankAccount=Cuenta de banco
 BankAccounts=Cuentas de banco
 AccountRef=Ref de la cuenta financiera
@@ -55,6 +54,7 @@ LineRecord=Transacción
 AddBankRecord=Añadir entrada
 AddBankRecordLong=Añadir entrada manualmente
 DateConciliating=Fecha de conciliación
+SubscriptionPayment=Pago de suscripción
 SocialContributionPayment=Pago de impuesto social/fiscal
 TransferFromToDone=La transferencia de <b>%s</b> hacia <b>%s</b> de <b>%s</b> %s ha sido registrada.
 ValidateCheckReceipt=¿Validar este recibo de cheque?

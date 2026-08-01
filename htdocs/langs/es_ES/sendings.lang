@@ -51,9 +51,12 @@ DateReceived=Fecha real de recepción
 ClassifyReception=Clasificar recibido
 SendShippingByEMail=Envío de expedición por e-mail
 SendShippingRef=Envío de la expedición %s
+SendDeliveryRef=Envío de la entrega %s
 ActionsOnShipping=Eventos sobre la expedición
 LinkToTrackYourPackage=Enlace para el seguimento de su paquete
-ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
+ShipmentCreationIsDoneFromOrder=Por el momento, la creación de un nuevo Envío totalmente interconectado con los demás módulos se realiza a través del módulo Orden de Venta.
+CreateSimpleShipment=Sin embargo, su administrador de Dolibarr puede habilitar la creación de un Envío simple desde la página de configuración del módulo Envíos.
+SHIPMENT_STANDALONE=Por el momento, permitir la creación de un Envío simple aún no interconectado con otros módulos.
 ShipmentLine=Línea de expedición
 ProductQtyInCustomersOrdersRunning=Cantidad en pedidos de clientes abiertos
 ProductQtyInSuppliersOrdersRunning=Cantidad en pedidos a proveedores abiertos
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=La opción del módulo Flujo de Trabajo, para
 NoWarehouseInBase=No hay almacén en la base
 ShipmentUpdated=Envío actualizado exitosamente
 ShipmentIncrementStockOnDelete = Aumentar el stock al eliminar
+ConfirmSignShipping=Confirmar envío de letreros
+ConfirmUnsignShipping=Confirmar la cancelación de la firma del envío
+SignShipping=Firmar Envío
+UnsignShipping=Cancelar la firma del envío
+
+# Deliveries
+Delivery=Envío
+DeliveryRef=Ref. envío
+DeliveryCard=Nota de entrega
+DeliveryOrder=Nota de entrega
+DeliveryDate=Fecha de entrega
+CreateDeliveryOrder=Generar nota de entrega
+DeliveryStateSaved=Estado de entrega guardado
+SetDeliveryDate=Establecer fecha de entrega estimada
+SetShippingDate=Indicar la fecha de entrega
+ValidateDeliveryReceipt=Validar la nota de entrega
+ValidateDeliveryReceiptConfirm=¿Está seguro de que desea validar esta entrega?
+DeleteDeliveryReceipt=Eliminar la nota de entrega
+DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar la nota de entrega <b>%s</b>?
+DeliveryMethod=Método de envío
+TrackingNumber=Nº de seguimiento
+DeliveryNotValidated=Nota de recepción no validada
+StatusDeliveryCanceled=Anulado
+StatusDeliveryDraft=Borrador
+StatusDeliveryValidated=Recibido
+NameAndSignature=Nombre y firma :
+ToAndDate=En___________________________________ a ____/_____/__________
+GoodStatusDeclaration=He recibido la mercancía en buen estado,
+Deliverer=Destinatario :
+Sender=Emisor
+Recipient=Destinatario de la entrega
+ErrorStockIsNotEnough=No hay suficiente stock
+Shippable=Enviable
+NonShippable=No enviable
+ShowShippableStatus=Mostrar estado del envío
+ShowReceiving=Mostrar nota de recepción
+NonExistentOrder=Pedido inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantidades de stock ya asignadas en líneas anteriores
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Distribución de envíos
 ErrorTooManyCombinationBatchcode=No se realizó envío para la línea %s porque se encontraron demasiadas combinaciones de almacén, producto y código de lote (%s).
 ErrorNoCombinationBatchcode=No se pudo guardar la línea %s como la combinación de almacén-producto-lote/serie (%s, %s, %s) no se encontró en stock.
 ErrorTooMuchShipped=La cantidad enviada no debe ser mayor que la cantidad solicitada para la línea %s
+NoShipmentLineChangeDetected=No se detectó ningún cambio en la línea de envío.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Responsable recepción pedido a proveedor
 TypeContact_shipping_external_BILLING=Contacto cliente de facturación presupuesto

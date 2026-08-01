@@ -51,9 +51,12 @@ DateReceived=تلقى تاريخ التسليم
 ClassifyReception=تصنيف المستلمة
 SendShippingByEMail=إرسال الشحنة عبر البريد الإلكتروني
 SendShippingRef=تقديم شحنة٪ الصورة
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=الأحداث على شحنة
 LinkToTrackYourPackage=رابط لتتبع الحزمة الخاصة بك
-ShipmentCreationIsDoneFromOrder=في الوقت الحالي ، يتم إنشاء شحنة جديدة من سجل أوامر المبيعات.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=خط الشحن
 ProductQtyInCustomersOrdersRunning=كمية المنتج من أوامر البيع المفتوحة
 ProductQtyInSuppliersOrdersRunning=كمية المنتج من أوامر الشراء المفتوحة
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=لم يتم تمكين الخيار من وح
 NoWarehouseInBase=لا يوجد مستودع في القاعدة
 ShipmentUpdated=تم تحديث الشحنة بنجاح
 ShipmentIncrementStockOnDelete = زيادة المخزون عند الحذف
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=توصيل
+DeliveryRef=معرف التسليم
+DeliveryCard=إيصال التسليم
+DeliveryOrder=إيصال التسليم
+DeliveryDate=تاريخ التسليم او الوصول
+CreateDeliveryOrder=إنشاء إيصال الاستلام
+DeliveryStateSaved=تم حفظ حالة التسليم
+SetDeliveryDate=تعيين تاريخ التسليم المحتمل
+SetShippingDate=تعيين تاريخ الشحن
+ValidateDeliveryReceipt=التحقق من إيصال الاستلام
+ValidateDeliveryReceiptConfirm=هل تريد تأكيد إيصال الاستلام هذا؟
+DeleteDeliveryReceipt=حذف إيصال التسليم
+DeleteDeliveryReceiptConfirm=هل تريد بالتأكيد حذف إيصال الاستلام <b> %s</b>؟
+DeliveryMethod=طريقة التوصيل
+TrackingNumber=رقم التتبع
+DeliveryNotValidated=لم يتم التحقق من صحة التسليم
+StatusDeliveryCanceled=ملغي
+StatusDeliveryDraft=حوالة مصرفية
+StatusDeliveryValidated=تم الاستلام
+NameAndSignature=الاسم والتوقيع :
+ToAndDate=إلى ___________________________________ في ____ / _____ / __________
+GoodStatusDeclaration=تلقيت البضائع أعلاه في حالة جيدة،
+Deliverer=الموصل:
+Sender=مرسل
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=ليس هناك مخزون كاف
+Shippable=قابل للشحن
+NonShippable=غير قابل للشحن
+ShowShippableStatus=إظهار علامة قابل للشحن
+ShowReceiving=عرض إيصال الاستلام
+NonExistentOrder=امر غير موجود
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=توزيع الشحنة
 ErrorTooManyCombinationBatchcode=لا يوجد إرسال للسطر %s حيث تم العثور على مجموعات كثيرة جدًا من المستودع والمنتج ورمز الدفعة (%s).
 ErrorNoCombinationBatchcode=تعذر حفظ السطر %s كمجموعة من المستودع-منتج-lot/serial (%s, %s, %s) لم يتم العثور عليه في المخزون.
 ErrorTooMuchShipped=يجب ألا تكون الكمية المشحونة أكبر من الكمية المطلوبة للسطر %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=مندوب متابعة الشحن
 TypeContact_shipping_external_BILLING=جهة اتصال فاتورة العميل

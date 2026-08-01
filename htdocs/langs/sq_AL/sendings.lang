@@ -51,9 +51,12 @@ DateReceived=Data e marrjes së dorëzimit
 ClassifyReception=Klasifiko Marrë
 SendShippingByEMail=Dërgo dërgesën me email
 SendShippingRef=Dorëzimi i dërgesës %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Ngjarjet në dërgesë
 LinkToTrackYourPackage=Lidhje për të gjurmuar paketën tuaj
-ShipmentCreationIsDoneFromOrder=Për momentin, krijimi i një dërgese të re bëhet nga rekordi i Porosisë së Shitjes.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Linja e dërgesës
 ProductQtyInCustomersOrdersRunning=Sasia e produktit nga porositë e shitjeve të hapura
 ProductQtyInSuppliersOrdersRunning=Sasia e produktit nga porositë e hapura të blerjes
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Opsioni nga moduli Workflow, për ta vendosur
 NoWarehouseInBase=Nuk ka depo në bazë
 ShipmentUpdated=Dërgesa u përditësua me sukses
 ShipmentIncrementStockOnDelete = Rrit stokun me fshirje
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Delivery date
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Anulluar
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
+NameAndSignature=Name and Signature:
+ToAndDate=Për___________________________________ në ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Dërguesi
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Shpërndarja e dërgesës
 ErrorTooManyCombinationBatchcode=Asnjë dërgim për linjën %s pasi u gjetën shumë kombinime të magazinës, produktit, kodit të grupit (%s).
 ErrorNoCombinationBatchcode=Nuk mund të ruhej rreshti %s si kombinim i warehouse-product-lot/serial (%s, %s, %s) nuk u gjet në magazinë.
 ErrorTooMuchShipped=Sasia e dërguar nuk duhet të jetë më e madhe se sasia e porositur për linjën %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Transportim përfaqësues pasues
 TypeContact_shipping_external_BILLING=Kontakti i faturës së klientit

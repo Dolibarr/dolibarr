@@ -22,7 +22,7 @@ This is the documentation of module MyModule
 *Log of versions of document*
 
 [options="header",format="csv"]
-|=== 
+|===
 Author, Date, Version
 --- __USER_FULLNAME__  __USER_EMAIL__ ---, __YYYY-MM-DD__, Version 1.0
 |===
@@ -63,4 +63,3 @@ __API_DOC__
 
 //include::ChangeLog.md[]
 __CHANGELOG__
-

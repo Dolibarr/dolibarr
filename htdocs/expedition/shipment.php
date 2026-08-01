@@ -3,9 +3,9 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -49,17 +58,8 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $order_id	= GETPOSTINT('id'); // id of order
 $ref		= GETPOST('ref', 'alpha');
@@ -77,7 +77,7 @@ $result = restrictedArea($user, 'commande', $order_id);
 
 $object = new Commande($db);
 $shipment = new Expedition($db);
-$extrafields = new ExtraFields($db);
+$product = null;
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -301,16 +301,16 @@ if ($order_id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {	// Do not change on shipment
+			if (0) {	// @phpstan-ignore-line  Do not change on shipment
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+					$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
-				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+				if (!empty($object) && !empty($object->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($objectsrc->fk_project);
+					$proj->fetch($object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
@@ -320,7 +320,7 @@ if ($order_id > 0 || !empty($ref)) {
 		}
 		$morehtmlref .= '</div>';
 
-
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -427,8 +427,6 @@ if ($order_id > 0 || !empty($ref)) {
 
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$formproduct = new FormProduct($db);
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('Warehouse');
@@ -666,8 +664,7 @@ if ($order_id > 0 || !empty($ref)) {
 					// Show product and description
 					$type = isset($objp->type) ? $objp->type : $objp->product_type;
 
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}
@@ -712,7 +709,7 @@ if ($order_id > 0 || !empty($ref)) {
 						}
 
 						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print '<a name="'.$objp->rowid.'"></a>'; // Anchor to return to the line
 
 						// Show product and description
 						$product_static->type = $type;
@@ -740,7 +737,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
-						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
@@ -800,7 +797,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock') && $product !== null) {
 						print '<td class="center">';
 						if ($objp->stockable_product == Product::ENABLED_STOCK) {
 							print $product->stock_reel;
@@ -823,7 +820,7 @@ if ($order_id > 0 || !empty($ref)) {
 					print "</tr>\n";
 
 					// Show subproducts lines
-					if ($objp->fk_product > 0 && getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
+					if ($objp->fk_product > 0 && getDolGlobalString('PRODUIT_SOUSPRODUITS') && $product !== null) {
 						// Set tree of subproducts in product->sousprods
 						$product->get_sousproduits_arbo();
 						//var_dump($product->sousprods);exit;
@@ -920,7 +917,7 @@ if ($order_id > 0 || !empty($ref)) {
 				if ($toBeShippedTotal <= 0) {
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
-				print '<br><br>';
+
 				print '</div>';
 				print "</form>\n";
 

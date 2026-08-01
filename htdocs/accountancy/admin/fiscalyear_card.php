@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2014-2026	Alexandre Spangaro	<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,28 +25,27 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha') ? GETPOST('ref', 'alpha') : GETPOST('label', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
@@ -56,23 +55,21 @@ $error = 0;
 
 // Initialize a technical objects
 $object = new Fiscalyear($db);
-$extrafields = new ExtraFields($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // List of status
+/*
 static $tmpstatus2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
+	'0' => 'OpenFiscalYear',
+	'1' => 'CloseFiscalYear'
 );
-$status2label = array(
-		'' => ''
-);
+$status2label = array('' => '');
 foreach ($tmpstatus2label as $key => $val) {
 	$status2label[$key] = $langs->trans($val);
 }
-
+*/
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearmonth'), GETPOSTINT('fiscalyearday'), GETPOSTINT('fiscalyearyear'));
 $date_end = dol_mktime(0, 0, 0, GETPOSTINT('fiscalyearendmonth'), GETPOSTINT('fiscalyearendday'), GETPOSTINT('fiscalyearendyear'));
 
@@ -82,7 +79,7 @@ $permissiontoadd = $user->hasRight('accounting', 'fiscalyear', 'write');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$permissiontoadd) {
+if (!$permissiontoadd) { // after this test $permissiontoadd is always true
 	accessforbidden();
 }
 
@@ -97,7 +94,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
+if ($action == 'confirm_delete' && $confirm == "yes" /* && $permissiontoadd // always true */) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: fiscalyear.php");
@@ -105,7 +102,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add' && $permissiontoadd) {
+} elseif ($action == 'add' /* && $permissiontoadd // always true */) {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -150,7 +147,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		header("Location: ./fiscalyear.php");
 		exit;
 	}
-} elseif ($action == 'update' && $permissiontoadd) {
+} elseif ($action == 'update' /* && $permissiontoadd // always true */) {
 	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -176,7 +173,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 		exit;
 	}
-} elseif ($action == 'reopen' && $permissiontoadd && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
+} elseif ($action == 'reopen' /* && $permissiontoadd // always true */ && getDolGlobalString('ACCOUNTING_CAN_REOPEN_CLOSED_PERIOD')) {
 	$result = $object->fetch($id);
 
 	$object->status = GETPOSTINT('status');
@@ -209,7 +206,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-fis
 if ($action == 'create') {
 	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -344,13 +341,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/fiscalyear.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'label', $linkback, 1, 'label', 'label', $morehtmlref);
 
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
+
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	// Id
+	print "<tr>";
+	print '<td class="titlefield">'.$langs->trans("Id").'</td><td>';
+	print $object->id;
+	print '</td></tr>';
 
 	// Label
 	print '<tr><td class="tdtop">';
@@ -374,6 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td></tr>';
 
 	print '</table>';
+
 	print '</div>';
 	print '</div>';
 

@@ -57,3 +57,7 @@ donAnonymous=Névtelen adomány
 AnonymousDonationTooltip=Jelölje be ezt a négyzetet, ha azt szeretné, hogy adománya névtelen maradjon. Személyes adatait nem fogják kérni.
 publicDonationFieldHelp=%s közzéteheti az adományomat a nyilvános nyilvántartásban
 listOfPublicDonations=Közadományok listája
+donationErrorMessageContactEmail=An error has occurred. To complete your donation, please contact us at %s
+descDonationLineInInvoice=Donation and contribution
+companyBusinessNumber=Business Registration Number
+companyTIN=Tax Identification Number

@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -39,18 +46,6 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
-if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
-	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
-}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -69,14 +64,15 @@ if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 	$filtert = $user->id;
 }
 
-// Sorting
+// Pagination parameters
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+}
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -115,7 +111,7 @@ $day = GETPOSTINT("day") ? GETPOSTINT("day") : date("d");
 $pid = GETPOSTISSET("search_projectid") ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
-$maxprint = ((GETPOSTINT("maxprint") != '') ? GETPOSTINT("maxprint") : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : getDolGlobalInt('AGENDA_MAX_EVENTS_DAY_VIEW', 3);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
@@ -195,7 +191,7 @@ $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
-$result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions');
+$result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
@@ -254,11 +250,11 @@ $nowday   = $nowarray['mday'];
 // Define list of all external calendars (global setup)
 $listofextcals = array();
 
-$prev = dol_get_first_day($year, $month);
 $first_day   = 1;
 $first_month = 1;
 $first_year  = $year;
 
+$prev = dol_get_first_day_week($day, $month, $year);
 $week = $prev['week'];
 
 $day  = (int) $day;
@@ -311,7 +307,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {  // Always false @phpstan-suppress-current-line
+if ($showbirthday) {  // Always false @phpstan-ignore-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -339,7 +335,6 @@ $param .= "&maxprint=".urlencode((string) ($maxprint));
 
 $paramnoactionodate = $param;
 
-$prev = dol_get_first_day($year, 1);
 $prev_year  = $year - 1;
 $prev_month = $month;
 $prev_day   = $day;
@@ -347,6 +342,7 @@ $first_day  = 1;
 $first_month = 1;
 $first_year = $year;
 
+$prev = dol_get_first_day_week(1, 1, $year);
 $week = $prev['week'];
 
 $day = (int) $day;
@@ -363,7 +359,7 @@ $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 //print dol_print_date($firstdaytoshow, 'dayhour', 'gmt');
 //print dol_print_date($lastdaytoshow,'dayhour', 'gmt');
 
-$max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
+$max_day_in_month = idate("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
 
 $tmpday = $first_day;
 $picto = 'calendarweek';
@@ -419,7 +415,7 @@ if ($conf->use_javascript_ajax) {
 				$s .= '		});'."\n";
 				$s .= '});'."\n";
 				$s .= '</script>'."\n";
-				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" checked> '.$val ['name'].' &nbsp; </div>';
+				$s .= '<div class="nowrap float"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" class="marginleftonly" checked> '.$val ['name'].' &nbsp; </div>';
 			}
 		}
 
@@ -482,7 +478,7 @@ if (empty($reshook)) {
 
 $viewmode .= '</div>';
 
-$viewmode .= '<span class="marginrightonly"></span>';
+$viewmode .= '<span class="marginrightonly"></span>';	// To add a space before the navigation tools
 
 
 $newparam = '';
@@ -490,7 +486,7 @@ $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
-	$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.((int) $tmpforcreatebutton['year']);
+	$newparam .= '&month='.urlencode(str_pad((string) $month, 2, "0", STR_PAD_LEFT)).'&year='.((int) $tmpforcreatebutton['year']);
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
@@ -499,14 +495,14 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, -1, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 
 $link = '';
 //print load_fiche_titre('', $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30">';
+$newtitle = '<div class="nowrap clear inline-block minheight30 hideonsmartphone">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
@@ -552,9 +548,9 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	// TODO Replace with a AND EXISTS
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
-	if ($filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
 		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
-	} elseif ($filtert == -3) {
+	} elseif ($filtert == '-3') {
 		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
@@ -617,7 +613,7 @@ if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND (a.fk_soc IS NULL OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale)."))";
 	}
 }
 // Search on socid
@@ -701,7 +697,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		// Discard auto action if option is on
-		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->code == 'AC_OTH_AUTO') {
+		if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
 			$i++;
 			continue;
 		}
@@ -795,14 +791,14 @@ $maxnbofchar = 18;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
+// default values
+$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
+	global $theme_datacolor;
 }
 
 
@@ -949,6 +945,7 @@ jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
 		var ref=$(this).attr(\'ref\');
 		var res = ref.split("_");
+		var type = res[0];
 		var userid = res[1];
 		var year = res[2];
 		var month = res[3];
@@ -956,6 +953,9 @@ jQuery(document).ready(function() {
 		var hour = res[5];
 		var min = res[6];
 		var ids = res[7];
+
+		console.log("We click on a class onclickopenref in page peruser with ref="+ref+" type="+type);
+
 		if (ids == \'none\') /* No event */
 		{
 			/* alert(\'no event\'); */
@@ -1016,6 +1016,14 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 
 	$cases1 = array(); // Color first half hour
 	$cases2 = array(); // Color second half hour
+	/**
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases1
+	 * @var array<int,array<int,array<string,string|int|bool>>> $cases2
+	 */
+	'
+	@phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases1
+	@phan-var-force array<int,array<int,array<string,string|int|bool>>> $cases2
+	';
 
 	$i = 0;
 	$nummytasks = 0;
@@ -1236,7 +1244,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		$string2 = '&nbsp;';
 		$title1 = '';
 		$title2 = '';
-		if (isset($cases1[$h]) && $cases1[$h] != '') {
+		if (isset($cases1[$h])) {
 			//$title1.=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases1[$h]) > 1) {
 				$title1 .= count($cases1[$h]).' '.(count($cases1[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));
@@ -1253,7 +1261,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				}
 			}
 		}
-		if (isset($cases2[$h]) && $cases2[$h] != '') {
+		if (isset($cases2[$h])) {
 			//$title2.=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
 			if (count($cases2[$h]) > 1) {
 				$title2 .= count($cases2[$h]).' '.(count($cases2[$h]) == 1 ? $langs->trans("Event") : $langs->trans("Events"));

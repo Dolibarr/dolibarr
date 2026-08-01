@@ -1,7 +1,7 @@
 // MENU
 let navmenu = document.querySelector('.doc-sidebar nav ul');
 let navmenulinks = navmenu.querySelectorAll('a.link-withsubmenu');
-if(navmenulinks.length > 0) {    
+if(navmenulinks.length > 0) {
     navmenulinks.forEach(
         function (menulink) {
             menulink.addEventListener(

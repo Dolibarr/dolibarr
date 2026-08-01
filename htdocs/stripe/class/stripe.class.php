@@ -22,8 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global env
-
+require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global $stripearrayofkeys and $stripearrayofkeysbyenv
 
 /**
  *	Stripe class
@@ -164,7 +163,7 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
+	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for Adherent and Societe.
 	 * @param	string		$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int<0,1>	$status							Status (0=test, 1=live)
 	 * @param	int<0,1>	$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
@@ -336,6 +335,32 @@ class Stripe extends CommonObject
 		return $selectedreader;
 	}
 
+
+	/**
+	 * Convert an amount in Stripe format into an amount into standard amount
+	 *
+	 * @param 	int|float	$amount				Amount in Stripe format (For example 1234 for 12.34 euros)
+	 * @param	string		$currency_code		Currency code (Example 'EUR')
+	 * @param	int			$direction			0=From standard to Stripe amount, 1=From Stripe to standard amount
+	 * @return	int|float						Standard float amount (For example 12.34)
+	 */
+	public function convertAmount($amount, $currency_code, $direction = 0)
+	{
+		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (!in_array($currency_code, $arrayzerounitcurrency)) {
+			if (empty($direction)) {
+				$newamount = (int) round($amount * 100);		// If $amount is 79.99, doing 79.99 * 100 returns float 7998.999999999999, and "int" do a truncation into 7998 so we must first use round to get nearest integer value
+			} else {
+				$newamount = (float) ($amount / 100);
+			}
+		} else {
+			$newamount = $amount;
+		}
+
+		return $newamount;
+	}
+
+
 	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
@@ -352,7 +377,7 @@ class Stripe extends CommonObject
 	 * @param	?CommonObject	$object						    	Object to pay with Stripe
 	 * @param	?string			$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	?string			$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int<0,1>		$status							    Status (0=test, 1=live)
+	 * @param	int<0,1>		$servicestatus					    Status (0=test, 1=live)
 	 * @param	int<0,1>		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param	'automatic'|'manual'|'terminal'		$mode			Automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent, terminal=manual
 	 * @param   bool			$confirmnow                     	False=default, true=try to confirm immediately after create (if conditions are ok)
@@ -362,26 +387,21 @@ class Stripe extends CommonObject
 	 * @param	int				$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
 	 * @return 	?\Stripe\PaymentIntent				        		Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $servicestatus = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		dol_syslog(get_class($this)."::getPaymentIntent description=".$description, LOG_INFO, 1);
 
 		$error = 0;
 
-		if (empty($status)) {
+		if (empty($servicestatus)) {
 			$service = 'StripeTest';
 		} else {
 			$service = 'StripeLive';
 		}
 
-		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripeamount = $amount * 100;
-		} else {
-			$stripeamount = $amount;
-		}
+		$stripeamount = $this->convertAmount($amount, $currency_code, 0);
 
 		$fee = 0;
 		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
@@ -392,11 +412,7 @@ class Stripe extends CommonObject
 		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
 			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripefee = round($fee * 100);
-		} else {
-			$stripefee = round($fee);
-		}
+		$stripefee = round($this->convertAmount($fee, $currency_code));
 
 		$paymentintent = null;
 
@@ -407,26 +423,36 @@ class Stripe extends CommonObject
 			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
 			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 
+			// Try to retrieve the last paymentintent for invoice, but if it fails, never mind.
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
 			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 			$sql .= " WHERE pi.fk_facture = ".((int) $object->id);
 			$sql .= " AND pi.sourcetype = '".$this->db->escape($object->element)."'";
 			$sql .= " AND pi.entity IN (".getEntity('societe').")";
 			$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
+			$sql .= " ORDER BY rowid DESC";
 
 			dol_syslog(get_class($this)."::getPaymentIntent search stripe payment intent for object id = ".$object->id, LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				if ($num) {
 					$obj = $this->db->fetch_object($resql);
-					$intent = $obj->ext_payment_id;
 
-					dol_syslog(get_class($this)."::getPaymentIntent found existing payment intent record");
+					$ext_payment_intent = $obj->ext_payment_id;
+					$ext_payment_intent_array = preg_split('/[:@]/', $ext_payment_intent);
+
+					$intent = $ext_payment_intent_array[0];
+					$customerindb = (isset($ext_payment_intent_array[1]) ? $ext_payment_intent_array[1] : '');
+					$pkeyindb = (isset($ext_payment_intent_array[2]) ? $ext_payment_intent_array[2] : '');
+					// TODO Test that $pkeyindb and $customerindb match
+
+					dol_syslog(get_class($this)."::getPaymentIntent found existing payment intent record with intent=".$intent);
 
 					// Force to use the correct API key
 					global $stripearrayofkeysbyenv;
-					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 					try {
 						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -460,8 +486,7 @@ class Stripe extends CommonObject
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
-				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
+				$paymentmethodtypes[] = "sepa_debit";
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
@@ -484,32 +509,34 @@ class Stripe extends CommonObject
 				}
 				$stripemode = 'manual';
 			}
-
 			global $dolibarr_main_url_root;
-
 			$descriptioninpaymentintent = $description;
-
-			$dataforintent = array(
-				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
-				"confirmation_method" => $stripemode,
-				"amount" => $stripeamount,
-				"currency" => $currency_code,
-				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
-				/*
-				'return_url' => $dolibarr_main_url_root.'/public/payment/paymentok.php',
-				'automatic_payment_methods' => array(
-					'enabled' => true,
-					'allow_redirects' => 'never',
+			// When STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=2, use automatic_payment_methods
+			// so Stripe Dashboard controls active methods (Klarna, Bancontact, Link, etc.)
+			// and return_url redirect flow works correctly.
+			// In terminal mode, automatic methods are not supported — fallback to manual list.
+			$useautomaticmethods = (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 && $mode != 'terminal');
+			$dataforintent = array_merge(
+				array(
+					"confirm"     => $confirmnow,
+					"amount"      => $stripeamount,
+					"currency"    => $currency_code,
+					"description" => $descriptioninpaymentintent,
+					"metadata"    => $metadata,
 				),
-				*/
-				"description" => $descriptioninpaymentintent,
-				//"save_payment_method" => true,
-				"setup_future_usage" => "on_session",
-				"metadata" => $metadata
+				$useautomaticmethods ? array(
+					'automatic_payment_methods' => array(
+						'enabled' => true,
+					),
+				) : array(
+					'confirmation_method'  => $stripemode,
+					'payment_method_types' => $paymentmethodtypes,
+					'setup_future_usage'   => 'on_session',
+				)
 			);
-			if ($descriptor) {
-				$dataforintent["statement_descriptor_suffix"] = $descriptor; // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
-				$dataforintent["statement_descriptor"] = $descriptor; 	// For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
+			if ($tag) {
+				$dataforintent["statement_descriptor_suffix"] = dol_trunc($tag, 12, 'right', 'UTF-8', 1); 	// For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				$dataforintent["statement_descriptor"] = dol_trunc($tag, 22, 'right', 'UTF-8', 1); 			// For SEPA, 22 chars, it will take only statement_descriptor, not statement_descriptor_suffix
 			}
 			if (!is_null($customer)) {
 				$dataforintent["customer"] = $customer;
@@ -550,7 +577,7 @@ class Stripe extends CommonObject
 			try {
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
-				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 				$arrayofoptions = array();
 				if (empty($noidempotency_key)) {
@@ -561,70 +588,105 @@ class Stripe extends CommonObject
 					$arrayofoptions["stripe_account"] = $key;
 				}
 
-				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".var_export($dataforintent, true));
+				// Hook to allow external modules to modify Stripe PaymentIntent data before API call.
+				// Can be used to customize statement_descriptor (e.g. structured communication for SEPA),
+				// add metadata, modify description, etc.
+				// Note: $arrayofoptions is not passed for security reasons (contains stripe_account and idempotency_key).
+				$parameters = array(
+					'dataforintent' => $dataforintent,
+					'object' => $object,
+					'tag' => $tag,
+					'amount' => $amount,
+					'currency_code' => $currency_code,
+					'customer' => $customer,
+					'servicestatus' => $servicestatus,
+				);
+				$reshook = $hookmanager->executeHooks('beforeCreateStripePaymentIntent', $parameters, $this);
+				if (!empty($hookmanager->resArray['dataforintent'])) {
+					$dataforintent = $hookmanager->resArray['dataforintent'];
+				}
+
+				dol_syslog(get_class($this)."::getPaymentIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
+				dol_syslog(get_class($this)."::getPaymentIntent dataforintent to create paymentintent = ".formatLogObject($dataforintent));
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
-				// Store the payment intent
-				if (is_object($object)) {
-					$paymentintentalreadyexists = 0;
+				if ($paymentintent instanceof \Stripe\PaymentIntent) {
+					dol_syslog(get_class($this)."::getPaymentIntent paymentintent is a defined object");
 
-					if ($did > 0) {
-						// If a payment request line provided, we do not need to recreate one, we just update it
-						dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
+					// Store the payment intent
+					if (is_object($object)) {
+						$paymentintentalreadyexists = 0;
 
-						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
-						$sql .= " ext_payment_site = '".$this->db->escape($service)."',";
-						$sql .= " ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
-						$sql .= " WHERE rowid = ".((int) $did);
-
-						$resql = $this->db->query($sql);
-						if ($resql) {
-							$paymentintentalreadyexists++;
-						} else {
-							$error++;
-							dol_print_error($this->db);
+						// Get $customerid and $pkey
+						$customerid = $paymentintent->customer;
+						$pkey = '';
+						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
 						}
-					} else {
-						// Check that payment intent $paymentintent->id is not already recorded.
-						dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
 
-						$sql = "SELECT pi.rowid";
-						$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
-						$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
-						$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
-						$sql .= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
+						$LONGTRANSACTIONID = $paymentintent->id.':'.$customerid.'@'.$pkey;
 
-						$resql = $this->db->query($sql);
-						if ($resql) {
-							$num = $this->db->num_rows($resql);
-							if ($num) {
-								$obj = $this->db->fetch_object($resql);
-								if ($obj) {
-									$paymentintentalreadyexists++;
-								}
+
+						if ($did > 0) {
+							// If a payment request line provided, we do not need to recreate one, we just update it
+							dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
+
+							$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET";
+							$sql .= " ext_payment_site = '".$this->db->escape($service)."',";
+							$sql .= " ext_payment_id = '".$this->db->escape($paymentintent->id)."'";	// TODO Save the long transaction id
+							$sql .= " WHERE rowid = ".((int) $did);
+
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$paymentintentalreadyexists++;
+							} else {
+								$error++;
+								dol_print_error($this->db);
 							}
 						} else {
-							$error++;
-							dol_print_error($this->db);
-						}
-					}
+							// Check that payment intent $paymentintent->id is not already recorded.
+							dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
 
-					// If not, we create it.
-					if (!$error && !$paymentintentalreadyexists) {
-						$now = dol_now();
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
-						$resql = $this->db->query($sql);
-						if (!$resql) {
-							$error++;
-							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.", LOG_ERR);
+							$sql = "SELECT pi.rowid";
+							$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
+							$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
+							$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
+							$sql .= " AND (pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."' OR pi.ext_payment_id = '".$this->db->escape($LONGTRANSACTIONID)."')";
+
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								$num = $this->db->num_rows($resql);
+								if ($num) {
+									$obj = $this->db->fetch_object($resql);
+									if ($obj) {
+										$paymentintentalreadyexists++;
+									}
+								}
+							} else {
+								$error++;
+								dol_print_error($this->db);
+							}
 						}
+
+						// If not, we create it.
+						if (!$error && !$paymentintentalreadyexists) {
+							$now = dol_now();
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
+							// TODO Save the long transaction id in ext_payment_id
+							$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								$error++;
+								$this->error = $this->db->lasterror();
+								dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.", LOG_ERR);
+							}
+						}
+					} else {
+						$_SESSION["stripe_payment_intent"] = $paymentintent;
 					}
 				} else {
-					$_SESSION["stripe_payment_intent"] = $paymentintent;
+					dol_syslog(get_class($this)."::getPaymentIntent create paymentintent did not returned a Stripe\PaymentIntent object", LOG_ERR);
 				}
 			} catch (Stripe\Exception\CardException $e) {
 				$error++;
@@ -667,22 +729,22 @@ class Stripe extends CommonObject
 	 * @param	Societe		$object							    Object of company to link the Stripe payment mode with
 	 * @param	string		$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string		$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int<0,1>	$status							    Status (0=test, 1=live)
+	 * @param	int<0,1>	$servicestatus					    Service status (0=test, 1=live)
 	 * @param	int<0,1>	$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param   bool		$confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
 	 * @return 	\Stripe\SetupIntent|null				        Stripe SetupIntent or null if not found and failed to create
 	 */
-	public function getSetupIntent($description, $object, $customer, $key, $status, $usethirdpartyemailforreceiptemail = 0, $confirmnow = false)
+	public function getSetupIntent($description, $object, $customer, $key, $servicestatus, $usethirdpartyemailforreceiptemail = 0, $confirmnow = false)
 	{
 		global $conf;
 
 		$noidempotency_key = 1;
 
-		dol_syslog("getSetupIntent description=".$description.' confirmnow='.json_encode($confirmnow), LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.formatLogObject($confirmnow), LOG_INFO, 1);
 
 		$error = 0;
 
-		if (empty($status)) {
+		if (empty($servicestatus)) {
 			$service = 'StripeTest';
 		} else {
 			$service = 'StripeLive';
@@ -751,10 +813,10 @@ class Stripe extends CommonObject
 			try {
 				// Force to use the correct API key
 				global $stripearrayofkeysbyenv;
-				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
-				dol_syslog(get_class($this)."::getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
-				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".var_export($dataforintent, true));
+				dol_syslog(get_class($this)."::getSetupIntent ".$stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_DEBUG);
+				dol_syslog(get_class($this)."::getSetupIntent dataforintent to create setupintent = ".formatLogObject($dataforintent));
 
 				// Note: If all data for payment intent are same than a previous one, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
@@ -841,7 +903,7 @@ class Stripe extends CommonObject
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$card = null;
 
@@ -913,7 +975,7 @@ class Stripe extends CommonObject
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard);
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -934,7 +996,7 @@ class Stripe extends CommonObject
 							}
 						} else {
 							if (!getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
-								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
+								dol_syslog("Try to create card with dataforcard = ".formatLogObject($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
 								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
@@ -1088,7 +1150,7 @@ class Stripe extends CommonObject
 						global $stripearrayofkeysbyenv;
 						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
-						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+						dol_syslog("Try to create sepa_debit with data = ".formatLogObject($dataforcard));
 
 						$s = new \Stripe\StripeClient($stripeacc);
 
@@ -1105,13 +1167,21 @@ class Stripe extends CommonObject
 
 							$cs = $s->setupIntents->create($dataforintent);
 							//$cs = $s->setupIntents->update($cs->id, ['payment_method' => $sepa->id]);
-							$cs = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
-							// note: $cs->mandate contains ID of mandate on Stripe side
 
 							if (!$cs) {
-								$this->error = 'Link SEPA <-> Customer failed';
+								$this->error = 'Link SEPA <-> setupIntent->create failed';
 								dol_syslog($this->error, LOG_ERR);
+								$cs2 = null;
 							} else {
+								// note: $cs->mandate contains ID of mandate on Stripe side
+								$cs2 = $s->setupIntents->confirm($cs->id, ['mandate_data' => ['customer_acceptance' => ['type' => 'offline']]]);
+								if (!$cs2) {
+									$this->error = 'Link SEPA <-> setupIntent->confirm failed';
+									dol_syslog($this->error, LOG_ERR);
+								}
+							}
+
+							if ($cs && $cs2) {
 								dol_syslog("Update the payment mode of the customer");
 
 								// print json_encode($sepa);

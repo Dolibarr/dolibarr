@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2018  Charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -197,9 +196,12 @@ class pdf_beluga extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -217,11 +219,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->multidir_output[$object->entity]) {
+		if ($conf->project->multidir_output[$object->entity ?? $conf->entity]) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->project->multidir_output[$object->entity];
+			$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -288,7 +290,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -411,16 +413,6 @@ class pdf_beluga extends ModelePDFProjects
 						'disableamount' => 1,
 						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
 						'lang' => 'interventions'),
-					'trip' => array(
-						'name' => "TripsAndExpenses",
-						'title' => "ListExpenseReportsAssociatedProject",
-						'class' => 'Deplacement',
-						'table' => 'deplacement',
-						'datefieldname' => 'dated',
-						'margin' => 'minus',
-						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire'),
-						'lang' => 'trip'),
 					'expensereport' => array(
 						'name' => "ExpensesReports",
 						'title' => "ListExpenseReportsAssociatedProject",
@@ -546,7 +538,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->startTransaction();
 								// Label
 								$pdf->SetXY($this->posxref, $curY);
-								$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+								$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 								$pageposafter = $pdf->getPage();
 								if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 									$pdf->rollbackTransaction(true);
@@ -556,7 +548,7 @@ class pdf_beluga extends ModelePDFProjects
 									// Label
 									$pdf->SetXY($this->posxref, $curY);
 									$posybefore = $pdf->GetY();
-									$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+									$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 									$pageposafter = $pdf->getPage();
 									$posyafter = $pdf->GetY();
 									if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -604,7 +596,7 @@ class pdf_beluga extends ModelePDFProjects
 											// Label
 											$pdf->SetXY($this->posxref, $curY);
 											$posybefore = $pdf->GetY();
-											$pdf->MultiCell($this->posxdate - $this->posxref, 3, $element->ref, 1, 'L');
+											$pdf->MultiCell($this->posxdate - $this->posxref, 3, (string) $element->ref, 1, 'L');
 											$pageposafter = $pdf->getPage();
 											$posyafter = $pdf->GetY();
 										}
@@ -744,9 +736,12 @@ class pdf_beluga extends ModelePDFProjects
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				$this->warnings = $hookmanager->warnings;
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

@@ -28,10 +28,10 @@ create table llx_reception
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
   fk_projet             integer  DEFAULT NULL,
-  
+
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
   ref_supplier          varchar(255),					-- reference of reception on supplier side
-  
+
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- author of creation
   fk_user_modif         integer,						-- author of last change
@@ -43,7 +43,7 @@ create table llx_reception
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option
   billed                smallint    DEFAULT 0,
-  
+
   height                float,							-- height
   width                 float,							-- with
   size_units            integer,						-- unit of all sizes (height, width, depth)
@@ -55,7 +55,7 @@ create table llx_reception
   model_pdf             varchar(255),
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
-  
+
   import_key			varchar(14),
   extraparams			varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

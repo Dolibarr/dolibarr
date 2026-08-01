@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,17 +55,17 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var string[]	role required by API method		user / external / admin
+	 * @var string[]	Role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 
 	/**
-	 * @var string		user role
+	 * @var string		User role
 	 */
 	public static $role = 'user';
 
 	/**
-	 * @var User		$user	Loggued user
+	 * @var User		Loggued user
 	 */
 	public static $user = null;
 
@@ -91,7 +91,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $db, $langs, $user;
+		global $conf, $langs, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -132,20 +132,56 @@ class DolibarrApiAccess implements iAuthenticate
 
 		if ($api_key) {
 			$userentity = 0;
+			$token_rowid = 0;
 
-			$sql = "SELECT u.login, u.datec, u.api_key,";
-			$sql .= " u.tms as date_modification, u.entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+			if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.api_key as api_key, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification,";
+					$sql .= " gu.entity, gu.entity as token_entity";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, u.api_key as api_key, u.entity as token_entity, 0 as token_rowid,";
+					$sql .= " u.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."user as u";
+					$sql .= " WHERE u.api_key = '".$this->db->escape($api_key)."' OR u.api_key = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."'";
+				}
+			} else {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && defined("DOLENTITY")) {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification,";
+					$sql .= " gu.entity";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " JOIN ".$this->db->prefix()."usergroup_user as gu ON u.rowid = gu.fk_user AND gu.entity = ".((int) $conf->entity);
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND gu.entity = oat.entity";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				} else {
+					$sql = "SELECT u.login, u.datec, u.api_key as use_api, u.entity, oat.tokenstring as api_key, oat.entity as token_entity, oat.rowid as token_rowid,";
+					$sql .= " oat.tms as date_modification";
+					$sql .= " FROM ".$this->db->prefix()."oauth_token AS oat";
+					$sql .= " JOIN ".$this->db->prefix()."user AS u ON u.rowid = oat.fk_user";
+					$sql .= " WHERE (oat.tokenstring = '".$this->db->escape($api_key)."'";
+					$sql .= " OR oat.tokenstring = '".$this->db->escape(dolEncrypt($api_key, '', '', 'dolibarr'))."')";
+					$sql .= " AND oat.service = 'dolibarr_rest_api'";
+				}
+			}
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$nbrows = $this->db->num_rows($result);
 				if ($nbrows == 1) {
 					$obj = $this->db->fetch_object($result);
+
 					$login = $obj->login;
 					$stored_key = dolDecrypt($obj->api_key);
 					$userentity = $obj->entity;
+					$token_entity = $obj->token_entity;
+					$token_rowid = $obj->token_rowid;
 
 					if (!defined("DOLENTITY") && $conf->entity != ($obj->entity ? $obj->entity : 1)) {		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
 						$conf->entity = ($obj->entity ? $obj->entity : 1);
@@ -157,7 +193,7 @@ class DolibarrApiAccess implements iAuthenticate
 						// see master.inc.php
 						require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-						$fmysoc = new Societe($db);
+						$fmysoc = new Societe($this->db);
 						$fmysoc->setMysoc($conf);
 
 						// We set some specific default values according to country
@@ -194,7 +230,7 @@ class DolibarrApiAccess implements iAuthenticate
 						$mysoc = $fmysoc;
 
 						// Reload langs
-						$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+						$langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
 						if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 							$langcode = $user->conf->MAIN_LANG_DEFAULT;
 						}
@@ -203,6 +239,10 @@ class DolibarrApiAccess implements iAuthenticate
 							$langs->tab_translate = array();
 							$langs->loadLangs(array('main'));
 						}
+					}
+
+					if ($conf->entity != ($token_entity ? $token_entity : 1)) {
+						throw new RestException(401, "functions_isallowed::check_user_api_key Authentication KO for '".$login."': Token not valid (may be a typo or a wrong entity)");
 					}
 				} elseif ($nbrows > 1) {
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
@@ -256,12 +296,27 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(401, $genericmessageerroruser);
 			}
 
-			// TODO
 			// Increase counter of API access
 			if (getDolGlobalString('API_COUNTER_ENABLED')) {
-				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
-				//var_dump('eeee');exit;
+				if (!getDolGlobalString('API_IN_TOKEN_TABLE')) {
+					// Update the counter into table llx_const
+					include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+					dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
+					//var_dump('eeee');exit;
+				} else {
+					// Update the counter into table llx_oauth_token
+					$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+					$sqlforcounter = "UPDATE ".$this->db->prefix()."oauth_token SET ";
+					$sqlforcounter .= " apicount_total = apicount_total + 1,";
+					$sqlforcounter .= " apicount_month = apicount_month + 1,";
+					// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+					$sqlforcounter .= " pageviews_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate(dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
+					$sqlforcounter .= " lastaccess = '".$this->db->idate(dol_now('gmt'), 'gmt')."'";
+					$sqlforcounter .= " WHERE rowid = ".((int) $token_rowid);
+
+					$this->db->query($sqlforcounter);
+				}
 			}
 
 			// User seems valid

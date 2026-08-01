@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026       Pierre Ardoin           <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -36,14 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
 if (isModEnabled('incoterm')) {
@@ -53,10 +53,10 @@ if (isModEnabled('incoterm')) {
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
@@ -65,7 +65,7 @@ $qty = GETPOSTINT('qty');
 $fk_product = GETPOSTINT('fk_product');
 $fk_warehouse_source = GETPOSTINT('fk_warehouse_source');
 $fk_warehouse_destination = GETPOSTINT('fk_warehouse_destination');
-$lineid   = GETPOSTINT('lineid');
+$lineid = GETPOSTINT('lineid');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
 $code_inv = GETPOST('inventorycode', 'alphanohtml');
@@ -111,7 +111,7 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -131,24 +131,24 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/product/stock/stocktransfer/stocktransfer_list.php', 1);
+	$backurlforlist = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_list.php');
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/product/stock/stocktransfer/stocktransfer_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = dolBuildUrl(DOL_URL_ROOT.'/product/stock/stocktransfer/stocktransfer_card.php', ['id' => ($id > 0 ? $id : '__ID__')]);
 			}
 		}
 	}
 
-	$triggermodname = 'STOCKTRANSFER_STOCKTRANSFER_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'STOCKTRANSFER_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-	// On remet cette lecture de permission ici car nécessaire d'avoir le nouveau statut de l'objet après toute action exécutée dessus (après incrémentation par example, le bouton supprimer doit disparaître)
+	// We put this permission read here because it is necessary to have the new status of the object after any executed action on it (for example, the delete button must disappear after incrementation)
 	$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 	// Actions when linking object each other
@@ -313,7 +313,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Annulation décrémentation
+	// Cancel Decrementation
 	if ($action == 'confirm_destockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -340,7 +340,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Incrémentation
+	// Incrementing
 	if ($action == 'confirm_addstock' && $confirm == 'yes' && $object->status == $object::STATUS_TRANSFERED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -363,11 +363,16 @@ if (empty($reshook)) {
 			$object->status = $object::STATUS_CLOSED;
 			$object->date_reelle_arrivee = dol_now();
 			$object->update($user);
+			$result = $object->call_trigger('STOCKTRANSFER_CLOSE', $user);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 			setEventMessage('StockStransferIncrementedShort');
 		}
 	}
 
-	// Annulation incrémentation
+	// Cancel Incrementing
 	if ($action == 'confirm_addstockcancel' && $confirm == 'yes' && $object->status == $object::STATUS_CLOSED && $permissiontoadd) {
 		$lines = $object->getLinesArray();
 		if (!empty($lines)) {
@@ -422,8 +427,7 @@ $help_url = '';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock-stocktransfer_stocktransfer_card');
 
 
-
-// Example : Adding jquery code
+// Example: Adding jQuery code
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {';
 
@@ -451,7 +455,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -564,29 +568,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($action == 'destock') { // Destock confirmation
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'morecss' => 'minwidth300'),
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'morecss' => 'minwidth200')
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProduct'), '', 'confirm_destock', $formquestion, 'yes', 1);
 	} elseif ($action == 'destockcancel') { // Destock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'morecss' => 'minwidth300'),
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'morecss' => 'minwidth200')
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProductCancel'), '', 'confirm_destockcancel', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstock') { // Addstock confirmation
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'morecss' => 'minwidth300'),
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'morecss' => 'minwidth200')
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProduct'), '', 'confirm_addstock', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstockcancel') { // Addstock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
-			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'morecss' => 'minwidth300'),
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'morecss' => 'minwidth200')
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProductCancel'), '', 'confirm_addstockcancel', $formquestion, 'yes', 1);
 	}
@@ -617,7 +621,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= empty($object->thirdparty) ? '' : $object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalInt('MAIN_DISABLE_OTHER_LINK') && !empty($object->thirdparty) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherOrders").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -626,7 +630,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -696,7 +700,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	print dol_get_fiche_end();
 
 
 	/*
@@ -769,7 +772,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($lineid > 0) {
 		print '<input type="hidden" name="lineid" value="'.$lineid.'" />';
 	}
-	print '<table id="tablelines" class="liste centpercent">';
+	print '<table id="tablelines" class="noborder noshadow centpercent nomarginbottom">';
 	//print '<div class="tagtable centpercent">';
 
 	$param = '';
@@ -799,6 +802,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$productstatic = new Product($db);
 	$warehousestatics = new Entrepot($db);
 	$warehousestatict = new Entrepot($db);
+	$i = 0;
 
 	foreach ($listofdata as $key => $line) {
 		$productstatic->fetch($line->fk_product);
@@ -884,7 +888,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print img_edit() . '</a>';
 				print '</td>';
 				print '<td class="right">';
-				print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '">' . img_delete($langs->trans("Remove")) . '</a>';
+				// Ensure the delete line link embeds a CSRF token.
+				$deleteLineUrl = $_SERVER["PHP_SELF"] . '?id=' . $id . '&action=deleteline&lineid=' . $line->id . '&token=' . newToken();
+				print '<a href="' . $deleteLineUrl . '">' . img_delete($langs->trans("Remove")) . '</a>';
 				print '</td>';
 			}
 
@@ -908,9 +914,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
+		$i ++;
 		print '</tr>';
 	}
 
+	// Line to add a new line
 	if (empty($object->status) && $action !== 'editline' && $permissiontoadd) {
 		print '<tr class="oddeven">';
 		// Product
@@ -934,9 +942,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 
-		$formproduct->loadWarehouses(); // Pour charger la totalité des entrepôts
+		$formproduct->loadWarehouses(); // To load all warehouses
 
-		// Define a list of warehouse to not show on the list
+		// Define a list of warehouses to exclude from the selection
 		$TExcludedWarehouseSource = array();
 		if (!empty($object->fk_warehouse_source)) {
 			$source_ent = new Entrepot($db);
@@ -948,7 +956,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// Define a list of warehouse to not show on the list
+		// Define a list of warehouses to exclude from the selection
 		$TExcludedWarehouseDestination = array();
 		if (!empty($object->fk_warehouse_destination)) {
 			$dest_ent = new Entrepot($db);
@@ -975,12 +983,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 
 		// Qty
-		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.$qty.'"' : '').'></td>';
+		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.(GETPOSTISSET('qty') ? GETPOST('qty') : $qty).'"' : '').'></td>';
 
 		// PMP
 		print '<td></td>';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			// Unité
+			// Unit
 			print '<td></td>';
 		}
 
@@ -1000,6 +1008,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</form>';
 	print '</div>';
 
+	print dol_get_fiche_end();
+
+
 	// Buttons for actions
 
 	if ($action != 'presend' && $action != 'editline') {
@@ -1013,7 +1024,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
 			// Back to draft
@@ -1043,7 +1054,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			/*
@@ -1129,9 +1140,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail = 'stocktransfer';
+	$modelmail = 'stocktransfer_send';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->stocktransfer->dir_output;
+	$diroutput = $conf->stocktransfer->dir_output.'/'.$object->element;
 	$trackid = 'stocktransfer'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

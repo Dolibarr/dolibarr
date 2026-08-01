@@ -51,9 +51,12 @@ DateReceived=Dátum doručenia obdržal
 ClassifyReception=Klasifikovať prijaté
 SendShippingByEMail=Zásielku poslať emailom
 SendShippingRef=Podanie zásielky %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Udalosti na zásielky
 LinkToTrackYourPackage=Odkaz pre sledovanie balíkov
-ShipmentCreationIsDoneFromOrder=V súčasnosti sa vytvorenie novej zásielky vykonáva zo záznamu zákazky odberateľa.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Zásielka linka
 ProductQtyInCustomersOrdersRunning=Množstvo produktu z otvorených zákaziek odberateľa
 ProductQtyInSuppliersOrdersRunning=Množstvo produktu z otvorených objednávok
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Možnosť z modulu Workflow, ktorá umožňuj
 NoWarehouseInBase=V základni nie je sklad
 ShipmentUpdated=Zásielka bola úspešne aktualizovaná
 ShipmentIncrementStockOnDelete = Zvýšiť zásoby pri mazaní
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Dodanie
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Termín dodania
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Nastaviť dátumom odoslania
+ValidateDeliveryReceipt=Potvrdenie o doručení
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Odstrániť potvrdenie o doručení
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Spôsob doručenia
+TrackingNumber=Sledovacie číslo
+DeliveryNotValidated=Dodávka nie je overená
+StatusDeliveryCanceled=Zrušený
+StatusDeliveryDraft=Návrh
+StatusDeliveryValidated=Prijaté
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Už tovar obdržal vyššie v dobrom stave,
+Deliverer=Deliverer:
+Sender=Odosielateľ
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Distribúcia zásielok
 ErrorTooManyCombinationBatchcode=Žiadne odoslanie pre riadok %s, pretože sa našlo príliš veľa kombinácií kódu skladu, produktu, šarže (%s).
 ErrorNoCombinationBatchcode=Nepodarilo sa uložiť riadok %s ako kombináciu sklad-produkt-šarža/sériový (%s, %s, %s) nebol nájdený na sklade.
 ErrorTooMuchShipped=Dodané množstvo by nemalo byť väčšie ako objednané množstvo pre riadok %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Zástupca nasledujúce-up doprava
 TypeContact_shipping_external_BILLING=Zákazník faktúra kontakt

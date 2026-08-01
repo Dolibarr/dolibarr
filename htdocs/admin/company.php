@@ -32,6 +32,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -45,15 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'admincompany'; // To manage different context of search
 $page_y = GETPOSTINT('page_y');
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
@@ -76,6 +75,12 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $object = new Societe($db);
 
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
+	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
+}
+
 
 /*
  * Actions
@@ -89,21 +94,31 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
+	$db->begin();
+
 	$tmparray = getCountry(GETPOSTINT('country_id'), 'all', $db, $langs, 0);
 	if (!empty($tmparray['id'])) {
-		if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
-			// For FR, default value of option to show profid SIREN is on by default
-			$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+		// Check we can change country
+		include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
+		if ($mysoc->country_code == 'FR' && $tmparray['code'] != $mysoc->country_code && isALNERunningVersion()) {
+			$langs->load("blockedlog");
+			setEventMessages($langs->trans("BlockedLogCountryChangeNotAllowedFR"), null, 'errors');
+			$error++;
+		} else {
+			if ($tmparray['code'] == 'FR' && $tmparray['id'] != $mysoc->country_id) {
+				// For FR, default value of option to show profid SIREN is on by default
+				$res = dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", 1, 'chaine', 0, '', $conf->entity);
+			}
+
+			$mysoc->country_id   = $tmparray['id'];
+			$mysoc->country_code = $tmparray['code'];
+			$mysoc->country_label = $tmparray['label'];
+
+			$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
+
+			activateModulesRequiredByCountry($mysoc->country_code);
 		}
-
-		$mysoc->country_id   = $tmparray['id'];
-		$mysoc->country_code = $tmparray['code'];
-		$mysoc->country_label = $tmparray['label'];
-
-		$s = $mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-		dolibarr_set_const($db, "MAIN_INFO_SOCIETE_COUNTRY", $s, 'chaine', 0, '', $conf->entity);
-
-		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
 	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, 0, $langs, 0);
@@ -117,8 +132,6 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	} else {
 		dolibarr_del_const($db, "MAIN_INFO_SOCIETE_STATE", $conf->entity);
 	}
-
-	$db->begin();
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("name", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -141,7 +154,15 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+			$mesg = $langs->trans("ErrorBadImageFormat");
+			if (!function_exists("imagecreate")) {
+				$mesg .= ' - '.$langs->trans("ErrorPHPDoesNotSupport", "GD");
+			} else {
+				$supportedextensions = getListOfPossibleImageExt();
+				$supportedextensions = preg_replace('/\\\./', '', $supportedextensions); // Remove '\.'
+				$mesg .= ' - '.$langs->trans("ErrorSupportedFormatAre", implode(', ', explode('|', $supportedextensions)));
+			}
+			setEventMessages($mesg, null, 'errors');
 			break;
 		}
 
@@ -429,8 +450,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'company', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br><br>\n";
+print '<div class="'.($setupcompanynotcomplete ? 'warning' : 'info').'">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</div>\n";
+print "<br>\n";
 
 
 // Edit parameters
@@ -443,26 +464,35 @@ if (!empty($conf->use_javascript_ajax)) {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
+
+		  // Show/hide VAT exemption code field based on VAT option
+		  $("input[name=\"optiontva\"]").change(function() {
+			if ($(this).val() == "0") {
+				$("#vat_exemption_code_div").show();
+			} else {
+				$("#vat_exemption_code_div").hide();
+			}
+		  });
 	  });';
 	print '</script>'."\n";
 }
 
-print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak" colspan="2">'.$langs->trans("CompanyInfo").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="wordbreak" colspan="2">'.$langs->trans("CompanyInfo").'</th></tr>'."\n";
 
 // Company name
-print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
+print '<tr class="oddeven"><td class="fieldrequired titlefieldcreate wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length'].'" class="minwidth250" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('name') ? GETPOST('name', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM'))).'"'.(getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
 print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
-print $form->selectCurrency($conf->currency, "currency");
+print $form->selectCurrency(getDolCurrency(), "currency", 2);
 print '</td></tr>'."\n";
 
 // Country
@@ -578,16 +608,16 @@ print '<br><br>';
 // IDs of the company (country-specific)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak" colspan="2">'.$langs->trans("CompanyIds").'</td></tr>';
+print '<tr class="liste_titre"><td class="wordbreak" colspan="2">'.$langs->trans("CompanyIds").'</td></tr>';
 
 $langs->load("companies");
 
 // Managing Director(s)
-print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
+print '<tr class="oddeven"><td class="titlefieldcreate smallheight"><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
 print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS'))).'"></td></tr>';
 
 // GDPR contact
-print '<tr class="oddeven"><td>';
+print '<tr class="oddeven"><td class="smallheight">';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
 print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : getDolGlobalString('MAIN_INFO_GDPR'))).'"></td></tr>';
@@ -595,15 +625,6 @@ print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value=
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
 print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : getDolGlobalString('MAIN_INFO_CAPITAL'))).'"></td></tr>';
-
-// Juridical Status
-print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
-if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
-} else {
-	print $countrynotdefined;
-}
-print '</td></tr>';
 
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
@@ -613,6 +634,15 @@ print '</td></tr>';
 // Tax ID Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
+print '</td></tr>';
+
+// Juridical Status
+print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
+if ($mysoc->country_code) {
+	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
+} else {
+	print $countrynotdefined;
+}
 print '</td></tr>';
 
 // ProfId1
@@ -773,6 +803,17 @@ if ($mysoc->country_code == 'FR') {
 	$tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
 }
 print '<label for="no_vat">'.$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
+
+print '<div class="shownifvatnotused" id="vat_exemption_code_div"'.(getDolGlobalString('FACTURE_TVAOPTION') ? ' style="display: none;"' : '').'>';
+$placeholder = (($mysoc->country_code == 'FR') ? 'VATEX-FR-FRANCHISE' : '');
+$tooltiptext = $langs->trans("VATExemptionCodeDesc").'<br>'.$langs->trans("VATExemptionCodeDesc2").'<br>'.$langs->trans("VATExemptionCodeDesc3");
+if (($mysoc->country_code == 'FR')) {
+	$tooltiptext .= '<br><br>'.$langs->trans("Example").':<br>';
+	$tooltiptext .= 'VATEX-FR-FRANCHISE, VATEX-FR-CGI261-4, VATEX-FR-J, VATEX-FR-I, VATEX-FR-D, ...';
+}
+print $form->textwithpicto($langs->trans("VATExemptionCode"), $tooltiptext, 1, 'help', 'valignmiddle', 0, 3, 'exemptioncode').' <input type="text" name="MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE" placeholder="'.$placeholder.'" value="'.getDolGlobalString('MAIN_INFO_SOCIETE_VAT_EXEMPTION_CODE').'">';
+print '</div>';
+
 print "</td></tr>\n";
 
 print "</table>";
@@ -795,7 +836,7 @@ if ($mysoc->useLocalTax(1)) {
 	print $form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp);
 	if (!isOnlyOneLocalTax(1)) {
 		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
+		$formcompany->select_localtax(1, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX1'), "lt1");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
@@ -839,7 +880,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, (float) getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
+		$formcompany->select_localtax(2, getDolGlobalFloat('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));

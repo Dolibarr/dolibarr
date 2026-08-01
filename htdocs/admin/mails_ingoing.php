@@ -3,7 +3,7 @@
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel', 'alpha');
 
 $trackid = GETPOST('trackid');
 
@@ -74,7 +74,7 @@ if (preg_match('/^mac/i', PHP_OS)) {
 }
 
 
-//$wikihelp = 'EN:Setup_EMails|FR:Paramétrage_EMails|ES:Configuración_EMails';
+//$wikihelp = 'EN:Setup_EMails|FR:Parametrage_EMails|ES:Configuracion_EMails';
 $wikihelp = '';
 llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-mails_ingoing');
 

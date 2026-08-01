@@ -13,11 +13,11 @@
  * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2017-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
@@ -58,16 +66,9 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'categories'));
 if (isModEnabled("shipping")) {
 	$langs->loadLangs(array('sendings'));
 }
@@ -80,7 +81,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect 	= GETPOST('toselect', 'array');
+$toselect 	= GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'proposallist';
 $optioncss  = GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'alpha');
@@ -108,6 +109,13 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$searchCategoryPropalList = GETPOST('search_category_propal_list', 'array:int');
+$searchCategoryPropalOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryPropalOperator = GETPOSTINT('search_category_propal_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryPropalOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOSTINT('search_product_category');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
@@ -200,7 +208,6 @@ $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/mass
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Propal($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -211,7 +218,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'p.ref' => 'Ref',
 	'p.ref_client' => 'RefCustomer',
-	'pd.description' => 'Description',
+	'pd.description' => 'ProductDescription',
 	's.nom' => "ThirdParty",
 	's.name_alias' => "AliasNameShort",
 	's.zip' => "Zip",
@@ -366,6 +373,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
 		$search_product_category = 0;
+		$searchCategoryPropalList = array();
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -578,9 +586,6 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = 'SELECT';
-if ($search_all !== '') {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
@@ -616,9 +621,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'propal as p ON p.fk_soc = s.rowid';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid = pd.fk_propal';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
@@ -679,7 +681,7 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
 }
-// Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
+// Search in 'code_client' when SOCIETE_ADD_REF_IN_LIST is set to 1
 if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
 	$sql .= natural_search('s.code_client', $search_code_client);
 }
@@ -714,7 +716,25 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('p.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	// Prepare the $sqltoadd for fields pd.* that need a test by doing a "or exits"
+	$sqltoadd = '';
+	$fieldstosearchallwithoutpd = array();
+	$fieldstosearchallwithpd = array();
+	foreach ($fieldstosearchall as $key => $val) {
+		if (!preg_match('/^pd\./', $key)) {
+			$fieldstosearchallwithoutpd[$key] = $val;
+		} else {
+			$fieldstosearchallwithpd[$key] = $val;
+		}
+	}
+
+	if (count($fieldstosearchallwithpd) > 0) {
+		$sqltoadd .= ' OR EXISTS (SELECT pd.rowid FROM '.MAIN_DB_PREFIX.'propaldet as pd WHERE pd.fk_propal = p.rowid';
+		$sqltoadd .= natural_search(array_keys($fieldstosearchallwithpd), '__KEYTOSEARCH__');
+		$sqltoadd .= ')';
+	}
+
+	$sql .= natural_search(array_keys($fieldstosearchallwithoutpd), $search_all, 0, 0, $sqltoadd);
 }
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND p.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
@@ -765,6 +785,7 @@ if ($search_import_key) {
 	$sql .= natural_search("p.import_key", $search_import_key);
 }
 // Search on user
+$param = '';
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
@@ -773,12 +794,46 @@ if ($search_user > 0) {
 	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal'";
 	$sql .= " WHERE ec.element_id = p.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
+if ($searchCategoryPropalOperator == 1) {
+	$param .= "&search_category_propal_operator=".urlencode((string) ($searchCategoryPropalOperator));
+}
+foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+	$param .= "&search_category_propal_list[]=".urlencode($searchCategoryPropal);
+}
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
 	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryPropalList is an array of ID)
+if (!empty($searchCategoryPropalList)) {
+	$searchCategoryPropalSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryPropalList as $searchCategoryPropal) {
+		if (intval($searchCategoryPropal) == -2) {
+			$searchCategoryPropalSqlList[] = "NOT EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal)";
+		} elseif (intval($searchCategoryPropal) > 0) {
+			if ($searchCategoryPropalOperator == 0) {
+				$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie = ".((int) $searchCategoryPropal).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryPropal);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryPropalSqlList[] = " EXISTS (SELECT ck.fk_propal FROM ".MAIN_DB_PREFIX."categorie_propal as ck WHERE p.rowid = ck.fk_propal AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryPropalOperator == 1) {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryPropalSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryPropalSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryPropalSqlList).")";
+		}
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
@@ -842,7 +897,7 @@ if (!empty($searchCategoryProductList)) {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - getWarningDelay('propal', 'cloture'))."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -856,7 +911,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -867,12 +926,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -917,7 +976,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 }
 
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-propale page-list');
 
 $param = '&search_status='.urlencode($search_status);
 if (!empty($mode)) {
@@ -1113,6 +1172,9 @@ $arrayofmassactions = array(
 if ($permissiontosendbymail) {
 	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 }
+if (isModEnabled('category') && $user->hasRight('propal', 'lire')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
@@ -1137,11 +1199,12 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/comm/propal/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewPropal'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('propal', 'creer'));
 
 // Fields title search
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1184,7 +1247,11 @@ if ($search_all) {
 $i = 0;
 
 $moreforfilter = '';
-
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROPOSAL, $searchCategoryPropalList, 'minwidth300', $searchCategoryPropalOperator ? $searchCategoryPropalOperator : 0);
+}
 // If the user can view prospects other than his'
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
@@ -1238,7 +1305,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1247,7 +1314,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1523,7 +1590,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1542,7 +1609,7 @@ $totalarray = array(
 
 // Fields title
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -1741,7 +1808,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -1851,10 +1918,10 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1875,7 +1942,7 @@ while ($i < $imaxinloop) {
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
-			print $object->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
+			print $object->getNomUrl(1, '', '', 0, 1, getDolGlobalInt('PROPAL_LIST_SHOW_NOTES', 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -2414,7 +2481,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

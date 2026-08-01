@@ -2,7 +2,7 @@
 /* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta", "exports", "other"));
@@ -123,8 +122,8 @@ if (empty($current_fiscal_period) && !empty($first_active_fiscal_period)) {
 	}
 }
 
-$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
-$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');  // @phpstan-ignore argument.type
+$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 
 /*
@@ -147,7 +146,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			} else {
 				setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
@@ -156,8 +155,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
-			$separate_auxiliary_account = (!empty(GETPOST('separate_auxiliary_account', 'none')) ? 1 : 0);
-			$generate_bookkeeping_records = (!empty(GETPOST('generate_bookkeeping_records', 'none')) ? 1 : 0);
+			$separate_auxiliary_account = (!empty(GETPOST('separate_auxiliary_account')) ? 1 : 0);
+			$generate_bookkeeping_records = (!empty(GETPOST('generate_bookkeeping_records')) ? 1 : 0);
 
 			$error = 0;
 			if ($generate_bookkeeping_records) {
@@ -177,7 +176,7 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
 
-					header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+					header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 					exit;
 				}
 			}
@@ -193,7 +192,7 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($langs->trans("AccountancyClosureInsertAccountingReversalSuccessfully"), null, 'mesgs');
 
-				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				header("Location: " . $_SERVER['PHP_SELF'] . '?fiscal_period_id=' . $current_fiscal_period['id']);
 				exit;
 			}
 		}
@@ -241,7 +240,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	} elseif ($action == 'step_2') {
@@ -279,7 +278,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	} elseif ($action == 'step_3') {
@@ -323,7 +322,7 @@ if (isset($current_fiscal_period)) {
 			$form_question,
 			'',
 			1,
-			300,
+			340,
 			600
 		);
 	}
@@ -343,11 +342,13 @@ print $formconfirm;
 
 $fiscal_period_nav_text = $langs->trans("FiscalPeriod");
 
-$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
-$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 if (!empty($current_fiscal_period)) {
-	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+	$fiscal_period_nav_text .= ' '.$current_fiscal_period['label'].' &nbsp;(' . dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . ($current_fiscal_period['date_end'] ? dol_print_date($current_fiscal_period['date_end'], 'day') : '?'). ')';
 }
+$fiscal_period_nav_text .= '&nbsp; &nbsp; ';
+$fiscal_period_nav_text .= '<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
+$fiscal_period_nav_text .= '&nbsp;';
+$fiscal_period_nav_text .= '<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
 
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
@@ -362,7 +363,7 @@ if (empty($current_fiscal_period)) {
 		$head[0][2] = 'step1';
 		print dol_get_fiche_head($head, 'step1', '', -1, '');
 
-		print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
+		//print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
 		$count_by_month = $object->getCountByMonthForFiscalPeriod((int) $current_fiscal_period['date_start'], (int) $current_fiscal_period['date_end']);
 
@@ -391,7 +392,7 @@ if (empty($current_fiscal_period)) {
 		print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
 		print '</tr>';
 
-		if (is_array($count_by_month['list'])) {
+		if (is_array($count_by_month['list']) && count($count_by_month['list']) > 0) {
 			foreach ($count_by_month['list'] as $info) {
 				print '<tr class="oddeven">';
 				if ($nb_years > 1) {
@@ -400,8 +401,15 @@ if (empty($current_fiscal_period)) {
 				for ($i = 1; $i <= 12; $i++) {
 					print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
 				}
-				print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
+				print '<td class="right"><b>' . $info['total'] . '</b></td>';
+				print '</tr>';
 			}
+		} else {
+			print '<tr class="oddeven"><td colspan="' . (12 + ($nb_years > 1 ? 1 : 0) + 1) . '">';
+			print '<span class="opacitymedium">';
+			print $langs->trans("None");
+			print '</span>';
+			print '</td></tr>';
 		}
 
 		print "</table>\n";

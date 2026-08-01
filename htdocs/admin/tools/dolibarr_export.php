@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 /**
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
- *		\brief      Page to export database
+ *		\brief      Page to export database.
+ *				    See the file export_files.php for code to build a zip of documents
+ *					See the file export.php for code to build a dump file.
  */
 
 // Load Dolibarr environment
@@ -30,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 /**
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -144,15 +148,14 @@ print "</script>\n";
 $title = $langs->trans("Backup");
 
 print load_fiche_titre($title, '', 'title_setup');
-//print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
 print '<div class="center">';
-print $langs->trans("BackupDesc", DOL_DATA_ROOT);
+print $langs->trans("BackupDesc", 3);
 print '</div>';
 print '<br>';
 
 print "<!-- Dump of a server -->\n";
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -249,7 +252,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	} else {
 		$fullpathofmysqldump = getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP');
 	}
-	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'">';
+	print '<input type="text" name="mysqldump" style="width: 80%" value="'.$fullpathofmysqldump.'" spellcheck="false">';
 	print '</fieldset>';
 
 	print '<br>';
@@ -626,7 +629,7 @@ $title = $langs->trans("BackupZipWizard");
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
 
-print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/admin/tools/export_files.php" name="dump" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="export_type" value="server" />';
 print '<input type="hidden" name="page_y" value="" />';
@@ -701,6 +704,34 @@ print '</fieldset>';
 print '</form>';
 
 print '<br>';
+
+
+print "<br>\n";
+print "<!-- Save setup conf -->\n";
+
+print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
+
+print '<br>';
+
+print '<span class="opacitymedium">';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key or dolibarr_main_instance_unique_id').'<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div id="backupfileright">';
+
+print $langs->trans("SeeValueIntoConfPhp").'<br>';
+print $langs->trans("SeeValueIntoConfPhp2");
+print '<br>';
+
+print '<br>';
+
+print '</div>';
+
+print '</fieldset>';
+
+print '<br><br>';
 
 // End of page
 llxFooter();

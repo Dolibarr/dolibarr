@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,13 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -38,14 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -70,7 +69,8 @@ $categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
-$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array:int');
+$select_categ_invoice_id=GETPOST('select_categ_invoice_id', 'array:int');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -101,18 +101,50 @@ $formother = new FormOther($db);
 
 
 $picto = 'bill';
-$title = $langs->trans("BillsStatistics");
-$dir = $conf->facture->dir_temp;
+$title = $langs->trans("BillsCustomers");
+$dir = $conf->invoice->dir_temp;
 
 if ($mode == 'supplier') {
 	$picto = 'supplier_invoice';
-	$title = $langs->trans("BillsStatisticsSuppliers");
+	$title = $langs->trans("BillsSuppliers");
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', $picto);
+$page = 0;
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = 0;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$newcardbutton = '';
+if ($mode == 'supplier') {
+	$urlnew = DOL_URL_ROOT.'/fourn/facture/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/fourn/facture/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/fourn/facture/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $urlnew, '', (int) ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')));
+} else {
+	$urlnew = DOL_URL_ROOT.'/compta/facture/card.php?action=create';
+	if (!empty($socid)) {
+		$urlnew .= '&socid='.$socid;
+	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/compta/facture/list.php?mode=common', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/compta/facture/list.php?mode=kanban', '', 1, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/compta/facture/stats/index.php', '', 2, array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $urlnew, '', $user->hasRight('facture', 'creer'));
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 dol_mkdir($dir);
 
@@ -125,6 +157,10 @@ if ($mode == 'customer') {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_invoice as cat ON (f.rowid = cat.fk_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
+	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
@@ -133,6 +169,10 @@ if ($mode == 'supplier') {
 	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
+	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_invoice as cat ON (f.rowid = cat.fk_supplier_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
 	}
 }
 
@@ -276,9 +316,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-if ($mode == 'customer') {
-	$type = 'invoice_stats';
-}
+$type = 'invoice_stats';
 if ($mode == 'supplier') {
 	$type = 'supplier_invoice_stats';
 }
@@ -291,7 +329,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Show filter box
-print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="stats" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
@@ -339,6 +377,28 @@ if (isModEnabled('category')) {
 	print '</td></tr>';
 }
 
+
+// Category facture
+if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
+	if ($mode == 'customer') {
+		$cat_type = Categorie::TYPE_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsCustomers"));
+	}
+	if ($mode == 'supplier') {
+		$cat_type = Categorie::TYPE_SUPPLIER_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsSuppliers"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_invoice_id', $cate_arbo, GETPOST('select_categ_invoice_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
+}
+
+
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
@@ -364,6 +424,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
+print img_picto('', 'calendar', 'class="pictofixedwidth"');
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';

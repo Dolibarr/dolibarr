@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2005       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ class Bookmark extends CommonObject
 		$sql .= " title, position, favicon";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bookmark";
 		$sql .= " WHERE rowid = ".((int) $id);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog("Bookmark::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -168,7 +169,7 @@ class Bookmark extends CommonObject
 		$sql .= ",title,favicon,position";
 		$sql .= ",entity";
 		$sql .= ") VALUES (";
-		$sql .= ($this->fk_user > 0 ? $this->fk_user : "0").",";
+		$sql .= ($this->fk_user > 0 ? ((int) $this->fk_user) : "0").",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
 		$sql .= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', ".(int) $this->position;
@@ -212,7 +213,7 @@ class Bookmark extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user : "0");
+		$sql .= " SET fk_user = ".($this->fk_user > 0 ? ((int) $this->fk_user) : "0");
 		$sql .= " ,dateb = '".$this->db->idate($this->datec)."'";
 		$sql .= " ,url = '".$this->db->escape($this->url)."'";
 		$sql .= " ,target = '".$this->db->escape($this->target)."'";
@@ -343,7 +344,7 @@ class Bookmark extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('mybookmarkdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

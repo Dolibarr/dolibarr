@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
+'@phan-var-force array<string,mixed>	$parameters';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -45,8 +46,12 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
+// Ensure $objectoffield is available for dol_eval visibility formulas.
+global $objectoffield;
+$objectoffield = $object;
+
 ?>
-<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php to show formObjectOptions + extrafields -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
@@ -281,7 +286,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
@@ -290,7 +295,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
+				$value = ($action == 'edit_extras' && GETPOSTISSET("options_".$tmpkeyextra)) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
 			// TODO Improve element and rights detection
@@ -305,9 +310,10 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
+				print '<input type="hidden" name="page_y" value="">';
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 
-				print '<input type="submit" class="button" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 

@@ -22,7 +22,7 @@ printSellby=Límit venda: %s
 printQty=Quant.: %d
 printPlannedWarehouse=Magatzem: %s
 AddDispatchBatchLine=Afegir una línia per despatx per caducitat
-WhenProductBatchModuleOnOptionAreForced=Quan el mòdul Lot/Sèries està activat, la disminució automàtica d'estoc es força a «%s» i el mode d'augment automàtic es força a «%s». És possible que algunes opcions no estiguin disponibles. Es poden definir altres opcions com vulgueu.
+WhenProductBatchModuleOnOptionAreForced=Quan el mòdul Lot/Sèrie està activat, alguns modes per a la disminució o l'augment automàtic de estoc poden no estar disponibles. Les altres opcions no tenen cap restricció.
 ProductDoesNotUseBatchSerial=Aquest producte no utilitza lot/número de sèrie
 ProductLotSetup=Configuració del mòdul lot/sèries
 ShowCurrentStockOfLot=Mostra l'estoc actual de la parella producte/lot
@@ -50,5 +50,6 @@ ToReplace=Substitueix
 CantMoveNonExistantSerial=Error. Demanes un moviment en un registre per a una sèrie que ja no existeix. Pot ser que porteu la mateixa sèrie al mateix magatzem diverses vegades en el mateix enviament o que l'utilitzi un altre enviament. Traieu aquest enviament i prepareu-ne un altre.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparació d'execució incompleta de la taula de lots amb el paràmetre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= estoc cal correcció perquè el número de sèrie és únic.
-ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
-ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
+ErrorBatchesNeedStockManagement=Error. Un producte amb gestió de lots també s'ha de gestionar a estoc.
+ForceBatchesNeedStockManagement=Un producte amb gestió de lots s'ha de gestionar a estoc (la gestió de estoc s'ha de forçar a sí)
+BatchInformationNotfound=No s'ha trobat la informació del lot

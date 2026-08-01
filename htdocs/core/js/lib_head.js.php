@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,49 +26,48 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
@@ -149,7 +148,10 @@ if ($thousand == 'Space') {
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
 
-// To start/stop Block UI
+/*
+ * To start/stop Block UI
+ */
+
 function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
 	const block = document.getElementById('dol-block-ui');
 	if (block != null) {
@@ -166,7 +168,10 @@ function dolUnblockUI() {
 }
 
 
-// For jQuery date picker
+/*
+ * For jQuery date picker
+ */
+
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
@@ -186,24 +191,24 @@ $(document).ready(function() {
 });
 
 jQuery(function($){
-	$.datepicker.regional['<?php echo $langs->defaultlang ?>'] = {
-		closeText: '<?php echo $langs->trans("Close2") ?>',
-		prevText: '<?php echo $langs->trans("Previous") ?>',
-		nextText: '<?php echo $langs->trans("Next") ?>',
-		currentText: '<?php echo $langs->trans("Now") ?>',
+	$.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>'] = {
+		closeText: '<?php echo dol_escape_js($langs->trans("Close2")) ?>',
+		prevText: '<?php echo dol_escape_js($langs->trans("Previous")) ?>',
+		nextText: '<?php echo dol_escape_js($langs->trans("Next")) ?>',
+		currentText: '<?php echo dol_escape_js($langs->trans("Now")) ?>',
 		monthNames: tradMonths,
 		monthNamesShort: tradMonthsShort,
 		dayNames: tradDays,
 		dayNamesShort: tradDaysShort,
 		dayNamesMin: tradDaysMin,
-		weekHeader: '<?php echo $langs->trans("Week"); ?>',
-		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		weekHeader: '<?php echo dol_escape_js($langs->trans("Week")); ?>',
+		dateFormat: '<?php echo dol_escape_js($langs->trans("FormatDateShortJQuery")); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
+		firstDay: <?php echo getDolGlobalInt('MAIN_START_WEEK', 1); ?>,
 		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
-	$.datepicker.setDefaults($.datepicker.regional['<?php echo $langs->defaultlang ?>']);
+	$.datepicker.setDefaults($.datepicker.regional['<?php echo dol_escape_js($langs->defaultlang) ?>']);
 });
 
 
@@ -296,6 +301,7 @@ function dpChangeDay(dateFieldID, format)
 	return 0;
 }
 
+
 /*
  * =================================================================
  * Function: formatDate(javascript object Date(), format)
@@ -314,7 +320,7 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	format=format+"";
 
 	var result="";
@@ -357,7 +363,6 @@ function formatDate(date,format)
 	return result;
 }
 
-
 /*
  * =================================================================
  * Function: getDateFromFormat(date_string, format_string)
@@ -382,7 +387,7 @@ function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parameters en chaine
+	// Force parameters to string
 	val = val+"";
 	format = format+"";
 
@@ -500,10 +505,14 @@ function getIntegerInString(str,i,minlength,maxlength)
  */
 function urlencode(s) {
 	var news = s;
+	if (typeof news === "number") {
+		news = news.toString();
+	}
 	news = news.replace(/\+/gi,'%2B');
 	news = news.replace(/&/gi,'%26');
 	return news;
 }
+
 
 /*
  * =================================================================
@@ -563,39 +572,49 @@ function cleanSerialize(expr) {
 
 
 /*
- * =================================================================
- * Purpose: Display a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fieldId
- * Input:   message
- * Author:  Regis Houssin
+ * Purpose: Fonction to open a confirm popup on a click of a link
+ * Input:   msg
+ * Input:   id
+ * Input:   popupWidth
+ * Input:   popupHeight
+ * Input:   disableCancelButton
  * Licence: GPL
- * TODO To remove, seems not used
- * ==================================================================
+ * See also document_preview() that also maje a dialogforpopup.dialog().
+ * See also newpopup that use window.open.
  */
-function displayMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	if (textbox.value == '') {
-		textbox.style.color = 'grey';
-		textbox.value = message;
-	}
-}
+function confirmDolibarr(msg, id, popupWidth = 400, popupHeight = 300, disableCancelButton = 0) {
+	let alink = document.getElementById(id);
+	let title = '<?php echo dol_escape_js($langs->transnoentitiesnoconv("Note")); ?>';
 
-/*
- * =================================================================
- * Purpose: Hide a temporary message in input text fields (For showing help message on
- *          input field).
- * Input:   fiedId
- * Input:   message
- * Author:  Regis Houssin
- * Licence: GPL
- * TODO To remove, seems not used
- * ==================================================================
- */
-function hideMessage(fieldId,message) {
-	var textbox = document.getElementById(fieldId);
-	textbox.style.color = 'black';
-	if (textbox.value == message) textbox.value = '';
+	if (alink.getAttribute("data-alreadyclicked") === "1") {
+		return true;
+	}
+
+	console.log("Call confirmDolibarr disableCancelButton="+disableCancelButton);
+
+	let buttons = {};
+	if (disableCancelButton === 0) {
+		buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Cancel")); ?>'] = function () {
+		   $(this).dialog("close");
+		};
+	}
+	buttons['<?php echo dol_escape_js($langs->transnoentitiesnoconv("Confirm")); ?>'] = function () {
+		console.log("We click OK"); $(this).dialog("close"); alink.setAttribute("data-alreadyclicked", "1"); alink.click(); return false;
+	};
+
+	new Promise(res => {
+			$("#dialogforpopup").text(msg).dialog({
+			  closeOnEscape: true,
+			  resizable: true,
+			  modal: true,
+			  width: popupWidth,
+			  height: popupHeight,
+			  title: title,
+			  buttons: buttons
+			});
+		});
+
+	return false;
 }
 
 
@@ -679,6 +698,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('setConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, value, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 
@@ -711,7 +736,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			//location.reload();
 			return false;
 		}
-	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.error("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 
 	return true;
 }
@@ -785,6 +810,12 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('delConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 			if (url.indexOf('dol_resetcache') < 0) {
@@ -952,12 +983,15 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 				})
 				.addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
-			input.data("ui-autocomplete")._renderItem = function( ul, item ) {
-				return $("<li>")
-					.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
-					.append( "<a>" + item.label + "</a>" )
-					.appendTo( ul );
-			};
+			const widgetInstance = input.data("ui-autocomplete");
+			if (widgetInstance) {
+				widgetInstance._renderItem = function( ul, item ) {
+					return $("<li>")
+						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.append( "<a>" + item.label + "</a>" )
+						.appendTo( ul );
+				};
+			}
 
 			this.button = $( "<button type=\'button\'>&nbsp;</button>" )
 				.attr( "tabIndex", -1 )
@@ -1000,16 +1034,17 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	text	Text to put into copy/paste area
- * @param	text2	Text to put under the copy/paste area
+ * @param	text		Text to put into copy/paste area
+ * @param	text2		Text to put under the copy/paste area
+ * @param   popupTitle	Text to show as title
  */
-function copyToClipboard(text,text2)
+function copyToClipboard(text, text2, popupTitle = '')
 {
 	text = text.replace(/<br>/g,"\n");
 	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
 	/* alert(newElem); */
 	$("#dialogforpopup").html(newElem);
-	$("#dialogforpopup").dialog();
+	$("#dialogforpopup").dialog({title: popupTitle});
 	$("#coordsforpopup").select();
 
 	return false;
@@ -1022,7 +1057,7 @@ function copyToClipboard(text,text2)
  * @param	url			Url
  * @param	title  		Title of popup
  * @return	boolean		False
- * @see document_preview()
+ * @see document_preview() and confirmDolibarr()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
@@ -1047,7 +1082,8 @@ function newpopup(url, title) {
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
  * @param 	title		Title of popup
  * @return	void
- * @see newpopup()
+ * @see also confirmDolibarr() that also make a dialogforpopup.dialog()
+ * @see also newpopup()that use window.open
  */
 function document_preview(file, type, title)
 {
@@ -1058,61 +1094,74 @@ function document_preview(file, type, title)
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
-		var width='85%';
-		var object_width='100%';
-		var height = ($( window ).height() - 60) * 0.90;
-		var object_height='98%';
+		var object_width = '100%';
+		var object_height = '98%';
+
+		var popupWidth = '85%';
+		var popupHeight = $( window ).height() * 0.90 - 100;
 
 		show_preview('notimage');
 
 	} else {
 		/* This is an image */
-		var object_width=0;
-		var object_height=0;
+		var object_width = 0;
+		var object_height = 0;
 
 		var img = new Image();
 
+		img.src = file;
 		img.onload = function() {
-			object_width = this.width;
-			object_height = this.height;
+			object_width = this.width;		/* the real width of image */
+			object_height = this.height;	/* the real height of image */
 
-			width = $( window ).width()*0.90;
-			console.log("object_width="+object_width+" window width="+width);
-			if(object_width < width){
+			/* Complete title with size of image */
+			title = title + ' (' + object_width + ' x ' + object_height + ')';
+
+			popupWidth = $( window ).width() * 0.85 - 50;
+			console.log("object_width="+object_width+" popup window width="+popupWidth);
+			if (object_width < popupWidth) {
 				console.log("Object width is small, we set width of popup according to image width.");
-				width = object_width + 30
+				popupWidth = object_width + 50
 			}
-			height = $( window ).height()*0.85;
-			console.log("object_height="+object_height+" window height="+height);
-			if(object_height < height){
+			if (popupWidth < 250) {	/* Set a minimal width because we need to have neough space for the buttons */
+				popupWidth = 250;
+			}
+
+			popupHeight = $( window ).height() * 0.90 - 160;
+			console.log("object_height="+object_height+" popup window height="+popupHeight);
+			if (object_height < (popupHeight - 160)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 100
-			}
-			else
-			{
+				popupHeight = object_height + 160
+			} else {
 				showOriginalSizeButton = true;
 			}
+
+			console.log("popupWidth="+popupWidth+" popupHeight="+popupHeight);
 
 			show_preview('image');
 
 		};
-		img.src = file;
 	}
 
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
-		if (mode == 'image' && showOriginalSizeButton)
-		{
+		if (mode == 'image') {
 			var curRot = 0;
+			var savMaxHeight = 0;
 			optionsbuttons = {
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort")); ?>': function() { $( this ).dialog( "close" ); }
 				};
+			if (showOriginalSizeButton) {
+				optionsbuttons = {
+					'<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>': function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
+					  ...optionsbuttons
+				};
+			}
 		}
 
 		$("#dialogforpopup").addClass("center");
@@ -1121,15 +1170,14 @@ function document_preview(file, type, title)
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
-			width: width,
-			height: height,
+			width: popupWidth,
+			height: popupHeight,
 			modal: true,
 			title: title,
 			buttons: optionsbuttons
 		});
 
-		if (showOriginalSizeButton)
-		{
+		if (showOriginalSizeButton) {
 			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
 		}
 	}
@@ -1341,8 +1389,10 @@ function generateFilterString(column, operator, context, fieldType) {
 	}
 })();
 
+
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price()
@@ -1371,7 +1421,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var amountAsLocalizedString;
 	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
-	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode(getDolCurrency()) ?>;
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;
@@ -1436,6 +1486,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  */
 function price2numjs(amount) {
 	if (amount == '') return '';
+	if (amount == null) return '';	/* null or undefined */
 
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
@@ -1565,10 +1616,10 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
 		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
-			/* console.log("click close butAction - we click outside"); */
+			/* console.log("click close butAction - we click outside"); // disabled because too verbose */
 			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
 			if (parentholder){
-				// Hide the menus.
+				// Hide the dropdown.
 				parentholder.removeClass("open --up --left");
 			}
 		}
@@ -1598,6 +1649,14 @@ function showOptions(child_list, parent_list) {
 function setListDependencies() {
 		console.log("setListDependencies");
 		jQuery("select option[parent]").parent().each(function() {
+			/* Skip selects inside line item extrafield containers — those are
+			 * handled by setListDependencies_extra() generated by getJSListDependancies().
+			 * Both handlers binding on the same select would race showOptions()
+			 * (prop disabled) against showOptions_extra() (clone/remove/append)
+			 * and leave the child options permanently disabled. See #36880. */
+			if ($(this).closest('[id^="extrafield_lines_area"]').length > 0) {
+				return;
+			}
 			var child_list = $(this).attr("name");
 			var parent = $(this).find("option[parent]:first").attr("parent");
 			var infos = parent.split(":");
@@ -1670,6 +1729,7 @@ $(document).ready(function() {
 
 /**
  * Function called when an item is moved to a different column
+ *
  * @param {jQuery} item - The dragged item
  * @param {jQuery} newColumn - The new column
  */
@@ -1696,5 +1756,102 @@ function onKanbanColumnChange(item, newColumn) {
 	item.data('original-column', newColumn);
 }
 
+
+if (typeof jQuery.fn.on === 'function') {
+
+/*
+ * Intuitive table selection (with keyboard selection)
+ */
+$(function() {
+
+	/**
+	 * @param {jQuery}  el
+	 * @param {Integer}  status
+	 */
+	let setLastClickedRowStatus = function (el, status = 1){
+		$('.row-with-select').attr('data-is-last-changed', 0);
+		el.attr('data-is-last-changed', status === 0 ? 0 : 1);
+	}
+
+	/**
+	 * Remove data-is-last-changed on double click
+	 * Because if data-is-last-changed is present the user can't select text
+	 */
+	$(document).on("dblclick", ".row-with-select", function(e) {
+		$('.row-with-select[data-is-last-changed]').removeAttr( 'data-is-last-changed' );
+	});
+
+	/**
+	 * DISABLE on click a and button
+	 * Because Ctrl + Click on link is also used for open ion a new tab
+	 * we need to block select tool
+	 */
+	$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
+		// we need to block select tool
+		if (e.ctrlKey) {
+			e.stopPropagation();
+		}
+	});
+
+	$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
+		// Prevents automatic change of “checked”
+		e.preventDefault();
+		e.stopPropagation(); // parent click trigger will be done below
+
+		let parentRow = $(this).closest(".row-with-select");
+
+		// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
+		// We simulate a click on the parent line
+		console.log("Emulate click on parent line");
+		parentRow.trigger({
+			type: "click",
+			ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+			shiftKey: e.shiftKey,
+			originalEvent: e
+		});
+
+	});
+
+	$(document).on("click", ".row-with-select", function (e) {
+		console.log("A click on line was done");
+
+		let checkBox = $(this).find('.checkforselect');
+		let nextCheckStatus = !checkBox.is(':checked')
+
+		if (e.ctrlKey || e.metaKey) {
+			// Add line to selection
+			if (checkBox) {
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+			}
+			setLastClickedRowStatus($(this), 1);
+		}
+
+		if (e.shiftKey) {
+			let lastLastChanged = $(this).closest('table').find('.row-with-select[data-is-last-changed="1"]');
+
+			if (lastLastChanged.length>0) {
+				// Add all lines to selection beetwin last selected line
+				if ($(this).index() === lastLastChanged.index()) {
+					return null;
+				}
+
+				if ($(this).index() < lastLastChanged.index()) {
+					$(this).nextUntil(lastLastChanged, ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}else{
+					lastLastChanged.nextUntil($(this), ".row-with-select" ).find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				}
+
+
+				lastLastChanged.find('.checkforselect').prop('checked', nextCheckStatus).trigger('change');
+				checkBox.prop('checked', nextCheckStatus).trigger('change');
+
+				setLastClickedRowStatus($(this), 1);
+			}
+		}
+	});
+});
+
+}
 
 // End of lib_head.js.php

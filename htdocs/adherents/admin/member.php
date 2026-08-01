@@ -8,7 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -35,9 +35,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,9 +44,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  *
  * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "members"));
+$langs->loadLangs(array("admin", "members", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -76,9 +76,63 @@ $error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-global $conf;
+if ($action == 'updateMask') {
+	$maskconst = GETPOST('maskconst', 'aZ09');
+	$maskvalue = GETPOST('maskvalue', 'alpha');
 
-if ($action == 'set_default') {
+	$res = 0;
+
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'specimen') { // For fiche expensereport
+	$modele = GETPOST('module', 'alpha');
+
+	$adherentspecimen = new Adherent($db);
+	$adherentspecimen->initAsSpecimen();
+	$adherentspecimen->status = 0; // Force statut draft to show watermark
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/member/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModelePDFMember $module';
+		/** @var ModelePDFMember $module */
+
+		if ($module->write_file($adherentspecimen, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=member&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+} elseif ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
 } elseif ($action == 'del_default') {
@@ -91,11 +145,7 @@ if ($action == 'set_default') {
 	$res = true;
 } elseif ($action == 'setdoc') {
 	// Set default model
-	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// The constant that was read ahead of the new set
-		// we therefore go through a variable to have a consistent display
-		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
-	}
+	dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity);
 
 	// We activate the model
 	$ret = delDocumentModel($value, $type);
@@ -242,8 +292,8 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
+$linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 
@@ -251,7 +301,7 @@ $head = member_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
 
-$dirModMember = array_merge(array('/core/modules/member/'), $conf->modules_parts['member']);
+$dirModMember = array_merge(array('/core/modules/member/'), (array) $conf->modules_parts['member']);
 foreach ($conf->modules_parts['models'] as $mo) {
 	//Add more models
 	$dirModMember[] = $mo.'core/modules/member/';
@@ -268,7 +318,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center" width="60"></td>';
 print "</tr>\n";
 
 $arrayofmodules = array();
@@ -290,6 +340,7 @@ foreach ($dirModMember as $dirroot) {
 					continue;
 				}
 				$modCodeMember = new $file();
+				/** @var ModeleNumRefMembers $modCodeMember */
 				// Show modules according to features level
 				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
@@ -307,6 +358,7 @@ foreach ($dirModMember as $dirroot) {
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
 '@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
+/** @var array<string,ModeleNumRefMembers> $arrayofmodules */
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -314,12 +366,13 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
-	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
+	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON', 'mod_member_simple') == "$file") {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity));
+		$isshareonotherentity = (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity);	// @phpstan-ignore-line
+		$disabled = (isModEnabled('multicompany') && $isshareonotherentity);
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
@@ -351,12 +404,14 @@ print "<br>";
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+
 // Defined model definition table
 $def = array();
+// TODO Replace with $def = getListOfModels($db, $type);
 $sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
+$sql .= " AND entity = ".((int) $conf->entity);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -407,6 +462,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
+							/** @var doc_generic_member_odt|pdf_standard_member $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -467,7 +523,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}

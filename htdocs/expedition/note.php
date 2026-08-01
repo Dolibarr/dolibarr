@@ -3,8 +3,8 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013 	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,14 +35,21 @@ if (isModEnabled('project')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
-$langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders', 'stocks', 'other', 'propal'));
+$langs->loadLangs(array('sendings', 'companies', 'bills', 'orders', 'stocks', 'other', 'propal'));
 
 $id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$objectsrc = null;
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -122,13 +122,13 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $objectsrc !== null) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {	// Do not change on shipment
+		if (0) {	// @phpstan-ignore-line  Do not change on shipment
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -151,8 +151,13 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
-	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	foreach ($dirtpls as $reldir) {
+		$res = @include dol_buildpath($reldir.'/notes.tpl.php');
+		if ($res) {
+			break;
+		}
+	}
 	print dol_get_fiche_end();
 }
 

@@ -166,5 +166,3 @@ MigrationUserGroupRightsEntity=Actualizar el valor del campo de entidad de llx_u
 MigrationUserPhotoPath=Migración de rutas de fotos para usuarios.
 MigrationFieldsSocialNetworks=Migración de campos de usuarios en redes sociales (%s)
 ErrorFoundDuringMigration=Se informaron errores durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s">hacer clic aquí</a> , pero es posible que la aplicación o algunas características no funcionen correctamente hasta que se resuelvan los errores.
-YouTryInstallDisabledByDirLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (directorio renombrado con el sufijo .lock). <br>
-YouTryInstallDisabledByFileLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (debido a la existencia de un archivo de bloqueo <strong>install.lock</strong> en el directorio de documentos de dolibarr). <br>

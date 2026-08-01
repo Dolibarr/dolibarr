@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+AccountingAccount=Boekhoudkundige rekening
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom scheidingsteken voor exporteren naar bestand
 ACCOUNTING_EXPORT_DATE=Datum formaat voor exporteren naar bestand
 ACCOUNTING_EXPORT_PIECE=Exporteren van het aantal stukken
@@ -48,7 +49,6 @@ Processing=Verwerken
 EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Onkostendeclaratie journaal
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Rekening (uit het Rekeningstelsel) die als standaard moet worden gebruikt
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rekening (uit het rekeningstelsel) dat moet worden gebruikt als standaardrekening voor de producten gekocht in hetzelfde land (gebruikt indien niet gedefinieerd in het productblad)
 Docdate=Datum
 Docref=Referentie

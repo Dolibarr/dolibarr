@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - subtotals
+DeleteSubtotalLine=Supprimer la ligne de sous-total
+ConfirmDeleteSubtotalLine=Êtes-vous sûr de vouloir supprimer cette ligne de sous-total ?
+DeleteTitleLine=Supprimer la ligne de titre
+ConfirmDeleteTitleLine=Êtes-vous sûr de vouloir supprimer cette ligne de titre ?
+DeleteCorrespondingSubtotalLine=Supprimer la ligne de sous-total correspondante ?
+STLineUnderCorrespondingTitle=La ligne de sous-total doit être sous un titre du même niveau et de la même description.

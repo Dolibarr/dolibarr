@@ -48,6 +48,7 @@ ConferenceOrBoothTab = Conferentie of stand
 AmountPaid = Betaald bedrag
 DateOfRegistration = Registratie datum
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
+ConferenceOrBoothAttendeesShort = Conf. or Booth Attendees
 ApplicantOrVisitor=Aanvrager of bezoeker
 Speaker=Spreker
 # Template Mail
@@ -81,8 +82,8 @@ ListOfAttendeesOfEvent=Lijst met deelnemers aan evenementenprojecten
 ListOfConfOrBoothOfEvent=Lijst met conferenties of stands van evenementenprojecten
 DownloadICSLink=ICS-bestand downloaden
 EVENTORGANIZATION_SECUREKEY=Seed om de sleutel voor de openbare registratiepagina te beveiligen om een conferentie voor te stellen
-SERVICE_BOOTH_LOCATION=Service gebruikt voor de factuurregel over een standlocatie
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een evenement
+SERVICE_BOOTH_LOCATION=Service te gebruiken op de Factuur lijn voor de verkoop van een stand.
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service te gebruiken op de Factuur lijn voor de deelnamekosten.
 NbVotes=Aantal stemmen
 # Status
 EvntOrgDraft = Ontwerp
@@ -122,7 +123,7 @@ NewSubscription=Registratie
 OrganizationEventConfRequestWasReceived=Uw suggestie voor een conferentie is ontvangen
 OrganizationEventBoothRequestWasReceived=Uw aanvraag voor een stand is ontvangen
 OrganizationEventPaymentOfBoothWasReceived=Uw betaling voor uw stand is geregistreerd
-OrganizationEventPaymentOfRegistrationWasReceived=Uw betaling voor uw evenementregistratie is geregistreerd
+OrganizationEventPaymentOfRegistrationWasReceived=Uw betaling voor uw inschrijving voor het evenement is geregistreerd.
 OrganizationEventBulkMailToAttendees=Dit is een herinnering aan uw deelname aan het evenement als deelnemer
 OrganizationEventBulkMailToSpeakers=Dit is een herinnering aan je deelname aan het evenement als spreker
 OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of partner)

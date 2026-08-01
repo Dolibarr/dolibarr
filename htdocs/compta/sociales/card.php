@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -28,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -44,13 +52,6 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
@@ -59,8 +60,8 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$cancel = GETPOST('cancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'chargesocialescard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -79,7 +80,6 @@ $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
 // Initialize a technical objects
 $object = new ChargeSociales($db);
-$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('taxsocialcontributioncard', 'globalcard'));
 
@@ -362,7 +362,7 @@ $resteapayer = 0;
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
-	print '<form name="charge" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form name="charge" method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -483,7 +483,7 @@ if ($id > 0) {
 				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
 
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 0);
 		}
 
 
@@ -513,7 +513,7 @@ if ($id > 0) {
 		}
 
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		// Print form confirm
 		print $formconfirm;
@@ -714,7 +714,6 @@ if ($id > 0) {
 
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$total = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
@@ -836,7 +835,7 @@ if ($id > 0) {
 
 			// Clone
 			if ($user->hasRight('tax', 'charges', 'creer')) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete
@@ -855,7 +854,7 @@ if ($id > 0) {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend') {
+		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 

@@ -10,7 +10,7 @@
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,13 @@ class Account extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
+
+	/**
+	 * Ref
+	 *
+	 * @var string
+	 */
+	public $ref;
 
 	/**
 	 * @var	int
@@ -324,14 +331,14 @@ class Account extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -348,7 +355,7 @@ class Account extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -385,7 +392,7 @@ class Account extends CommonObject
 		'comment' => array('type' => 'text', 'label' => 'Comment', 'enabled' => 1, 'visible' => -1, 'position' => 155),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 156),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 157),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 160),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 165),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 170),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 175),
@@ -474,8 +481,6 @@ class Account extends CommonObject
 	 */
 	public function canBeConciliated()
 	{
-		global $conf;
-
 		if (empty($this->rappro)) {
 			return -1;
 		}
@@ -503,6 +508,22 @@ class Account extends CommonObject
 	public function add_url_line($line_id, $url_id, $url, $label, $type)
 	{
 		// phpcs:enable
+		// Avoid uk_bank_url collision when the same target (line_id, url_id, type) is linked twice
+		// e.g. two distinct credit transfers for the same employee dispatched on the same bank line.
+		$sqlcheck = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank_url";
+		$sqlcheck .= " WHERE fk_bank = ".((int) $line_id);
+		$sqlcheck .= " AND url_id = ".((int) $url_id);
+		$sqlcheck .= " AND type = '".$this->db->escape($type)."'";
+		$resqlcheck = $this->db->query($sqlcheck);
+		if ($resqlcheck) {
+			$obj = $this->db->fetch_object($resqlcheck);
+			if ($obj) {
+				$this->db->free($resqlcheck);
+				return (int) $obj->rowid;
+			}
+			$this->db->free($resqlcheck);
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
 		$sql .= "fk_bank";
 		$sql .= ", url_id";
@@ -714,9 +735,9 @@ class Account extends CommonObject
 	/**
 	 *  Create bank account into database
 	 *
-	 *  @param	User	$user		Object user making creation
-	 *  @param  int     $notrigger  1=Disable triggers
-	 *  @return int        			Return integer < 0 if KO, > 0 if OK
+	 *  @param	User		$user		Object user making creation
+	 *  @param  int<0,1>    $notrigger  1=Disable triggers
+	 *  @return int        				Return integer < 0 if KO, > 0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -984,7 +1005,7 @@ class Account extends CommonObject
 
 			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
-				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type = 'bank_account' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1065,8 +1086,8 @@ class Account extends CommonObject
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
 		$sql .= ",owner_country_id = ".($this->owner_country_id > 0 ? ((int) $this->owner_country_id) : "null");
-		$sql .= ",state_id = ".($this->state_id > 0 ? $this->state_id : "null");
-		$sql .= ",fk_pays = ".($this->country_id > 0 ? $this->country_id : "null");
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND entity = ".((int) $conf->entity);
 
@@ -1359,7 +1380,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
+			$sql .= " AND ".$this->db->sanitize($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1391,7 +1412,7 @@ class Account extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
@@ -1405,7 +1426,6 @@ class Account extends CommonObject
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
-
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
@@ -1422,11 +1442,10 @@ class Account extends CommonObject
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
+				if ((int) $this->db->jdate($obj->datefin) < ($now - $conf->bank->rappro->warning_delay)) {
 					$response->nbtodolate++;
 				}
 			}
-
 			return $response;
 		} else {
 			dol_print_error($this->db);
@@ -1446,7 +1465,7 @@ class Account extends CommonObject
 		global $user;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$sql = "SELECT count(b.rowid) as nb";
@@ -1502,7 +1521,7 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}
@@ -1560,11 +1579,11 @@ class Account extends CommonObject
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
-	 *  @param  string  $option         			''=Show ref, 'reflabel'=Show ref+label
+	 *  @param  string  $option         			''=Show ref, 'nolink'=No link, 'reflabel'=Show ref+label
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param	int  	$notooltip		 			1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $mode = '', $option = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
 	{
@@ -1976,7 +1995,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->type            = Account::TYPE_CURRENT;
 		$this->status          = Account::STATUS_OPEN;
@@ -2009,7 +2027,7 @@ class Account extends CommonObject
 	 */
 	public static function replaceThirdparty($dbs, $origin_id, $dest_id)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type = 'company'";
 
 		if ($dbs->query($sql)) {
 			return true;
@@ -2150,7 +2168,7 @@ class AccountLine extends CommonObjectLine
 	public $fk_bordereau;
 
 	/**
-	 * @var int 		ID of bank account
+	 * @var ?int 		ID of bank account
 	 */
 	public $fk_account;
 
@@ -2575,7 +2593,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
-			$sql .= ", fk_user_rappro = ".$user->id;
+			$sql .= ", fk_user_rappro = ".((int) $user->id);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2587,7 +2605,7 @@ class AccountLine extends CommonObjectLine
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= $this->id;
+				$sql .= ((int) $this->id);
 				$sql .= ", ".((int) $cat);
 				$sql .= ")";
 
@@ -2624,7 +2642,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$newdate = $this->db->jdate($obj->datev) + (3600 * 24 * $sign);
+			$newdate = (int) $this->db->jdate($obj->datev) + (3600 * 24 * $sign);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " datev = '".$this->db->idate($newdate)."'";
@@ -2687,7 +2705,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$newdate = $this->db->jdate($obj->dateo) + (3600 * 24 * $sign);
+			$newdate = (int) $this->db->jdate($obj->dateo) + (3600 * 24 * $sign);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " dateo = '".$this->db->idate($newdate)."'";
@@ -2775,7 +2793,7 @@ class AccountLine extends CommonObjectLine
 	 *		@param	int		$maxlen			Longueur max libelle
 	 *		@param	string	$option			Option ('', 'showall', 'showconciliated', 'showconciliatedandaccounted'). Options may be slow.
 	 * 		@param	int     $notooltip		1=Disable tooltip
-	 *		@return	string					Chaine avec URL
+	 *		@return	string					String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0)
 	{

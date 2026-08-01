@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $id);
+//restrictedArea($user, 'mymodule', $id);
 
 //Parameters Page
 $paramwithsearch = '&sortfield=' . urlencode($sortfield);
@@ -261,8 +261,13 @@ if (empty($reshook)) {
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
 						}
-						if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+						// Mirror Product::fetch (product.class.php:2995-2997) which reads pmp from
+						// llx_product_perentity only when MULTICOMPANY_PRODUCT_SHARING_ENABLED and
+						// MULTICOMPANY_PMP_PER_ENTITY_ENABLED are both set. MAIN_PRODUCT_PERENTITY_SHARED
+						// is the accountancy-codes flag; using it to gate the pmp write here means we
+						// silently write into a row that fetch never looks at (#37773).
+						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -552,7 +557,7 @@ if (isModEnabled('project'))
 	{
 		if ($action != 'classify')
 		{
-			$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1126,7 +1131,7 @@ if ($resql) {
 			if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty ?? 0;
 			} else {
-				$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real ?? 0;
+				$valuetoshow = !empty($product_static->stock_warehouse[$obj->fk_warehouse]->real) ? $product_static->stock_warehouse[$obj->fk_warehouse]->real : 0;
 			}
 		}
 		print price2num($valuetoshow, 'MS');
@@ -1301,10 +1306,11 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page + 1).$paramwithsearch.'";
     						}});
+							return false;
     					});
 
 
-                         $(".paginationprevious:last").click(function(e){
+                        $(".paginationprevious:last").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
@@ -1314,19 +1320,22 @@ print '<script type="text/javascript">
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'";
        					 	}});
-						 });
+							return false;
+						});
 
-                          $("#idbuttonmakemovementandclose").click(function(e){
+                        $("#idbuttonmakemovementandclose").click(function(e){
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'";
    							$.ajax({
       					 	url: actionURL,
+        					type: "POST",
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page - 1).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
        					 	}});
-						 });
+							return false;
+						});
 					});
 </script>';
 

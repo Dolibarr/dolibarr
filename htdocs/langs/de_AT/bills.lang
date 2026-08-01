@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsLate=Verspätete Zahlungen
 DisabledBecauseNotErasable=Deaktiviert, weil es nicht gelöscht werden kann
-InvoiceStandardDesc=Dies ist die übliche Rechnungsart.
 InvoiceProForma=Proformarechnung
 InvoiceProFormaAsk=Proformarechnung
 InvoiceProFormaDesc=<b>Proformarechnung</b> entspricht dem Wert der echten Rechnung, wird aber nicht verbucht.
@@ -12,14 +10,10 @@ BillShortStatusValidated=Bestätigt
 BillShortStatusClosedUnpaid=geschlossen
 ValidateBill=Validate Rechnung
 CreditNote=Gutschrift
-NewRelativeDiscount=Neue relative Rabatt
 RelatedBill=Verwandte Rechnung
 PaymentTypeShortTRA=Entwurf
 BIC=BIC
 BICNumber=BIC
-LawApplicationPart2=Die Ware bleibt Eigentum der
-LawApplicationPart4=ihren Preis.
-UseCredit=Verwenden Sie die Credit
 ShowUnpaidLateOnly=Show Ende unbezahlte Rechnung nur
 ValidateInvoice=Validate Rechnung
 DisabledBecausePayments=Nicht möglich, da gibt es einige Zahlungen
@@ -28,4 +22,3 @@ PayedByThisPayment=Bezahlt durch diese Zahlung
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Debitorenrechnung
 TypeContact_facture_external_BILLING=Debitorenrechnung Kontakt
 TypeContact_facture_external_SHIPPING=Customer Versand Kontakt
-TypeContact_facture_external_SERVICE=Kundenservice kontaktieren

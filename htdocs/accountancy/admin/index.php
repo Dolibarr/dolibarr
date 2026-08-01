@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -32,13 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -47,6 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "other"));
@@ -67,23 +66,40 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $formSetup = new FormSetup($db);
 
 // Main options
-$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item = $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
-$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
+// Auxiliary account select mode
+$arrval = array(
+	(string) 0 => $langs->trans("No").' - <span class="opacitymedium">'.$langs->trans("FreeInput").'</span>',
+	(string) 1 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("DropDownList").'</span>',
+	(string) 2 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	(string) 3 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	(string) 4 => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
+);
+$item = $formSetup->newItem('ACCOUNTANCY_AUXACCOUNT_USE_SEARCH_TO_SELECT');
+$item->setAsSelect($arrval);
+$item->helpText = $langs->trans('UseSearchToSelectAuxAccountTooltip');
+$item->cssClass = 'minwidth300 maxwidth400';
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
 $item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
 $item->fieldParams['helpText'] = 'noclick';
+$item->fieldParams['forcereload'] = 1;
+$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 
 if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
-	$item->fieldAttr['class'] = 'maxwidth50 right';
+	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
 }
 
 // Parameters ACCOUNTING_* and others
@@ -238,11 +254,9 @@ if ($action == 'update_export') {
 	// Export options
 	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
-	if (!$error) {
-		// reload
-		$configuration = $accountancyexport->getTypeConfig();
-		$listparam = $configuration['param'];
-	}
+	// reload
+	$configuration = $accountancyexport->getTypeConfig();
+	$listparam = $configuration['param'];
 
 	if (!empty($modelcsv)) {
 		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
@@ -337,6 +351,34 @@ if ($action == 'setdisablebindingonexpensereports') {
 	}
 }
 
+if ($action == 'setdisabletransferonassets') {
+	$setdisabletransferonassets = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS", $setdisabletransferonassets, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisabletransferondiscounts') {
+	$setdisabletransferondiscounts = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS", $setdisabletransferondiscounts, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 if ($action == 'setenablelettering') {
 	$setenablelettering = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", $setenablelettering, 'yesno', 0, '', $conf->entity);
@@ -382,6 +424,76 @@ if ($action == 'setenablevatreversecharge') {
 if ($action == 'setenabletabonthirdparty') {
 	$setenabletabonthirdparty = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_TABONTHIRDPARTY", $setenabletabonthirdparty, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setenabledissociatecashsales') {
+	$setenabledissociatecashsales = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISSOCIATE_CASH_SALES", $setenabledissociatecashsales, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setexportenablelettering') {
+	$setexportenablelettering = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING", $setexportenablelettering, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setexportenableexportdate') {
+	$setexportenableexportdate = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE", $setexportenableexportdate, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setexportenablevalidationdate') {
+	$setexportenablevalidationdate = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE", $setexportenablevalidationdate, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setexportenablefull') {
+	$setexportenablefull = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOTIFIED_EXPORTFULL", $setexportenablefull, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -456,33 +568,28 @@ print '<br>';
 
 
 // Case of the parameter ACCOUNTING_MODE
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updatemode">';
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="updatemode">';
+print '<table class="noborder centpercent">';
 
-	print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
+print "</tr>\n";
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeVirtual').'</label> ('.$langs->trans('Default').')</td>';
+print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc')).'</span>';
+print "</td></tr>\n";
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
+print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc'))."</span>";
+print "</td></tr>\n";
 
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
-	print "</tr>\n";
-	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeVirtual').'</label> ('.$langs->trans('Default').')</td>';
-	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc')).'</span>';
-	print "</td></tr>\n";
-	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
-	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc'))."</span>";
-	print "</td></tr>\n";
+print "</table>\n";
 
-	print "</table>\n";
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
+print '</form>';
 
-	print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
-	print '</form>';
-
-
-	print '<br><br>';
-}
-
+print '<br><br>';
 
 // Show form main options
 print $formSetup->generateOutput(true);
@@ -522,7 +629,7 @@ foreach ($list_binding as $key) {
 			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
 			2=>$langs->trans("ThirdPartyName")
 		);
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -570,6 +677,32 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 }
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS").'</td>';
+if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_ASSETS')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferonassets&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferonassets&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS").'</td>';
+if (getDolGlobalString('ACCOUNTING_DISABLE_TRANSFER_ON_DISCOUNTS')) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferondiscounts&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisabletransferondiscounts&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 if (!getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ACCOUNTANCY_ER_DATE_RECORD").'</td>';
@@ -608,7 +741,7 @@ print '</form>';
 print '<br><br>';
 
 // Accountancy Numbering model
-$dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -766,7 +899,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 	print '<input class="flat right" name="ACCOUNTING_LETTERING_NBLETTERS" id="ACCOUNTING_LETTERING_NBLETTERS" value="' . $nbletter . '" type="number" step="1" min="2" max="3" >' . "\n";
 	print '</tr>';
 
-	// Auto Lettering when transfer in accountancy is realized
+	// Auto matching when transfer in accountancy is realized
 	print '<tr class="oddeven">';
 	print '<td>';
 	print $form->textwithpicto($langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING"), $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING_DESC")) . '</td>';
@@ -810,12 +943,27 @@ if (getDolGlobalString('ACCOUNTING_ENABLE_TABONTHIRDPARTY')) {
 }
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDissociateCashSales"), $langs->trans("AccountingDissociateCashSalesDesc")).'</td>';
+if (getDolGlobalString('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabledissociatecashsales&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabledissociatecashsales&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
 print '</form>';
+
 
 print '<br><br>';
 
@@ -925,9 +1073,65 @@ if ($num2) {
 
 		print '</td></tr>';
 	}
-
-	print "</table>\n";
 }
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDefaultNotExportLettering"), $langs->trans("AccountingDefaultNotExportLetteringDesc")) . '</td>';
+if (getDolGlobalInt('ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablelettering&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablelettering&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDefaultNotNotifiedExportDate"), $langs->trans("AccountingDefaultNotNotifiedExportDateDesc")) . '</td>';
+if (getDolGlobalInt('ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenableexportdate&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenableexportdate&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDefaultNotifiedValidationDate"), $langs->trans("AccountingDefaultNotifiedValidationDateDesc")) . '</td>';
+if (getDolGlobalInt('ACCOUNTING_DEFAULT_NOTIFIED_VALIDATION_DATE')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablevalidationdate&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablevalidationdate&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("AccountingDefaultNotifiedExportFull"), $langs->trans("AccountingDefaultNotifiedExportFullDesc")) . '</td>';
+if (getDolGlobalInt('ACCOUNTING_DEFAULT_NOTIFIED_EXPORTFULL')) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablefull&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setexportenablefull&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print "</table>\n";
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 

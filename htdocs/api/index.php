@@ -29,6 +29,15 @@
 
 use Luracast\Restler\Format\UploadFormat;
 
+// API endpoints return JSON (or XML). A stray PHP warning or notice in the
+// response body corrupts the parser on the caller side. Silence the display
+// of PHP messages here while keeping them in the server log so that the
+// problem is still observable to the operator (filefunc.inc.php only does
+// this when dolibarr_main_prod is set, which leaves development setups
+// emitting HTML into every API answer).
+@ini_set('display_errors', '0');
+@ini_set('log_errors', '1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
 }
@@ -63,7 +72,7 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS' && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 	http_response_code(204);
 	exit;
 }
@@ -72,13 +81,13 @@ if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS
 if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 // When we request url to get an API, we accept Cross site so we can make js API call inside another website
 if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY, DOLAPIENTITY');
 }
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -90,6 +99,15 @@ if (!$res && file_exists("../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
@@ -107,17 +125,11 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 
 // In API context, we force the protection to avoid forging of criteria including bind SQL injection
-$conf->global->MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER = 1;
+global $dolibarr_allow_unsecured_select_in_extrafields_filter;
+$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -199,9 +211,9 @@ if (getDolGlobalString('MAIN_API_DEBUG')) {
 		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
 		//	'version' => $api->r->getRequestedApiVersion(),
 		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//dol_syslog("Debug API input ".formatLogOb
+		dol_syslog("Debug API url ".formatLogObject($r->url), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".formatLogObject($r->getRequestData()), LOG_DEBUG, 0, '_api');
 		//}
 	});
 }
@@ -282,10 +294,9 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
-								//$conf->global->API_DISABLE_LOGIN_API = 1;
-								if ($file_searched == 'api_login.class.php' && getDolGlobalString('API_DISABLE_LOGIN_API')) {
-									continue;
-								}
+								//if ($file_searched == 'api_login.class.php' && !getDolGlobalString('API_ENABLE_LOGIN_API')) {
+								//	continue;
+								//}
 
 								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
 
@@ -357,9 +368,6 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
-	if ($moduleobject == 'eventattendees') {
-		$moduledirforclass = 'eventorganization';
-	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
@@ -411,7 +419,13 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 		exit(0);
 	}
 
-	if (class_exists($classname)) {
+	// Match the discovery loop above which accepts both "Foo" and "FooApi" class
+	// names (see line ~308). Without the Api suffix branch, a module file named
+	// api_mymodule.class.php exposing class MyModuleApi cannot be dispatched
+	// even though the api explorer lists it (#37282).
+	if (class_exists($classname.'Api')) {
+		$api->r->addAPIClass($classname.'Api');
+	} elseif (class_exists($classname)) {
 		$api->r->addAPIClass($classname);
 	}
 }
@@ -439,7 +453,11 @@ if ($usecompression) {
 	}
 }
 
-//dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+
+if (getDolGlobalString('MAIN_API_DEBUG')) {
+		dol_syslog('We found some compression algorithm: '.$foundonealgorithm.' -> usecompression='.(int) $usecompression, LOG_DEBUG, 0, '_api');
+}
+
 
 Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
@@ -468,7 +486,7 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	echo $result;
 }
 
-if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
+if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_always_enabled)) && $api->r->responseCode == 200) {
 	$error = 0;
 	$db->begin();
 	$userid = DolibarrApiAccess::$user->id;

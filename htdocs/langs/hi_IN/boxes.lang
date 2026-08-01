@@ -116,6 +116,7 @@ BoxLastCustomerShipments=अंतिम ग्राहक शिपमें�
 BoxTitleLastCustomerShipments=नवीनतम %s संशोधित ग्राहक शिपमेंट
 BoxTitleLastLeaveRequests=नवीनतम %s संशोधित अवकाश अनुरोध
 NoRecordedShipments=कोई ग्राहक शिपमेंट दर्ज नहीं
+NoUpcomingEvent=No upcoming events
 BoxCustomersOutstandingBillReached=बकाया सीमा तक पहुँच चुके ग्राहक
 BoxTitleLastFediverseInfos=%s से अंतिम %s पोस्ट
 BoxLastFediverseInfos=नवीनतम फेडिवर्स अपडेट: समाचार और रुझान

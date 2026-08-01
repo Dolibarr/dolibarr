@@ -1,4 +1,4 @@
---- Translation How to --- 
+--- Translation How to ---
 
 An instruction guide for translating Dolibarr in a new language is
 available on Dolibarr wiki:

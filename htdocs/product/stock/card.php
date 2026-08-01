@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2022-2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -86,6 +86,8 @@ $hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 // Security check
 $result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
+
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -176,7 +178,7 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-					$categories = GETPOST('categories', 'array');
+					$categories = GETPOST('categories', 'array:int');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
 						$backtopage = str_replace("__ID__", (string) $id, $backtopage);
@@ -215,15 +217,15 @@ if (empty($reshook)) {
 	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
-			$object->fk_parent   = GETPOST("fk_parent");
+			$object->fk_parent = GETPOSTINT("fk_parent");
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
-			$object->statut      = GETPOST("statut");
-			$object->lieu        = GETPOST("lieu");
-			$object->address     = GETPOST("address");
-			$object->zip         = GETPOST("zipcode");
-			$object->town        = GETPOST("town");
-			$object->country_id  = GETPOSTINT("country_id");
+			$object->statut = GETPOSTINT("statut");
+			$object->lieu = GETPOST("lieu");
+			$object->address = GETPOST("address");
+			$object->zip = GETPOST("zipcode");
+			$object->town = GETPOST("town");
+			$object->country_id = GETPOSTINT("country_id");
 			$object->phone = GETPOST("phone");
 			$object->fax = GETPOST("fax");
 
@@ -244,7 +246,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 				$action = '';
 			}
@@ -283,6 +285,8 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
+	// Actions when printing a doc from card
+	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
@@ -335,14 +339,14 @@ if ($action == 'create') {
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : 'ifone'), 'fk_parent', '', 1);
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOSTINT('fk_parent') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Project
 	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$socid.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$socid).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -369,7 +373,7 @@ if ($action == 'create') {
 
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
-	print img_picto('', 'globe-americas', 'class="paddingright"');
+	print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 	print $form->select_country((!empty($object->country_id) ? $object->country_id : $mysoc->country_code), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -378,11 +382,11 @@ if ($action == 'create') {
 
 	// Phone / Fax
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-	print img_picto('', 'object_phoning', 'class="paddingright"');
+	print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+	print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 	// Warehouse usage
@@ -467,10 +471,10 @@ if ($action == 'create') {
 			// Project
 			if (isModEnabled('project') && $formproject !== null) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+				$morehtmlref .= '<br>'.img_picto('', 'project', 'class="pictofixedwidth"').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
 						$projectid = $object->fk_project;
@@ -554,9 +558,11 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfield">';
 
 			// Value
-			print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
-			print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
-			print "</td></tr>";
+			if ($usercancreadsupplierprice) {
+				print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
+				print price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency);
+				print "</td></tr>";
+			}
 
 			// Last movement
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
@@ -647,35 +653,35 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("Products", "", "p.ref", "", "&id=".$object->id, "", $sortfield, $sortorder);
+			print_liste_field_titre("Label", "", "p.label", "", "&id=".$object->id, "", $sortfield, $sortorder);
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+				print_liste_field_titre("Unit", "", "p.fk_unit", "", "&id=".$object->id, 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
 				$totalarray['type'][$totalarray['nbfield']] = 'string';
 			}
+			if ($usercancreadsupplierprice) {
+				print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
 
-			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
+				print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
+				$totalarray['type'][$totalarray['nbfield']] = '';
+			}
 
-			print_liste_field_titre("EstimatedStockValueShort", "", "svalue", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			$totalarray['nbfield']++;
-			$totalarray['pos'][$totalarray['nbfield']] = 'totalvalue';
-			$totalarray['type'][$totalarray['nbfield']] = '';
-
-
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				print_liste_field_titre("SellPriceMin", "", "p.price", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "", "&id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';
@@ -831,17 +837,17 @@ if ($action == 'create') {
 						print $productstatic->getLabelOfUnit('long', $langs);
 						print '</td>';
 					}
+					if ($usercancreadsupplierprice) {
+						// Price buy PMP
+						print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
-					// Price buy PMP
-					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
-
-					// Total PMP
-					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
-					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
-
+						// Total PMP
+						print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
+						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
+					}
 					$pricemin = 0;
 					// Price sell min
-					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+					if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 						$pricemin = $objp->price;
 						print '<td class="right">';
 						print price(price2num($pricemin, 'MU'), 1);
@@ -855,7 +861,7 @@ if ($action == 'create') {
 
 					// Link to transfer
 					if ($user->hasRight('stock', 'mouvement', 'creer')) {
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfer&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
 						print "</a></td>";
@@ -940,7 +946,7 @@ if ($action == 'create') {
 				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(($socid > 0 ? $socid : -1), (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.($socid > 0 ? $socid : "").'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.($socid > 0 ? '&socid='.$socid : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td></tr>';
 			}
@@ -967,7 +973,7 @@ if ($action == 'create') {
 
 			// Country
 			print '<tr><td>'.$langs->trans('Country').'</td><td>';
-			print img_picto('', 'globe-americas', 'class="paddingright"');
+			print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 			print $form->select_country($object->country_id ? $object->country_id : $mysoc->country_code, 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -976,10 +982,10 @@ if ($action == 'create') {
 
 			// Phone / Fax
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning', 'class="paddingright"');
+			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
+			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
 			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 			// Status
@@ -1035,7 +1041,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$objectref = dol_sanitizeFileName($object->ref);
+	$objectref = dol_sanitizeFileName((string) $object->ref);
 	$relativepath = $object->ref.'/'.$objectref.'.pdf';
 	$filedir = $conf->stock->dir_output.'/'.$objectref;
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

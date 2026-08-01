@@ -4,7 +4,8 @@
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,8 +67,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 // Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
 // It should be enough because all payments are done on invoices of the same thirdparty.
@@ -369,9 +370,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "send")));
 		if ($usercansend) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle', '');
 		} else {
-			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', '#', '', false);
 		}
 	}
 
@@ -397,6 +398,11 @@ if ($result > 0) {
 	}
 	print '</div>';
 
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -409,7 +415,14 @@ if ($result > 0) {
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF') ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF'));
+			if (empty($modelpdf) && !empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$modelpdf = (string) $tmpkeys[0];
+			}
+			if (empty($modelpdf)) {
+				$modelpdf = 'standard_supplierpayment';
+			}
 
 			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
@@ -427,8 +440,26 @@ if ($result > 0) {
 		print '</div></div>';
 	}
 
+	// Ensure we have a PDF model to generate/attach the receipt on presend
+	if ($action == 'presend' && empty($object->model_pdf)) {
+		$defaultpdfmodel = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
+		if (!empty($defaultpdfmodel)) {
+			$object->model_pdf = $defaultpdfmodel;
+		} else {
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+			$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+			if (!empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$object->model_pdf = (string) $tmpkeys[0];
+			}
+		}
+		if (empty($object->model_pdf)) {
+			$object->model_pdf = 'standard_supplierpayment';
+		}
+	}
+
 	// Presend form
-	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$modelmail = 'supplier_payment_send';
 	$defaulttopic = 'SendPaymentReceipt';
 	$diroutput = $conf->fournisseur->payment->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';

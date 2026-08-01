@@ -51,9 +51,12 @@ DateReceived=Saadetise kättesaamise kuupäev
 ClassifyReception=Klassifitseeritud vastuvõetud
 SendShippingByEMail=Saatke saadetis meili teel
 SendShippingRef=Saadetise esitamine %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=Saatmisel toimuvad tegevused
 LinkToTrackYourPackage=Paki jälgimise link
-ShipmentCreationIsDoneFromOrder=Praegu luuakse uus saadetis müügitellimuse kirje põhjal.
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=Saadetise rida
 ProductQtyInCustomersOrdersRunning=Toote kogus avatud müügitellimustest
 ProductQtyInSuppliersOrdersRunning=Toote kogus avatud ostutellimustest
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=Mooduli „Töövoog“ valik, mis võimaldab
 NoWarehouseInBase=Baasis pole ladu
 ShipmentUpdated=Saadetis edukalt uuendatud
 ShipmentIncrementStockOnDelete = Suurenda varu kustutamisel
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Saadetis
+DeliveryRef=Saadetise viide
+DeliveryCard=Kohaletoimetamise kviitung
+DeliveryOrder=Kohaletoimetamise kviitung
+DeliveryDate=Kohaletoimetamise kuupäev
+CreateDeliveryOrder=Loo kohaletoimetamise kviitung
+DeliveryStateSaved=Saadetise olek salvestatud
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Määra saadetise kuupäev
+ValidateDeliveryReceipt=Kinnita vastuvõtu kviitung
+ValidateDeliveryReceiptConfirm=Kas kindlasti kinnitada selle saadetise vastuvõtu kviitungi?
+DeleteDeliveryReceipt=Kustuta vastuvõtu kviitung
+DeleteDeliveryReceiptConfirm=Kas tahad kindlasti kustutada saadetise vastuvõtu kviitungit <b>%s</b>?
+DeliveryMethod=Tarneviis
+TrackingNumber=Jälgimiskood
+DeliveryNotValidated=Saadetis on kinnitamata
+StatusDeliveryCanceled=Tühistatud
+StatusDeliveryDraft=Mustand
+StatusDeliveryValidated=Vastu võetud
+NameAndSignature=Nimi ja allkiri:
+ToAndDate=Saaja___________________________________ kuupäev ____ . _____. __________
+GoodStatusDeclaration=Olen ülalloetletud kaubad vastavalt tellimusele heas seisukorras kätte saanud,
+Deliverer=Kohaletoimetaja:
+Sender=Saatja
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=Laoseis ei ole piisav
+Shippable=Saab transportida
+NonShippable=Ei saa transportida
+ShowShippableStatus=Näita transporditavuse olekut
+ShowReceiving=Näita saadetise kviitungit
+NonExistentOrder=Olematu tellimus
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Laokogus on juba eraldatud eelmistele ridadele
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=Saadetiste jaotus
 ErrorTooManyCombinationBatchcode=Rea %s saadetist ei leitud, kuna leiti liiga palju lao-, toote- ja partiikoodi kombinatsioone (%s).
 ErrorNoCombinationBatchcode=Rida %s ei õnnestunud salvestada, kuna lao-toote-partii/seerianumbri kombinatsiooni (%s, %s, %s) laost ei leitud.
 ErrorTooMuchShipped=Saadetud kogus ei tohiks olla suurem kui real %s tellitud kogus
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Saatmist järelkontrolliv esindaja
 TypeContact_shipping_external_BILLING=Kliendi arveldamise kontakt

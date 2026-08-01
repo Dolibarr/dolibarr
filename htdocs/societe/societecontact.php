@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Charles-Fr Benke	<charles.fr@benke.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -43,6 +38,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'orders'));
@@ -65,7 +64,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "s.nom";
 }
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -73,6 +73,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -117,7 +118,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'swapstatut' && $user->hasRight('societe', 'creer')) {
-		// bascule du statut d'un contact
+		// toggle the status of a contact
 		if ($object->fetch($id)) {
 			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
@@ -185,10 +186,6 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-		}
-
 		if ($object->client) {
 			print '<tr><td class="titlefield">';
 			print $langs->trans('CustomerCode').'</td><td colspan="3">';
@@ -215,7 +212,8 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '</form>';
-		print '<br>';
+
+		print '<br><br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
@@ -317,7 +315,7 @@ if ($id > 0 || !empty($ref)) {
 						// EMail
 						print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
 
-						// Statut
+						// Status
 						print '<td class="nowrap">';
 						print $memberstatic->LibStatut($objp->statut, $objp->subscription, $datefin, 2);
 						print "</td>";

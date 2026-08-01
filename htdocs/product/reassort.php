@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2023 		Vincent de Grandpré  	<vincent@de-grandpre.quebec>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 /**
  *  \file       htdocs/product/reassort.php
- *  \ingroup    produit
+ *  \ingroup    product
  *  \brief      Page to list stocks
  */
 
@@ -299,25 +300,26 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 		} else {
 			$sql_having .= " HAVING";
 		}
-		$sql_having .= $natural_search_physique;
+		$sql_having .= $natural_search_physique;  // natural_search gives save sql @phan-suppress-current-line SqlInjection
 	}
 }
 
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
 
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -325,7 +327,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -412,7 +414,7 @@ if ($resql) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($search_categ);
-		$ways = $c->print_all_ways(' &gt; ', 'product/reassort.php');
+		$ways = $c->print_all_ways('auto', 'product/reassort.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";
 	}
@@ -453,7 +455,7 @@ if ($resql) {
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -502,7 +504,7 @@ if ($resql) {
 	$colspan++;
 	print '<td class="liste_titre"></td>';
 	$colspan++;
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre maxwidthsearch">';
 		$searchpicto = $form->showFilterAndCheckAddButtons(0);
 		print $searchpicto;
@@ -514,7 +516,7 @@ if ($resql) {
 	// Line for column titles
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
@@ -548,7 +550,7 @@ if ($resql) {
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", '', $param, "", $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", '', $param, "", $sortfield, $sortorder, 'right ');
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre('');
 	}
 	print "</tr>\n";
@@ -562,7 +564,7 @@ if ($resql) {
 
 		print '<tr>';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 		print '<td class="tdoverflowmax250">';
@@ -647,7 +649,7 @@ if ($resql) {
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td></td>';
 		}
 

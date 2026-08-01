@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2015  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2013	    Florian Henry               <florian.henry@open-concept.pro.com>
  * Copyright (C) 2018       Ferran Marcet               <fmarcet@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
@@ -56,7 +55,7 @@ if (!isset($id) || empty($id)) {
 }
 '@phan-var-force int<1,max> $id';
 
-// $user est le user qui edite, $id est l'id de l'utilisateur edite
+// $user is the user doing the edit, $id is the id of the user being edited
 $caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 || (($user->id != $id) && $user->hasRight("user", "user", "write")));
 
@@ -79,7 +78,7 @@ if ($user->id != $id && !$canreaduser) {
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
 
-// Charge utilisateur edite
+// Load editing user
 $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
@@ -296,10 +295,27 @@ if ($reshook < 0) {
 	$tmparray = array_merge($tmparray, $hookmanager->resArray);
 }
 
+// 1) Normalisation
+foreach ($tmparray as $k => $v) {
+	if (!is_array($v)) {
+		$tmparray[$k] = [
+			'label' => is_string($v) ? $v : (is_string($k) ? $k : (string) $k),
+			'picto' => 'generic',
+		];
+	} else {
+		$tmparray[$k]['label'] = $tmparray[$k]['label'] ?? (is_string($k) ? $k : (string) $k);
+		$tmparray[$k]['picto'] = !empty($tmparray[$k]['picto']) ? $tmparray[$k]['picto'] : 'generic';
+	}
+}
+
 foreach ($tmparray as $key => $val) {
-	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
+	$tmparray[$key]['data-html'] = img_picto(
+		$langs->trans($val['label']),
+		$val['picto'],
+		'class="pictofixedwidth"'
+	) . $langs->trans($val['label']);
+
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
-	$tmparray[$key]['picto'] = empty($val['picto']) ? 'generic' : $val['picto'];
 }
 
 $head = user_prepare_head($object);
@@ -307,7 +323,7 @@ $head = user_prepare_head($object);
 $title = $langs->trans("User");
 
 if ($action == 'edit') {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
@@ -339,12 +355,10 @@ if ($action == 'edit') {
 	} else {
 		print '<td>';
 		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
-			}
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
 		print '</td>';
@@ -484,12 +498,12 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'refid valignmiddle nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -508,12 +522,10 @@ if ($action == 'edit') {
 	} else {
 		print '<td>';
 		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
-			}
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "superadmin", 'class="paddingleft valignmiddle"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "admin", 'class="paddingleft valignmiddle"');
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;
 		print '</td>';
@@ -625,7 +637,8 @@ if ($action == 'edit') {
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
 		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
 	} else {
-		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
+		if ($caneditfield || !empty($user->admin)) {
+			// If the user editing is the current user (no special permissions required as this is an output modification page and not a data modification page), or if they are an admin.
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';

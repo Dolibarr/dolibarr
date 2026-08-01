@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
@@ -38,13 +45,6 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
@@ -54,6 +54,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $typeobject = null;
+$objectsrc = null;
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -94,7 +95,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if (empty($reshook)) {
+if (empty($reshook) && $objectsrc !== null) {
 	if ($action == 'addcontact' && $user->hasRight('expedition', 'creer')) {
 		if ($result > 0 && $id > 0) {
 			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
@@ -106,6 +107,7 @@ if (empty($reshook)) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		} else {
+			$mesgs = null;
 			if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -170,10 +172,10 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {	// Do not change on shipment
+		if (0) {	// @phpstan-ignore-line  Do not change on shipment
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true).'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
 			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
@@ -244,9 +246,12 @@ if ($id > 0 || !empty($ref)) {
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) {
-			break;
+		$file = dol_buildpath($reldir.'/contacts.tpl.php');
+		if (file_exists($file)) {
+			$res = @include $file;
+			if ($res) {
+				break;
+			}
 		}
 	}
 }

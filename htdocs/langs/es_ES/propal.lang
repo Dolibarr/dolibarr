@@ -14,6 +14,7 @@ DeleteProp=Eliminar presupuesto
 ValidateProp=Validar presupuesto
 CancelPropal=Anular
 AddProp=Crear presupuesto
+AddRenewalProp=Crear presupuesto renovado
 ConfirmDeleteProp=¿Está seguro de querer eliminar este presupuesto?
 ConfirmValidateProp=¿Está seguro de querer validar este presupuesto bajo la referencia <b>%s</b> ?
 ConfirmCancelPropal=¿Está seguro de querer cancelar el presupuesto <b>%s</b>?

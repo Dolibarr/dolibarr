@@ -8,7 +8,7 @@
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ class Don extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE client IN (1, 3)";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " LIMIT 10";
 
 		$resql = $this->db->query($sql);
@@ -436,8 +436,8 @@ class Don extends CommonObject
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
-		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
+		$sql .= ", ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
+		$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : "null");
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
 		$sql .= ", '".$this->db->escape($this->lastname)."'";
 		$sql .= ", '".$this->db->escape($this->societe)."'";
@@ -501,7 +501,7 @@ class Don extends CommonObject
 	/**
 	 *  Update a donation record
 	 *
-	 *  @param 		User	$user   Object utilisateur qui met a jour le don
+	 *  @param 		User	$user   Object User which updates the donation
 	 *  @param      int		$notrigger	Disable triggers
 	 *  @return     int      		>0 if OK, <0 if KO
 	 */
@@ -529,7 +529,7 @@ class Don extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET";
 		$sql .= " amount = ".((float) $this->amount);
-		$sql .= ", fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
+		$sql .= ", fk_payment = ".($this->modepaymentid ? ((int) $this->modepaymentid) : "null");
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", societe='".$this->db->escape($this->societe)."'";
@@ -538,7 +538,7 @@ class Don extends CommonObject
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
 		$sql .= ", public=".((int) $this->public);
-		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
 		$sql .= ", note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", datedon='".$this->db->idate($this->date)."'";
@@ -639,7 +639,7 @@ class Don extends CommonObject
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
-						$this->errors[] = $this->error;
+						$this->errors[] = 'ErrorFailToDeleteDir';
 					}
 				}
 			}
@@ -668,7 +668,7 @@ class Don extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		$sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
+		$sql = "SELECT d.rowid, d.entity, d.datec, d.date_valid, d.tms as datem, d.datedon,";
 		$sql .= " d.fk_soc as socid, d.firstname, d.lastname, d.societe, d.amount, d.fk_statut as status, d.address, d.zip, d.town, ";
 		$sql .= " d.fk_country, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
 		$sql .= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
@@ -692,7 +692,8 @@ class Don extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id                 = $obj->rowid;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref                = $obj->rowid;
 				$this->date_creation      = $this->db->jdate($obj->datec);
 				$this->datec              = $this->db->jdate($obj->datec);
@@ -903,7 +904,7 @@ class Don extends CommonObject
 		$sql = "SELECT sum(amount) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."don";
 		$sql .= " WHERE fk_statut = ".((int) $param);
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -949,7 +950,7 @@ class Don extends CommonObject
 	 *	@param	int  	$notooltip					1=Disable tooltip
 	 *	@param	string	$moretitle					Add more text to title tooltip
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string								Chaine avec URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
@@ -1088,10 +1089,7 @@ class Don extends CommonObject
 		$file = '';
 		$classname = '';
 		$filefound = 0;
-		$dirmodels = array('/');
-		if (is_array($conf->modules_parts['models'])) {
-			$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-		}
+		$dirmodels = array_merge(['/'], (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			foreach (array('html', 'doc', 'pdf') as $prefix) {
 				$file = $prefix."_".preg_replace('/^html_/', '', $modele).".modules.php";
@@ -1123,7 +1121,7 @@ class Don extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
-			if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
+			if ($obj->write_file($object, $outputlangs /*, $currency */) > 0) {
 				$outputlangs->charset_output = $sav_charset_output;
 
 				// we delete preview files
@@ -1216,7 +1214,7 @@ class Don extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
 		}
 		if (!empty($this->amount)) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
+			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, getDolCurrency()).'</span>';
 		}
 		if (isset($this->status)) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

@@ -57,3 +57,7 @@ donAnonymous=Doazón anónima
 AnonymousDonationTooltip=Marca esta caixa se quere que a súa doazón permaneza no anonimato. Non lle pedirán información persoal.
 publicDonationFieldHelp=%s pode publicar a miña doazón no rexistro público
 listOfPublicDonations=Lista de doazóns públicas
+donationErrorMessageContactEmail=Aconteceu un erro. Para completar a súa doazón, póñase en contacto connosco en %s
+descDonationLineInInvoice=Doazón e contribución
+companyBusinessNumber=Número de rexistro mercantil
+companyTIN=Número de identificación fiscal

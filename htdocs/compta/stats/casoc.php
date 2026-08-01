@@ -5,9 +5,9 @@
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -45,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'categories', 'bills', 'compta'));
@@ -236,6 +236,7 @@ $namelink = "";
 $builddate = 0;
 $calcmode = '';
 $name = '';
+$description = '';
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -282,6 +283,7 @@ $name = array();
 // Show Array
 $catotal = 0;
 $catotal_ht = 0;
+$sql = '';
 
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.name_alias, s.zip, s.town, s.fk_pays,";
@@ -448,7 +450,7 @@ if ($modecompta == "RECETTES-DEPENSES") {
 
 // Show array
 $i = 0;
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value) {
@@ -642,7 +644,7 @@ if (count($amount)) {
 		// Third party
 		$fullname = $name[$key];
 		if ($key > 0) {
-			$thirdparty_static->id = $key;
+			$thirdparty_static->id = (int) $key;
 			$thirdparty_static->name = $fullname;
 			$thirdparty_static->client = 1;
 			$linkname = $thirdparty_static->getNomUrl(1, 'customer');

@@ -31,8 +31,8 @@ OAUTH_URL_FOR_CREDENTIAL=ወደ <a class="notasortlink" href="%s" target="_blank
 OAUTH_STRIPE_TEST_NAME=Stripe Test
 OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=የOAuth ደንበኛ መታወቂያ
-OAUTH_SECRET=የOAuth ሚስጥር
-OAUTH_TENANT=OAuth ተከራይ
+OAUTH_SECRET=OAuth Secret
+OAUTH_TENANT=OAuth Tenant
 OAuthProviderAdded=OAuth አቅራቢ ታክሏል።
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=ለዚህ አቅራቢ የOAuth ግቤት እና መለያ አስቀድሞ አለ።
 URLOfOAuthServiceEndpoints=Base URL for OAuth service endpoints
@@ -40,7 +40,7 @@ URLOfOAuthServiceEndpointsExample=https://mastodon.example.com
 URLOfServiceForAuthorization=ለማረጋገጫ በOAuth አገልግሎት የቀረበ URL
 Scopes=ፈቃዶች (ወሰን)
 ScopeUndefined=ፈቃዶች (ወሰን) ያልተገለጹ (የቀደመውን ትር ይመልከቱ)
-ScopesDesc=Example: read,write with Mastodon
+ScopesDesc=Example: "read", "write" with Mastodon or "none"
 TokenRawValue=Full Token (object)
 AccessToken=Access Token
 TokenExpired=Expired
@@ -50,3 +50,4 @@ RefreshToken=Refresh token
 RefreshTokenHelp=Use the Refresh Token to get a new Access Token
 OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
 OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed
+OAuthErrorStateDiffers=Value for state=%s differs from value in session. Code is refused.

@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011		Dimitri Mouillard		<dmouillard@teclib.com>
+ * Copyright (C) 2012-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018-2026	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,12 @@ class Holiday extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'holiday';
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'HOLIDAY';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -90,7 +97,7 @@ class Holiday extends CommonObject
 	public $date_fin_gmt = '';
 
 	/**
-	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+	 * @var int|string 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning (in db integer default 0)
 	 */
 	public $halfday = '';
 
@@ -160,23 +167,18 @@ class Holiday extends CommonObject
 	 */
 	public $fk_type;
 
+	/**
+	 * @var array<int,array{id:int,rowid:int,ref:string,fk_user:int,fk_type:int,date_create:int|'',date_modification:int|'',description:string,date_debut:string,date_fin:string,date_debut_gmt:string,date_fin_gmt:string,halfday:int,statut:int,status:int,fk_validator:int,date_valid:mixed,fk_user_valid:mixed,date_approval:int|'',fk_user_approve:int,date_refuse:int|'',fk_user_refuse:int,date_cancel:int|'',fk_user_cancel:int,detail_refuse:string,user_firstname:string,user_lastname:string,user_login:string,user_statut:int,user_status:int,user_photo:string,validator_firstname:string,validator_lastname:string,validator_login:string,validator_statut:int,validator_status:int,validator_photo:string}>
+	 */
 	public $holiday = array();
+
 	public $events = array();
+
+	/**
+	 * @var array<int,array{id:int,rowid:int,date_action:string,fk_user_action:int,fk_user_update:int,type_action:string,prev_solde:float,new_solde:float,fk_type:int}>
+	 */
 	public $logs = array();
 
-
-	/**
-	 * @var string
-	 */
-	public $optName = '';
-	/**
-	 * @var string
-	 */
-	public $optValue = '';
-	/**
-	 * @var int
-	 */
-	public $optRowid = 0;
 
 	/**
 	 * Draft status
@@ -251,6 +253,7 @@ class Holiday extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModelNumRefHolidays $obj';
+			/** @var ModelNumRefHolidays $obj */
 			$numref = $obj->getNextValue($objsoc, $this);
 
 			if ($numref != "") {
@@ -291,7 +294,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *   Créer un congés payés dans la base de données
+	 *   Create a paid leave entry in the database
 	 *
 	 *   @param		User	$user        	User that create
 	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -369,12 +372,9 @@ class Holiday extends CommonObject
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
-
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
 
 					if (!$error && !$notrigger) {
@@ -451,18 +451,18 @@ class Holiday extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = ($obj->ref ? $obj->ref : $obj->rowid);
-				$this->fk_user = $obj->fk_user;
+				$this->id    = (int) $obj->rowid;
+				$this->ref   = (string) ($obj->ref ? $obj->ref : $obj->rowid);
+				$this->fk_user = (int) $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
 				$this->description = $obj->description;
 				$this->date_debut = $this->db->jdate($obj->date_debut);
 				$this->date_fin = $this->db->jdate($obj->date_fin);
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
-				$this->halfday = $obj->halfday;
-				$this->status = $obj->status;
-				$this->statut = $obj->status;	// deprecated
+				$this->halfday = (int) $obj->halfday;
+				$this->status = (int) $obj->status;
+				$this->statut = (int) $obj->status;	// deprecated
 				$this->fk_validator = $obj->fk_validator;
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->fk_user_valid = $obj->fk_user_valid;
@@ -513,6 +513,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.fk_user,";
 		$sql .= " cp.fk_type,";
 		$sql .= " cp.date_create,";
+		$sql .= " cp.tms as date_modification,";
 		$sql .= " cp.description,";
 		$sql .= " cp.date_debut,";
 		$sql .= " cp.date_fin,";
@@ -543,7 +544,7 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack needed for search on the list
 		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
@@ -574,45 +575,46 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
-				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
+				$tab_result[$i]['ref'] = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 
-				$tab_result[$i]['fk_user'] = $obj->fk_user;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
-				$tab_result[$i]['description'] = $obj->description;
+				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
+				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
-				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->status;
-				$tab_result[$i]['status'] = $obj->status;
-				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
+				$tab_result[$i]['halfday'] = (int) $obj->halfday;
+				$tab_result[$i]['statut'] = (int) $obj->status;
+				$tab_result[$i]['status'] = (int) $obj->status;
+				$tab_result[$i]['fk_validator'] = (int) $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
-				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
+				$tab_result[$i]['fk_user_valid'] = (int) $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
-				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
+				$tab_result[$i]['fk_user_approve'] = (int) $obj->fk_user_approve;
 				$tab_result[$i]['date_refuse'] = $this->db->jdate($obj->date_refuse);
-				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
+				$tab_result[$i]['fk_user_refuse'] = (int) $obj->fk_user_refuse;
 				$tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
-				$tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
-				$tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
+				$tab_result[$i]['fk_user_cancel'] = (int) $obj->fk_user_cancel;
+				$tab_result[$i]['detail_refuse'] = (string) $obj->detail_refuse;
 
-				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
-				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
-				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_status;
-				$tab_result[$i]['user_status'] = $obj->user_status;
-				$tab_result[$i]['user_photo'] = $obj->user_photo;
+				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
+				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
+				$tab_result[$i]['user_login'] = (string) $obj->user_login;
+				$tab_result[$i]['user_statut'] = (int) $obj->user_status;
+				$tab_result[$i]['user_status'] = (int) $obj->user_status;
+				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
-				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
-				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_status;
-				$tab_result[$i]['validator_status'] = $obj->validator_status;
-				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
+				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
+				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
+				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
+				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
 			}
@@ -673,7 +675,7 @@ class Holiday extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 
 		// Selection filtering
 		if (!empty($filter)) {
@@ -703,46 +705,46 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
-				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
+				$tab_result[$i]['ref'] = (string) ($obj->ref ? $obj->ref : $obj->rowid);
 
-				$tab_result[$i]['fk_user'] = $obj->fk_user;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['fk_user'] = (int) $obj->fk_user;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
 				$tab_result[$i]['date_modification'] = $this->db->jdate($obj->date_modification);
-				$tab_result[$i]['description'] = $obj->description;
+				$tab_result[$i]['description'] = (string) $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
 				$tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut, 1);
 				$tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin, 1);
-				$tab_result[$i]['halfday'] = $obj->halfday;
-				$tab_result[$i]['statut'] = $obj->status;
-				$tab_result[$i]['status'] = $obj->status;
-				$tab_result[$i]['fk_validator'] = $obj->fk_validator;
+				$tab_result[$i]['halfday'] = (int) $obj->halfday;
+				$tab_result[$i]['statut'] = (int) $obj->status;
+				$tab_result[$i]['status'] = (int) $obj->status;
+				$tab_result[$i]['fk_validator'] = (int) $obj->fk_validator;
 				$tab_result[$i]['date_valid'] = $this->db->jdate($obj->date_valid);
-				$tab_result[$i]['fk_user_valid'] = $obj->fk_user_valid;
+				$tab_result[$i]['fk_user_valid'] = (int) $obj->fk_user_valid;
 				$tab_result[$i]['date_approval'] = $this->db->jdate($obj->date_approval);
-				$tab_result[$i]['fk_user_approve'] = $obj->fk_user_approve;
-				$tab_result[$i]['date_refuse'] = $obj->date_refuse;
-				$tab_result[$i]['fk_user_refuse'] = $obj->fk_user_refuse;
-				$tab_result[$i]['date_cancel'] = $obj->date_cancel;
-				$tab_result[$i]['fk_user_cancel'] = $obj->fk_user_cancel;
-				$tab_result[$i]['detail_refuse'] = $obj->detail_refuse;
+				$tab_result[$i]['fk_user_approve'] = (int) $obj->fk_user_approve;
+				$tab_result[$i]['date_refuse'] = $this->db->jdate($obj->date_refuse);
+				$tab_result[$i]['fk_user_refuse'] = (int) $obj->fk_user_refuse;
+				$tab_result[$i]['date_cancel'] = $this->db->jdate($obj->date_cancel);
+				$tab_result[$i]['fk_user_cancel'] = (int) $obj->fk_user_cancel;
+				$tab_result[$i]['detail_refuse'] = (string) $obj->detail_refuse;
 
-				$tab_result[$i]['user_firstname'] = $obj->user_firstname;
-				$tab_result[$i]['user_lastname'] = $obj->user_lastname;
-				$tab_result[$i]['user_login'] = $obj->user_login;
-				$tab_result[$i]['user_statut'] = $obj->user_status;
-				$tab_result[$i]['user_status'] = $obj->user_status;
-				$tab_result[$i]['user_photo'] = $obj->user_photo;
+				$tab_result[$i]['user_firstname'] = (string) $obj->user_firstname;
+				$tab_result[$i]['user_lastname'] = (string) $obj->user_lastname;
+				$tab_result[$i]['user_login'] = (string) $obj->user_login;
+				$tab_result[$i]['user_statut'] = (int) $obj->user_status;
+				$tab_result[$i]['user_status'] = (int) $obj->user_status;
+				$tab_result[$i]['user_photo'] = (string) $obj->user_photo;
 
-				$tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
-				$tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-				$tab_result[$i]['validator_login'] = $obj->validator_login;
-				$tab_result[$i]['validator_statut'] = $obj->validator_status;
-				$tab_result[$i]['validator_status'] = $obj->validator_status;
-				$tab_result[$i]['validator_photo'] = $obj->validator_photo;
+				$tab_result[$i]['validator_firstname'] = (string) $obj->validator_firstname;
+				$tab_result[$i]['validator_lastname'] = (string) $obj->validator_lastname;
+				$tab_result[$i]['validator_login'] = (string) $obj->validator_login;
+				$tab_result[$i]['validator_statut'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_status'] = (int) $obj->validator_status;
+				$tab_result[$i]['validator_photo'] = (string) $obj->validator_photo;
 
 				$i++;
 			}
@@ -775,7 +777,7 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -784,10 +786,10 @@ class Holiday extends CommonObject
 		}
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id) {
 			$num = $this->getNextNumRef(null);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -899,7 +901,7 @@ class Holiday extends CommonObject
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1021,14 +1023,13 @@ class Holiday extends CommonObject
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
-		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
+		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT && $this->status != self::STATUS_CANCELED) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
-			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1);
+			$daysAsked = num_open_day($this->date_debut, $this->date_fin, 0, 1, 0, '', $this->fk_user);
 
 			if (($balance - $daysAsked) < 0 && getDolGlobalString('HOLIDAY_DISALLOW_NEGATIVE_BALANCE')) {
 				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
@@ -1041,6 +1042,11 @@ class Holiday extends CommonObject
 
 		$sql .= " description= '".$this->db->escape($this->description)."',";
 
+		if (!empty($this->date_create)) {
+			$sql .= " date_create = '".$this->db->idate($this->date_create)."',";
+		} else {
+			$error++;
+		}
 		if (!empty($this->date_debut)) {
 			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
 		} else {
@@ -1594,10 +1600,10 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Met à jour une option du module Holiday Payés
+	 *  Update an option of the Holiday module
 	 *
-	 *  @param	string	$name       name du paramètre de configuration
-	 *  @param	string	$value      vrai si mise à jour OK sinon faux
+	 *  @param	string	$name       name settings parameter
+	 *  @param	string	$value      true if update OK else false
 	 *  @return boolean				ok or ko
 	 */
 	public function updateConfCP($name, $value)
@@ -1660,7 +1666,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *	Met à jour le timestamp de la dernière mise à jour du solde des CP
+	 *	Updates the timestamp of the last CP balance update.
 	 *
 	 *	@param		int		$userID		Id of user
 	 *	@param		float	$nbHoliday	Nb of days
@@ -1674,11 +1680,12 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		if (empty($userID) && empty($nbHoliday) && empty($fk_type)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$langs->load("holiday");
 
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
-			// Si mise à jour pour tout le monde en début de mois
+			// If updated for everyone at the beginning of the month
 			$now = dol_now();
 
 			// Get month of last update
@@ -1759,7 +1766,7 @@ class Holiday extends CommonObject
 							$endDate = $endOfMonth;
 						}
 
-						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday']);
+						$nbDaysToDeduct = (int) num_open_day($startDate, $endDate, 0, 1, $obj['halfday'], $obj['country_id'], $obj['fk_user']);
 
 						if ($nbDaysToDeduct <= 0) {
 							continue;
@@ -1779,7 +1786,7 @@ class Holiday extends CommonObject
 					}
 				}
 
-				//updating the date of the last monthly balance update
+				// Updating the date of the last monthly balance update
 				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
 				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
 
@@ -1798,13 +1805,9 @@ class Holiday extends CommonObject
 				$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			}
 
-			if (!$error) {
-				return 1;
-			} else {
-				return 0;
-			}
+			return 1;
 		} else {
-			// Mise à jour pour un utilisateur
+			// Update for one user
 			$nbHoliday = price2num($nbHoliday, 5);
 
 			$sql = "SELECT nb_holiday FROM ".MAIN_DB_PREFIX."holiday_users";
@@ -1924,8 +1927,6 @@ class Holiday extends CommonObject
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
 
 		if ($stringlist) {
@@ -1954,13 +1955,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -1972,10 +1973,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -1990,13 +1991,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2008,16 +2009,16 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $stringlist;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
 			}
 		} else {
-			// Si faux donc return array
+			// If false, return array
 			// List for Dolibarr users
 			if ($type) {
 				// If we need users of Dolibarr
@@ -2025,7 +2026,7 @@ class Holiday extends CommonObject
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " DISTINCT";
 				}
-				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut as status, u.fk_user";
+				$sql .= " u.rowid, u.lastname, u.firstname, u.gender, u.fk_country as country_id, u.photo, u.employee, u.statut as status, u.fk_user";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -2045,13 +2046,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2065,15 +2066,16 @@ class Holiday extends CommonObject
 						$tab_result[$i]['employee'] = (int) $obj->employee;
 						$tab_result[$i]['photo'] = $obj->photo;
 						$tab_result[$i]['fk_user'] = (int) $obj->fk_user; // rowid of manager
+						$tab_result[$i]['country_id'] = (int) $obj->country_id; // id of country of user
 						//$tab_result[$i]['type'] = $obj->type;
 						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->errors[] = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2088,13 +2090,13 @@ class Holiday extends CommonObject
 
 				$resql = $this->db->query($sql);
 
-				// Si pas d'erreur SQL
+				// If no SQL error
 				if ($resql) {
 					$i = 0;
 					$tab_result = $this->holiday;
 					$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
+					// User listing loops
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
 
@@ -2114,10 +2116,10 @@ class Holiday extends CommonObject
 
 						$i++;
 					}
-					// Retoune le tableau des utilisateurs
+					// Returns the user table
 					return $tab_result;
 				} else {
-					// Erreur SQL
+					// SQL error
 					$this->error = "Error ".$this->db->lasterror();
 					return -1;
 				}
@@ -2167,9 +2169,9 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr
+	 *	Count number of active users in Dolibarr
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsers()
 	{
@@ -2183,9 +2185,9 @@ class Holiday extends CommonObject
 		return $object->compteur;
 	}
 	/**
-	 *	Compte le nombre d'utilisateur actifs dans Dolibarr sans CP
+	 *	Count number of active users in Dolibarr without Paid leave
 	 *
-	 *  @return     int      retourne le nombre d'utilisateur
+	 *  @return     int      Return numbers of users
 	 */
 	public function countActiveUsersWithoutCP()
 	{
@@ -2200,7 +2202,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
+	 *  Compare the number of active Dolibarr users to the number of paid leave users
 	 *
 	 *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
 	 *  @param    int	$userCP    				Number of active users into table of holidays
@@ -2228,8 +2230,6 @@ class Holiday extends CommonObject
 	 */
 	public function addLogCP($fk_user_action, $fk_user_update, $label, $new_solde, $fk_type)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$prev_solde = price2num((float) $this->getCPforUser($fk_user_update, $fk_type), 5);
@@ -2267,8 +2267,9 @@ class Holiday extends CommonObject
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
+		$optRowid = 0;
 		if (!$error) {
-			$this->optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
+			$optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
 		}
 
 		// Commit or rollback
@@ -2281,7 +2282,7 @@ class Holiday extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-			return $this->optRowid;
+			return $optRowid;
 		}
 	}
 
@@ -2290,7 +2291,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	string	$sqlorder   SQL sort order
 	 *  @param  string	$sqlwhere   SQL where
-	 *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
+	 *  @return int         		-1 if error, 1 if OK, 2 if no result
 	 */
 	public function fetchLog($sqlorder, $sqlwhere)
 	{
@@ -2334,23 +2335,23 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
-				$tab_result[$i]['date_action'] = $obj->date_action;
-				$tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
-				$tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
-				$tab_result[$i]['type_action'] = $obj->type_action;
-				$tab_result[$i]['prev_solde'] = $obj->prev_solde;
-				$tab_result[$i]['new_solde'] = $obj->new_solde;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
+				$tab_result[$i]['date_action'] = (string) $obj->date_action;
+				$tab_result[$i]['fk_user_action'] = (int) $obj->fk_user_action;
+				$tab_result[$i]['fk_user_update'] = (int) $obj->fk_user_update;
+				$tab_result[$i]['type_action'] = (string) $obj->type_action;
+				$tab_result[$i]['prev_solde'] = (float) $obj->prev_solde;
+				$tab_result[$i]['new_solde'] = (float) $obj->new_solde;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 
 				$i++;
 			}
-			// Retourne 1 et ajoute le tableau à la variable
+			// Returns 1 and adds the array to the variable
 			$this->logs = $tab_result;
 			return 1;
 		} else {
-			// Erreur SQL
+			// SQL error
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -2386,7 +2387,15 @@ class Holiday extends CommonObject
 			if ($num) {
 				$types = array();
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('id' => $obj->rowid, 'rowid' => $obj->rowid, 'code' => $obj->code, 'label' => $obj->label, 'affect' => $obj->affect, 'delay' => $obj->delay, 'newbymonth' => $obj->newbymonth);
+					$types[$obj->rowid] = array(
+						'id' => $obj->rowid,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'label' => $obj->label,
+						'affect' => $obj->affect,
+						'delay' => $obj->delay,
+						'newbymonth' => $obj->newbymonth
+					);
 				}
 
 				return $types;
@@ -2530,7 +2539,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 
 		if ($user->socid) {
-			return -1; // protection pour eviter appel par utilisateur externe
+			return -1; // Protection to prevent calls by external users
 		}
 
 		$now = dol_now();
@@ -2575,7 +2584,7 @@ class Holiday extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:int}	$arraydata		Label of holiday type (if known)
+	 *  @param		?array{labeltype:string,selected?:int<0,1>,nbopenedday?:float}	$arraydata		Label of holiday type (if known)
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -2614,5 +2623,203 @@ class Holiday extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 * Send a mail with previous month Hr information
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	string		$mailto				Email address to send to
+	 * @param	string		$template			Id or Label of mail template to use
+	 * @param	string		$newlang			Force a	lang or empty for auto
+	 *
+	 * @return	int								0 if OK, <> 0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendPreviousMonthHRInformations($mailto = "", $template = "", $newlang = "")
+	{
+		global $conf, $langs, $user;
+
+		$outputlangs = $langs;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$arrayfields = array(
+			'user' => 'Employee',
+			'type' => 'Type',
+			'date_start' => 'DateDebCP',
+			'date_end' => 'DateFinCP',
+			'used_days' => 'NbUseDaysCPShort',
+		);
+
+		if (!empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$outputlangs->loadLangs(array('main', 'holiday', 'hrm'));
+
+		if (empty($mailto) || !isValidEmail($mailto)) {
+			$this->errors[] = 'Bad value for parameter mailto. Must be a valid email address.';
+			return 1;
+		}
+
+		$typeleaves = $this->getTypes(1, -1);
+		$arraytypeleaves = array();
+		foreach ($typeleaves as $val) {
+			$labeltoshow = ($outputlangs->trans($val['code']) != $val['code'] ? $outputlangs->trans($val['code']) : $val['label']);
+			$arraytypeleaves[$val['rowid']] = $labeltoshow;
+		}
+		$listhalfday = array('morning' => $outputlangs->trans("Morning"), "afternoon" => $outputlangs->trans("Afternoon"));
+
+		$datenow = dol_getdate(dol_now());
+		$prev_month = dol_get_prev_month($datenow["mon"], $datenow["year"]);
+		$year_month = sprintf("%04d", $prev_month["year"]).'-'.sprintf("%02d", $prev_month["month"]);
+		$arrayleaves = array();
+
+		$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
+		$sql .= " WHERE cp.entity IN (".getEntity('holiday').") AND cp.rowid > 0";
+		$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
+		$sql .= " AND (";
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$this->db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$this->db->escape($year_month)."')";
+		$sql .= " OR";	// For leave over several months
+		$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$this->db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$this->db->escape($year_month)."') ";
+		$sql .= " )";
+		$sql .= $this->db->order("cp.fk_user, cp.date_debut", "ASC");
+		$resql = $this->db->query($sql);
+		if (empty($resql)) {
+			$this->errors[] = $this->db->lasterror();
+			return 1;
+		}
+		$num = $this->db->num_rows($resql);
+		if ($num > 0) {
+			$tmpuser = new User($this->db);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$tmpuser->fetch($obj->fk_user);
+
+				$date_start = $this->db->jdate($obj->date_debut, true);
+				$date_end = $this->db->jdate($obj->date_fin, true);
+
+				$tmpstart = dol_getdate($date_start);
+				$tmpend = dol_getdate($date_end);
+
+				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
+				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
+
+				$halfdayinmonth = $obj->halfday;
+				$starthalfdayinmonth = $starthalfday;
+				$endhalfdayinmonth = $endhalfday;
+
+				//0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+
+				// Set date_start_gmt and date_end_gmt that are date to show for the selected month
+				$date_start_inmonth = $this->db->jdate($obj->date_debut, true);
+				$date_end_inmonth = $this->db->jdate($obj->date_fin, true);
+				if ($tmpstart['year'] < $prev_month["year"] || $tmpstart['mon'] < $prev_month["month"]) {
+					$date_start_inmonth = dol_get_first_day($prev_month["year"], $prev_month["month"], true);
+					$starthalfdayinmonth = 'morning';
+					if ($halfdayinmonth == 2) {
+						$halfdayinmonth = 1;
+					}
+					if ($halfdayinmonth == -1) {
+						$halfdayinmonth = 0;
+					}
+				}
+				if ($tmpend['year'] > $prev_month["year"] || $tmpend['mon'] > $prev_month["month"]) {
+					$date_end_inmonth = dol_get_last_day($prev_month["year"], $prev_month["month"], true) - ((24 * 3600) - 1);
+					$endhalfdayinmonth = 'afternoon';
+					if ($halfdayinmonth == 2) {
+						$halfdayinmonth = -1;
+					}
+					if ($halfdayinmonth == 1) {
+						$halfdayinmonth = 0;
+					}
+				}
+				$arrayleaves[] = array(
+					"user" => $tmpuser->getNomUrl(0, 'nolink', 0, 0, 24, 1),
+					"type" => $arraytypeleaves[$obj->fk_type],
+					"date_start" => dol_print_date($date_start_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$starthalfdayinmonth]).')</span>',
+					"date_end" => dol_print_date($date_end_inmonth, 'day') . ' <span class="opacitymedium">('.$outputlangs->trans($listhalfday[$endhalfdayinmonth]).')</span>',
+					"used_days" => num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth, $tmpuser->country_id, $obj->fk_user)
+				);
+			}
+		}
+
+		$outputarrayleaves = '<br><table style="width: 100%;border-collapse: separate !important;border-spacing: 0px;border-top: 1px solid #b6b6b6;border-left: 1px solid #b6b6b6;border-right: 1px solid #b6b6b6;margin: 0px 0px 20px 0px;">';
+		$outputarrayleaves .= '<tr>';
+		foreach ($arrayfields as $key => $label) {
+			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;">';
+			$outputarrayleaves .= $outputlangs->trans($label);
+			$outputarrayleaves .= '</td>';
+		}
+		$outputarrayleaves .= '</tr>';
+
+		if (!empty($arrayleaves)) {
+			foreach ($arrayleaves as $key => $fields) {
+				$outputarrayleaves .= '<tr>';
+				foreach ($fields as $field => $value) {
+					$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" id="'.$field.'">';
+					$outputarrayleaves .= $value;
+					$outputarrayleaves .= '</td>';
+				}
+				$outputarrayleaves .= '</tr>';
+			}
+		} else {
+			$outputarrayleaves .= '<tr>';
+			$outputarrayleaves .= '<td style="border-bottom:1px solid #b6b6b6;padding: 6px 10px 6px 12px;" colspan="5">';
+			$outputarrayleaves .= $outputlangs->trans("None");
+			$outputarrayleaves .= '</td>';
+			$outputarrayleaves .= '</tr>';
+		}
+		$outputarrayleaves .= '</table>';
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+		$formmail = new FormMail($this->db);
+		$templateId = 0;
+		$templateLabel = '';
+		if (empty($template) || $template == 'EmailTemplateCode') {
+			$templateLabel = '(HolidayHrInformationsPreviousMonth)';
+		} else {
+			if (is_numeric($template)) {
+				$templateId = $template;
+			} else {
+				$templateLabel = $template;
+			}
+		}
+		$mailtemplate = $formmail->getEMailTemplate($this->db, "holiday", $user, $outputlangs, $templateId, 1, $templateLabel);
+
+		if (is_numeric($mailtemplate) || empty($mailtemplate->topic)) {
+			$this->errors[] = 'No mail template found for code "'.$templateLabel.'" or id "'.$templateId.'".';
+			$error++;
+		}
+
+		if (!$error) {
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $this);
+			complete_substitutions_array($substitutionarray, $outputlangs, $this);
+
+			$subject = make_substitutions($mailtemplate->topic, $substitutionarray, $outputlangs);
+			$msg = make_substitutions($mailtemplate->content, $substitutionarray, $outputlangs);
+			$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+
+			$msg = preg_replace('/__HOLIDAY_ARRAY_PER_EMPLOYEE_FOR_PERIOD__/', $outputarrayleaves, $msg);
+			$cmail = new CMailFile($subject, $mailto, $from, $msg, array(), array(), array(), '', '', 0, 1);
+			$result = $cmail->sendfile();
+			if (!$result || !empty($cmail->error) || !empty($cmail->errors)) {
+				$this->errors[] = $cmail->error;
+				if (is_array($cmail->errors) && count($cmail->errors) > 0) {
+					$this->errors = array_merge($this->errors, $cmail->errors);
+					$error++;
+				}
+			}
+		}
+
+		if (!empty($this->errors)) {
+			$this->output .= "\n";
+			// The $this->errors will be concatenated to the output by the function that call this method.
+		}
+		return ($error ? 1 : 0);
 	}
 }

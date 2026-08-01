@@ -25,10 +25,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -36,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "sms", "other", "errors"));
@@ -226,23 +225,28 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:Setup_Translation|FR:Paramétrage_Traduction|ES:Configuración_Traducción';
-llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-translation');
+$title = $langs->trans("Translation");
+llxHeader('', $title, $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-translation');
 
 $param = '&mode='.urlencode($mode);
 
-$enabledisablehtml = '';
-$enabledisablehtml .= $langs->trans("EnableOverwriteTranslation").' ';
+$enabledisablehtml = '<span class="divfilteralone">';
 if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
-	$enabledisablehtml .= '</a>';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
+} else {
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
+}
+$enabledisablehtml .= $langs->trans("EnableOverwriteTranslation");
+if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
+	// Button off, click to enable
+	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off', 'class="paddingleft valignmiddle"');
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
-	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
-	$enabledisablehtml .= '</a>';
+	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on', 'class="paddingleft valignmiddle"');
 }
+$enabledisablehtml .= '</a>';
+$enabledisablehtml .= '</span>';
 
 $current_language_code = $langs->defaultlang;
 $s = picto_from_langcode($current_language_code);
@@ -251,7 +255,7 @@ if (!empty($conf->dol_optimize_smallscreen)) {
 	$infoOnCurrentLang = 1;
 }
 
-print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'language', 0, '', '', $infoOnCurrentLang);
+print load_fiche_titre($title, $enabledisablehtml, 'language', 0, '', '', $infoOnCurrentLang);
 
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -274,7 +278,7 @@ if ($transvalue) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -368,8 +372,8 @@ if ($mode == 'overwrite') {
 	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
 	$infoOnTransProcess = info_admin($text);
 
-	$infoOnTransProcess .= '<div class="justify">';
-	$infoOnTransProcess .= '<span class="opacitymedium">';
+	$infoOnTransProcess .= '<div class="justify info">';
+	$infoOnTransProcess .= '<span class="">';
 	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	$infoOnTransProcess .= '</span></div>';
@@ -396,7 +400,7 @@ if ($mode == 'overwrite') {
 	if (isModEnabled('multicompany') && !$user->entity) {
 		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print '<td align="center"></td>';
+	print '<td></td>';
 	print "</tr>\n";
 
 
@@ -567,7 +571,7 @@ if ($mode == 'searchkey') {
 	//print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
 	$title = $langs->trans("Translation");
 	if ($nbtotalofrecords > 0) {
-		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
+		$title .= ' <span class="opacitymedium colorblack paddingleft small">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
@@ -579,37 +583,46 @@ if ($mode == 'searchkey') {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
-	print '<tr class="liste_titre liste_titre_filter"><td>';
+	print '<tr class="liste_titre liste_titre_filter">';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print '<td class="center nowraponall">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
+		print $searchpicto;
+		print '</td>';
+	}
+	print '<td>';
 	print $formadmin->select_language($langcode, 'langcode', 0, array(), 0, 0, 0, 'minwidth100 maxwidth250', 1);
 	print '</td>'."\n";
 	print '<td>';
 	print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.dol_escape_htmltag($transkey).'">';
 	print '</td><td>';
 	print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($transvalue).'">';
-	// Limit to superadmin
-	/*if (isModEnabled('multicompany') && !$user->entity)
-	{
-		print '</td><td>';
-		print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
-	}
-	else
-	{*/
 	print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
-	//}
 	print '</td>';
+	print '<td></td>';
 	// Action column
-	print '<td class="right nowraponall">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
-	print $searchpicto;
-	print '</td>';
+	if (!$conf->main_checkbox_left_column) {
+		print '<td class="right nowraponall">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(!empty($massactionbutton) ? 1 : 0, 'checkforselect', 1);
+		print $searchpicto;
+		print '</td>';
+	}
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print_liste_field_titre("");
+	}
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("TranslationKey", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
-	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
-	print '<td align="center"></td>';
+	print_liste_field_titre("");
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print_liste_field_titre("");
+	}
 	print "</tr>\n";
 
 
@@ -636,7 +649,15 @@ if ($mode == 'searchkey') {
 		if ($limit && $i > ($offset + $limit)) {
 			break;
 		}
-		print '<tr class="oddeven"><td>'.dolPrintHTML($langcode).'</td>';
+
+		print '<tr class="oddeven">';
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="center nowraponall">';
+			print '</td>';
+		}
+		// Code lang
+		print '<td>'.dolPrintHTML($langcode).'</td>';
 		// Key
 		print '<td class="" title="'.dolPrintHTMLForAttribute($key).'">'.dolPrintHTML($key).'</td>';
 		print '<td class="tdoverflowmax300 small">';
@@ -655,6 +676,7 @@ if ($mode == 'searchkey') {
 		}
 		print '</span>';
 		print '</td>';
+
 		print '<td class="right nowraponall">';
 		if (!empty($newlangfileonly->tab_translate[$key])) {
 			if ($val != $newlangfileonly->tab_translate[$key]) {
@@ -712,11 +734,13 @@ if ($mode == 'searchkey') {
 				print $form->textwithpicto('', $htmltext, 1, 'warning');
 			}
 		}
-		/*if (isModEnabled('multicompany') && !$user->entity)
-		{
-			print '<td>'.$val.'</td>';
-		}*/
-		print '</td></tr>'."\n";
+		print '</td>';
+
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print'<td></td>';
+		}
+		print '</tr>'."\n";
 	}
 
 	if (empty($recordtoshow)) {

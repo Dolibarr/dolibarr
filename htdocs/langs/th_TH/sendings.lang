@@ -51,9 +51,12 @@ DateReceived=วันที่ได้รับการส่งมอบ
 ClassifyReception=จำแนกประเภทที่ได้รับ
 SendShippingByEMail=ส่งของทางอีเมล์ครับ
 SendShippingRef=การส่งของการขนส่ง %s
+SendDeliveryRef=Submission of delivery %s
 ActionsOnShipping=เหตุการณ์ที่เกิดขึ้นในการจัดส่ง
 LinkToTrackYourPackage=เชื่อมโยงไปยังติดตามแพคเกจของคุณ
-ShipmentCreationIsDoneFromOrder=ในขณะนี้ การสร้างการจัดส่งใหม่เสร็จสิ้นจากบันทึกใบสั่งขาย
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new Shipment fully interconnected with other modules is done through the Sales Order module.
+CreateSimpleShipment=However, your Dolibarr administrator can enable the creation of a simple Shipment from Shipments module setup page.
+SHIPMENT_STANDALONE=For the moment, allow the creation of a simple Shipment not yet interconnected with other modules.
 ShipmentLine=สายการจัดส่ง
 ProductQtyInCustomersOrdersRunning=ปริมาณผลิตภัณฑ์จากใบสั่งขายที่เปิดอยู่
 ProductQtyInSuppliersOrdersRunning=ปริมาณผลิตภัณฑ์จากคำสั่งซื้อที่เปิดอยู่
@@ -69,6 +72,44 @@ OptionToSetSendingBilledNotEnabled=ตัวเลือกจากโมดู
 NoWarehouseInBase=ไม่มีโกดังในฐาน
 ShipmentUpdated=อัปเดตการจัดส่งเรียบร้อยแล้ว
 ShipmentIncrementStockOnDelete = เพิ่มสต๊อกสินค้าเมื่อลบออก
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=การจัดส่งสินค้า
+DeliveryRef=Ref Delivery
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=วันที่ส่งมอบ
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=ตั้งวันที่จัดส่ง
+ValidateDeliveryReceipt=ตรวจสอบการจัดส่งใบเสร็จรับเงิน
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=ลบใบเสร็จรับเงินการจัดส่ง
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=วิธีการจัดส่ง
+TrackingNumber=ติดตามจำนวน
+DeliveryNotValidated=การจัดส่งสินค้าไม่ได้ผ่านการตรวจสอบ
+StatusDeliveryCanceled=ยกเลิก
+StatusDeliveryDraft=ร่าง
+StatusDeliveryValidated=ที่ได้รับ
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ บน ____ / _____ / __________
+GoodStatusDeclaration=ได้รับสินค้าดังกล่าวข้างต้นอยู่ในสภาพดี
+Deliverer=Deliverer:
+Sender=ผู้ส่ง
+Recipient=Delivery recipient
+ErrorStockIsNotEnough=มีไม่มากพอที่หุ้น
+Shippable=shippable
+NonShippable=ไม่ shippable
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument
@@ -87,6 +128,7 @@ ShipmentDistribution=การกระจายสินค้า
 ErrorTooManyCombinationBatchcode=ไม่มีการจัดส่งสำหรับบรรทัด %s เนื่องจากพบคลังสินค้า ผลิตภัณฑ์ รหัสชุดงานมากเกินไป (%s)
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=ปริมาณที่จัดส่งไม่ควรมากกว่าปริมาณที่สั่งซื้อสำหรับบรรทัด %s
+NoShipmentLineChangeDetected=No shipment line change was detected.
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=แทนการจัดส่งสินค้าต่อไปนี้ขึ้น
 TypeContact_shipping_external_BILLING=ติดต่อใบแจ้งหนี้ของลูกค้า

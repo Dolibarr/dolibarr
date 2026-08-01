@@ -2,8 +2,8 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025 Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026 MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025      Joachim Kueter       <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,6 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
@@ -49,7 +48,7 @@ $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal"
 $socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
-$module = GETPOST('module', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 if (!$section) {
 	$section = 0;
 }
@@ -147,7 +146,7 @@ if ($action == 'confirm_deletefile' && $user->hasRight('ecm', 'upload')) {
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile');
 
-		$ret = dol_delete_file($file);
+		$ret = dol_delete_file($file, 1);
 		if ($ret) {
 			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		} else {
@@ -185,16 +184,16 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
-	$sqltree = $ecmdirstatic->get_full_arbo(0);
+	$treesqldir = $ecmdirstatic->get_full_arbo(0);
 
 	$adirwascreated = 0;
 
 	// Now we compare both trees to complete missing trees into database
 	//var_dump($disktree);
-	//var_dump($sqltree);
+	//var_dump($treesqldir);
 	foreach ($disktree as $dirdesc) {    // Loop on tree onto disk
 		$dirisindatabase = 0;
-		foreach ($sqltree as $dirsqldesc) {
+		foreach ($treesqldir as $dirsqldesc) {
 			if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname']) {
 				$dirisindatabase = 1;
 				break;
@@ -218,7 +217,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				dol_syslog($txt);
 				//print $txt." -> ";
 				$parentdirisindatabase = 0;
-				foreach ($sqltree as $dirsqldesc) {
+				foreach ($treesqldir as $dirsqldesc) {
 					if ($dirsqldesc['fullrelativename'] == $relativepathtosearchparent) {
 						$parentdirisindatabase = $dirsqldesc['id'];
 						break;
@@ -249,13 +248,13 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id' => $id,
+					$newsqldir = array('id' => $id,
 									 'id_mere' => $ecmdirtmp->fk_parent,
 									 'label' => $ecmdirtmp->label,
 									 'description' => $ecmdirtmp->description,
 									 'fullrelativename' => $relativepathmissing);
-					$sqltree[] = $newdirsql; // We complete fulltree for following loops
-					//var_dump($sqltree);
+					$treesqldir[] = $newsqldir; // We complete fulltree for following loops
+					//var_dump($treesqldir);
 					$adirwascreated = 1;
 				} else {
 					dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
@@ -269,7 +268,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	}
 
 	// Loop now on each sql tree to check if dir exists
-	foreach ($sqltree as $dirdesc) {    // Loop on each sqltree to check dir is on disk
+	foreach ($treesqldir as $dirdesc) {    // Loop on each treesqldir to check dir is on disk
 		$dirtotest = $conf->ecm->dir_output.'/'.$dirdesc['fullrelativename'];
 		if (!dol_is_dir($dirtotest)) {
 			$ecmdirtmp->id = $dirdesc['id'];
@@ -285,7 +284,7 @@ if ($action == 'refreshmanual' && $user->hasRight('ecm', 'read')) {
 	// If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
 	// it to be sure that fulltree array is not used without reloading it.
 	if ($adirwascreated) {
-		$sqltree = null;
+		$treesqldir = null;
 	}
 }
 
@@ -304,7 +303,7 @@ $moreheadjs = '';
 
 $morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
-	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+	$morejs[] = "public/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_auto');
@@ -346,7 +345,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	}
 	if (isModEnabled("supplier_order")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => $user->hasRight('fournisseur', 'commande', 'lire'), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => $user->hasRight('fournisseur', 'commande', 'lire'), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
 		$rowspan++;
@@ -458,7 +457,7 @@ print '</div>';
 // Start left area
 
 
-// Confirmation de la suppression d'une ligne categorie
+// Generate form to confirm the deletion of a category line
 if ($action == 'delete_section') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }

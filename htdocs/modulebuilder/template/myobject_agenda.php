@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2020-2025	BERTON Anthony 			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2026	BERTON Anthony 			<anthony.berton@bb2a.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
@@ -76,20 +77,19 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
@@ -99,12 +99,12 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : getDolDefaultContextPage(__FILE__); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
-if (GETPOST('actioncode', 'array')) {
-	$actioncode = GETPOST('actioncode', 'array', 3);
+if (GETPOSTISARRAY('actioncode')) {
+	$actioncode = GETPOST('actioncode', 'array:alpha', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -113,14 +113,19 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
+$search_complete = GETPOST('search_complete');
+$search_filtert = GETPOSTINT('search_filtert');
+$search_dateevent_start = GETPOSTDATE('dateevent_start');
+$search_dateevent_end = GETPOSTDATE('dateevent_end');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -189,7 +194,10 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$actioncode = '';
+		$search_rowid = '';
 		$search_agenda_label = '';
+		$search_complete = '';
+		$search_filtert = '';
 	}
 }
 
@@ -234,7 +242,7 @@ if ($object->id > 0) {
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref.='<a class="editfielda" href="' . dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'classify', 'id' => $object->id], true) . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			}
 			$morehtmlref.=' : ';
 			if ($action == 'classify') {
@@ -280,7 +288,7 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.urlencode($object->element.(property_exists($object, 'module') ? '@'.$object->module : '')).'&originid='.urlencode((string) $object->id);
+	$out = '&origin='.urlencode($object->element.(!empty($object->module) ? '@'.$object->module : '')).'&originid='.urlencode((string) $object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
 	$permok = $user->hasRight('agenda', 'myactions', 'create');
@@ -322,12 +330,37 @@ if ($object->id > 0) {
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		print '<br>';
 
-		$param = '&id='.$object->id.(!empty($socid) ? '&socid='.$socid : '');
-		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param = '&id='.$object->id;
+		if (!empty($contextpage) && $contextpage != getDolDefaultContextPage(__FILE__)) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.((int) $limit);
+		}
+		if ($search_rowid) {
+			$param .= '&search_rowid='.urlencode($search_rowid);
+		}
+		if ($actioncode !== '' && $actioncode !== '-1') {
+			$param .= '&actioncode='.urlencode($actioncode);
+		}
+		if ($search_agenda_label) {
+			$param .= '&search_agenda_label='.urlencode($search_agenda_label);
+		}
+		if ($search_complete != '') {
+			$param .= '&search_complete='.urlencode($search_complete);
+		}
+		if ($search_filtert != '') {
+			$param .= '&search_filtert='.urlencode((string) $search_filtert);
+		}
+		if ($search_dateevent_start != '') {
+			$param .= '&dateevent_startyear='.GETPOSTINT('dateevent_startyear');
+			$param .= '&dateevent_startmonth='.GETPOSTINT('dateevent_startmonth');
+			$param .= '&dateevent_startday='.GETPOSTINT('dateevent_startday');
+		}
+		if ($search_dateevent_end != '') {
+			$param .= '&dateevent_endyear='.GETPOSTINT('dateevent_endyear');
+			$param .= '&dateevent_endmonth='.GETPOSTINT('dateevent_endmonth');
+			$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
 		}
 
 		// Try to know count of actioncomm from cache
@@ -340,18 +373,21 @@ if ($object->id > 0) {
 			$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
 		}
 
-		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+		print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 		// List of all actions
 		$filters = array();
 		$filters['search_agenda_label'] = $search_agenda_label;
 		$filters['search_rowid'] = $search_rowid;
+		$filters['search_complete'] = $search_complete;		// Can be 'na', '0', '100', '50'
+		$filters['search_filtert'] = $search_filtert;
+
 
 		// TODO Replace this with same code than into list.php
 		if ($mode == 'messaging') {
 			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
 		} else {
-			show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
+		  show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, !empty($object->module) ? $object->module : '');
 		}
 	}
 }

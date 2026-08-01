@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,8 +103,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print '<span class="opacitymedium">'.$langs->trans("MoreNetworksAvailableWithModule")."</span><br>\n";
+print '<div class="info">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."<br>\n";
+print $langs->trans("MoreNetworksAvailableWithModule")."</div>\n";
 print "<br>\n";
 
 
@@ -112,7 +112,7 @@ print "<br>\n";
  * Edit parameters
  */
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 

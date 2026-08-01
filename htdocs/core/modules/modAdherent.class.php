@@ -8,6 +8,7 @@
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,13 +192,13 @@ class modAdherent extends DolibarrModules
 		// Boxes
 		//-------
 		$this->boxes = array(
-			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
-			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
-			3 => array('file'=>'box_members_last_modified.php', 'enabledbydefaulton'=>'membersindex'),
-			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
-			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
-			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
-			7 => array('file'=>'box_members_by_tags.php', 'enabledbydefaulton'=>'membersindex'),
+			0 => array('file' => 'box_members.php', 'enabledbydefaulton' => 'Home'),
+			2 => array('file' => 'box_birthdays_members.php', 'enabledbydefaulton' => 'Home'),
+			3 => array('file' => 'box_members_last_modified.php', 'enabledbydefaulton' => 'membersindex'),
+			4 => array('file' => 'box_members_last_subscriptions.php', 'enabledbydefaulton' => 'membersindex'),
+			5 => array('file' => 'box_members_subscriptions_by_year.php', 'enabledbydefaulton' => 'membersindex'),
+			6 => array('file' => 'box_members_by_type.php', 'enabledbydefaulton' => 'membersindex'),
+			7 => array('file' => 'box_members_by_tags.php', 'enabledbydefaulton' => 'membersindex'),
 		);
 
 		// Permissions
@@ -207,11 +208,11 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
-		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
-		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $this->rights[$r][1]     Default label if translation of key “PermissionXXX” not found (XXX = Permission ID)
+		// $this->rights[$r][2]     Not used
+		// $this->rights[$r][3]     1=Allowed by default, 0=Not allowed by default
+		// $this->rights[$r][4]     Level 1 for naming permission in code
+		// $this->rights[$r][5]     Level 2 to name permission in code
 
 		$r++;
 		$this->rights[$r][0] = 71;
@@ -286,27 +287,27 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'MemberId', 'a.ref'=>'MemberRef', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
-			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.code_departement'=>'StateCode', 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
-			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
-			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
-			'a.tms'=>'DateLastModification', 'a.datefin'=>'DateEndSubscription', 'ta.rowid'=>'MemberTypeId', 'ta.libelle'=>'MemberTypeLabel',
-			'c.rowid'=>'SubscriptionId', 'c.dateadh'=>'DateSubscription', 'c.datef'=>'DateEndSubscription', 'c.subscription'=>'Amount'
+			'a.rowid' => 'MemberId', 'a.ref' => 'MemberRef', 'a.civility' => "UserTitle", 'a.lastname' => "Lastname", 'a.firstname' => "Firstname", 'a.login' => "Login", 'a.gender' => "Gender", 'a.morphy' => 'MemberNature',
+			'a.societe' => 'Company', 'a.address' => "Address", 'a.zip' => "Zip", 'a.town' => "Town", 'd.code_departement' => 'StateCode', 'd.nom' => "State", 'co.code' => "CountryCode", 'co.label' => "Country",
+			'a.phone' => "PhonePro", 'a.phone_perso' => "PhonePerso", 'a.phone_mobile' => "PhoneMobile", 'a.email' => "Email", 'a.birth' => "Birthday", 'a.statut' => "Status",
+			'a.photo' => "Photo", 'a.note_public' => "NotePublic", 'a.note_private' => "NotePrivate", 'a.datec' => 'DateCreation', 'a.datevalid' => 'DateValidation',
+			'a.tms' => 'DateLastModification', 'a.datefin' => 'DateEndSubscription', 'ta.rowid' => 'MemberTypeId', 'ta.libelle' => 'MemberTypeLabel',
+			'c.rowid' => 'SubscriptionId', 'c.dateadh' => 'DateSubscription', 'c.datef' => 'DateEndSubscription', 'c.subscription' => 'Amount'
 		);
 		$this->export_TypeFields_array[$r] = array(
-			'a.civility'=>"Text", 'a.lastname'=>"Text", 'a.firstname'=>"Text", 'a.login'=>"Text", 'a.gender'=>'Text', 'a.morphy'=>'Text', 'a.societe'=>'Text', 'a.address'=>"Text",
-			'a.zip'=>"Text", 'a.town'=>"Text", 'd.nom'=>"Text", 'co.code'=>'Text', 'co.label'=>"Text", 'a.phone'=>"Text", 'a.phone_perso'=>"Text", 'a.phone_mobile'=>"Text",
-			'a.email'=>"Text", 'a.birth'=>"Date", 'a.statut'=>"Status", 'a.note_public'=>"Text", 'a.note_private'=>"Text", 'a.datec'=>'Date', 'a.datevalid'=>'Date',
-			'a.tms'=>'Date', 'a.datefin'=>'Date', 'ta.rowid'=>'List:adherent_type:libelle::member_type', 'ta.libelle'=>'Text',
-			'c.rowid'=>'Numeric', 'c.dateadh'=>'Date', 'c.datef'=>'Date', 'c.subscription'=>'Numeric'
+			'a.civility' => "Text", 'a.lastname' => "Text", 'a.firstname' => "Text", 'a.login' => "Text", 'a.gender' => 'Text', 'a.morphy' => 'Text', 'a.societe' => 'Text', 'a.address' => "Text",
+			'a.zip' => "Text", 'a.town' => "Text", 'd.nom' => "Text", 'co.code' => 'Text', 'co.label' => "Text", 'a.phone' => "Text", 'a.phone_perso' => "Text", 'a.phone_mobile' => "Text",
+			'a.email' => "Text", 'a.birth' => "Date", 'a.statut' => "Status", 'a.note_public' => "Text", 'a.note_private' => "Text", 'a.datec' => 'Date', 'a.datevalid' => 'Date',
+			'a.tms' => 'Date', 'a.datefin' => 'Date', 'ta.rowid' => 'List:adherent_type:libelle::member_type', 'ta.libelle' => 'Text',
+			'c.rowid' => 'Numeric', 'c.dateadh' => 'Date', 'c.datef' => 'Date', 'c.subscription' => 'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'a.rowid'=>'member', 'a.ref'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
-			'a.societe'=>'member', 'a.address'=>"member", 'a.zip'=>"member", 'a.town'=>"member", 'd.nom'=>"member", 'co.code'=>"member", 'co.label'=>"member",
-			'a.phone'=>"member", 'a.phone_perso'=>"member", 'a.phone_mobile'=>"member", 'a.email'=>"member", 'a.birth'=>"member", 'a.statut'=>"member",
-			'a.photo'=>"member", 'a.note_public'=>"member", 'a.note_private'=>"member", 'a.datec'=>'member', 'a.datevalid'=>'member', 'a.tms'=>'member',
-			'a.datefin'=>'member', 'ta.rowid'=>'member_type', 'ta.libelle'=>'member_type',
-			'c.rowid'=>'subscription', 'c.dateadh'=>'subscription', 'c.datef'=>'subscription', 'c.subscription'=>'subscription'
+			'a.rowid' => 'member', 'a.ref' => 'member', 'a.civility' => "member", 'a.lastname' => "member", 'a.firstname' => "member", 'a.login' => "member", 'a.gender' => 'member', 'a.morphy' => 'member',
+			'a.societe' => 'member', 'a.address' => "member", 'a.zip' => "member", 'a.town' => "member", 'd.nom' => "member", 'co.code' => "member", 'co.label' => "member",
+			'a.phone' => "member", 'a.phone_perso' => "member", 'a.phone_mobile' => "member", 'a.email' => "member", 'a.birth' => "member", 'a.statut' => "member",
+			'a.photo' => "member", 'a.note_public' => "member", 'a.note_private' => "member", 'a.datec' => 'member', 'a.datevalid' => 'member', 'a.tms' => 'member',
+			'a.datefin' => 'member', 'ta.rowid' => 'member_type', 'ta.libelle' => 'member_type',
+			'c.rowid' => 'subscription', 'c.dateadh' => 'subscription', 'c.datef' => 'subscription', 'c.subscription' => 'subscription'
 		);
 		// Add extra fields
 		$keyforselect = 'adherent';
@@ -321,7 +322,7 @@ class modAdherent extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON a.state_id = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON a.country = co.rowid';
 		$this->export_sql_end[$r] .= ' WHERE a.fk_adherent_type = ta.rowid AND ta.entity IN ('.getEntity('member_type').') ';
-		$this->export_dependencies_array[$r] = array('subscription'=>'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array('subscription' => 'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		// Imports
 		//--------
@@ -335,21 +336,21 @@ class modAdherent extends DolibarrModules
 		$this->import_label[$r] = "Members"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = array('a'=>MAIN_DB_PREFIX.'adherent', 'extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
-		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
+		$this->import_tables_array[$r] = array('a' => MAIN_DB_PREFIX.'adherent', 'extra' => MAIN_DB_PREFIX.'adherent_extrafields');
+		$this->import_tables_creator_array[$r] = array('a' => 'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
 			'a.ref' => 'MemberRef*',
-			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberTypeId*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
-			'a.state_id'=>'StateId|StateCode', 'a.country'=>"CountryId|CountryCode", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
-			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
-			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
+			'a.civility' => "UserTitle", 'a.lastname' => "Lastname*", 'a.firstname' => "Firstname", 'a.gender' => "Gender", 'a.login' => "Login*", "a.pass" => "Password",
+			"a.fk_adherent_type" => "MemberTypeId*", 'a.morphy' => 'MemberNature*', 'a.societe' => 'Company', 'a.address' => "Address", 'a.zip' => "Zip", 'a.town' => "Town",
+			'a.state_id' => 'StateId|StateCode', 'a.country' => "CountryId|CountryCode", 'a.phone' => "PhonePro", 'a.phone_perso' => "PhonePerso", 'a.phone_mobile' => "PhoneMobile",
+			'a.email' => "Email", 'a.birth' => "Birthday", 'a.statut' => "Status*", 'a.photo' => "Photo", 'a.note_public' => "NotePublic", 'a.note_private' => "NotePrivate",
+			'a.datec' => 'DateCreation', 'a.datefin' => 'DateEndSubscription'
 		);
 		if (isModEnabled("societe")) {
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'adherent' AND entity IN (0,".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -360,10 +361,10 @@ class modAdherent extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_convertvalue_array[$r] = array(
-			'a.ref'=>array(
-				'rule'=>'getrefifauto',
+			'a.ref' => array(
+				'rule' => 'getrefifauto',
 				'class' => getDolGlobalString('MEMBER_ADDON', 'mod_member_simple'),
-				'path'=>"/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
+				'path' => "/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -381,41 +382,66 @@ class modAdherent extends DolibarrModules
 			)
 		);
 		if (isModEnabled("societe")) {
-			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
+			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule' => 'fetchidfromref', 'classfile' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty');
 		}
-		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array(
-			'a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility', 'a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type', 'a.morphy'=>'(phy|mor)',
-			'a.statut'=>'^[0|1]', 'a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+			'a.civility' => 'code@'.MAIN_DB_PREFIX.'c_civility', 'a.fk_adherent_type' => 'rowid@'.MAIN_DB_PREFIX.'adherent_type', 'a.morphy' => '(phy|mor)',
+			'a.statut' => '^[0|1]', 'a.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 'a.datefin' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_examplevalues_array[$r] = array(
-			'a.ref'=>"auto or MEM2010-1234",
-			'a.civility'=>"MR", 'a.lastname'=>'Smith', 'a.firstname'=>'John', 'a.gender'=>'man or woman', 'a.login'=>'jsmith', 'a.pass'=>'passofjsmith', 'a.fk_adherent_type'=>'1',
-			'a.morphy'=>'"mor" or "phy"', 'a.societe'=>'JS company', 'a.address'=>'21 jump street', 'a.zip'=>'55000', 'a.town'=>'New York', 'a.country'=>'1',
-			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
-			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
+			'a.ref' => "auto or MEM2010-1234",
+			'a.civility' => "MR", 'a.lastname' => 'Smith', 'a.firstname' => 'John', 'a.gender' => 'man or woman', 'a.login' => 'jsmith', 'a.pass' => 'passofjsmith', 'a.fk_adherent_type' => '1',
+			'a.morphy' => '"mor" or "phy"', 'a.societe' => 'JS company', 'a.address' => '21 jump street', 'a.zip' => '55000', 'a.town' => 'New York', 'a.country' => '1',
+			'a.email' => 'jsmith@example.com', 'a.birth' => '1972-10-10', 'a.statut' => "0 or 1", 'a.note_public' => "This is a public comment on member",
+			'a.note_private' => "This is private comment on member", 'a.datec' => dol_print_date($now, '%Y-%m__%d'), 'a.datefin' => dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
 		if (isModEnabled("societe")) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
-		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
+		$this->import_updatekeys_array[$r] = array('a.ref' => 'MemberRef', 'a.login' => 'Login');
+
+		// Import subscriptions
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "Subscriptions"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'subscription');
+		$this->import_fields_array[$r] = array(
+			'c.fk_adherent' => 'MemberRef*',
+			'c.note' => 'Note', 'c.dateadh' => 'DateSubscription', 'c.datef' => 'DateEndSubscription', 'c.subscription' => 'Amount', 'c.fk_type' => 'MemberType', 'c.fk_bank' => 'Bank'
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'c.fk_adherent' => array(
+				'rule' => 'fetchidfromref',
+				'classfile' => '/adherents/class/adherent.class.php',
+				'class' => 'Adherent',
+				'method' => 'fetch',
+				'element' => 'member'
+			)
+		);
+		$this->import_examplevalues_array[$r] = array(
+			'c.fk_adherent' => 'member ref',
+			'c.note' => 'Subscription #33', 'c.dateadh' => '2025-09-01', 'c.datef' => '2026-08-31', 'c.subscription' => '50'
+		);
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
 		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
-			0=>array(
-				'label'=>'SendReminderForExpiredSubscriptionTitle',
-				'jobtype'=>'method', 'class'=>'adherents/class/adherent.class.php',
-				'objectname'=>'Adherent',
-				'method'=>'sendReminderForExpiredSubscription',
-				'parameters'=>'10;0',
-				'comment'=>'SendReminderForExpiredSubscription',
-				'frequency'=>1,
-				'unitfrequency'=> 3600 * 24,
-				'priority'=>50,
-				'status'=>1,
-				'test'=>'isModEnabled("member")',
-				'datestart'=>$datestart
+			0 => array(
+				'label' => 'SendReminderForExpiredSubscriptionTitle',
+				'jobtype' => 'method', 'class' => 'adherents/class/adherent.class.php',
+				'objectname' => 'Adherent',
+				'method' => 'sendReminderForExpiredSubscription',
+				'parameters' => '10;0',
+				'comment' => 'SendReminderForExpiredSubscription',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("member")',
+				'datestart' => $datestart
 			),
 		);
 	}

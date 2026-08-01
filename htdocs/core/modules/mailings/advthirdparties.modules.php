@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
 *
 * This file is an example to follow to add your own email selector inside
@@ -84,7 +84,7 @@ class mailing_advthirdparties extends MailingTargets
 		// phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".formatLogObject($socid).' contactid='.formatLogObject($contactid));
 
 		$cibles = array();
 
@@ -190,7 +190,7 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".formatLogObject($cibles), LOG_DEBUG);
 
 		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
@@ -258,7 +258,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE type in (1,2)"; // We keep only categories for suppliers and customers/prospects
 		// $sql.= " AND visible > 0";	// We ignore the property visible because third party's categories does not use this property (only products categories use it).
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY label";
 
 		//print $sql;

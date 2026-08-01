@@ -102,3 +102,4 @@ SignedReceiverOnline=Signat per tercers en línia
 SignedAll=Signat per totes les parts
 SignStatus=Estat de la signatura
 DocumentSigned=Document signat
+DocumentUnsigned=Document sense signar

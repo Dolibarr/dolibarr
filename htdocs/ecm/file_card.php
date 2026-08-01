@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2008-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -32,22 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
- * @var string $dolibarr_main_url_root
- */
-
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$module = GETPOST('module', 'aZ09arobase');
 
 // Get parameters
 $socid = GETPOSTINT("socid");
@@ -104,7 +105,7 @@ $filepathtodocument = $relativetodocument.$urlfile;
 
 // Try to load object from index
 $object = new EcmFiles($db);
-$extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -342,11 +343,7 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
 print '</td><td>';
 $modulepart = 'ecm';
-$forcedownload = 1;
-$rellink = '/document.php?modulepart='.$modulepart;
-if ($forcedownload) {
-	$rellink .= '&attachment=1';
-}
+$rellink = '/document.php?modulepart=' . $modulepart . '&attachment=1';
 if (!empty($object->entity)) {
 	$rellink .= '&entity='.$object->entity;
 }
@@ -373,23 +370,13 @@ if ($action != 'edit') {
 print '</td><td>';
 if (!empty($object->share)) {
 	if ($action != 'edit') {
-		$forcedownload = 0;
-
-		$paramlink = '';
-		if (!empty($object->share)) {
-			$paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
-		}
-		if ($forcedownload) {
-			$paramlink .= ($paramlink ? '&' : '').'attachment=1';
-		}
-
-		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+		$fulllink = $urlwithroot.'/document.php?hashp='.$object->share; // Hash for public share
 		//if (!empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (!empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small downloadexternallink" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'" spellcheck="false">';
 		} else {
 			print $fulllink;
 		}
@@ -397,13 +384,13 @@ if (!empty($object->share)) {
 			print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here
 		}
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" checked="checked" /> ';
 	}
 } else {
 	if ($action != 'edit') {
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" /> ';
 	}
 }
 print '</td>';

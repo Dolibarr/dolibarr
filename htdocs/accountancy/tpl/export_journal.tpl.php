@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015-2024  Alexandre Spangaro	<alexandre@inovea-conseil.com>
- * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
- * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+/* Copyright (C) 2015-2025  Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2022  		Lionel Vessiller			<lvessiller@open-dsi.fr>
+ * Copyright (C) 2016       Charlie Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2022  		Progiseize					<a.bisotti@progiseize.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// $formatexportset must be defined
-// $downloadMode 	=0 for direct download or =1 to download after writing files or =-1 not to download files
-
 '
 @phan-var-force int $formatexportset
 @phan-var-force string $type_export
@@ -33,10 +30,14 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var string $action
  * @var int $formatexportset
  * @var string $type_export
  * @var string $filename
- * @var int<-1,1> $downloadMode
+ * @var string $search_date_end
+ * @var int<-1,1> $downloadMode		Value =0 for direct download or =1 to download after writing files or =-1 not to download files
  */
 
 // Protection to avoid direct call of template
@@ -52,12 +53,9 @@ $nodateexport = getDolGlobalInt('ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME');
 $siren = getDolGlobalString('MAIN_INFO_SIREN');
 
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+$startaccountingperiod = '';
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-
-if (empty($downloadMode)) {
-	header('Content-Type: text/csv');
-}
 
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $accountancyexport = new AccountancyExport($db);
@@ -82,13 +80,56 @@ if ((substr($accountancyexport->getFormatCode($formatexportset), 0, 3) == 'fec')
 
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 	$siren = str_replace(" ", "", $siren);
-	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
+	$completefilename = $siren."FEC".$endaccountingperiod;
+
+	// Option: append a timestamp suffix to avoid overwriting a previous export of the same fiscal period.
+	// The strict FEC naming convention (SIRENFECAAAAMMJJ.txt) is still respected by default;
+	// this suffix is only added if the admin explicitly enables it, since some import software
+	// requires strict compliance with the official filename.
+	if (getDolGlobalInt('ACCOUNTING_EXPORT_FEC_ADD_TIMESTAMP')) {
+		$completefilename .= "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+	}
+
+	$completefilename .= ".txt";
 } elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && getDolGlobalString('ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME')) {
 	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 
+// --- Hook: allow external modules to override export filename ---
+if (is_object($hookmanager)) {
+	// Dedicated context (non-blocking if other hooks are already initialized)
+	$hookmanager->initHooks(array('accountancyexportfilename'));
+
+	$parameters = array(
+		'type_export'       => $type_export ?? '',
+		'format'            => $format ?? '',
+		'format_code'       => $accountancyexport->getFormatCode($formatexportset),
+		'code'              => $code ?? '',
+		'prefix'            => $prefix ?? '',
+		'filename'          => $filename ?? '',
+		'period_start'      => $startaccountingperiod,
+		'period_end'        => $endaccountingperiod ?? '',
+		'siren'             => $siren ?? '',
+		'ndate_in_filename' => $nodateexport ?? 0,
+		'now_datetime'      => $date_export,
+		// Value by default
+		'defaultfilename'   => $completefilename
+	);
+
+	// Hook called by modules: setExportFilename
+	$reshook = $hookmanager->executeHooks('setExportFilename', $parameters, $accountancyexport, $action);
+	if ($reshook > 0) {
+		if (!empty($hookmanager->resArray['filename'])) {
+			$completefilename = $hookmanager->resArray['filename'];
+		} elseif ($hookmanager->resPrint !== '') {
+			$completefilename = $hookmanager->resPrint;
+		}
+	}
+}
+
 if (empty($downloadMode)) {
+	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 }

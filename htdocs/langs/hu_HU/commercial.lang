@@ -102,3 +102,4 @@ SignedReceiverOnline=Aláírta: partner online
 SignedAll=Minden fél aláírta
 SignStatus=Aláírás állapota
 DocumentSigned=Aláírt dokumentum
+DocumentUnsigned=Aláíratlan dokumentumok

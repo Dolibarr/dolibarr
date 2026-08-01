@@ -18,6 +18,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  \file		htdocs/delivery/tpl/linkedobjectblock.tpl.php
+ *  \ingroup	delivery
+ *  \brief		Template to show objects linked to deliveries
+ */
+
+/**
+ * @var Translate $langs
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var User $user
+ *
+ * @var CommonObject $object
+ * @var int $noMoreLinkedObjectBlockAfter
+ * @var int $showImportButton
+ * @var Delivery[] $linkedObjectBlock
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -26,19 +44,12 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE delivery/tpl/linkedobjectblock.tpl.php -->\n";
 
-global $user;
-global $noMoreLinkedObjectBlockAfter;
-
-$langs = $GLOBALS['langs'];
-'@phan-var-force Translate $langs';
-$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
-
 // Load translation files required by the page
 $langs->load('sendings');
 
-$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 '@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Delivery[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;

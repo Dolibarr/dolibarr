@@ -13,13 +13,13 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,13 @@ class PropaleLigne extends CommonObjectLine
 	public $subprice;
 
 	/**
+	 * Unit price including tax — set when the line was entered with price_base_type='TTC', 0 otherwise.
+	 * Used to preserve the original entry mode on no-op edits (avoids rounding drift).
+	 * @var float
+	 */
+	public $subprice_ttc = 0;
+
+	/**
 	 * @var float|string
 	 */
 	public $remise_percent;
@@ -152,7 +159,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|''|null
 	 */
 	public $pa_ht;
 
@@ -178,25 +185,25 @@ class PropaleLigne extends CommonObjectLine
 	/**
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
-	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
-	 * @var int
+	 * Bit 1:	0 if normal line - 1 if line with fixed discount
+	 * @var ?int
 	 */
 	public $info_bits = 0;
 
 	/**
-	 * Total amount excluding taxes (HT = "Hors Taxe" in French) including discounts
+	 * Total amount excluding taxes HT including discounts
 	 * @var float
 	 */
 	public $total_ht;
 
 	/**
-	 * Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * Total VAT amount
 	 * @var float
 	 */
 	public $total_tva;
 
 	/**
-	 * Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * Total amount including taxes
 	 * @var float
 	 */
 	public $total_ttc;
@@ -298,12 +305,12 @@ class PropaleLigne extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 */
 	public $date_start;
 
 	/**
-	 * @var int|string
+	 * @var int|''|null
 	 */
 	public $date_end;
 
@@ -359,6 +366,19 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 	/**
+	 *	Return true if the unit price was originally entered including tax (TTC mode).
+	 *	Useful to preserve the entry mode on no-op edits and to avoid total drift.
+	 *	Note: cannot use !empty() because MySQL returns doubles as strings like "0.00000000"
+	 *	which empty() treats as non-empty.
+	 *
+	 *	@return	bool
+	 */
+	public function wasEnteredIncludingTax()
+	{
+		return isset($this->subprice_ttc) && (float) $this->subprice_ttc != 0;
+	}
+
+	/**
 	 *	Retrieve the propal line object
 	 *
 	 *	@param	int		$rowid		Propal line id
@@ -367,16 +387,19 @@ class PropaleLigne extends CommonObjectLine
 	public function fetch($rowid)
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.vat_src_code, pd.tva_tx,';
-		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
+		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice, pd.subprice_ttc,';
 		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql .= ' pd.fk_unit,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,p.barcode as product_barcode,';
+		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
+		$sql .= ' p.customcode, p.fk_country as country_id, c.code as country_code,';
 		$sql .= ' p.packaging,';
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON c.rowid = p.fk_country';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
@@ -385,14 +408,15 @@ class PropaleLigne extends CommonObjectLine
 
 			if ($objp) {
 				$this->id = $objp->rowid;
-				$this->rowid			= $objp->rowid; // deprecated
+				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
-				$this->label			= $objp->custom_label;
-				$this->desc				= $objp->description;
+				$this->label = $objp->custom_label;
+				$this->desc = $objp->description;
 				$this->qty = $objp->qty;
-				$this->price			= $objp->price; // deprecated
+				$this->price = $objp->price; // deprecated
 				$this->subprice = $objp->subprice;
+				$this->subprice_ttc = $objp->subprice_ttc;
 				$this->vat_src_code = $objp->vat_src_code;
 				$this->tva_tx			= $objp->tva_tx;
 				$this->remise			= $objp->remise; // deprecated
@@ -419,9 +443,18 @@ class PropaleLigne extends CommonObjectLine
 				$this->ref = $objp->product_ref; // deprecated
 				$this->product_ref = $objp->product_ref;
 				$this->libelle = $objp->product_label; // deprecated
-				$this->product_label	= $objp->product_label;
-				$this->product_desc		= $objp->product_desc;
+				$this->product_label = $objp->product_label;
+				$this->product_desc = $objp->product_desc;
+				$this->product_barcode = $objp->product_barcode;
+				$this->product_custom_code = $objp->customcode;
+				$this->product_custom_country_id = $objp->country_id;
+				$this->product_custom_country_code = $objp->country_code;
+
 				$this->fk_unit          = $objp->fk_unit;
+				$this->weight = $objp->weight;
+				$this->weight_units = $objp->weight_units;
+				$this->volume = $objp->volume;
+				$this->volume_units = $objp->volume_units;
 
 				$this->packaging      	= $objp->packaging;
 
@@ -459,7 +492,7 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
@@ -544,13 +577,13 @@ class PropaleLigne extends CommonObjectLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
 		$sql .= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type,';
 		$sql .= ' fk_remise_except, qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' subprice, remise_percent, ';
+		$sql .= ' subprice, subprice_ttc, remise_percent, ';
 		$sql .= ' info_bits, ';
 		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
 		$sql .= ' fk_unit,';
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
-		$sql .= " VALUES (".$this->fk_propal.",";
+		$sql .= " VALUES (".((int) $this->fk_propal).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
@@ -565,6 +598,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice, 'MU') : "null").",";
+		$sql .= " ".price2num($this->subprice_ttc, 'MU').",";
 		$sql .= " ".price2num($this->remise_percent).",";
 		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
 		$sql .= " ".price2num($this->total_ht, 'MT').",";
@@ -590,8 +624,8 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-			$this->id = $this->rowid;
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
+			$this->rowid = $this->id;
 			$result = $this->insertExtraFields();
 			if ($result < 0) {
 				$error++;
@@ -653,13 +687,11 @@ class PropaleLigne extends CommonObjectLine
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
-				if (!$error) {
-					$this->id = $this->rowid;
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$error++;
-						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
-					}
+				$this->id = $this->rowid;
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
 				}
 			} else {
 				$this->error = $this->db->error() . " sql=" . $sql;
@@ -758,29 +790,30 @@ class PropaleLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql .= " description='".$this->db->escape($this->desc)."'";
-		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= ", product_type=".$this->product_type;
-		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
+		$sql .= " description = '".$this->db->escape($this->desc)."'";
+		$sql .= ", label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= ", product_type = ".((int) $this->product_type);
+		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
 		$sql .= ", localtax1_tx=".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-		$sql .= ", qty='".price2num($this->qty)."'";
-		$sql .= ", subprice=".price2num($this->subprice);
-		$sql .= ", remise_percent=".price2num($this->remise_percent);
-		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
-		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
-		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
+		$sql .= ", qty = ".((float) price2num($this->qty));
+		$sql .= ", subprice = ".price2num($this->subprice);
+		$sql .= ", subprice_ttc = ".price2num($this->subprice_ttc);
+		$sql .= ", remise_percent = ".price2num($this->remise_percent);
+		$sql .= ", price = ".(float) price2num($this->price); // TODO A virer
+		$sql .= ", remise = ".(float) price2num($this->remise); // TODO A virer
+		$sql .= ", info_bits = '".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht);
-			$sql .= ", total_tva=".price2num($this->total_tva);
-			$sql .= ", total_ttc=".price2num($this->total_ttc);
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
+			$sql .= ", total_ht = ".price2num($this->total_ht);
+			$sql .= ", total_tva = ".price2num($this->total_tva);
+			$sql .= ", total_ttc = ".price2num($this->total_ttc);
+			$sql .= ", total_localtax1 = ".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2 = ".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
@@ -791,7 +824,7 @@ class PropaleLigne extends CommonObjectLine
 		}
 		$sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : ((int) $this->fk_unit));
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
@@ -804,11 +837,9 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -851,7 +882,7 @@ class PropaleLigne extends CommonObjectLine
 		// phpcs:enable
 		$this->db->begin();
 
-		// Mise a jour ligne en base
+		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
 		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');

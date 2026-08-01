@@ -103,7 +103,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr dev/build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/dev/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
-%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/public/includes/ckeditor/_source
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
@@ -189,7 +189,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
-%_datadir/dolibarr/htdocs/externalsite
 %_datadir/dolibarr/htdocs/fichinter
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
