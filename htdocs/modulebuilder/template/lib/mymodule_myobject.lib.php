@@ -106,7 +106,6 @@ function myobjectPrepareHead($object)
 
 	// BEGIN MODULEBUILDER TAB AGENDA
 	if ($showtabofpageagenda) {
-
 		$mode = 'list';
 		if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
 			$mode = 'messaging';
