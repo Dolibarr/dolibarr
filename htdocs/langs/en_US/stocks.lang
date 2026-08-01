@@ -19,6 +19,7 @@ Stock=Stock
 Stocks=Stocks
 MissingStocks=Missing stocks
 StockAtDate=Stocks at date
+ProductValuesAndMovements=Product values and movements
 StockAtDateInPast=Date in the past
 StockAtDateInFuture=Date in the future
 StocksByLotSerial=Stocks by lot/serial
