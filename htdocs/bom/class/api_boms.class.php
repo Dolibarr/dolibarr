@@ -97,7 +97,7 @@ class Boms extends DolibarrApi
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 * @phan-return BOM[]
@@ -261,7 +261,7 @@ class Boms extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
+					$this->bom->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->bom);
 				}
 				continue;
 			}
@@ -275,6 +275,42 @@ class Boms extends DolibarrApi
 		} else {
 			throw new RestException(500, $this->bom->error);
 		}
+	}
+
+	/**
+	 * Validate BOM
+	 *
+	 * @param   int $id             BOM ID
+	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
+		}
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Bom not found');
+		}
+
+		$result = $this->bom->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating BOM: '.$this->bom->error);
+		}
+		$result = $this->bom->fetch($id);
+
+		return $this->_cleanObjectDatas($this->bom);
 	}
 
 	/**

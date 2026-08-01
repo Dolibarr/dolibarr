@@ -125,10 +125,10 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= 'desiredstock,';
 		$sql .= 'import_key';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
-		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
-		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
-		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
+		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : (int) $this->fk_product).',';
+		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : (int) $this->fk_entrepot).',';
+		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : (float) $this->seuil_stock_alerte).',';
+		$sql .= ' '.(!isset($this->desiredstock) ? '0' : (float) $this->desiredstock).',';
 		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 		$sql .= ')';
 
@@ -364,10 +364,10 @@ class ProductStockEntrepot extends CommonObject
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
 		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
-		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';
-		$sql .= ' desiredstock = '.(isset($this->desiredstock) ? $this->desiredstock : "null").',';
+		$sql .= ' fk_product = '.(isset($this->fk_product) ? (int) $this->fk_product : "null").',';
+		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? (int) $this->fk_entrepot : "null").',';
+		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? (float) $this->seuil_stock_alerte : "null").',';
+		$sql .= ' desiredstock = '.(isset($this->desiredstock) ? (float) $this->desiredstock : "null").',';
 		$sql .= ' import_key = '.(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 

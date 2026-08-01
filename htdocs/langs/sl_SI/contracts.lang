@@ -103,7 +103,13 @@ ConfirmCloneContract=Ali ste prepričani, da želite klonirati pogodbo <b> %s </
 LowerDateEndPlannedShort=Nižji načrtovani končni datum aktivnih storitev
 SendContractRef=Informacije o pogodbi __REF__
 OtherContracts=Druge pogodbe
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe
 TypeContact_contrat_internal_SALESREPFOLL=Referent za sledenje pogodbe
 TypeContact_contrat_external_BILLING=Kontakt v računovodstvu kupca

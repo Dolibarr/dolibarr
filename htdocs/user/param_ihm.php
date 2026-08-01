@@ -55,7 +55,7 @@ if (!isset($id) || empty($id)) {
 }
 '@phan-var-force int<1,max> $id';
 
-// $user est le user qui edite, $id est l'id de l'utilisateur edite
+// $user is the user doing the edit, $id is the id of the user being edited
 $caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write"))
 || (($user->id != $id) && $user->hasRight("user", "user", "write")));
 

@@ -46,6 +46,9 @@ $langs->loadLangs(array('mrp', 'products', 'companies'));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
+$search_month = GETPOSTINT('search_month');
+$search_year = GETPOSTINT('search_year');
+
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
@@ -124,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+		print '<div class="clearboth"></div>';
+		print '<table class="noborder tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -288,8 +291,10 @@ if ($id > 0 || !empty($ref)) {
 			$option .= '&search_year='.urlencode((string) $search_year);
 		}
 
+		print '<span id="anchorundermenu" class="anchorundermenu"></span>';
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="page_y" value="">';
 		if (!empty($sortfield)) {
 			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 		}

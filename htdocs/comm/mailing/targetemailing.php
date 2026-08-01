@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024-2025	MDW	                <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,9 +285,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Action update description of emailing
-if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
+if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setemail_replyto' || $action == 'setemail_errorsto' || $action == 'setevenunsubscribe') && $permissiontocreate) {
 	$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, getDolGlobalInt('MAILING_USE_NEW_PATH_FOR_FILES') ? 0 : 2, 0, 1, $object, 'mailing');
 
+	$mesg = '';
 	if ($action == 'settitle') {					// Test on permission already done
 		$object->title = trim(GETPOST('title', 'alpha'));
 	} elseif ($action == 'setemail_from') {			// Test on permission already done
@@ -296,12 +297,14 @@ if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreply
 		$object->email_replyto = trim(GETPOST('email_replyto', 'alphawithlgt')); // Must allow 'name <email>'
 	} elseif ($action == 'setemail_errorsto') {		// Test on permission already done
 		$object->email_errorsto = trim(GETPOST('email_errorsto', 'alphawithlgt')); // Must allow 'name <email>'
-	} elseif ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
-	} elseif ($action == 'setfrom' && empty($object->email_from)) {	// Test on permission already done
-		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	} elseif ($action == 'setevenunsubscribe') {	// Test on permission already done
 		$object->evenunsubscribe = (GETPOST('evenunsubscribe') ? 1 : 0);
+	}
+	if ($action == 'settitle' && empty($object->title)) {		// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTitle"));
+	}
+	if ($action == 'setemail_from' && empty($object->email_from)) {	// Test on permission already done
+		$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom"));
 	}
 
 	if (!$mesg) {
@@ -498,8 +501,6 @@ if ($object->fetch($id) >= 0) {
 
 	print dol_get_fiche_end();
 
-	print '<br>';
-
 
 	$newcardbutton = '';
 	$allowaddtarget = ($object->status == $object::STATUS_DRAFT);
@@ -512,14 +513,19 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere").'...', ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), '');
+		print '<div class="info">';
+		print $langs->trans("ToAddRecipientsChooseHere").'...';
+		//print ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : '');
+		print '</div>';
 
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercentwithout1imp liste_titre_bydiv borderbottom" id="tablelines">';
 
 		print '<div class="tagtr liste_titre">';
 		print '<div class="tagtd"></div>';
-		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules").'</div>';
+		print '<div class="tagtd">'.$langs->trans("RecipientSelectionModules");
+		print ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : '');
+		print '</div>';
 		print '<div class="tagtd center maxwidth150">';
 		if ($object->messtype != 'sms') {
 			print $langs->trans("NbOfUniqueEMails");
@@ -530,7 +536,7 @@ if ($object->fetch($id) >= 0) {
 		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
 		if ($object->messtype != 'sms') {
 			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">'.$langs->trans("EvenUnsubscribe").' ';
-			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1);
+			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1, 'allowaddtarget=1');
 			print '</div>';
 		}
 		print '</div>';
@@ -593,6 +599,7 @@ if ($object->fetch($id) >= 0) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="add">';
 						print '<input type="hidden" name="page_y" value="'.newToken().'">';
+						//print '<input type="hidden" name="allowaddtarget" value="1">';
 					} else {
 						print '<div class="oddeven trforbreakperms trforbreaknobg impair tagtr">';
 					}
@@ -629,6 +636,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd left valignmiddle">';
 					if ($allowaddtarget) {
+						$filter = false;
 						try {
 							$filter = $obj->formFilter();
 						} catch (Exception $e) {

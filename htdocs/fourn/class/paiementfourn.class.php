@@ -6,10 +6,11 @@
  * Copyright (C) 2010-2011  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023       Joachim Kueter		    <git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand		    <technique@infras.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Lionel Vessiller		<lvessiller@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,23 +198,38 @@ class PaiementFourn extends Paiement
 				continue;
 			}
 			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
-			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			$value_converted = MultiCurrency::getAmountConversionFromInvoiceRate((int) $key, $value ? $value : 0, $way, 'facture_fourn');
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
 				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
-			if (empty($currencyofpayment)) {
-				$currencyofpayment = $this->multicurrency_code[$key];
+			// Fallback: read invoice multicurrency code/tx if caller did not fill the arrays
+			$invoice_multicurrency_code = $this->multicurrency_code[$key] ?? '';
+			$invoice_multicurrency_tx = $this->multicurrency_tx[$key] ?? '';
+			if (empty($invoice_multicurrency_code) || empty($invoice_multicurrency_tx)) {
+				$tmparray = MultiCurrency::getInvoiceRate($key, 'facture_fourn');
+				if ($tmparray !== false) {
+					if (empty($invoice_multicurrency_code)) {
+						$invoice_multicurrency_code = $tmparray['invoice_multicurrency_code'];
+					}
+					if (empty($invoice_multicurrency_tx)) {
+						$invoice_multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
+					}
+				}
 			}
-			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $invoice_multicurrency_code;
+			}
+			if ($currencyofpayment != $invoice_multicurrency_code) {
 				// If we have invoices with different currencies in the payment, we stop here
 				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
 				return -1;
 			}
 			if (empty($currencytxofpayment)) {
-				$currencytxofpayment = $this->multicurrency_tx[$key];
+				$currencytxofpayment = $invoice_multicurrency_tx;
 			}
 
 			$totalamount_converted += $value_converted;
@@ -314,6 +330,8 @@ class PaiementFourn extends Paiement
 											$discount->fk_soc = $invoice->socid;
 											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
+											$discount->multicurrency_code = $invoice->multicurrency_code;
+											$discount->multicurrency_tx = $invoice->multicurrency_tx;
 
 											// Loop on each vat rate
 											$i = 0;
@@ -338,18 +356,25 @@ class PaiementFourn extends Paiement
 											}
 
 											foreach ($amount_ht as $tva_tx => $xxx) {
-												$discount->amount_ht = abs($amount_ht[$tva_tx]);
-												$discount->amount_tva = abs($amount_tva[$tva_tx]);
-												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
 												$discount->total_ht = abs($amount_ht[$tva_tx]);
 												$discount->total_tva = abs($amount_tva[$tva_tx]);
 												$discount->total_ttc = abs($amount_ttc[$tva_tx]);
-												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
-												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
-												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+
+												// keep compatibility
+												$discount->amount_ht = $discount->total_ht;
+												$discount->amount_tva = $discount->total_tva;
+												$discount->amount_ttc = $discount->total_ttc;
+
+												// multi-currency
 												$discount->multicurrency_total_ht = abs($multicurrency_amount_ht[$tva_tx]);
 												$discount->multicurrency_total_tva = abs($multicurrency_amount_tva[$tva_tx]);
 												$discount->multicurrency_total_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+
+												// keep compatibility
+												$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+												$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+												$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
+
 												$discount->tva_tx = abs((float) $tva_tx);
 
 												$result = $discount->create($user);
@@ -469,9 +494,9 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		// Verifier si paiement porte pas sur une facture a l'etat payee
-		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('paye=1');
+		// Check if payment is completely paid, if payments are shared, we refuse deletion.
+		// TODO Check also if partially paid
+		$billsarray = $this->getBillsArray('paye:=:1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorCantDeletePaymentSharedWithPayedInvoice";
@@ -575,7 +600,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
+	 *	@param      string	$filter         SQL filter. Use USF syntax. Warning: This value must not come from a user input.
 	 *	@return     array<int,int>|int<-1,-1>	Array of supplier invoice id | <0 si ko
 	 */
 	public function getBillsArray($filter = '')
@@ -584,7 +609,7 @@ class PaiementFourn extends Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= " AND ".$filter;
+			$sql .= forgeSQLFromUniversalSearchCriteria($filter);
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);

@@ -231,9 +231,21 @@ if (empty($reshook)) {
 	} elseif ($action == 'enable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOSTINT('mode');
-			$result = $accounting->accountActivate($id, $mode);
-			if ($result < 0) {
-				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			// Block the activation of matching on a centralized account
+			if ($mode == 1 && !empty($accounting->centralized)) {
+				setEventMessages($langs->trans('CentralizedAccountCannotBeMatchable'), null, 'errors');
+			} else {
+				$result = $accounting->accountActivate($id, $mode);
+				if ($result < 0) {
+					setEventMessages($accounting->error, $accounting->errors, 'errors');
+				}
+				// When activating centralized mode, force matchable to 0
+				if ($mode == 2 && $result >= 0) {
+					$result = $accounting->accountDeactivate($id, 1);
+					if ($result < 0) {
+						setEventMessages($accounting->error, $accounting->errors, 'errors');
+					}
+				}
 			}
 		}
 		$action = 'update';
@@ -500,7 +512,7 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -525,7 +537,7 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
@@ -586,7 +598,7 @@ if ($resql) {
 	}
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -601,7 +613,7 @@ if ($resql) {
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 		$totalarray['nbfield']++;
 	}
@@ -654,7 +666,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -673,7 +685,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
@@ -812,17 +824,24 @@ if ($resql) {
 			}
 		}
 
-		// Activated or not reconciliation on an accounting account
+		// Activated or not matching on an accounting account
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 			print '<td class="center">';
-			if (empty($obj->reconcilable)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&page='.$page.'&mode=1&token='.newToken().'">';
-				print img_picto($langs->trans("Disabled"), 'switch_off');
+			if (!empty($obj->centralized)) {
+				// Centralized account: matching not possible, grayed out switch
+				print '<a style="cursor:not-allowed;" title="' . dol_escape_htmltag($langs->trans('CentralizedAccountCannotBeMatchable')) . '">';
+				print img_picto('', !empty($obj->reconcilable) ? 'switch_on' : 'switch_off', '', 0, 0, 1, '', 'opacitymedium');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&page='.$page.'&mode=1&token='.newToken().'">';
-				print img_picto($langs->trans("Activated"), 'switch_on');
-				print '</a>';
+				if (empty($obj->reconcilable)) {
+					print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?id=' . $obj->rowid . '&action=enable&page=' . $page . '&mode=1&token=' . newToken() . '">';
+					print img_picto($langs->trans('Disabled'), 'switch_off');
+					print '</a>';
+				} else {
+					print '<a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?id=' . $obj->rowid . '&action=disable&page=' . $page . '&mode=1&token=' . newToken() . '">';
+					print img_picto($langs->trans('Activated'), 'switch_on');
+					print '</a>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -867,7 +886,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param.'&page='.$page).'">';

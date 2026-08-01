@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 				$nouveauchoix .= "1";
 			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
-			} else { // else it's zéro
+			} else { // else it's zero
 				$nouveauchoix .= "0";
 			}
 		}
@@ -528,7 +528,7 @@ print '<table class="border tableforfield centpercent">';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td>';
 if ($action == 'edit') {
-	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
+	print $form->selectDate(!empty($expiredate) ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
 	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
@@ -556,7 +556,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 $url = $urlwithouturlroot.dol_buildpath('/public/opensurvey/studs.php', 1).'?sondage='.$object->id_sondage;
-$urllink = '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
+$urllink = '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'" spellcheck="false">';
 print $urllink;
 if ($action != 'edit') {
 	print ajax_autoselect("opensurveyurl", $url, 'image');
@@ -740,7 +740,7 @@ if ($object->format == "D") {
 	// Displaying the months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utilisé pour supprimer le suffixe @* qui déplaît logiquement à strftime()
+		$cur = intval($toutsujet[$i]); // intval() is used to strip the @* suffix which naturally confuses strftime()
 
 		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
@@ -1074,8 +1074,7 @@ for ($i = 0; $i < $nbcolonnes + 1; $i++) {
 	if (isset($sumfor[$i])) {
 		if ($i == 0) {
 			$meilleurecolonne = $sumfor[$i];
-		}
-		if (isset($sumfor[$i]) && $sumfor[$i] > $meilleurecolonne) {
+		} elseif ($sumfor[$i] > $meilleurecolonne) {
 			$meilleurecolonne = $sumfor[$i];
 		}
 	}
@@ -1124,7 +1123,7 @@ if ($nbofcheckbox >= 2) {
 	print '</tr>'."\n";
 }
 
-// S'il a oublié de remplir un nom
+// If they forgot to fill in a name
 if (GETPOSTISSET("boutonp") && GETPOST("nom") == "") {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 }
@@ -1137,7 +1136,7 @@ if (isset($erreur_ajout_date) && $erreur_ajout_date) {
 	setEventMessages($langs->trans("ErrorWrongDate"), null, 'errors');
 }
 
-//fin du tableau
+// End of table
 print '</table>'."\n";
 print '</div>'."\n";
 

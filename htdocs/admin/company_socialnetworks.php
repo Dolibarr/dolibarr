@@ -103,8 +103,8 @@ $head = company_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
-print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print '<span class="opacitymedium">'.$langs->trans("MoreNetworksAvailableWithModule")."</span><br>\n";
+print '<div class="info">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."<br>\n";
+print $langs->trans("MoreNetworksAvailableWithModule")."</div>\n";
 print "<br>\n";
 
 

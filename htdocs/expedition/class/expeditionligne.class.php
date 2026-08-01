@@ -13,7 +13,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -437,11 +437,11 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= ", description";
 		$sql .= ", rang";
 		$sql .= ") VALUES (";
-		$sql .= $this->fk_expedition;
-		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : $this->fk_elementdet);
-		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : $this->fk_parent);
-		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : $this->fk_product);
+		$sql .= ((int) $this->fk_expedition);
+		$sql .= ", ".(empty($this->entrepot_id) ? 'NULL' : ((int) $this->entrepot_id));
+		$sql .= ", ".(empty($this->fk_elementdet) ? 'NULL' : ((int) $this->fk_elementdet));
+		$sql .= ", ".(empty($this->fk_parent) ? 'NULL' : ((int) $this->fk_parent));
+		$sql .= ", ".(empty($this->fk_product) ? 'NULL' : ((int) $this->fk_product));
 		$sql .= ", '".(empty($this->element_type) ? 'order' : $this->db->escape($this->element_type))."'";
 		$sql .= ", ".price2num($this->qty, 'MS');
 		$sql .= ", ".((int) $this->fk_unit);
@@ -817,7 +817,7 @@ class ExpeditionLigne extends CommonObjectLine
 		if (!$error) {
 			// update line
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-			$sql .= " fk_entrepot = ".($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
+			$sql .= " fk_entrepot = ".($this->entrepot_id > 0 ? ((int) $this->entrepot_id) : 'null');
 			$sql .= " , qty = ".((float) price2num($qty, 'MS'));
 			$sql .= " , fk_unit = ".((int) $this->fk_unit);
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -876,6 +876,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$orderline = new OrderLine($this->db);
 		if ($orderline->fetch($fk_elementdet) <= 0) {
 			return true; // Order line not found, skip check
+		}
+		if ($orderline->product_type == 9) {
+			return true; // Skip check for title/separator lines, they have no deliverable quantity
 		}
 		$qty_ordered = (float) $orderline->qty;
 

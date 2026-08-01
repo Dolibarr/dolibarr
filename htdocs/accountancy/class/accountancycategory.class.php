@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Jamal Elbaz             <jamelbaz@gmail.pro>
  * Copyright (C) 2016-2026	Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ class AccountancyCategory // extends CommonObject
 	public $lines_display;
 
 	/**
-	 * @var mixed Sum debit credit
+	 * @var float Sum debit credit
 	 */
 	public $sdc;
 
@@ -444,7 +444,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON t.fk_pcg_version = asy.pcg_version AND asy.rowid = ".((int) $pcgver);
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
-		$sql .= " AND t.entity = ".$conf->entity;
+		$sql .= " AND t.entity = ".((int) $conf->entity);
 
 		$this->lines_display = array();
 
@@ -483,7 +483,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " WHERE (aa.fk_accounting_category <> ".((int) $id)." OR aa.fk_accounting_category IS NULL)";
 		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " GROUP BY aa.account_number, aa.label";
 		$sql .= " ORDER BY aa.account_number, aa.label";
 
@@ -529,7 +529,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
 		$sql .= " AND aa.active = 1";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
 
 		$this->db->begin();
@@ -623,7 +623,7 @@ class AccountancyCategory // extends CommonObject
 	/**
 	 * Function to set the property ->sdc (and ->sdcperaccount) that is the result of an accounting account from the ledger with a direction and a period
 	 *
-	 * @param int|array<?string>	$cpt 	Accounting account or array of accounting account
+	 * @param string|int|array<?string>	$cpt 	Accounting account or array of accounting account
 	 * @param int 		$date_start			Date start
 	 * @param int	 	$date_end			Date end
 	 * @param int<0,1>	$sens 				Sens of the account:  0: credit - debit (use this by default), 1: debit - credit
@@ -695,7 +695,7 @@ class AccountancyCategory // extends CommonObject
 							$this->sdc = $obj->credit - $obj->debit;
 						}
 						if (is_array($cpt)) {
-							$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+							$this->sdcperaccount[(string) $obj->accountancy_account] = $this->sdc;
 						}
 					}
 					$i++;
@@ -734,10 +734,10 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " WHERE t.fk_accounting_category IN (SELECT c.rowid";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = 1";
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
 		$sql .= " AND cat.rowid = t.fk_accounting_category";
-		$sql .= " AND t.entity = ".$conf->entity;
+		$sql .= " AND t.entity = ".((int) $conf->entity);
 		if ($catid > 0) {
 			$sql .= " AND cat.rowid = ".((int) $catid);
 		}
@@ -796,7 +796,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.fk_report=".((int) $id_report);
-		$sql .= " AND c.entity = ".$conf->entity;
+		$sql .= " AND c.entity = ".((int) $conf->entity);
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";
 		}
@@ -841,14 +841,14 @@ class AccountancyCategory // extends CommonObject
 	 * Get all accounting account of a given custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
-	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
-	 * 												Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
-	 * 												Example: "fk_accounting_category = 99"
+	 * @param 	int 		$cat_id 						Id if personalized accounting group/category
+	 * @param 	string 		$sanitizedpredefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must be sanitized and not come from an input of a user.
+	 * 														Example: "pcg_type = 'EXPENSE' AND fk_pcg_version = 'xx'"
+	 * 														Example: "fk_accounting_category = 99"
 	 * @return	never|array<array{id:int,account_number:string,account_label:string}>|int<-1,-1>		Array of accounting accounts or -1 if error
 	 * @see getCats(), getCatsCpts()
 	 */
-	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
+	public function getCptsCat($cat_id, $sanitizedpredefinedgroupwhere = '')
 	{
 		global $conf, $mysoc;
 		$sql = '';
@@ -868,15 +868,15 @@ class AccountancyCategory // extends CommonObject
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= " AND t.active = 1";
 			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
 		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
-			$sql .= " WHERE ".$predefinedgroupwhere;
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " WHERE ".$sanitizedpredefinedgroupwhere;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 			$sql .= ' AND t.active = 1';
 			$sql .= " AND t.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 			$sql .= " ORDER BY t.account_number";
@@ -989,7 +989,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account as aca";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = aca.fk_accounting_account";
 		$sql .= " WHERE aca.fk_accounting_category = ".((int) $this->id);
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY aa.account_number ASC";
 
 		dol_syslog(get_class($this)."::getAccountsForCategory", LOG_DEBUG);
@@ -1033,7 +1033,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_category_account as aca";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_accounting_category as ac ON ac.rowid = aca.fk_accounting_category";
 		$sql .= " WHERE aca.fk_accounting_account = ".((int) $fkAccountingAccount);
-		$sql .= " AND ac.entity = ".$conf->entity;
+		$sql .= " AND ac.entity = ".((int) $conf->entity);
 		$sql .= " ORDER BY ac.position ASC";
 
 		dol_syslog(get_class($this)."::getCategoriesForAccount", LOG_DEBUG);
@@ -1109,7 +1109,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= "   FROM ".MAIN_DB_PREFIX."accounting_category_account";
 		$sql .= "   WHERE fk_accounting_category = ".((int) $this->id);
 		$sql .= " )";
-		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " AND aa.entity = ".((int) $conf->entity);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.fk_pcg_version = '".$this->db->escape($pcgvercode)."'";
 		$sql .= " ORDER BY aa.account_number ASC";

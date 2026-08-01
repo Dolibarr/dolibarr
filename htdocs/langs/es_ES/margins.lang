@@ -31,14 +31,14 @@ UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descuento global se toma en cuenta como un producto, servicio o sólo en el total a la hora de calcular los márgenes.
 MARGIN_TYPE=Precio compra/coste sugerido por defecto por el cálculo de márgenes
 MargeType1=Margen en Mejor precio de proveedor
-MargeType2=Margen en Precio Medio Ponderado (PMP)
+MargeType2=Margen sobre el Precio Medio Ponderado (PMP)
 MargeType3=Margen en Precio de coste
-MarginTypeDesc=* Margen sobre mejor precio de compra = Precio de venta - Mejor precio proveedor definido en la ficha del producto <br> * Margen sobre Precio Medio Ponderado (PMP) = Precio de venta - Precio Promedio Ponderado (PMP) o mejor precio proveedor si aún no hay PMP<br> * Margen sobre el precio de coste = Precio venta - Precio de coste definido en la ficha del producto o PMP si el precio de coste no se ha definido, o mejor precio proveedor si aún no hay PMP
+MarginTypeDesc=* Margen sobre el mejor precio de compra = Precio de venta - Mejor precio del proveedor definido en la ficha del producto<br>* Margen sobre el Precio Medio Ponderado (PMP) = Precio de venta - Precio Medio Ponderado del producto (PMP) o mejor precio del proveedor si el PMP aún no está definido<br>* Margen sobre el precio de costo = Precio de venta - Precio de costo definido en la ficha del producto o PMP si el precio de costo no está definido, o mejor precio del proveedor si el PMP aún no está definido
 CostPrice=Precio de compra
 UnitCharges=Carga unitaria
 Charges=Cargas
 AgentContactType=Tipo de contacto comisionado
-AgentContactTypeDetails=Indique qué tipo de contacto (vinculado en las facturas) se utilizará en el informe de margen por contacto/dirección. Tenga en cuenta que la lectura de estadísticas de un contacto no es confiable ya que en la mayoría de los casos el contacto puede no estar indicado explícitamente en las facturas.
+AgentContactTypeDetails=Defina qué tipo de contacto (vinculado en las facturas) se utilizará para el informe de margen por contacto/dirección. Tenga en cuenta que la lectura de estadísticas sobre un contacto no es confiable ya que en la mayoría de los casos es posible que el contacto no esté definido explícitamente en las facturas.
 rateMustBeNumeric=El margen  debe ser un valor numérico
 markRateShouldBeLesserThan100=El margen tiene que ser menor que 100
 ShowMarginInfos=Mostrar info de márgenes

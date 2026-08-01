@@ -152,7 +152,23 @@ class FormProduct
 				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
-		$sql .= " ORDER BY ".$orderBy;
+		$reorderBy = explode(',', $orderBy);
+		$arraysortfield = array();
+		$arraysortorder = array();
+		foreach ($reorderBy as $element) {
+			$elementKey = explode(' ', $element)[0];
+			if ($elementKey) {
+				$arraysortfield[] = $elementKey;
+				if (isset($element[1])) {
+					$arraysortorder[] = $element[1];
+				} else {
+					$arraysortorder[] = 'ASC';
+				}
+			}
+		}
+		$sortfield = implode(',', $arraysortfield);
+		$sortorder = implode(',', $arraysortorder);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -196,8 +212,6 @@ class FormProduct
 	 */
 	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
 	{
-		global $conf, $langs;
-
 		if (empty($fk_product) && count($this->cache_workstations)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
@@ -214,7 +228,7 @@ class FormProduct
 			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
-		$sql .= " ORDER BY ".$orderBy;
+		$sql .= $this->db->order($orderBy);
 
 		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -612,18 +626,19 @@ class FormProduct
 				if ($mode == 1) {
 					$return .= $lines->short_label;
 				} elseif ($mode == 2) {
-					$return .= $lines->scale;
+					$return .= (int) $lines->scale;
 				} else {
 					$return .= $lines->id;
 				}
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $selected) {
+				} elseif ($mode == 2 && (int) $lines->scale === (int) $selected) { // Careful null !== 0 !== '0' and when 0 is saved bdd store null
 					$return .= ' selected';
 				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
+
 				$return .= '>';
 				if ($measuring_style == 'time') {
 					$return .= $langs->trans(ucfirst((string) $lines->label));

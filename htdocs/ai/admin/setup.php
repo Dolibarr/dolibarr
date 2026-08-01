@@ -5,6 +5,7 @@
  * Copyright (C) 2024-2025	Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,14 +107,6 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'custom') {
 		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
 	}
-
-	// Generic Model Field
-	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MODEL');
-	$item->nameText = $langs->trans("AI_API_MODEL").' ('.$ialabel.')';
-	$item->defaultFieldValue = $iarecord['textgeneration'];
-	$item->fieldParams['trClass'] = 'iaservice '.$ia;
-	$item->cssClass = 'minwidth500 input'.$ia;
-	$item->helpText = $langs->trans("AI_API_MODEL_HELP");
 }
 
 $setupnotempty = + count($formSetup->items);
@@ -122,6 +115,10 @@ $setupnotempty = + count($formSetup->items);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 // Access control
+// Setup intentionally stays admin-only: per @sonikf and @eldy feedback,
+// the AI module's technical setup (API keys, provider configuration) is
+// a task done by the admin user, just like for every other Dolibarr module.
+// Per-user/group AI usage is gated separately by 'ai/assistant/use'.
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -269,6 +266,13 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
 	print '<br><textarea id="'.$htmlname.'" placeholder="Click on picto to enter a prompt or enter a message and click picto to make text transformation..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
 
 	print '<br><br>';
@@ -283,8 +287,15 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
 
+	print ' &nbsp; ';
+	if (getDolGlobalString("AI_DEBUG")) {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOnInFile", 'dolibarr_ai.log').'</span>';
+	} else {
+		print ' <span class="small opacitymedium">'.$langs->trans("DebugOff", 'dolibarr_ai.log').'</span>';
+	}
+
 	print '<br>';
-	$doleditor = new DolEditor($htmlname, '', '', 100, 'dolibarr_details');
+	$doleditor = new DolEditor($htmlname, '', '', 150, 'dolibarr_details');
 	print $doleditor->Create(1);
 
 	print '</form>';

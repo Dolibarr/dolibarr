@@ -56,8 +56,6 @@ if (!defined('MAIN_ALREADY_INCLUDED')) {
 /**
  * @var Conf $conf
  * @var Translate $langs
- *
- * @var string $dolibarr_nocache
  */
 
 
@@ -68,11 +66,7 @@ if (!defined('MAIN_ALREADY_INCLUDED')) {
 	// Define javascript type
 	top_httphead('text/javascript; charset=UTF-8');
 	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	if (empty($dolibarr_nocache)) {
-		header('Cache-Control: max-age=10800, public, must-revalidate');
-	} else {
-		header('Cache-Control: no-cache');
-	}
+	header('Cache-Control: max-age=10800, public, must-revalidate');
 }
 
 
@@ -154,7 +148,10 @@ if ($thousand == 'Space') {
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
 
-// To start/stop Block UI
+/*
+ * To start/stop Block UI
+ */
+
 function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
 	const block = document.getElementById('dol-block-ui');
 	if (block != null) {
@@ -171,7 +168,10 @@ function dolUnblockUI() {
 }
 
 
-// For jQuery date picker
+/*
+ * For jQuery date picker
+ */
+
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
@@ -301,6 +301,7 @@ function dpChangeDay(dateFieldID, format)
 	return 0;
 }
 
+
 /*
  * =================================================================
  * Function: formatDate(javascript object Date(), format)
@@ -361,7 +362,6 @@ function formatDate(date,format)
 	// alert(result);
 	return result;
 }
-
 
 /*
  * =================================================================
@@ -505,10 +505,14 @@ function getIntegerInString(str,i,minlength,maxlength)
  */
 function urlencode(s) {
 	var news = s;
+	if (typeof news === "number") {
+		news = news.toString();
+	}
 	news = news.replace(/\+/gi,'%2B');
 	news = news.replace(/&/gi,'%26');
 	return news;
 }
+
 
 /*
  * =================================================================
@@ -694,6 +698,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('setConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, value, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 
@@ -726,7 +736,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			//location.reload();
 			return false;
 		}
-	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.error("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 
 	return true;
 }
@@ -800,6 +810,12 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				});
 			}
 		});
+
+		// Execute js context Dolibarr Hooks
+		if (typeof Dolibarr != 'undefined') {
+			Dolibarr.executeHook('delConstant', {url : saved_url, code, input, entity, strict, forcereload, userid, token, userconst});
+		}
+
 		if (forcereload) {
 			var url = window.location.href;
 			if (url.indexOf('dol_resetcache') < 0) {
@@ -1018,16 +1034,17 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	text	Text to put into copy/paste area
- * @param	text2	Text to put under the copy/paste area
+ * @param	text		Text to put into copy/paste area
+ * @param	text2		Text to put under the copy/paste area
+ * @param   popupTitle	Text to show as title
  */
-function copyToClipboard(text,text2)
+function copyToClipboard(text, text2, popupTitle = '')
 {
 	text = text.replace(/<br>/g,"\n");
 	var newElem = '<textarea id="coordsforpopup" style="border: none; width: 90%; height: 120px;">'+text+'</textarea><br><br>'+text2;
 	/* alert(newElem); */
 	$("#dialogforpopup").html(newElem);
-	$("#dialogforpopup").dialog();
+	$("#dialogforpopup").dialog({title: popupTitle});
 	$("#coordsforpopup").select();
 
 	return false;
@@ -1372,8 +1389,10 @@ function generateFilterString(column, operator, context, fieldType) {
 	}
 })();
 
+
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
+
 
 /**
  * Function similar to PHP price()
@@ -1597,10 +1616,10 @@ jQuery(document).ready(function() {
 	jQuery(document).on("click", function(event) {
 		// search if click was outside drop down
 		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
-			/* console.log("click close butAction - we click outside"); */
+			/* console.log("click close butAction - we click outside"); // disabled because too verbose */
 			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
 			if (parentholder){
-				// Hide the menus.
+				// Hide the dropdown.
 				parentholder.removeClass("open --up --left");
 			}
 		}
@@ -1630,6 +1649,14 @@ function showOptions(child_list, parent_list) {
 function setListDependencies() {
 		console.log("setListDependencies");
 		jQuery("select option[parent]").parent().each(function() {
+			/* Skip selects inside line item extrafield containers — those are
+			 * handled by setListDependencies_extra() generated by getJSListDependancies().
+			 * Both handlers binding on the same select would race showOptions()
+			 * (prop disabled) against showOptions_extra() (clone/remove/append)
+			 * and leave the child options permanently disabled. See #36880. */
+			if ($(this).closest('[id^="extrafield_lines_area"]').length > 0) {
+				return;
+			}
 			var child_list = $(this).attr("name");
 			var parent = $(this).find("option[parent]:first").attr("parent");
 			var infos = parent.split(":");

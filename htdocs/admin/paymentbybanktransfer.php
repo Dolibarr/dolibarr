@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
@@ -173,7 +173,7 @@ print "</tr>";
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToPayCreditTransfer").'</td>';
 print '<td>';
 print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-print $form->select_comptes(getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT'), 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
+print $form->select_comptes(getDolGlobalString('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT'), 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "(courant:=:1)", 1, '', 0, 'minwidth200', 1);
 print '</td></tr>';
 
 /* Moved to bank account data
@@ -361,7 +361,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								}
 								else
 								{

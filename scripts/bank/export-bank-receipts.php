@@ -2,7 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -54,12 +60,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
@@ -76,11 +76,11 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (!isset($argv[3]) || !$argv[3]) {
-	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all|empty] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
 	exit(1);
 }
 $bankref = $argv[1];
-$num = $argv[2];
+$bankreceiptnum = $argv[2] ?: 'all';
 $model = $argv[3];
 $newlangid = 'en_EN'; // To force a new lang id
 
@@ -142,7 +142,7 @@ $objmodel = new $classname($db);
 
 // Define target path
 $dirname = $conf->bank->dir_temp;
-$filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
+$filename = 'export-bank-receipts-'.$bankref.'-'.$bankreceiptnum.'.'.$objmodel->extension;
 
 $array_fields = array(
 	'bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),
@@ -192,9 +192,9 @@ $array_export_TypeFields = array(
 
 // Build request to find records for a bank account/receipt
 $listofnum = "";
-if (!empty($num) && $num != "all") {
+if (!empty($bankreceiptnum) && $bankreceiptnum != "all") {
 	$listofnum .= "'";
-	$arraynum = explode(',', $num);
+	$arraynum = explode(',', $bankreceiptnum);
 	foreach ($arraynum as $val) {
 		if ($listofnum != "'") {
 			$listofnum .= "','";
@@ -212,7 +212,7 @@ $sql .= " WHERE b.fk_account = ".((int) $acct->id);
 if ($listofnum) {
 	$sql .= " AND b.num_releve IN (".$db->sanitize($listofnum, 1).")";
 }
-if (!isset($num)) {
+if ($bankreceiptnum == 'empty') {
 	$sql .= " OR b.num_releve is null";
 }
 $sql .= " AND b.fk_account = ba.rowid";
@@ -261,7 +261,7 @@ if ($resql) {
 			$sql2 = "SELECT sum(b.amount) as amount";
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."bank as b";
 			$sql2 .= " WHERE b.num_releve < '".$db->escape($objp->num_releve)."'";
-			$sql2 .= " AND b.fk_account = ".$objp->bankid;
+			$sql2 .= " AND b.fk_account = ".((int) $objp->bankid);
 			$resql2 = $db->query($sql2);
 			if ($resql2) {
 				$obj2 = $db->fetch_object($resql2);
@@ -433,7 +433,7 @@ if ($resql) {
 	}
 
 	if ($numrows > 0) {
-		print "Found ".$numrows." records for receipt ".$num."\n";
+		print "Found ".$numrows." records for receipt ".$bankreceiptnum."\n";
 
 		// Genere en-tete
 		$objmodel->write_footer($outputlangs);
@@ -445,7 +445,7 @@ if ($resql) {
 
 		$ret = 0;
 	} else {
-		print "No records found for receipt ".$num."\n";
+		print "No records found for receipt ".$bankreceiptnum."\n";
 
 		$ret = 0;
 	}

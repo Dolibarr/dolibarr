@@ -2,6 +2,7 @@
 /* Copyright (C) 2022		Alice Adminson			<aadminson@example.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Anthony Damhet			<a.damhet@progiseize.fr>
  * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,6 +44,7 @@ function getListOfAIFeatures()
 
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
+		'textspellchecker' => array('label' => $langs->trans('TextSpellChecker'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER),
 		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
 
 		'textgenerationextrafield' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("ExtrafieldFiller").')', 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER),
@@ -193,7 +195,7 @@ function getListOfAIServices()
 }
 
 /**
- * Tests the connection to an AI service using its API key and URL.
+ * Tests the connection to an AI service using its API key and URL by sending message "Hello"
  *
  * This function supports multiple AI providers (Google Gemini, Anthropic Claude, and OpenAI-compatible APIs like
  * Mistral, Groq, and DeepSeek). It constructs a minimal, provider-specific request payload and sends it
@@ -234,11 +236,8 @@ function testAIConnection(string $service, string $key, string $url): array
 
 	$model = '';
 	if (empty($model)) {
-		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL');
+		$model = getDolGlobalString('AI_API_' . strtoupper($service) . '_MODEL_TEXT');
 	}
-
-	$data = [];
-	$headers = ["Content-Type: application/json"];
 
 	// GOOGLE
 	if ($service == 'google' || strpos($url, 'googleapis') !== false) {
@@ -315,14 +314,14 @@ function testAIConnection(string $service, string $key, string $url): array
  * @param   string                  $error      Error message, if any
  * @param   string                  $rawReq     Raw request payload
  * @param   string                  $rawRes     Raw response payload
- * @return  void
+ * @return  int									Return 0
  */
-function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = ''): void
+function ai_log_request($db, $user, $query, array $response, $provider, float $time, float $confidence, $status, $error = '', $rawReq = '', $rawRes = '')
 {
 	global $conf;
 
 	if (!getDolGlobalInt('AI_LOG_REQUESTS')) {
-		return;
+		return 0;
 	}
 
 	$tool = isset($response['tool']) ? (string) $response['tool'] : '';
@@ -355,10 +354,11 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	$sql .= ")";
 
 	$resql = $db->query($sql);
-
 	if (!$resql) {
 		dol_print_error($db);
 	}
+
+	return 0;
 }
 
 /**
@@ -391,8 +391,9 @@ function getListForAISummarize()
 function getListForAIRephraseStyle()
 {
 	$arrayforaierephrasestyle = array(
+		'spellchecker' => 'RephraseSpellChecker',
 		'professional' => 'RephraseStyleProfessional',
-		'humouristic' => 'RephraseStyleHumouristic'
+		'humouristic' => 'RephraseStyleHumouristic',
 	);
 
 	return $arrayforaierephrasestyle;
@@ -423,9 +424,23 @@ function aiAdminPrepareHead()
 	$h++;
 
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/assistant.php", 1);
+		$head[$h][1] = $langs->trans("Assistant");
+		$head[$h][2] = 'assistant';
+		$h++;
+	}
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
 		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
 		$head[$h][1] = $langs->trans("MCPServer");
 		$head[$h][2] = 'servermcp';
+		$h++;
+	}
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/configure_tools.php", 1);
+		$head[$h][1] = $langs->trans("ToolAccessControl");
+		$head[$h][2] = 'tools';
 		$h++;
 	}
 
@@ -449,4 +464,275 @@ function aiAdminPrepareHead()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ai@ai', 'remove');
 
 	return $head;
+}
+
+/**
+ * Resolve the AI provider/service currently configured for the AI Assistant
+ * (e.g. "ChatGPT (OpenAI)", "Google Gemini", "Anthropic (Claude)"), so it can be
+ * displayed in the chat header. The precise model name is intentionally not
+ * shown here, only which AI is in use.
+ *
+ * @return string	The provider label, or '' if no service is configured
+ */
+function getAiAssistantProviderLabel()
+{
+	$serviceKey = getDolGlobalString('AI_API_SERVICE');
+	if (empty($serviceKey) || $serviceKey === '-1') {
+		return '';
+	}
+
+	$services = getListOfAIServices();
+
+	return isset($services[$serviceKey]['label']) ? (string) $services[$serviceKey]['label'] : (string) $serviceKey;
+}
+
+/**
+ * Build the configuration array consumed by the AI Assistant chat frontend (ai/js/ai_assistant.js).
+ * It is serialized as JSON into the data-ai-config attribute of the chat container.
+ *
+ * @return array{mode:string,labels:array<string,string>,baseUrl:string,token:string,userInitial:string}
+ */
+function getAiChatAssistantConfig()
+{
+	global $langs, $user;
+
+	$keys = array(
+		// General UI
+		'NoDataAvailable',
+		'Error',
+		'NoRecordFound',
+		'Download',
+		'Show',
+		'Confirm',
+		'ConfirmAiAction',
+		'ClearChatHistoryTitle',
+		'HistoryCleared',
+		'Send',
+		'TypeYourQuestion',
+
+		// Placeholders & Status
+		'TypeOrSpeak',
+		'UploadLocalDoc',
+		'UploadCloudDoc',
+		'DocLoaded',
+		'Listening',
+		'Transcribed',
+		'NoSpeech',
+		'ProcessingAudio',
+		'Timeout',
+		'Cancelled',
+
+		// Engine Specific
+		'CloudSpeechReady',
+		'WhisperReady',
+		'DownloadingModel',
+		'ModelLoading',
+
+		// Document Processing
+		'ProcessingFile',
+		'ReadingPdf',
+		'PdfError',
+		'UnsupportedFileType',
+		'TryingOCR',
+		'OcrProgress',
+		'SwitchingAIModel',
+		'OcrFailed',
+		'ReadingWord',
+		'ReadingExcel',
+		'ReadingOdf',
+
+		// Errors
+		'MicError',
+		'MicTooQuiet',
+		'ConnectionBlocked',
+		'ConnectionBlockedHelp',
+		'WorkerInitFailed',
+		'NetworkError',
+		'AIError',
+		'EmptyAIResponse',
+		'BrowserNotSupported',
+
+		// Actions & Dialogs
+		'YesProceed',
+		'Cancel',
+		'Submit',
+		'ActionCancelled',
+		'ExecutingTool',
+		'FetchingData',
+		'GeneratingLink',
+		'Found',
+		'TypeResponse',
+		'OpenVerb',
+
+		// Voice Confirmation
+		'VoiceYesNo',
+		'VoiceQuiet',
+		'PleaseRepeat',
+		'HeardText',
+
+		// Context
+		'DocContextIntro',
+		'DocContextOutro'
+	);
+
+	$ai_translations = array();
+	foreach ($keys as $key) {
+		$ai_translations[$key] = $langs->transnoentitiesnoconv($key);
+	}
+	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
+	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
+		"CloudVoiceRequiresSecureContext",
+		"HTTPS",
+		"localhost",
+		"Whisper"
+	);
+
+	// First letter of the current user name, shown in the "user" message avatar
+	$userinitial = '';
+	if (is_object($user)) {
+		$namesource = $user->firstname ? $user->firstname : ($user->login ? $user->login : '');
+		$userinitial = dol_strtoupper(dol_substr($namesource, 0, 1));
+	}
+
+	return array(
+		'mode' => getDolGlobalString('AI_DEFAULT_INPUT_MODE'),
+		'labels' => $ai_translations,
+		// Endpoints are called with absolute URLs so the chat also works when
+		// injected into another page (topbar popover) and not only when served
+		// from /ai/assistant/index.php.
+		'baseUrl' => dol_buildpath('/ai/assistant/', 1),
+		'token' => newToken(),
+		'userInitial' => $userinitial,
+	);
+}
+
+/**
+ * Build the HTML of the AI Assistant chat interface.
+ * Shared by the standalone page (ai/assistant/index.php) and the topbar popover
+ * fragment (ai/assistant/popover.php) so both render the exact same chat.
+ *
+ * @param	string	$mode	'page' for the standalone full page, 'popover' for the topbar popover fragment
+ * @return	string			HTML content
+ */
+function getAiChatAssistantHtml($mode = 'page')
+{
+	global $langs, $user, $conf;
+
+	$out = '';
+
+	// Config travels as a data attribute: <script> tags injected via innerHTML
+	// are never executed by the browser, so a window.AI_CONFIG inline script
+	// would not work for the AJAX-loaded popover.
+	$out .= '<div class="ai-chat-container'.($mode === 'popover' ? ' ai-in-popover' : '').'"';
+	$out .= ' data-ai-config="'.dol_escape_htmltag(json_encode(getAiChatAssistantConfig())).'"';
+	if ($mode === 'page') {
+		$out .= ' data-ai-autoinit="1"';
+	}
+	$out .= '>';
+
+	// Header
+	$out .= '<div class="chat-header">';
+	if ($mode === 'popover') {
+		// In the popover the title links to the full standalone page
+		$title = img_picto('', 'fa-robot', '', 0, 0, 0, '', 'paddingright').$langs->trans("AIAssistant");
+		$title = '<a href="'.dol_buildpath('/ai/assistant/index.php', 1).'" class="ai-header-link" title="'.dol_escape_htmltag($langs->trans("AIOpenFullPage")).'">'.$title.'</a>';
+		$out .= '<h2>'.$title.'</h2>';
+	} else {
+		// Full page: assistant identity (avatar + title + current LLM model)
+		$out .= '<div class="chat-header-id">';
+		$out .= '<span class="chat-header-avatar">'.img_picto('', 'fa-robot').'</span>';
+		$out .= '<span class="chat-header-text">';
+		$out .= '<span class="chat-header-title">'.$langs->trans("AIAssistant").'</span>';
+		$aiprovider = getAiAssistantProviderLabel();
+		if ($aiprovider !== '') {
+			$out .= '<span class="chat-header-status" title="'.dol_escape_htmltag($langs->trans("AIProviderInUse")).'">'.dol_escape_htmltag($aiprovider).'</span>';
+		}
+		$out .= '</span>';
+		$out .= '</div>';
+	}
+	$out .= '<div class="header-controls">';
+	// Engine Switcher (restyled as a pill with a sparkle icon)
+	$out .= '<select id="engine-select" class="engine-select">';
+	$out .= '<option value="text">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
+	$out .= '<option value="cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	$out .= '<option value="whisper">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
+	$out .= '<option value="local_docs">'.$langs->transnoentitiesnoconv("OptionLocalParsing").'</option>';
+	$out .= '<option value="cloud_docs">'.$langs->transnoentitiesnoconv("OptionCloudParsing").'</option>';
+	$out .= '</select>';
+	// Clear Button
+	$out .= '<button type="button" id="clear-btn" class="icon-btn" title="'.dol_escape_htmltag($langs->trans("ClearChatHistoryTitle")).'">';
+	$out .= img_picto('', 'fa-trash').' <span class="ai-btn-label">'.$langs->trans("Clear").'</span>';
+	$out .= '</button>';
+	if ($mode === 'popover') {
+		// Window controls of the popover (handled by the bootstrap JS in main.inc.php)
+		$out .= '<button type="button" id="ai-expand-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-expand="'.dol_escape_htmltag($langs->trans("AIExpandPanel")).'" data-title-reduce="'.dol_escape_htmltag($langs->trans("AIReducePanel")).'"><i class="fa fa-expand-alt"></i></button>';
+		$out .= '<button type="button" id="ai-close-btn" class="icon-btn ai-window-btn" title="'.dol_escape_htmltag($langs->trans("Close")).'"><i class="fa fa-times"></i></button>';
+	}
+	$out .= '</div>';
+	$out .= '</div>';
+
+	// Chat History
+	$out .= '<div id="chat-history" class="chat-history">';
+	if ($mode === 'popover') {
+		// Compact greeting line for the narrow popover
+		$out .= '<div class="msg system">'.$langs->trans("AIWelcomeMessage").'</div>';
+	} else {
+		// Full page: rich empty-state welcome screen (hidden by JS as soon as the
+		// conversation starts, restored on Clear). Quick cards send a localized
+		// ready-made prompt on click (data-prompt).
+		$welcomename = $user->firstname ? $user->firstname : (is_object($user) ? $user->login : '');
+		$quickcards = array(
+			array('icon' => 'fa-file-invoice-dollar', 'key' => 'Invoices'),
+			array('icon' => 'fa-chart-line', 'key' => 'Revenue'),
+			array('icon' => 'fa-coins', 'key' => 'Finance'),
+			array('icon' => 'fa-warehouse', 'key' => 'Inventory'),
+		);
+		$out .= '<div class="chat-welcome">';
+		$out .= '<div class="chat-welcome-avatar">'.img_picto('', 'fa-robot').'</div>';
+		$out .= '<h2 class="chat-welcome-title">'.dol_escape_htmltag($langs->trans("AIGreeting", $welcomename)).'</h2>';
+		$out .= '<p class="chat-welcome-subtitle">'.dol_escape_htmltag($langs->trans("AIGreetingSubtitle")).'</p>';
+		$out .= '<div class="chat-welcome-actions">';
+		foreach ($quickcards as $card) {
+			$out .= '<button type="button" class="ai-quick-card" data-prompt="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AIQuick".$card['key']."Prompt")).'">';
+			$out .= '<span class="ai-quick-icon">'.img_picto('', $card['icon']).'</span>';
+			$out .= '<span class="ai-quick-text">';
+			$out .= '<span class="ai-quick-title">'.dol_escape_htmltag($langs->trans("AIQuick".$card['key']."Title")).'</span>';
+			$out .= '<span class="ai-quick-desc">'.dol_escape_htmltag($langs->trans("AIQuick".$card['key']."Desc")).'</span>';
+			$out .= '</span>';
+			$out .= '</button>';
+		}
+		$out .= '</div>';
+		$out .= '</div>';
+	}
+	$out .= '</div>';
+
+	// Controls: a single rounded "pill" holding the attach/mic buttons, the
+	// textarea and the send button.
+	$out .= '<div class="chat-controls">';
+	$out .= '<div class="chat-input-pill">';
+	// Upload Wrapper (Visible only in Doc modes)
+	$out .= '<div id="upload-wrapper" class="upload-wrapper ai-hidden">';
+	$out .= '<input type="file" id="file-upload" accept=".pdf,.txt,.xml,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.odt,.ods" style="display: none;">';
+	$out .= '<button type="button" id="upload-btn" class="round-btn" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("AttachFile")).'">'.img_picto('', 'fa-paperclip').'</button>';
+	$out .= '</div>';
+	// Microphone Wrapper (Visible only in Voice modes)
+	$out .= '<div id="mic-wrapper" class="mic-wrapper ai-hidden">';
+	$out .= '<button type="button" id="mic-btn" class="round-btn mic-btn" title="'.dol_escape_htmltag($langs->trans("ToggleMicrophone")).'">'.img_picto('', 'fa-microphone').'</button>';
+	$out .= '</div>';
+	// Text Input
+	$out .= '<textarea id="user-input" class="ia-input" rows="1"';
+	if (empty($conf->dol_optimize_smallscreen)) {
+		$out .= ' placeholder="'.dol_escape_htmltag($langs->trans("TypeYourQuestion")).'"';
+	}
+	$out .= ' autocomplete="off" spellcheck="false"></textarea>';
+	// Send Button
+	$out .= '<button type="button" id="send-btn" class="chat-send-btn" title="'.dol_escape_htmltag($langs->trans("SendPrompt")).'">'.img_picto('', 'fa-paper-plane').'</button>';
+	$out .= '</div>';
+	$out .= '</div>';
+
+	$out .= '<div id="status-bar"></div>';
+
+	$out .= '</div>';
+
+	return $out;
 }

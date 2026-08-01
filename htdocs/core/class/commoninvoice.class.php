@@ -3,8 +3,8 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -203,6 +203,11 @@ abstract class CommonInvoice extends CommonObject
 	public $situation_cycle_ref;
 
 	/**
+	 * @var int 		Populated by setRetainedWarrantyPaymentTerms()
+	 */
+	public $retained_warranty_fk_cond_reglement;
+
+	/**
 	 * ! Closing after partial payment: CLOSECODE_DISCOUNTVAT, CLOSECODE_BADDEBT, CLOSECODE_BANKCHARGE, CLOSECODE_OTHER
 	 * ! Closing when no payment: CLOSECODE_ABANDONED, CLOSECODE_REPLACED
 	 * @var string Close code
@@ -345,7 +350,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$sql = "SELECT sum(amount) as amount, sum(multicurrency_amount) as multicurrency_amount";
 		$sql .= " FROM ".$this->db->prefix().$table;
-		$sql .= " WHERE ".$field." = ".((int) $this->id);
+		$sql .= " WHERE ".$this->db->sanitize($field)." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 
@@ -578,6 +583,37 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Change the retained warranty payments terms
+	 *
+	 *  @param		int		$id		Id of new payment terms
+	 *  @return		int				>0 if OK, <0 if KO
+	 */
+	public function setRetainedWarrantyPaymentTerms($id)
+	{
+		dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms('.$id.')');
+		if ($this->status >= 0 || $this->element == 'societe') {
+			$fieldname = 'retained_warranty_fk_cond_reglement';
+
+			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((int) $id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
+
+			if ($this->db->query($sql)) {
+				$this->retained_warranty_fk_cond_reglement = $id;
+				return 1;
+			} else {
+				dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms Error '.$sql.' - '.$this->db->error());
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			dol_syslog(get_class($this).'::setRetainedWarrantyPaymentTerms, status of the object is incompatible');
+			$this->error = 'Status of the object is incompatible '.$this->status;
+			return -2;
+		}
+	}
+
+	/**
 	 *  Return list of payments
 	 *
 	 *  @see $error Empty string '' if no error.
@@ -594,26 +630,31 @@ abstract class CommonInvoice extends CommonObject
 
 		$table = 'paiement_facture';
 		$table2 = 'paiement';
+
 		$field = 'fk_facture';
 		$field2 = 'fk_paiement';
-		$field3 = ', p.ref_ext';
-		$field4 = ', p.fk_bank'; // Bank line id
+		$field3 = 'p.ref_ext';
+		$field4 = 'p.fk_bank'; // Bank line id
+
 		$sharedentity = 'facture';
+
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			$table = 'paiementfourn_facturefourn';
 			$table2 = 'paiementfourn';
+
 			$field = 'fk_facturefourn';
 			$field2 = 'fk_paiementfourn';
 			$field3 = '';
+
 			$sharedentity = 'facture_fourn';
 		}
 
 		// List of payments
 		if (empty($mode) || $mode == 1) {
-			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".$field3 . $field4;
+			$sql = "SELECT p.ref, pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code".($field3 ? ", ".$this->db->sanitize($field3) : "") . (", ".$this->db->sanitize($field4));
 			$sql .= " FROM ".$this->db->prefix().$table." as pf, ".$this->db->prefix().$table2." as p, ".$this->db->prefix()."c_paiement as t";
-			$sql .= " WHERE pf.".$field." = ".((int) $this->id);
-			$sql .= " AND pf.".$field2." = p.rowid";
+			$sql .= " WHERE pf.".$this->db->sanitize($field)." = ".((int) $this->id);
+			$sql .= " AND pf.".$this->db->sanitize($field2)." = p.rowid";
 			$sql .= ' AND p.fk_paiement = t.id';
 			$sql .= ' AND p.entity IN ('.getEntity($sharedentity).')';
 			if ($filtertype) {
@@ -729,7 +770,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV') {
-			if ($this instanceOf Facture) {
+			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
 				if ((int) $this->email_sent_counter > 0) {
@@ -742,9 +783,10 @@ abstract class CommonInvoice extends CommonObject
 				}
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
-				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+				if (isALNERunningVersion() && !empty($this->module_source)) {
+					$this->error = 'Action to modify an invoice from an external module like the Point Of Sale is not allowed';
 					return -7;
+					// Note, edit status to draft is also blocked by the trigger of blockedlog module for action BILL_UNVALIDATE that do a test on isEditable().
 				}
 			}
 
@@ -842,7 +884,7 @@ abstract class CommonInvoice extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 			if (isALNERunningVersion()) {
-				$this->error = 'Action not allowed on the certified version';
+				$this->error = 'Action not allowed on a certified version (or candidate for certification)';
 				return -7;
 			}
 
@@ -901,7 +943,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// If not a draft invoice and not temporary invoice
 		if ($tmppart !== 'PROV') {
-			if ($this instanceOf Facture) {
+			if ($this instanceof Facture) {
 				/* @var Facture $this */
 				// If sent by email, we refuse
 				if ((int) $this->email_sent_counter > 0) {
@@ -915,7 +957,7 @@ abstract class CommonInvoice extends CommonObject
 
 				include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 				if (isALNERunningVersion()) {
-					$this->error = 'Action not allowed on the certified version';
+					$this->error = 'Action not allowed on the certified version (or candidate for certification)';
 					return -7;
 				}
 			}
@@ -982,6 +1024,10 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getVentilExportCompta($mode = 0)
 	{
+		if (!isModEnabled('accounting')) {
+			return 0;
+		}
+
 		$alreadydispatched = 0;
 
 		$type = 'customer_invoice';
@@ -1248,7 +1294,7 @@ abstract class CommonInvoice extends CommonObject
 			'paye'        => $paye,
 			'alreadypaid' => $alreadypaid,
 			'type'        => $type,
-			'paramsBadge'=>& $paramsBadge
+			'paramsBadge' => & $paramsBadge
 		);
 
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1433,7 +1479,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql		.= " AND type	= 'ban'";	// To exclude record done for some online payments
 				$sql		.= " AND traite	= 0";		// Not yet in a transfer receipt
 				dol_syslog(get_class($this)."::demande_prelevement - get pending requests not yet in receipt", LOG_DEBUG);
-				$resql= $this->db->query($sql);
+				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$total_already_requested += $obj ? (float) $obj->total_requested : 0;
@@ -2318,13 +2364,13 @@ abstract class CommonInvoice extends CommonObject
 		$complementaryinfo = '';
 		/*
 		 Example: //S1/10/10201409/11/190512/20/1400.000-53/30/106017086/31/180508/32/7.7/40/2:10;0:30
-		 /10/ Numéro de facture – 10201409
-		 /11/ Date de facture – 12.05.2019
-		 /20/ Référence client – 1400.000-53
-		 /30/ Numéro IDE pour la TVA – CHE-106.017.086 TVA
-		 /31/ Date de la prestation pour la comptabilisation de la TVA – 08.05.2018
-		 /32/ Taux de TVA sur le montant total de la facture – 7.7%
-		 /40/ Conditions – 2% d’escompte à 10 jours, paiement net à 30 jours
+		 /10/ Invoice number -- 10201409
+		 /11/ Invoice date -- 12.05.2019
+		 /20/ Customer reference -- 1400.000-53
+		 /30/ VAT IDE number -- CHE-106.017.086 TVA
+		 /31/ Service date for VAT accounting -- 08.05.2018
+		 /32/ VAT rate on total invoice amount -- 7.7%
+		 /40/ Terms -- 2% discount at 10 days, net payment at 30 days
 		 */
 		$datestring = dol_print_date($this->date, '%y%m%d');
 		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
@@ -2345,7 +2391,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";
-		// Info Seller ("Compte / Payable à")
+		// Info Seller ("Account / Payable to")
 		if ($this->fk_account > 0) {
 			// Bank BAN if country is LI or CH.  TODO Add a test to check than IBAN start with CH or LI
 			$bankaccount->fetch($this->fk_account);
@@ -2374,7 +2420,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
 		}
-		// Final seller (Ultimate seller) ("Créancier final" = "En faveur de")
+		// Final seller (Ultimate seller) ("Final creditor" = "In favour of")
 		$s .= "\n";
 		$s .= "\n";
 		$s .= "\n";
@@ -2651,4 +2697,21 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float 		Situation advance percentage (default 100 for standard invoices)
 	 */
 	public $situation_percent = 100;
+
+	/**
+	 * Check if a line is a deposit line
+	 *
+	 * @return bool                 True if line is a deposit, false otherwise
+	 */
+	public function isDepositLine()
+	{
+		// Do not take into account lines of the type "deposit."
+		$reg = array();
+		if (preg_match('/^\((.*)\)$/', $this->desc, $reg)) {
+			if ($reg[1] == 'DEPOSIT') {
+				return true;
+			}
+		}
+		return false;
+	}
 }

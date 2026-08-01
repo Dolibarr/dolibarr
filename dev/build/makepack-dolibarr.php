@@ -93,7 +93,7 @@ $REQUIREMENTTARGET = [
 	'RPM_FEDORA'   => 'rpmbuild',
 	'RPM_MANDRIVA' => 'rpmbuild',
 	'RPM_OPENSUSE' => 'rpmbuild',
-	'DEB'          => 'dpkg',
+	'DEB'          => 'dpkg,po2debconf',
 	'FLATPACK'     => 'flatpack',
 	'EXEDOLIWAMP'  => 'ISCC.exe',
 	'SNAPSHOT'     => 'tar',
@@ -105,10 +105,9 @@ $ALTERNATEPATH = [
 ];
 
 $RPMSUBVERSION = 'auto';
-$RPMDIR = '';
+$RPMDIR = (getenv('HOME') ?: '') . '/rpmbuild';	// by default
 if (is_dir('/usr/src/redhat')) { $RPMDIR = '/usr/src/redhat'; }   // redhat
 if (is_dir('/usr/src/packages')) { $RPMDIR = '/usr/src/packages'; } // opensuse
-if (is_dir('/usr/src/RPM')) { $RPMDIR = '/usr/src/RPM'; }     // mandrake
 
 $VERSION = '4.0';
 
@@ -122,8 +121,8 @@ $scriptPath = realpath($argv[0]) ?: $argv[0];
 $DIR = dirname($scriptPath);
 $PROG = pathinfo($scriptPath, PATHINFO_FILENAME);
 $Extension = pathinfo($scriptPath, PATHINFO_EXTENSION);
-$SOURCE = dirname($DIR);
-$DESTI = $SOURCE . '/build';
+$SOURCE = preg_replace('/\/dev/', '', preg_replace('/\/build/', '', $DIR));
+$DESTI = $SOURCE . '/dev/build';
 
 if ($SOURCE[0] !== '/' && !preg_match('/^[a-z]:/i', $SOURCE)) {
 	echo "Error: Launch the script $PROG.$Extension with its full path from /.\n";
@@ -214,7 +213,11 @@ $BUILDROOT = $TEMP . '/buildroot';
 
 
 // Get version $MAJOR, $MINOR and $BUILD
-$filefuncPath = $SOURCE . '/htdocs/filefunc.inc.php';
+if (file_exists($SOURCE . '/htdocs/version.inc.php')) {
+	$filefuncPath = $SOURCE . '/htdocs/version.inc.php';
+} else {
+	$filefuncPath = $SOURCE . '/htdocs/filefunc.inc.php';
+}
 $filefuncContent = file_get_contents($filefuncPath);
 if ($filefuncContent === false) {
 	echo "Error: Can't open descriptor file $filefuncPath\n";
@@ -222,8 +225,20 @@ if ($filefuncContent === false) {
 }
 
 $PROJVERSION = '';
+$matches = array();
 if (preg_match("/define\('DOL_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
 	$PROJVERSION = $matches[1];
+}
+if (empty($PROJVERSION)) {
+	$DOL_MAJOR_VERSION = 'notfound';
+	$DOL_MINOR_VERSION = 'notfound';
+	if (preg_match("/define\('DOL_MAJOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
+		$DOL_MAJOR_VERSION = $matches[1];
+	}
+	if (preg_match("/define\('DOL_MINOR_VERSION',\s*'([\d\.a-z\-]+)'\)/i", $filefuncContent, $matches)) {
+		$DOL_MINOR_VERSION = $matches[1];
+	}
+	$PROJVERSION = $DOL_MAJOR_VERSION.'.'.$DOL_MINOR_VERSION;
 }
 
 $versionParts = explode('.', $PROJVERSION, 3);
@@ -256,7 +271,7 @@ if (strpos($newbuild, '-') === false) {
 	$newbuild .= '-0.4';  // finale (fedora)
 }
 $REL1 = preg_replace('/-.*$/', '', $newbuild);
-if ($RPMSUBVERSION === 'auto') {
+if ($RPMSUBVERSION === 'auto') {	// @phpstan-ignore-line
 	$RPMSUBVERSION = preg_replace('/^.*-/', '', $newbuild);
 }
 $FILENAMETGZ2    = "$PROJECT-$MAJOR.$MINOR.$REL1";
@@ -301,10 +316,10 @@ for ($i = 1; $i < $argc; $i++) {
 }
 
 // Force output dir if env vars are defined
-if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {
+if ($ENVDESTIBETARC && preg_match('/[a-z]/i', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTIBETARC;
 }
-if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {
+if ($ENVDESTISTABLE && preg_match('/^[0-9]+$/', $BUILD)) {	// @phpstan-ignore-line
 	$DESTI = $ENVDESTISTABLE;
 }
 
@@ -336,12 +351,12 @@ if ($target) {
 	$targetUpper = strtoupper($target);
 	if ($targetUpper === 'ALL') {
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {
+			if ($key !== 'SNAPSHOT' && $key !== 'SF' && $key !== 'ASSO') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
 	}
-	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {
+	if ($targetUpper !== 'ALL' && $targetUpper !== 'SF' && $targetUpper !== 'ASSO') {	// @phpstan-ignore-line
 		$CHOOSEDTARGET[$targetUpper] = 1;
 	}
 	if ($targetUpper === 'SF') {
@@ -386,7 +401,7 @@ if ($target) {
 	} elseif ($NUM_SCRIPT === '0') {
 		$CHOOSEDTARGET['-CHKSUM'] = 1;
 		foreach ($LISTETARGET as $key) {
-			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {
+			if ($key !== 'SNAPSHOT' && $key !== 'ASSO' && $key !== 'SF') {				// @phpstan-ignore-line
 				$CHOOSEDTARGET[$key] = 1;
 			}
 		}
@@ -412,7 +427,7 @@ ksort($CHOOSEDTARGET);
 
 foreach ($CHOOSEDTARGET as $tgt => $val) {
 	if (preg_match('/RPM/i', $tgt)) {
-		if ($atleastonerpm && $DESTI === "$SOURCE/build") {
+		if ($atleastonerpm && $DESTI === "$SOURCE/dev/build") {
 			echo "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit(1);
 		}
@@ -482,7 +497,7 @@ foreach ($CHOOSEDTARGET as $tgt => $val) {
 
 ksort($CHOOSEDPUBLISH);
 foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-	if ($val < 0) { continue; }
+	if ($val < 0) { continue; }					// @phpstan-ignore-line
 	if ($tgt === 'ASSO') { $nbofpublishneedchangelog++; }
 	if ($tgt === 'SF') { $nbofpublishneedchangelog++; $nbofpublishneedtag++; }
 	$nboftargetok++;
@@ -497,6 +512,7 @@ if ($nboftargetok) {
 	if ($nbofpublishneedchangelog) {
 		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-rc\d*/', '', $BUILD);
 		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-beta\d*/', '', $TMPBUILDTOCHECKCHANGELOG);
+		$TMPBUILDTOCHECKCHANGELOG = preg_replace('/\-alpha\d*/', '', $TMPBUILDTOCHECKCHANGELOG);
 
 		echo "\nCheck if ChangeLog is ok for version $MAJOR.$MINOR.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret = run("grep \"ChangeLog for $MAJOR.$MINOR.$TMPBUILDTOCHECKCHANGELOG\" \"$SOURCE/ChangeLog\" 2>&1");
@@ -507,12 +523,14 @@ if ($nboftargetok) {
 			echo "ChangeLog for $MAJOR.$MINOR.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
 
-		if (!$BUILD || $BUILD === '0-rc') {
+		if (!$BUILD || $BUILD === '0-alpha' || $BUILD === '0-beta' || $BUILD === '0-rc') {
 			// For a major version
-			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log `git rev-list --boundary ' . $MAJOR . '.' . $MINOR . '..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print "Building changeLog file for a major version:\n";
+			//print 'cd ~/git/dolibarr_dev; git log `git rev-list --boundary ' . $MAJOR . '.' . $MINOR . '..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
+			print 'cd ~/git/dolibarr_dev; git log `diff -u <(git rev-list --first-parent '. ( $MAJOR - 1 ). '.0)  <(git rev-list --first-parent develop) | sed -ne \'s/^ //p\' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
 		} else {
 			// For a maintenance release
-			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log ' . $MAJOR . '.' . $MINOR . '.' . ($BUILD - 1) . '.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			echo 'cd ~/git/dolibarr_' . $MAJOR . '.' . $MINOR . '; git log ' . $MAJOR . '.' . $MINOR . '.' . (((float) $BUILD) - 1) . '.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy';
 		}
 		echo "\n";
 
@@ -522,6 +540,8 @@ if ($nboftargetok) {
 				echo "Canceled.\n";
 				exit(0);
 			}
+		} else {
+			$WAITKEY = prompt("\nPress a key to continue (or CTRL+C to stop)... ");
 		}
 	}
 
@@ -542,18 +562,19 @@ if ($nboftargetok) {
 		if (trim($ret)) {
 			echo "Some files exists in source directory and are not indexed neither excluded in .gitignore.\n";
 			echo $ret;
-			echo "Canceled.\n";
+			echo "\nCanceled.\n";
 			exit(0);
 		}
 
-		echo "Create xml check file with md5 checksum with command php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
+		echo "Create xml check file with hash checksum with command php ".$SOURCE."/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD\n";
 		$outputLines = [];
-		exec("php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
+		$retcode = 0;
+		exec("php $SOURCE/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD", $outputLines, $retcode);
 		$ret = implode("\n", $outputLines);
 		if ($retcode !== 0) {
 			echo "Error running generate_filelist_xml.php please check\n";
 			echo $ret;
-			echo "Canceled.\n";
+			echo "\nCanceled.\n";
 			exit(0);
 		}
 		echo $ret . "\n";
@@ -602,7 +623,7 @@ if ($nboftargetok) {
 	// ========================================================================
 
 	if ($nboftargetneedbuildroot) {
-		if (!$copyalreadydone) {
+		if (!$copyalreadydone) {	// @phpstan-ignore-line
 			echo "Creation of a buildroot used for all packages\n";
 
 			echo "Delete directory $BUILDROOT\n";
@@ -610,8 +631,8 @@ if ($nboftargetok) {
 
 			@mkdir($BUILDROOT, 0777, true);
 			@mkdir("$BUILDROOT/$PROJECT", 0777, true);
-			echo "Copy $SOURCE into $BUILDROOT/$PROJECT\n";
-			run("cp -pr \"$SOURCE\" \"$BUILDROOT/$PROJECT\"");
+			echo "Copy $SOURCE/. into $BUILDROOT/$PROJECT\n";
+			run("cp -pr \"$SOURCE/.\" \"$BUILDROOT/$PROJECT\"");
 		}
 
 		echo "Clean $BUILDROOT\n";
@@ -620,33 +641,42 @@ if ($nboftargetok) {
 		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate");
 		run("rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders");
 		run("rm -fr $BUILDROOT/$PROJECT/.git*");
+		run("rm -fr $BUILDROOT/$PROJECT/.mailmap");
+		run("rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache");
 		run("rm -fr $BUILDROOT/$PROJECT/.project");
 		run("rm -fr $BUILDROOT/$PROJECT/.pydevproject");
+		run("rm -fr $BUILDROOT/$PROJECT/.pyproject.toml");
 		run("rm -fr $BUILDROOT/$PROJECT/.settings");
 		run("rm -fr $BUILDROOT/$PROJECT/.scrutinizer.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.stickler.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.travis.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.tx");
 		run("rm -f  $BUILDROOT/$PROJECT/build.xml");
+
+		run("rm -f  $BUILDROOT/$PROJECT/.pre-commit-config.yaml");
+		run("rm -fr $BUILDROOT/$PROJECT/.phan");
+
 		run("rm -f  $BUILDROOT/$PROJECT/phpstan.neon");
+		run("rm -fr $BUILDROOT/$PROJECT/phpstan.neon.dist");
 		run("rm -f  $BUILDROOT/$PROJECT/pom.xml");
 		run("rm -f  $BUILDROOT/$PROJECT/README-*.md");
 
-		run("rm -fr $BUILDROOT/$PROJECT/build/html");
-		run("rm -f  $BUILDROOT/$PROJECT/build/Doli*-*");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.deb");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.dsc");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.tar.gz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr_*.tar.xz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.deb");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.rpm");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar.gz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tar.xz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.tgz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.xz");
-		run("rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip");
-		run("rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/build/html");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/Doli*-*");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr_*.deb");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr_*.dsc");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr_*.tar.gz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr_*.tar.xz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.deb");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.rpm");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.tar");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.tar.gz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.tar.xz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.tgz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.xz");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/dolibarr-*.zip");
+		run("rm -f  $BUILDROOT/$PROJECT/dev/build/doxygen/doxygen_warnings.log");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/build/phpstan/phpstan");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql");
@@ -661,6 +691,8 @@ if ($nboftargetok) {
 
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/mssql");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/sqlite3");
+
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/install/install.forced.php");
 
 		run("rm -fr $BUILDROOT/$PROJECT/node_modules");
 
@@ -681,6 +713,8 @@ if ($nboftargetok) {
 		run("rm -fr $BUILDROOT/$PROJECT/dev/security");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/spec");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/test");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/tools/php-cs-fixer/vendor");
+		run("rm -fr $BUILDROOT/$PROJECT/dev/tools/rector/vendor");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/uml");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/vagrant");
 		run("rm -fr $BUILDROOT/$PROJECT/dev/xdebug");
@@ -724,6 +758,7 @@ if ($nboftargetok) {
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/factory*");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/forceproject*");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/lead*");
+		run("rm -fr $BUILDROOT/$PROJECT/htdocs/langs/*/README.md");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/management*");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/multicompany*");
 		run("rm -fr $BUILDROOT/$PROJECT/htdocs/ndf*");
@@ -779,6 +814,12 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart");
 		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/autoload.php");
+
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/bin");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/bin");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/bin");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/bin");
+		run("rm -f  $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/*/*/*/bin");
 	}
 
 
@@ -834,11 +875,11 @@ if ($nboftargetok) {
 			$cmd = "cp -pr \"$BUILDROOT/$PROJECT/\" \"$BUILDROOT/$FILENAMETGZ\"";
 			run($cmd);
 
-			run("rm -fr $BUILDROOT/$FILENAMETGZ/build/exe");
+			run("rm -fr $BUILDROOT/$FILENAMETGZ/dev/build/exe");
 			run("rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/includes/ckeditor/_source");
 
 			echo "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
+			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
 			echo "$cmd\n";
 			run($cmd);
 
@@ -865,7 +906,7 @@ if ($nboftargetok) {
 			$cmd = "cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEXZ\"";
 			run($cmd);
 
-			run("rm -fr $BUILDROOT/$FILENAMEXZ/build/exe");
+			run("rm -fr $BUILDROOT/$FILENAMEXZ/dev/build/exe");
 			run("rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/includes/ckeditor/_source");
 
 			echo "Compress $FILENAMEXZ into $FILENAMEXZ.xz...\n";
@@ -901,7 +942,7 @@ if ($nboftargetok) {
 			$cmd = "cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEZIP\"";
 			run($cmd);
 
-			run("rm -fr $BUILDROOT/$FILENAMEZIP/build/exe");
+			run("rm -fr $BUILDROOT/$FILENAMEZIP/dev/build/exe");
 			run("rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/includes/ckeditor/_source");
 
 			echo "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
@@ -909,7 +950,7 @@ if ($nboftargetok) {
 			echo "Go to directory $BUILDROOT\n";
 			$olddir = getcwd();
 			chdir($BUILDROOT);
-			$cmd = "7z a -r -tzip -xr@\"$BUILDROOT/$FILENAMEZIP/build/zip/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMEZIP/*";
+			$cmd = "7z a -r -tzip -xr@\"$BUILDROOT/$FILENAMEZIP/dev/build/zip/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMEZIP/*";
 			echo $cmd . "\n";
 			run($cmd);
 			chdir($olddir);
@@ -936,6 +977,7 @@ if ($nboftargetok) {
 			if ($RPMDIR === '') { $RPMDIR = (getenv('HOME') ?: '') . '/rpmbuild'; }
 
 			echo "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
+			echo "RPMDIR = $RPMDIR\n";
 
 			echo "Remove target $FILENAMERPM...\n";
 			@unlink("$NEWDESTI/$FILENAMERPM");
@@ -956,7 +998,7 @@ if ($nboftargetok) {
 
 			// Build tgz
 			echo "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
-			run("tar --exclude-from \"$SOURCE/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ2.tgz\" $FILENAMETGZ2");
+			run("tar --exclude-from \"$SOURCE/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ2.tgz\" $FILENAMETGZ2");
 
 			if (!is_dir($RPMDIR . '/SOURCES')) { @mkdir($RPMDIR . '/SOURCES', 0777, true); }
 			echo "Move $BUILDROOT/$FILENAMETGZ2.tgz to $RPMDIR/SOURCES/$FILENAMETGZ2.tgz\n";
@@ -973,10 +1015,10 @@ if ($nboftargetok) {
 			$datestring = date('D M ') . $day . date(' Y');
 			$changelogstring = "* $datestring Laurent Destailleur (eldy) $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n- Upstream release\n";
 
-			echo "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/build/rpm/$BUILDFICSRC\n";
-			$specContent = file_get_contents("$SOURCE/build/rpm/$BUILDFICSRC");
+			echo "Generate file $BUILDROOT/$BUILDFIC from $SOURCE/dev/build/rpm/$BUILDFICSRC\n";
+			$specContent = file_get_contents("$SOURCE/dev/build/rpm/$BUILDFICSRC");
 			if ($specContent === false) {
-				echo "Error: Can't read $SOURCE/build/rpm/$BUILDFICSRC\n";
+				echo "Error: Can't read $SOURCE/dev/build/rpm/$BUILDFICSRC\n";
 				exit(1);
 			}
 			$specContent = str_replace('__FILENAMETGZ__', $FILENAMETGZ, $specContent);
@@ -986,7 +1028,7 @@ if ($nboftargetok) {
 			file_put_contents("$BUILDROOT/$BUILDFIC", $specContent);
 
 			echo "Copy patch file to $RPMDIR/SOURCES\n";
-			run("cp \"$SOURCE/build/rpm/dolibarr-forrpm.patch\" \"$RPMDIR/SOURCES\"");
+			run("cp \"$SOURCE/dev/build/rpm/dolibarr-forrpm.patch\" \"$RPMDIR/SOURCES\"");
 			run("chmod 644 $RPMDIR/SOURCES/dolibarr-forrpm.patch");
 
 			echo "Launch RPM build (rpmbuild --clean -ba $BUILDROOT/$BUILDFIC)\n";
@@ -1036,44 +1078,44 @@ if ($nboftargetok) {
 			echo "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd = "cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			run($cmd);
-			$cmd = "cp -pr \"$BUILDROOT/$PROJECT/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/build/debian/apache/.htaccess\"";
+			$cmd = "cp -pr \"$BUILDROOT/$PROJECT/dev/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/dev/build/debian/apache/.htaccess\"";
 			run($cmd);
 
 			echo "Remove other files\n";
 			run("rm -f  $BUILDROOT/$PROJECT.tmp/README-FR.md");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/README");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/README-FR");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/aps");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/dmg");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/pad/README");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/tgz/README");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/debian/po");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/debian/source");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/changelog");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/compat");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/control*");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/copyright");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.config");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.desktop");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.docs");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.install");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.lintian-overrides");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.postrm");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.postinst");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates.futur");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/rules");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/README.Debian");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/README.howto");
-			run("rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/watch");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/doap");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/exe");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/launchpad");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/live");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/patch");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/perl");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/rpm");
-			run("rm -fr $BUILDROOT/$PROJECT.tmp/build/zip");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/README");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/README-FR");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/aps");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/dmg");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/pad/README");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/tgz/README");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/debian/po");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/debian/source");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/changelog");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/compat");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/control*");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/copyright");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.config");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.desktop");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.docs");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.install");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.lintian-overrides");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.postrm");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.postinst");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.templates");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/dolibarr.templates.futur");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/rules");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/README.Debian");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/README.howto");
+			run("rm -f  $BUILDROOT/$PROJECT.tmp/dev/build/debian/watch");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/doap");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/exe");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/launchpad");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/live");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/patch");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/perl");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/rpm");
+			run("rm -fr $BUILDROOT/$PROJECT.tmp/dev/build/zip");
 			// Remove duplicate license files
 			run("rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/LICENSE.md");
 			run("rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source/plugins/scayt/LICENSE.md");
@@ -1106,47 +1148,47 @@ if ($nboftargetok) {
 			echo "Create directory $BUILDROOT/$PROJECT.tmp/debian\n";
 			run("mkdir \"$BUILDROOT/$PROJECT.tmp/debian\"");
 
-			echo "Copy $SOURCE/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
+			echo "Copy $SOURCE/dev/build/debian/xxx to $BUILDROOT/$PROJECT.tmp/debian\n";
 
 			// Add files for dpkg-source (changelog)
-			$changelogContent = file_get_contents("$SOURCE/build/debian/changelog");
+			$changelogContent = file_get_contents("$SOURCE/dev/build/debian/changelog");
 			if ($changelogContent === false) {
-				echo "Error: Can't read $SOURCE/build/debian/changelog\n";
+				echo "Error: Can't read $SOURCE/dev/build/debian/changelog\n";
 				exit(1);
 			}
 			$changelogContent = str_replace('__VERSION__', "$MAJOR.$MINOR.$newbuild", $changelogContent);
 			file_put_contents("$BUILDROOT/$PROJECT.tmp/debian/changelog", $changelogContent);
 
 			// Add files for dpkg-source
-			run("cp -f  \"$SOURCE/build/debian/compat\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/control\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/copyright\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.desktop\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.docs\"           \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.install\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.lintian-overrides\"  \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.xpm\"            \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/rules\"          \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/watch\"          \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -fr \"$SOURCE/build/debian/patches\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -fr \"$SOURCE/build/debian/po\"             \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -fr \"$SOURCE/build/debian/source\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -fr \"$SOURCE/build/debian/apache\"         \"$BUILDROOT/$PROJECT.tmp/debian/apache\"");
-			run("cp -f  \"$SOURCE/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/debian/apache\"");
-			run("cp -fr \"$SOURCE/build/debian/lighttpd\"       \"$BUILDROOT/$PROJECT.tmp/debian/lighttpd\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/compat\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/control\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/copyright\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.desktop\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.docs\"           \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.install\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.lintian-overrides\"  \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.xpm\"            \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/rules\"          \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/watch\"          \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -fr \"$SOURCE/dev/build/debian/patches\"        \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -fr \"$SOURCE/dev/build/debian/po\"             \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -fr \"$SOURCE/dev/build/debian/source\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -fr \"$SOURCE/dev/build/debian/apache\"         \"$BUILDROOT/$PROJECT.tmp/debian/apache\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/debian/apache\"");
+			run("cp -fr \"$SOURCE/dev/build/debian/lighttpd\"       \"$BUILDROOT/$PROJECT.tmp/debian/lighttpd\"");
 			// Add files also required to build binary package
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.config\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.postinst\"       \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.postrm\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/dolibarr.templates\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
-			run("cp -f  \"$SOURCE/build/debian/install.forced.php.install\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.config\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.postinst\"       \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.postrm\"         \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/dolibarr.templates\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
+			run("cp -f  \"$SOURCE/dev/build/debian/install.forced.php.install\"      \"$BUILDROOT/$PROJECT.tmp/debian\"");
 
 			echo "Set permissions on files/dir\n";
 			run("chmod -R 755 $BUILDROOT/$PROJECT.tmp");
 			run("find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ");
-			run("find $BUILDROOT/$PROJECT.tmp/build -name '*.php' -type f -exec chmod 755 {} \\; ");
-			run("find $BUILDROOT/$PROJECT.tmp/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ");
-			run("find $BUILDROOT/$PROJECT.tmp/build -name '*.pl' -type f -exec chmod 755 {} \\; ");
+			run("find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ");
+			run("find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ");
+			run("find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ");
 			run("find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ");
 			run("chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules");
 			run("chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php");
@@ -1170,7 +1212,7 @@ if ($nboftargetok) {
 
 			// We need a tarball to be able to build "quilt" debian package
 			echo "Compress $BUILDROOT/$PROJECT-$MAJOR.$MINOR.$build into $BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz...\n";
-			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
+			$cmd = "tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/dev/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$BUILDROOT/$FILENAMEDEBNATIVE.orig.tar.gz\" $PROJECT-$MAJOR.$MINOR.$build";
 			echo $cmd . "\n";
 			run($cmd);
 
@@ -1217,21 +1259,21 @@ if ($nboftargetok) {
 
 			$SOURCEBACK = str_replace('/', '\\', $SOURCE);
 
-			echo "Prepare file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+			echo "Prepare file \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
 
-			$issContent = file_get_contents("$SOURCE/build/exe/doliwamp/doliwamp.iss");
+			$issContent = file_get_contents("$SOURCE/dev/build/exe/doliwamp/doliwamp.iss");
 			if ($issContent === false) {
-				echo "Error: Can't read $SOURCE/build/exe/doliwamp/doliwamp.iss\n";
+				echo "Error: Can't read $SOURCE/dev/build/exe/doliwamp/doliwamp.iss\n";
 				exit(1);
 			}
 			$issContent = str_replace('__FILENAMEEXEDOLIWAMP__', $FILENAMEEXEDOLIWAMP, $issContent);
-			file_put_contents("$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss", $issContent);
+			file_put_contents("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss", $issContent);
 
 			echo "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
 
 			$cmd = '';
 			if ($OS === 'windows') {
-				$cmd = "ISCC.exe \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+				$cmd = "ISCC.exe \"$SOURCEBACK\\dev\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 			}
 			if ($cmd) {
 				echo "$cmd\n";
@@ -1240,11 +1282,11 @@ if ($nboftargetok) {
 			}
 
 			// Move to final dir
-			echo "Move \"$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
-			@rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe", "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
+			echo "Move \"$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+			@rename("$SOURCE/dev/build/$FILENAMEEXEDOLIWAMP.exe", "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
 
-			echo "Remove tmp file $SOURCE/build/exe/doliwamp/doliwamp.tmp.iss\n";
-			@unlink("$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss");
+			echo "Remove tmp file $SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss\n";
+			@unlink("$SOURCE/dev/build/exe/doliwamp/doliwamp.tmp.iss");
 
 			continue;
 		}
@@ -1257,7 +1299,7 @@ if ($nboftargetok) {
 
 	ksort($CHOOSEDPUBLISH);
 	foreach ($CHOOSEDPUBLISH as $tgt => $val) {
-		if ($val < 0) { continue; }
+		if ($val < 0) { continue; }								// @phpstan-ignore-line
 
 		echo "\nList of files to publish (BUILD=$BUILD)\n";
 

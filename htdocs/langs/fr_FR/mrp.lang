@@ -173,3 +173,5 @@ ErrorObjectMustNotBeFinishedToModifyDateEnd = L'objet %s ne doit pas être termi
 ErrorObjectMustNotBeFinishedToModifyDateStart = L'objet %s ne doit pas être terminé pour modifier la date de début.
 BOM_SUB_BOM=Utilisez des sous-bombes
 UseSearchToSelectBom=Attendez qu'une touche soit enfoncée avant de charger le contenu de la liste combo Boms.<br>Cela peut améliorer les performances si vous avez un grand nombre de projets, mais c'est moins pratique.
+ReInitialize=Réinitialiser
+ReInitializeHelp=Réinitialisez les lignes pour consommer et afin de produire (si le Nomenclature a changé et, la production n'a pas démarré).

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,9 @@ class RssParser
 	 */
 	private $current_namespace;
 
+	/**
+	 * @var array<array<string,string>|array<string,array<string,string>>>
+	 */
 	public $items = array();
 	/**
 	 * @var array<string,string>|array<string,array<string,string>>
@@ -364,6 +367,7 @@ class RssParser
 						return -1;
 					}
 
+					// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 					xml_set_object($xmlparser, $this);
 					// @phan-suppress-next-line PhanUndeclaredFunctionInCallable
 					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element'); // @phpstan-ignore-line
@@ -811,11 +815,14 @@ class RssParser
 			}
 		} else {
 			if (!empty($this->initem)) {
-				$this->concat($this->current_item[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->current_item[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->intextinput)) {
-				$this->concat($this->textinput[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->textinput[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inimage)) {
-				$this->concat($this->image[$el], $text);
+				// @phpstan-ignore-next-line argument.type
+				$this->concat($this->image[$el], $text);  // @phan-suppress-current-line PhanTypeMismatchArgument
 			} elseif (!empty($this->inchannel)) {
 				$this->concat($this->channel[$el], $text);
 			}
