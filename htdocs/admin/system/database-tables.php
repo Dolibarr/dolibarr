@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,12 +57,12 @@ $action = GETPOST('action', 'aZ09');
  */
 
 $logsql = '';
-$resultsql = true;
+$resql_action = true;
 
 if ($action == 'convert') {	// Convert engine into innodb
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ENGINE=INNODB";
 	$logsql .= $sql.'<br>';
-	$resultsql = $db->query($sql);
+	$resql_action = $db->query($sql);
 }
 if ($action == 'convertutf8') {
 	$collation = 'utf8_unicode_ci';
@@ -75,14 +75,14 @@ if ($action == 'convertutf8') {
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
-		$resultsql = $resql1;
+		$resql_action = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
 		$logsql .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
-			$resultsql = $resql2;
+			$resql_action = $resql2;
 		}
 	}
 }
@@ -97,21 +97,21 @@ if ($action == 'convertutf8mb4') {
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
-		$resultsql = $resql1;
+		$resql_action = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
 		$logsql .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
-			$resultsql = $resql2;
+			$resql_action = $resql2;
 		}
 	}
 }
 if ($action == 'convertdynamic') {
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ROW_FORMAT=DYNAMIC;";
 	$logsql .= $sql.'<br>';
-	$resultsql = $db->query($sql);
+	$resql_action = $db->query($sql);
 }
 
 
@@ -126,7 +126,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsea
 print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), $linkback, 'title_setup');
 
 if ($logsql) {
-	print info_admin($logsql.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+	print info_admin($logsql.' '.(empty($resql_action) ? ' => KO '.$db->lasterror() : ' => OK'));
 }
 
 // Define request to get table description
